@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>제주항공 - 여행사</title>
+    <title>제주 그룹 - 제주의 모든 여행을 함께</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -25,53 +25,23 @@
         <div class="header-inner">
             <!-- 로고 -->
             <div class="logo">
-                <a href="#" class="logo-link"><img src="/images/logo_jeju.png" alt="제주항공 로고"></a>
+                <a href="#" class="logo-link">제주 그룹</a>
             </div>
 
             <!-- 메인 네비게이션 -->
             <nav class="gnb" id="gnb">
                 <ul class="gnb-list">
                     <li class="gnb-item">
-                        <a href="#" class="gnb-link">예약</a>
-                        <ul class="gnb-depth2">
-                            <li><a href="#">항공권 예매</a></li>
-                            <li><a href="#">호텔 예약</a></li>
-                        </ul>
+                        <a href="#section-2" class="gnb-link">제주에어</a>
                     </li>
                     <li class="gnb-item">
-                        <a href="#" class="gnb-link">여행 준비</a>
-                        <ul class="gnb-depth2">
-                            <li><a href="#">여행 가이드</a></li>
-                            <li><a href="#">짐 정보</a></li>
-                        </ul>
+                        <a href="#section-3" class="gnb-link">제주호텔</a>
                     </li>
                     <li class="gnb-item">
-                        <a href="#" class="gnb-link">여행 편의</a>
-                        <ul class="gnb-depth2">
-                            <li><a href="#">사전 체크인</a></li>
-                            <li><a href="#">기내 서비스</a></li>
-                        </ul>
+                        <a href="#section-4" class="gnb-link">제주렌트카</a>
                     </li>
                     <li class="gnb-item">
-                        <a href="#" class="gnb-link">J 멤버스</a>
-                        <ul class="gnb-depth2">
-                            <li><a href="#">멤버십 안내</a></li>
-                            <li><a href="#">마일리지</a></li>
-                        </ul>
-                    </li>
-                    <li class="gnb-item">
-                        <a href="#" class="gnb-link">이벤트/제휴</a>
-                        <ul class="gnb-depth2">
-                            <li><a href="#">진행중인 이벤트</a></li>
-                            <li><a href="#">제휴 정보</a></li>
-                        </ul>
-                    </li>
-                    <li class="gnb-item">
-                        <a href="#" class="gnb-link">J 멤버인</a>
-                        <ul class="gnb-depth2">
-                            <li><a href="#">멤버인 소개</a></li>
-                            <li><a href="#">멤버인 혜택</a></li>
-                        </ul>
+                        <a href="#section-5" class="gnb-link">멤버십</a>
                     </li>
                 </ul>
             </nav>
@@ -79,7 +49,7 @@
             <!-- 헤더 우측 컨트롤 (언어 선택, 마이페이지) -->
             <div class="header-right-controls">
                 <button class="lang-toggle">English</button>
-                <button class="mypage-btn"><i class="fa-solid fa-plane-departure"></i></button>
+                <button class="mypage-btn"><i class="fa-solid fa-user"></i></button>
             </div>
         </div>
     </header>
@@ -87,327 +57,220 @@
 
     <!-- ==================== 메인 컨텐츠 시작 ==================== -->
     <main class="main-content">
-        <!-- ==================== 섹션 1: 항공권 예매 ==================== -->
+        <!-- ==================== 섹션 1: 브랜드 비주얼 (Hero Section) ==================== -->
         <section class="section section-1" id="section-1">
-            <div class="section-bg"></div>
-            <div class="section-content">
-                <div class="booking-container">
-                    <div class="booking-tabs">
-                        <button class="booking-tab active" data-tab="flight">항공권 예매</button>
-                        <button class="booking-tab" data-tab="hotel">호텔 예약</button>
-                        <button class="booking-tab" data-tab="check">예약 조회</button>
-                    </div>
+            <!-- 유튜브 배경 영상 -->
+            <div class="hero-video-container">
+                <iframe class="hero-video" src="https://www.youtube.com/embed/Pc-XikbtLZ8?autoplay=1&mute=1&loop=1&playlist=Pc-XikbtLZ8&controls=0&modestbranding=1" 
+                    title="제주 여행" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+                <div class="hero-overlay"></div>
+            </div>
 
-                    <div class="booking-content">
-                        <!-- 항공권 예매 탭 -->
-                        <div class="booking-tab-content active" id="flight-tab">
-                            <div class="booking-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>출발지</label>
-                                        <input type="text" placeholder="출발지 선택">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>도착지</label>
-                                        <input type="text" placeholder="도착지 선택">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>출발일</label>
-                                        <input type="date">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>인원</label>
-                                        <input type="number" placeholder="인원 선택">
-                                    </div>
-                                </div>
-                                <button class="search-btn">항공권 검색</button>
-                            </div>
-                        </div>
-
-                        <!-- 호텔 예약 탭 -->
-                        <div class="booking-tab-content" id="hotel-tab">
-                            <div class="booking-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>도시</label>
-                                        <input type="text" placeholder="도시 선택">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>체크인</label>
-                                        <input type="date">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>체크아웃</label>
-                                        <input type="date">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>인원</label>
-                                        <input type="number" placeholder="인원 선택">
-                                    </div>
-                                </div>
-                                <button class="search-btn">호텔 검색</button>
-                            </div>
-                        </div>
-
-                        <!-- 예약 조회 탭 -->
-                        <div class="booking-tab-content" id="check-tab">
-                            <div class="booking-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>예약번호</label>
-                                        <input type="text" placeholder="예약번호 입력">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>이름</label>
-                                        <input type="text" placeholder="이름 입력">
-                                    </div>
-                                </div>
-                                <button class="search-btn">예약 조회</button>
-                            </div>
-                        </div>
+            <!-- 메인 콘텐츠 -->
+            <div class="hero-content">
+                <h1 class="hero-title">제주 여행의 시작과 끝,<br>제주 그룹이 함께합니다.</h1>
+                <p class="hero-subtitle">하늘, 머물음, 그리고 드라이브. 제주의 모든 여행을 한 곳에서.</p>
+                
+                <!-- Scroll Down 아이콘 -->
+                <div class="scroll-down">
+                    <span>Scroll Down</span>
+                    <div class="scroll-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ==================== 섹션 2: 특별한 혜택 ==================== -->
+        <!-- ==================== 섹션 2: 제주에어 소개 ==================== -->
         <section class="section section-2" id="section-2">
-            <div class="section-bg"></div>
+            <div class="section-bg" style="background-image: url('#');"></div>
             <div class="section-content">
-                <div class="section-header">
-                    <h2>특별한 혜택을 확인해 보세요.</h2>
-                </div>
-                <div class="benefit-carousel">
-                    <button class="carousel-btn prev">‹</button>
-                    <div class="carousel-container">
-                        <div class="carousel-items">
-                            <div class="benefit-card">
-                                <div class="card-image" style="background-image: url('#');"></div>
-                                <div class="card-content">
-                                    <h3>싱가포르 Aloft 호텔</h3>
-                                    <p>최대 10% 할인</p>
-                                </div>
-                            </div>
-                            <div class="benefit-card">
-                                <div class="card-image" style="background-image: url('#');"></div>
-                                <div class="card-content">
-                                    <h3>싱가포르 센토사</h3>
-                                    <p>무료 혜택</p>
-                                </div>
-                            </div>
-                            <div class="benefit-card">
-                                <div class="card-image" style="background-image: url('#');"></div>
-                                <div class="card-content">
-                                    <h3>제주항공X라쿠텐트래블</h3>
-                                    <p>입북 숙소 할인</p>
-                                </div>
-                            </div>
-                            <div class="benefit-card">
-                                <div class="card-image" style="background-image: url('#');"></div>
-                                <div class="card-content">
-                                    <h3>제주항공X라쿠텐트래블</h3>
-                                    <p>입북 숙소 할인</p>
-                                </div>
-                            </div>
-                            <div class="benefit-card">
-                                <div class="card-image" style="background-image: url('#');"></div>
-                                <div class="card-content">
-                                    <h3>제주항공X라쿠텐트래블</h3>
-                                    <p>입북 숙소 할인</p>
-                                </div>
-                            </div>
-                            <div class="benefit-card">
-                                <div class="card-image" style="background-image: url('#');"></div>
-                                <div class="card-content">
-                                    <h3>제주항공X라쿠텐트래블</h3>
-                                    <p>입북 숙소 할인</p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="service-intro left-layout">
+                    <div class="service-image">
+                        <div class="image-placeholder" style="background-image: url('#');"></div>
                     </div>
-                    <button class="carousel-btn next">›</button>
-                </div>
-                <div class="carousel-dots">
-                    <span class="dot"></span>
-                    <span class="dot active"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                    <div class="service-info">
+                        <div class="service-header">
+                            <span class="service-tag">제주에어</span>
+                            <h2>가장 빠르고 편안한 하늘길</h2>
+                        </div>
+                        <p class="service-description">
+                            제주에어는 합리적인 운임으로 최고의 서비스를 제공합니다. 
+                            국내외 주요 노선을 운항하며, 편안한 객실 환경과 친절한 승무원 서비스로 
+                            당신의 여행을 더욱 특별하게 만들어드립니다.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> 합리적인 운임</li>
+                            <li><i class="fas fa-check"></i> 편안한 객실</li>
+                            <li><i class="fas fa-check"></i> 친절한 서비스</li>
+                        </ul>
+                        <button class="cta-button">항공권 예약하기</button>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- ==================== 섹션 3: 여행의 편리함 ==================== -->
+        <!-- ==================== 섹션 3: 제주호텔 소개 ==================== -->
         <section class="section section-3" id="section-3">
-            <div class="section-bg"></div>
+            <div class="section-bg" style="background-image: url('#');"></div>
             <div class="section-content">
-                <div class="section-header">
-                    <h2>여행에 편리함을 더해보세요.</h2>
-                </div>
-                <div class="conv-cards-grid">
-                    <div class="conv-card active" data-conv="seat">
-                        <div class="conv-card-image-01" style="background-image: url(/images/airplane_sit_01.png);">
-                        </div>
-                        <div class="conv-card-content">
-                            <h3>사전 좌석</h3>
-                            <p>원하는 좌석을 예약해 보세요.</p>
-                            <ul class="conv-card-features">
-                                <li>비즈니스 라이트</li>
-                                <li>사전 수하물</li>
-                            </ul>
-                        </div>
+                <div class="service-intro right-layout">
+                    <div class="service-image">
+                        <div class="image-placeholder" style="background-image: url('#');"></div>
                     </div>
-                    <div class="conv-card" data-conv="guide">
-                        <div class="conv-card-image-02" style="background-image: url(/images/air_food_01.png);"></div>
-                        <div class="conv-card-content">
-                            <h3>기내 서비스</h3>
-                            <p>편안한 기내 환경을 제공합니다.</p>
-                            <ul class="conv-card-features">
-                                <li>음료 서비스</li>
-                                <li>기내식</li>
-                            </ul>
+                    <div class="service-info">
+                        <div class="service-header">
+                            <span class="service-tag">제주호텔</span>
+                            <h2>제주의 자연을 품은 프리미엄 휴식처</h2>
                         </div>
-                    </div>
-                    <div class="conv-card" data-conv="service">
-                        <div class="conv-card-image-03" style="background-image: url(/images/travel_safe_01.png);">
-                        </div>
-                        <div class="conv-card-content">
-                            <h3>여행 동반 서비스</h3>
-                            <p>여행을 더욱 편하게 만들어드립니다.</p>
-                            <ul class="conv-card-features">
-                                <li>짐 배송</li>
-                                <li>여행 보험</li>
-                            </ul>
-                        </div>
+                        <p class="service-description">
+                            제주호텔은 제주의 아름다운 자연 속에서 프리미엄한 휴식을 제공합니다. 
+                            현대적인 시설과 전통의 따뜻함이 어우러진 객실에서 
+                            잊을 수 없는 제주의 밤을 경험하세요.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> 프리미엄 객실</li>
+                            <li><i class="fas fa-check"></i> 자연 친화적 설계</li>
+                            <li><i class="fas fa-check"></i> 최고의 서비스</li>
+                        </ul>
+                        <button class="cta-button">객실 둘러보기</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ==================== 섹션 4: 인기 노선 ==================== -->
+        <!-- ==================== 섹션 4: 제주렌트카 소개 ==================== -->
         <section class="section section-4" id="section-4">
-            <div class="section-bg"></div>
+            <div class="section-bg" style="background-image: url('#');"></div>
             <div class="section-content">
-                <div class="section-header">
-                    <h2>지금 뜨는 인기 노선을 확인해 보세요.</h2>
-                    <span class="note">*1인 편도 기준</span>
-                </div>
-                <div class="routes-carousel">
-                    <button class="carousel-btn prev">‹</button>
-                    <div class="carousel-container">
-                        <div class="carousel-items">
-                            <div class="route-card">
-                                <div class="route-image" style="background-image: url('#');"></div>
-                                <div class="route-info">
-                                    <h3>서울(인천)-비엘타인(왓파이)</h3>
-                                    <p class="price">181,400원~</p>
-                                    <p class="date">2026.01.01 ~ 2026.02.15</p>
-                                </div>
-                            </div>
-                            <div class="route-card">
-                                <div class="route-image" style="background-image: url('#');"></div>
-                                <div class="route-info">
-                                    <h3>부산-방콕(수완나품)</h3>
-                                    <p class="price">217,600원~</p>
-                                    <p class="date">2026.01.15 ~ 2026.02.15</p>
-                                </div>
-                            </div>
-                            <div class="route-card">
-                                <div class="route-image" style="background-image: url('#');"></div>
-                                <div class="route-info">
-                                    <h3>김포-제주</h3>
-                                    <p class="price">25,600원~</p>
-                                    <p class="date">2026.01.15 ~ 2026.01.31</p>
-                                </div>
-                            </div>
-                            <div class="route-card">
-                                <div class="route-image" style="background-image: url('#');"></div>
-                                <div class="route-info">
-                                    <h3>부산-세부</h3>
-                                    <p class="price">78,400원~</p>
-                                    <p class="date">2026.01.15 ~ 2026.02.15</p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="service-intro left-layout">
+                    <div class="service-image">
+                        <div class="image-placeholder" style="background-image: url('#');"></div>
                     </div>
-                    <button class="carousel-btn next">›</button>
+                    <div class="service-info">
+                        <div class="service-header">
+                            <span class="service-tag">제주렌트카</span>
+                            <h2>완벽한 드라이빙을 위한 최신형 차량</h2>
+                        </div>
+                        <p class="service-description">
+                            제주렌트카는 최신형 차량으로 완벽한 드라이빙 경험을 제공합니다. 
+                            제주의 해안도로를 자유롭게 누비며, 당신만의 특별한 여행을 만들어보세요. 
+                            24시간 고객지원으로 안전한 여행을 보장합니다.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> 최신형 차량</li>
+                            <li><i class="fas fa-check"></i> 합리적인 가격</li>
+                            <li><i class="fas fa-check"></i> 24시간 지원</li>
+                        </ul>
+                        <button class="cta-button">차량 예약하기</button>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- ==================== 섹션 5: J 멤버스 혜택 ==================== -->
+        <!-- ==================== 섹션 5: 제주 그룹 멤버십 ==================== -->
+        <!-- ==================== 섹션 5: 제주 그룹 멤버십 ==================== -->
         <section class="section section-5" id="section-5">
-            <div class="section-bg"></div>
             <div class="section-content">
-                <div class="section-header">
-                    <h2>J 멤버스 혜택존을 경험해 보세요.</h2>
-                    <a href="#" class="view-all">전체보기</a>
-                </div>
-                <div class="members-grid">
-                    <div class="member-card">
-                        <div class="card-image" style="background-image: url('#');"></div>
-                        <div class="card-label">렌터카</div>
+                <div class="membership-container">
+                    <div class="membership-header">
+                        <h2>제주 그룹 멤버십</h2>
+                        <p>제주 여행의 모든 순간을 더욱 특별하게</p>
                     </div>
-                    <div class="member-card">
-                        <div class="card-image" style="background-image: url('#');"></div>
-                        <div class="card-label">호텔/숙소</div>
+
+                    <div class="membership-tiers">
+                        <!-- 실버 멤버십 -->
+                        <div class="membership-tier">
+                            <div class="tier-badge">SILVER</div>
+                            <h3>실버 멤버</h3>
+                            <p class="tier-price">월 <span>29,900</span>원</p>
+                            <ul class="tier-benefits">
+                                <li>✓ 항공권 5% 할인</li>
+                                <li>✓ 호텔 예약 10% 할인</li>
+                                <li>✓ 렌트카 기본료 할인</li>
+                                <li>✓ 우선 고객 지원</li>
+                            </ul>
+                            <button class="tier-btn">가입하기</button>
+                        </div>
+
+                        <!-- 골드 멤버십 -->
+                        <div class="membership-tier gold-tier">
+                            <div class="tier-badge gold">GOLD</div>
+                            <div class="tier-popular">인기</div>
+                            <h3>골드 멤버</h3>
+                            <p class="tier-price">월 <span>49,900</span>원</p>
+                            <ul class="tier-benefits">
+                                <li>✓ 항공권 10% 할인</li>
+                                <li>✓ 호텔 예약 15% 할인</li>
+                                <li>✓ 렌트카 기본료 20% 할인</li>
+                                <li>✓ 무료 공항 라운지</li>
+                                <li>✓ 우선 예약 서비스</li>
+                            </ul>
+                            <button class="tier-btn gold-btn">가입하기</button>
+                        </div>
+
+                        <!-- 플래티넘 멤버십 -->
+                        <div class="membership-tier">
+                            <div class="tier-badge">PLATINUM</div>
+                            <h3>플래티넘 멤버</h3>
+                            <p class="tier-price">월 <span>79,900</span>원</p>
+                            <ul class="tier-benefits">
+                                <li>✓ 항공권 15% 할인</li>
+                                <li>✓ 호텔 예약 20% 할인</li>
+                                <li>✓ 렌트카 기본료 30% 할인</li>
+                                <li>✓ VIP 라운지 이용</li>
+                                <li>✓ 전담 컨시어지 서비스</li>
+                                <li>✓ 무료 취소 정책</li>
+                            </ul>
+                            <button class="tier-btn">가입하기</button>
+                        </div>
                     </div>
-                    <div class="member-card">
-                        <div class="card-image" style="background-image: url('#');"></div>
-                        <div class="card-label">음용/여행자 보험</div>
-                    </div>
-                    <div class="member-card">
-                        <div class="card-image" style="background-image: url('#');"></div>
-                        <div class="card-label">골프/투어</div>
+
+                    <div class="membership-footer">
+                        <p>모든 멤버십은 언제든지 취소할 수 있습니다.</p>
+                        <p>추가 혜택과 이벤트는 <strong>제주 그룹 앱</strong>에서 확인하세요.</p>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-    <!-- ==================== 메인 컨텐츠 끝 ==================== -->
 
     <!-- ==================== 푸터 시작 ==================== -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-info">
-                <div class="company-info">
-                    <p><strong>(주)제주항공</strong></p>
-                    <p>대표이사 : 김이배</p>
-                    <p>사업자등록번호 : 616-81-50527</p>
-                    <p>통신판매업신고 : 제주 2006-125호</p>
-                    <p>호스팅 사업자 : AWS</p>
-                </div>
-                <div class="company-contact">
-                    <p>주소 : 제주특별자치도 제주시 신대로 64 (연동, 건설공제회관 3층)</p>
-                    <p>고객센터 : 1599-1500 (09:00 ~ 19:00)</p>
-                    <p>고객 문의 : jejuair.help@jejuair.net</p>
-                    <p>제휴 문의 : partnership@jejuair.net</p>
-                </div>
+                <p><strong>(주)제주 그룹</strong></p>
+                <p>대표이사: 김이배</p>
+                <p>사업자등록번호: 616-81-50527</p>
+                <p>통신판매업신고: 제주 2006-125호</p>
+                <p>호스팅 사업자: AWS</p>
+                <p>주소: 제주특별자치도 제주시 신대로 64 (연동, 건설공제회관 3층)</p>
+                <p>고객센터: 1599-1500 (09:00 ~ 19:00)</p>
+                <p>고객 문의: jejugroup.help@jejugroup.net</p>
+                <p>제휴 문의: partnership@jejugroup.net</p>
             </div>
             <div class="footer-social">
-                <a href="#" class="social-icon" title="유튜브">#</a>
-                <a href="#" class="social-icon" title="인스타그램">#</a>
-                <a href="#" class="social-icon" title="틱톡">#</a>
-                <a href="#" class="social-icon" title="페이스북">#</a>
+                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
             </div>
         </div>
         <div class="footer-copyright">
-            <p>Copyright ⓒ Jeju Air. All Rights Reserved.</p>
+            <p>Copyright ⓒ Jeju Group. All Rights Reserved.</p>
         </div>
     </footer>
     <!-- ==================== 푸터 끝 ==================== -->
 
-    <!-- ==================== 탑 버튼 시작 ==================== -->
-    <button class="top-btn" id="topBtn" title="페이지 맨 위로">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
+    <!-- ==================== 탑 버튼 ==================== -->
+    <button class="top-btn" id="topBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
     </button>
-    <!-- ==================== 탑 버튼 끝 ==================== -->
 
     <script src="/js/script.js"></script>
 </body>
