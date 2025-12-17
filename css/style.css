@@ -57,6 +57,21 @@ body::-webkit-scrollbar {
     background-color: rgba(255, 255, 255, 0.95);
     /* backdrop-filter: blur(10px); */
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+    transition: all 0.3s ease; /* 부드러운 전환 효과 */
+}
+.header.section2plus-header .gnb-link,
+.header.section2plus-header .mypage-btn {
+    color: #ffffff; /* 흰색으로 변경 */
+}
+.header.section2plus-header .lang-toggle {
+    color: #ffffff; /* 흰색으로 변경 */
+    border-color: rgba(255, 255, 255, 0.7); /* 테두리도 흰색 계열로 */
+}
+.header.section2plus-header .gnb-link,
+.header.section2plus-header .mypage-btn,
+.header.section2plus-header .lang-toggle {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 .header.transparent {
@@ -128,7 +143,7 @@ body::-webkit-scrollbar {
 }
 
 .header.section2plus-header .gnb-link {
-    color: #000;
+    color: #f2f2f2;
 }
 
 .header.section2plus-header .gnb-link:hover {
@@ -136,7 +151,7 @@ body::-webkit-scrollbar {
 }
 
 .header.section2plus-header .lang-toggle {
-    color: #000;
+    color: #f2f2f2;
     border-color: #999999;
 }
 
@@ -146,7 +161,7 @@ body::-webkit-scrollbar {
 }
 
 .header.section2plus-header .mypage-btn {
-    color: #000;
+    color: #f2f2f2;
 }
 
 .header.section2plus-header .mypage-btn:hover {
@@ -220,7 +235,7 @@ body::-webkit-scrollbar {
 }
 
 .gnb-link {
-    color: #000;
+    color: #f2f2f2;
     text-decoration: none;
     font-size: 16px;
     font-weight: 800;
@@ -242,9 +257,9 @@ body::-webkit-scrollbar {
 
 .lang-toggle {
     padding: 8px 16px;
-    border: 2px solid #999999;
+    border: 2px solid #f2f2f2;
     background-color: transparent;
-    color: #000;
+    color: #f2f2f2;
     border-radius: 20px;
     cursor: pointer;
     font-size: 12px;
@@ -253,14 +268,14 @@ body::-webkit-scrollbar {
 }
 
 .lang-toggle:hover {
-    border-color: #555555;
-    color: #555555;
+    border-color: #FF5000;
+    color: #FF5000;
 }
 
 .mypage-btn {
     background: none;
     border: none;
-    color: #000;
+    color: #f2f2f2;
     font-size: 18px;
     cursor: pointer;
     transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -421,6 +436,23 @@ body::-webkit-scrollbar {
 .section-2, .section-3, .section-4 {
     background-color: #ffffff;
 }
+.section-2 .section-bg {
+    background-image: url(/images/jejuair_bg.jpg); /* 비행기 날개 이미지 */
+    filter: blur(8px) brightness(0.7); /* 블러 및 밝기 조절 */
+    transform: scale(1.1); /* 가장자리가 흐려지는 것을 방지 */
+}
+
+.section-3 .section-bg {
+    background-image: url('https://images.unsplash.com/photo-1618773928121-c32242e63f39' ); /* 호텔 내부 이미지 */
+    filter: blur(8px) brightness(0.7);
+    transform: scale(1.1);
+}
+
+.section-4 .section-bg {
+    background-image: url('https://images.unsplash.com/photo-1533106418989-88406e7cc8ca' ); /* 해안도로 드라이브 이미지 */
+    filter: blur(8px) brightness(0.7);
+    transform: scale(1.1);
+}
 
 .service-intro {
     display: flex;
@@ -430,6 +462,12 @@ body::-webkit-scrollbar {
     width: 90%;
     margin: 0 auto;
     animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+    background-color: rgba(255, 255, 255, 0.85); /* 흰색 반투명 배경 */
+    padding: 60px; /* 내부 여백을 넉넉하게 줍니다. */
+    border-radius: 16px; /* 부드러운 모서리 */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* 입체감을 위한 그림자 */
+    backdrop-filter: blur(10px); /* (선택사항) 유리처럼 비치는 효과 */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* (선택사항) 테두리 */
 }
 
 .left-layout {
@@ -488,7 +526,7 @@ body::-webkit-scrollbar {
 
 .service-description {
     font-size: 16px;
-    color: #555;
+    color: #333;
     line-height: 1.8;
     margin: 24px 0 32px 0;
 }
@@ -533,95 +571,203 @@ body::-webkit-scrollbar {
 
 /* ==================== 섹션 5: 멤버십 ==================== */
 .section-5 {
-    background-color: #f9f9f9;
+    background: linear-gradient(135deg, #ffffff 0%, #e9e9e9 100%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+.section-5 .section-bg {
+    background-image: url(/images/sanghai.webp); /* 해안도로 드라이브 이미지 */
+    filter: blur(8px) brightness(0.7);
+    transform: scale(1.1);
+}
+
+.membership-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 60px 40px;
 }
 
 .membership-header {
     text-align: center;
     margin-bottom: 60px;
-    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
 }
 
 .membership-header h2 {
-    font-size: 40px;
+    position: relative;
+    top: 24px;
+    font-size: 48px;
     font-weight: 700;
-    color: #000;
+    color: #e9e9e9;
     margin-bottom: 12px;
 }
 
 .membership-header p {
-    font-size: 16px;
-    color: #555;
-}
-
-.membership-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 32px;
-    max-width: 1200px;
-    width: 90%;
-    margin: 0 auto 40px;
-    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
-}
-
-.membership-card {
-    background-color: white;
-    padding: 32px 24px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.membership-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-}
-
-.membership-icon {
-    font-size: 40px;
-    color: #FF5000;
-    margin-bottom: 16px;
-}
-
-.membership-card h3 {
+    position: relative;
+    top: 24px;
     font-size: 18px;
+    color: #c9c9c9;
+}
+
+.membership-tiers {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 60px;
+    bottom: 24px;
+}
+
+.membership-tier {
+    background: rgba(255, 255, 255, 0.90);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 2px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 40px 30px;
+    text-align: center;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.membership-tier:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(255, 80, 0, 0.15);
+    border-color: #FF5000;
+}
+
+.tier-badge {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #666;
+    padding: 8px 18px; /* 조금 더 넓게 */
+    /* padding: 8px 16px; */
+    border-radius: 20px;
+    border: none; /* 테두리 제거 */
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.tier-badge.silver {
+    background: linear-gradient(135deg, #E0E0E0 0%, #B0B0B0 100%);
+    color: #454545;
+}
+.tier-badge.gold {
+    background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+    color: #583e02; /* 짙은 갈색 텍스트로 가독성 확보 */
+}
+.tier-badge.platinum {
+    background: linear-gradient(135deg, #434343 0%, #000000 100%);
+    color: #ffffff; /* 흰색 텍스트로 대비 강조 */
+}
+.tier-popular {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: #FF5000;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.gold-tier {
+    border-color: #FF5000;
+    box-shadow: 0 10px 30px rgba(255, 80, 0, 0.1);
+}
+
+.gold-tier:hover {
+    box-shadow: 0 20px 50px rgba(255, 80, 0, 0.2);
+}
+
+.membership-tier h3 {
+    font-size: 28px;
     font-weight: 700;
     color: #000;
-    margin-bottom: 12px;
+    margin: 20px 0;
 }
 
-.membership-card p {
+.tier-price {
     font-size: 14px;
     color: #555;
+    margin-bottom: 10px;
+}
+
+.tier-price span {
+    font-size: 32px;
+    font-weight: 700;
+    color: #FF5000;
+}
+
+.tier-benefits {
+    list-style: none;
+    padding: 30px 0;
+    text-align: left;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    margin: 30px 0;
+    order: 3;
+}
+
+.tier-benefits li {
+    font-size: 14px;
+    color: #555;
+    padding: 10px 0;
     line-height: 1.6;
 }
 
-.membership-btn {
-    padding: 14px 40px;
-    background-color: #FF5000;
-    color: white;
-    border: none;
+.tier-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: #fff;
+    color: #FF5000;
+    border: 1px solid #FF5000;
+    /* border: none; */
     border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    font-family: 'FlightSans', sans-serif;
-    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    order: 2;
 }
 
-.membership-btn:hover {
-    background-color: #ff6b1a;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 80, 0, 0.3);
+.tier-btn:hover {
+    background: #ffd9cc;
 }
+
+.gold-btn {
+    background: #FF5000;
+    color: white;
+}
+
+.gold-btn:hover {
+    background: #e64500;
+}
+
+.plan-sub p {
+    font-size: 10px;
+    color: #f9f9f9;
+    margin: 8px 0;
+}
+
+.plan-sub strong {
+    color: #FF5000;
+    font-weight: 700;
+}
+
 
 /* ==================== 푸터 ==================== */
 .footer {
     background-color: #f2f2f2;
     padding: 30px 40px;
     margin-top: 0;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    display: block;
 }
 
 .footer-content {
@@ -682,6 +828,16 @@ body::-webkit-scrollbar {
 .footer-copyright p {
     font-size: 10px;
     color: #999;
+}
+
+/* Footer가 section 클래스를 가질 때 100vh 제거 */
+.footer.section {
+    min-height: auto !important;
+    height: auto !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    padding-top: 60px;
+    padding-bottom: 60px;
 }
 
 /* ==================== 탑 버튼 ==================== */
@@ -885,178 +1041,6 @@ body::-webkit-scrollbar {
     }
 }
 
-/* ==================== 섹션 5: 멤버십 ==================== */
-.section-5 {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.membership-container {
-    width: 100%;
-    max-width: 1200px;
-    padding: 60px 40px;
-}
-
-.membership-header {
-    text-align: center;
-    margin-bottom: 60px;
-}
-
-.membership-header h2 {
-    font-size: 48px;
-    font-weight: 700;
-    color: #000;
-    margin-bottom: 12px;
-}
-
-.membership-header p {
-    font-size: 18px;
-    color: #555;
-}
-
-.membership-tiers {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-bottom: 60px;
-}
-
-.membership-tier {
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 16px;
-    padding: 40px 30px;
-    text-align: center;
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.membership-tier:hover {
-    transform: translateY(-12px);
-    box-shadow: 0 20px 40px rgba(255, 80, 0, 0.15);
-    border-color: #FF5000;
-}
-
-.tier-badge {
-    display: inline-block;
-    background: #f0f0f0;
-    color: #666;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-}
-
-.tier-badge.gold {
-    background: #FFD700;
-    color: #333;
-}
-
-.tier-popular {
-    position: absolute;
-    top: -12px;
-    right: 20px;
-    background: #FF5000;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.gold-tier {
-    border-color: #FF5000;
-    box-shadow: 0 10px 30px rgba(255, 80, 0, 0.1);
-}
-
-.gold-tier:hover {
-    box-shadow: 0 20px 50px rgba(255, 80, 0, 0.2);
-}
-
-.membership-tier h3 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #000;
-    margin: 20px 0;
-}
-
-.tier-price {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 10px;
-}
-
-.tier-price span {
-    font-size: 32px;
-    font-weight: 700;
-    color: #FF5000;
-}
-
-.tier-benefits {
-    list-style: none;
-    padding: 30px 0;
-    text-align: left;
-    border-top: 1px solid #e0e0e0;
-    border-bottom: 1px solid #e0e0e0;
-    margin: 30px 0;
-}
-
-.tier-benefits li {
-    font-size: 14px;
-    color: #555;
-    padding: 10px 0;
-    line-height: 1.6;
-}
-
-.tier-btn {
-    width: 100%;
-    padding: 14px 20px;
-    background: #f0f0f0;
-    color: #333;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 20px;
-}
-
-.tier-btn:hover {
-    background: #e0e0e0;
-}
-
-.gold-btn {
-    background: #FF5000;
-    color: white;
-}
-
-.gold-btn:hover {
-    background: #e64500;
-}
-
-.membership-footer {
-    text-align: center;
-    padding-top: 40px;
-    border-top: 1px solid #e0e0e0;
-}
-
-.membership-footer p {
-    font-size: 14px;
-    color: #555;
-    margin: 8px 0;
-}
-
-.membership-footer strong {
-    color: #FF5000;
-    font-weight: 700;
-}
-
-/* 반응형 디자인 */
 @media (max-width: 1024px) {
     .membership-tiers {
         grid-template-columns: repeat(2, 1fr);
