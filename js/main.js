@@ -156,12 +156,12 @@ document.querySelectorAll('.gnb-link').forEach((link, index) => {
 });
 
 /* ==================== CTA 버튼 클릭 이벤트 ==================== */
-document.querySelectorAll('.cta-button').forEach(button => {
-    button.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('예약 페이지로 이동합니다.');
-    });
-});
+// document.querySelectorAll('.cta-button').forEach(button => {
+//     button.addEventListener('click', (e) => {
+//         e.preventDefault();
+//         alert('예약 페이지로 이동합니다.');
+//     });
+// });
 
 /* ==================== 멤버십 버튼 클릭 이벤트 ==================== */
 const membershipBtn = document.querySelector('.membership-btn');
@@ -187,8 +187,8 @@ const langData = {
         signup: "회원가입",
         customerCenter: "고객센터",
         navAir: "제주에어",
-        navHotel: "제주호텔",
-        navRentCar: "제주렌트카",
+        navHotel: "제주 스테이",
+        navRentCar: "제주 렌트카",
         navMembership: "멤버십",
         langToggle: "English",
         heroTitle: "제주 여행의 시작과 끝, 제주 그룹이 함께합니다.",
@@ -260,7 +260,7 @@ const langData = {
         signup: "Sign Up",
         customerCenter: "Support",
         navAir: "Jeju Air",
-        navHotel: "Jeju Hotel",
+        navHotel: "Jeju Stay",
         navRentCar: "Jeju Rent-a-Car",
         navMembership: "Membership",
         langToggle: "한국어",
