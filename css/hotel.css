@@ -709,7 +709,8 @@ input {
     display: block;
 }
 
-/* ========== Calendar Popup ========== */
+/* ========== Date Range Picker 캘린더 ========== */
+
 .calendar-popup {
     position: absolute;
     top: calc(100% + 8px);
@@ -750,8 +751,8 @@ input {
 }
 
 .calendar-tab.active {
-    color: var(--accent-blue);
-    border-bottom-color: var(--accent-blue);
+    color: #FF5000;
+    border-bottom-color: #FF5000;
 }
 
 .calendar-view {
@@ -788,6 +789,9 @@ input {
     justify-content: center;
     border-radius: var(--radius-full);
     color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
     transition: all var(--transition-fast);
 }
 
@@ -817,7 +821,7 @@ input {
 }
 
 .calendar-weekdays .weekend {
-    color: var(--accent-blue);
+    color: #FF5000;
 }
 
 .calendar-days {
@@ -825,6 +829,8 @@ input {
     grid-template-columns: repeat(7, 1fr);
     gap: 4px;
 }
+
+/* ========== 새로운 Date Range Picker 날짜 스타일 ========== */
 
 .calendar-day {
     aspect-ratio: 1;
@@ -836,43 +842,72 @@ input {
     border-radius: var(--radius-full);
     cursor: pointer;
     transition: all var(--transition-fast);
+    border: 2px solid transparent;
+    background: transparent;
 }
 
-.calendar-day:hover:not(.disabled):not(.selected) {
-    background: var(--background);
-}
-
+/* 1. 오늘 날짜 - FF5000 보더 원형 */
 .calendar-day.today {
-    border: 2px solid var(--accent-blue);
+    border: 2px solid #FF5000;
+    color: var(--text-title);
+    background: transparent;
 }
 
+/* 2. 호버 효과 - 연한 주황색 배경 */
+.calendar-day:not(.disabled):not(.selected):not(.today):not(.in-range):hover {
+    background: rgba(255, 80, 0, 0.15);
+}
+
+/* 3. 선택된 날짜 - FF5000 배경 원형 */
 .calendar-day.selected {
-    background: var(--accent-blue);
-    color: var(--surface);
+    background: #FF5000;
+    color: white;
+    border: 2px solid #FF5000;
+    font-weight: var(--font-weight-bold);
+    border-radius: var(--radius-full);
 }
 
+/* 4. 범위 내 날짜 - 연한 주황색 배경 */
 .calendar-day.in-range {
-    background: var(--accent-blue-light);
+    background: rgba(255, 80, 0, 0.15);
+    color: var(--text-title);
     border-radius: 0;
+    border: none;
 }
 
-.calendar-day.range-start {
-    border-radius: var(--radius-full) 0 0 var(--radius-full);
+/* 5. 호버 중 임시 범위 */
+.calendar-day.in-range-temp {
+    background: rgba(255, 80, 0, 0.15);
+    border-radius: 0;
+    border: none;
 }
 
-.calendar-day.range-end {
-    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+/* 6. 호버 끝점 */
+.calendar-day.hover-end {
+    background: #FF5000;
+    color: white;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-bold);
 }
 
+/* 7. 비활성화 날짜 */
 .calendar-day.disabled {
     color: var(--text-muted);
     opacity: 0.4;
     cursor: not-allowed;
+    background: transparent;
+    border: none;
 }
 
-.calendar-day.other-month {
-    color: var(--text-muted);
-    opacity: 0.3;
+.calendar-day.disabled:hover {
+    background: transparent;
+}
+
+/* 8. 다른 달의 날짜 */
+.calendar-day.empty {
+    cursor: default;
+    background: transparent;
+    border: none;
 }
 
 /* Flexible View */
