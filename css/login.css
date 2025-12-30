@@ -42,58 +42,79 @@
 }
 
 /* 2. 헤더 가독성 강제 수정 (메인 CSS 덮어쓰기) */
+.login-page .header {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .login-page .gnb-link,
 .login-page .util-link,
 .login-page .header-util,
 .login-page .header-right-controls button {
-    color: #ffffff; /* 흰색 강제 */
+    color: #ffffff !important; /* 흰색 강제 */
     text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.login-page .logo-link img {
+    filter: brightness(0) invert(1); /* 로고 흰색으로 변경 */
+}
+
+.login-page .lang-toggle {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: #ffffff !important;
+}
+
+.login-page .lang-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff !important;
 }
 
 .login-page .util-divider {
     color: rgba(255,255,255,0.4) !important;
 }
+
 .login-page a:hover {
-    color: #FF5000;
+    color: #FF5000 !important;
 }
+
 /* 3. 로그인 카드 (글래스모피즘 적용) */
 .login-wrapper {
     width: 100%;
-    max-width: 440px;
-    margin: 60px auto; /* 헤더, 푸터 사이 중앙 배치 */
+    max-width: 460px; /* 조금 더 넓게 */
+    margin: 100px auto 60px; /* 헤더 공간 확보 */
     padding: 20px;
 }
 
 .login-card {
-    background: rgba(255, 255, 255, 0.85); /* 반투명 흰색 */
-    backdrop-filter: blur(15px); /* 뒤 배경 흐리게 */
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.90); /* 가독성을 위해 불투명도 약간 증가 */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
     padding: 50px 40px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.6);
     text-align: center;
-    animation: fadeInUp 0.8s ease-out; /* 등장 애니메이션 */
+    animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); /* 더 부드러운 애니메이션 */
 }
 
 /* 애니메이션 정의 */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 /* 상단 로고 및 설명 */
 .login-logo {
-    width: 130px;
-    margin-bottom: 16px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    width: 140px;
+    margin-bottom: 20px;
+    /* 로고가 이미지가 아니라 텍스트라면 다르겠지만 이미지이므로 필터 등 불필요 */
 }
 
 .login-desc {
-    font-size: 15px;
-    color: #666;
+    font-size: 16px;
+    color: #555;
     margin-bottom: 40px;
-    font-weight: 400;
+    font-weight: 500;
     letter-spacing: -0.5px;
 }
 

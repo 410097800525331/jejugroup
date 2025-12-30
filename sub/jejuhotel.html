@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JEJU STAY | 전 세계 호텔 예약</title>
     <meta name="description" content="제주그룹의 글로벌 호텔 예약 플랫폼. 전 세계 호텔, 리조트, 펜션을 최저가로 예약하세요.">
-    
+
     <!-- Fonts: FlightSans is loaded via CSS @font-face, Noto Sans KR as fallback -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="/css/hotel.css">
+    <link rel="stylesheet" href="../css/hotel.css">
 </head>
+
 <body>
     <!-- ========== 섹션 1: 글로벌 헤더 (GNB) ========== -->
     <header class="header" id="header">
@@ -27,7 +29,7 @@
                 <span class="logo-divider">|</span>
                 <span class="logo-stay">STAY</span>
             </a>
-            
+
             <!-- 메인 네비게이션 -->
             <nav class="main-nav">
                 <ul class="nav-list">
@@ -57,7 +59,7 @@
                     </li>
                 </ul>
             </nav>
-            
+
             <!-- 우측 유틸리티 -->
             <div class="header-utils">
                 <a href="#" class="util-link lounge">
@@ -74,13 +76,13 @@
                     로그인
                 </a>
             </div>
-            
+
             <!-- 모바일 메뉴 버튼 -->
             <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="메뉴 열기">
                 <i data-lucide="menu"></i>
             </button>
         </div>
-        
+
         <!-- 모바일 네비게이션 -->
         <div class="mobile-nav" id="mobileNav">
             <ul class="mobile-nav-list">
@@ -98,13 +100,14 @@
         <!-- ========== 섹션 2: 히어로 & 검색 위젯 ========== -->
         <section class="hero">
             <div class="hero-background">
-                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80" alt="아름다운 해변 풍경" class="hero-image">
+                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80" alt="아름다운 해변 풍경"
+                    class="hero-image">
                 <div class="hero-overlay"></div>
             </div>
-            
+
             <div class="hero-content">
                 <p class="hero-subtitle-top">전 세계 200만 개 이상의 호텔, 리조트, 펜션을 최저가로 예약</p>
-                
+
                 <!-- 새로운 레이아웃 검색 위젯 -->
                 <div class="search-widget-large">
                     <!-- 검색 탭 -->
@@ -122,15 +125,16 @@
                             <span>즐길거리</span>
                         </button>
                     </div>
-                    
+
                     <!-- 검색 폼 - 호텔/펜션용 (새로운 레이아웃) -->
                     <div class="search-form-new" id="searchFormHotel">
                         <!-- 상단: 여행지 검색 (전체 너비) -->
                         <div class="search-row-top">
                             <div class="search-field-new destination-field-new" id="destinationFieldLarge">
                                 <i data-lucide="search" class="field-icon-new"></i>
-                                <input type="text" class="field-input-new" id="destinationInput" placeholder="어디로 떠나시나요?" autocomplete="off">
-                                
+                                <input type="text" class="field-input-new" id="destinationInput"
+                                    placeholder="어디로 떠나시나요?" autocomplete="off">
+
                                 <!-- 여행지 드롭다운 -->
                                 <div class="destination-dropdown" id="destinationDropdown">
                                     <div class="dropdown-columns">
@@ -138,7 +142,8 @@
                                             <div class="dropdown-header">대한민국 내 여행지</div>
                                             <ul class="destination-list">
                                                 <li class="destination-item" data-value="서울">
-                                                    <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=100&h=100&fit=crop" alt="서울">
+                                                    <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=100&h=100&fit=crop"
+                                                        alt="서울">
                                                     <div class="destination-info">
                                                         <span class="destination-name">서울</span>
                                                         <span class="destination-count">(5,945)</span>
@@ -146,7 +151,8 @@
                                                     </div>
                                                 </li>
                                                 <li class="destination-item" data-value="인천">
-                                                    <img src="https://images.unsplash.com/photo-1583425921686-c5daf5f49e4a?w=100&h=100&fit=crop" alt="인천">
+                                                    <img src="https://images.unsplash.com/photo-1583425921686-c5daf5f49e4a?w=100&h=100&fit=crop"
+                                                        alt="인천">
                                                     <div class="destination-info">
                                                         <span class="destination-name">인천</span>
                                                         <span class="destination-count">(2,147)</span>
@@ -154,7 +160,8 @@
                                                     </div>
                                                 </li>
                                                 <li class="destination-item" data-value="부산">
-                                                    <img src="https://images.unsplash.com/photo-1590559899731-a382839e5549?w=100&h=100&fit=crop" alt="부산">
+                                                    <img src="https://images.unsplash.com/photo-1590559899731-a382839e5549?w=100&h=100&fit=crop"
+                                                        alt="부산">
                                                     <div class="destination-info">
                                                         <span class="destination-name">부산</span>
                                                         <span class="destination-count">(2,734)</span>
@@ -162,7 +169,8 @@
                                                     </div>
                                                 </li>
                                                 <li class="destination-item" data-value="속초">
-                                                    <img src="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=100&h=100&fit=crop" alt="속초">
+                                                    <img src="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=100&h=100&fit=crop"
+                                                        alt="속초">
                                                     <div class="destination-info">
                                                         <span class="destination-name">속초</span>
                                                         <span class="destination-count">(800)</span>
@@ -170,7 +178,8 @@
                                                     </div>
                                                 </li>
                                                 <li class="destination-item" data-value="제주">
-                                                    <img src="https://images.unsplash.com/photo-1562680802-9cf8b15f419d?w=100&h=100&fit=crop" alt="제주">
+                                                    <img src="https://images.unsplash.com/photo-1562680802-9cf8b15f419d?w=100&h=100&fit=crop"
+                                                        alt="제주">
                                                     <div class="destination-info">
                                                         <span class="destination-name">제주</span>
                                                         <span class="destination-count">(4,939)</span>
@@ -178,7 +187,8 @@
                                                     </div>
                                                 </li>
                                                 <li class="destination-item" data-value="경주">
-                                                    <img src="https://images.unsplash.com/photo-1653632445016-b0de695eab90?w=100&h=100&fit=crop" alt="경주">
+                                                    <img src="https://images.unsplash.com/photo-1653632445016-b0de695eab90?w=100&h=100&fit=crop"
+                                                        alt="경주">
                                                     <div class="destination-info">
                                                         <span class="destination-name">경주</span>
                                                         <span class="destination-count">(1,439)</span>
@@ -226,23 +236,36 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- 중간: 체크인/체크아웃/인원 (3열) -->
+
+                        <!-- 중간: 체크인/체크아웃/인원 (3열 -> 2열 구조로 변경) -->
                         <div class="search-row-middle">
-                            <!-- 체크인 -->
-                            <div class="search-field-new date-field-new" id="checkInField">
-                                <i data-lucide="calendar" class="field-icon-new"></i>
-                                <div class="date-content-new">
-                                    <span class="date-full" id="checkInDisplay">2025년 12월 20일</span>
-                                    <span class="date-day-new" id="checkInDay">금요일</span>
+                            <!-- 체크인/체크아웃 통합 그룹 (CSS grid 2fr 영역) -->
+                            <div class="date-field-group">
+                                <!-- 체크인 -->
+                                <div class="date-field-new" id="checkInField">
+                                    <i data-lucide="calendar" class="field-icon-new"></i>
+                                    <div class="date-content-new">
+                                        <span class="date-full" id="checkInDisplay">2025년 12월 20일</span>
+                                        <span class="date-day-new" id="checkInDay">금요일</span>
+                                    </div>
                                 </div>
-                                <!-- 새로운 Date Range Picker 캘린더 팝업 -->
+
+                                <!-- 체크아웃 -->
+                                <div class="date-field-new" id="checkOutField">
+                                    <i data-lucide="calendar" class="field-icon-new"></i>
+                                    <div class="date-content-new">
+                                        <span class="date-full" id="checkOutDisplay">2025년 12월 21일</span>
+                                        <span class="date-day-new" id="checkOutDay">토요일</span>
+                                    </div>
+                                </div>
+
+                                <!-- 캘린더 팝업 (그룹 내부에 위치하여 전체 너비 활용) -->
                                 <div class="calendar-popup" id="calendarPopup">
                                     <!-- 캘린더 탭 -->
                                     <div class="calendar-tabs">
                                         <button class="calendar-tab active" data-calendar-tab="calendar">캘린더</button>
                                     </div>
-                                    
+
                                     <!-- 캘린더 뷰 -->
                                     <div class="calendar-view" id="calendarView">
                                         <div class="calendar-container">
@@ -255,13 +278,14 @@
                                                     <span class="calendar-title" id="leftMonthTitle">2025년 12월</span>
                                                 </div>
                                                 <div class="calendar-weekdays">
-                                                    <span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="weekend">토</span><span class="weekend">일</span>
+                                                    <span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span
+                                                        class="weekend">토</span><span class="weekend">일</span>
                                                 </div>
                                                 <div class="calendar-days" id="leftCalendarDays">
                                                     <!-- 동적으로 생성 -->
                                                 </div>
                                             </div>
-                                            
+
                                             <!-- 오른쪽 달력 -->
                                             <div class="calendar-month" id="calendarRight">
                                                 <div class="calendar-header">
@@ -271,7 +295,8 @@
                                                     </button>
                                                 </div>
                                                 <div class="calendar-weekdays">
-                                                    <span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="weekend">토</span><span class="weekend">일</span>
+                                                    <span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span
+                                                        class="weekend">토</span><span class="weekend">일</span>
                                                 </div>
                                                 <div class="calendar-days" id="rightCalendarDays">
                                                     <!-- 동적으로 생성 -->
@@ -280,27 +305,17 @@
                                         </div>
                                     </div>
                                 </div>
-                              
                             </div>
-                            
-                            <!-- 체크아웃 -->
-                            <div class="search-field-new date-field-new" id="checkOutField">
-                                <i data-lucide="calendar" class="field-icon-new"></i>
-                                <div class="date-content-new">
-                                    <span class="date-full" id="checkOutDisplay">2025년 12월 21일</span>
-                                    <span class="date-day-new" id="checkOutDay">토요일</span>
-                                </div>
-                            </div>
-                            
+
                             <!-- 인원 및 객실 -->
                             <div class="search-field-new guest-field-new" id="guestFieldLarge">
                                 <i data-lucide="users" class="field-icon-new"></i>
                                 <div class="guest-content-new">
-                                    <span class="guest-main" id="guestSummary">성인 2명</span>
+                                    <span class="guest-main" id="guestSummary">성인 1명</span>
                                     <span class="guest-sub" id="roomSummary">객실 1개</span>
                                 </div>
                                 <i data-lucide="chevron-down" class="field-chevron"></i>
-                                
+
                                 <!-- 인원 선택 팝업 -->
                                 <div class="guest-popup-new" id="guestPopupLarge">
                                     <div class="guest-row-new">
@@ -326,7 +341,7 @@
                                             <button class="counter-btn-new minus" data-target="adults">
                                                 <i data-lucide="minus"></i>
                                             </button>
-                                            <span class="counter-value-new" id="adultsCountLarge">2</span>
+                                            <span class="counter-value-new" id="adultsCountLarge">1</span>
                                             <button class="counter-btn-new plus" data-target="adults">
                                                 <i data-lucide="plus"></i>
                                             </button>
@@ -350,7 +365,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- 하단: 검색 버튼 (중앙 배치) -->
                         <div class="search-row-bottom">
                             <button class="search-btn-new" id="searchBtn">
@@ -358,15 +373,16 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <!-- 검색 폼 - 즐길거리용 -->
                     <div class="search-form-new hidden" id="searchFormActivity">
                         <!-- 상단: 여행지 검색 (전체 너비) -->
                         <div class="search-row-top">
                             <div class="search-field-new destination-field-new" id="destinationFieldActivity">
                                 <i data-lucide="search" class="field-icon-new"></i>
-                                <input type="text" class="field-input-new" id="destinationInputActivity" placeholder="어디로 떠나시나요?" autocomplete="off">
-                                
+                                <input type="text" class="field-input-new" id="destinationInputActivity"
+                                    placeholder="어디로 떠나시나요?" autocomplete="off">
+
                                 <!-- 여행지 드롭다운 (즐길거리용) -->
                                 <div class="destination-dropdown" id="destinationDropdownActivity">
                                     <div class="dropdown-columns">
@@ -374,7 +390,8 @@
                                             <div class="dropdown-header">대한민국 내 여행지</div>
                                             <ul class="destination-list">
                                                 <li class="destination-item" data-value="서울">
-                                                    <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=100&h=100&fit=crop" alt="서울">
+                                                    <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=100&h=100&fit=crop"
+                                                        alt="서울">
                                                     <div class="destination-info">
                                                         <span class="destination-name">서울</span>
                                                         <span class="destination-count">(5,945)</span>
@@ -382,7 +399,8 @@
                                                     </div>
                                                 </li>
                                                 <li class="destination-item" data-value="제주">
-                                                    <img src="https://images.unsplash.com/photo-1579169825453-8d4b4653cc3a?w=100&h=100&fit=crop" alt="제주">
+                                                    <img src="https://images.unsplash.com/photo-1579169825453-8d4b4653cc3a?w=100&h=100&fit=crop"
+                                                        alt="제주">
                                                     <div class="destination-info">
                                                         <span class="destination-name">제주</span>
                                                         <span class="destination-count">(4,939)</span>
@@ -390,7 +408,8 @@
                                                     </div>
                                                 </li>
                                                 <li class="destination-item" data-value="부산">
-                                                    <img src="https://images.unsplash.com/photo-1590559899731-a382839e5549?w=100&h=100&fit=crop" alt="부산">
+                                                    <img src="https://images.unsplash.com/photo-1590559899731-a382839e5549?w=100&h=100&fit=crop"
+                                                        alt="부산">
                                                     <div class="destination-info">
                                                         <span class="destination-name">부산</span>
                                                         <span class="destination-count">(2,734)</span>
@@ -423,7 +442,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- 하단: 검색 버튼 (중앙 배치) -->
                         <div class="search-row-bottom">
                             <button class="search-btn-new" id="searchBtnActivity">
@@ -481,10 +500,11 @@
                     <h2 class="section-title">한국인이 사랑하는 인기 여행지</h2>
                     <p class="section-subtitle">지금 가장 핫한 여행지에서 특별한 숙소를 만나보세요</p>
                 </div>
-                
+
                 <div class="destinations-grid">
                     <a href="#" class="destination-card large">
-                        <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80" alt="제주도" class="destination-image">
+                        <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80" alt="제주도"
+                            class="destination-image">
                         <div class="destination-overlay"></div>
                         <div class="destination-content">
                             <span class="destination-badge">특가</span>
@@ -493,7 +513,8 @@
                         </div>
                     </a>
                     <a href="#" class="destination-card">
-                        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80" alt="오사카" class="destination-image">
+                        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80" alt="오사카"
+                            class="destination-image">
                         <div class="destination-overlay"></div>
                         <div class="destination-content">
                             <span class="destination-badge">특가</span>
@@ -502,7 +523,8 @@
                         </div>
                     </a>
                     <a href="#" class="destination-card">
-                        <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=600&q=80" alt="다낭" class="destination-image">
+                        <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=600&q=80" alt="다낭"
+                            class="destination-image">
                         <div class="destination-overlay"></div>
                         <div class="destination-content">
                             <span class="destination-badge">특가</span>
@@ -511,7 +533,8 @@
                         </div>
                     </a>
                     <a href="#" class="destination-card">
-                        <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600&q=80" alt="방콕" class="destination-image">
+                        <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600&q=80" alt="방콕"
+                            class="destination-image">
                         <div class="destination-overlay"></div>
                         <div class="destination-content">
                             <span class="destination-badge">특가</span>
@@ -520,7 +543,8 @@
                         </div>
                     </a>
                     <a href="#" class="destination-card">
-                        <img src="https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=600&q=80" alt="도쿄" class="destination-image">
+                        <img src="https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=600&q=80" alt="도쿄"
+                            class="destination-image">
                         <div class="destination-overlay"></div>
                         <div class="destination-content">
                             <span class="destination-badge">특가</span>
@@ -529,7 +553,8 @@
                         </div>
                     </a>
                     <a href="#" class="destination-card">
-                        <img src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=600&q=80" alt="싱가포르" class="destination-image">
+                        <img src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=600&q=80" alt="싱가포르"
+                            class="destination-image">
                         <div class="destination-overlay"></div>
                         <div class="destination-content">
                             <h3 class="destination-name">싱가포르</h3>
@@ -547,12 +572,13 @@
                     <h2 class="section-title">이달의 특가 호텔</h2>
                     <p class="section-subtitle">JJ 멤버 전용 특별 할인가로 만나보세요</p>
                 </div>
-                
+
                 <div class="hotel-list">
                     <!-- 호텔 카드 1 -->
                     <article class="hotel-card">
                         <div class="hotel-image-wrap">
-                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80" alt="그랜드 하얏트 제주" class="hotel-image">
+                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80"
+                                alt="그랜드 하얏트 제주" class="hotel-image">
                             <button class="wishlist-btn" aria-label="위시리스트 추가">
                                 <i data-lucide="heart"></i>
                             </button>
@@ -593,11 +619,12 @@
                             <span class="price-tax">세금 포함</span>
                         </div>
                     </article>
-                    
+
                     <!-- 호텔 카드 2 -->
                     <article class="hotel-card">
                         <div class="hotel-image-wrap">
-                            <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&q=80" alt="오사카 리츠칼튼" class="hotel-image">
+                            <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&q=80"
+                                alt="오사카 리츠칼튼" class="hotel-image">
                             <button class="wishlist-btn" aria-label="위시리스트 추가">
                                 <i data-lucide="heart"></i>
                             </button>
@@ -638,11 +665,12 @@
                             <span class="price-tax">세금 포함</span>
                         </div>
                     </article>
-                    
+
                     <!-- 호텔 카드 3 -->
                     <article class="hotel-card">
                         <div class="hotel-image-wrap">
-                            <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=400&q=80" alt="다낭 인터컨티넨탈" class="hotel-image">
+                            <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=400&q=80"
+                                alt="다낭 인터컨티넨탈" class="hotel-image">
                             <button class="wishlist-btn" aria-label="위시리스트 추가">
                                 <i data-lucide="heart"></i>
                             </button>
@@ -683,11 +711,12 @@
                             <span class="price-tax">세금 포함</span>
                         </div>
                     </article>
-                    
+
                     <!-- 호텔 카드 4 -->
                     <article class="hotel-card">
                         <div class="hotel-image-wrap">
-                            <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80" alt="방콕 만다린 오리엔탈" class="hotel-image">
+                            <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80"
+                                alt="방콕 만다린 오리엔탈" class="hotel-image">
                             <button class="wishlist-btn" aria-label="위시리스트 추가">
                                 <i data-lucide="heart"></i>
                             </button>
@@ -729,7 +758,7 @@
                         </div>
                     </article>
                 </div>
-                
+
                 <div class="section-more">
                     <a href="#" class="more-btn">
                         더 많은 특가 호텔 보기
@@ -766,7 +795,7 @@
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="footer-links">
                     <div class="footer-column">
                         <h4 class="footer-title">고객 지원</h4>
@@ -806,7 +835,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="footer-bottom">
                 <div class="footer-legal">
                     <p>주식회사 제주스테이 | 대표이사: 홍길동 | 사업자등록번호: 123-45-67890</p>
@@ -819,6 +848,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="/js/hotel.js"></script>
+    <script src="../js/hotel.js"></script>
 </body>
+
 </html>

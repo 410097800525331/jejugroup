@@ -500,32 +500,286 @@ input {
     color: var(--text-muted);
 }
 
-/* Middle Row - Date & Guest (3 columns) */
+/* ========== 아고다 스타일 체크인/체크아웃 & 캘린더 ========== */
+
+/* 1. 체크인/체크아웃 통합 필드 스타일 (검색 폼 내부) */
 .search-row-middle {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr; /* 날짜 영역을 더 넓게 */
     gap: var(--space-md);
     margin-bottom: var(--space-md);
 }
 
-.date-field-new {
-    padding: var(--space-md) var(--space-lg);
+/* 날짜 필드를 감싸는 가상의 컨테이너 역할을 하도록 개별 필드 스타일 수정 */
+.date-field-group {
+    display: flex;
+    background: var(--background);
+    border: 1px solid #e5e5e5;
+    border-radius: var(--radius-xl);
+    /* overflow: hidden;  <-- REMOVED to allow popup to show */
+    background: var(--background);
 }
 
+/* 개별 날짜 필드 스타일 재정의 */
+.date-field-new {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: transparent; /* 배경을 부모에게 위임하거나 투명하게 */
+    border: none; /* 개별 테두리 제거 */
+    border-radius: 0; /* 모서리 제거 */
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    position: relative; /* 캘린더 팝업 위치 기준 */
+}
+
+.date-field-new:first-child {
+    border-right: 1px solid var(--border-light);
+    border-top-left-radius: var(--radius-xl);
+    border-bottom-left-radius: var(--radius-xl);
+}
+
+.date-field-new:nth-of-type(2) {
+    border-top-right-radius: var(--radius-xl);
+    border-bottom-right-radius: var(--radius-xl);
+}
+
+.date-field-new:hover {
+    background: var(--border-light);
+}
+
+.date-field-new.active {
+    background: var(--surface);
+    box-shadow: inset 0 0 0 2px var(--primary); /* 안쪽 그림자로 활성 상태 표시 */
+    z-index: 10;
+}
+
+/* 아이콘 색상 및 스타일 */
+.field-icon-new {
+    width: 24px;
+    height: 24px;
+    color: var(--text-muted);
+}
+
+.date-field-new.active .field-icon-new {
+    color: var(--primary);
+}
+
+/* 날짜 텍스트 스타일 */
 .date-content-new {
     display: flex;
     flex-direction: column;
 }
 
 .date-full {
-    font-size: 1rem;
+    font-size: 1.1rem; /* 약간 키움 */
     font-weight: var(--font-weight-bold);
     color: var(--text-title);
 }
 
 .date-day-new {
-    font-size: 0.8125rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
+}
+
+/* 2. 대형 캘린더 팝업 스타일 */
+.calendar-popup {
+    position: absolute;
+    top: calc(100% + 12px); /* 약간 더 띄움 */
+    left: 0;
+    /* transform: translateX(-50%);  <- search-row-middle 기준이므로 제거하거나 조정 */
+    width: 100%; /* 부모 너비에 맞춤 */
+    min-width: 680px; /* 최소 너비 보장 */
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); /* 그림자 강화 */
+    z-index: 200;
+    display: none;
+    overflow: visible; /* 쉐도우 잘림 방지 */
+    border: 1px solid var(--border-light);
+    animation: fadeInDown 0.2s ease-out;
+}
+
+.calendar-popup::before {
+    /* 말풍선 화살표 (선택적) */
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50px; /* 체크인 쪽에 맞춤 (동적으로 변경 필요할 수 있음) */
+    width: 16px;
+    height: 16px;
+    background: var(--surface);
+    transform: rotate(45deg);
+    border-top: 1px solid var(--border-light);
+    border-left: 1px solid var(--border-light);
+    z-index: 201; 
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.calendar-popup.active {
+    display: block;
+}
+
+/* 캘린더 뷰 내부 */
+.calendar-container {
+    display: flex;
+    gap: 30px; /* 달력 간 간격 */
+    padding: 20px;
+}
+
+.calendar-month {
+    flex: 1;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 중앙 정렬 */
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.calendar-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.calendar-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background);
+    color: var(--text-title);
+    transition: all 0.2s;
+}
+
+.calendar-nav:hover {
+    background: var(--border);
+}
+
+.calendar-nav.prev { left: 0; }
+.calendar-nav.next { right: 0; }
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.calendar-weekdays span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.calendar-weekdays .weekend {
+    color: var(--error); /* 주말 색상 (선택 사항) */
+}
+
+/* 날짜 그리드 */
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 0; /* 간격 제거 */
+    column-gap: 0; /* 간격 제거 */
+}
+
+.calendar-day {
+    aspect-ratio: 1/1; /* 정사각형 유지 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 0; /* 기본 사각형 (연속성을 위해) */
+    margin: 2px 0; /* 상하 간격 미세 조정 */
+    transition: background 0.1s, color 0.1s;
+    user-select: none;
+    position: relative;
+    z-index: 1;
+}
+
+.calendar-day:hover:not(.disabled):not(.selected):not(.check-in):not(.check-out) {
+    background: var(--border-light);
+    color: var(--primary);
+    font-weight: 700;
+    border-radius: 4px; /* 호버 시 약간 둥글게 */
+}
+
+.calendar-day.disabled {
+    color: #ddd;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.calendar-day.today {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* 3. 범위 선택 스타일 (핵심 - 연속 바) */
+
+/* 체크인 */
+.calendar-day.check-in {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 50%; /* 단일 선택 시 원형 */
+}
+
+/* 범위가 시작되면 오른쪽 직각 */
+.calendar-day.check-in.has-range,
+.calendar-day.check-in.has-preview {
+    border-radius: 50% 0 0 50%;
+    /* 꽉 찬 느낌을 위해 width/height 조정이 필요할 수 있으나 grid 내에서는 background로 충분 */
+}
+
+/* 체크아웃 */
+.calendar-day.check-out {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 50%;
+}
+
+/* 범위가 있으면 왼쪽 직각 */
+.calendar-day.check-out.has-range {
+    border-radius: 0 50% 50% 0;
+}
+
+/* 범위 내 날짜 */
+.calendar-day.in-range {
+    background: rgba(255, 80, 0, 0.1);
+    color: var(--text-title);
+    border-radius: 0; /* 완전 사각형 */
+}
+
+/* 호버 시 미리보기 스타일 */
+.calendar-day.in-range-preview {
+    background: rgba(255, 80, 0, 0.1); /* 연한 주황색 */
+    color: var(--text-title);
+    border-radius: 0;
+}
+
+/* 호버 미리보기의 끝점 */
+.calendar-day.preview-end {
+    background: rgba(255, 80, 0, 0.6); /* 반투명 주황 */
+    color: #fff;
+    border-radius: 0 50% 50% 0; /* 끝부분 둥글게 */
 }
 
 .guest-field-new {
@@ -723,86 +977,6 @@ input {
 }
 
 
-/* ========== Date Range Picker 캘린더 ========== */
-
-.calendar-popup {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 700px;
-    background: var(--surface);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
-    z-index: 200;
-    display: none;
-    overflow: hidden;
-    border: 1px solid var(--border-light);
-}
-
-.calendar-popup.active {
-    display: block;
-}
-
-.calendar-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-}
-
-.calendar-tab {
-    flex: 1;
-    padding: var(--space-lg);
-    font-size: 1rem;
-    font-weight: var(--font-weight-medium);
-    color: var(--text-muted);
-    background: transparent;
-    border-bottom: 2px solid transparent;
-    transition: all var(--transition-fast);
-}
-
-.calendar-tab:hover {
-    color: var(--text-title);
-}
-
-.calendar-tab.active {
-    color: #FF5000;
-    border-bottom-color: #FF5000;
-}
-
-.calendar-view {
-    padding: var(--space-lg);
-}
-
-.calendar-container {
-    display: flex;
-    gap: var(--space-xl);
-}
-
-.calendar-month {
-    flex: 1;
-}
-
-.calendar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-md);
-}
-
-.calendar-title {
-    font-size: 1rem;
-    font-weight: var(--font-weight-bold);
-    color: var(--text-title);
-}
-
-.calendar-nav {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-full);
-    color: var(--text-muted);
     background: transparent;
     border: none;
     cursor: pointer;
@@ -965,6 +1139,92 @@ input {
 /* Flexible View */
 .flexible-view {
     padding: var(--space-xl);
+}
+
+/* ========== Mobile Responsiveness ========== */
+@media (max-width: 768px) {
+    /* Hero Section Padding */
+    .hero {
+        padding: calc(var(--header-height) + var(--space-lg)) var(--container-padding) var(--space-xl);
+        min-height: auto; /* Allow content to dictate height on mobile if needed */
+    }
+
+    /* Search Widget Layout */
+    .search-widget-large {
+        margin: 0 var(--space-sm);
+        border-radius: var(--radius-xl);
+    }
+    
+    .search-tabs-large {
+        flex-wrap: wrap;
+    }
+    
+    .search-tab-large {
+        padding: var(--space-md);
+        font-size: 0.9rem;
+    }
+
+    .search-form-new {
+        padding: var(--space-lg);
+    }
+
+    #searchFormHotel {
+        height: auto; /* Allow auto height */
+    }
+
+    /* Stack Search Fields */
+    .search-row-middle {
+        grid-template-columns: 1fr; /* Stack vertically */
+        gap: var(--space-sm);
+    }
+
+    .date-field-group {
+        width: 100%;
+    }
+
+    /* Calendar Popup Mobile */
+    .calendar-popup {
+        position: fixed; /* Use fixed for better mobile experience or absolute width constrained */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90vw;
+        min-width: 300px;
+        max-height: 80vh;
+        overflow-y: auto;
+        border-radius: var(--radius-lg);
+    }
+    
+    .calendar-popup::before {
+        display: none; /* Hide arrow on mobile */
+    }
+
+    .calendar-container {
+        flex-direction: column; /* Stack months */
+        gap: var(--space-lg);
+        padding: var(--space-md);
+    }
+    
+    .calendar-days {
+        gap: 0; /* Tighten gap */
+    }
+    
+    .calendar-day {
+        font-size: 0.8rem; /* Smaller text */
+    }
+    
+    /* Search Button */
+    .search-row-bottom {
+        transform: none; /* Remove desktop offset */
+        margin-top: var(--space-lg);
+    }
+    
+    .search-btn-new {
+        width: 100%;
+        font-size: 1rem;
+        padding: var(--space-md);
+    }
+}
 }
 
 .flexible-section {

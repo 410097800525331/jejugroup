@@ -158,42 +158,94 @@ function initCalendar() {
 }
 
 /* ========== [수정] Range Calendar 날짜 선택 로직 ========== */
+
+// 호버 상태 관리를 위한 변수 추가
+let hoverDate = null;
+
 function handleDateClick(timestamp) {
     // 오늘 이전 날짜는 선택 불가
     const todayTs = new Date().setHours(0, 0, 0, 0);
     if (timestamp < todayTs) return;
 
-    // 첫 번째 클릭: 이전 선택 초기화 후 새로운 체크인 설정
-    if (!calendarState.tempCheckIn || calendarState.tempCheckIn === calendarState.checkIn) {
-        // 이전 선택 초기화
+    // 1. 첫 번째 선택 (체크인)
+    if (!calendarState.tempCheckIn || (calendarState.tempCheckIn && calendarState.tempCheckOut)) {
         calendarState.tempCheckIn = timestamp;
         calendarState.tempCheckOut = null;
+        
+        // UI 즉시 업데이트 (렌더링)
+        renderCalendar();
     }
-    // 두 번째 클릭: 체크아웃 설정
-    else if (timestamp > calendarState.tempCheckIn) {
-        calendarState.tempCheckOut = timestamp;
-        
-        // 확정 날짜로 저장
-        calendarState.checkIn = calendarState.tempCheckIn;
-        calendarState.checkOut = calendarState.tempCheckOut;
-        
-        // 디스플레이 업데이트
-        updateDateDisplay('checkIn', new Date(calendarState.checkIn));
-        updateDateDisplay('checkOut', new Date(calendarState.checkOut));
-        
-        // 팝업 닫기
-        setTimeout(() => {
-            closeAllPopups();
-        }, 200);
-        return;
-    }
-    // 같은 날짜를 다시 클릭하거나 이전 날짜를 클릭하면 새로 시작
+    // 2. 두 번째 선택 (체크아웃)
     else {
-        calendarState.tempCheckIn = timestamp;
-        calendarState.tempCheckOut = null;
-    }
+        // 체크인 날짜보다 이전 날짜를 클릭한 경우 -> 새로운 체크인으로 설정
+        if (timestamp < calendarState.tempCheckIn) {
+            calendarState.tempCheckIn = timestamp;
+            renderCalendar();
+        }
+        // 같은 날짜 클릭 (허용하지 않거나, 1박으로 설정 등 정책에 따름. 여기선 무시)
+        else if (timestamp === calendarState.tempCheckIn) {
+            return;
+        }
+        // 정상적인 체크아웃 선택
+        else {
+            calendarState.tempCheckOut = timestamp;
+            
+            // 확정 날짜로 저장
+            calendarState.checkIn = calendarState.tempCheckIn;
+            calendarState.checkOut = calendarState.tempCheckOut;
+            
+            // 디스플레이 업데이트
+            updateDateDisplay('checkIn', new Date(calendarState.checkIn));
+            updateDateDisplay('checkOut', new Date(calendarState.checkOut));
+            
+            renderCalendar();
 
-    renderCalendar();
+            // 팝업 닫기 (약간의 지연 후)
+            setTimeout(() => {
+                closeAllPopups();
+            }, 300);
+        }
+    }
+}
+
+function handleDateHover(timestamp) {
+    // 체크인만 선택된 상태일 때만 미리보기 동작
+    if (calendarState.tempCheckIn && !calendarState.tempCheckOut) {
+        hoverDate = timestamp;
+        updateHoverStyles();
+    }
+}
+
+// 호버 스타일만 업데이트하는 가벼운 함수 (전체 렌더링 방지)
+function updateHoverStyles() {
+    const days = document.querySelectorAll('.calendar-day:not(.empty):not(.disabled)');
+    const start = calendarState.tempCheckIn;
+    const currentHover = hoverDate;
+
+    days.forEach(dayEl => {
+        // 기존 미리보기 클래스 제거
+        dayEl.classList.remove('in-range-preview', 'preview-end');
+
+        const dayTs = parseInt(dayEl.dataset.timestamp);
+
+        if (start && currentHover && dayTs > start && dayTs <= currentHover) {
+            // 범위 내 날짜
+            if (dayTs < currentHover) {
+                dayEl.classList.add('in-range-preview');
+            }
+            // 끝나는 날짜 (마우스 위치)
+            else if (dayTs === currentHover) {
+                dayEl.classList.add('preview-end');
+                // 시작 날짜에도 has-preview 클래스 추가하여 오른쪽 모서리 제어
+                const startEl = document.querySelector(`.calendar-day[data-timestamp='${start}']`);
+                if (startEl) startEl.classList.add('has-preview');
+            }
+        } else {
+             // 범위 밖이나 호버 해제 시 has-preview 제거
+             const startEl = document.querySelector(`.calendar-day[data-timestamp='${start}']`);
+             if (startEl) startEl.classList.remove('has-preview');
+        }
+    });
 }
 
 /** 캘린더 그리기 */
@@ -221,8 +273,11 @@ function renderCalendar() {
         const m = parseInt(dayEl.dataset.month);
         const y = parseInt(dayEl.dataset.year);
         const currentTs = new Date(y, m - 1, d).setHours(0, 0, 0, 0);
+        
+        // 데이터 속성에 타임스탬프 저장 (호버 로직용)
+        dayEl.dataset.timestamp = currentTs;
 
-        // 1. 오늘 날짜 - 주황색 원형 테두리
+        // 1. 오늘 날짜
         if (currentTs === todayTs) {
             dayEl.classList.add('today');
         }
@@ -232,34 +287,37 @@ function renderCalendar() {
             dayEl.classList.add('disabled');
         }
 
-        // 3. 선택 로직 (스타일링) - 임시 선택 기준
+        // 3. 선택 로직 (스타일링)
         const start = calendarState.tempCheckIn;
         const end = calendarState.tempCheckOut;
 
         // 체크인 날짜
         if (start === currentTs) {
-            if (end) {
-                dayEl.classList.add('check-in');
-            } else {
-                dayEl.classList.add('single-date');
-            }
+            dayEl.classList.add('check-in');
+            if (end) dayEl.classList.add('has-range');
         }
 
         // 체크아웃 날짜
         if (end === currentTs) {
             dayEl.classList.add('check-out');
+            if (start) dayEl.classList.add('has-range');
         }
 
-        // 범위 내 날짜 (연한 주황색)
+        // 범위 내 날짜
         if (start && end && currentTs > start && currentTs < end) {
             dayEl.classList.add('in-range');
         }
 
-        // 클릭 이벤트 연결
+        // 이벤트 연결
         if (!dayEl.classList.contains('disabled')) {
             dayEl.addEventListener('click', (e) => {
                 e.stopPropagation();
                 handleDateClick(currentTs);
+            });
+            
+            // 호버 이벤트 추가
+            dayEl.addEventListener('mouseenter', () => {
+                handleDateHover(currentTs);
             });
         }
     });
@@ -293,6 +351,8 @@ function updateDateDisplay(type, dateObj) {
 function initGuestSelector() {
     const guestField = document.getElementById('guestFieldLarge');
     const guestPopup = document.getElementById('guestPopupLarge');
+    
+    // 팝업 토글
     guestField?.addEventListener('click', (e) => {
         e.stopPropagation();
         closeAllPopups('guestPopupLarge');
@@ -300,17 +360,51 @@ function initGuestSelector() {
         guestField.classList.toggle('active');
     });
     
+    // 카운터 버튼 로직
     document.querySelectorAll('.counter-btn-new').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const target = btn.dataset.target;
             const span = document.getElementById(`${target}CountLarge`);
             let val = parseInt(span.textContent);
-            if (btn.classList.contains('plus')) val++;
-            else if (val > 0) val--;
+            
+            // 최소값 정의
+            const minValues = {
+                'rooms': 1,
+                'adults': 1,
+                'children': 0
+            };
+            
+            if (btn.classList.contains('plus')) {
+                val++;
+            } else {
+                if (val > minValues[target]) {
+                    val--;
+                }
+            }
+            
             span.textContent = val;
+            updateGuestSummary();
         });
     });
+}
+
+function updateGuestSummary() {
+    const rooms = parseInt(document.getElementById('roomsCountLarge').textContent);
+    const adults = parseInt(document.getElementById('adultsCountLarge').textContent);
+    const children = parseInt(document.getElementById('childrenCountLarge').textContent);
+    
+    const guestSummary = document.getElementById('guestSummary');
+    const roomSummary = document.getElementById('roomSummary');
+    
+    // 요약 텍스트 업데이트
+    let guestText = `성인 ${adults}명`;
+    if (children > 0) {
+        guestText += `, 아동 ${children}명`;
+    }
+    
+    guestSummary.textContent = guestText;
+    roomSummary.textContent = `객실 ${rooms}개`;
 }
 
 function closeAllPopups(exceptId) {

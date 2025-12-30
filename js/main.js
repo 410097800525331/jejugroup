@@ -1,149 +1,148 @@
-/* ==================== 풀페이지 스크롤 제어 ==================== */
+/* ==================== 풀페이지 스크롤 제어 (최적화됨) ==================== */
 let currentSectionIndex = 0;
 let isScrolling = false;
-let keyPressed = {};
-let keyTimeout;
 let wheelTimeout;
 let lastWheelTime = 0;
 
+// DOM 요소 캐싱
 const sections = document.querySelectorAll('.section');
-const keyDelay = 50;
-const wheelDelay = 30;
-const scrollDuration = 1200;
+const header = document.querySelector('.header');
+const topBtn = document.getElementById('topBtn');
+const footer = document.querySelector('footer');
+
+const wheelDelay = 50; // 휠 디바운스 시간 조정
+const scrollDuration = 1000; // 스크롤 애니메이션 시간
 
 /* ==================== 스크롤 함수 ==================== */
 function scrollToSection(index) {
-    // 인덱스 범위 제한 (0 ~ 마지막 섹션)
     if (index < 0) index = 0;
     if (index >= sections.length) index = sections.length - 1;
-    if (isScrolling) return;
     
+    // 이미 해당 섹션이거나 스크롤 중이면 무시 (단, 강제 이동이 필요할 수 있으므로 상황에 따라 조정)
+    if (isScrolling) return;
+
     currentSectionIndex = index;
     isScrolling = true;
-    
+
     const targetSection = sections[currentSectionIndex];
     const targetPosition = targetSection.offsetTop;
-    
+
     window.scrollTo({
         top: targetPosition,
         behavior: 'smooth'
     });
-    
+
+    // 헤더 및 버튼 상태 업데이트 (즉시 반영)
+    updateHeaderAndButtons();
+
     setTimeout(() => {
         isScrolling = false;
     }, scrollDuration);
 }
 
-/* ==================== 마우스 휠 이벤트 ==================== */
-document.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    
-    const now = Date.now();
-    if (now - lastWheelTime < wheelDelay) return;
-    lastWheelTime = now;
-    
-    clearTimeout(wheelTimeout);
-    wheelTimeout = setTimeout(() => {
-        if (e.deltaY > 0) {
-            scrollToSection(currentSectionIndex + 1);
-        } else {
-            scrollToSection(currentSectionIndex - 1);
-        }
-    }, wheelDelay);
-}, { passive: false });
+/* ==================== IntersectionObserver (현재 섹션 감지) ==================== */
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.5 // 50% 이상 보일 때 활성화
+};
 
-/* ==================== 키보드 이벤트 제어 (수정본) ==================== */
-document.addEventListener('keydown', (e) => {
-    // 이미 스크롤 중이면 키 입력을 무시
-    if (isScrolling) {
-        // 스크롤 중일 때 방향키/스페이스바 기본 동작(수치 스크롤)을 완전히 차단
-        if (['ArrowUp', 'ArrowDown', ' ', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.key)) {
-            e.preventDefault();
-        }
-        return;
-    }
+const observer = new IntersectionObserver((entries) => {
+    // 자동 스크롤 중일 때는 옵저버에 의한 인덱스 변경을 막아 튀는 현상 방지
+    if (isScrolling) return;
 
-    // 처리할 키 목록
-    const scrollKeys = ['ArrowUp', 'ArrowDown', ' ', 'PageUp', 'PageDown', 'Home', 'End'];
-    
-    if (scrollKeys.includes(e.key)) {
-        e.preventDefault(); // 브라우저 기본 스크롤 방지
-
-        if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
-            // 마지막 섹션이 아닐 때만 이동
-            if (currentSectionIndex < sections.length - 1) {
-                scrollToSection(currentSectionIndex + 1);
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // 현재 보이는 섹션의 인덱스 찾기
+            const index = Array.from(sections).indexOf(entry.target);
+            if (index !== -1) {
+                currentSectionIndex = index;
+                updateHeaderAndButtons();
             }
-        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-            // 첫 번째 섹션이 아닐 때만 이동
-            if (currentSectionIndex > 0) {
+        }
+    });
+}, observerOptions);
+
+sections.forEach(section => {
+    observer.observe(section);
+});
+
+/* ==================== 헤더 및 UI 업데이트 함수 ==================== */
+function updateHeaderAndButtons() {
+    // 섹션 1(인덱스 0)일 때와 아닐 때 헤더 스타일 구분
+    if (currentSectionIndex === 0) {
+        header.classList.remove('transparent');
+        header.classList.add('section1-header');
+        header.classList.remove('section2plus-header');
+        
+        // 탑 버튼 숨김
+        if (topBtn) topBtn.classList.remove('show');
+    } else {
+        header.classList.add('transparent');
+        header.classList.remove('section1-header');
+        header.classList.add('section2plus-header');
+        
+        // 탑 버튼 표시
+        if (topBtn) topBtn.classList.add('show');
+    }
+}
+
+/* ==================== 마우스 휠 이벤트 ==================== */
+/* ==================== 마우스 휠 이벤트 (섹션이 2개 이상일 때만 활성화) ==================== */
+if (sections.length > 1) {
+    document.addEventListener('wheel', (e) => {
+        // 기본 스크롤 동작 방지 (완전한 풀페이지 느낌을 위해)
+        e.preventDefault();
+
+        const now = Date.now();
+        if (now - lastWheelTime < wheelDelay) return;
+        lastWheelTime = now;
+
+        clearTimeout(wheelTimeout);
+        wheelTimeout = setTimeout(() => {
+            if (e.deltaY > 0) {
+                // 아래로 스크롤
+                scrollToSection(currentSectionIndex + 1);
+            } else {
+                // 위로 스크롤
                 scrollToSection(currentSectionIndex - 1);
             }
+        }, wheelDelay);
+    }, { passive: false });
+
+    /* ==================== 키보드 이벤트 제어 ==================== */
+    document.addEventListener('keydown', (e) => {
+        const scrollKeys = ['ArrowUp', 'ArrowDown', ' ', 'PageUp', 'PageDown', 'Home', 'End'];
+        
+        // 스크롤 중이거나 스크롤 키가 아니면 무시
+        if (!scrollKeys.includes(e.key)) return;
+        
+        e.preventDefault(); // 기본 동작 방지
+
+        if (isScrolling) return;
+
+        if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+            scrollToSection(currentSectionIndex + 1);
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            scrollToSection(currentSectionIndex - 1);
         } else if (e.key === 'Home') {
             scrollToSection(0);
         } else if (e.key === 'End') {
             scrollToSection(sections.length - 1);
         }
-    }
-}, { passive: false }); // passive: false를 설정해야 preventDefault가 확실히 작동합니다.
-
-/* ==================== 현재 섹션 감지 및 헤더 제어 (수정본) ==================== */
-window.addEventListener('scroll', () => {
-    // 1. 자동 스크롤 중에는 인덱스를 수동으로 계산하지 않음 (충돌 방지)
-    if (isScrolling) {
-        updateHeaderAndButtons(); // 헤더 스타일만 업데이트
-        return;
-    }
-
-    const scrollPosition = window.scrollY + window.innerHeight / 2;
-    const windowHeight = window.innerHeight;
-    const fullHeight = document.documentElement.scrollHeight;
-    
-    // 2. 페이지 최하단(푸터)에 도달했는지 확인
-    if (window.scrollY + windowHeight >= fullHeight - 10) {
-        currentSectionIndex = sections.length - 1;
-    } else {
-        sections.forEach((section, index) => {
-            if (scrollPosition >= section.offsetTop && scrollPosition < section.offsetTop + section.offsetHeight) {
-                currentSectionIndex = index;
-            }
-        });
-    }
-    
-    updateHeaderAndButtons();
-});
-    
-    function updateHeaderAndButtons() {
-    // 헤더 스타일 제어
-    const header = document.querySelector('.header');
-    
-    if (currentSectionIndex === 0) {
-        header.classList.remove('transparent');
-        header.classList.add('section1-header');
-        header.classList.remove('section2plus-header');
-    } else {
-        header.classList.add('transparent');
-        header.classList.remove('section1-header');
-        header.classList.add('section2plus-header');
-    }
-    
-    // 탑 버튼 표시/숨김
-    const topBtn = document.getElementById('topBtn');
-    if (window.scrollY > window.innerHeight / 2) {
-        topBtn.classList.add('show');
-    } else {
-        topBtn.classList.remove('show');
-    }
+    }, { passive: false });
 }
 
+
 /* ==================== 탑 버튼 기능 ==================== */
-const topBtn = document.getElementById('topBtn');
-topBtn.addEventListener('click', () => {
-    scrollToSection(0);
-});
+if (topBtn) {
+    topBtn.addEventListener('click', () => {
+        scrollToSection(0);
+    });
+}
 
 /* ==================== 네비게이션 링크 클릭 ==================== */
-document.querySelectorAll('.gnb-link').forEach((link, index) => {
+document.querySelectorAll('.gnb-link').forEach((link) => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const sectionId = link.getAttribute('href');
@@ -155,56 +154,29 @@ document.querySelectorAll('.gnb-link').forEach((link, index) => {
     });
 });
 
-/* ==================== CTA 버튼 클릭 이벤트 ==================== */
-// document.querySelectorAll('.cta-button').forEach(button => {
-//     button.addEventListener('click', (e) => {
-//         e.preventDefault();
-//         alert('예약 페이지로 이동합니다.');
-//     });
-// });
-
-/* ==================== 멤버십 버튼 클릭 이벤트 ==================== */
-const membershipBtn = document.querySelector('.membership-btn');
-if (membershipBtn) {
-    membershipBtn.addEventListener('click', () => {
-        alert('멤버십 가입 페이지로 이동합니다.');
-    });
-}
-
-/* ==================== 페이지 로드 시 초기화 (수정됨) ==================== */
+/* ==================== 페이지 로드 시 초기화 ==================== */
 window.addEventListener('load', () => {
-    // 1. URL에 해시(예: #section-2)가 있는지 확인
     const hash = window.location.hash;
-    
     if (hash) {
-        // 해시와 일치하는 섹션 찾기
         const targetSection = document.querySelector(hash);
-        
         if (targetSection) {
-            // 해당 섹션이 몇 번째인지 인덱스 찾기
             const index = Array.from(sections).indexOf(targetSection);
-            
             if (index !== -1) {
-                // 인덱스 업데이트 후 해당 위치로 이동
-                currentSectionIndex = index;
-                
-                // 브라우저 렌더링 타이밍을 고려해 살짝 늦게 실행
+                // 약간의 지연 후 이동하여 정확도 높임
                 setTimeout(() => {
-                    window.scrollTo({
-                        top: targetSection.offsetTop,
-                        behavior: 'smooth'
-                    });
+                   scrollToSection(index);
                 }, 100);
-                
-                updateHeaderAndButtons(); // 헤더 상태도 그에 맞게 업데이트
-                return; // 여기서 함수 종료 (아래의 0번 이동 코드 실행 안 함)
+                return;
             }
         }
     }
-
-    // 2. 해시가 없거나 잘못된 경우 -> 기존처럼 맨 위로 이동
-    currentSectionIndex = 0;
-    scrollToSection(0);
+    // 해시가 없으면 0번으로 초기화 (풀페이지 모드일 때만)
+    if (sections.length > 1) {
+        setTimeout(() => {
+            updateHeaderAndButtons();
+            window.scrollTo(0, 0);
+        }, 10);
+    }
 });
 
 // ==================== ✨ 언어 토글 기능 (오류 수정 완료) ✨ =================

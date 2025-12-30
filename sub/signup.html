@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <title>회원가입 | 제주그룹</title>
@@ -7,46 +8,46 @@
 
   <!-- 메인과 동일 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/signup.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/signup.css">
 </head>
 
 <body class="signup-page">
-    <header class="header">
-        <div class="header-util">
-            <a href="/sub/login.html" class="util-link" data-lang="login">로그인</a>
-            <span class="util-divider">|</span>
-            <a href="/sub/signup.html" class="util-link" data-lang="signup">회원가입</a>
-            <span class="util-divider">|</span>
-            <a href="#" class="util-link" data-lang="customerCenter">고객센터</a>
-        </div>
+  <header class="header">
+    <div class="header-util">
+      <a href="login.html" class="util-link" data-lang="login">로그인</a>
+      <span class="util-divider">|</span>
+      <a href="signup.html" class="util-link" data-lang="signup">회원가입</a>
+      <span class="util-divider">|</span>
+      <a href="#" class="util-link" data-lang="customerCenter">고객센터</a>
+    </div>
 
-        <div class="header-inner">
-            <div class="logo">
-                <a href="/index.html" class="logo-link"><img src="/images/logo_jejuGP.png" alt="제주그룹"></a>
-            </div>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="../index.html" class="logo-link"><img src="../images/logo_jejuGP.png" alt="제주그룹"></a>
+      </div>
 
-            <nav class="gnb" id="gnb">
-                <ul class="gnb-list">
-                    <li class="gnb-item"><a href="/index.html#section-2" class="gnb-link" data-lang="navAir">제주에어</a></li>
-                    <li class="gnb-item"><a href="/index.html#section-3" class="gnb-link" data-lang="navHotel">제주 스테이</a></li>
-                    <li class="gnb-item"><a href="/index.html#section-4" class="gnb-link" data-lang="navRentCar">제주 렌트카</a></li>
-                    <li class="gnb-item"><a href="/index.html#section-5" class="gnb-link" data-lang="navMembership">멤버십</a></li>
-                </ul>
-            </nav>
+      <nav class="gnb" id="gnb">
+        <ul class="gnb-list">
+          <li class="gnb-item"><a href="../index.html#section-2" class="gnb-link" data-lang="navAir">제주에어</a></li>
+          <li class="gnb-item"><a href="../index.html#section-3" class="gnb-link" data-lang="navHotel">제주 스테이</a></li>
+          <li class="gnb-item"><a href="../index.html#section-4" class="gnb-link" data-lang="navRentCar">제주 렌트카</a></li>
+          <li class="gnb-item"><a href="../index.html#section-5" class="gnb-link" data-lang="navMembership">멤버십</a></li>
+        </ul>
+      </nav>
 
-            <div class="header-right-controls">
-                <button class="lang-toggle">English</button>
-                <button class="mypage-btn"><i class="fa-solid fa-plane-departure"></i></button>
-            </div>
-        </div>
-    </header>
+      <div class="header-right-controls">
+        <button class="lang-toggle">English</button>
+        <button class="mypage-btn"><i class="fa-solid fa-plane-departure"></i></button>
+      </div>
+    </div>
+  </header>
 
   <div class="signup-wrapper">
     <div class="signup-card">
 
       <div class="signup-header">
-        <img src="/images/logo_jejuGP.png" alt="Jeju Group" class="signup-logo">
+        <img src="../images/logo_jejuGP.png" alt="Jeju Group" class="signup-logo">
         <h1 class="signup-title">회원가입</h1>
         <p class="signup-desc">모든 여행을 제주그룹 하나로</p>
       </div>
@@ -55,7 +56,7 @@
         <!-- 기본 정보 섹션 -->
         <div class="form-section">
           <h3 class="section-title">기본 정보</h3>
-          
+
           <div class="input-group">
             <label for="name">이름 <span class="required">*</span></label>
             <input type="text" id="name" name="name" placeholder="홍길동" required>
@@ -86,7 +87,7 @@
         <!-- 계정 정보 섹션 -->
         <div class="form-section">
           <h3 class="section-title">계정 정보</h3>
-          
+
           <div class="input-group">
             <label for="password">비밀번호 <span class="required">*</span></label>
             <input type="password" id="password" name="password" placeholder="8자 이상, 영문, 숫자, 특수문자 포함" required>
@@ -107,7 +108,7 @@
         <!-- 개인 정보 섹션 -->
         <div class="form-section">
           <h3 class="section-title">개인 정보</h3>
-          
+
           <div class="input-group">
             <label for="birthdate">생년월일 <span class="required">*</span></label>
             <input type="date" id="birthdate" name="birthdate" required>
@@ -141,7 +142,7 @@
         <!-- 약관 동의 섹션 -->
         <div class="form-section">
           <h3 class="section-title">약관 동의</h3>
-          
+
           <div class="checkbox-group">
             <label class="checkbox-label">
               <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
@@ -170,44 +171,46 @@
       </form>
 
       <div class="signup-links">
-        <p>이미 계정이 있으신가요? <a href="/sub/login.html">로그인</a></p>
+        <p>이미 계정이 있으신가요? <a href="login.html">로그인</a></p>
       </div>
 
     </div>
   </div>
 
   <footer class="footer section" id="section-footer">
-        <div class="footer-content">
-            <div class="footer-info">
-                <p><strong data-lang="footerCompany">(주)제주 그룹</strong></p>
-                <p data-lang="footerCEO">대표이사: 김이배</p> 
-                <p data-lang="footerBizNum">사업자등록번호: 616-81-50527</p>
-                <p data-lang="footerSaleNum">통신판매업신고: 제주 2006-125호</p>
-                <p data-lang="footerHosting">호스팅 사업자: AWS</p>
-                <br>
-                <p data-lang="footerAddr">주소: 제주특별자치도 제주시 신대로 64 (연동, 건설공제회관 3층)</p>
-                <p data-lang="footerCs">고객센터: 1599-1500 (09:00 ~ 19:00)</p>
-                <p data-lang="footerCsEmail">고객 문의: jejugroup.help@jejugroup.net</p>
-                <p data-lang="footerPartnerEmail">제휴 문의: partnership@jejugroup.net</p>
-            </div>
-            <div class="footer-social">
-                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
-            </div>
-        </div>
-        <div class="footer-copyright">
-            <p data-lang="footerCopyright">Copyright ⓒ Jeju Group. All Rights Reserved.</p>
-        </div>
-    </footer>
+    <div class="footer-content">
+      <div class="footer-info">
+        <p><strong data-lang="footerCompany">(주)제주 그룹</strong></p>
+        <p data-lang="footerCEO">대표이사: 김이배</p>
+        <p data-lang="footerBizNum">사업자등록번호: 616-81-50527</p>
+        <p data-lang="footerSaleNum">통신판매업신고: 제주 2006-125호</p>
+        <p data-lang="footerHosting">호스팅 사업자: AWS</p>
+        <br>
+        <p data-lang="footerAddr">주소: 제주특별자치도 제주시 신대로 64 (연동, 건설공제회관 3층)</p>
+        <p data-lang="footerCs">고객센터: 1599-1500 (09:00 ~ 19:00)</p>
+        <p data-lang="footerCsEmail">고객 문의: jejugroup.help@jejugroup.net</p>
+        <p data-lang="footerPartnerEmail">제휴 문의: partnership@jejugroup.net</p>
+      </div>
+      <div class="footer-social">
+        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <p data-lang="footerCopyright">Copyright ⓒ Jeju Group. All Rights Reserved.</p>
+    </div>
+  </footer>
 
-    <button class="top-btn" id="topBtn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="18 15 12 9 6 15"></polyline>
-        </svg>
-    </button>
+  <button class="top-btn" id="topBtn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
 
-    <script src="/js/signup.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/signup.js"></script>
 </body>
+
 </html>
