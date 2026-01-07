@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initCalendar(); // 롱스테이 전용 로직 포함
     initAmenityFilter();
     initMobileSearch();
+    initCurrencySwitcher();
 });
 
 /* ========== 공통 기능 (hotel.js와 동일) ========== */
@@ -148,7 +149,7 @@ function initAmenityFilter() {
     }
 
     function filterCards(amenities) {
-        const cards = document.querySelectorAll('.hotel-card.long-stay');
+        const cards = document.querySelectorAll('.hotel-card-horizontal');
         cards.forEach(card => {
             const cardAmenities = (card.dataset.amenity || '').split(',');
             // Check if card has ALL selected amenities
@@ -372,6 +373,11 @@ function generateMonthDaysHTML(dateObj) {
             ariaDisabled = 'true';
         }
 
+        // Highlight Today
+        if (currentTs === todayTs) {
+            classes.push('DayPicker-Day--today');
+        }
+
         const checkIn = calendarState.tempCheckIn || calendarState.checkIn;
         const checkOut = calendarState.tempCheckOut || calendarState.checkOut;
 
@@ -511,3 +517,293 @@ function closeAllPopups(exceptId) {
         if (exceptId !== 'destinationDropdown') document.getElementById('destinationFieldLarge')?.classList.remove('active');
     }
 }
+
+/* ========== State Management (v2.0) ========== */
+const AppState = {
+    currency: localStorage.getItem('jeju_currency') || 'KRW',
+    destination: localStorage.getItem('jeju_destination') || '',
+    
+    setCurrency(curr) {
+        this.currency = curr;
+        localStorage.setItem('jeju_currency', curr);
+        document.dispatchEvent(new CustomEvent('currencyChanged', { detail: curr }));
+    },
+    
+    setDestination(dest) {
+        this.destination = dest;
+        localStorage.setItem('jeju_destination', dest);
+    }
+};
+
+/* ========== Currency Switcher Logic (Updated) ========== */
+function initCurrencySwitcher() {
+    const currencyBtns = document.querySelectorAll('.currency-btn-minimal');
+    
+    // Initial Render
+    updateCurrencyUI(AppState.currency);
+    
+    // Event Listeners
+    currencyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const selectedCurrency = btn.getAttribute('data-currency');
+            if (selectedCurrency === AppState.currency) return;
+            AppState.setCurrency(selectedCurrency);
+            // UI Update handled by Event Listener below
+        });
+    });
+
+    // Global Event Handler
+    document.addEventListener('currencyChanged', (e) => {
+        updateCurrencyUI(e.detail);
+        renderLongStayHotels(); // Re-render list with new currency
+    });
+}
+
+function updateCurrencyUI(currency) {
+    const currencyBtns = document.querySelectorAll('.currency-btn-minimal');
+    currencyBtns.forEach(b => {
+        if(b.getAttribute('data-currency') === currency) {
+            b.classList.add('active');
+        } else {
+            b.classList.remove('active');
+        }
+    });
+
+    // Update Static Prices (if any remain)
+    const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    document.querySelectorAll('[data-krw]').forEach(el => {
+        const rawValue = el.getAttribute(`data-${currency.toLowerCase()}`);
+        if(rawValue) {
+             const symbol = currency === 'KRW' ? '₩' : '$';
+             el.textContent = `${symbol}${formatNumber(rawValue)}`;
+        }
+    });
+}
+
+/* ========== Monthly Stay Data & Rendering Logic ========== */
+
+/* ========== Monthly Stay Data & Rendering Logic (v2.0) ========== */
+
+const longStayHotels = [
+    {
+        id: 1,
+        name: "그랜드 하얏트 제주",
+        location: "제주시 노형동 · 해변까지 도보 5분",
+        image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80",
+        rating: 9.2,
+        star: 4,
+        reviews: 2341,
+        recommendation: "특가",
+        amenities: ["kitchen", "washer", "parking"],
+        specs: [
+            { icon: "wifi", text: "무료 와이파이" },
+            { icon: "waves", text: "수영장" },
+            { icon: "utensils", text: "조식 포함" }
+        ],
+        reviewLabel: "최고",
+        priceDaily: 480000,
+        discountRate: 0.25,
+        currency: "KRW", // Base currency
+        infra: {
+            mart: "이마트 도보 10분",
+            hospital: "한라병원 차량 15분",
+            bus: "노형오거리 도보 5분"
+        }
+    },
+    {
+        id: 2,
+        name: "오사카 리츠칼튼",
+        location: "오사카 키타구 · 우메다역 도보 3분",
+        image: "https://images.unsplash.com/photo-1598935898639-6f91f24d7768?w=600&q=80",
+        rating: 9.5,
+        star: 5,
+        reviews: 4521,
+        recommendation: "특가",
+        amenities: ["desk", "fitness", "spa"],
+        specs: [
+            { icon: "wifi", text: "무료 와이파이" },
+            { icon: "dumbbell", text: "피트니스" },
+            { icon: "sparkles", text: "스파" }
+        ],
+        reviewLabel: "최고",
+        priceDaily: 550000, // Should be roughly converted/handled. For demo, keep KRW base.
+        discountRate: 0.10,
+        infra: {
+            mart: "라이프마켓 도보 3분",
+            hospital: "오사카시립병원 차량 10분",
+            bus: "우메다역 도보 3분"
+        }
+    },
+    {
+        id: 3,
+        name: "파리 에펠뷰 아파트",
+        location: "프랑스 파리 · 7구",
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80",
+        rating: 8.9,
+        star: 3,
+        reviews: 320,
+        recommendation: "최저가 보장",
+        amenities: ["kitchen", "subway"],
+        specs: [
+            { icon: "wifi", text: "와이파이" },
+            { icon: "utensils", text: "주방" },
+            { icon: "train", text: "역세권" }
+        ],
+        reviewLabel: "매우 좋음",
+        priceDaily: 350000,
+        discountRate: 0.30,
+        infra: {
+            mart: "까르푸 도보 5분",
+            hospital: "아메리칸병원 차량 20분",
+            bus: "비하켐역 도보 2분"
+        }
+    }
+];
+
+function renderLongStayHotels(hotelsData = longStayHotels) {
+    const listContainer = document.getElementById('hotelList');
+    if (!listContainer) return;
+
+    // Currency Conversion Factor (Simplified)
+    const KRW_TO_USD = 0.00074;
+    const isUSD = AppState.currency === 'USD';
+    const symbol = isUSD ? '$' : '₩';
+
+    listContainer.innerHTML = hotelsData.map(hotel => {
+        // Calculation Logic
+        const NIGHTS = 30;
+        let pDaily = hotel.priceDaily;
+        if(isUSD) pDaily = Math.round(pDaily * KRW_TO_USD);
+
+        const standardTotal = pDaily * NIGHTS;
+        const finalTotal = Math.round(standardTotal * (1 - hotel.discountRate));
+        const savedAmount = standardTotal - finalTotal;
+
+        // Formatting
+        const formatMoney = (n) => n.toLocaleString();
+        
+        // Stars
+        const starsHtml = Array(5).fill(0).map((_, i) => 
+            `<i data-lucide="star" class="${i < hotel.star ? 'star-icon filled' : ''}" style="width:14px; height:14px;"></i>` 
+        ).join('');
+
+        // Spec Items
+        const specsHtml = hotel.specs.map(s => 
+            `<span><i data-lucide="${s.icon}"></i> ${s.text}</span>`
+        ).join('');
+
+        return `
+            <article class="hotel-card-horizontal" data-amenity="${hotel.amenities.join(',')}" onclick="updateInfraUI(${hotel.id})">
+                <div class="card-image-wrap">
+                    <img src="${hotel.image}" alt="${hotel.name}">
+                    <button class="wishlist-btn"><i data-lucide="heart"></i></button>
+                    <!-- v2.0 Savings Badge -->
+                    <span class="stay-discount-badge">1박 대비 ${symbol}${formatMoney(savedAmount)} Save</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-info">
+                        <div class="card-header">
+                            <span class="badge-recommend">${hotel.recommendation}</span>
+                            <div class="star-rating" style="color:#FFB300; display:flex; gap:2px;">
+                                ${starsHtml}
+                            </div>
+                        </div>
+                        <h3 class="card-title">${hotel.name}</h3>
+                        <p class="card-location"><i data-lucide="map-pin"></i> ${hotel.location}</p>
+                        <div class="card-specs">
+                            ${specsHtml}
+                        </div>
+                        <div class="card-review-badge">
+                            <span class="score">${hotel.rating}</span>
+                            <span class="label">${hotel.reviewLabel} · 리뷰 ${formatMoney(hotel.reviews)}개</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-price-section">
+                        <!-- Tooltip -->
+                        <div class="price-tooltip">1박 환산 시 약 ${symbol}${formatMoney(Math.round(finalTotal/30))}</div>
+                        
+                        <div class="price-container">
+                            <span class="monthly-price-label">30박 세금포함 총액</span>
+                            <!-- Tone-on-tone Highlight -->
+                            <div class="monthly-price highlight">${symbol}${formatMoney(finalTotal)}</div>
+                            <div class="per-night-price">1박 평균 ${symbol}${formatMoney(pDaily)}</div>
+                        </div>
+
+                        <div class="badges-container">
+                            <span class="badge-utility"><i data-lucide="zap" style="width:12px; height:12px;"></i> 공과금 포함</span>
+                            <span class="badge-member">제주항공 회원 추가 할인 적용</span>
+                        </div>
+                        
+                        <span class="tax-label">세금 및 봉사료 포함</span>
+                    </div>
+                </div>
+            </article>
+        `;
+    }).join('');
+
+    // Re-initialize Lucide icons for new content
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+    
+    // Re-init wishlist buttons
+    if(typeof initWishlistButtons === 'function') initWishlistButtons();
+}
+
+// v2.0 Dynamic Infra UI
+function updateInfraUI(hotelId) {
+    const hotel = longStayHotels.find(h => h.id === hotelId);
+    if(!hotel || !hotel.infra) return;
+
+    const ids = {
+        mart: 'infra-mart-dist',
+        hosp: 'infra-hosp-dist',
+        bus: 'infra-bus-dist'
+    };
+
+    if(document.getElementById(ids.mart)) document.getElementById(ids.mart).textContent = hotel.infra.mart;
+    if(document.getElementById(ids.hosp)) document.getElementById(ids.hosp).textContent = hotel.infra.hospital;
+    if(document.getElementById(ids.bus)) document.getElementById(ids.bus).textContent = hotel.infra.bus;
+
+    // Optional: Scroll to infra section to give feedback?
+    // document.querySelector('.infra-layout').scrollIntoView({ behavior: 'smooth' });
+}
+
+// v2.0 Search Logic
+function initSearchLogic() {
+    const btn = document.getElementById('searchBtn');
+    if(!btn) return;
+
+    btn.addEventListener('click', () => {
+        // Get Filters
+        const destInput = document.getElementById('destinationInput')?.value.trim();
+        const checkedAmenities = Array.from(document.querySelectorAll('.amenity-option input[type="checkbox"]:checked')).map(c => c.value);
+        
+        // Filter Data
+        let filtered = longStayHotels;
+        
+        if (destInput) {
+            filtered = filtered.filter(h => h.name.includes(destInput) || h.location.includes(destInput));
+        }
+        
+        if (checkedAmenities.length > 0) {
+            filtered = filtered.filter(h => {
+                 return checkedAmenities.every(req => h.amenities.includes(req));
+            });
+        }
+        
+        // Render
+        renderLongStayHotels(filtered);
+    });
+}
+
+// Ensure it runs after DOM Load
+document.addEventListener('DOMContentLoaded', () => {
+    // Run Init Logic
+    renderLongStayHotels();
+    initSearchLogic();
+    
+    // Initial Infra Load (Data for first hotel)
+    if(longStayHotels.length > 0) updateInfraUI(longStayHotels[0].id);
+});

@@ -999,10 +999,6 @@ input {
     padding: var(--space-lg);
 }
 
-.dropdown-column:first-child {
-    border-right: 1px solid var(--border-light);
-}
-
 .dropdown-header {
     font-size: 0.8125rem;
     font-weight: var(--font-weight-medium);

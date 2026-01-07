@@ -447,3 +447,720 @@
     height: 16px;
 }
 
+/* ========== Global Refinements ========== */
+
+/* Currency Switcher */
+.currency-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 16px;
+    padding: 6px 12px;
+    background: #f5f5f5;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.currency-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+}
+
+.currency-btn.active {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.currency-divider {
+    color: #ddd;
+    font-size: 0.8rem;
+}
+
+/* Synergy Banner Refinement */
+.air-synergy-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #FFF9F6; /* Adjusted Background */
+    border: 1px solid rgba(255, 80, 0, 0.2); /* Subtle Orange Border */
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 40px; /* Increased Spacing */
+    margin-bottom: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.air-synergy-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 80, 0, 0.1);
+}
+
+.synergy-icon {
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.synergy-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.synergy-text strong {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.synergy-text span {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.synergy-link {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+/* Global Community Reviews */
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.review-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    transition: transform 0.2s;
+}
+
+.review-card:hover {
+    transform: translateY(-4px);
+}
+
+.review-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.user-info strong {
+    font-size: 1rem;
+    color: #333;
+}
+
+.user-info span {
+    font-size: 0.85rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.flag-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.review-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 12px;
+}
+
+.review-tags {
+    display: flex;
+    gap: 8px;
+}
+
+.review-tags span {
+    font-size: 0.85rem;
+    color: #888;
+    background: #f5f5f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .review-grid {
+        grid-template-columns: 1fr;
+    }
+    .air-synergy-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        gap: 12px;
+    }
+    .synergy-link {
+        align-self: flex-end;
+    }
+}
+
+/* ========== UI/UX Renewal (Hero, Listings, Community) ========== */
+
+/* Minimal Currency Switcher (In Search Bar) */
+.currency-switcher-minimal {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8f9fa;
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+.currency-btn-minimal {
+    border: none;
+    background: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+.currency-btn-minimal:hover {
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.currency-btn-minimal.active {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.currency-btn-minimal .divider {
+    width: 1px;
+    height: 12px;
+    background: #ddd;
+    margin: 0 4px;
+}
+
+/* ========== Horizontal Hotel Card List (Image Match) ========== */
+
+.hotel-list-horizontal {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.hotel-card-horizontal {
+    display: flex;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    height: 240px; /* Fixed height for consistency */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hotel-card-horizontal:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* 1. Image Section */
+.card-image-wrap {
+    width: 320px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.card-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Wishlist Button */
+.card-image-wrap .wishlist-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: white;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    color: #ccc;
+    transition: all 0.2s;
+}
+
+.card-image-wrap .wishlist-btn:hover {
+    transform: scale(1.1);
+    color: #ff5000;
+}
+.card-image-wrap .wishlist-btn.active {
+    color: #ff5000;
+    fill: #ff5000;
+}
+.card-image-wrap .wishlist-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* 2. Content Section (Info + Price) */
+.card-content {
+    flex: 1;
+    display: flex;
+}
+
+/* Info Part */
+.card-info {
+    flex: 1; /* Takes remaining space */
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.badge-recommend {
+    background: #FFF3E0;
+    color: #FF6D00;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 6px;
+    border-radius: 4px;
+    letter-spacing: -0.5px;
+}
+.badge-new {
+    background: #E3F2FD;
+    color: #1565C0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+.star-rating {
+    display: flex;
+    gap: 2px;
+    color: #FFB300;
+}
+.star-rating svg {
+    width: 14px;
+    height: 14px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 8px;
+}
+
+.card-location {
+    font-size: 0.9rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+.card-location svg {
+    width: 14px;
+    height: 14px;
+    color: #999;
+}
+
+.card-specs {
+    display: flex;
+    gap: 16px;
+    margin-bottom: auto; /* Push review badge down */
+}
+.card-specs span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #555;
+}
+.card-specs svg {
+    width: 16px;
+    height: 16px;
+    color: #26C6DA; /* Cyan-ish color */
+}
+
+.card-review-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.card-review-badge .score {
+    background: #006064; /* Dark Teal */
+    color: white;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 8px 8px 8px 0;
+    font-size: 1rem;
+}
+.card-review-badge .label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+
+/* Price Part (Right Side with Gray Background) */
+.card-price-section {
+    width: 200px; /* Fixed Width */
+    background: #F9FAFB;
+    border-left: 1px solid #f0f0f0;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.card-price-section .discount-badge {
+    background: #FF5000;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.card-price-section .price-original {
+    color: #bbb;
+    text-decoration: line-through;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.card-price-section .price-final {
+    color: #FF5000;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.card-price-section .price-tax {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+
+/* Responsive */
+@media (max-width: 900px) {
+    .hotel-card-horizontal {
+        flex-direction: column;
+        height: auto;
+    }
+    .card-image-wrap {
+        width: 100%;
+        height: 200px;
+    }
+    .card-content {
+        flex-direction: column;
+    }
+    .card-info {
+        padding: 20px;
+        order: 1;
+    }
+    .card-price-section {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #eee;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        order: 2;
+    }
+    .price-final {
+        font-size: 1.25rem;
+    }
+}
+
+/* ========== Monthly Stay Price Section (JS Dynamic) ========== */
+:root {
+    --jeju-orange: #FF5722;
+    --discount-red: #D32F2F;
+    --utility-green: #2E7D32;
+}
+
+/* Sticky Search Widget */
+.search-widget-large {
+    position: sticky;
+    top: 80px; /* Adjust based on header height */
+    z-index: 90;
+    transition: all 0.3s ease;
+}
+
+/* Updated Price Section Layout (v2.0 Refinement) */
+.card-price-section {
+    width: 250px;
+    background: #F9FAFB;
+    border-left: 1px solid #f0f0f0;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    text-align: right;
+    position: relative;
+}
+
+/* Savings Badge - Moved to Image Overlay */
+.stay-discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #D32F2F; /* Deep Red */
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Remove old savings banner style logic if needed or repurpose */
+.savings-banner {
+    display: none; /* Hidden in price section, moved to image */
+}
+
+/* Price Hierarchy */
+.price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 16px;
+}
+
+.monthly-price-label {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.monthly-price {
+    color: #333; /* Tone-on-tone Dark Gray */
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+.monthly-price.highlight {
+    color: var(--jeju-orange);
+}
+
+.per-night-price {
+    font-size: 0.8rem;
+    color: #aaa;
+    text-decoration: line-through;
+    margin-top: 6px;
+}
+
+/* Utilities & Member Badges */
+.badges-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.badge-utility {
+    font-size: 0.7rem;
+    color: var(--utility-green);
+    background: #E8F5E9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-member {
+    font-size: 0.7rem;
+    color: var(--jeju-orange);
+    border: 1px solid rgba(255, 87, 34, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.tax-label {
+    font-size: 0.65rem; /* Reduced size */
+    color: #ccc;
+    margin-top: 12px;
+}
+
+/* Tooltip for Price Hover */
+.price-tooltip {
+    visibility: hidden;
+    background-color: rgba(33, 33, 33, 0.95);
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 6px 10px;
+    position: absolute;
+    z-index: 100;
+    bottom: 100%;
+    right: 50%;
+    transform: translateX(50%);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    margin-bottom: 8px;
+}
+
+.card-price-section:hover .price-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Responsive Adjusments */
+@media (max-width: 900px) {
+    .card-price-section {
+        width: 100%;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
+    .monthly-price {
+        font-size: 1.5rem;
+    }
+    .search-widget-large {
+        position: relative; /* Disable sticky on mobile if space is tight */
+        top: 0;
+    }
+}
+
+/* Dropdown Enhancements (Dividers & Hover) */
+.dropdown-column {
+    position: relative;
+    padding-right: 0; /* Clear any defaults */
+}
+
+/* Vertical Divider Lines */
+.dropdown-column:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 4px; 
+    bottom: 4px;
+    right: -12px; /* Position exactly in the middle of grid gap (24px) */
+    width: 1px;
+    background-color: #e0e0e0;
+}
+
+/* Destination Item Styling */
+.destination-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-bottom: 4px;
+}
+
+.destination-item:hover {
+    background-color: #f0f4f8; /* Light hover background */
+}
+
+/* Image Hover Animation */
+.destination-item img {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.destination-item:hover img {
+    transform: scale(1.15) rotate(2deg); /* slight zoom and tilt */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+/* Refine text for better alignment */
+.destination-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.destination-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.2;
+}
+
+.destination-count {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 2px;
+}
+
+.destination-desc {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 2px;
+}
