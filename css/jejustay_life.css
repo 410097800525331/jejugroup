@@ -1,5 +1,17 @@
 /* ========== JEJU STAY - Life (Long Stay) Styles ========== */
 
+/* Scroll-based Sunset Background -> Twilight Serenity */
+body.long-stay-page {
+    background: linear-gradient(135deg, 
+        #FFFFFF 0%, 
+        #F5EFFF 30%, 
+        #FFF0F5 60%, 
+        #FFE8D6 100%
+    );
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
 /* Long Stay Badge on Hotel Card Image */
 .stay-badge {
     position: absolute;
@@ -18,7 +30,7 @@
 /* Magazine Section Styles */
 .magazine-section {
     padding: var(--space-3xl) 0;
-    background: #fff;
+    background: transparent;
 }
 .magazine-layout {
     display: grid;
@@ -1097,9 +1109,16 @@
     margin-top: 2px;
 }
 
+
+/* Deals Section (Explicit Transparency) */
+.deals-section {
+    background: transparent;
+    padding: var(--space-3xl) 0;
+}
+
 /* ========== Selection Standards Section ========== */
 .standards-section {
-    background-color: var(--surface, #F9FAFB);
+    background-color: transparent;
     padding: var(--space-3xl) 0;
 }
 
@@ -1115,23 +1134,27 @@
 }
 
 .standard-card {
-    background: var(--background, #fff);
-    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.45); /* Glassmorphism Base - Twilight Serenity */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 28px; /* Premium Radius */
     padding: var(--space-xl);
-    box-shadow: var(--shadow-md);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    border: 1px solid transparent;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     height: 100%;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
 }
 
 .standard-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--primary-light);
-    background-color: #fff;
+    transform: translateY(-15px) rotateX(5deg);
+    box-shadow: 0 25px 50px rgba(255, 80, 0, 0.15); /* Orange Glow */
+    background: rgba(255, 255, 255, 0.7);
+    border-color: var(--primary);
 }
 
 .card-icon-wrapper {
@@ -1156,7 +1179,7 @@
     font-size: 1.125rem;
     font-weight: 700;
     margin-bottom: var(--space-sm);
-    color: var(--text-title, #111);
+    color: #1A1A2E; /* Twilight Navy */
     word-break: keep-all;
 }
 
@@ -1181,4 +1204,48 @@
     .standard-card {
         padding: var(--space-lg);
     }
+}
+
+/* More Hotels Button */
+.more-hotels-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.btn-more-hotels {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 40px;
+    background: #fff;
+    border: 2px solid #FF5000;
+    border-radius: 8px;
+    color: #FF5000;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-more-hotels:hover {
+    background: #FFF3E0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 80, 0, 0.15);
+}
+
+.btn-more-hotels i {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s;
+}
+
+.btn-more-hotels:hover i {
+    transform: translateX(4px);
+}
+
+/* Section Transition Refinement */
+.promo-section {
+    background: transparent;
+    padding: 80px 0; /* Add padding for breathing room */
 }

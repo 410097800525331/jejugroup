@@ -23,23 +23,23 @@
     /* Brand Colors */
     --primary: #FF5000;
     --primary-hover: #E64800;
-    --primary-light: rgba(255, 80, 0, 0.1);
-    --secondary: #00758F;
-    --secondary-hover: #005F73;
-    --secondary-light: rgba(0, 117, 143, 0.1);
+    --primary-light: #FF8A00;
+    --secondary: #1E293B; /* Slate 800 */
+    --secondary-hover: #0F172A;
+    --secondary-light: rgba(30, 41, 59, 0.1);
 
     /* Blue accent for calendar/UI */
     --accent-blue: #3B82F6;
     --accent-blue-light: rgba(59, 130, 246, 0.1);
     
-    /* Neutral Colors */
-    --background: #F8F7F9;
+    /* Neutral Colors - Arctic Blue Theme */
+    --background: #F4F7FA;
     --surface: #FFFFFF;
-    --text-title: #333333;
-    --text-body: #757575;
-    --text-muted: #9E9E9E;
-    --border: #E5E5E5;
-    --border-light: #F0F0F0;
+    --text-title: #1E293B; /* Slate 800 */
+    --text-body: #475569; /* Slate 600 */
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
     
     /* Semantic Colors */
     --success: #2E7D32;
@@ -64,10 +64,14 @@
     --radius-2xl: 24px;
     --radius-full: 9999px;
     
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    
+    /* New Shadows */
+    --shadow-widget: 0 20px 50px rgba(0, 0, 0, 0.1);
+    --shadow-card: 0 10px 25px rgba(30, 41, 59, 0.08);
     
     /* Typography */
     --font-family: 'FlightSans', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -394,7 +398,8 @@ input {
 .search-widget-large {
     background: var(--surface);
     border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-widget); /* Updated to deep shadow */
+    border: 1px solid rgba(255, 255, 255, 0.8); /* Added border definition */
     overflow: visible;
     max-width: 900px;
     margin: 0 auto;
@@ -2011,11 +2016,11 @@ input {
 }
 
 .price-discount {
-    font-size: 0.6875rem;
-    font-weight: var(--font-weight-bold);
-    color: var(--surface);
-    background: var(--primary);
-    padding: 2px 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary); /* Text color matching primary */
+    background: rgba(255, 80, 0, 0.1); /* Soft Orange Background */
+    padding: 2px 8px;
     border-radius: var(--radius-sm);
 }
 
@@ -2026,9 +2031,9 @@ input {
 }
 
 .price-final {
-    font-size: 1.5rem;
-    font-weight: var(--font-weight-bold);
-    color: var(--primary);
+    font-size: 1.6rem; /* Increased Size */
+    font-weight: 700;
+    color: var(--primary); /* Jeju Orange */
 }
 
 .price-tax {
@@ -2051,7 +2056,7 @@ input {
     font-weight: var(--font-weight-medium);
     color: var(--primary);
     border: 2px solid var(--primary);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-xl); /* Updated to XL */
     transition: all var(--transition-fast);
 }
 

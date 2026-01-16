@@ -14,6 +14,9 @@
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -516,58 +519,69 @@
         </section>
 
         <!-- ========== Selection Standards (New) ========== -->
+        <!-- ========== Selection Standards Section (Premium Renewal) ========== -->
         <section class="standards-section section">
             <div class="container">
                 <div class="standards-header">
-                    <h2 class="section-title" data-lang="stdTitle">제주스테이가 검증한 '살기 좋은 집'의 기준</h2>
-                    <p class="section-subtitle" data-lang="stdSubtitle">전 세계 200만 개 숙소 중 장기 체류에 최적화된 곳만 선별했습니다.</p>
+                    <span class="std-badge">JEJU STAY CERTIFIED</span>
+                    <h2 class="section-title" data-lang="stdTitle">우리가 고집하는 장기 체류의 기준</h2>
+                    <p class="section-subtitle" data-lang="stdSubtitle">단순한 숙박을 넘어 삶의 질을 결정하는 4가지 필수 요소</p>
                 </div>
                 <div class="standards-grid">
                     <!-- Card 1 -->
-                    <div class="standard-card">
-                        <div class="card-icon-wrapper">
-                            <i data-lucide="home"></i>
+                    <div class="standard-card-wrapper">
+                        <div class="standard-card">
+                            <div class="card-icon-wrapper">
+                                <i data-lucide="home"></i>
+                            </div>
+                            <h3 class="card-title" data-lang="stdItem1Title">생활 필수 가전 완비</h3>
+                            <p class="card-desc" data-lang="stdItem1Desc">주방 도구, 세탁기, 초고속 와이파이 등 장기 투숙 시 별도 구매가 필요
+                                없는 '풀 퍼니시드' 숙소만 입점합니다.</p>
+                            <div class="card-footer-line"></div>
                         </div>
-                        <h3 class="card-title" data-lang="stdItem1Title">생활 필수 가전 완비</h3>
-                        <p class="card-desc" data-lang="stdItem1Desc">주방 도구, 세탁기, 초고속 와이파이 등 장기 투숙 시 별도 구매가 필요 없는 '풀
-                            퍼니시드'
-                            숙소만 입점합니다.</p>
                     </div>
                     <!-- Card 2 -->
-                    <div class="standard-card">
-                        <div class="card-icon-wrapper">
-                            <i data-lucide="shield-check"></i>
+                    <div class="standard-card-wrapper">
+                        <div class="standard-card">
+                            <div class="card-icon-wrapper">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <h3 class="card-title" data-lang="stdItem2Title">24시간 안전 검증</h3>
+                            <p class="card-desc" data-lang="stdItem2Desc">치안이 확보된 지역인지, 건물 내 보안 시스템이 작동하는지 현지 파트너가
+                                직접 방문하여 확인합니다.</p>
+                            <div class="card-footer-line"></div>
                         </div>
-                        <h3 class="card-title" data-lang="stdItem2Title">24시간 안전 검증</h3>
-                        <p class="card-desc" data-lang="stdItem2Desc">치안이 확보된 지역인지, 건물 내 보안 시스템이 작동하는지 현지 파트너가 직접 방문하여
-                            확인합니다.</p>
                     </div>
                     <!-- Card 3 -->
-                    <div class="standard-card">
-                        <div class="card-icon-wrapper">
-                            <i data-lucide="banknote"></i>
+                    <div class="standard-card-wrapper">
+                        <div class="standard-card">
+                            <div class="card-icon-wrapper">
+                                <i data-lucide="banknote"></i>
+                            </div>
+                            <h3 class="card-title" data-lang="stdItem3Title">장기 예약 전용 특가</h3>
+                            <p class="card-desc" data-lang="stdItem3Desc">14박 이상 예약 시 일반 1박 요금 대비 평균 25~40% 저렴한
+                                'Long-Stay' 전용 레이트를 보장합니다.</p>
+                            <div class="card-footer-line"></div>
                         </div>
-                        <h3 class="card-title" data-lang="stdItem3Title">장기 예약 전용 특가</h3>
-                        <p class="card-desc" data-lang="stdItem3Desc">14박 이상 예약 시 일반 1박 요금 대비 평균 25~40% 저렴한 'Long-Stay'
-                            전용
-                            레이트를 보장합니다.</p>
                     </div>
                     <!-- Card 4 -->
-                    <div class="standard-card">
-                        <div class="card-icon-wrapper">
-                            <i data-lucide="refresh-cw"></i>
+                    <div class="standard-card-wrapper">
+                        <div class="standard-card">
+                            <div class="card-icon-wrapper">
+                                <i data-lucide="refresh-cw"></i>
+                            </div>
+                            <h3 class="card-title" data-lang="stdItem4Title">유연한 취소 정책</h3>
+                            <p class="card-desc" data-lang="stdItem4Desc">일정 변경이 잦은 장기 여행자를 위해, 입주 7일 전까지는 유연하게 취소 및
+                                변경이 가능한 숙소를 우선 노출합니다.</p>
+                            <div class="card-footer-line"></div>
                         </div>
-                        <h3 class="card-title" data-lang="stdItem4Title">유연한 취소 정책</h3>
-                        <p class="card-desc" data-lang="stdItem4Desc">일정 변경이 잦은 장기 여행자를 위해, 입주 7일 전까지는 유연하게 취소 및 변경이 가능한
-                            숙소를
-                            우선 노출합니다.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- ========== Long Stay Listings ========== -->
-        <section class="deals-section" style="background: var(--background);">
+        <section class="deals-section">
             <div class="container">
                 <div class="section-header">
                     <h2 class="section-title" data-lang="lifeDealTitle">장기 체류 추천 숙소</h2>
@@ -576,6 +590,14 @@
 
                 <div class="hotel-list-horizontal" id="hotelList">
                     <!-- Javascript rendered content -->
+                </div>
+
+                <!-- More Hotels Button -->
+                <div class="more-hotels-container">
+                    <a href="#" class="btn-more-hotels">
+                        <span data-lang="btnMoreHotels">더 많은 특가 호텔 보기</span>
+                        <i data-lucide="chevron-right"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -594,7 +616,8 @@
                             <strong>지민님</strong> <span><span class="flag-icon">🇹🇭</span> Chiang Mai</span>
                         </div>
                     </div>
-                    <p class="review-text" data-lang="lifeReviewText1">"아침엔 도이수텝을 보며 조깅하고, 낮에는 공유 오피스에서 집중해서 일했어요. 치앙마이
+                    <p class="review-text" data-lang="lifeReviewText1">"아침엔 도이수텝을 보며 조깅하고, 낮에는 공유 오피스에서 집중해서 일했어요.
+                        치앙마이
                         라이프는 정말 꿈만 같았습니다."</p>
                     <div class="review-tags">
                         <span>#디지털노마드</span><span>#님만해민</span>
@@ -640,7 +663,7 @@
         </section>
 
         <!-- ========== Benefit Highlights ========== -->
-        <section class="promo-section" style="background: #F0F4F8;">
+        <section class="promo-section">
             <div class="container">
                 <div class="section-header">
                     <h2 class="section-title" data-lang="lifeMemTitle">Long Stay 멤버십 혜택</h2>
@@ -652,7 +675,8 @@
                         </div>
                         <div class="promo-content">
                             <h3 class="promo-title" data-lang="promoLuggageTitle">위탁 수하물<br>10kg 추가 증정</h3>
-                            <p class="promo-desc" data-lang="promoLuggageDesc">짐이 많은 장기 여행도 걱정 없이,<br>제주항공 이용 시 혜택 제공
+                            <p class="promo-desc" data-lang="promoLuggageDesc">짐이 많은 장기 여행도 걱정 없이,<br>제주항공 이용 시 혜택
+                                제공
                             </p>
                         </div>
                     </div>
@@ -671,7 +695,8 @@
                         </div>
                         <div class="promo-content">
                             <h3 class="promo-title" data-lang="promoGuideTitle">한 달 살기<br>가이드북 제공</h3>
-                            <p class="promo-desc" data-lang="promoGuideDesc">쓰레기 배출일부터 근처 인프라 정보까지<br>생활 필수 정보 수록</p>
+                            <p class="promo-desc" data-lang="promoGuideDesc">쓰레기 배출일부터 근처 인프라 정보까지<br>생활 필수 정보 수록
+                            </p>
                         </div>
                     </div>
                 </div>

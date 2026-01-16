@@ -32,8 +32,67 @@ document.addEventListener('DOMContentLoaded', function() {
     initCalendar(); // 롱스테이 전용 로직 포함
     initAmenityFilter();
     initMobileSearch();
-
+    
+    // GSAP Animations
+    initStandardsAnimation();
 });
+
+/* ========== GSAP Animations ========== */
+/* ========== GSAP Animations ========== */
+function initStandardsAnimation() {
+    // Check if GSAP is available
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Standards Section Cards Stagger
+        // Initial set for GSAP to handle 'from' state correctly if needed, 
+        // but using 'to' with 'from' styles or 'from' directly is better.
+        // User requested gsap.from() logic in description but JSON config suggests simple vars.
+        // Actually, JSON says "vars: { y: 50, opacity: 0 ... }" which implies a "from" state or a "to" state destination?
+        // Wait, "targetSelector... vars ... y: 50, opacity: 0" usually means "animate TO this" or "Start FROM this"?
+        // Detailed instruction says: "initStandardsAnimation 함수를 생성하고, 내부에서 gsap.from() 메서드를 사용하여 애니메이션을 정의하십시오." (Use gsap.from())
+        // "타겟 요소인 .standard-card-wrapper들이 초기 상태에서 y: 50 위치와 opacity: 0에서 시작하여 본래 위치로 돌아오도록 설정하십시오."
+        // This confirms: FROM y:50, opacity:0 TO y:0, opacity:1.
+        
+        gsap.from('.standard-card-wrapper', {
+            scrollTrigger: {
+                trigger: '.standards-section',
+                start: 'top 85%', // Viewport hit
+                toggleActions: 'play none none reverse'
+            },
+            y: 60,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "power4.out",
+            clearProps: "all" // Ensure CSS hover works after animation
+        });
+    } else {
+        console.warn('GSAP not found. Falling back to IntersectionObserver.');
+        // Fallback for non-GSAP environments
+        const cards = document.querySelectorAll('.standard-card-wrapper');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Simple stagger simulation with partial timeout or just CSS transition delay
+                    setTimeout(() => {
+                         entry.target.style.opacity = '1';
+                         entry.target.style.transform = 'translateY(0)';
+                         entry.target.style.transition = 'all 0.8s ease-out';
+                    }, index * 200); // 0.2s stagger
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        cards.forEach(c => {
+             // Set initial state for fallback
+             c.style.opacity = '0';
+             c.style.transform = 'translateY(50px)';
+             observer.observe(c);
+        });
+    }
+}
 
 /* ========== 공통 기능 (hotel.js와 동일) ========== */
 function initHeader() {
