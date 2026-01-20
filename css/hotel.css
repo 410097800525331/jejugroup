@@ -424,6 +424,7 @@ input {
 /* New Search Form Layout */
 .search-form-new {
     padding: var(--space-xl);
+    padding-bottom: calc(var(--space-xl) + 36px); /* Increased by 36px (adjusted +6px) */
 }
 
 /* Top Row - Destination (Full Width) */
@@ -1584,11 +1585,12 @@ input {
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-light);
     transition: all var(--transition-normal);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .promo-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
 }
 
 .promo-main {
@@ -1714,6 +1716,13 @@ input {
     border-radius: var(--radius-lg);
     overflow: hidden;
     cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.destination-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
 
 .destination-card.large {
@@ -1797,16 +1806,18 @@ input {
     border-radius: var(--radius-lg);
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 .hotel-card:hover {
-    box-shadow: 0 10px 25px rgba(30, 41, 59, 0.08);
-    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
 }
 
 .hotel-image-wrap {
     position: relative;
     width: 280px;
+    height: 260px;
     flex-shrink: 0;
 }
 

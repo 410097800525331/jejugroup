@@ -1,7 +1,7 @@
 /* ==================== Strict Full Page Scroll Controller ==================== */
 document.addEventListener('DOMContentLoaded', () => {
     // --- Configuration ---
-    const SCROLL_COOLDOWN = 1000; // Time in ms to ignore input after scroll
+    const SCROLL_COOLDOWN = 1500; // Time in ms to ignore input after scroll
     const sections = document.querySelectorAll('.section');
     const footer = document.querySelector('footer');
     
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- State ---
     let currentSectionIndex = 0; // 0 to sections.length (where last index is Footer)
     let isScrolling = false;
+    let lastScrollTime = 0;
     let touchStartY = 0;
 
     // The total number of stops = sections + footer
@@ -75,17 +76,22 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('wheel', (e) => {
         e.preventDefault(); // Lock native scroll
 
+        const now = new Date().getTime();
+        if (now - lastScrollTime < SCROLL_COOLDOWN) return;
+
         if (isScrolling) return;
 
         if (e.deltaY > 0) {
             // Scroll Down
             if (currentSectionIndex < maxIndex) {
+                lastScrollTime = now;
                 currentSectionIndex++;
                 scrollToCurrentIndex();
             }
         } else {
             // Scroll Up
             if (currentSectionIndex > 0) {
+                lastScrollTime = now;
                 currentSectionIndex--;
                 scrollToCurrentIndex();
             }
@@ -98,22 +104,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (keys.includes(e.key)) {
             e.preventDefault();
             
+            const now = new Date().getTime();
+            if (now - lastScrollTime < SCROLL_COOLDOWN) return;
+
             if (isScrolling) return;
 
             if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
                 if (currentSectionIndex < maxIndex) {
+                    lastScrollTime = now;
                     currentSectionIndex++;
                     scrollToCurrentIndex();
                 }
             } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
                 if (currentSectionIndex > 0) {
+                    lastScrollTime = now;
                     currentSectionIndex--;
                     scrollToCurrentIndex();
                 }
             } else if (e.key === 'Home') {
+                lastScrollTime = now;
                 currentSectionIndex = 0;
                 scrollToCurrentIndex();
             } else if (e.key === 'End') {
+                lastScrollTime = now;
                 currentSectionIndex = maxIndex;
                 scrollToCurrentIndex();
             }

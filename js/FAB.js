@@ -298,8 +298,8 @@ function toggleFabAnimation() {
 
     if (!isFabOpen) {
         // [Phase A: Opening]
-        // Reset visibility (in case CSS hidden them)
-        gsap.set([c0, c1, c2, c3, c4], { opacity: 1 });
+        // Reset visibility (in case CSS hidden them) & Enable Clicks
+        gsap.set([c0, c1, c2, c3, c4], { opacity: 1, pointerEvents: "auto" });
         
         // Stage 1: Eject Up (All cards)
         // From Y=20 (Hidden) to Y=-100 (Higher rise)
@@ -322,6 +322,9 @@ function toggleFabAnimation() {
 
     } else {
         // [Phase B: Closing]
+        // Disable Clicks Immediately
+        gsap.set([c0, c1, c2, c3, c4], { pointerEvents: "none" });
+
         // Stage 1: Stack & Hide
         
         // Collapse X
