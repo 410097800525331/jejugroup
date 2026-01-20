@@ -109,23 +109,33 @@
 .filter-sticky-bar {
     position: sticky;
     top: var(--header-height);
-    background: var(--surface);
+    background: transparent;
     z-index: 900;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: none;
     padding: 16px 0;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    box-shadow: none;
 }
 
 .filter-chips-wrapper {
     display: flex;
     gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 4px; /* Scrollbar space */
-    scrollbar-width: none; /* Firefox */
+    justify-content: center; /* Center align chips */
+    flex-wrap: wrap; /* Allow wrapping if needed, or use scroll */
+    padding-bottom: 4px;
 }
 
-.filter-chips-wrapper::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+/* Mobile: Enable scroll and start alignment */
+@media (max-width: 768px) {
+    .filter-chips-wrapper {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+    .filter-chips-wrapper::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
 }
 
 .filter-chip {
@@ -135,12 +145,13 @@
     padding: 8px 16px;
     border-radius: var(--radius-full);
     border: 1px solid var(--border);
-    background: var(--background);
+    background: var(--surface); /* Ensure background is white/surface */
     color: var(--text-body);
     font-size: 0.9rem;
     font-weight: 500;
     white-space: nowrap;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Elastic-like */
+    cursor: pointer; /* Explicit cursor */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .filter-chip:hover {
@@ -150,9 +161,9 @@
 }
 
 .filter-chip.active {
-    background: var(--text-title);
+    background: #FF5000;
     color: #fff;
-    border-color: var(--text-title);
+    border-color: #FF5000;
 }
 
 /* Authentication Banner */
@@ -483,4 +494,40 @@
     font-weight: 700;
     border-radius: 8px;
     margin-top: 10px;
+}
+
+/* Header Scroll View */
+.header.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.header.scrolled .logo-group,
+.header.scrolled .logo-stay,
+.header.scrolled .logo-divider {
+    color: #000;
+}
+
+.header.scrolled .nav-link {
+    color: #333;
+}
+
+.header.scrolled .nav-link:hover,
+.header.scrolled .nav-link.active {
+    color: #FF5000;
+}
+
+.header.scrolled .util-link {
+    color: #333;
+}
+
+.header.scrolled .search-icon,
+.header.scrolled .util-icon {
+    /* If icons rely on inheritance */
+    color: inherit;
+}
+
+.header.scrolled .mobile-menu-btn {
+    color: #000;
 }

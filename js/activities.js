@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5. Initialize Animations
     animateCards();
+
+    // 6. Initialize Header Scroll Logic
+    initHeaderScroll();
 });
 
 /* --- Filter Bar Logic --- */
@@ -132,6 +135,23 @@ function animateCards() {
         duration: 0.6,
         stagger: 0.1,
         ease: "power2.out",
-        delay: 0.2
+    });
+}
+
+/* --- Header Scroll Logic --- */
+function initHeaderScroll() {
+    const header = document.getElementById('header');
+    
+    // Initial check
+    if (window.scrollY > 10) {
+        header.classList.add('scrolled');
+    }
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
     });
 }

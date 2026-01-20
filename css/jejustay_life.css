@@ -1249,3 +1249,10 @@ body.long-stay-page {
     background: transparent;
     padding: 80px 0; /* Add padding for breathing room */
 }
+
+/* Seamless Footer for Life Page */
+.footer {
+    background: transparent !important;
+    background-color: transparent !important;
+    border-top: none !important;
+}

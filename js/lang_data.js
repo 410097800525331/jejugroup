@@ -159,7 +159,7 @@ const langData = {
         fabChatbotLabel: "AI 챗봇",
         
         // Header & Mobile Nav (Common)
-        navLounge: "JJ 라운지",
+
         navResCheck: "예약 확인",
         navLogin: "로그인",
         navCs: "고객센터",
@@ -429,18 +429,7 @@ const langData = {
         lifeMemberDiscount: "제주항공 회원 추가 할인 적용",
         lifeTaxServiceIncl: "세금 및 봉사료 포함",
 
-        // JJ Lounge
-        loungeBenefitTitle: "Platinum 혜택",
-        benefit1Title: "우선 탑승",
-        benefit1Desc: "제주항공 전 노선 우선 탑승 혜택 제공",
-        benefit2Title: "공항 라운지",
-        benefit2Desc: "전 세계 주요 공항 라운지 연 4회 무료",
-        benefit3Title: "호텔 얼리 체크인",
-        benefit3Desc: "제주 스테이 제휴 호텔 오후 1시 얼리 체크인",
-        benefit4Title: "추가 적립 5%",
-        benefit4Desc: "항공/숙박 결제 시 포인트 5% 추가 적립",
-        historyTitle: "최근 이용 내역",
-        logout: "로그아웃"
+
     },
     en: {
         // Global
@@ -602,7 +591,7 @@ const langData = {
         fabChatbotLabel: "AI Chatbot",
         
         // Header & Mobile Nav (Common)
-        navLounge: "JJ Lounge",
+
         navResCheck: "My Booking",
         navLogin: "Login",
         navCs: "Support",
@@ -802,18 +791,8 @@ const langData = {
         lifeMemberDiscount: "Jeju Air Member Discount Applied",
         lifeTaxServiceIncl: "Tax & Service Charge Included",
 
-        // JJ Lounge
-        loungeBenefitTitle: "Platinum Benefits",
-        benefit1Title: "Priority Boarding",
-        benefit1Desc: "Priority boarding on all Jeju Air flights",
-        benefit2Title: "Airport Lounge",
-        benefit2Desc: "Free access to major airport lounges 4x/year",
-        benefit3Title: "Hotel Early Check-in",
-        benefit3Desc: "1 PM Early Check-in at Jeju Stay partner hotels",
-        benefit4Title: "Extra 5% Points",
-        benefit4Desc: "Earn extra 5% points on flight/stay payments",
-        historyTitle: "Recent History",
-        logout: "Logout",
+
+
         promoLuggageTitle: "Extra 10kg<br>Checked Baggage",
         promoLuggageDesc: "No worries about heavy luggage,<br>benefits when flying Jeju Air",
         promoCardTitle: "Local Life<br>Membership Card",
