@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제주 스테이 - 검색 결과</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/hotel_list.css" rel="stylesheet">
+    </head>
+<body>
+
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">JEJU STAY</div>
+            <nav class="nav">
+                <a href="#">항공</a>
+                <a href="#" class="active">숙소</a>
+                <a href="#">렌터카</a>
+                <a href="#">투어/티켓</a>
+            </nav>
+            <div class="user-menu">
+                <button class="btn-secondary">로그인</button>
+                <button class="btn-primary">회원가입</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="search-sticky">
+        <div class="container search-container">
+            <div class="search-input-group">
+                <i class="fa-solid fa-location-dot"></i>
+                <input type="text" id="destinationInput" value="제주도, 전체">
+            </div>
+            <div class="search-input-group">
+                <i class="fa-regular fa-calendar"></i>
+                <input type="text" value="2026. 01. 31 - 02. 01">
+            </div>
+            <div class="search-input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" value="성인 2명, 객실 1개">
+            </div>
+            <button class="btn-search">검색 수정</button>
+        </div>
+    </section>
+
+    <div class="container main-layout">
+        
+        <aside class="sidebar">
+            <div class="map-widget">
+                <div class="map-bg"></div>
+                <button class="btn-map">지도에서 숙소 보기</button>
+            </div>
+
+            <div class="filter-group">
+                <h3>1박당 요금</h3>
+                <div class="price-slider-box">
+                    <input type="range" min="0" max="500000" step="10000" value="500000" id="priceRange">
+                    <div class="price-labels">
+                        <span>0원</span>
+                        <span id="priceValue">500,000원+</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>숙소 등급</h3>
+                <label class="checkbox-row">
+                    <input type="checkbox"> 5성급 <span class="count">(12)</span>
+                </label>
+                <label class="checkbox-row">
+                    <input type="checkbox"> 4성급 <span class="count">(45)</span>
+                </label>
+                <label class="checkbox-row">
+                    <input type="checkbox"> 3성급 <span class="count">(88)</span>
+                </label>
+            </div>
+
+            <div class="filter-group">
+                <h3>편의 시설</h3>
+                <label class="checkbox-row"><input type="checkbox"> 수영장</label>
+                <label class="checkbox-row"><input type="checkbox"> 무료 조식</label>
+                <label class="checkbox-row"><input type="checkbox"> 오션뷰</label>
+                <label class="checkbox-row"><input type="checkbox"> 무료 주차</label>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="sort-bar">
+                <span class="result-count">제주도의 <strong>1,240개</strong> 숙소</span>
+                <div class="sort-options">
+                    <button class="active">추천순</button>
+                    <button>최저가순</button>
+                    <button>평점 높은 순</button>
+                    <button>거리 순</button>
+                </div>
+            </div>
+
+            <div id="hotelListContainer" class="hotel-list-container">
+                </div>
+        </main>
+    </div>
+
+    <script src="../js/hotel_list.js"></script>
+</body>
+</html>
