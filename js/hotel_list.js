@@ -607,8 +607,8 @@ function renderHotels(data) {
                                 ${breakfast ? `<span class="benefit-tag"><i class="fa-solid fa-utensils"></i> 조식 포함</span>` : ''}
                             </div>
 
-                            <div class="hotel-badges" style="margin-top:8px;">
-                                ${hotel.badges.map(badge => `<span class="badge-text" style="color:var(--text-muted); font-size:0.75rem; margin-right:6px;">#${badge}</span>`).join('')}
+                            <div class="hotel-badges">
+                                ${hotel.badges.map(badge => `<span class="badge-text">#${badge}</span>`).join('')}
                             </div>
                         </div>
 

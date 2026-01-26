@@ -166,6 +166,14 @@ const langData = {
         mobileNavHotel: "숙소 예약",
         mobileNavLife: "한 달 살기",
         mobileNavActivity: "즐길 거리",
+        
+        // New Nav Items
+        navEsim: "eSIM",
+        navGuide: "여행 가이드",
+        navTips: "여행 일정 팁",
+        mobileNavEsim: "eSIM",
+        mobileNavGuide: "여행 가이드",
+        mobileNavTips: "여행 일정 팁",
 
         // Hotel Page Additional
         destKr: "대한민국 내 여행지",
@@ -598,6 +606,14 @@ const langData = {
         mobileNavHotel: "Hotels",
         mobileNavLife: "Long Stay",
         mobileNavActivity: "Activities",
+        
+        // New Nav Items
+        navEsim: "eSIM",
+        navGuide: "Travel Guide",
+        navTips: "Travel Tips",
+        mobileNavEsim: "eSIM",
+        mobileNavGuide: "Travel Guide",
+        mobileNavTips: "Travel Tips",
 
         // Hotel Page Additional
         destKr: "Domestic Destinations",

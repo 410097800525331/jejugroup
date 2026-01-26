@@ -106,7 +106,6 @@ const DEALS = [
     },
     { id: 9, category: 'hotel', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=500&q=80', badge: '강력 추천', title: '호텔 인디고 방콕 와이어리스 로드', location: '방콕', rating: 4.7, reviews: 1560, oldPrice: 220000, newPrice: 145000 },
     { id: 10, category: 'rentacar', image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=500&q=80', badge: '소형차 특가', title: '오키나와 렌터카 (혼다 피트)', location: '오키나와', rating: 4.8, reviews: 920, oldPrice: 90000, newPrice: 55000 },
-    { id: 11, category: 'activity', image: 'https://images.unsplash.com/photo-1598890777032-bde8356084e3?w=500&q=80', badge: '인기', title: '센토사섬 유니버설 스튜디오 싱가포르', location: '싱가포르', rating: 4.8, reviews: 9800, oldPrice: 85000, newPrice: 76000 },
     { id: 12, category: 'pension', image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=500&q=80', badge: '풀빌라', title: '발리 스미냑 프라이빗 풀빌라', location: '인도네시아, 발리', rating: 4.9, reviews: 450, oldPrice: 450000, newPrice: 280000 },
     { id: 13, category: 'hotel', image: 'https://lh3.googleusercontent.com/p/AF1QipN3DmDaDnxNEbJ8e0btW2OXHskV76AWwZjj_rUf=w500-q80-k-no', badge: '시내 중심', title: 'JR 규슈 호텔 블라썸 하카타', location: '후쿠오카', rating: 4.7, reviews: 3100, oldPrice: 180000, newPrice: 110000 },
     { id: 14, category: 'hotel', image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=500&q=80', badge: '조식 포함', title: '소테츠 프레사 인 도쿄 롯폰기', location: '도쿄', rating: 4.4, reviews: 1850, oldPrice: 150000, newPrice: 89000 },

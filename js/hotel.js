@@ -37,7 +37,14 @@ function initMobileMenu() {
     const menuBtn = document.getElementById('mobileMenuBtn');
     const mobileNav = document.getElementById('mobileNav');
     if (menuBtn && mobileNav) {
-        menuBtn.addEventListener('click', () => mobileNav.classList.toggle('active'));
+        menuBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('active');
+            if (mobileNav.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
     }
 }
 

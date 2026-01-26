@@ -154,86 +154,93 @@ input {
 }
 
 /* ========== Header ========== */
+/* ========== Header ========== */
 .header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    background: transparent;
+    background: var(--surface); /* Solid White */
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-title); /* Dark Text Default */
     transition: all var(--transition-normal);
 }
 
 .header.scrolled {
-    background: var(--surface);
+    /* Background stays white, just add shadow */
     box-shadow: var(--shadow-md);
-}
-
-.header.scrolled .logo,
-.header.scrolled .nav-link,
-.header.scrolled .util-link {
-    color: var(--text-title);
+    border-bottom: none; /* Remove border when shadow appears */
 }
 
 .header.scrolled .nav-link:hover,
 .header.scrolled .nav-link.active {
     color: var(--primary);
 }
+/* Removed old .header.scrolled color overrides since default is now dark */
+
+
 
 .header-container {
     display: flex;
     align-items: center;
+    align-items: center;
     justify-content: space-between;
-    max-width: var(--container-max);
+    max-width: 100%; /* Full Width */
+    width: 100%;
     margin: 0 auto;
-    padding: 0 var(--container-padding);
+    padding: 0 60px; /* Leisurely Padding */
     height: var(--header-height);
 }
 
-/* Logo */
+/* Logo - Left Zone */
 .logo {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-weight: var(--font-weight-bold);
-    font-size: 1.25rem;
-    color: var(--surface);
-    transition: color var(--transition-fast);
+    width: 240px; /* Zone 1: Fixed Width */
+    flex-shrink: 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.05); /* Softened Divider */
+    padding-right: 40px;
+    margin-right: 40px;
 }
 
-.logo-group {
-    letter-spacing: -0.5px;
+.logo-img {
+    height: 48px; /* Adjusted height for visibility */
+    width: auto;
+    object-fit: contain;
 }
 
-.logo-divider {
-    opacity: 0.5;
-    font-weight: var(--font-weight-regular);
-}
-
-.logo-stay {
+/* Fallback Color for Text Logo (if image fails or is removed) */
+.logo {
     color: var(--primary);
 }
 
-/* Main Navigation */
+/* Old text styles removed (logo-group, logo-divider, logo-stay) */
+
+/* Main Navigation - Center Zone */
 .main-nav {
     display: flex;
     align-items: center;
+    justify-content: center; /* Center content */
+    flex: 1; /* Zone 2: Take remaining space */
+    padding: 0 80px; /* Isolation Zone */
 }
 
 .nav-list {
     display: flex;
-    gap: var(--space-xl);
+    gap: 40px; /* Increased to 40px */
 }
 
 .nav-link {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: var(--font-weight-medium);
-    color: var(--surface);
+    color: var(--text-title); /* Dark Text */
     padding: var(--space-sm) 0;
     transition: color var(--transition-fast);
+    white-space: nowrap;
 }
 
 .nav-link:hover,
@@ -246,11 +253,24 @@ input {
     height: 18px;
 }
 
-/* Header Utilities */
+/* Nav Diet: Hide text for last 3 items (eSIM, Guide, Tips) */
+.nav-item:nth-last-child(-n+3) .nav-link span {
+    display: none;
+}
+
+/* Adjust gap for mixed content if needed, but flex gap handles it well */
+
+/* Header Utilities - Right Zone */
 .header-utils {
     display: flex;
     align-items: center;
-    gap: var(--space-lg);
+    justify-content: flex-end; /* Align to right */
+    gap: 24px;
+    width: 240px; /* Zone 3: Fixed Width */
+    flex-shrink: 0;
+    border-left: 1px solid rgba(0, 0, 0, 0.05); /* Softened Divider */
+    padding-left: 40px;
+    margin-left: 40px;
 }
 
 .util-link {
@@ -259,8 +279,9 @@ input {
     gap: 6px;
     font-size: 0.875rem;
     font-weight: var(--font-weight-medium);
-    color: var(--surface);
+    color: var(--text-title); /* Dark Text */
     transition: color var(--transition-fast);
+    white-space: nowrap; /* Prevent wrapping */
 }
 
 .util-link:hover {
@@ -272,6 +293,26 @@ input {
     height: 18px;
 }
 
+/* Primary Action: Login Capsule Button */
+.login-btn {
+    background-color: var(--primary);
+    color: white !important; /* Force white text */
+    padding: 8px 24px;
+    border-radius: 999px; /* Capsule shape */
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+}
+
+.login-btn:hover {
+    background-color: var(--primary-dark);
+    box-shadow: var(--shadow-md);
+    color: white !important;
+}
+
+.login-btn .util-icon {
+    display: none; /* Hide user icon inside button for cleaner look? Or keep it? User didn't specify, but capsule usually text only. Let's keep icon for consistency or hide if crowded. Request said 'Capsule Button style'. I will keep icon but ensure style logic applies to .login-btn class. */
+}
+
 
 
 /* Mobile Menu Button */
@@ -281,7 +322,7 @@ input {
     justify-content: center;
     width: 40px;
     height: 40px;
-    color: var(--surface);
+    color: var(--text-title); /* Dark Icon */
 }
 
 .header.scrolled .mobile-menu-btn {
@@ -2458,3 +2499,39 @@ input {
     padding-bottom: 60px;
 }
 
+
+/* Responsive Fallback for < 1600px */
+@media (max-width: 1600px) {
+    .header-container {
+        max-width: 1280px; /* Revert to standard */
+    }
+
+    .header-container {
+        max-width: 1280px;
+        padding: 0 24px; /* Reduced padding */
+    }
+
+    .logo {
+        width: auto;
+        min-width: 200px;
+        border-right: none;
+        padding-right: 0;
+        margin-right: 0;
+    }
+
+    .header-utils {
+        width: auto;
+        min-width: 200px;
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .main-nav {
+        padding: 0 20px; /* Reduced isolation */
+    }
+
+    .nav-list {
+        gap: 20px; /* Reduce gap */
+    }
+}
