@@ -29,6 +29,7 @@
 
 <body class="deals-page">
     <!-- ========== Header ========== -->
+    <!-- ========== Header ========== -->
     <header class="header" id="header">
         <div class="header-container">
             <!-- 로고 -->
@@ -45,6 +46,7 @@
                             <i data-lucide="building-2" class="nav-icon"></i>
                             <span data-lang="navAccommodations">숙소 예약</span>
                         </a>
+                        <!-- Mega Dropdown: Accommodations -->
                         <div class="mega-dropdown">
                             <div class="mega-dropdown-inner">
                                 <ul class="mega-menu-list-horizontal">
@@ -63,6 +65,7 @@
                             <i data-lucide="plane" class="nav-icon"></i>
                             <span data-lang="navTravel">여행 상품</span>
                         </a>
+                        <!-- Mega Dropdown: Travel -->
                         <div class="mega-dropdown">
                             <div class="mega-dropdown-inner">
                                 <ul class="mega-menu-list-horizontal">
@@ -79,8 +82,8 @@
                         <a href="deals.html" class="nav-link active">
                             <i data-lucide="percent" class="nav-icon"></i>
                             <span data-lang="navDeals">특가 & 혜택</span>
-                            <!-- No dropdown for Deals as requested -->
                         </a>
+                        <!-- Mega Dropdown: Deals -->
                         <div class="mega-dropdown">
                             <div class="mega-dropdown-inner">
                                 <ul class="mega-menu-list-horizontal">
@@ -98,6 +101,7 @@
                             <i data-lucide="book-open" class="nav-icon"></i>
                             <span data-lang="navGuide">여행 정보</span>
                         </a>
+                        <!-- Mega Dropdown: Guide -->
                         <div class="mega-dropdown">
                             <div class="mega-dropdown-inner">
                                 <ul class="mega-menu-list-horizontal">
@@ -132,22 +136,22 @@
                 <i data-lucide="menu"></i>
             </button>
         </div>
-    </header>
 
-    <!-- 모바일 네비게이션 -->
-    <div class="mobile-nav" id="mobileNav">
-        <ul class="mobile-nav-list">
-            <li><a href="jejuhotel.html" class="mobile-nav-link" data-lang="mobileNavHotel">숙소 예약</a></li>
-            <li><a href="jejustay_life.html" class="mobile-nav-link" data-lang="mobileNavLife">한 달 살기</a></li>
-            <li><a href="activities.html" class="mobile-nav-link" data-lang="mobileNavActivity">즐길 거리</a></li>
-            <li><a href="deals.html" class="mobile-nav-link active" data-lang="mobileNavDeals">할인 쿠폰 & 특가</a></li>
-            <li><a href="esim.html" class="mobile-nav-link" data-lang="mobileNavEsim">eSIM</a></li>
-            <li><a href="travel_guide.html" class="mobile-nav-link" data-lang="mobileNavGuide">여행 가이드</a></li>
-            <li><a href="#" class="mobile-nav-link" data-lang="mobileNavTips">여행 일정 팁</a></li>
-            <li><a href="reservation_check.html" class="mobile-nav-link" data-lang="navResCheck">예약 확인</a></li>
-            <li><a href="../sub/login.html" class="mobile-nav-link" data-lang="navLogin">로그인</a></li>
-        </ul>
-    </div>
+        <!-- 모바일 네비게이션 -->
+        <div class="mobile-nav" id="mobileNav">
+            <ul class="mobile-nav-list">
+                <li><a href="jejuhotel.html" class="mobile-nav-link" data-lang="mobileNavHotel">숙소 예약</a></li>
+                <li><a href="jejustay_life.html" class="mobile-nav-link" data-lang="mobileNavLife">한 달 살기</a></li>
+                <li><a href="activities.html" class="mobile-nav-link" data-lang="mobileNavActivity">즐길 거리</a></li>
+                <li><a href="deals.html" class="mobile-nav-link active" data-lang="mobileNavDeals">할인 쿠폰 & 특가</a></li>
+                <li><a href="esim.html" class="mobile-nav-link" data-lang="mobileNavEsim">eSIM</a></li>
+                <li><a href="travel_guide.html" class="mobile-nav-link" data-lang="mobileNavGuide">여행 가이드</a></li>
+                <li><a href="#" class="mobile-nav-link" data-lang="mobileNavTips">여행 일정 팁</a></li>
+                <li><a href="#" class="mobile-nav-link" data-lang="navResCheck">예약 확인</a></li>
+                <li><a href="../sub/login.html" class="mobile-nav-link" data-lang="navLogin">로그인</a></li>
+            </ul>
+        </div>
+    </header>
 
     <main>
         <!-- ========== Hero Section (Glassmorphism) ========== -->
@@ -271,6 +275,7 @@
     <script>
         lucide.createIcons();
     </script>
+    <script src="../js/stagger_nav.js"></script>
 </body>
 
 </html>

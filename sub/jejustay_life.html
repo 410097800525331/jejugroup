@@ -40,10 +40,11 @@
                 <ul class="nav-list">
                     <!-- 1. Accommodations -->
                     <li class="nav-item">
-                        <a href="jejuhotel.html" class="nav-link">
+                        <a href="jejuhotel.html" class="nav-link active">
                             <i data-lucide="building-2" class="nav-icon"></i>
                             <span data-lang="navAccommodations">숙소 예약</span>
                         </a>
+                        <!-- Mega Dropdown: Accommodations -->
                         <div class="mega-dropdown">
                             <div class="mega-dropdown-inner">
                                 <ul class="mega-menu-list-horizontal">
@@ -62,6 +63,7 @@
                             <i data-lucide="plane" class="nav-icon"></i>
                             <span data-lang="navTravel">여행 상품</span>
                         </a>
+                        <!-- Mega Dropdown: Travel -->
                         <div class="mega-dropdown">
                             <div class="mega-dropdown-inner">
                                 <ul class="mega-menu-list-horizontal">
@@ -78,8 +80,8 @@
                         <a href="deals.html" class="nav-link">
                             <i data-lucide="percent" class="nav-icon"></i>
                             <span data-lang="navDeals">특가 & 혜택</span>
-                            <!-- No dropdown for Deals as requested -->
                         </a>
+                        <!-- Mega Dropdown: Deals -->
                         <div class="mega-dropdown">
                             <div class="mega-dropdown-inner">
                                 <ul class="mega-menu-list-horizontal">
@@ -97,6 +99,7 @@
                             <i data-lucide="book-open" class="nav-icon"></i>
                             <span data-lang="navGuide">여행 정보</span>
                         </a>
+                        <!-- Mega Dropdown: Guide -->
                         <div class="mega-dropdown">
                             <div class="mega-dropdown-inner">
                                 <ul class="mega-menu-list-horizontal">
@@ -135,15 +138,14 @@
         <!-- 모바일 네비게이션 -->
         <div class="mobile-nav" id="mobileNav">
             <ul class="mobile-nav-list">
-                <li><a href="jejuhotel.html" class="mobile-nav-link" data-lang="mobileNavHotel">숙소 예약</a></li>
-                <li><a href="jejustay_life.html" class="mobile-nav-link active" data-lang="mobileNavLife">한 달 살기</a>
-                </li>
-                <li><a href="activities.html" class="mobile-nav-link" data-lang="mobileNavActivity">즐길 거리</a></li>
-                <li><a href="deals.html" class="mobile-nav-link" data-lang="mobileNavDeals">할인 쿠폰 & 특가</a></li>
+                <li><a href="jejuhotel.html" class="mobile-nav-link active" data-lang="mobileNavHotel">숙소 예약</a></li>
+                <li><a href="jejustay_life.html" class="mobile-nav-link" data-lang="mobileNavLife">한 달 살기</a></li>
+                <li><a href="#" class="mobile-nav-link" data-lang="mobileNavActivity">즐길 거리</a></li>
+                <li><a href="#" class="mobile-nav-link" data-lang="mobileNavDeals">할인 쿠폰 & 특가</a></li>
                 <li><a href="esim.html" class="mobile-nav-link" data-lang="mobileNavEsim">eSIM</a></li>
                 <li><a href="travel_guide.html" class="mobile-nav-link" data-lang="mobileNavGuide">여행 가이드</a></li>
                 <li><a href="#" class="mobile-nav-link" data-lang="mobileNavTips">여행 일정 팁</a></li>
-                <li><a href="reservation_check.html" class="mobile-nav-link" data-lang="navResCheck">예약 확인</a></li>
+                <li><a href="#" class="mobile-nav-link" data-lang="navResCheck">예약 확인</a></li>
                 <li><a href="../sub/login.html" class="mobile-nav-link" data-lang="navLogin">로그인</a></li>
             </ul>
         </div>
@@ -177,7 +179,7 @@
                     <div class="search-form-new" id="searchFormLongStay">
                         <div class="global-search-container">
                             <div class="global-search-bar">
-                                <!-- 1. 여행지 (Destination) -->
+                                <!-- 1. Destination -->
                                 <div class="search-item destination-item-new" id="destinationFieldLarge">
                                     <div class="item-icon">
                                         <i data-lucide="map-pin"></i>
@@ -190,7 +192,8 @@
                                     </div>
 
                                     <!-- 여행지 드롭다운 -->
-                                    <div class="destination-dropdown" id="destinationDropdown">
+                                    <div class="destination-dropdown" id="destinationDropdown"
+                                        style="top: 100%; left: 0; margin-top: 16px;">
                                         <div class="dropdown-columns"
                                             style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
                                             <!-- Column 1: Japan / China -->
@@ -384,9 +387,7 @@
 
                                 <div class="search-divider"></div>
 
-                                <div class="search-divider"></div>
-
-                                <!-- 2. 일정 (Dates) -->
+                                <!-- 2. Date -->
                                 <div class="search-item date-item-new" id="checkInField">
                                     <div class="item-icon">
                                         <i data-lucide="calendar"></i>
@@ -401,21 +402,39 @@
                                     </div>
 
                                     <!-- 캘린더 팝업 -->
-                                    <div class="Popup RangePicker RangePicker--checkIn" id="calendarPopup">
-                                        <div class="Popup__content">
+                                    <div class="Popup RangePicker RangePicker--checkIn RangePicker--with-dayuse"
+                                        id="calendarPopup" role="dialog" aria-modal="true" aria-label="체크인 날짜 선택 달력"
+                                        style="left: 0; top: 120%;">
+                                        <div class="Popup__content Popup__content_Occupancy">
+                                            <span class="ScreenReaderOnly">엔터 키를 눌러 캘린더를 여세요. 방향키를 사용해 체크인 및 체크아웃
+                                                날짜를 탐색할 수 있습니다.</span>
                                             <div class="RangePicker-Header">
-                                                <div class="RangePicker-NavPrev"><button class="NavBtn"
-                                                        id="prevMonth"><i data-lucide="chevron-left"></i></button></div>
-                                                <div class="RangePicker-Tabs">
-                                                    <div class="RangePicker-Tab"><button
-                                                            class="TabBtn active">캘린더</button>
+                                                <div class="RangePicker-NavPrev">
+                                                    <button type="button" class="NavBtn NavBtn--prev" id="prevMonth"
+                                                        aria-label="Previous Month">
+                                                        <i data-lucide="chevron-left"></i>
+                                                    </button>
+                                                </div>
+                                                <div role="tablist" class="RangePicker-Tabs">
+                                                    <div class="RangePicker-Tab Item">
+                                                        <button role="tab" aria-selected="true" id="tab-calendar"
+                                                            class="TabBtn active" data-lang="calTitle">캘린더</button>
+                                                        <div class="TabIndicator"></div>
+                                                    </div>
+                                                    <div class="RangePicker-Tab Item">
+                                                        <button role="tab" aria-selected="false" id="tab-flexible"
+                                                            class="TabBtn" data-lang="calFlexible">날짜 미정</button>
                                                     </div>
                                                 </div>
-                                                <div class="RangePicker-NavNext"><button class="NavBtn"
-                                                        id="nextMonth"><i data-lucide="chevron-right"></i></button>
+                                                <div class="RangePicker-NavNext">
+                                                    <button type="button" class="NavBtn NavBtn--next" id="nextMonth"
+                                                        aria-label="Next Month">
+                                                        <i data-lucide="chevron-right"></i>
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <div class="RangePicker-Panel active">
+
+                                            <div role="tabpanel" id="panel-calendar" class="RangePicker-Panel active">
                                                 <div class="DayPicker" id="dayPickerContainer">
                                                     <div class="DayPicker-wrapper">
                                                         <div class="DayPicker-Months" id="calendarMonths"></div>
@@ -426,10 +445,28 @@
                                                         style="color: var(--error); font-size: 0.9rem; display: none;">*
                                                         최소 14박 이상 선택해주세요</span>
                                                     <div style="display: flex; gap: 8px;">
-                                                        <button class="ActionBtn ActionBtn--clear" id="btn-clear"
-                                                            data-lang="btnReset">초기화</button>
-                                                        <button class="ActionBtn ActionBtn--confirm" id="btn-confirm"
-                                                            data-lang="btnConfirm">확인</button>
+                                                        <button type="button" class="ActionBtn ActionBtn--clear"
+                                                            id="btn-clear">
+                                                            <span data-lang="btnReset">선택 해제</span>
+                                                        </button>
+                                                        <button type="button" class="ActionBtn ActionBtn--confirm"
+                                                            id="btn-confirm">
+                                                            <span data-lang="btnConfirm">확인</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div role="tabpanel" id="panel-flexible" class="RangePicker-Panel">
+                                                <div class="Flexible-Content">
+                                                    <h3 data-lang="calFlexTitle">투숙 기간은 얼마나 되시나요?</h3>
+                                                    <div class="Flexible-Options">
+                                                        <button class="Flexible-Option" data-val="3"
+                                                            data-lang="calFlex3">3박</button>
+                                                        <button class="Flexible-Option" data-val="7"
+                                                            data-lang="calFlex7">1주일</button>
+                                                        <button class="Flexible-Option" data-val="30"
+                                                            data-lang="calFlex30">1개월</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -439,9 +476,7 @@
 
                                 <div class="search-divider"></div>
 
-                                <!-- 2. 일정 (Dates) -->
-
-                                <!-- 3. 여행자 (Guests) -->
+                                <!-- 3. Guests -->
                                 <div class="search-item guest-item-new" id="guestFieldLarge">
                                     <div class="item-icon">
                                         <i data-lucide="users"></i>
@@ -454,7 +489,7 @@
                                     </div>
 
                                     <!-- 인원 선택 팝업 -->
-                                    <div class="guest-popup-new" id="guestPopupLarge">
+                                    <div class="guest-popup-new" id="guestPopupLarge" style="left: -20px; top: 120%;">
                                         <div class="guest-row-new">
                                             <div class="guest-info-new">
                                                 <span class="guest-type-new" data-lang="guestRooms">객실</span>
@@ -472,7 +507,8 @@
                                         <div class="guest-row-new">
                                             <div class="guest-info-new">
                                                 <span class="guest-type-new" data-lang="guestAdults">성인</span>
-                                                <span class="guest-desc-new" data-lang="guestAdultsDesc">18세 이상</span>
+                                                <span class="guest-desc-new" data-lang="guestAdultsDesc">18세
+                                                    이상</span>
                                             </div>
                                             <div class="guest-counter-new">
                                                 <button class="counter-btn-new minus" data-target="adults">
@@ -503,16 +539,75 @@
                                     </div>
                                 </div>
 
-                                <!-- Divider -->
                                 <div class="search-divider"></div>
 
-                                <!-- 4. 검색 버튼 (Text Button) -->
+                                <!-- 4. Options -->
+                                <div class="search-item options-item-new" id="optionsFieldLarge">
+                                    <div class="item-icon">
+                                        <i data-lucide="sliders-horizontal"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <label class="item-label">필수 옵션</label>
+                                        <div class="options-display-text" id="optionsSummary"
+                                            style="font-size: 0.95rem; font-weight: 700; color: var(--text-title); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 140px;">
+                                            선택사항 없음
+                                        </div>
+                                    </div>
+
+                                    <!-- 옵션 선택 팝업 -->
+                                    <div class="options-popup-new" id="optionsPopupLarge"
+                                        style="display: none; position: absolute; top: 120%; right: 0; width: 320px; background: #fff; padding: 24px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 100;">
+                                        <div class="options-grid"
+                                            style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                                            <label class="option-check-item"
+                                                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                                                <span class="option-name">주방</span>
+                                                <input type="checkbox" class="option-checkbox" value="주방"
+                                                    style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                            </label>
+                                            <label class="option-check-item"
+                                                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                                                <span class="option-name">세탁기</span>
+                                                <input type="checkbox" class="option-checkbox" value="세탁기"
+                                                    style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                            </label>
+                                            <label class="option-check-item"
+                                                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                                                <span class="option-name">풀옵션 주방</span>
+                                                <input type="checkbox" class="option-checkbox" value="풀옵션 주방"
+                                                    style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                            </label>
+                                            <label class="option-check-item"
+                                                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                                                <span class="option-name">세탁기/건조기</span>
+                                                <input type="checkbox" class="option-checkbox" value="세탁기/건조기"
+                                                    style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                            </label>
+                                            <label class="option-check-item"
+                                                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                                                <span class="option-name">업무용 데스크</span>
+                                                <input type="checkbox" class="option-checkbox" value="업무용 데스크"
+                                                    style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                            </label>
+                                            <label class="option-check-item"
+                                                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                                                <span class="option-name">전용 주차장</span>
+                                                <input type="checkbox" class="option-checkbox" value="전용 주차장"
+                                                    style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 5. Search Button Wrapper -->
                                 <div class="search-btn-wrapper">
-                                    <button class="search-btn-text" id="searchBtn">
-                                        <span data-lang="searchBtn">검색</span>
+                                    <button class="search-btn-pill-expanded" id="searchBtn">
+                                        <i data-lucide="search"></i>
+                                        <span>검색</span>
                                     </button>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -812,6 +907,7 @@
     <script src="../js/jejustay_life.js"></script>
     <script src="../js/FAB.js"></script>
     <script src="../js/chatbot.js"></script>
+    <script src="../js/stagger_nav.js"></script>
 </body>
 
 </html>

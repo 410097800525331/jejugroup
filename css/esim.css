@@ -48,27 +48,72 @@
     align-items: center;
 }
 
-.nav-link {
-    position: relative;
-}
-
+/* ========== Staggered Text Animation Styles ========== */
 .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background-color: #FF5000;
-    transition: width 0.3s ease;
-}
-
-.nav-item:hover .nav-link::after {
-    width: 100%;
+    display: none !important;
 }
 
 .nav-item:hover .nav-link {
-    color: #FF5000;
+    color: inherit;
+}
+
+.stagger-wrapper {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.stagger-original,
+.stagger-clone {
+    display: block;
+}
+
+.stagger-original {
+    position: relative;
+}
+
+.stagger-clone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.stagger-char {
+    display: inline-block;
+    will-change: transform;
+    transition: transform 0s linear; 
+}
+
+.stagger-original .stagger-char {
+    transform: translateY(0);
+}
+
+.stagger-clone .stagger-char {
+    transform: translateY(100%);
+}
+
+.nav-link.is-animating .stagger-char {
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.nav-link.is-animating .stagger-original .stagger-char {
+    transform: translateY(-100%);
+}
+
+.nav-link.is-animating .stagger-clone .stagger-char {
+    transform: translateY(0);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .mega-dropdown {
@@ -172,16 +217,71 @@ body {
 }
 
 /* ========== Header (Synced with Hotel) ========== */
+/* ========== Header (Synced with Hotel - Glassmorphism) ========== */
 .header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border-light);
-    color: var(--text-title);
+    background: rgba(255, 255, 255, 0.02); /* Subtle Glass Initially */
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #FFFFFF; /* White Text Initially */
     transition: all var(--transition-normal);
+}
+
+.header.scrolled {
+    background: rgba(255, 255, 255, 0.8); /* More transparent white */
+    backdrop-filter: blur(20px); /* Stronger blur */
+    box-shadow: var(--shadow-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Glass Edge */
+    color: var(--text-title);
+}
+
+/* Update Link Colors for Glass Header */
+.header .nav-link,
+.header .util-link,
+.header .mobile-menu-btn {
+    color: #FFFFFF; /* Force White Initially */
+}
+
+.header.scrolled .nav-link,
+.header.scrolled .util-link,
+.header.scrolled .mobile-menu-btn {
+    color: var(--text-title); /* Dark on Scroll */
+}
+
+.header.scrolled .nav-link:hover,
+.header.scrolled .util-link:hover {
+    color: var(--primary);
+}
+
+/* Logo handling for dark/light backgrounds */
+.logo {
+    display: flex;
+    align-items: center;
+    width: 240px;
+    flex-shrink: 0;
+    padding-right: 40px;
+    margin-right: 40px;
+}
+
+.logo-img {
+    filter: brightness(0) invert(1); /* Force White Logo Initially */
+    transition: filter 0.3s ease;
+}
+
+.header.scrolled .logo-img {
+    filter: none; /* Original Logo Color on Scroll */
+}
+
+/* Hide borders that rely on dark text initially */
+.logo {
+    border-right: 1px solid rgba(255,255,255,0.2);
+}
+.header.scrolled .logo {
+    border-right: none;
 }
 
 .header-container {

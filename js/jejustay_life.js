@@ -31,7 +31,14 @@ document.addEventListener('DOMContentLoaded', function() {
     initDestinationDropdown(); // 기존 목적지 검색 유지
     initCalendar(); // 롱스테이 전용 로직 포함
     initGuestSelector(); // [New] Guest Selector
+    initOptionsPopup(); // [New] Options Selector
     initMobileSearch();
+    
+    // Global click listener to close popups when clicking outside
+    // (Relies on stopPropagation in triggers/popups)
+    document.addEventListener('click', () => {
+        closeAllPopups();
+    });
     
     // GSAP Animations
     initStandardsAnimation();
@@ -217,16 +224,20 @@ function closeAllPopups(exceptId = null) {
     const popups = {
         'destinationDropdown': document.getElementById('destinationDropdown'),
         'calendarPopup': document.getElementById('calendarPopup'),
-        'guestPopupLarge': document.getElementById('guestPopupLarge')
+        'guestPopupLarge': document.getElementById('guestPopupLarge'),
+        'optionsPopupLarge': document.getElementById('optionsPopupLarge')
     };
     
     for (const [id, el] of Object.entries(popups)) {
-        if (id !== exceptId && el && el.classList.contains('active')) {
+        if (id !== exceptId && el) {
             el.classList.remove('active');
+            if (id === 'optionsPopupLarge') el.style.display = 'none'; // Handle inline style
+            
             // Remove active state from parent field if needed
              if (id === 'guestPopupLarge') document.getElementById('guestFieldLarge')?.classList.remove('active');
              if (id === 'calendarPopup') document.getElementById('checkInField')?.classList.remove('active');
              if (id === 'destinationDropdown') document.getElementById('destinationFieldLarge')?.classList.remove('active');
+             if (id === 'optionsPopupLarge') document.getElementById('optionsFieldLarge')?.classList.remove('active');
         }
     }
 }
@@ -295,6 +306,59 @@ function updateGuestSummary() {
 }
 
 
+/* ========== [New] Options Selector ========== */
+function initOptionsPopup() {
+    const optionsField = document.getElementById('optionsFieldLarge');
+    const optionsPopup = document.getElementById('optionsPopupLarge');
+    const optionsSummary = document.getElementById('optionsSummary');
+
+    if (optionsField && optionsPopup) {
+        optionsField.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Check visibility by style since we use inline display:none
+            const isActive = optionsPopup.style.display === 'block'; 
+            closeAllPopups('optionsPopupLarge');
+            
+            if (!isActive) {
+                optionsPopup.style.display = 'block';
+                optionsField.classList.add('active');
+                // Use setTimeout to allow click propagation to finish before adding document listener if needed?
+                // But we use stopPropagation on popup click, so standard matching logic in closeAllPopups handles "others".
+            } else {
+                optionsPopup.style.display = 'none';
+                optionsField.classList.remove('active');
+            }
+        });
+
+        optionsPopup.addEventListener('click', (e) => e.stopPropagation());
+
+        // Checkbox Logic
+        const checkboxes = optionsPopup.querySelectorAll('.option-checkbox');
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                updateOptionsSummary();
+            });
+        });
+
+        function updateOptionsSummary() {
+            const checked = Array.from(optionsPopup.querySelectorAll('.option-checkbox:checked')).map(cb => cb.value);
+            if (checked.length === 0) {
+                optionsSummary.textContent = "선택사항 없음";
+                optionsSummary.style.color = "#999";
+            } else {
+                // Truncate if too long?
+                if(checked.length > 2) {
+                     optionsSummary.textContent = `${checked[0]}, ${checked[1]} 외 ${checked.length - 2}`;
+                } else {
+                     optionsSummary.textContent = checked.join(', ');
+                }
+                optionsSummary.style.color = "var(--text-title)";
+            }
+        }
+    }
+}
+
+
 /* ========== Mobile Search Interaction ========== */
 function initMobileSearch() {
     const summaryView = document.getElementById('mobileSearchSummary');
@@ -329,32 +393,89 @@ function initMobileSearch() {
 // 3. Update closeAllPopups
 
 
-/* ========== Long Stay Calendar Logic ========== */
+/* ========== Long Stay Calendar Logic (Ported from hotel.js with Long Stay Validation) ========== */
 function initCalendar() {
     const calendarPopup = document.getElementById('calendarPopup');
-    const checkInField = document.getElementById('checkInField');
-    // const checkOutField = document.getElementById('checkOutField'); // Merged
-    const dateFieldGroup = document.getElementById('checkInField'); // Use the single field as group
+    const dateFieldContainer = document.getElementById('checkInField'); 
 
-    function toggleCalendar(event) {
-        event.stopPropagation();
+    if (!calendarPopup || !dateFieldContainer) return;
+
+    // 1. Toggle Calendar
+    dateFieldContainer.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
         const isActive = calendarPopup.classList.contains('active');
         closeAllPopups('calendarPopup');
 
         if (!isActive) {
+            // Synch temp state on open
+            calendarState.tempCheckIn = calendarState.checkIn;
+            calendarState.tempCheckOut = calendarState.checkOut;
+            
             calendarPopup.classList.add('active');
-            dateFieldGroup.classList.add('active');
-            renderCalendar();
+            dateFieldContainer.classList.add('active');
+            renderCalendar(); 
         } else {
             calendarPopup.classList.remove('active');
-            dateFieldGroup.classList.remove('active');
+            dateFieldContainer.classList.remove('active');
+        }
+    });
+
+    // 2. Prevent propagation
+    calendarPopup.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    // 2-1. Tab Switching Logic (Added from hotel.js)
+    const tabCalendar = document.getElementById('tab-calendar');
+    const tabFlexible = document.getElementById('tab-flexible');
+    const panelCalendar = document.getElementById('panel-calendar');
+    const panelFlexible = document.getElementById('panel-flexible');
+
+    function switchTab(targetTab) {
+        [tabCalendar, tabFlexible].forEach(t => {
+            if(t) {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            }
+        });
+        [panelCalendar, panelFlexible].forEach(p => {
+            if(p) {
+                p.classList.remove('active');
+                p.style.display = 'none';
+            }
+        });
+
+        if(targetTab) {
+            targetTab.classList.add('active');
+            targetTab.setAttribute('aria-selected', 'true');
+            
+            if (targetTab === tabCalendar && panelCalendar) {
+                panelCalendar.classList.add('active');
+                panelCalendar.style.display = 'block';
+            } else if (targetTab === tabFlexible && panelFlexible) {
+                panelFlexible.classList.add('active');
+                panelFlexible.style.display = 'block';
+            }
         }
     }
 
-    checkInField?.addEventListener('click', toggleCalendar);
-    calendarPopup?.addEventListener('click', (e) => e.stopPropagation());
+    if(tabCalendar) tabCalendar.addEventListener('click', (e) => { e.stopPropagation(); switchTab(tabCalendar); });
+    if(tabFlexible) tabFlexible.addEventListener('click', (e) => { e.stopPropagation(); switchTab(tabFlexible); });
 
-    // Navigation
+    // 2-2. Flexible Option Logic
+    document.querySelectorAll('.Flexible-Option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.Flexible-Option').forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            
+            // For logic consistency: maybe set a state? 
+            // Currently just UI selection as per hotel.js
+        });
+    });
+
+    // 3. Navigation
     document.getElementById('prevMonth')?.addEventListener('click', (e) => {
         e.stopPropagation();
         currentMonth.setMonth(currentMonth.getMonth() - 1);
@@ -367,7 +488,7 @@ function initCalendar() {
         renderCalendar();
     });
 
-    // Actions
+    // 4. Clear
     document.getElementById('btn-clear')?.addEventListener('click', (e) => {
         e.stopPropagation();
         calendarState = { checkIn: null, checkOut: null, tempCheckIn: null, tempCheckOut: null };
@@ -377,9 +498,11 @@ function initCalendar() {
         updateWarning(null);
     });
 
+    // 5. Confirm (With Long Stay Validation)
     document.getElementById('btn-confirm')?.addEventListener('click', (e) => {
         e.stopPropagation();
-        // Validation Check on Confirm
+        
+        // Validation: Min Stay Check
         if (calendarState.tempCheckIn && calendarState.tempCheckOut) {
             const days = (calendarState.tempCheckOut - calendarState.tempCheckIn) / ONE_DAY_MS;
             if (days < MIN_STAY_DAYS) {
@@ -388,20 +511,13 @@ function initCalendar() {
             }
         }
         
+        // Confirm Logic
         calendarState.checkIn = calendarState.tempCheckIn;
         calendarState.checkOut = calendarState.tempCheckOut;
         closeAllPopups();
         
-        // 여기에 "패키지 요금 적용" 로직 시뮬레이션
+        // Update UI/Price
         checkPackageRate();
-    });
-
-    // Close when clicking outside needs to check the new structure
-    document.addEventListener('click', (e) => {
-        if (calendarPopup?.classList.contains('active') && !checkInField?.contains(e.target)) {
-            calendarPopup.classList.remove('active');
-            checkInField?.classList.remove('active');
-        }
     });
 
     // Initial warning update
@@ -424,15 +540,8 @@ function checkPackageRate() {
     if (calendarState.checkIn && calendarState.checkOut) {
         const days = (calendarState.checkOut - calendarState.checkIn) / ONE_DAY_MS;
         if (days >= 28) {
-            // 한 달 살기 패키지 적용 알림 (간단히 Alert 또는 UI 변경)
-            // console.log("Monthly Package Rate Applied");
-            // 실제 구현에서는 가격 정보를 업데이트하겠지만, 여기서는 데모용으로 Alert 대신
-            // 검색 버튼 텍스트를 변경해보겠습니다.
             const searchBtn = document.getElementById('searchBtn');
             if(searchBtn) {
-                // Icon button style update? Or assume user wants visual feedback
-                // Since it's an icon button now, maybe change color or tooltip?
-                // searchBtn.innerHTML = `<span>한 달 살기 특가 검색 (${days}박)</span>`; // No text space
                 searchBtn.style.background = 'linear-gradient(45deg, #FF5000, #FF8A00)';
                 searchBtn.title = `한 달 살기 특가 적용 (${days}박)`;
             }
@@ -440,10 +549,11 @@ function checkPackageRate() {
     }
 }
 
-/* ========== Rendering Logic (Copied & Adapted) ========== */
+/* ========== Rendering Logic (Agoda Style) ========== */
 function renderCalendar() {
     const container = document.getElementById('calendarMonths');
     if (!container) return;
+
     container.innerHTML = '';
 
     const leftDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
@@ -453,11 +563,13 @@ function renderCalendar() {
         const monthDiv = document.createElement('div');
         monthDiv.className = 'DayPicker-Month';
         
+        // Caption
         const caption = document.createElement('div');
         caption.className = 'DayPicker-Caption';
         caption.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
         monthDiv.appendChild(caption);
 
+        // Weekdays
         const weekdays = document.createElement('div');
         weekdays.className = 'DayPicker-Weekdays';
         const daysRaw = ['월', '화', '수', '목', '금', '토', '일'];
@@ -469,6 +581,7 @@ function renderCalendar() {
         });
         monthDiv.appendChild(weekdays);
 
+        // Body (Days)
         const body = document.createElement('div');
         body.className = 'DayPicker-Body';
         body.innerHTML = generateMonthDaysHTML(date);
@@ -489,143 +602,160 @@ function generateMonthDaysHTML(dateObj) {
     const todayTs = new Date().setHours(0,0,0,0);
     let html = '';
 
+    // Empty cells
     for(let i=0; i<startOffset; i++) {
         html += `<div class="DayPicker-Day DayPicker-Day--outside"></div>`;
     }
 
+    // Days
     for(let d=1; d<=lastDate; d++) {
         const currentTs = new Date(year, month, d).getTime();
         let classes = ['DayPicker-Day'];
-        let ariaDisabled = 'false';
-
+        
+        // Disabled
         if (currentTs < todayTs) {
             classes.push('DayPicker-Day--disabled');
-            ariaDisabled = 'true';
         }
 
-        // Highlight Today
+        // Today
         if (currentTs === todayTs) {
             classes.push('DayPicker-Day--today');
         }
 
+        // Selection Logic
         const checkIn = calendarState.tempCheckIn || calendarState.checkIn;
         const checkOut = calendarState.tempCheckOut || calendarState.checkOut;
 
         if (checkIn && currentTs === checkIn) {
             classes.push('DayPicker-Day--selected', 'DayPicker-Day--checkIn');
-            if (checkOut || hoverDate > checkIn) classes.push('DayPicker-Day--hasRange');
+            classes.push('DayPicker-Day--hasRange');
         }
         if (checkOut && currentTs === checkOut) {
             classes.push('DayPicker-Day--selected', 'DayPicker-Day--checkOut');
-            if (checkIn) classes.push('DayPicker-Day--hasRange');
+            classes.push('DayPicker-Day--hasRange');
         }
+        
+        // Range
         if (checkIn && checkOut && currentTs > checkIn && currentTs < checkOut) {
             classes.push('DayPicker-Day--inRange');
         }
 
-        html += `<div class="${classes.join(' ')}" role="gridcell" 
-                 data-timestamp="${currentTs}" data-day="${d}">${d}</div>`;
+        // Hover Range (Server-side rendering part of logic, mostly handled by JS event)
+        if (checkIn && !checkOut && hoverDate) {
+            if (currentTs > checkIn && currentTs <= hoverDate) {
+                classes.push('DayPicker-Day--hoverRange');
+            }
+        }
+
+        html += `<div class="${classes.join(' ')}" 
+                 data-timestamp="${currentTs}" 
+                 data-day="${d}">${d}</div>`;
     }
     return html;
 }
 
 function attachDayListeners() {
     const days = document.querySelectorAll('.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)');
+    
     days.forEach(day => {
+        // Click
         day.addEventListener('click', (e) => {
             e.stopPropagation();
             const ts = parseInt(day.dataset.timestamp);
             handleDateClick(ts);
         });
-        day.addEventListener('mouseenter', () => {
-             const ts = parseInt(day.dataset.timestamp);
-             handleDateHover(ts);
+
+        // Hover (MouseEnter)
+        day.addEventListener('mouseenter', (e) => {
+            const ts = parseInt(day.dataset.timestamp);
+            const { tempCheckIn, tempCheckOut } = calendarState;
+
+            // Only effective if checkIn is selected but checkOut is not
+            if (tempCheckIn && !tempCheckOut) {
+                if (ts > tempCheckIn) {
+                    hoverDate = ts;
+                    updateHoverEffect(); 
+                }
+            }
         });
+    });
+
+    // Mouse Leave Container
+    const calendarContainer = document.getElementById('dayPickerContainer');
+    if (calendarContainer) {
+        calendarContainer.onmouseleave = () => {
+            if (hoverDate) {
+                hoverDate = null;
+                updateHoverEffect();
+            }
+        };
+    }
+}
+
+// Optimized Hover Effect
+function updateHoverEffect() {
+    const { tempCheckIn, tempCheckOut } = calendarState;
+    const days = document.querySelectorAll('.DayPicker-Day');
+
+    days.forEach(day => {
+        const ts = parseInt(day.dataset.timestamp);
+        
+        // Reset hover class
+        day.classList.remove('DayPicker-Day--hoverRange');
+
+        // Apply new hover class
+        if (tempCheckIn && !tempCheckOut && hoverDate) {
+            if (ts > tempCheckIn && ts <= hoverDate) {
+                day.classList.add('DayPicker-Day--hoverRange');
+            }
+        }
     });
 }
 
 function handleDateClick(timestamp) {
-    if (!calendarState.tempCheckIn || (calendarState.tempCheckIn && calendarState.tempCheckOut)) {
+    const { tempCheckIn, tempCheckOut } = calendarState;
+
+    // Case 1: Start new selection
+    if (!tempCheckIn || (tempCheckIn && tempCheckOut)) {
         calendarState.tempCheckIn = timestamp;
         calendarState.tempCheckOut = null;
-        updateWarning(null); // Reset warning
-    } else {
-        if (timestamp < calendarState.tempCheckIn) {
+        hoverDate = null;
+    } 
+    // Case 2: Complete selection
+    else {
+        if (timestamp < tempCheckIn) {
+            // New Start Date
             calendarState.tempCheckIn = timestamp;
-        } else if (timestamp === calendarState.tempCheckIn) {
-            return;
+            hoverDate = null;
+        } else if (timestamp === tempCheckIn) {
+            return; 
         } else {
+            // End Date
             calendarState.tempCheckOut = timestamp;
-            
-            // Check Warning immediately
-            const diff = (timestamp - calendarState.tempCheckIn) / ONE_DAY_MS;
-            if (diff < MIN_STAY_DAYS) {
-                updateWarning(`* 최소 ${MIN_STAY_DAYS}박 이상 선택해야 합니다 (현재 ${diff}박)`);
-                // 선택은 허용하되 경고 표시 (Confirm 시 막음)
-            } else {
-                updateWarning(null);
-                if (diff >= 28) {
-                    updateWarning(`* 한 달 살기 패키지 요금이 적용됩니다 (${diff}박)`);
-                     document.getElementById('stayWarning').style.color = 'var(--primary)'; // Positive Color
-                }
-            }
+            hoverDate = null;
         }
     }
     
-    // Update UI
-    updateDateDisplay('checkIn', calendarState.tempCheckIn ? new Date(calendarState.tempCheckIn) : null);
-    updateDateDisplay('checkOut', calendarState.tempCheckOut ? new Date(calendarState.tempCheckOut) : null);
+    updateResults();
     renderCalendar();
 }
 
-function handleDateHover(timestamp) {
-    if (calendarState.tempCheckIn && !calendarState.tempCheckOut) {
-        hoverDate = timestamp;
-        updateHoverStyles();
-    }
-}
+function updateResults() {
+    if (calendarState.tempCheckIn) updateDateDisplay('checkIn', new Date(calendarState.tempCheckIn));
+    else updateDateDisplay('checkIn', null);
 
-function updateHoverStyles() {
-    const days = document.querySelectorAll('.DayPicker-Day:not(.DayPicker-Day--outside):not(.DayPicker-Day--disabled)');
-    const start = calendarState.tempCheckIn;
-    const currentHover = hoverDate;
-
-    days.forEach(dayEl => {
-        dayEl.classList.remove('DayPicker-Day--inRange', 'DayPicker-Day--previewEnd', 'DayPicker-Day--hasRange');
-        if (dayEl.classList.contains('DayPicker-Day--checkIn')) dayEl.classList.add('DayPicker-Day--hasRange');
-
-        const dayTs = parseInt(dayEl.dataset.timestamp);
-        if (start && currentHover && dayTs > start && dayTs <= currentHover) {
-             if (dayTs < currentHover) dayEl.classList.add('DayPicker-Day--inRange');
-             else if (dayTs === currentHover) dayEl.classList.add('DayPicker-Day--previewEnd');
-        }
-    });
+    if (calendarState.tempCheckOut) updateDateDisplay('checkOut', new Date(calendarState.tempCheckOut));
+    else updateDateDisplay('checkOut', null);
 }
 
 function updateDateDisplay(type, dateObj) {
     const displayId = type === 'checkIn' ? 'checkInDisplay' : 'checkOutDisplay';
-    const dayId = type === 'checkIn' ? 'checkInDay' : 'checkOutDay';
-    const lang = document.documentElement.lang || 'ko';
-    
-    // Localized Day Names
-    const dayNames = lang === 'en' 
-        ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-        : ['일', '월', '화', '수', '목', '금', '토'];
-
     const elDisplay = document.getElementById(displayId);
-    const elDay = document.getElementById(dayId);
     
-    if (!elDisplay || !elDay) return;
+    if (!elDisplay) return;
 
     if (!dateObj) {
-        // Fallback Text (Localized)
-        if (lang === 'en') {
-             elDisplay.textContent = 'Select Date';
-             elDay.textContent = type === 'checkIn' ? 'Check-in' : 'Check-out';
-        } else {
-             elDisplay.textContent = '날짜 선택';
-             elDay.textContent = type === 'checkIn' ? '체크인' : '체크아웃';
-        }
+        elDisplay.textContent = '날짜 선택';
         return;
     }
 
@@ -634,30 +764,9 @@ function updateDateDisplay(type, dateObj) {
     const d = String(dateObj.getDate()).padStart(2, '0');
     
     elDisplay.textContent = `${y}-${m}-${d}`;
-    elDay.textContent = dayNames[dateObj.getDay()];
 }
 
-function closeAllPopups(exceptId) {
-    const popups = ['calendarPopup', 'amenityDropdown', 'destinationDropdown']; // Add others if needed
-    popups.forEach(id => {
-        if (id !== exceptId) {
-            const p = document.getElementById(id);
-            if(p) p.classList.remove('active');
-        }
-    });
 
-    // Remove active state from trigger fields if nothing is open
-    if (!exceptId) {
-        document.querySelectorAll('.date-field-group').forEach(f => f.classList.remove('active'));
-        document.getElementById('amenityField')?.classList.remove('active');
-        document.getElementById('destinationFieldLarge')?.classList.remove('active');
-    } else {
-        // Close others' triggers when opening one
-        if (exceptId !== 'calendarPopup') document.querySelectorAll('.date-field-group').forEach(f => f.classList.remove('active'));
-        if (exceptId !== 'amenityDropdown') document.getElementById('amenityField')?.classList.remove('active');
-        if (exceptId !== 'destinationDropdown') document.getElementById('destinationFieldLarge')?.classList.remove('active');
-    }
-}
 
 /* ========== State Management (v2.0) ========== */
 const AppState = {

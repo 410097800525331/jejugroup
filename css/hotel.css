@@ -180,29 +180,83 @@ input {
     align-items: center;
 }
 
-/* Nav Link Hover Effect (Orange Underline) */
-.nav-link {
-    position: relative;
-    /* existing styles */
-}
+/* ========== Staggered Text Animation Styles ========== */
 
+/* Disable previous underline effect */
 .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0; /* Adjust depending on header height/padding */
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background-color: #FF5000; /* Jeju Air Orange */
-    transition: width 0.3s ease;
+    display: none !important;
 }
 
-.nav-item:hover .nav-link::after {
-    width: 100%;
-}
-
+/* Ensure Nav Link doesn't change color on hover (handled by inner spans if needed, or forced inherit) */
 .nav-item:hover .nav-link {
-    color: #FF5000; /* Optional: change text color too */
+    color: inherit; /* Keep original color as requested */
+}
+
+/* Wrapper for the split text */
+.stagger-wrapper {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    line-height: 1; /* Tighter fit for overflow hidden */
+}
+
+/* Group Containers */
+.stagger-original,
+.stagger-clone {
+    display: block; /* Stack on top of each other via position */
+}
+
+.stagger-original {
+    position: relative;
+}
+
+.stagger-clone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Character Base Style */
+.stagger-char {
+    display: inline-block;
+    will-change: transform;
+    /* CRITICAL: Default transition is 0s for Instant Reset (Snap Back) */
+    transition: transform 0s linear; 
+}
+
+/* Initial Positions */
+.stagger-original .stagger-char {
+    transform: translateY(0);
+}
+
+.stagger-clone .stagger-char {
+    transform: translateY(100%); /* Start from below */
+}
+
+/* Active Animation State (Triggered by JS) */
+.nav-link.is-animating .stagger-char {
+    /* Active Duration */
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1); /* Quart ease out for snappy feel */
+}
+
+.nav-link.is-animating .stagger-original .stagger-char {
+    transform: translateY(-100%); /* Move up and out */
+}
+
+.nav-link.is-animating .stagger-clone .stagger-char {
+    transform: translateY(0); /* Move up and in */
+}
+
+/* Fix for icons alignment since we added a wrapper */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 /* The Drawer Container */

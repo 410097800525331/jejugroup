@@ -1,0 +1,108 @@
+/* ========================================
+   JEJU STAY - Private & Emotional Stay Styles
+   프라이빗 감성 숙소 전용 스타일
+   ======================================== */
+
+/* Body Override */
+.private-stay-page {
+    font-family: 'FlightSans', 'Noto Sans KR', sans-serif;
+    /* Soft warm background for emotional vibe */
+    background: #fdfbf7; 
+}
+
+.private-stay-page .header {
+    /* Slightly warmer glass effect */
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.private-stay-page .header.scrolled {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(25px);
+}
+
+/* Hero Section Customization */
+.private-stay-page .hero-overlay {
+    /* Warmer overlay: brown/dark orange tint */
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.4) 0%,
+        rgba(40, 30, 20, 0.3) 40%,
+        rgba(40, 30, 20, 0.6) 100%
+    );
+}
+
+.private-stay-page .hero-subtitle-top {
+    font-family: 'Noto Serif KR', serif; /* Serif for premium feel */
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Premium Search Bar Caption (Replaces Tabs) */
+.private-stay-page .search-bar-caption {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    margin-bottom: 8px; /* Alignment adjustment */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Premium Section Titles */
+.private-stay-page .section-title {
+    font-family: 'Noto Serif KR', serif;
+    color: #2c241b; /* Dark Brown */
+    letter-spacing: -0.5px;
+}
+
+.private-stay-page .section-subtitle {
+    color: #8c7b6d; /* Muted warm gray */
+    font-weight: 400;
+}
+
+/* Card Customization - More Spacious & Elegant */
+.private-stay-page .hotel-card {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    background: #fff;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.private-stay-page .hotel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.private-stay-page .hotel-image-wrap {
+    height: 280px; /* Taller images */
+}
+
+/* Tags */
+.private-stay-page .hotel-tag {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+}
+
+.private-stay-page .jj-pick {
+    background: #2c241b;
+    color: #fff;
+}
+
+/* Price */
+.private-stay-page .price-final {
+    color: #c7916b; /* Gold/Bronze color */
+}
+
+.private-stay-page .search-btn-pill {
+    background: #c7916b; 
+}
+.private-stay-page .search-btn-pill:hover {
+    background: #b07e5a;
+}

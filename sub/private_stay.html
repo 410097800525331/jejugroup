@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEJU STAY | 프라이빗 감성 숙소</title>
+    <meta name="description" content="제주스테이 프라이빗. 오직 나만을 위한 프리미엄 감성 숙소, 풀빌라, 독채 펜션을 예약하세요.">
+
+    <!-- Fonts: FlightSans is loaded via CSS @font-face, Noto Sans KR as fallback -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/hotel.css">
+    <link rel="stylesheet" href="../css/private_stay.css">
+    <link rel="stylesheet" href="../css/FAB.css">
+    <link rel="stylesheet" href="../css/chatbot-style.css">
+</head>
+
+<body class="private-stay-page">
+    <!-- ========== 섹션 1: 글로벌 헤더 (GNB) ========== -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <!-- 로고 -->
+            <a href="jejuhotel.html" class="logo">
+                <img src="../images/logo_jejuhotel.png" alt="JEJU STAY" class="logo-img">
+            </a>
+
+            <!-- 메인 네비게이션 -->
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <!-- 1. Accommodations -->
+                    <li class="nav-item">
+                        <a href="jejuhotel.html" class="nav-link active">
+                            <i data-lucide="building-2" class="nav-icon"></i>
+                            <span data-lang="navAccommodations">숙소 예약</span>
+                        </a>
+                        <!-- Mega Dropdown: Accommodations -->
+                        <div class="mega-dropdown">
+                            <div class="mega-dropdown-inner">
+                                <ul class="mega-menu-list-horizontal">
+                                    <li><a href="jejuhotel.html" class="mega-menu-link">호텔 & 리조트</a></li>
+                                    <li><a href="jejustay_life.html" class="mega-menu-link">전 세계 한 달 살기 <span
+                                                class="badge-new">NEW</span></a></li>
+                                    <li><a href="private_stay.html" class="mega-menu-link"
+                                            style="color: var(--primary); font-weight: 700;">프라이빗 감성 숙소</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 2. Travel -->
+                    <li class="nav-item">
+                        <a href="activities.html" class="nav-link">
+                            <i data-lucide="plane" class="nav-icon"></i>
+                            <span data-lang="navTravel">여행 상품</span>
+                        </a>
+                        <!-- Mega Dropdown: Travel -->
+                        <div class="mega-dropdown">
+                            <div class="mega-dropdown-inner">
+                                <ul class="mega-menu-list-horizontal">
+                                    <li><a href="activities.html" class="mega-menu-link">즐길 거리 (액티비티)</a></li>
+                                    <li><a href="esim.html" class="mega-menu-link">eSIM / 유심</a></li>
+                                    <li><a href="#" class="mega-menu-link">렌터카 예약</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 3. Deals -->
+                    <li class="nav-item">
+                        <a href="deals.html" class="nav-link">
+                            <i data-lucide="percent" class="nav-icon"></i>
+                            <span data-lang="navDeals">특가 & 혜택</span>
+                        </a>
+                        <!-- Mega Dropdown: Deals -->
+                        <div class="mega-dropdown">
+                            <div class="mega-dropdown-inner">
+                                <ul class="mega-menu-list-horizontal">
+                                    <li><a href="deals.html" class="mega-menu-link">이달의 특가 프로모션</a></li>
+                                    <li><a href="#" class="mega-menu-link">회원 전용 혜택</a></li>
+                                    <li><a href="#" class="mega-menu-link">제휴 카드 할인</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 4. Guide -->
+                    <li class="nav-item">
+                        <a href="travel_guide.html" class="nav-link">
+                            <i data-lucide="book-open" class="nav-icon"></i>
+                            <span data-lang="navGuide">여행 정보</span>
+                        </a>
+                        <!-- Mega Dropdown: Guide -->
+                        <div class="mega-dropdown">
+                            <div class="mega-dropdown-inner">
+                                <ul class="mega-menu-list-horizontal">
+                                    <li><a href="travel_guide.html" class="mega-menu-link">여행 가이드북</a></li>
+                                    <li><a href="#" class="mega-menu-link">국가별 여행 팁</a></li>
+                                    <li><a href="#" class="mega-menu-link">여행 준비 체크리스트</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- 우측 유틸리티 -->
+            <div class="header-utils">
+
+                <a href="reservation_check.html" class="util-link">
+                    <i data-lucide="clipboard-list" class="util-icon"></i>
+                    <span data-lang="navResCheck">예약 확인</span>
+                </a>
+                <a href="../sub/login.html" class="util-link login-btn">
+                    <i data-lucide="user" class="util-icon"></i>
+                    <span data-lang="navLogin">로그인</span>
+                </a>
+                <a href="customer_center.html" class="util-link">
+                    <i data-lucide="headphones" class="util-icon"></i>
+                    <span data-lang="navCs">고객센터</span>
+                </a>
+            </div>
+
+            <!-- 모바일 메뉴 버튼 -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="메뉴 열기">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+
+        <!-- 모바일 네비게이션 -->
+        <div class="mobile-nav" id="mobileNav">
+            <ul class="mobile-nav-list">
+                <li><a href="jejuhotel.html" class="mobile-nav-link active" data-lang="mobileNavHotel">숙소 예약</a></li>
+                <li><a href="jejustay_life.html" class="mobile-nav-link" data-lang="mobileNavLife">한 달 살기</a></li>
+                <li><a href="#" class="mobile-nav-link" data-lang="mobileNavActivity">즐길 거리</a></li>
+                <li><a href="esim.html" class="mobile-nav-link" data-lang="mobileNavEsim">eSIM</a></li>
+                <li><a href="travel_guide.html" class="mobile-nav-link" data-lang="mobileNavGuide">여행 가이드</a></li>
+                <li><a href="#" class="mobile-nav-link" data-lang="mobileNavTips">여행 일정 팁</a></li>
+                <li><a href="#" class="mobile-nav-link" data-lang="navResCheck">예약 확인</a></li>
+                <li><a href="../sub/login.html" class="mobile-nav-link" data-lang="navLogin">로그인</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- ========== 섹션 2: 히어로 & 검색 위젯 ========== -->
+        <section class="hero">
+            <div class="hero-background">
+                <!-- 감성 숙소 이미지 (Pool Villa / Nature) -->
+                <img src="https://images.unsplash.com/photo-1542718610-a1d656d1884c?q=80&w=2500&auto=format&fit=crop"
+                    alt="Private Wellness Stay" class="hero-image">
+                <div class="hero-overlay"></div>
+            </div>
+
+            <div class="hero-content">
+                <p class="hero-subtitle-top" data-lang="heroSubtitlePrivate">온전히 나를 마주하는 시간, 프리미엄 프라이빗 스테이</p>
+
+                <!-- 새로운 레이아웃 검색 위젯 -->
+                <div class="search-widget-large">
+                    <!-- 검색 탭 (캡션으로 대체) -->
+                    <div class="search-tabs-large">
+                        <div class="search-bar-caption">
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px; color: #c7916b;"></i>
+                            <span
+                                style="font-family: 'Noto Serif KR', serif; font-weight: 500; letter-spacing: 0.5px;">Premium
+                                Private Selection</span>
+                        </div>
+                    </div>
+
+                    <!-- 검색 폼 - 호텔/펜션용 (NEW Global OTA Style) -->
+                    <div class="search-form-new" id="searchFormHotel">
+                        <div class="global-search-container">
+                            <div class="global-search-bar">
+                                <!-- 1. 여행지 (Destination) -->
+                                <div class="search-item destination-item-new" id="destinationFieldLarge">
+                                    <div class="item-icon">
+                                        <i data-lucide="search"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <label class="item-label" data-lang="destLabel">여행지</label>
+                                        <input type="text" class="item-input" id="destinationInput"
+                                            placeholder="어떤 분위기를 원하시나요?" autocomplete="off"
+                                            data-lang-placeholder="destPlaceholderPrivate">
+                                    </div>
+
+                                    <!-- 여행지 드롭다운 (위치 유지) -->
+                                    <div class="destination-dropdown" id="destinationDropdown">
+                                        <div class="dropdown-columns">
+                                            <div class="dropdown-column">
+                                                <div class="dropdown-header">국내 감성 스테이</div>
+                                                <ul class="destination-list">
+                                                    <li class="destination-item" data-value="제주">
+                                                        <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=100&h=100&fit=crop"
+                                                            alt="제주">
+                                                        <div class="destination-info">
+                                                            <span class="destination-name">제주 돌담집</span>
+                                                            <span class="destination-desc">고즈넉한 힐링</span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="destination-item" data-value="가평">
+                                                        <img src="https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=100&h=100&fit=crop"
+                                                            alt="가평">
+                                                        <div class="destination-info">
+                                                            <span class="destination-name">가평 풀빌라</span>
+                                                            <span class="destination-desc">숲속의 요새</span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="destination-item" data-value="남해">
+                                                        <img src="https://images.unsplash.com/photo-1572979062332-60197c4bd5a4?w=100&h=100&fit=crop"
+                                                            alt="남해">
+                                                        <div class="destination-info">
+                                                            <span class="destination-name">남해 오션뷰</span>
+                                                            <span class="destination-desc">바다 앞 프라이빗</span>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="dropdown-column">
+                                                <div class="dropdown-header">해외 럭셔리 스테이</div>
+                                                <ul class="destination-list overseas">
+                                                    <li class="destination-item" data-value="교토">
+                                                        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100&h=100&fit=crop"
+                                                            alt="교토">
+                                                        <div class="destination-info">
+                                                            <span class="destination-name">교토 료칸</span>
+                                                            <span class="destination-desc">전통의 미학</span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="destination-item" data-value="발리">
+                                                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=100&h=100&fit=crop"
+                                                            alt="발리">
+                                                        <div class="destination-info">
+                                                            <span class="destination-name">발리 풀빌라</span>
+                                                            <span class="destination-desc">정글 뷰 인피니티풀</span>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="search-divider"></div>
+
+                                <!-- 2. 일정 (Dates: Check-in & Check-out merged) -->
+                                <div class="search-item date-item-new" id="checkInField">
+                                    <div class="item-icon">
+                                        <i data-lucide="calendar"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <label class="item-label" data-lang="dateLabel">일정</label>
+                                        <div class="date-display-text">
+                                            <span id="checkInDisplay" data-lang="dateSelect">체크인</span>
+                                            <span class="date-separator"> - </span>
+                                            <span id="checkOutDisplay" data-lang="dateSelect">체크아웃</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 캘린더 팝업 (From jejuhotel.html) -->
+                                    <div class="Popup RangePicker RangePicker--checkIn RangePicker--with-dayuse"
+                                        id="calendarPopup" role="dialog" aria-modal="true" aria-label="체크인 날짜 선택 달력">
+                                        <div class="Popup__content Popup__content_Occupancy">
+                                            <div class="RangePicker-Header">
+                                                <div class="RangePicker-NavPrev">
+                                                    <button type="button" class="NavBtn NavBtn--prev" id="prevMonth"
+                                                        aria-label="Previous Month">
+                                                        <i data-lucide="chevron-left"></i>
+                                                    </button>
+                                                </div>
+                                                <div role="tablist" class="RangePicker-Tabs">
+                                                    <div class="RangePicker-Tab Item">
+                                                        <button role="tab" aria-selected="true" id="tab-calendar"
+                                                            class="TabBtn active" data-lang="calTitle">캘린더</button>
+                                                        <div class="TabIndicator"></div>
+                                                    </div>
+                                                    <div class="RangePicker-Tab Item">
+                                                        <button role="tab" aria-selected="false" id="tab-flexible"
+                                                            class="TabBtn" data-lang="calFlexible">날짜 미정</button>
+                                                    </div>
+                                                </div>
+                                                <div class="RangePicker-NavNext">
+                                                    <button type="button" class="NavBtn NavBtn--next" id="nextMonth"
+                                                        aria-label="Next Month">
+                                                        <i data-lucide="chevron-right"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div role="tabpanel" id="panel-calendar" class="RangePicker-Panel active">
+                                                <div class="DayPicker" id="dayPickerContainer">
+                                                    <div class="DayPicker-wrapper">
+                                                        <div class="DayPicker-Months" id="calendarMonths"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="RangePicker-Footer">
+                                                    <button type="button" class="ActionBtn ActionBtn--clear"
+                                                        id="btn-clear">
+                                                        <span data-lang="btnReset">선택 해제</span>
+                                                    </button>
+                                                    <button type="button" class="ActionBtn ActionBtn--confirm"
+                                                        id="btn-confirm">
+                                                        <span data-lang="btnConfirm">확인</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div role="tabpanel" id="panel-flexible" class="RangePicker-Panel">
+                                                <div class="Flexible-Content">
+                                                    <h3 data-lang="calFlexTitle">투숙 기간은 얼마나 되시나요?</h3>
+                                                    <div class="Flexible-Options">
+                                                        <button class="Flexible-Option" data-val="1">1박</button>
+                                                        <button class="Flexible-Option" data-val="2">2박</button>
+                                                        <button class="Flexible-Option" data-val="3">3박 이상</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="search-divider"></div>
+
+                                <!-- 3. 여행자 (Guests) -->
+                                <div class="search-item guest-item-new" id="guestFieldLarge">
+                                    <div class="item-icon">
+                                        <i data-lucide="users"></i>
+                                    </div>
+                                    <div class="item-content">
+                                        <label class="item-label" data-lang="guestLabel">인원</label>
+                                        <div class="guest-display-text">
+                                            <span id="guestSummary">성인 2명, 객실 1개</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 인원 선택 팝업 -->
+                                    <div class="guest-popup-new" id="guestPopupLarge">
+                                        <div class="guest-row-new">
+                                            <div class="guest-info-new">
+                                                <span class="guest-type-new" data-lang="guestRooms">객실</span>
+                                            </div>
+                                            <div class="guest-counter-new">
+                                                <button class="counter-btn-new minus" data-target="rooms"><i
+                                                        data-lucide="minus"></i></button>
+                                                <span class="counter-value-new" id="roomsCountLarge">1</span>
+                                                <button class="counter-btn-new plus" data-target="rooms"><i
+                                                        data-lucide="plus"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="guest-row-new">
+                                            <div class="guest-info-new">
+                                                <span class="guest-type-new" data-lang="guestAdults">성인</span>
+                                                <span class="guest-desc-new" data-lang="guestAdultsDesc">18세 이상</span>
+                                            </div>
+                                            <div class="guest-counter-new">
+                                                <button class="counter-btn-new minus" data-target="adults"><i
+                                                        data-lucide="minus"></i></button>
+                                                <span class="counter-value-new" id="adultsCountLarge">2</span>
+                                                <button class="counter-btn-new plus" data-target="adults"><i
+                                                        data-lucide="plus"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="guest-row-new">
+                                            <div class="guest-info-new">
+                                                <span class="guest-type-new" data-lang="guestChildren">아동</span>
+                                                <span class="guest-desc-new" data-lang="guestChildrenDesc">0 -
+                                                    17세</span>
+                                            </div>
+                                            <div class="guest-counter-new">
+                                                <button class="counter-btn-new minus" data-target="children"><i
+                                                        data-lucide="minus"></i></button>
+                                                <span class="counter-value-new" id="childrenCountLarge">0</span>
+                                                <button class="counter-btn-new plus" data-target="children"><i
+                                                        data-lucide="plus"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 4. 검색 버튼 -->
+                                <div class="search-btn-wrapper">
+                                    <button class="search-btn-pill" id="searchBtn">
+                                        <i data-lucide="search" class="search-btn-icon"></i>
+                                        <span class="search-btn-text" data-lang="searchBtn">검색</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 섹션 3: 큐레이션 (Premium Benefits) ========== -->
+        <section class="promo-section">
+            <div class="container">
+                <div class="promo-grid">
+                    <div class="promo-card promo-main"
+                        style="background: linear-gradient(135deg, #2c241b 0%, #4a3b2a 100%);">
+                        <div class="promo-icon">
+                            <i data-lucide="crown" style="color: #c7916b;"></i>
+                        </div>
+                        <div class="promo-content">
+                            <span class="promo-badge" style="background: #c7916b; color: #fff;">PREMIUM CHECK-IN</span>
+                            <h3 class="promo-title">프라이빗 스테이 예약 시<br><strong style="color: #c7916b;">얼리 체크인 & 웰컴
+                                    키트</strong> 제공</h3>
+                            <p class="promo-desc" style="color: rgba(255,255,255,0.7);">제주 유니버스 회원을 위한 특별한 시작</p>
+                            <a href="#" class="promo-link" style="color: #fff;"><span>혜택 확인하기</span> <i
+                                    data-lucide="arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="promo-card promo-sub" style="background: #fff; border: 1px solid #e5e5e5;">
+                        <div class="promo-icon">
+                            <i data-lucide="camera" style="color: #333;"></i>
+                        </div>
+                        <div class="promo-content">
+                            <span class="promo-badge" style="background: #eee; color: #333;">SNAP PHOTO</span>
+                            <h3 class="promo-title" style="color: #333;">인생샷 포인트<br>스냅 촬영 할인</h3>
+                            <a href="#" class="promo-link" style="color: #333;"><span>작가 보기</span> <i
+                                    data-lucide="arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="promo-card promo-sub" style="background: #fff; border: 1px solid #e5e5e5;">
+                        <div class="promo-icon">
+                            <i data-lucide="wine" style="color: #333;"></i>
+                        </div>
+                        <div class="promo-content">
+                            <span class="promo-badge" style="background: #eee; color: #333;">DINING</span>
+                            <h3 class="promo-title" style="color: #333;">인룸 다이닝<br>와인 & 플래터</h3>
+                            <a href="#" class="promo-link" style="color: #333;"><span>메뉴 보기</span> <i
+                                    data-lucide="arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 섹션 4: 추천 여행지 (Private Spots) ========== -->
+        <section class="destinations-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">감성이 머무는 곳</h2>
+                    <p class="section-subtitle">일상의 소음이 사라진, 오직 당신만을 위한 숨겨진 스테이</p>
+                </div>
+
+                <div class="destinations-grid">
+                    <a href="#" class="destination-card large">
+                        <img src="https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=800&q=80" alt="숲속 독채"
+                            class="destination-image">
+                        <div class="destination-overlay"></div>
+                        <div class="destination-content">
+                            <span class="destination-badge">인기</span>
+                            <h3 class="destination-name">숲속의 요새</h3>
+                            <p class="destination-hotels">프라이빗 캐빈 모음</p>
+                        </div>
+                    </a>
+                    <a href="#" class="destination-card">
+                        <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600&q=80"
+                            alt="바다 앞 풀빌라" class="destination-image">
+                        <div class="destination-overlay"></div>
+                        <div class="destination-content">
+                            <h3 class="destination-name">오션뷰 풀빌라</h3>
+                            <p class="destination-hotels">인피니티 풀 완비</p>
+                        </div>
+                    </a>
+                    <a href="#" class="destination-card">
+                        <img src="https://images.unsplash.com/photo-1512918760532-3c46000e3b94?w=600&q=80" alt="한옥 스테이"
+                            class="destination-image">
+                        <div class="destination-overlay"></div>
+                        <div class="destination-content">
+                            <h3 class="destination-name">모던 한옥</h3>
+                            <p class="destination-hotels">전통과 현대의 조화</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 섹션 5: 프리미엄 큐레이션 (Listings) ========== -->
+        <section class="deals-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">이달의 큐레이션</h2>
+                    <p class="section-subtitle">건축가의 철학이 담긴 공간을 소개합니다</p>
+                </div>
+
+                <div class="hotel-list">
+                    <!-- 숙소 카드 1 -->
+                    <article class="hotel-card">
+                        <div class="hotel-image-wrap">
+                            <img src="https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=400&q=80"
+                                alt="제주 서귀포, 스테이 무드" class="hotel-image">
+                            <button class="wishlist-btn" aria-label="위시리스트 추가">
+                                <i data-lucide="heart"></i>
+                            </button>
+                        </div>
+                        <div class="hotel-info">
+                            <div class="hotel-header">
+                                <span class="hotel-tag jj-pick">Premium</span>
+                                <div class="hotel-rating">
+                                    <span style="font-size: 0.8rem; color: #888;">독채</span>
+                                </div>
+                            </div>
+                            <h3 class="hotel-name">제주 서귀포, 스테이 무드</h3>
+                            <p class="hotel-location">
+                                <i data-lucide="map-pin"></i> 제주 안덕면 · 산방산 뷰
+                            </p>
+                            <div class="hotel-amenities">
+                                <span class="amenity"><i data-lucide="coffee"></i> <span>핸드드립</span></span>
+                                <span class="amenity"><i data-lucide="music"></i> <span>LP 플레이어</span></span>
+                                <span class="amenity"><i data-lucide="bath"></i> <span>자쿠지</span></span>
+                            </div>
+                            <div class="hotel-review">
+                                <span class="review-score">9.8</span>
+                                <span class="review-text">완벽함 · 128개 후기</span>
+                            </div>
+                        </div>
+                        <div class="hotel-price">
+                            <div class="price-info">
+                                <span class="price-label">1박 요금</span>
+                            </div>
+                            <div class="price-original"><span>₩450,000</span></div>
+                            <div class="price-final"><span>₩380,000</span></div>
+                            <span class="price-tax">세금 포함</span>
+                        </div>
+                    </article>
+
+                    <!-- 숙소 카드 2 -->
+                    <article class="hotel-card">
+                        <div class="hotel-image-wrap">
+                            <img src="https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=400&q=80"
+                                alt="가평, 포레스트 하우스" class="hotel-image">
+                            <button class="wishlist-btn" aria-label="위시리스트 추가">
+                                <i data-lucide="heart"></i>
+                            </button>
+                        </div>
+                        <div class="hotel-info">
+                            <div class="hotel-header">
+                                <span class="hotel-tag jj-pick">Design Award</span>
+                                <div class="hotel-rating">
+                                    <span style="font-size: 0.8rem; color: #888;">풀빌라</span>
+                                </div>
+                            </div>
+                            <h3 class="hotel-name">가평, 포레스트 하우스</h3>
+                            <p class="hotel-location">
+                                <i data-lucide="map-pin"></i> 경기 가평군 · 프라이빗 온수풀
+                            </p>
+                            <div class="hotel-amenities">
+                                <span class="amenity"><i data-lucide="waves"></i> <span>개별 수영장</span></span>
+                                <span class="amenity"><i data-lucide="flame"></i> <span>불멍 존</span></span>
+                                <span class="amenity"><i data-lucide="bed-double"></i> <span>킹 사이즈</span></span>
+                            </div>
+                            <div class="hotel-review">
+                                <span class="review-score">9.5</span>
+                                <span class="review-text">훌륭함 · 84개 후기</span>
+                            </div>
+                        </div>
+                        <div class="hotel-price">
+                            <div class="price-info">
+                                <span class="price-label">1박 요금</span>
+                            </div>
+                            <div class="price-original"><span>₩620,000</span></div>
+                            <div class="price-final"><span>₩550,000</span></div>
+                            <span class="price-tax">세금 포함</span>
+                        </div>
+                    </article>
+
+                    <!-- 숙소 카드 3 -->
+                    <article class="hotel-card">
+                        <div class="hotel-image-wrap">
+                            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80"
+                                alt="교토, 마치야 스테이" class="hotel-image">
+                            <button class="wishlist-btn" aria-label="위시리스트 추가">
+                                <i data-lucide="heart"></i>
+                            </button>
+                        </div>
+                        <div class="hotel-info">
+                            <div class="hotel-header">
+                                <span class="hotel-tag jj-pick">Historic</span>
+                                <div class="hotel-rating">
+                                    <span style="font-size: 0.8rem; color: #888;">전통 가옥</span>
+                                </div>
+                            </div>
+                            <h3 class="hotel-name">교토, 히노키 마치야</h3>
+                            <p class="hotel-location">
+                                <i data-lucide="map-pin"></i> 일본 교토 · 기온 거리
+                            </p>
+                            <div class="hotel-amenities">
+                                <span class="amenity"><i data-lucide="bath"></i> <span>히노키탕</span></span>
+                                <span class="amenity"><i data-lucide="trees"></i> <span>중정 정원</span></span>
+                                <span class="amenity"><i data-lucide="utensils"></i> <span>가이세키</span></span>
+                            </div>
+                            <div class="hotel-review">
+                                <span class="review-score">9.9</span>
+                                <span class="review-text">최고 · 210개 후기</span>
+                            </div>
+                        </div>
+                        <div class="hotel-price">
+                            <div class="price-info">
+                                <span class="price-label">1박 요금</span>
+                            </div>
+                            <div class="price-original"><span>₩850,000</span></div>
+                            <div class="price-final"><span>₩720,000</span></div>
+                            <span class="price-tax">세금 포함</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== 섹션 6: 푸터 ========== -->
+    <footer class="footer section" id="section-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <p><strong data-lang="footerCompany">(주)제주 그룹</strong></p>
+                <p data-lang="footerCEO">대표이사: 김이배</p>
+                <p data-lang="footerBizNum">사업자등록번호: 616-81-50527</p>
+                <p data-lang="footerSaleNum">통신판매업신고: 제주 2006-125호</p>
+                <p data-lang="footerHosting">호스팅 사업자: AWS</p>
+                <br>
+                <p data-lang="footerAddr">주소: 제주특별자치도 제주시 신대로 64 (연동, 건설공제회관 3층)</p>
+                <p data-lang="footerCs">고객센터: 1599-1500 (09:00 ~ 19:00)</p>
+                <p data-lang="footerCsEmail">고객 문의: jejugroup.help@jejugroup.net</p>
+                <p data-lang="footerPartnerEmail">제휴 문의: partnership@jejugroup.net</p>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p data-lang="footerCopyright">Copyright ⓒ Jeju Group. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="../js/lang_data.js"></script>
+    <script src="../js/hotel.js"></script>
+    <script src="../js/FAB.js"></script>
+    <script src="../js/chatbot.js"></script>
+    <script src="../js/stagger_nav.js"></script>
+</body>
+
+</html>
