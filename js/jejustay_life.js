@@ -28,11 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
     initWishlistButtons();
     initScrollAnimations();
     // initSearchTabs(); // 롱스테이 페이지는 탭 없음
-    initDestinationDropdown(); // 기존 목적지 검색 유지
-    initCalendar(); // 롱스테이 전용 로직 포함
-    initGuestSelector(); // [New] Guest Selector
-    initOptionsPopup(); // [New] Options Selector
-    initMobileSearch();
+    // initDestinationDropdown(); // Deprecated -> SearchManager
+    // initGuestSelector(); // Deprecated -> SearchManager
+    // initOptionsPopup(); // Deprecated -> SearchManager
+    // initMobileSearch(); // Deprecated -> SearchManager
+    
+    // Initialize Search Manager (Class-based Architecture)
+    window.searchManager = new SearchManager();
     
     // Global click listener to close popups when clicking outside
     // (Relies on stopPropagation in triggers/popups)
@@ -189,185 +191,245 @@ function initScrollAnimations() {
     });
 }
 
-function initDestinationDropdown() {
-    const destField = document.getElementById('destinationFieldLarge');
-    const destInput = document.getElementById('destinationInput');
-    const destDropdown = document.getElementById('destinationDropdown');
-    
-    if (destField && destDropdown) {
+/* ========== Search Manager (Class-based Architecture) ========== */
+class SearchManager {
+    constructor() {
+        this.state = {
+            destination: '',
+            dates: { start: null, end: null },
+            guests: { rooms: 1, adults: 1, children: 0 },
+            options: [],
+            isTyping: false
+        };
+        
+        this.init();
+    }
+
+    init() {
+        this.bindDestination();
+        this.bindGuests();
+        this.bindOptions();
+        this.bindSearchButton();
+        this.bindPopups();
+    }
+
+    /* --- Security: Input Sanitization --- */
+    sanitize(str) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#x27;',
+            "/": '&#x2F;',
+        };
+        const reg = /[&<>"'/]/ig;
+        return str.replace(reg, (match) => (map[match]));
+    }
+
+    /* --- Destination Logic --- */
+    bindDestination() {
+        const field = document.getElementById('destinationFieldLarge');
+        const input = document.getElementById('destinationInput');
+        const dropdown = document.getElementById('destinationDropdown');
+        const listItems = document.querySelectorAll('.destination-item');
+
+        if (!field || !input || !dropdown) return;
+
         // Toggle Dropdown
-        destField.addEventListener('click', (e) => {
+        field.addEventListener('click', (e) => {
             e.stopPropagation();
-            const isActive = destDropdown.classList.contains('active');
-            closeAllPopups('destinationDropdown'); // Close others
-            
-            if (!isActive) {
-                destDropdown.classList.add('active');
-                destField.classList.add('active');
-            }
+            this.togglePopup('destinationDropdown');
         });
 
-        // Handle Item Click
-        document.querySelectorAll('.destination-item, .destination-item-text').forEach(item => {
+        // Input Handling with Debounce
+        input.addEventListener('input', this.debounce((e) => {
+            const val = this.sanitize(e.target.value);
+            this.state.destination = val;
+            this.updateTitle('destinationInput', val); // Dynamic Tooltip
+        }, 300));
+
+        // Selection
+        listItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const val = item.dataset.value;
-                if (destInput) destInput.value = val;
+                input.value = val;
+                this.state.destination = val;
+                this.updateTitle('destinationInput', val); // Dynamic Tooltip
                 closeAllPopups();
             });
         });
     }
-}
 
-// Helper to close all popups
-function closeAllPopups(exceptId = null) {
-    const popups = {
-        'destinationDropdown': document.getElementById('destinationDropdown'),
-        'calendarPopup': document.getElementById('calendarPopup'),
-        'guestPopupLarge': document.getElementById('guestPopupLarge'),
-        'optionsPopupLarge': document.getElementById('optionsPopupLarge')
-    };
-    
-    for (const [id, el] of Object.entries(popups)) {
-        if (id !== exceptId && el) {
-            el.classList.remove('active');
-            if (id === 'optionsPopupLarge') el.style.display = 'none'; // Handle inline style
-            
-            // Remove active state from parent field if needed
-             if (id === 'guestPopupLarge') document.getElementById('guestFieldLarge')?.classList.remove('active');
-             if (id === 'calendarPopup') document.getElementById('checkInField')?.classList.remove('active');
-             if (id === 'destinationDropdown') document.getElementById('destinationFieldLarge')?.classList.remove('active');
-             if (id === 'optionsPopupLarge') document.getElementById('optionsFieldLarge')?.classList.remove('active');
-        }
-    }
-}
-
-/* ========== [리팩토링] 인원 선택 (Guest) ========== */
-function initGuestSelector() {
-    const guestField = document.getElementById('guestFieldLarge');
-    const guestPopup = document.getElementById('guestPopupLarge');
-    
-    if (!guestField || !guestPopup) return;
-
-    // 1. 토글
-    guestField.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isActive = guestPopup.classList.contains('active');
-        closeAllPopups('guestPopupLarge');
+    /* --- Guest Logic --- */
+    bindGuests() {
+        const field = document.getElementById('guestFieldLarge');
+        const popup = document.getElementById('guestPopupLarge');
+        const summary = document.getElementById('guestSummary');
         
-        if (!isActive) {
-            guestPopup.classList.add('active');
-            guestField.classList.add('active');
-        } else {
-            guestPopup.classList.remove('active');
-            guestField.classList.remove('active');
-        }
-    });
+        if (!field || !popup) return;
 
-    // 2. 팝업 내부 클릭 방지
-    guestPopup.addEventListener('click', (e) => e.stopPropagation());
-
-    // 3. 증감 버튼 로직
-    document.querySelectorAll('.counter-btn-new').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation(); // 버튼 클릭 시 팝업 닫히지 않게
-            
-            const target = btn.dataset.target; // 'rooms', 'adults', 'children'
-            const span = document.getElementById(`${target}CountLarge`);
-            if (!span) return;
-
-            let val = parseInt(span.textContent);
-            const minValues = { 'rooms': 1, 'adults': 1, 'children': 0 };
-
-            if (btn.classList.contains('plus')) {
-                val++;
-            } else {
-                if (val > minValues[target]) val--;
-            }
-            
-            span.textContent = val;
-            updateGuestSummary();
-        });
-    });
-}
-
-function updateGuestSummary() {
-    const rooms = parseInt(document.getElementById('roomsCountLarge').textContent || 1);
-    const adults = parseInt(document.getElementById('adultsCountLarge').textContent || 1);
-    const children = parseInt(document.getElementById('childrenCountLarge').textContent || 0);
-    
-    const summaryEl = document.getElementById('guestSummary');
-    if (summaryEl) {
-        let text = `성인 ${adults}명, 객실 ${rooms}개`;
-        if (children > 0) text += `, 아동 ${children}명`;
-        summaryEl.textContent = text;
-        summaryEl.style.color = '#333';
-    }
-}
-
-
-/* ========== [New] Options Selector ========== */
-function initOptionsPopup() {
-    const optionsField = document.getElementById('optionsFieldLarge');
-    const optionsPopup = document.getElementById('optionsPopupLarge');
-    const optionsSummary = document.getElementById('optionsSummary');
-
-    if (optionsField && optionsPopup) {
-        optionsField.addEventListener('click', (e) => {
+        field.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Check visibility by style since we use inline display:none
-            const isActive = optionsPopup.style.display === 'block'; 
-            closeAllPopups('optionsPopupLarge');
-            
-            if (!isActive) {
-                optionsPopup.style.display = 'block';
-                optionsField.classList.add('active');
-                // Use setTimeout to allow click propagation to finish before adding document listener if needed?
-                // But we use stopPropagation on popup click, so standard matching logic in closeAllPopups handles "others".
-            } else {
-                optionsPopup.style.display = 'none';
-                optionsField.classList.remove('active');
-            }
+            this.togglePopup('guestPopupLarge');
         });
+        
+        popup.addEventListener('click', e => e.stopPropagation());
 
-        optionsPopup.addEventListener('click', (e) => e.stopPropagation());
+        // Counter Logic
+        const btns = popup.querySelectorAll('.counter-btn-new');
+        btns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const target = btn.dataset.target; // rooms, adults, children
+                const isPlus = btn.classList.contains('plus');
+                const display = document.getElementById(`${target}CountLarge`);
+                
+                if (!display) return;
+                
+                let currentVal = parseInt(display.textContent);
+                const min = target === 'children' ? 0 : 1;
+                const max = 20; // Hard limit for security
 
-        // Checkbox Logic
-        const checkboxes = optionsPopup.querySelectorAll('.option-checkbox');
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', () => {
-                updateOptionsSummary();
+                if (isPlus && currentVal < max) currentVal++;
+                if (!isPlus && currentVal > min) currentVal--;
+                
+                display.textContent = currentVal;
+                this.state.guests[target] = currentVal;
+                this.updateGuestSummary();
             });
         });
+    }
 
-        function updateOptionsSummary() {
-            const checked = Array.from(optionsPopup.querySelectorAll('.option-checkbox:checked')).map(cb => cb.value);
-            if (checked.length === 0) {
-                optionsSummary.textContent = "선택사항 없음";
-                optionsSummary.style.color = "#999";
-            } else {
-                // Truncate if too long?
-                if(checked.length > 2) {
-                     optionsSummary.textContent = `${checked[0]}, ${checked[1]} 외 ${checked.length - 2}`;
-                } else {
-                     optionsSummary.textContent = checked.join(', ');
-                }
-                optionsSummary.style.color = "var(--text-title)";
-            }
+    updateGuestSummary() {
+        const { rooms, adults, children } = this.state.guests;
+        const el = document.getElementById('guestSummary');
+        if (el) {
+            let txt = `성인 ${adults}명, 객실 ${rooms}개`;
+            if (children > 0) txt += `, 아동 ${children}명`;
+            el.textContent = txt;
+            this.updateTitle('guestSummary', txt); // Dynamic Tooltip
         }
     }
-}
 
+    /* --- Options Logic --- */
+    bindOptions() {
+        const field = document.getElementById('optionsFieldLarge');
+        const popup = document.getElementById('optionsPopupLarge');
+        const summary = document.getElementById('optionsSummary');
 
-/* ========== Mobile Search Interaction ========== */
-function initMobileSearch() {
-    const summaryView = document.getElementById('mobileSearchSummary');
-    const searchWidget = document.querySelector('.search-widget-large');
-    
-    if (summaryView && searchWidget) {
-        summaryView.addEventListener('click', () => {
-            searchWidget.classList.toggle('expanded');
+        if (!field || !popup) return;
+
+        field.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.togglePopup('optionsPopupLarge');
         });
+
+        popup.addEventListener('click', e => e.stopPropagation());
+
+        const checks = popup.querySelectorAll('.option-checkbox');
+        checks.forEach(chk => {
+            chk.addEventListener('change', () => {
+                // Use Span Content for accurate display label
+                const checkedNodes = Array.from(popup.querySelectorAll('.option-checkbox:checked'));
+                const labels = checkedNodes.map(c => c.nextElementSibling.textContent.trim());
+                this.state.options = checkedNodes.map(c => c.value); // State keeps values
+                
+                if (labels.length === 0) {
+                    summary.textContent = "전체"; // Zero Truncation: Shortest possible text
+                    summary.style.color = "#999";
+                } else {
+                    // Strict Length Logic: "Keyword + 외 N"
+                    summary.textContent = labels.length > 1 
+                        ? `${labels[0]} 외 ${labels.length - 1}` 
+                        : labels[0];
+                    summary.style.color = "var(--text-main)";
+                }
+                this.updateTitle('optionsSummary', labels.join(', ')); // Full list in tooltip
+            });
+        });
+    }
+
+    /* --- Search Action --- */
+    bindSearchButton() {
+        const btn = document.getElementById('searchBtn');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                // Prevent Form Submit if type submit
+                // e.preventDefault(); 
+                // But we have onsubmit="return false" in HTML form
+                
+                // Collect Data
+                const searchData = {
+                    destination: this.state.destination,
+                    checkIn: calendarState.checkIn, // Global state
+                    checkOut: calendarState.checkOut,
+                    guests: this.state.guests,
+                    options: this.state.options
+                };
+                
+                console.log('Safe Search Data:', searchData);
+                // Implementation: Navigate or Filter List
+                this.showToast('검색 결과가 업데이트 되었습니다.');
+            });
+        }
+    }
+
+    /* --- Utilities --- */
+    togglePopup(id) {
+        const el = document.getElementById(id);
+        const isActive = el.classList.contains('active') || el.style.display === 'block'; // Legacy support
+        
+        closeAllPopups(id); // Helper global function
+        
+        if (!isActive) {
+            el.classList.add('active');
+            el.parentElement.classList.add('active'); // active class on parent item
+            if (id.includes('options')) el.style.display = 'block'; // Handling legacy style
+        }
+    }
+    
+    // Popup binding for mobile expand is integrated or can be added here
+    bindPopups() {
+       // Mobile Summary Click
+       const mobileSummary = document.getElementById('mobileSearchSummary');
+       if (mobileSummary) {
+           mobileSummary.addEventListener('click', () => {
+               document.querySelector('.global-search-container').classList.toggle('expanded');
+           });
+       }
+    }
+
+    updateTitle(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.title = text;
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }
+
+    showToast(msg) {
+        // Create simple toast
+        const div = document.createElement('div');
+        div.style.cssText = `
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: white; padding: 12px 24px;
+            border-radius: 50px; z-index: 9999;font-size: 0.9rem;
+            animation: fadeIn 0.3s;
+        `;
+        div.textContent = msg;
+        document.body.appendChild(div);
+        setTimeout(() => {
+            div.style.opacity = '0';
+            setTimeout(() => div.remove(), 300);
+        }, 2000);
     }
 }
 

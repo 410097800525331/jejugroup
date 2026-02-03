@@ -1,0 +1,120 @@
+@charset "UTF-8";
+
+/* ==================== 날씨 위젯 스타일 ==================== */
+.weather-widget {
+    min-width: 100px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default; /* 클릭 안됨 */
+}
+
+.weather-loading {
+    color: #f2f2f2;
+    font-size: 18px;
+}
+
+/* 헤더 상태에 따른 로딩 아이콘 컬러 */
+.header.section2plus-header .weather-loading,
+.header.section1-header .weather-loading {
+    color: #f2f2f2;
+}
+
+.header.footer-header .weather-loading {
+    color: #333;
+}
+
+/* 로딩 완료 후 페이드 인 */
+.weather-widget .weather-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeIn 0.5s ease;
+}
+
+.weather-icon {
+    width: 40px;
+    height: 40px;
+    /* OpenWeather 아이콘이 약간 큼, 조정 */
+    margin: -5px; 
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+.weather-temp {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f2f2f2;
+    margin-right: 4px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.weather-dust {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 10px;
+    line-height: 1.1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    color: #f2f2f2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.dust-label {
+    opacity: 0.8;
+    font-size: 9px;
+}
+
+.dust-value {
+    font-weight: 700;
+}
+
+/* 미세먼지 상태별 컬러 (배경색 미세 조정 or 텍스트 컬러) */
+.weather-dust.good .dust-value { color: #4ade80; } /* Green */
+.weather-dust.fair .dust-value { color: #facc15; } /* Yellow */
+.weather-dust.poor .dust-value { color: #fb923c; } /* Orange */
+.weather-dust.very-poor .dust-value { color: #f87171; } /* Red */
+
+
+/* ==== 섹션별 헤더 색상 대응 (중요) ==== */
+
+/* Section 1 & 2+ (투명 헤더) */
+.header.section1-header .weather-temp,
+.header.section2plus-header .weather-temp {
+    color: #f2f2f2;
+}
+.header.section1-header .weather-dust,
+.header.section2plus-header .weather-dust {
+    background: rgba(255, 255, 255, 0.2);
+    color: #f2f2f2;
+}
+.header.section1-header .weather-icon,
+.header.section2plus-header .weather-icon {
+    /* 아이콘은 이미지라 필터로 조정 가능하나 기본 유지 */
+}
+
+/* Footer Header (흰색 배경) */
+.header.footer-header .weather-temp {
+    color: #333;
+    text-shadow: none;
+}
+.header.footer-header .weather-dust {
+    background: rgba(0, 0, 0, 0.05); /* 어두운 배경 */
+    color: #555;
+    text-shadow: none;
+}
+.header.footer-header .dust-label {
+    color: #777;
+}
+
+.header.footer-header .weather-icon {
+    filter: none; /* 그림자 제거 */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

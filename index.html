@@ -7,6 +7,7 @@
     <title data-lang="pageTitle">제주 그룹 - 모든 여행을 제주그룹 하나로</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/weather.css">
 
 </head>
 
@@ -32,13 +33,17 @@
                     <li class="gnb-item"><a href="#section-2" class="gnb-link" data-lang="navAir">제주에어</a></li>
                     <li class="gnb-item"><a href="#section-3" class="gnb-link" data-lang="navHotel">제주 스테이</a></li>
                     <li class="gnb-item"><a href="#section-4" class="gnb-link" data-lang="navRentCar">제주 렌트카</a></li>
-                    <li class="gnb-item"><a href="#section-5" class="gnb-link" data-lang="navMembership">멤버십</a></li>    
+                    <li class="gnb-item"><a href="#section-5" class="gnb-link" data-lang="navMembership">멤버십</a></li>
                 </ul>
             </nav>
 
             <div class="header-right-controls">
                 <button class="lang-toggle">English</button>
-                <button class="mypage-btn"><i class="fa-solid fa-plane-departure"></i></button>
+                <div id="weather-widget" class="weather-widget">
+                    <div class="weather-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -249,6 +254,7 @@
 
     <script src="js/lang_data.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/weather.js"></script>
 </body>
 
 </html>

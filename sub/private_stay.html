@@ -164,35 +164,29 @@
             <div class="hero-content">
                 <p class="hero-subtitle-top" data-lang="heroSubtitlePrivate">온전히 나를 마주하는 시간, 프리미엄 프라이빗 스테이</p>
 
-                <!-- 새로운 레이아웃 검색 위젯 -->
+                <!-- 새로운 레이아웃 검색 위젯 (Pill Design) -->
                 <div class="search-widget-large">
-                    <!-- 검색 탭 (캡션으로 대체) -->
                     <div class="search-tabs-large">
                         <div class="search-bar-caption">
-                            <i data-lucide="sparkles" style="width: 16px; height: 16px; color: #c7916b;"></i>
-                            <span
-                                style="font-family: 'Noto Serif KR', serif; font-weight: 500; letter-spacing: 0.5px;">Premium
-                                Private Selection</span>
+                            <i data-lucide="sparkles"></i>
+                            <span class="caption-serif">Premium Private Selection</span>
                         </div>
                     </div>
 
-                    <!-- 검색 폼 - 호텔/펜션용 (NEW Global OTA Style) -->
-                    <div class="search-form-new" id="searchFormHotel">
+                    <div class="search-form-new" id="searchFormPrivate">
                         <div class="global-search-container">
                             <div class="global-search-bar">
                                 <!-- 1. 여행지 (Destination) -->
                                 <div class="search-item destination-item-new" id="destinationFieldLarge">
                                     <div class="item-icon">
-                                        <i data-lucide="search"></i>
+                                        <i data-lucide="map-pin"></i>
                                     </div>
                                     <div class="item-content">
                                         <label class="item-label" data-lang="destLabel">여행지</label>
                                         <input type="text" class="item-input" id="destinationInput"
-                                            placeholder="어떤 분위기를 원하시나요?" autocomplete="off"
-                                            data-lang-placeholder="destPlaceholderPrivate">
+                                            placeholder="어떤 분위기를 원하시나요?" autocomplete="off">
                                     </div>
 
-                                    <!-- 여행지 드롭다운 (위치 유지) -->
                                     <div class="destination-dropdown" id="destinationDropdown">
                                         <div class="dropdown-columns">
                                             <div class="dropdown-column">
@@ -214,14 +208,6 @@
                                                             <span class="destination-desc">숲속의 요새</span>
                                                         </div>
                                                     </li>
-                                                    <li class="destination-item" data-value="남해">
-                                                        <img src="https://images.unsplash.com/photo-1572979062332-60197c4bd5a4?w=100&h=100&fit=crop"
-                                                            alt="남해">
-                                                        <div class="destination-info">
-                                                            <span class="destination-name">남해 오션뷰</span>
-                                                            <span class="destination-desc">바다 앞 프라이빗</span>
-                                                        </div>
-                                                    </li>
                                                 </ul>
                                             </div>
                                             <div class="dropdown-column">
@@ -235,14 +221,6 @@
                                                             <span class="destination-desc">전통의 미학</span>
                                                         </div>
                                                     </li>
-                                                    <li class="destination-item" data-value="발리">
-                                                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=100&h=100&fit=crop"
-                                                            alt="발리">
-                                                        <div class="destination-info">
-                                                            <span class="destination-name">발리 풀빌라</span>
-                                                            <span class="destination-desc">정글 뷰 인피니티풀</span>
-                                                        </div>
-                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -251,7 +229,7 @@
 
                                 <div class="search-divider"></div>
 
-                                <!-- 2. 일정 (Dates: Check-in & Check-out merged) -->
+                                <!-- 2. 일정 (Dates) -->
                                 <div class="search-item date-item-new" id="checkInField">
                                     <div class="item-icon">
                                         <i data-lucide="calendar"></i>
@@ -264,63 +242,25 @@
                                             <span id="checkOutDisplay" data-lang="dateSelect">체크아웃</span>
                                         </div>
                                     </div>
-
-                                    <!-- 캘린더 팝업 (From jejuhotel.html) -->
-                                    <div class="Popup RangePicker RangePicker--checkIn RangePicker--with-dayuse"
-                                        id="calendarPopup" role="dialog" aria-modal="true" aria-label="체크인 날짜 선택 달력">
-                                        <div class="Popup__content Popup__content_Occupancy">
-                                            <div class="RangePicker-Header">
-                                                <div class="RangePicker-NavPrev">
-                                                    <button type="button" class="NavBtn NavBtn--prev" id="prevMonth"
-                                                        aria-label="Previous Month">
-                                                        <i data-lucide="chevron-left"></i>
-                                                    </button>
-                                                </div>
-                                                <div role="tablist" class="RangePicker-Tabs">
-                                                    <div class="RangePicker-Tab Item">
-                                                        <button role="tab" aria-selected="true" id="tab-calendar"
-                                                            class="TabBtn active" data-lang="calTitle">캘린더</button>
-                                                        <div class="TabIndicator"></div>
-                                                    </div>
-                                                    <div class="RangePicker-Tab Item">
-                                                        <button role="tab" aria-selected="false" id="tab-flexible"
-                                                            class="TabBtn" data-lang="calFlexible">날짜 미정</button>
-                                                    </div>
-                                                </div>
-                                                <div class="RangePicker-NavNext">
-                                                    <button type="button" class="NavBtn NavBtn--next" id="nextMonth"
-                                                        aria-label="Next Month">
-                                                        <i data-lucide="chevron-right"></i>
-                                                    </button>
+                                    <!-- Calendar Popup (Premium) -->
+                                    <div class="calendar-popup-new" id="calendarPopup" role="dialog" aria-modal="true">
+                                        <div class="calendar-content active" id="panel-calendar">
+                                            <div class="month-navigation">
+                                                <button type="button" id="prevMonth" aria-label="Previous"><i
+                                                        data-lucide="chevron-left"></i></button>
+                                                <button type="button" id="nextMonth" aria-label="Next"><i
+                                                        data-lucide="chevron-right"></i></button>
+                                            </div>
+                                            <div class="day-picker-container" id="dayPickerContainer">
+                                                <div class="day-picker-months" id="calendarMonths">
+                                                    <!-- Rendered by JS -->
                                                 </div>
                                             </div>
-
-                                            <div role="tabpanel" id="panel-calendar" class="RangePicker-Panel active">
-                                                <div class="DayPicker" id="dayPickerContainer">
-                                                    <div class="DayPicker-wrapper">
-                                                        <div class="DayPicker-Months" id="calendarMonths"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="RangePicker-Footer">
-                                                    <button type="button" class="ActionBtn ActionBtn--clear"
-                                                        id="btn-clear">
-                                                        <span data-lang="btnReset">선택 해제</span>
-                                                    </button>
-                                                    <button type="button" class="ActionBtn ActionBtn--confirm"
-                                                        id="btn-confirm">
-                                                        <span data-lang="btnConfirm">확인</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div role="tabpanel" id="panel-flexible" class="RangePicker-Panel">
-                                                <div class="Flexible-Content">
-                                                    <h3 data-lang="calFlexTitle">투숙 기간은 얼마나 되시나요?</h3>
-                                                    <div class="Flexible-Options">
-                                                        <button class="Flexible-Option" data-val="1">1박</button>
-                                                        <button class="Flexible-Option" data-val="2">2박</button>
-                                                        <button class="Flexible-Option" data-val="3">3박 이상</button>
-                                                    </div>
-                                                </div>
+                                        </div>
+                                        <div class="calendar-footer">
+                                            <div class="cal-btns">
+                                                <button type="button" class="btn-clear" id="btn-clear">지우기</button>
+                                                <button type="button" class="btn-confirm" id="btn-confirm">적용하기</button>
                                             </div>
                                         </div>
                                     </div>
@@ -328,7 +268,7 @@
 
                                 <div class="search-divider"></div>
 
-                                <!-- 3. 여행자 (Guests) -->
+                                <!-- 3. 인원 (Guests) -->
                                 <div class="search-item guest-item-new" id="guestFieldLarge">
                                     <div class="item-icon">
                                         <i data-lucide="users"></i>
@@ -336,61 +276,59 @@
                                     <div class="item-content">
                                         <label class="item-label" data-lang="guestLabel">인원</label>
                                         <div class="guest-display-text">
-                                            <span id="guestSummary">성인 2명, 객실 1개</span>
+                                            <span id="guestSummary">성인 2, 객실 1</span>
                                         </div>
                                     </div>
-
-                                    <!-- 인원 선택 팝업 -->
-                                    <div class="guest-popup-new" id="guestPopupLarge">
-                                        <div class="guest-row-new">
-                                            <div class="guest-info-new">
-                                                <span class="guest-type-new" data-lang="guestRooms">객실</span>
-                                            </div>
-                                            <div class="guest-counter-new">
-                                                <button class="counter-btn-new minus" data-target="rooms"><i
-                                                        data-lucide="minus"></i></button>
-                                                <span class="counter-value-new" id="roomsCountLarge">1</span>
-                                                <button class="counter-btn-new plus" data-target="rooms"><i
-                                                        data-lucide="plus"></i></button>
-                                            </div>
-                                        </div>
-                                        <div class="guest-row-new">
-                                            <div class="guest-info-new">
-                                                <span class="guest-type-new" data-lang="guestAdults">성인</span>
-                                                <span class="guest-desc-new" data-lang="guestAdultsDesc">18세 이상</span>
-                                            </div>
-                                            <div class="guest-counter-new">
-                                                <button class="counter-btn-new minus" data-target="adults"><i
-                                                        data-lucide="minus"></i></button>
-                                                <span class="counter-value-new" id="adultsCountLarge">2</span>
-                                                <button class="counter-btn-new plus" data-target="adults"><i
-                                                        data-lucide="plus"></i></button>
+                                    <!-- Guest Popup -->
+                                    <div class="guest-popup-new" id="guestPopupLarge" role="dialog" aria-modal="true"
+                                        style="width: 280px; padding: 20px;">
+                                        <div class="guest-row"
+                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                            <span class="g-label" style="font-weight: 500;">객실</span>
+                                            <div class="counter-box"
+                                                style="display: flex; gap: 10px; align-items: center;">
+                                                <button type="button" class="counter-btn-new minus"
+                                                    data-target="rooms">-</button>
+                                                <span class="count-val" id="roomsCountLarge"
+                                                    style="width: 20px; text-align: center;">1</span>
+                                                <button type="button" class="counter-btn-new plus"
+                                                    data-target="rooms">+</button>
                                             </div>
                                         </div>
-                                        <div class="guest-row-new">
-                                            <div class="guest-info-new">
-                                                <span class="guest-type-new" data-lang="guestChildren">아동</span>
-                                                <span class="guest-desc-new" data-lang="guestChildrenDesc">0 -
-                                                    17세</span>
+                                        <div class="guest-row"
+                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                            <span class="g-label" style="font-weight: 500;">성인</span>
+                                            <div class="counter-box"
+                                                style="display: flex; gap: 10px; align-items: center;">
+                                                <button type="button" class="counter-btn-new minus"
+                                                    data-target="adults">-</button>
+                                                <span class="count-val" id="adultsCountLarge"
+                                                    style="width: 20px; text-align: center;">2</span>
+                                                <button type="button" class="counter-btn-new plus"
+                                                    data-target="adults">+</button>
                                             </div>
-                                            <div class="guest-counter-new">
-                                                <button class="counter-btn-new minus" data-target="children"><i
-                                                        data-lucide="minus"></i></button>
-                                                <span class="counter-value-new" id="childrenCountLarge">0</span>
-                                                <button class="counter-btn-new plus" data-target="children"><i
-                                                        data-lucide="plus"></i></button>
+                                        </div>
+                                        <div class="guest-row"
+                                            style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span class="g-label" style="font-weight: 500;">아동</span>
+                                            <div class="counter-box"
+                                                style="display: flex; gap: 10px; align-items: center;">
+                                                <button type="button" class="counter-btn-new minus"
+                                                    data-target="children">-</button>
+                                                <span class="count-val" id="childrenCountLarge"
+                                                    style="width: 20px; text-align: center;">0</span>
+                                                <button type="button" class="counter-btn-new plus"
+                                                    data-target="children">+</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- 4. 검색 버튼 -->
-                                <div class="search-btn-wrapper">
-                                    <button class="search-btn-pill" id="searchBtn">
-                                        <i data-lucide="search" class="search-btn-icon"></i>
-                                        <span class="search-btn-text" data-lang="searchBtn">검색</span>
-                                    </button>
-                                </div>
+                                <!-- 4. 검색 버튼 (Integrated Pill) -->
+                                <button class="search-btn-integrated" id="searchBtn">
+                                    <i data-lucide="search"></i>
+                                    <span data-lang="searchBtn">검색</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -612,6 +550,14 @@
                         </div>
                     </article>
                 </div>
+
+                <div class="more-hotels-container" style="margin-top: 40px; text-align: center;">
+                    <a href="#" class="btn-more-hotels"
+                        style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 32px; border: 1px solid #e5e5e5; border-radius: 30px; color: #666; font-weight: 500; transition: all 0.3s ease;">
+                        <span>더 많은 감성 숙소 보기</span>
+                        <i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i>
+                    </a>
+                </div>
             </div>
         </section>
     </main>
@@ -646,7 +592,7 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="../js/lang_data.js"></script>
-    <script src="../js/hotel.js"></script>
+    <script src="../js/private_stay.js"></script>
     <script src="../js/FAB.js"></script>
     <script src="../js/chatbot.js"></script>
     <script src="../js/stagger_nav.js"></script>
