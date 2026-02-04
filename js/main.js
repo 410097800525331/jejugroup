@@ -120,6 +120,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // 입력 창이나 날씨 오버레이 활성화 시 스크롤 막기 (RayPersona: 사용자 경험 보호)
+        if (e.target.tagName === 'INPUT' || 
+            e.target.tagName === 'TEXTAREA' || 
+            document.querySelector('.weather-overlay.active')) {
+            return;
+        }
+
         if (keys.includes(e.key)) {
             e.preventDefault();
             
@@ -175,16 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Header Style
-                // Header Style
-                if (entry.target.tagName === 'FOOTER' || entry.target.id === 'section-footer') {
-                    header.classList.remove('section1-header', 'section2plus-header', 'transparent');
-                    header.classList.add('footer-header');
-                    // Header background for footer: usually white or transparent with dark text? 
-                    // Let's keep it consistent with design. If footer is light, header should probably be solid white or transparent-dark-text.
-                    // Given the existing code uses 'transparent' class for section2+, I'll assume we want to control transparency via CSS for .footer-header specifically or add 'transparent' if needed.
-                    // Let's NOT add 'transparent' by default here, so we can control background in CSS.
-                    if (topBtn) topBtn.classList.add('show');
-                } else if (entry.target.id === 'section-1') {
+                if (entry.target.id === 'section-1') {
                     header.classList.remove('transparent', 'section2plus-header', 'footer-header');
                     header.classList.add('section1-header');
                     if (topBtn) topBtn.classList.remove('show');

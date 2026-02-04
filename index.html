@@ -40,9 +40,9 @@
             <div class="header-right-controls">
                 <button class="lang-toggle">English</button>
                 <div id="weather-widget" class="weather-widget">
-                    <div class="weather-loading">
+                    <button class="weather-header-btn" id="weather-open-btn">
                         <i class="fa-solid fa-spinner fa-spin"></i>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -252,8 +252,28 @@
         </video>
     </div>
 
+    <!-- Weather Overlay Modal -->
+    <div id="weather-overlay" class="weather-overlay">
+        <div class="weather-overlay-content">
+            <button class="weather-close-btn" id="weather-close-btn">&times;</button>
+            <div class="weather-search-bar">
+                <input type="text" id="weather-search-input" placeholder="도시 이름을 입력하세요 (예: Seoul, Jeju)">
+                <button id="weather-search-btn"><i class="fas fa-search"></i></button>
+                <ul id="weather-suggestions" class="weather-suggestions"></ul>
+            </div>
+            <div id="weather-detail-container">
+                <!-- Detailed weather info will be injected here -->
+                <div class="weather-loading-large">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>날씨 정보를 불러오는 중...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/lang_data.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/city_data.js"></script>
     <script src="js/weather.js"></script>
 </body>
 

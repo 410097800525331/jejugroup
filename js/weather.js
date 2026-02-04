@@ -1,138 +1,296 @@
 
-// OpenWeatherMap API 설정
-// TODO: 실제 배포시 백엔드 프록시로 교체 필수. 현재는 정적 호스팅 환경이라 불가피 노출.
-const API_KEY = '1e63233c6a2916873dd354eaaf829b1e'; // 사용자 요청으로 하드코딩 (원칙 위배되지만 요구사항 준수)
+// OpenWeatherMap API 설정 (RayPersona: 보안을 위해 Netlify Function 프록시 사용)
+// const API_KEY = '...'; // 더 이상 프론트엔드에 키를 두지 않음
 
-// 기본 위치: 서울 시청
+// 기본 위치: 서울
 const DEFAULT_LAT = 37.5665;
 const DEFAULT_LON = 126.9780;
 
-// 엘리먼트 캐싱
-const widget = document.getElementById('weather-widget');
+// DOM 캐싱
+const openBtn = document.getElementById('weather-open-btn');
+const overlay = document.getElementById('weather-overlay');
+const closeBtn = document.getElementById('weather-close-btn');
+const detailContainer = document.getElementById('weather-detail-container');
+const searchInput = document.getElementById('weather-search-input');
+const searchBtn = document.getElementById('weather-search-btn');
+const suggestionsList = document.getElementById('weather-suggestions');
+
+// 날씨 상태 저장 (전역)
+let currentWeatherData = null;
+let currentPollutionData = null;
 
 /*
- * 날씨 데이터 로직 시작
- * 위치 수집 -> API 호출 -> UI 렌더링
- * "서울 기준" fallback 철저 구현
+ * 날씨 앱 코어 로직
  */
-
 async function initWeather() {
-    if (!widget) return;
-
     try {
-        const position = await getGeoLocation();
-        const { lat, lon } = position;
-        
-        // 날씨 & 미세먼지 병렬 호출 (속도 최적화)
-        const [weatherData, pollutionData] = await Promise.all([
+        const coords = await getGeoLocation();
+        await updateWeatherData(coords.lat, coords.lon);
+    } catch (error) {
+        console.warn('Geolocation failed, falling back to Seoul:', error.message);
+        await updateWeatherData(DEFAULT_LAT, DEFAULT_LON);
+    }
+}
+
+async function updateWeatherData(lat, lon) {
+    try {
+        const [weather, pollution] = await Promise.all([
             fetchWeatherData(lat, lon),
             fetchPollutionData(lat, lon)
         ]);
-
-        renderWidget(weatherData, pollutionData);
-
+        
+        currentWeatherData = weather;
+        currentPollutionData = pollution;
+        
+        renderHeaderButton(weather);
+        if (overlay.classList.contains('active')) renderOverlay();
     } catch (error) {
-        console.error('Weather Error:', error);
-        // 에러 발생시 서울 기준으로 재시도 (사용자 경험 우선)
-        fallbackToSeoul(); 
+        handleWeatherError(error);
     }
 }
 
-// 위치 정보 가져오기 (Promise 래핑)
+// 도시 이름으로 검색 (Korean Support & Mapping)
+async function searchCityWeather(cityQuery) {
+    if (!cityQuery) return;
+    
+    // CITY_DATA에서 매핑된 도시 찾기 (한글 검색 대응)
+    const mappedCity = CITY_DATA.find(c => c.ko === cityQuery || c.en.toLowerCase() === cityQuery.toLowerCase());
+    const searchTerm = mappedCity ? mappedCity.en : cityQuery;
+
+    // 로딩 상태 표시
+    detailContainer.innerHTML = `
+        <div class="weather-loading-large">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>'${cityQuery}' 날씨 검색 중...</p>
+        </div>
+    `;
+    suggestionsList.classList.remove('active');
+
+    try {
+        const weatherRes = await fetch(`/.netlify/functions/weather?type=search&q=${encodeURIComponent(searchTerm)}`);
+        if (weatherRes.status === 404) throw new Error('CITY_NOT_FOUND');
+        if (!weatherRes.ok) throw new Error('SEARCH_FAILED');
+        
+        const weather = await weatherRes.json();
+        const pollution = await fetchPollutionData(weather.coord.lat, weather.coord.lon);
+        
+        currentWeatherData = weather;
+        currentPollutionData = pollution;
+        
+        renderOverlay();
+    } catch (error) {
+        let msg = '날씨를 불러올 수 없습니다.';
+        if (error.message === 'CITY_NOT_FOUND') msg = `'${cityQuery}' 도시를 찾을 수 없습니다.`;
+        
+        detailContainer.innerHTML = `
+            <div class="weather-loading-large">
+                <i class="fa-solid fa-circle-exclamation" style="color: #ea580c;"></i>
+                <p class="weather-error-msg"></p>
+            </div>
+        `;
+        // RayPersona: XSS 방지를 위한 textContent 사용
+        detailContainer.querySelector('.weather-error-msg').textContent = msg;
+    }
+}
+
+// 연관 검색어 표시 (Autocomplete)
+function showSuggestions(query) {
+    currentFocus = -1; // 리셋
+    if (!query) {
+        suggestionsList.classList.remove('active');
+        return;
+    }
+
+    const filtered = CITY_DATA.filter(c => 
+        c.ko.includes(query) || 
+        c.en.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 5); // 최대 5개 노출
+
+    if (filtered.length === 0) {
+        suggestionsList.classList.remove('active');
+        return;
+    }
+
+    suggestionsList.innerHTML = filtered.map(c => `
+        <li class="suggestion-item" data-ko="${c.ko}" data-en="${c.en}">
+            <span>${c.ko} (${c.en})</span>
+            <span class="country-tag">${c.country}</span>
+        </li>
+    `).join('');
+
+    suggestionsList.classList.add('active');
+}
+
+// 위치 정보 비동기 래핑
 function getGeoLocation() {
     return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-            reject(new Error('Geolocation not supported'));
-        } else {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    resolve({
-                        lat: position.coords.latitude,
-                        lon: position.coords.longitude
-                    });
-                },
-                () => {
-                    // 거부하거나 에러나면 바로 reject -> 서울 fallback
-                    reject(new Error('Permission denied or error'));
-                }
-            );
-        }
+        if (!navigator.geolocation) reject(new Error('지원 안 함'));
+        navigator.geolocation.getCurrentPosition(
+            pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+            err => reject(err)
+        );
     });
 }
 
-// 서울 기준 Fallback
-async function fallbackToSeoul() {
-    try {
-        const [weatherData, pollutionData] = await Promise.all([
-            fetchWeatherData(DEFAULT_LAT, DEFAULT_LON),
-            fetchPollutionData(DEFAULT_LAT, DEFAULT_LON)
-        ]);
-        renderWidget(weatherData, pollutionData);
-    } catch (e) {
-        let msg = '날씨 정보 없음';
-        if (e.message === 'Invalid API Key') msg = 'API 키 오류';
-        widget.innerHTML = `<span style="font-size:12px; color: #f2f2f2;">${msg}</span>`;
-    }
-}
-
-// OpenWeatherMap Current Weather 호출
+// API 호출부 (이제 넷리파이 함수로 프록시 쏴줌)
 async function fetchWeatherData(lat, lon) {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=kr`;
-    const res = await fetch(url);
-    if (res.status === 401) throw new Error('Invalid API Key');
-    if (!res.ok) throw new Error('Weather API Failed');
+    const res = await fetch(`/.netlify/functions/weather?type=current&lat=${lat}&lon=${lon}`);
+    if (res.status === 401) throw new Error('API_KEY_INVALID');
     return await res.json();
 }
 
-// OpenWeatherMap Air Pollution 호출
 async function fetchPollutionData(lat, lon) {
-    const url = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
-    const res = await fetch(url);
-    if (res.status === 401) throw new Error('Invalid API Key');
-    if (!res.ok) throw new Error('Pollution API Failed');
+    const res = await fetch(`/.netlify/functions/weather?type=pollution&lat=${lat}&lon=${lon}`);
     return await res.json();
 }
 
-// UI 렌더링
-function renderWidget(weather, pollution) {
-    if (!weather || !pollution) return;
-
+// 헤더 버튼 렌더링
+function renderHeaderButton(weather) {
+    if (!openBtn) return;
     const temp = Math.round(weather.main.temp);
-    const iconCode = weather.weather[0].icon;
-    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+    const icon = weather.weather[0].icon;
+    openBtn.innerHTML = `
+        <img src="https://openweathermap.org/img/wn/${icon}.png" alt="weather">
+        <span>${temp}°</span>
+    `;
+}
+
+// 날씨 ID에 따른 이펙트 클래스 매핑
+function getWeatherEffectClass(weatherId) {
+    if (weatherId >= 200 && weatherId < 300) return 'weather-effect-thunder';
+    if (weatherId >= 300 && weatherId < 600) return 'weather-effect-rain';
+    if (weatherId >= 600 && weatherId < 700) return 'weather-effect-snow';
+    if (weatherId >= 700 && weatherId < 800) return 'weather-effect-clouds'; // Atmosphere (fog, etc) -> clouds
+    if (weatherId > 800) return 'weather-effect-clouds'; // 801-804
+    return 'weather-effect-clear'; // 800
+}
+
+// 오버레이 상세 내용 렌더링
+function renderOverlay() {
+    if (!currentWeatherData || !currentPollutionData) return;
+
+    const w = currentWeatherData;
+    const p = currentPollutionData;
+    const aqi = p.list[0].main.aqi;
     
-    // 미세먼지 등급 (1:Good, 2:Fair, 3:Moderate, 4:Poor, 5:Very Poor)
-    const aqi = pollution.list[0].main.aqi; 
-    let dustText = '';
-    let dustClass = '';
+    // 미세먼지 매핑
+    const dustMap = { 1: ['좋음', 'good'], 2: ['보통', 'fair'], 3: ['나쁨', 'poor'], 4: ['매우나쁨', 'very-poor'], 5: ['매우나쁨', 'very-poor'] };
+    const [dustText, dustClass] = dustMap[aqi] || ['데이터 없음', ''];
 
-    // 한국 기준 대략적 매핑 (PM10/2.5 수치 정밀 변환보단 AQI 인덱스로 직관적 표현)
-    switch(aqi) {
-        case 1: dustText = '좋음'; dustClass = 'good'; break;
-        case 2: dustText = '보통'; dustClass = 'fair'; break;
-        case 3: dustText = '나쁨'; dustClass = 'poor'; break;
-        case 4: 
-        case 5: dustText = '매우나쁨'; dustClass = 'very-poor'; break;
-        default: dustText = '-';
-    }
+    // 날씨 이펙트 클래스 가져오기
+    const effectClass = getWeatherEffectClass(w.weather[0].id);
 
-    // HTML 주입
-    // .mypage-btn 처럼 보이게 스타일링 클래스 활용
-    // 기존 버튼 스타일을 유지하면서 내용만 교체
-    const html = `
-        <div class="weather-content">
-            <img src="${iconUrl}" alt="${weather.weather[0].description}" class="weather-icon">
-            <span class="weather-temp">${temp}°</span>
-            <div class="weather-dust ${dustClass}">
-                <span class="dust-label">미세</span>
-                <span class="dust-value">${dustText}</span>
+    detailContainer.innerHTML = `
+        <div class="weather-bg-effect ${effectClass}"></div>
+        <div class="weather-detail-main">
+            <p class="weather-detail-city">${w.name}</p>
+            <div class="weather-detail-info">
+                <img src="https://openweathermap.org/img/wn/${w.weather[0].icon}@4x.png" class="weather-detail-icon">
+                <h2 class="weather-detail-temp">${Math.round(w.main.temp)}°</h2>
+                <p class="weather-detail-desc">${w.weather[0].description}</p>
+            </div>
+        </div>
+        <div class="weather-detail-grid">
+            <div class="weather-detail-item">
+                <span class="item-label">체감 온도</span>
+                <span class="item-value">${Math.round(w.main.feels_like)}°</span>
+            </div>
+            <div class="weather-detail-item weather-detail-dust ${dustClass}">
+                <span class="item-label">미세먼지</span>
+                <span class="item-value">${dustText}</span>
+            </div>
+            <div class="weather-detail-item">
+                <span class="item-label">습도</span>
+                <span class="item-value">${w.main.humidity}%</span>
+            </div>
+            <div class="weather-detail-item">
+                <span class="item-label">풍속</span>
+                <span class="item-value">${w.wind.speed}m/s</span>
             </div>
         </div>
     `;
-
-    widget.innerHTML = html;
-    widget.classList.add('loaded'); // 애니메이션 트리거
 }
 
-// 실행
+// 이벤트 리스너
+if (openBtn) openBtn.onclick = () => {
+    overlay.classList.add('active');
+    renderOverlay();
+};
+
+if (closeBtn) closeBtn.onclick = () => overlay.classList.remove('active');
+
+if (searchBtn) searchBtn.onclick = () => searchCityWeather(searchInput.value.trim());
+
+// 검색창 키보드 네비게이션 변수
+let currentFocus = -1;
+
+if (searchInput) {
+    searchInput.oninput = (e) => {
+        showSuggestions(e.target.value.trim());
+    };
+    
+    searchInput.onkeydown = (e) => {
+        const items = suggestionsList.getElementsByTagName('li');
+        if (e.key === 'ArrowDown') {
+            currentFocus++;
+            addActive(items);
+        } else if (e.key === 'ArrowUp') {
+            currentFocus--;
+            addActive(items);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (currentFocus > -1 && items[currentFocus]) {
+                items[currentFocus].click();
+            } else {
+                searchCityWeather(searchInput.value.trim());
+            }
+        }
+    };
+}
+
+function addActive(items) {
+    if (!items) return;
+    removeActive(items);
+    if (currentFocus >= items.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (items.length - 1);
+    items[currentFocus].classList.add('autocomplete-active');
+    
+    // 스크롤 자동 이동
+    items[currentFocus].scrollIntoView({ block: 'nearest' });
+}
+
+function removeActive(items) {
+    for (let i = 0; i < items.length; i++) {
+        items[i].classList.remove('autocomplete-active');
+    }
+}
+
+// 추천 아이템 클릭 시
+suggestionsList.onclick = (e) => {
+    const item = e.target.closest('.suggestion-item');
+    if (item) {
+        const cityKo = item.getAttribute('data-ko');
+        searchInput.value = cityKo;
+        searchCityWeather(cityKo);
+    }
+};
+
+window.addEventListener('click', e => { 
+    if (e.target === overlay) {
+        overlay.classList.remove('active');
+        suggestionsList.classList.remove('active');
+    }
+    // 검색창 밖 클릭 시 추천 목록 닫기
+    if (!e.target.closest('.weather-search-bar')) {
+        suggestionsList.classList.remove('active');
+    }
+});
+
+window.addEventListener('keydown', e => { 
+    if (e.key === 'Escape') {
+        overlay.classList.remove('active');
+        suggestionsList.classList.remove('active');
+    }
+});
+
 document.addEventListener('DOMContentLoaded', initWeather);
