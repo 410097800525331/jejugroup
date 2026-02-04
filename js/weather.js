@@ -144,13 +144,44 @@ async function fetchPollutionData(lat, lon) {
     return await res.json();
 }
 
+// 날씨 아이콘 매핑 (RayPersona: OWM 기본 아이콘이 '볼링공' 같아서 FA로 교체)
+function getWeatherIconHTML(iconCode, size = 'small') {
+    const iconMap = {
+        '01d': ['fa-sun', '#ffbd00'],
+        '01n': ['fa-moon', '#f5f3ce'],
+        '02d': ['fa-cloud-sun', '#ffbd00'],
+        '02n': ['fa-cloud-moon', '#f5f3ce'],
+        '03d': ['fa-cloud', '#cbd5e1'],
+        '03n': ['fa-cloud', '#cbd5e1'],
+        '04d': ['fa-cloud', '#94a3b8'],
+        '04n': ['fa-cloud', '#94a3b8'],
+        '09d': ['fa-cloud-showers-heavy', '#60a5fa'],
+        '09n': ['fa-cloud-showers-heavy', '#60a5fa'],
+        '10d': ['fa-cloud-sun-rain', '#60a5fa'],
+        '10n': ['fa-cloud-moon-rain', '#60a5fa'],
+        '11d': ['fa-bolt', '#fde047'],
+        '11n': ['fa-bolt', '#fde047'],
+        '13d': ['fa-snowflake', '#99f6e4'],
+        '13n': ['fa-snowflake', '#99f6e4'],
+        '50d': ['fa-smog', '#94a3b8'],
+        '50n': ['fa-smog', '#94a3b8'],
+    };
+
+    const [iconClass, color] = iconMap[iconCode.substring(0, 3)] || ['fa-sun', '#ffbd00'];
+    
+    if (size === 'large') {
+        return `<i class="fa-solid ${iconClass} weather-detail-icon-fa" style="color: ${color};"></i>`;
+    }
+    return `<i class="fa-solid ${iconClass}" style="color: ${color}; margin-right: 4px;"></i>`;
+}
+
 // 헤더 버튼 렌더링
 function renderHeaderButton(weather) {
     if (!openBtn) return;
     const temp = Math.round(weather.main.temp);
-    const icon = weather.weather[0].icon;
+    const iconCode = weather.weather[0].icon;
     openBtn.innerHTML = `
-        <img src="https://openweathermap.org/img/wn/${icon}.png" alt="weather">
+        ${getWeatherIconHTML(iconCode, 'small')}
         <span>${temp}°</span>
     `;
 }
@@ -179,13 +210,14 @@ function renderOverlay() {
 
     // 날씨 이펙트 클래스 가져오기
     const effectClass = getWeatherEffectClass(w.weather[0].id);
+    const iconHTML = getWeatherIconHTML(w.weather[0].icon, 'large');
 
     detailContainer.innerHTML = `
         <div class="weather-bg-effect ${effectClass}"></div>
         <div class="weather-detail-main">
             <p class="weather-detail-city">${w.name}</p>
             <div class="weather-detail-info">
-                <img src="https://openweathermap.org/img/wn/${w.weather[0].icon}@4x.png" class="weather-detail-icon">
+                ${iconHTML}
                 <h2 class="weather-detail-temp">${Math.round(w.main.temp)}°</h2>
                 <p class="weather-detail-desc">${w.weather[0].description}</p>
             </div>
