@@ -1,6 +1,6 @@
 /*
- * JEJU STAY - Life (Long Stay) Interactive JavaScript
- * Based on hotel.js, extended for Long Term Stay logic
+ * JEJU STAY - 라이프 (장기 체류) 인터랙티브 자바스크립트
+ * hotel.js 기반, 장기 체류 로직을 위해 확장됨
  */
 
 // 전역 변수
@@ -13,12 +13,12 @@ let calendarState = {
 };
 let hoverDate = null;
 
-// Constants
+// 상수
 const MIN_STAY_DAYS = 14;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Icons
+    // 아이콘 초기화
     if (window.lucide) {
         lucide.createIcons();
     }
@@ -34,24 +34,24 @@ document.addEventListener('DOMContentLoaded', function() {
     initOptionsPopup(); // [New] Options Selector
     initMobileSearch();
     
-    // Global click listener to close popups when clicking outside
-    // (Relies on stopPropagation in triggers/popups)
+    // 팝업 외부 클릭 시 모든 팝업을 닫는 글로벌 클릭 리스너
+    // (트리거/팝업의 stopPropagation에 의존함)
     document.addEventListener('click', () => {
         closeAllPopups();
     });
     
-    // GSAP Animations
+    // GSAP 애니메이션
     initStandardsAnimation();
 });
 
 /* ========== GSAP Animations ========== */
 /* ========== GSAP Animations ========== */
 function initStandardsAnimation() {
-    // Check if GSAP is available
+    // GSAP 사용 가능 여부 확인
     if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
 
-        // Standards Section Cards Stagger
+        // 기준 섹션 카드 스태거(Stagger) 효과
         // Initial set for GSAP to handle 'from' state correctly if needed, 
         // but using 'to' with 'from' styles or 'from' directly is better.
         // User requested gsap.from() logic in description but JSON config suggests simple vars.
@@ -64,7 +64,7 @@ function initStandardsAnimation() {
         gsap.from('.standard-card-wrapper', {
             scrollTrigger: {
                 trigger: '.standards-section',
-                start: 'top 85%', // Viewport hit
+                start: 'top 85%', // 뷰포트 히트
                 toggleActions: 'play none none reverse'
             },
             y: 60,
@@ -72,28 +72,28 @@ function initStandardsAnimation() {
             duration: 1.2,
             stagger: 0.15,
             ease: "power4.out",
-            clearProps: "all" // Ensure CSS hover works after animation
+            clearProps: "all" // 애니메이션 후 CSS 호버가 작동하도록 보장
         });
     } else {
-        console.warn('GSAP not found. Falling back to IntersectionObserver.');
-        // Fallback for non-GSAP environments
+        console.warn('GSAP를 찾을 수 없습니다. IntersectionObserver로 대체합니다.');
+        // GSAP가 없는 환경을 위한 대체 로직
         const cards = document.querySelectorAll('.standard-card-wrapper');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    // Simple stagger simulation with partial timeout or just CSS transition delay
+                    // 부분적인 타임아웃 또는 CSS 트랜지션 지연을 사용한 간단한 스태거 시뮬레이션
                     setTimeout(() => {
                          entry.target.style.opacity = '1';
                          entry.target.style.transform = 'translateY(0)';
                          entry.target.style.transition = 'all 0.8s ease-out';
-                    }, index * 200); // 0.2s stagger
+                    }, index * 200); // 0.2초 스태거
                     observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.1 });
         
         cards.forEach(c => {
-             // Set initial state for fallback
+              // 대체 로직을 위한 초기 상태 설정
              c.style.opacity = '0';
              c.style.transform = 'translateY(50px)';
              observer.observe(c);
@@ -128,13 +128,13 @@ function initWishlistButtons() {
             const hotel = longStayHotels.find(h => h.id === id);
             
             if(hotel && window.FABState) {
-                // Calculate Price for display
+                // 표시용 가격 계산
                 const NIGHTS = 30;
                 const standardTotal = hotel.priceDaily * NIGHTS;
                 const finalTotal = Math.round(standardTotal * (1 - hotel.discountRate));
                 const priceStr = `₩${finalTotal.toLocaleString()}`; 
                 
-                // Construct Item Object
+                // 아이템 객체 구성
                 const item = {
                     id: hotel.id,
                     name: hotel.name,
@@ -160,31 +160,31 @@ function initScrollAnimations() {
     }, { threshold: 0.1 });
     document.querySelectorAll('.hotel-card, .destination-card, .curation-card').forEach(el => observer.observe(el));
     
-    // Global Language Change Listener
+    // 글로벌 언어 변경 리스너
     document.addEventListener('fabLanguageChanged', (e) => {
-        // 1. Re-render Calendar (Month names, etc.)
+        // 1. 캘린더 다시 렌더링 (월 이름 등)
         renderCalendar();
         
-        // 2. Re-render Hotel List (localized data)
+        // 2. 호텔 리스트 다시 렌더링 (현지화된 데이터)
         renderLongStayHotels();
         
-        // 3. Re-run Amenity Filter Summary update to refresh text
+        // 3. 편의시설 필터 요약 업데이트 재실행하여 텍스트 갱신
         const amenityField = document.getElementById('amenityField');
         if (amenityField && typeof amenityField.updateSummary === 'function') {
             amenityField.updateSummary();
         }
         
-        // 4. Update Summary Dates if selected
+        // 4. 선택된 경우 요약 날짜 업데이트
         updateDateDisplay('checkIn', calendarState.tempCheckIn ? new Date(calendarState.tempCheckIn) : calendarState.checkIn ? new Date(calendarState.checkIn) : null);
         updateDateDisplay('checkOut', calendarState.tempCheckOut ? new Date(calendarState.tempCheckOut) : calendarState.checkOut ? new Date(calendarState.checkOut) : null);
 
-        // 5. Update Warning Message if present
+        // 5. 경고 메시지가 있는 경우 업데이트
         if (document.getElementById('stayWarning').style.display === 'block') {
-             // Re-trigger validation logic or just hide it to avoid stale text?
-             updateWarning(document.getElementById('stayWarning').textContent); // Trigger update if logic allows, or reset
+             // 유효성 검사 로직을 다시 실행하거나 오래된 텍스트를 피하기 위해 숨김 처리?
+             updateWarning(document.getElementById('stayWarning').textContent); // 로직이 허용되면 업데이트 트리거, 아니면 리셋
         }
         
-        // 6. Update Search Button text if package rate applied
+        // 6. 패키지 요금이 적용된 경우 검색 버튼 텍스트 업데이트
         checkPackageRate();
     });
 }
@@ -195,11 +195,11 @@ function initDestinationDropdown() {
     const destDropdown = document.getElementById('destinationDropdown');
     
     if (destField && destDropdown) {
-        // Toggle Dropdown
+        // 드롭다운 토글
         destField.addEventListener('click', (e) => {
             e.stopPropagation();
             const isActive = destDropdown.classList.contains('active');
-            closeAllPopups('destinationDropdown'); // Close others
+            closeAllPopups('destinationDropdown'); // 다른 팝업 닫기
             
             if (!isActive) {
                 destDropdown.classList.add('active');
@@ -207,7 +207,7 @@ function initDestinationDropdown() {
             }
         });
 
-        // Handle Item Click
+        // 아이템 클릭 핸들링
         document.querySelectorAll('.destination-item, .destination-item-text').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -219,7 +219,7 @@ function initDestinationDropdown() {
     }
 }
 
-// Helper to close all popups
+// 모든 팝업을 닫는 헬퍼 함수
 function closeAllPopups(exceptId = null) {
     const popups = {
         'destinationDropdown': document.getElementById('destinationDropdown'),
@@ -231,9 +231,8 @@ function closeAllPopups(exceptId = null) {
     for (const [id, el] of Object.entries(popups)) {
         if (id !== exceptId && el) {
             el.classList.remove('active');
-            if (id === 'optionsPopupLarge') el.style.display = 'none'; // Handle inline style
             
-            // Remove active state from parent field if needed
+            // 필요한 경우 부모 필드에서 활성 상태 제거
              if (id === 'guestPopupLarge') document.getElementById('guestFieldLarge')?.classList.remove('active');
              if (id === 'calendarPopup') document.getElementById('checkInField')?.classList.remove('active');
              if (id === 'destinationDropdown') document.getElementById('destinationFieldLarge')?.classList.remove('active');
@@ -315,24 +314,21 @@ function initOptionsPopup() {
     if (optionsField && optionsPopup) {
         optionsField.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Check visibility by style since we use inline display:none
-            const isActive = optionsPopup.style.display === 'block'; 
+            const isActive = optionsPopup.classList.contains('active');
             closeAllPopups('optionsPopupLarge');
             
             if (!isActive) {
-                optionsPopup.style.display = 'block';
+                optionsPopup.classList.add('active');
                 optionsField.classList.add('active');
-                // Use setTimeout to allow click propagation to finish before adding document listener if needed?
-                // But we use stopPropagation on popup click, so standard matching logic in closeAllPopups handles "others".
             } else {
-                optionsPopup.style.display = 'none';
+                optionsPopup.classList.remove('active');
                 optionsField.classList.remove('active');
             }
         });
 
         optionsPopup.addEventListener('click', (e) => e.stopPropagation());
 
-        // Checkbox Logic
+        // 체크박스 로직
         const checkboxes = optionsPopup.querySelectorAll('.option-checkbox');
         checkboxes.forEach(cb => {
             cb.addEventListener('change', () => {
@@ -344,15 +340,14 @@ function initOptionsPopup() {
             const checked = Array.from(optionsPopup.querySelectorAll('.option-checkbox:checked')).map(cb => cb.value);
             if (checked.length === 0) {
                 optionsSummary.textContent = "선택사항 없음";
-                optionsSummary.style.color = "#999";
+                optionsSummary.style.color = "#777"; // Increased contrast from #999
             } else {
-                // Truncate if too long?
                 if(checked.length > 2) {
                      optionsSummary.textContent = `${checked[0]}, ${checked[1]} 외 ${checked.length - 2}`;
                 } else {
                      optionsSummary.textContent = checked.join(', ');
                 }
-                optionsSummary.style.color = "var(--text-title)";
+                optionsSummary.style.color = "#222"; // Use solid dark color for active state
             }
         }
     }
@@ -371,62 +366,55 @@ function initMobileSearch() {
     }
 }
 
-/* ========== Long Stay Calendar Logic (Keep Existing) ========== */
-// ... (Calendar functions omitted for brevity in replace, but needed in full file)
-// Since replace_file_content replaces a block, I must ensure I don't delete calendar logic if I target a range.
-// But I am rewriting the file structure slightly.
-// Wait, I should not overwrite initCalendar if I don't include it in replacement.
-// The replace_file_content tool requires TargetContent to match EXACTLY.
-// It is better to use the "EndLine" feature carefully or replace specific function blocks.
-// However, the previous tool call showed initAmenityFilter at line 89.
-// And closeAllPopups at line 388.
-// I will replace from initHeader downwards to overwrite Filter and Utility functions, but preserve initCalendar if possible?
-// Looking at the file, initCalendar is lines 100-176.
-// I can replace initAmenityFilter block specifically.
-// And append initMobileSearch at the end.
-// And update closeAllPopups.
-
-// Let's do partial replacements to be safe.
-
-// 1. Replace initAmenityFilter
-// 2. Add initMobileSearch at bottom
-// 3. Update closeAllPopups
 
 
-/* ========== Long Stay Calendar Logic (Ported from hotel.js with Long Stay Validation) ========== */
+/* ========== 장기 체류 캘린더 로직 (장기 체류 유효성 검사가 포함된 hotel.js에서 이식됨) ========== */
 function initCalendar() {
     const calendarPopup = document.getElementById('calendarPopup');
     const dateFieldContainer = document.getElementById('checkInField'); 
 
     if (!calendarPopup || !dateFieldContainer) return;
 
-    // 1. Toggle Calendar
+    // 1. 캘린더 토글
     dateFieldContainer.addEventListener('click', (e) => {
         e.stopPropagation();
         
         const isActive = calendarPopup.classList.contains('active');
-        closeAllPopups('calendarPopup');
-
+        
         if (!isActive) {
-            // Synch temp state on open
+            closeAllPopups('calendarPopup'); // 다른 팝업 닫기
+            
+            // 열 때 실시간 동기화
             calendarState.tempCheckIn = calendarState.checkIn;
             calendarState.tempCheckOut = calendarState.checkOut;
             
             calendarPopup.classList.add('active');
             dateFieldContainer.classList.add('active');
             renderCalendar(); 
+            updateResults(); // 메인 바를 현재 temp(confirmed와 동일) 상태로 초기화
         } else {
-            calendarPopup.classList.remove('active');
-            dateFieldContainer.classList.remove('active');
+            // 이미 열려있을 때 다시 클릭하면 '취소'로 간주하고 닫기
+            cancelCalendar();
         }
     });
 
-    // 2. Prevent propagation
+    function cancelCalendar() {
+        // 임시 선택을 버리고 원래 확정된 상태로 UI 원복
+        calendarState.tempCheckIn = null;
+        calendarState.tempCheckOut = null;
+        updateDateDisplay('checkIn', calendarState.checkIn ? new Date(calendarState.checkIn) : null);
+        updateDateDisplay('checkOut', calendarState.checkOut ? new Date(calendarState.checkOut) : null);
+        
+        calendarPopup.classList.remove('active');
+        dateFieldContainer.classList.remove('active');
+    }
+
+    // 2. 이벤트 전파 방지
     calendarPopup.addEventListener('click', (e) => {
         e.stopPropagation();
     });
 
-    // 2-1. Tab Switching Logic (Added from hotel.js)
+    // 2-1. 탭 전환 로직 (hotel.js에서 추가됨)
     const tabCalendar = document.getElementById('tab-calendar');
     const tabFlexible = document.getElementById('tab-flexible');
     const panelCalendar = document.getElementById('panel-calendar');
@@ -463,19 +451,19 @@ function initCalendar() {
     if(tabCalendar) tabCalendar.addEventListener('click', (e) => { e.stopPropagation(); switchTab(tabCalendar); });
     if(tabFlexible) tabFlexible.addEventListener('click', (e) => { e.stopPropagation(); switchTab(tabFlexible); });
 
-    // 2-2. Flexible Option Logic
+    // 2-2. 유연한 옵션 로직
     document.querySelectorAll('.Flexible-Option').forEach(opt => {
         opt.addEventListener('click', (e) => {
             e.stopPropagation();
             document.querySelectorAll('.Flexible-Option').forEach(o => o.classList.remove('active'));
             opt.classList.add('active');
             
-            // For logic consistency: maybe set a state? 
-            // Currently just UI selection as per hotel.js
+            // 로직 일관성을 위해: 상태를 설정해야 할까요? 
+            // 현재는 hotel.js에 따라 UI 선택만 수행함
         });
     });
 
-    // 3. Navigation
+    // 3. 네비게이션
     document.getElementById('prevMonth')?.addEventListener('click', (e) => {
         e.stopPropagation();
         currentMonth.setMonth(currentMonth.getMonth() - 1);
@@ -488,7 +476,7 @@ function initCalendar() {
         renderCalendar();
     });
 
-    // 4. Clear
+    // 4. 초기화
     document.getElementById('btn-clear')?.addEventListener('click', (e) => {
         e.stopPropagation();
         calendarState = { checkIn: null, checkOut: null, tempCheckIn: null, tempCheckOut: null };
@@ -498,29 +486,48 @@ function initCalendar() {
         updateWarning(null);
     });
 
-    // 5. Confirm (With Long Stay Validation)
+    // 5. 확정 (장기 체류 유효성 검사 포함)
     document.getElementById('btn-confirm')?.addEventListener('click', (e) => {
         e.stopPropagation();
         
-        // Validation: Min Stay Check
-        if (calendarState.tempCheckIn && calendarState.tempCheckOut) {
-            const days = (calendarState.tempCheckOut - calendarState.tempCheckIn) / ONE_DAY_MS;
-            if (days < MIN_STAY_DAYS) {
-                alert(`장기 체류 서비스는 최소 ${MIN_STAY_DAYS}박부터 예약 가능합니다.`);
-                return;
-            }
+        // 유효성 검사: 선택 안 함 상태에서 확인 누르면 초기화 허용
+        if (!calendarState.tempCheckIn && !calendarState.tempCheckOut) {
+            calendarState.checkIn = null;
+            calendarState.checkOut = null;
+            closeAllPopups();
+            updateDateDisplay('checkIn', null);
+            updateDateDisplay('checkOut', null);
+            return;
+        }
+
+        // 유효성 검사: 하나만 선택된 경우
+        if (!calendarState.tempCheckIn || !calendarState.tempCheckOut) {
+            alert('체크인과 체크아웃 날짜를 모두 선택해주세요.');
+            return;
         }
         
-        // Confirm Logic
+        // 유효성 검사: 최소 체류 기간 확인
+        const days = (calendarState.tempCheckOut - calendarState.tempCheckIn) / ONE_DAY_MS;
+        if (days < MIN_STAY_DAYS) {
+            alert(`장기 체류 서비스는 최소 ${MIN_STAY_DAYS}박부터 예약 가능합니다.`);
+            return;
+        }
+        
+        // 확정 로직
         calendarState.checkIn = calendarState.tempCheckIn;
         calendarState.checkOut = calendarState.tempCheckOut;
+        
+        // UI가 temp 상태를 이미 반영하고 있을 수 있지만, 확정적으로 한 번 더 호출
+        updateDateDisplay('checkIn', new Date(calendarState.checkIn));
+        updateDateDisplay('checkOut', new Date(calendarState.checkOut));
+        
         closeAllPopups();
         
-        // Update UI/Price
+        // UI/가격 업데이트
         checkPackageRate();
     });
 
-    // Initial warning update
+    // 초기 경고 업데이트
     updateWarning(null);
 }
 
@@ -549,7 +556,7 @@ function checkPackageRate() {
     }
 }
 
-/* ========== Rendering Logic (Agoda Style) ========== */
+/* ========== 렌더링 로직 (아고다 스타일) ========== */
 function renderCalendar() {
     const container = document.getElementById('calendarMonths');
     if (!container) return;
@@ -563,13 +570,13 @@ function renderCalendar() {
         const monthDiv = document.createElement('div');
         monthDiv.className = 'DayPicker-Month';
         
-        // Caption
+        // 캡션
         const caption = document.createElement('div');
         caption.className = 'DayPicker-Caption';
         caption.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
         monthDiv.appendChild(caption);
 
-        // Weekdays
+        // 요일
         const weekdays = document.createElement('div');
         weekdays.className = 'DayPicker-Weekdays';
         const daysRaw = ['월', '화', '수', '목', '금', '토', '일'];
@@ -581,7 +588,7 @@ function renderCalendar() {
         });
         monthDiv.appendChild(weekdays);
 
-        // Body (Days)
+        // 본문 (날짜)
         const body = document.createElement('div');
         body.className = 'DayPicker-Body';
         body.innerHTML = generateMonthDaysHTML(date);
@@ -602,27 +609,27 @@ function generateMonthDaysHTML(dateObj) {
     const todayTs = new Date().setHours(0,0,0,0);
     let html = '';
 
-    // Empty cells
+    // 빈 셀 (앞부분 공백)
     for(let i=0; i<startOffset; i++) {
         html += `<div class="DayPicker-Day DayPicker-Day--outside"></div>`;
     }
 
-    // Days
+    // 날짜들
     for(let d=1; d<=lastDate; d++) {
         const currentTs = new Date(year, month, d).getTime();
         let classes = ['DayPicker-Day'];
         
-        // Disabled
+        // 비활성화 (오늘 이전)
         if (currentTs < todayTs) {
             classes.push('DayPicker-Day--disabled');
         }
 
-        // Today
+        // 오늘
         if (currentTs === todayTs) {
             classes.push('DayPicker-Day--today');
         }
 
-        // Selection Logic
+        // 선택 로직
         const checkIn = calendarState.tempCheckIn || calendarState.checkIn;
         const checkOut = calendarState.tempCheckOut || calendarState.checkOut;
 
@@ -635,12 +642,12 @@ function generateMonthDaysHTML(dateObj) {
             classes.push('DayPicker-Day--hasRange');
         }
         
-        // Range
+        // 범위 내 날짜
         if (checkIn && checkOut && currentTs > checkIn && currentTs < checkOut) {
             classes.push('DayPicker-Day--inRange');
         }
 
-        // Hover Range (Server-side rendering part of logic, mostly handled by JS event)
+        // 호버 범위 (서버 사이드 렌더링 로직의 일부, 대부분 JS 이벤트로 처리됨)
         if (checkIn && !checkOut && hoverDate) {
             if (currentTs > checkIn && currentTs <= hoverDate) {
                 classes.push('DayPicker-Day--hoverRange');
@@ -658,19 +665,19 @@ function attachDayListeners() {
     const days = document.querySelectorAll('.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)');
     
     days.forEach(day => {
-        // Click
+        // 클릭
         day.addEventListener('click', (e) => {
             e.stopPropagation();
             const ts = parseInt(day.dataset.timestamp);
             handleDateClick(ts);
         });
 
-        // Hover (MouseEnter)
+        // 호버 (MouseEnter)
         day.addEventListener('mouseenter', (e) => {
             const ts = parseInt(day.dataset.timestamp);
             const { tempCheckIn, tempCheckOut } = calendarState;
 
-            // Only effective if checkIn is selected but checkOut is not
+            // 체크인은 선택되었지만 체크아웃은 선택되지 않은 경우에만 유효
             if (tempCheckIn && !tempCheckOut) {
                 if (ts > tempCheckIn) {
                     hoverDate = ts;
@@ -680,7 +687,7 @@ function attachDayListeners() {
         });
     });
 
-    // Mouse Leave Container
+    // 컨테이너에서 마우스가 벗어날 때
     const calendarContainer = document.getElementById('dayPickerContainer');
     if (calendarContainer) {
         calendarContainer.onmouseleave = () => {
@@ -692,7 +699,7 @@ function attachDayListeners() {
     }
 }
 
-// Optimized Hover Effect
+// 최적화된 호버 효과
 function updateHoverEffect() {
     const { tempCheckIn, tempCheckOut } = calendarState;
     const days = document.querySelectorAll('.DayPicker-Day');
@@ -700,10 +707,10 @@ function updateHoverEffect() {
     days.forEach(day => {
         const ts = parseInt(day.dataset.timestamp);
         
-        // Reset hover class
+        // 호버 클래스 초기화
         day.classList.remove('DayPicker-Day--hoverRange');
 
-        // Apply new hover class
+        // 새로운 호버 클래스 적용
         if (tempCheckIn && !tempCheckOut && hoverDate) {
             if (ts > tempCheckIn && ts <= hoverDate) {
                 day.classList.add('DayPicker-Day--hoverRange');
@@ -715,22 +722,22 @@ function updateHoverEffect() {
 function handleDateClick(timestamp) {
     const { tempCheckIn, tempCheckOut } = calendarState;
 
-    // Case 1: Start new selection
+    // 케이스 1: 새로운 선택 시작
     if (!tempCheckIn || (tempCheckIn && tempCheckOut)) {
         calendarState.tempCheckIn = timestamp;
         calendarState.tempCheckOut = null;
         hoverDate = null;
     } 
-    // Case 2: Complete selection
+    // 케이스 2: 선택 완료
     else {
         if (timestamp < tempCheckIn) {
-            // New Start Date
+            // 새로운 시작 날짜
             calendarState.tempCheckIn = timestamp;
             hoverDate = null;
         } else if (timestamp === tempCheckIn) {
             return; 
         } else {
-            // End Date
+            // 종료 날짜
             calendarState.tempCheckOut = timestamp;
             hoverDate = null;
         }
@@ -768,7 +775,7 @@ function updateDateDisplay(type, dateObj) {
 
 
 
-/* ========== State Management (v2.0) ========== */
+/* ========== 상태 관리 (v2.0) ========== */
 const AppState = {
     destination: localStorage.getItem('jeju_destination') || '',
     
@@ -778,7 +785,7 @@ const AppState = {
     }
 };
 
-/* ========== Monthly Stay Data & Rendering Logic (v2.0) ========== */
+/* ========== 한 달 살기 데이터 및 렌더링 로직 (v2.0) ========== */
 
 const longStayHotels = [
     {
