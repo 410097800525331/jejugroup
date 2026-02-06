@@ -59,6 +59,7 @@ body.long-stay-page {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
 }
+
 .magazine-content {
     padding: var(--space-xl);
 }
@@ -550,7 +551,7 @@ body.long-stay-page {
     align-items: center;
     justify-content: center;
     gap: 8px; /* 아이콘과 텍스트 사이 간격 */
-    height: calc(100% - 12px); /* 컨테이너보다 약간 작게 */
+    top: 100%; /* 컨테이너보다 약간 작게 */
     padding: 0 32px; /* 넓은 패딩 */
     background: linear-gradient(135deg, #FF5000 0%, #FF8A00 100%); /* 제주 오렌지 그라데이션 */
     color: #fff;
@@ -627,7 +628,7 @@ body.long-stay-page {
 /* 게스트 팝업 (Hotel.css에서 복사/수정됨) */
 .guest-popup-new {
     position: absolute;
-    top: calc(100% + 12px);
+    top: 100%; /* 검색바에 딱 붙임 */
     right: 0;
     width: 340px;
     background: #fff;
@@ -635,7 +636,8 @@ body.long-stay-page {
     box-shadow: 0 16px 48px rgba(0,0,0,0.12);
     padding: 24px;
     display: none;
-    z-index: 2000;
+    display: none;
+    z-index: 90; /* Global Z-index override will handle this, but explicit here too */
 }
 .guest-popup-new.active {
     display: block;
@@ -1561,7 +1563,7 @@ body.long-stay-page {
 
 /* 1. 컨테이너 및 캡션 */
 .search-widget-v2 {
-    max-width: 1120px; /* 900px에서 확대됨 */
+    max-width: 1200px; /* 다시 최적화된 컴팩트 너비 */
     width: 95%;
     margin: 0 auto;
     position: relative;
@@ -1580,58 +1582,54 @@ body.long-stay-page {
     text-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
-/* 2. 메인 검색바 (글래스 알약 모양) */
+/* 2. 메인 검색바 (솔리드 화이트 프리미엄) */
 .global-search-bar-v2 {
-    background: var(--v2-glass);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    background: #FFFFFF;
     border-radius: 100px;
     padding: 8px;
     display: flex;
     align-items: center;
     height: 84px;
-    border: 1px solid var(--v2-border);
-    box-shadow: var(--v2-shadow);
+    border: none;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.1);
     transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     position: relative;
+    z-index: 100; /* 팝업보다 위에 위치하여 가림 처리 */
 }
 
 /* 3. 검색 항목 */
 .search-item-v2 {
     display: flex;
     align-items: center;
-    gap: 14px; /* 약간 좁혀진 간격 */
+    gap: 14px;
     padding: 0 24px;
     cursor: pointer;
     height: 100%;
     position: relative;
     border-radius: 100px;
     transition: all 0.4s ease;
-    flex: 1; /* 기본 flex 설정 */
+    flex: 1; /* 기본적으로 유연하게 설정 */
+    min-width: 0; /* 텍스트 넘침 방지 */
 }
 
-/* 균형을 위한 특정 Flex 비율 */
-#destinationFieldLarge { flex: 1.4; }
-#checkInField { flex: 1.2; }
-#guestFieldLarge { flex: 1.0; }
-#optionsFieldLarge { flex: 1.0; }
+/* 개별 필드 너비 조정: 날짜 필드만 292px로 고정하여 흔들림 방지 */
+#destinationFieldLarge { flex: 1.2; }
+#checkInField { flex: 0 0 292px; } /* 흔들림 방지를 위해 날짜 필드만 고정 */
+#guestFieldLarge { flex: 1; }
+#optionsFieldLarge { flex: 1; }
 
 .search-item-v2:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.03); /* 화이트 배경 대비 전용 호버 */
 }
 
-/* 활성 상태: 배경 반전 및 확대 */
-/* 활성 상태: 배경 반전 및 확대 */
+/* 활성 상태: 배경 반전 및 하단 모서리 조정 */
+/* 활성 상태: 배경 반전 */
 .search-item-v2.active {
-    background: #FFFFFF !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    /* transform: scale(1.03);  <-- 완벽한 정렬을 위해 확대를 제거함 */
-    z-index: 2000; /* 드롭다운보다 높게 설정 */
-    border-radius: 24px 24px 0 0 !important; /* 하단 모서리 깎기 제거 */
-    padding-bottom: 20px; /* 간극을 메우기 위해 시각적으로 확장 */
-    margin-bottom: -10px; /* 드롭다운을 가깝게 끌어당김 */
-    height: calc(100% + 10px); /* 높이 확장 */
+    background: #F8F9FA !important;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+    z-index: 2000;
 }
+
 .item-icon-v2 {
     color: #444;
     display: flex;
@@ -1692,7 +1690,7 @@ body.long-stay-page {
     border: none;
     border-radius: 100px;
     height: 68px;
-    padding: 0 36px;
+    padding: 0 28px; /* 버튼 가독성 확보 */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1701,6 +1699,8 @@ body.long-stay-page {
     font-size: 16px;
     box-shadow: 0 10px 25px rgba(255, 80, 0, 0.25);
     transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    white-space: nowrap; /* 글자 찌그러짐 방지 */
+    flex-shrink: 0; /* 버튼 압축 방지 */
 }
 
 .search-btn-v2:hover {
@@ -1756,43 +1756,46 @@ body.long-stay-page {
 
 @keyframes lShapeReveal {
     0% {
-        clip-path: inset(0 100% 100% 0);
+        /* Start from a thin vertical line at the left edge (aligned with icon) */
+        clip-path: inset(0 99.7% 100% 0);
     }
-    66% {
-        /* 1s mark: Vertical line fully grown (2/3 of 1.5s) */
-        /* Use 99.7% to keep the left border line visible */
-        clip-path: inset(0 99.7% 0 0); 
+    30% {
+        /* Line grows down fully */
+        clip-path: inset(0 99.7% 0 0);
     }
     100% {
-        /* 1.5s mark: Fully expanded to the right */
+        /* Expands to the right */
         clip-path: inset(0 0 0 0);
     }
 }
 
 /* Staggered Item Animation (Start after L-shape expansion) */
-.active .destination-item,
-.active .guest-row-new,
-.active .option-check-item,
-.active .DayPicker-Month {
+.active.is-opening .destination-item,
+.active.is-opening .guest-row-new,
+.active.is-opening .option-check-item,
+.active.is-opening .DayPicker-Month {
     animation: itemReveal 0.4s ease-out backwards;
 }
 
-/* Incremental Delays for the 'Fluid' feel (Starting after 1.5s) */
-.active .destination-item:nth-child(1) { animation-delay: 1.5s; }
-.active .destination-item:nth-child(2) { animation-delay: 1.55s; }
-.active .destination-item:nth-child(3) { animation-delay: 1.6s; }
-.active .destination-item:nth-child(4) { animation-delay: 1.65s; }
+/* Incremental Delays for the 'Fluid' feel (Starting after 0.4s delay of L-shape expansion if you want it faster, 
+   but original plan says starting after L-shape is done. L-shape starts at 0.4s and takes 1.5s total? 
+   No, L-shape animation is 1.5s. So after 1.5s it's fully open. 
+   Keeping 1.5s delays for consistency with previous setup.) */
+.active.is-opening .destination-item:nth-child(1) { animation-delay: 1.5s; }
+.active.is-opening .destination-item:nth-child(2) { animation-delay: 1.55s; }
+.active.is-opening .destination-item:nth-child(3) { animation-delay: 1.6s; }
+.active.is-opening .destination-item:nth-child(4) { animation-delay: 1.65s; }
 
-.active .guest-row-new:nth-child(1) { animation-delay: 1.5s; }
-.active .guest-row-new:nth-child(2) { animation-delay: 1.55s; }
-.active .guest-row-new:nth-child(3) { animation-delay: 1.6s; }
+.active.is-opening .guest-row-new:nth-child(1) { animation-delay: 1.5s; }
+.active.is-opening .guest-row-new:nth-child(2) { animation-delay: 1.55s; }
+.active.is-opening .guest-row-new:nth-child(3) { animation-delay: 1.6s; }
 
-.active .option-check-item:nth-child(1) { animation-delay: 1.5s; }
-.active .option-check-item:nth-child(2) { animation-delay: 1.54s; }
-.active .option-check-item:nth-child(3) { animation-delay: 1.58s; }
-.active .option-check-item:nth-child(4) { animation-delay: 1.62s; }
-.active .option-check-item:nth-child(5) { animation-delay: 1.66s; }
-.active .option-check-item:nth-child(6) { animation-delay: 1.7s; }
+.active.is-opening .option-check-item:nth-child(1) { animation-delay: 1.5s; }
+.active.is-opening .option-check-item:nth-child(2) { animation-delay: 1.54s; }
+.active.is-opening .option-check-item:nth-child(3) { animation-delay: 1.58s; }
+.active.is-opening .option-check-item:nth-child(4) { animation-delay: 1.62s; }
+.active.is-opening .option-check-item:nth-child(5) { animation-delay: 1.66s; }
+.active.is-opening .option-check-item:nth-child(6) { animation-delay: 1.7s; }
 
 @keyframes itemReveal {
     from {
@@ -1810,10 +1813,13 @@ body.long-stay-page {
 .guest-popup-new,
 .options-popup-new,
 .Popup[role="dialog"] {
-    left: 0 !important;
+    left: 24px !important; /* 아이콘 위치에 맞춰 정렬 */
     right: auto !important;
     transform: none !important;
     border-radius: 0 24px 24px 24px !important; /* Flatten Top-Left to attach */
+    top: calc(100% + 8px) !important; /* 1px 더 올려서 8px로 조정 */
+    border: none !important; /* 이중 테두리 방지 */
+    z-index: 90 !important; /* 검색바 아래로 배치 */
 }
 
 /* 캘린더 내부 레이아웃 문제에 대한 특정 오버라이드 (있는 경우) */
@@ -1918,71 +1924,72 @@ body.long-stay-page {
     background-color: #f5f5f5;
     border-radius: 50%;
 }
-.DayPicker-Day--selected {
-    background-color: var(--primary);
-    color: #fff;
-    border-radius: 50%;
+/* Selection Logic Specificity Fix */
+.Popup[role="dialog"] .DayPicker-Day--selected {
+    background-color: var(--v2-orange) !important;
+    color: #fff !important;
+    border-radius: 50% !important;
 }
 
-/* Range Highlight Logic */
-.DayPicker-Day--inRange {
+.Popup[role="dialog"] .DayPicker-Day--inRange {
     background: rgba(255, 80, 0, 0.15) !important;
-    color: var(--text-title);
-    border-radius: 0;
+    color: #222 !important;
+    border-radius: 0 !important;
 }
-.DayPicker-Day--checkIn {
-    background: var(--primary) !important;
-    color: #fff;
-    border-radius: 50%;
+
+.Popup[role="dialog"] .DayPicker-Day--checkIn {
+    background: var(--v2-orange) !important;
+    color: #fff !important;
+    border-radius: 50% !important;
     position: relative;
     z-index: 2;
 }
-/* Connect CheckIn to Range */
-.DayPicker-Day--checkIn.DayPicker-Day--hasRange::before {
+
+.Popup[role="dialog"] .DayPicker-Day--checkIn.DayPicker-Day--hasRange::before {
     content: '';
     position: absolute;
     top: 0;
     right: 0;
     width: 50%;
     height: 100%;
-    background: rgba(255, 80, 0, 0.15);
+    background: rgba(255, 80, 0, 0.15) !important;
     z-index: -1;
 }
 
-.DayPicker-Day--checkOut {
-    background: var(--primary) !important;
-    color: #fff;
-    border-radius: 50%;
+.Popup[role="dialog"] .DayPicker-Day--checkOut {
+    background: var(--v2-orange) !important;
+    color: #fff !important;
+    border-radius: 50% !important;
     position: relative;
     z-index: 2;
 }
-/* Connect CheckOut to Range */
-.DayPicker-Day--checkOut.DayPicker-Day--hasRange::before {
+
+.Popup[role="dialog"] .DayPicker-Day--checkOut.DayPicker-Day--hasRange::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 50%;
     height: 100%;
-    background: rgba(255, 80, 0, 0.15);
+    background: rgba(255, 80, 0, 0.15) !important;
     z-index: -1;
 }
 
-/* Disabled State */
-.DayPicker-Day--disabled {
-    color: #e0e0e0;
-    cursor: not-allowed;
-    text-decoration: line-through;
-}
-
-/* Today */
-.DayPicker-Day--today {
-    color: var(--primary);
-    font-weight: 700;
-}
-
 /* Hover Range */
-.DayPicker-Day--hoverRange {
-    background: rgba(255, 80, 0, 0.1); /* Lighter than inRange */
-    border-radius: 0;
+.Popup[role="dialog"] .DayPicker-Day--hoverRange {
+    background: rgba(255, 80, 0, 0.1) !important;
+    border-radius: 0 !important;
+}
+
+/* Sync with Hotel Page Design */
+.Popup[role="dialog"] .DayPicker-Day--disabled {
+    color: #e0e0e0 !important;
+    cursor: not-allowed !important;
+    text-decoration: none !important; /* Remove line-through for cleaner look */
+    opacity: 0.6;
+}
+
+.Popup[role="dialog"] .DayPicker-Day--today {
+    color: var(--v2-orange) !important;
+    font-weight: 800 !important;
 }

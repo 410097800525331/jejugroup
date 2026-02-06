@@ -295,12 +295,18 @@ function updateGuestSummary() {
     const adults = parseInt(document.getElementById('adultsCountLarge').textContent || 1);
     const children = parseInt(document.getElementById('childrenCountLarge').textContent || 0);
     
-    const summaryEl = document.getElementById('guestSummary');
-    if (summaryEl) {
-        let text = `성인 ${adults}명, 객실 ${rooms}개`;
-        if (children > 0) text += `, 아동 ${children}명`;
-        summaryEl.textContent = text;
-        summaryEl.style.color = '#333';
+    // 1. 게스트 요약 (성인 + 아동)
+    const guestSummaryEl = document.getElementById('guestSummary');
+    if (guestSummaryEl) {
+        let guestText = `성인 ${adults}명`;
+        if (children > 0) guestText += `, 아동 ${children}명`;
+        guestSummaryEl.textContent = guestText;
+    }
+
+    // 2. 객실 요약 (서브 텍스트)
+    const roomSummaryEl = document.getElementById('roomSummary');
+    if (roomSummaryEl) {
+        roomSummaryEl.textContent = `객실 ${rooms}개`;
     }
 }
 
@@ -388,10 +394,15 @@ function initCalendar() {
             calendarState.tempCheckIn = calendarState.checkIn;
             calendarState.tempCheckOut = calendarState.checkOut;
             
-            calendarPopup.classList.add('active');
+            calendarPopup.classList.add('active', 'is-opening');
             dateFieldContainer.classList.add('active');
             renderCalendar(); 
             updateResults(); // 메인 바를 현재 temp(confirmed와 동일) 상태로 초기화
+            
+            // 애니메이션 완료 후 is-opening 제거하여 리렌더링 시 깜빡임 방지
+            setTimeout(() => {
+                calendarPopup.classList.remove('is-opening');
+            }, 1500); // L-Shape Reveal 애니메이션 시간 (1.5s)에 맞춤
         } else {
             // 이미 열려있을 때 다시 클릭하면 '취소'로 간주하고 닫기
             cancelCalendar();
