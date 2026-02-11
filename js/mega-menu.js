@@ -48,14 +48,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     megaMenuItems.forEach(menuItem => {
         menuItem.addEventListener('mouseenter', () => {
+            const dropdown = menuItem.closest('.mega-dropdown');
             const targetId = menuItem.getAttribute('data-preview');
             const targetImage = document.getElementById(targetId);
 
-            if (targetImage) {
-                // 기존 활성화된 이미지 비활성화
-                previewImages.forEach(img => img.classList.remove('active'));
-                // 타겟 이미지 활성화 (CSS transition에 의해 Cross-fade 발생)
+            if (targetImage && dropdown) {
+                // 현재 드롭다운 내의 이미지만 비활성화 (전역 영향 방지)
+                dropdown.querySelectorAll('.preview-image').forEach(img => img.classList.remove('active'));
+                
+                // 타겟 이미지 활성화
                 targetImage.classList.add('active');
+
+                // 로더 숨기기
+                const loader = dropdown.querySelector('.preview-loader');
+                if (loader) loader.style.display = 'none';
             }
         });
     });

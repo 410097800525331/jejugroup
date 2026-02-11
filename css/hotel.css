@@ -172,9 +172,9 @@ input {
     /* other existing styles preserve */
 }
 
-/* Make nav items static so absolute children relate to the header */
+/* Make nav items relative so absolute children relate to the nav item */
 .nav-item {
-    position: static !important;
+    position: relative;
     height: 100%;
     display: flex;
     align-items: center;
@@ -187,9 +187,10 @@ input {
     display: none !important;
 }
 
-/* Ensure Nav Link doesn't change color on hover (handled by inner spans if needed, or forced inherit) */
-.nav-item:hover .nav-link {
-    color: inherit; /* Keep original color as requested */
+/* Ensure Nav Link changes color on hover throughout the entire area */
+.nav-item:hover .nav-link,
+.nav-link:hover {
+    color: var(--primary) !important;
 }
 
 /* Wrapper for the split text */
@@ -235,6 +236,7 @@ input {
 
 .stagger-clone .stagger-char {
     transform: translateY(100%); /* Start from below */
+    color: var(--primary); /* Clone should be orange for the flip effect */
 }
 
 /* Active Animation State (Triggered by JS) */
@@ -250,6 +252,7 @@ input {
 
 .nav-link.is-animating .stagger-clone .stagger-char {
     transform: translateY(0); /* Move up and in */
+    color: var(--primary);
 }
 
 /* Fix for icons alignment since we added a wrapper */
@@ -259,69 +262,80 @@ input {
     gap: 6px;
 }
 
-/* The Drawer Container */
+/* The Localized Dropdown Container */
 .mega-dropdown {
     position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
+    top: 100%; /* Align perfectly with header bottom to avoid hover gap */
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    width: max-content;
+    min-width: 180px;
     background: #fff;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 30px 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    padding: 12px;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-5px);
-    transition: all 0.2s ease-out;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Springy top-down effect */
     z-index: 1050;
-    display: flex;
-    justify-content: center;
+    display: flex; /* Flex is used for the inner container layout */
+}
+
+/* Invisible Bridge to prevent hovering flicker */
+.mega-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: transparent;
 }
 
 /* Show on Hover */
 .nav-item:hover .mega-dropdown {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(5px); /* Move down slightly for premium feel */
 }
 
 /* Inner Layout */
 .mega-dropdown-inner {
-    max-width: 1200px;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center the list horizontally */
 }
 
-/* Horizontal List */
+/* Vertical List */
 .mega-menu-list-horizontal {
     list-style: none;
     display: flex;
-    flex-direction: row; /* Horizontal Layout */
-    gap: 60px; /* ample space between items */
+    flex-direction: column; /* Changed to Vertical */
+    gap: 4px; /* Tight vertical spacing */
     padding: 0;
     margin: 0;
 }
 
 .mega-menu-list-horizontal li {
-    display: flex;
-    align-items: center;
+    display: block;
+    width: 100%;
 }
 
 .mega-menu-link {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #333;
+    display: block;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4B5563;
     text-decoration: none;
-    transition: color 0.2s;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .mega-menu-link:hover {
     color: #FF5000;
-    text-decoration: underline;
-    text-underline-offset: 4px;
+    background: rgba(255, 80, 0, 0.05);
+    text-decoration: none; /* Removed underline */
 }
 
 .badge-new {
@@ -358,23 +372,33 @@ input {
     transition: all 0.3s ease;
 }
 
-.header.scrolled {
-    background: rgba(255, 255, 255, 0.6); /* More transparent */
-    backdrop-filter: blur(20px); /* Stronger blur */
-    box-shadow: var(--shadow-md);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Glass Edge */
+.header.scrolled .nav-link,
+.header.scrolled .util-link,
+.header.scrolled .mobile-menu-btn,
+.header.light-mode .nav-link,
+.header.light-mode .util-link,
+.header.light-mode .mobile-menu-btn {
     color: var(--text-title);
 }
 
-.header.scrolled .nav-link,
-.header.scrolled .util-link,
-.header.scrolled .mobile-menu-btn {
+.header.light-mode {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     color: var(--text-title);
+}
+
+.header.light-mode .logo-img {
+    filter: none;
 }
 
 .header.scrolled .nav-link:hover,
 .header.scrolled .nav-link.active,
-.header.scrolled .util-link:hover {
+.header.scrolled .util-link:hover,
+.header.light-mode .nav-link:hover,
+.header.light-mode .nav-link.active,
+.header.light-mode .util-link:hover {
     color: var(--primary);
 }
 
@@ -452,17 +476,15 @@ input {
     white-space: nowrap;
 }
 
-.nav-link:hover,
-.nav-link.active {
+.nav-link:hover {
     color: var(--primary);
 }
 
-/* Transparent State Overrides */
+/* Transparent State Overrides - Removed color lock to allow orange highlights */
 .header:not(.scrolled) .nav-link:hover,
-.header:not(.scrolled) .nav-link.active,
 .header:not(.scrolled) .util-link:hover {
-    color: #FFFFFF;
-    opacity: 0.7;
+    color: var(--primary);
+    opacity: 1; /* Clearer feedback */
 }
 
 .nav-icon {
@@ -491,7 +513,7 @@ input {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: var(--font-weight-medium);
     color: #FFFFFF; /* White Text */
     transition: color 0.3s ease;
@@ -575,13 +597,15 @@ input {
     right: 0;
     bottom: 0;
     z-index: -1;
+    overflow: hidden;
 }
 
 .hero-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 60%; /* Ensure landmark visibility */
+    object-position: 51% 61%; /* Absolutely centers the hotel roof apex */
+    transform: scale(1.1) translateX(-45px) translateY(19px);
 }
 
 .hero-overlay {
@@ -590,13 +614,12 @@ input {
     left: 0;
     right: 0;
     bottom: 0;
-    /* Deep Navy/Purple Gradient for Magic Hour feel + Top Shadow for legibility */
+    /* More transparent and subtle gradient for bright images */
     background: linear-gradient(
         to bottom,
-        rgba(0, 0, 0, 0.5) 0%, /* Top Shadow for Transparent Header Text */
-        rgba(10, 25, 47, 0.4) 30%,
-        rgba(10, 25, 47, 0.2) 60%,
-        rgba(10, 25, 47, 0.8) 100%
+        rgba(0, 0, 0, 0.4) 0%,   /* Subtle shadow for header text */
+        rgba(0, 0, 0, 0.1) 40%,  /* Allow image brightness in the middle */
+        rgba(0, 0, 0, 0.5) 100%  /* Preserve contrast for bottom areas if needed */
     );
 }
 
