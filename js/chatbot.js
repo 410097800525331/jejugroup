@@ -241,7 +241,7 @@ class HotelChatbot {
 
             const errorMsg = {
                 type: 'bot',
-                content: '죄송합니다. 서버 연결이 원활하지 않습니다. (Backend Endpoint Check Needed)',
+                content: `죄송합니다. 서버 에러가 발생했습니다. (${error.message})`,
                 timestamp: new Date()
             };
             this.messages.push(errorMsg);
