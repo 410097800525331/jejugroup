@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const SCROLL_COOLDOWN = 1500; // Time in ms to ignore input after scroll
     const sections = document.querySelectorAll('.section');
     const footer = document.querySelector('footer');
+    const isNormalScrollPage =
+        document.body.classList.contains('customer-center-page') ||
+        document.body.classList.contains('scroll-normal') ||
+        document.body.classList.contains('login-page') ||
+        document.body.classList.contains('signup-page') ||
+        document.body.classList.contains('reservation-page');
     
     // UI Elements
     const header = document.querySelector('.header');
@@ -75,11 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Wheel Event
     window.addEventListener('wheel', (e) => {
         // Allow default scroll for specific pages
-        if (document.body.classList.contains('customer-center-page') || 
-            document.body.classList.contains('scroll-normal') ||
-            document.body.classList.contains('login-page') ||
-            document.body.classList.contains('signup-page') ||
-            document.body.classList.contains('reservation-page')) {
+        if (isNormalScrollPage) {
             return;
         }
 
@@ -112,11 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const keys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '];
         
         // Allow default scroll for specific pages
-        if (document.body.classList.contains('customer-center-page') || 
-            document.body.classList.contains('scroll-normal') ||
-            document.body.classList.contains('login-page') ||
-            document.body.classList.contains('signup-page') ||
-            document.body.classList.contains('reservation-page')) {
+        if (isNormalScrollPage) {
             return;
         }
 
@@ -158,6 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }, { passive: false });
+
+    if (isNormalScrollPage) {
+        return;
+    }
 
     // --- UI Observers (Keep UI in sync with visual position) ---
     // This runs independently to update header colors/navs regardless of how we got there
@@ -320,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoOverlay.classList.add('active');
                 
                 // 비디오 속성 세팅 및 명시적 로드
-                transitionVideo.src = '/assets/takeoff.mp4';
+                transitionVideo.src = 'assets/takeoff.mp4';
                 transitionVideo.load();
                 transitionVideo.muted = true;
                 transitionVideo.playsInline = true;
