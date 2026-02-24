@@ -13,7 +13,7 @@
 
     // Security: Guard fallback just in case
     if (!session || !session.role) {
-        window.location.replace('/index.html');
+        window.location.replace('../../index.html');
         return;
     }
 
@@ -129,7 +129,7 @@
         logoutBtn.addEventListener('click', () => {
              // Security Protocol: Destroy session and rotate out
             localStorage.removeItem('userSession');
-            window.location.replace('/index.html');
+            window.location.replace('../../index.html');
         });
     }
 

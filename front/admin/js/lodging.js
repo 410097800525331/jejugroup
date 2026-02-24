@@ -111,7 +111,7 @@
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('userSession');
-            window.location.replace('/index.html');
+            window.location.replace('../../index.html');
         });
     }
 
