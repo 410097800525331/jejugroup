@@ -9,7 +9,7 @@ $(document).ready(function () {
 
     const cardHTML = `
       <div class="event_card ${isEnded ? 'ended' : ''}">
-        <div class="event_thumb" style="background-image:url('/assets/img/${data.img}')"></div>
+        <div class="event_thumb" style="background-image:url('assets/img/${data.img}')"></div>
         <div class="event_content">
           <h2 class="color">${isEnded ? '종료' : `D-${diffDay}`}</h2>
           <h3>${data.head}</h3>

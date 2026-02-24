@@ -21,9 +21,9 @@ $(document).ready(function () {
         <li>
           <button class="mobile_menu_btn">제주항공</button>
           <ul class="mobile_sub_menu">
-            <li><a href="/sub/hero.html">회사소개</a></li>
-            <li><a href="/sub/recruit.html">채용안내</a></li>
-            <li><a href="/sub/ccm_hero.html">소비자중심경영</a></li>
+            <li><a href="sub/about.html">회사소개</a></li>
+            <li><a href="sub/career.html">채용안내</a></li>
+            <li><a href="sub/ccm.html">소비자중심경영</a></li>
           </ul>
         </li>
     
@@ -39,16 +39,16 @@ $(document).ready(function () {
         <li>
           <button class="mobile_menu_btn">탑승 수속</button>
           <ul class="mobile_sub_menu">
-            <li><a href="/sub/processing.html">빠른 수속</a></li>
-            <li><a href="/sub/mobile_pass.html">모바일 탑승권</a></li>
-            <li><a href="/sub/oath.html">사전 서약서</a></li>
+            <li><a href="sub/fastProcedure.html">빠른 수속</a></li>
+            <li><a href="sub/viewCheckin.html">모바일 탑승권</a></li>
+            <li><a href="sub/eDocument.html">사전 서약서</a></li>
           </ul>
         </li>
       </ul>
     
       <div class="mobile_bottom_menu">
         <a href="#">고객센터</a>
-        <a href="/sub/notic.html">공지사항</a>
+        <a href="sub/notic.html">공지사항</a>
         <a href="#">한국어</a>
       </div>
     

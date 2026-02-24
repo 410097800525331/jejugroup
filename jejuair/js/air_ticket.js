@@ -1,7 +1,7 @@
 $(cardDatas).each((idx, data) => {
   const card = `
     <article class="polaroid_card">
-      <a href="/sub/Availability.html"><img src="${data.mainImg}" alt="최저가 항공권"></a>
+      <a href="sub/Availability.html"><img src="${data.mainImg}" alt="최저가 항공권"></a>
       <div class="card_info">
         <div class="price_row">
           <p>${data.airplane}</p>
@@ -13,7 +13,7 @@ $(cardDatas).each((idx, data) => {
           <p>KRW <span>${data.price}</span></p>
         </div>
       </div>
-      <a class="basic_btn" href="/sub/Availability.html"><span>지금예약</span></a>
+      <a class="basic_btn" href="sub/Availability.html"><span>지금예약</span></a>
     </article>
   `;
 

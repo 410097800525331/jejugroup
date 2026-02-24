@@ -1,8 +1,8 @@
 @charset "utf-8";
-@import url(/css/common.css);
-@import url(/css/header.css);
-@import url(/css/footer.css);
-@import url(/css/ticket.css);
+@import url(./common.css);
+@import url(./header.css);
+@import url(./footer.css);
+@import url(./ticket.css);
 
 /* ##### slider ##### */
 .swiper {
@@ -324,7 +324,7 @@ iframe {
   top: -38%;
   width: 750px;
   height: 350px;
-  background: url(/assets/img/main/airplane.png) no-repeat 0 0/cover;
+  background: url(../assets/img/main/airplane.png) no-repeat 0 0/cover;
   animation: float_rotate 4s linear infinite;
 }
 @keyframes float_rotate {

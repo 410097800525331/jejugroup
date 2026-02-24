@@ -1,7 +1,7 @@
 $(document).ready(function () {
   const ticketHTML = `
       <div class="ticket_panel">
-      <button class="panel_toggle_btn" title="항공권 예매"><img src="/assets/img/ico-airplane.png" alt="icon"></button>
+      <button class="panel_toggle_btn" title="항공권 예매"><img src="assets/img/ico-airplane.png" alt="icon"></button>
     </div>
     <div class="ticket_wrap">
       <!-- tab -->
@@ -16,7 +16,7 @@ $(document).ready(function () {
         <div class="tab_sub">
           <button class="ticket_sub_tab_btn active" data-tab="tab_round">왕복</button>
           <button class="ticket_sub_tab_btn" data-tab="tab_oneway">편도</button>
-          <button class="ticket_sub_tab_btn"><a href="/sub/Availability.html">다구간</a></button>
+          <button class="ticket_sub_tab_btn"><a href="sub/Availability.html">다구간</a></button>
         </div>
         <!-- ticket top -->
         <div class="ticket_top" data-tab="tab_round">
@@ -24,13 +24,13 @@ $(document).ready(function () {
             <div class="input_box">
               <label>출발지</label>
               <input type="text" placeholder="선택">
-              <img src="/assets/img/ico_loc.svg" alt="icon">
+              <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
-            <div class="arrow_btn"><img src="/assets/img/ico-arrow.svg" alt="icon"></div>
+            <div class="arrow_btn"><img src="assets/img/ico-arrow.svg" alt="icon"></div>
             <div class="input_box">
               <label>도착지</label>
               <input type="text" placeholder="선택">
-              <img src="/assets/img/ico_loc.svg" alt="icon">
+              <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
           </div>
         </div>
@@ -39,13 +39,13 @@ $(document).ready(function () {
             <div class="input_box">
               <label>출발지</label>
               <input type="text" placeholder="선택">
-              <img src="/assets/img/ico_loc.svg" alt="icon">
+              <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
-            <div class="arrow_btn"><img src="/assets/img/ico-arrowB.svg" alt="icon"></div>
+            <div class="arrow_btn"><img src="assets/img/ico-arrowB.svg" alt="icon"></div>
             <div class="input_box">
               <label>도착지</label>
               <input type="text" placeholder="선택">
-              <img src="/assets/img/ico_loc.svg" alt="icon">
+              <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
           </div>
         </div>
@@ -58,13 +58,13 @@ $(document).ready(function () {
               <label>탑승일</label>
               <input type="text" class="date_input" placeholder="선택" readonly>
               <span class="stay_info"></span>
-              <img src="/assets/img/ico_cal.svg" alt="icon">
+              <img src="assets/img/ico_cal.svg" alt="icon">
             </div>
             <br>
             <div class="input_box">
               <label>탑승객</label>
               <input type="text" placeholder="성인1">
-              <img src="/assets/img/ico_person.svg" alt="icon">
+              <img src="assets/img/ico_person.svg" alt="icon">
             </div>
           </div>
           <div class="pay_method">
@@ -92,13 +92,13 @@ $(document).ready(function () {
             <div class="input_box">
               <label>탑승객</label>
               <input type="text" placeholder="성 (Last Name)">
-              <img src="/assets/img/ico_person.svg" alt="icon">
+              <img src="assets/img/ico_person.svg" alt="icon">
             </div>
             <div class="arrow_btn"></div>
             <div class="input_box">
               <label>탑승객</label>
               <input type="text" placeholder="이름 (First Name)">
-              <img src="/assets/img/ico_person.svg" alt="icon">
+              <img src="assets/img/ico_person.svg" alt="icon">
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ $(document).ready(function () {
               <label>탑승일</label>
               <input type="text" class="date_input" placeholder="선택" readonly>
               <span class="stay_info"></span>
-              <img src="/assets/img/ico_cal.svg" alt="icon">
+              <img src="assets/img/ico_cal.svg" alt="icon">
             </div>
           </div>
           <ul class="reserve_msg">
@@ -142,13 +142,13 @@ $(document).ready(function () {
             <div class="input_box">
               <label>출발지</label>
               <input type="text" placeholder="선택">
-              <img src="/assets/img/ico_loc.svg" alt="icon">
+              <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
             <div class="arrow_btn"></div>
             <div class="input_box">
               <label>도착지</label>
               <input type="text" placeholder="선택">
-              <img src="/assets/img/ico_loc.svg" alt="icon">
+              <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@ $(document).ready(function () {
               <label>탑승일</label>
               <input type="text" class="date_input" placeholder="선택" readonly>
               <span class="stay_info"></span>
-              <img src="/assets/img/ico_cal.svg" alt="icon">
+              <img src="assets/img/ico_cal.svg" alt="icon">
             </div>
           </div>
           <div class="pay_method">
@@ -180,7 +180,7 @@ $(document).ready(function () {
               <label>탑승일</label>
               <input type="text" class="date_input" placeholder="선택" readonly>
               <span class="stay_info"></span>
-              <img src="/assets/img/ico_cal.svg" alt="icon">
+              <img src="assets/img/ico_cal.svg" alt="icon">
             </div>
           <div class="pay_method">
             <div class="pay_options">

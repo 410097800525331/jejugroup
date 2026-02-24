@@ -6,10 +6,10 @@ $(document).ready(function () {
         <div class="footer_link">
           <h4>제주항공</h4>
           <ul>
-            <li><a href="/sub/about.html">회사소개</a></li>
-            <li><a href="/sub/career.html">채용안내</a></li>
-            <li><a href="/sub/ccm.html">소비자중심경영</a></li>
-            <li><a href="/sub/notic.html">공지사항</a></li>
+            <li><a href="sub/about.html">회사소개</a></li>
+            <li><a href="sub/career.html">채용안내</a></li>
+            <li><a href="sub/ccm.html">소비자중심경영</a></li>
+            <li><a href="sub/notic.html">공지사항</a></li>
           </ul>
         </div>
         <div class="footer_link">
@@ -35,7 +35,7 @@ $(document).ready(function () {
         <div class="footer_link">
           <h4>이벤트/제휴</h4>
           <ul>
-            <li><a href="/sub/event.html">이벤트</a></li>
+            <li><a href="sub/event.html">이벤트</a></li>
             <li><a href="https://jejurentcar.netlify.app/" target="_blank">렌터카</a></li>
             <li><a href="https://jejuteam.netlify.app/sub/jejuhotel" target="_blank">호텔/숙소</a></li>
           </ul>
@@ -58,14 +58,14 @@ $(document).ready(function () {
         <!-- link container -->
         <div class="link_container">
           <div class="sns_link">
-            <a href="https://www.youtube.com/@jejuair_official"><img src="/assets/img/20250804165831645.png" alt="유튜브"></a>
-            <a href="https://www.instagram.com/jejuair_official/"><img src="/assets/img/20250804165841751.png" alt="인스타그램"></a>
-            <a href="https://www.facebook.com/funjejuair/"><img src="/assets/img/20250804165859889.png" alt="페이스북"></a>
-            <a href="https://www.tiktok.com/@jejuair_official"><img src="/assets/img/20250804165850759.png" alt="틱톡"></a>
+            <a href="https://www.youtube.com/@jejuair_official"><img src="assets/img/20250804165831645.png" alt="유튜브"></a>
+            <a href="https://www.instagram.com/jejuair_official/"><img src="assets/img/20250804165841751.png" alt="인스타그램"></a>
+            <a href="https://www.facebook.com/funjejuair/"><img src="assets/img/20250804165859889.png" alt="페이스북"></a>
+            <a href="https://www.tiktok.com/@jejuair_official"><img src="assets/img/20250804165850759.png" alt="틱톡"></a>
           </div>
           <div class="qr_link">
             <h4>앱을 다운로드하고<br>앱전용 혜택을<br>받아보세요!</h4>
-            <img src="/assets/img/icon-app-down-qr.png" alt="qr">
+            <img src="assets/img/icon-app-down-qr.png" alt="qr">
           </div>
         </div>
       </div>
