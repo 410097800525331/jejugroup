@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/user.css">
+</head>
+
+<body>
+  <!-- ##### header ##### -->
+  <header id="header_wrap"></header>
+  <section class="user_wrap">
+    <div class="user_box inner2">
+      <h1>로그인</h1>
+      <p>포인트 적립에서 운임할인까지 회원전용 혜택을 받아보세요.</p>
+      <form id="user_form">
+        <div class="input_group">
+          <label>아이디</label>
+          <input type="text" id="user_id" placeholder="아이디 입력">
+        </div>
+        <div class="input_group">
+          <label>비밀번호</label>
+          <input type="password" id="user_pw" placeholder="비밀번호 입력">
+        </div>
+        <p class="error_msg" id="error_msg">
+          아이디 또는 비밀번호가 올바르지 않습니다.
+        </p>
+        <div class="login_options">
+          <label><input type="checkbox"> 아이디 저장</label>
+          <a href="#">아이디/비밀번호 찾기</a>
+        </div>
+        <button type="submit" class="btn">로그인</button>
+      </form>
+      <div class="quick_login">3초 만에 빠른 로그인</div>
+      <div class="sns_login">
+        <button class="sns_btn kakao">카카오</button>
+        <button class="sns_btn naver">네이버</button>
+        <button class="sns_btn apple">Apple</button>
+      </div>
+      <div class="simple_login">
+        <button>휴대폰 간편 로그인</button>
+      </div>
+      <div class="guest_login">
+        <a href="#">비회원으로 예약 조회 / 로그인</a>
+      </div>
+    </div>
+  </section>
+  <script>
+    const form = document.getElementById('login_form');
+    const userId = document.getElementById('user_id');
+    const userPw = document.getElementById('user_pw');
+    const errorMsg = document.getElementById('error_msg');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      userId.classList.remove('error');
+      userPw.classList.remove('error');
+      errorMsg.style.display = 'none';
+
+      if (userId.value === '' || userPw.value === '') {
+        errorMsg.textContent = '아이디와 비밀번호를 입력해주세요.';
+        errorMsg.style.display = 'block';
+        userId.classList.add('error');
+        userPw.classList.add('error');
+        return;
+      }
+
+      if (userId.value !== 'test' || userPw.value !== '1234') {
+        errorMsg.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+        errorMsg.style.display = 'block';
+        userId.classList.add('error');
+        userPw.classList.add('error');
+        return;
+      }
+
+      alert('로그인 성공');
+    });
+  </script>
+  <!-- ##### footer ##### -->
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/footer.js"></script>
+</body>
+
+</html>

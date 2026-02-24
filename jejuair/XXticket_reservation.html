@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/ticket_reservation.css">
+  <link rel="stylesheet" href="/css/reservation.css">
+</head>
+
+<body>
+  <!-- ##### header ##### -->
+  <header id="header_wrap"></header>
+  <div class="ticket"></div>
+
+  <section class="ticket_page">
+    <div class="ticket_horizontal">
+
+      <!-- tab -->
+      <div class="tab_menu">
+        <div class="tab_btn active" data-tab="tab_booking">항공권 예매</div>
+        <div class="tab_btn" data-tab="tab_reserve">예약 조회</div>
+        <div class="tab_btn" data-tab="tab_flight">운항 조회</div>
+      </div>
+
+      <div class="ticket_wrap">
+
+        <!-- tab 1 -->
+        <div id="tab_booking" class="tab_content active">
+
+          <!-- sub tab -->
+          <div class="tab_sub">
+            <button class="sub_tab_btn active" data-tab="tab_round">왕복</button>
+            <button class="sub_tab_btn" data-tab="tab_oneway">편도</button>
+            <button class="sub_tab_btn">다구간</button>
+          </div>
+
+          <!-- main row -->
+          <div class="ticket_row">
+
+            <!-- 출도착 -->
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>출발지</label>
+                <input type="text" placeholder="선택">
+                <img src="/assets/img/ico_loc.svg" alt="">
+              </div>
+
+              <div class="arrow_btn">
+                <img src="/assets/img/ico-arrow.svg" alt="">
+              </div>
+
+              <div class="input_box">
+                <label>도착지</label>
+                <input type="text" placeholder="선택">
+                <img src="/assets/img/ico_loc.svg" alt="">
+              </div>
+            </div>
+
+            <!-- 날짜 -->
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>탑승일</label>
+                <input type="text" placeholder="선택">
+                <img src="/assets/img/ico_cal.svg" alt="">
+              </div>
+            </div>
+
+            <!-- 인원 -->
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>탑승객</label>
+                <input type="text" placeholder="성인 1">
+                <img src="/assets/img/ico_person.svg" alt="">
+              </div>
+            </div>
+
+            <!-- 검색 -->
+            <div class="ticket_col search_col">
+              <button class="search_btn">항공권 검색</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- tab 2 -->
+        <div id="tab_reserve" class="tab_content">
+          <div class="ticket_row">
+
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>성</label>
+                <input type="text">
+              </div>
+            </div>
+
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>이름</label>
+                <input type="text">
+              </div>
+            </div>
+
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>예약번호</label>
+                <input type="text">
+              </div>
+            </div>
+
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>탑승일</label>
+                <input type="text" placeholder="YYYY.MM.DD">
+              </div>
+            </div>
+
+            <div class="ticket_col search_col">
+              <button class="search_btn">예약 조회</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- tab 3 -->
+        <div id="tab_flight" class="tab_content">
+          <div class="ticket_row">
+
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>출발지</label>
+                <input type="text">
+              </div>
+            </div>
+
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>도착지</label>
+                <input type="text">
+              </div>
+            </div>
+
+            <div class="ticket_col">
+              <div class="input_box">
+                <label>탑승일</label>
+                <input type="text">
+              </div>
+            </div>
+
+            <div class="ticket_col search_col">
+              <button class="search_btn">조회</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <script>
+    /* ===============================
+       상단 탭 (항공권 / 예약 / 운항)
+    ================================ */
+    const tabBtns = document.querySelectorAll('.tab_btn');
+    const tabContents = document.querySelectorAll('.tab_content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        btn.classList.add('active');
+        document.getElementById(target).classList.add('active');
+      });
+    });
+
+
+    /* ===============================
+       항공권 예매 서브 탭 (왕복 / 편도)
+    ================================ */
+    const bookingTab = document.querySelector('#tab_booking');
+
+    if (bookingTab) {
+      const subBtns = bookingTab.querySelectorAll('.sub_tab_btn[data-tab]');
+      const ticketRows = bookingTab.querySelectorAll('.ticket_row[data-tab]');
+
+      subBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.tab;
+
+          subBtns.forEach(b => b.classList.remove('active'));
+          ticketRows.forEach(r => r.style.display = 'none');
+
+          btn.classList.add('active');
+          const targetRow = bookingTab.querySelector(`.ticket_row[data-tab="${target}"]`);
+          if (targetRow) targetRow.style.display = 'flex';
+        });
+      });
+
+      /* 초기 상태 */
+      ticketRows.forEach(r => {
+        if (r.dataset.tab !== 'tab_round') r.style.display = 'none';
+      });
+    }
+
+
+    /* ===============================
+       운항 조회 서브 탭
+    ================================ */
+    const flightTab = document.querySelector('#tab_flight');
+
+    if (flightTab) {
+      const subBtns = flightTab.querySelectorAll('.sub_tab_btn[data-sub]');
+      const ticketRows = flightTab.querySelectorAll('.ticket_row[data-sub]');
+
+      subBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.sub;
+
+          subBtns.forEach(b => b.classList.remove('active'));
+          ticketRows.forEach(r => r.style.display = 'none');
+
+          btn.classList.add('active');
+          const targetRow = flightTab.querySelector(`.ticket_row[data-sub="${target}"]`);
+          if (targetRow) targetRow.style.display = 'flex';
+        });
+      });
+
+      /* 초기 상태 */
+      ticketRows.forEach(r => {
+        if (r.dataset.sub !== 'schedule') r.style.display = 'none';
+      });
+    }
+  </script>
+
+
+
+  <!-- ##### footer ##### -->
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/footer.js"></script>
+  <script src="/js/ticket.js"></script>
+</body>
+
+</html>

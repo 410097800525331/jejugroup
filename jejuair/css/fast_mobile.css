@@ -1,0 +1,150 @@
+@charset "utf-8";
+
+/* 빠른 수속 */
+.a {
+  text-decoration: underline;
+  margin-top: 20px;
+}
+.search_form {
+  margin: 40px 0;
+  padding: 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+.search_form .form_row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.form_row label {
+  margin-right: 8px;
+}
+.search_form input {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+.passenger_box {
+  margin-top: 10px;
+}
+.name_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+.add_btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  color: var(--text-sub);
+  border: 1px solid var(--text-sub);
+  cursor: pointer;
+}
+.container iframe {
+  margin-top: 20px;
+}
+/* 수속 절차 안내 */
+.top_tabs {
+  display: flex;
+  gap: 40px;
+  margin: 40px 0;
+  cursor: pointer;
+}
+.top_tab.active {
+  font-weight: 700;
+  border-bottom: 3px solid var(--main-color);
+}
+.timeline {
+  position: relative;
+  padding-left: 40px;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--sub-color);
+}
+.timeline_item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 30px;
+  padding: 30px 0;
+}
+.timeline_item>div {
+  display: flex;
+  gap: 30px;
+}
+.timeline_item span {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--main-color);
+  color: #fff;
+}
+.timeline_item img {
+  width: 400px;
+  height: 220px;
+  border-radius: 12px;
+}
+.timeline_item ul {
+  margin-bottom: 20px;
+}
+.warning {
+  margin: 30px 0 60px;
+}
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .container iframe {
+    width: 600px;
+  }
+  .timeline_item img {
+    display: none;
+  }
+  .name_row {
+    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+  .add_btn {
+    margin-bottom: 20px;
+  }
+}
+
+/* 모바일 탑승권 */
+.form_input label {
+  min-width: 70px;
+}
+.form_input input {
+  width: 100%;
+}
+.time_cards {
+  display: flex;
+  gap: 20px;
+}
+.time_card {
+  flex: 1;
+  padding: 24px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+.restriction_box li {
+  margin-bottom: 8px;
+}
+@media (max-width: 768px) {
+  .time_cards {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,221 @@
+@charset "utf-8";
+
+/* 소비자중심경영 */
+.ccm_effect img {
+  display: block;
+  width: 1200px;
+  margin: 0 auto;
+}
+
+/* 사전 수하물 */
+.page_intro {
+  margin: 30px 0 20px;
+}
+.benefit_list {
+  display: flex;
+  gap: 20px;
+}
+.benefit_item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid var(--main-bg);
+  border-radius: 12px;
+}
+.benefit_item img {
+  width: 80px; height: 80px;
+}
+.guide_list {
+  padding: 20px;
+}
+.guide_list li {
+  margin-bottom: 10px;
+  border-bottom: 2px solid var(--main-bg);
+}
+.link_list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-decoration: underline;
+  color: var(--main-color);
+}
+@media (max-width: 1024px) {
+  .benefit_list {
+    flex-direction: column;
+  }
+}
+
+/* 기내 수하물 */
+.allowance_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--main-bg);
+}
+.allowance_box img {
+  width: 200px;
+}
+.weight {
+  margin-bottom: 20px;
+}
+.size_table,
+.fee_table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+.size_table th,
+.size_table td,
+.fee_table th,
+.fee_table td {
+  border: 1px solid #eee;
+  padding: 14px;
+  text-align: left;
+}
+.size_table th,
+.fee_table th {
+  background: #fafafa;
+  width: 30%;
+}
+.danger_text {
+  margin-top: 15px;
+  color: var(--main-color);
+  font-weight: bold;
+}
+@media (max-width: 768px) {
+  .allowance_box {
+    flex-direction: column;
+  }
+  .size_table th {
+    font-size: 1.2rem;
+  }
+}
+
+/* 운송제한물품 */
+.restricted_items_wrap img {
+  width: 400px;
+}
+.restricted_items_wrap ul.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  border: none;
+}
+@media (max-width: 768px) {
+  .pdf_links {
+    flex-direction: column;
+  }
+}
+
+/* 수하물 분실 및 배상 */
+.pet_tab_content,
+.tab_content {
+  display: none;
+}
+.pet_tab_content.active,
+.tab_content.active {
+  display: block;
+}
+.service_tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+.pet_tab_btn,
+.tab_btn {
+  display: block;
+  padding: 10px 36px;
+  border-radius: 22px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+.pet_tab_btn.active,
+.tab_btn.active {
+  background: #ff5a00;
+  color: #fff;
+  border-color: #ff5a00;
+}
+.lost_baggage_wrap ul {
+  position: relative;
+  padding-left: 18px;
+  margin: 12px 0;
+}
+.lost_baggage_wrap li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #ff5a00;
+}
+@media (max-width: 768px) {
+  .page_header h1 {
+    font-size: 1.6rem;
+  }
+  .guide_box,
+  .table_wrap {
+    padding: 20px;
+  }
+}
+
+/* 펫 멤버십/펫 패스 */
+.benefit_cards {
+  display: flex;
+  gap: 20px;
+}
+.benefit_card {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  padding: 24px;
+}
+.benefit_card ul {
+  padding-top: 18px;
+}
+.benefit_card strong {
+  margin-left: 20px;
+  font-size: 1.8rem;
+}
+.acc_item {
+  border-top: 1px solid #ccc;
+}
+.acc_btn {
+  position: relative;
+  width: 100%;
+  padding: 18px 16px;
+  font-size: 1.6rem;
+  text-align: left;
+  cursor: pointer;
+}
+.acc_btn.active {
+  background: #fafafa;
+}
+.acc_btn::after {
+  content: "＋";
+  position: absolute;
+  right: 16px; top: 50%;
+  transform: translateY(-50%);
+}
+.acc_item.active .acc_btn::after {
+  content: "－";
+}
+.acc_content {
+  display: none;
+  padding: 20px 16px;
+}
+.acc_content ul {
+  padding-left: 18px;
+}
+.acc_content h4 {
+  margin: 16px 0 8px;
+}
+@media (max-width: 1024px) {
+  .benefit_cards,
+  .price_table,
+  .step_list {
+    flex-direction: column;
+  }
+}

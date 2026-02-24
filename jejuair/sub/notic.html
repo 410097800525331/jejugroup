@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/notic_service.css">
+</head>
+
+<body>
+  <!-- ##### header ##### -->
+  <header id="header_wrap"></header>
+  <div class="ticket"></div>
+
+  <section class="notice_wrap">
+    <div class="inner2">
+      <h1>공지사항</h1>
+      <p>새소식과 운임 공지를 확인해 보세요.</p>
+      <div class="notice_content is_active" id="tab1">
+        <table class="notice_table">
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>제목</th>
+              <th>작성일</th>
+              <th>조회</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>공지</td>
+              <td class="notice_subject">
+                <a href="#">[한국 출발] 국제선 유류할증료 (2026년 1월)</a>
+              </td>
+              <td>2025.12.19</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>공지</td>
+              <td class="notice_subject">
+                <a href="#">국내선 유류할증료 (2026년 1월)</a>
+              </td>
+              <td>2025.12.05</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>공지</td>
+              <td class="notice_subject">
+                <a href="#">개인정보처리방침 개정 안내</a>
+              </td>
+              <td>2025.12.02</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>공지</td>
+              <td class="notice_subject">
+                <a href="#">제주항공 자전거 케이스 대여 서비스 일시 중단 안내</a>
+              </td>
+              <td>2025.11.28</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>공지</td>
+              <td class="notice_subject">
+                <a href="#">인도네시아 바탐 향나딤공항 VOA(Visa On Arrival) 이용 안내</a>
+              </td>
+              <td>2025.11.27</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="notice_content" id="tab2">
+        <table class="notice_table">
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>제목</th>
+              <th>작성일</th>
+              <th>조회</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>안내</td>
+              <td class="notice_subject">
+                <a href="#">비즈니스 라이트 기내식 혜택 변경 안내</a>
+              </td>
+              <td>2025.11.27</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>안내</td>
+              <td class="notice_subject">
+                <a href="#">[한국 출발 외] 국제선 유류할증료 (2025년 12월)</a>
+              </td>
+              <td>2025.11.25</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>안내</td>
+              <td class="notice_subject">
+                <a href="#">[한국 출발] 국제선 유류할증료 (2025년 12월)</a>
+              </td>
+              <td>2025.11.20</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>안내</td>
+              <td class="notice_subject">
+                <a href="#">중국 전자 입국 신고서 시행 안내</a>
+              </td>
+              <td>2025.11.14</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>안내</td>
+              <td class="notice_subject">
+                <a href="#">검역관리지역 및 Q-CODE 작성 안내</a>
+              </td>
+              <td>2025.11.10</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="notice_tabs notice_pagination">
+        <button class="page_btn is_active" data-tab="tab1">1</button>
+        <button class="page_btn" data-tab="tab2">2</button>
+      </div>
+    </div>
+  </section>
+  <script>
+    const pageBtns = document.querySelectorAll(".page_btn");
+    const contents = document.querySelectorAll(".notice_content");
+
+    pageBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        pageBtns.forEach(b => b.classList.remove("is_active"));
+        contents.forEach(c => c.classList.remove("is_active"));
+
+        btn.classList.add("is_active");
+        document.getElementById(btn.dataset.tab).classList.add("is_active");
+      });
+    });
+  </script>
+
+  <!-- ##### footer ##### -->
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/footer.js"></script>
+  <script src="/js/ticket.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/user.css">
+</head>
+
+<body>
+  <!-- ##### header ##### -->
+  <header id="header_wrap"></header>
+
+  <section class="mypage_wrap">
+    <div class="inner">
+      <!-- LNB -->
+      <aside class="mypage_sidebar">
+        <ul>
+          <li class="active" data-page="profile">회원정보 관리</li>
+          <li data-page="booking">예약 내역</li>
+          <li data-page="flight">탑승 내역</li>
+          <li data-page="jmember">J 멤버스</li>
+          <li data-page="coupon">쿠폰 / 혜택</li>
+          <li data-page="payment">결제 내역</li>
+          <li data-page="qna">문의 내역</li>
+        </ul>
+      </aside>
+      <!-- CONTENT -->
+      <main class="mypage_content">
+        <!-- 회원정보 관리 -->
+        <div class="mypage_section active" data-page="profile">
+          <h2>회원정보 관리</h2>
+          <div class="form_block">
+            <h3 class="block_title">기본 정보</h3>
+            <div class="info_row">
+              <label>아이디</label>
+              <p>jeju_user01</p>
+            </div>
+            <div class="info_row">
+              <label>이름</label>
+              <p>홍길동</p>
+            </div>
+            <div class="info_row">
+              <label>생년월일</label>
+              <p>1996.10.14</p>
+            </div>
+          </div>
+          <div class="form_block">
+            <h3 class="block_title">연락처 정보</h3>
+            <div class="info_row">
+              <label for="email">이메일</label>
+              <input id="email" type="email" value="jejuair@gmail.com">
+            </div>
+            <div class="info_row">
+              <label for="phone">휴대전화</label>
+              <input id="phone" type="tel" value="010-0000-0000">
+            </div>
+            <div class="info_row">
+              <label>마케팅 수신 동의</label>
+              <div class="check_group">
+                <label><input type="checkbox" checked> 이메일</label>
+                <label><input type="checkbox"> 문자(SMS)</label>
+              </div>
+            </div>
+          </div>
+          <div class="form_block">
+            <h3 class="block_title">비밀번호 변경</h3>
+            <div class="info_row">
+              <label>현재 비밀번호</label>
+              <input type="password">
+            </div>
+            <div class="info_row">
+              <label>새 비밀번호</label>
+              <input type="password">
+            </div>
+            <div class="info_row">
+              <label>새 비밀번호 확인</label>
+              <input type="password">
+            </div>
+            <p class="form_notice">
+              ※ 8~20자, 영문/숫자/특수문자 중 2가지 이상 조합
+            </p>
+          </div>
+          <div class="form_actions">
+            <button class="btn_primary">회원정보 저장</button>
+          </div>
+          <div class="withdraw_block">
+            <p>회원 탈퇴 시 예약 내역, 포인트, 쿠폰 등 모든 정보가 즉시 삭제되며 삭제된 정보는 복구할 수 없습니다.</p>
+            <button id="withdraw_btn" class="btn_danger">회원 탈퇴</button>
+          </div>
+        </div>
+        <!-- 예약 내역 -->
+        <div class="mypage_section" data-page="booking">
+          <h2>예약 내역</h2>
+          <table class="table">
+            <tr>
+              <th>예약번호</th>
+              <th>노선</th>
+              <th>탑승일</th>
+              <th>상태</th>
+            </tr>
+            <tr>
+              <td>JEA123456</td>
+              <td>김포 → 제주</td>
+              <td>2026.03.18</td>
+              <td class="status">예약완료</td>
+            </tr>
+          </table>
+          <a href="/sub/viewOnOffReservationList.html" class="btn_line">예약조회 바로가기</a>
+        </div>
+        <!-- 탑승 내역 -->
+        <div class="mypage_section" data-page="flight">
+          <h2>탑승 내역</h2>
+          <table class="table">
+            <tr>
+              <th>노선</th>
+              <th>탑승일</th>
+              <th>포인트</th>
+            </tr>
+            <tr>
+              <td>제주 → 김포</td>
+              <td>2025.12.02</td>
+              <td>+1,200P</td>
+            </tr>
+          </table>
+        </div>
+        <!-- J 멤버스 -->
+        <div class="mypage_section" data-page="jmember">
+          <h2>J 멤버스</h2>
+          <div class="member_summary">
+            <div class="grade_box">
+              <span>현재 등급</span>
+              <h3>Silver</h3>
+              <p>유효기간: 2026.12.31</p>
+            </div>
+            <div class="point_box">
+              <span>보유 포인트</span>
+              <strong>12,500 P</strong>
+              <p>※ 항공권 및 부가서비스 결제 시 사용 가능</p>
+            </div>
+          </div>
+          <div class="benefit_block">
+            <h3 class="block_title">등급 혜택</h3>
+            <ul class="benefit_list">
+              <li>국내선 항공권 구매 시 <strong>5% 포인트 추가 적립</strong></li>
+              <li>사전 수하물 <strong>할인 혜택</strong></li>
+              <li>이벤트 우선 참여 기회</li>
+              <li>
+                <p>
+                <h3>다음 등급 안내</h3>Gold 등급까지 <strong>3회</strong> 탑승 또는 <strong>18,000P</strong> 추가 적립이 필요합니다.
+                </p>
+                <div class="progress_bar">
+                  <span class="progress" style="width:60%"></span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <section class="point_history">
+            <h3 class="block_title">최근 포인트 내역</h3>
+            <table class="table">
+              <tr>
+                <th>일자</th>
+                <th>내용</th>
+                <th>적립/차감</th>
+              </tr>
+              <tr>
+                <td>2026.01.12</td>
+                <td>김포 → 제주 탑승</td>
+                <td class="plus">+1,200P</td>
+              </tr>
+              <tr>
+                <td>2025.12.02</td>
+                <td>항공권 결제 사용</td>
+                <td class="minus">-3,000P</td>
+              </tr>
+            </table>
+          </section>
+          <div class="form_actions">
+            <button class="btn_line">J 멤버스 혜택 전체보기</button>
+            <button class="btn_line">포인트 사용하기</button>
+          </div>
+        </div>
+        <!-- 쿠폰 / 혜택 -->
+        <div class="mypage_section" data-page="coupon">
+          <h2>쿠폰 / 혜택</h2>
+          <div class="coupon_summary">
+            <div class="summary_item">
+              <span>사용 가능 쿠폰</span>
+              <strong>1장</strong>
+            </div>
+            <div class="summary_item">
+              <span>만료 예정</span>
+              <strong>0장</strong>
+            </div>
+            <div class="summary_item">
+              <span>만료 쿠폰</span>
+              <strong>1장</strong>
+            </div>
+          </div>
+          <div class="coupon_block">
+            <h3>사용 가능 쿠폰</h3>
+            <div class="coupon_card">
+              <div class="coupon_info">
+                <strong>국내선 5,000원 할인 쿠폰</strong>
+                <div>국내선 항공권 결제 시 사용 가능</div>
+                <p>유효기간: 2026.03.31</p>
+              </div>
+              <div class="coupon_action">
+                <button class="btn_primary">사용하기</button>
+              </div>
+            </div>
+          </div>
+          <div class="coupon_block">
+            <h>만료 쿠폰</h>
+            <div class="coupon_card expired">
+              <div class="coupon_info">
+                <strong>국제선 10% 할인 쿠폰</strong>
+                <div>국제선 항공권 결제 시 사용 가능</div>
+                <p>유효기간: 2025.12.31</p>
+              </div>
+              <div class="coupon_action">
+                <span>기간 만료</span>
+              </div>
+            </div>
+          </div>
+          <div class="coupon_notice">
+            <p>※ 쿠폰은 항공권 결제 단계에서 적용할 수 있으며, 일부 노선 및 프로모션에는 사용이 제한될 수 있습니다.</p>
+          </div>
+        </div>
+        <!-- 결제 내역 -->
+        <div class="mypage_section" data-page="payment">
+          <h2>결제 내역</h2>
+          <table class="table">
+            <tr>
+              <th>결제일</th>
+              <th>금액</th>
+              <th>수단</th>
+            </tr>
+            <tr>
+              <td>2026.01.20</td>
+              <td>89,000원</td>
+              <td>신용카드</td>
+            </tr>
+          </table>
+        </div>
+        <!-- 문의 내역 -->
+        <div class="mypage_section" data-page="qna">
+          <h2>문의 내역</h2>
+          <table class="table">
+            <tr>
+              <th>문의일</th>
+              <th>제목</th>
+              <th>상태</th>
+            </tr>
+            <tr>
+              <td>2026.01.05</td>
+              <td>수하물 문의</td>
+              <td>답변완료</td>
+            </tr>
+          </table>
+        </div>
+      </main>
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.mypage_sidebar li');
+      const sections = document.querySelectorAll('.mypage_section');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const page = tab.dataset.page;
+
+          // sidebar active
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          // section active
+          sections.forEach(sec => {
+            sec.classList.toggle('active', sec.dataset.page === page);
+          });
+        });
+      });
+
+      // 회원 탈퇴
+      const withdrawBtn = document.getElementById('withdraw_btn');
+      if (withdrawBtn) {
+        withdrawBtn.addEventListener('click', () => {
+          const confirmed = confirm(
+            '정말로 탈퇴하시겠습니까?\n모든 예약 및 포인트는 복구되지 않습니다.'
+          );
+          if (confirmed) {
+            alert('탈퇴가 완료되었습니다.');
+            location.href = '/'; // 메인으로 이동
+          }
+        });
+      }
+    });
+  </script>
+  <!-- ##### footer ##### -->
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/footer.js"></script>
+</body>
+
+</html>

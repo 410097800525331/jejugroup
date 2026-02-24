@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+  <!-- Effect cards -->
+
+  <!-- ##### header #####
+  https://flyasiana.com/I/KR/KO/ACTQuick.do -->
+  <header id="header_wrap"></header>
+
+  <!-- ##### ticket ##### -->
+  <div class="ticket"></div>
+
+  <!-- ##### slide ##### -->
+  <section class="swiper mySwiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide"><img src="/assets/img/main/slide1.png" alt="slide image"></div>
+      <div class="swiper-slide"><img src="/assets/img/main/slide2.png" alt="slide image"></div>
+      <div class="swiper-slide"><img src="/assets/img/main/slide3.png" alt="slide image"></div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </section>
+
+  <!-- ##### cards ##### -->
+  <section id="air_ticket_wrap">
+    <div class="inner">
+      <div class="air_ticket_title">
+        <div>
+          <p>Popular Routes</p>
+          <h2>인기 노선을 확인해 보세요.</h2>
+        </div>
+        <a class="allmore_btn" href="/sub/route.html">전체보기</a>
+      </div>
+      <!-- air_ticket.js -->
+      <div class="air_ticket air_ticket_cards"></div>
+    </div>
+  </section>
+
+  <!-- ##### tab ##### -->
+  <section class="convenience_wrap">
+    <div class="inner convenience">
+      <div class="tab_img">
+        <p>Travel</p>
+        <h2>여행에 편리함을 더해보세요.</h2>
+        <img src="https://digitalchosun.dizzo.com/site/data/img_dir/2024/12/02/2024120280152_0.jpg" alt="제주항공">
+      </div>
+      <div class="tab_container">
+        <div class="tabs">
+          <h3 class="tab active" data-tab="pre-travel">여행 전</h3>
+          <h3 class="tab" data-tab="in-flight">기내에서</h3>
+          <h3 class="tab" data-tab="companion">여행 동반</h3>
+        </div>
+        <!-- convenience.js -->
+        <div class="tab_contents"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ##### youtube ##### -->
+  <section class="youtube_wrap">
+    <div class="inner">
+      <div class="animai">
+        <div class="plane_fly"></div>
+      </div>
+      <iframe width="600" height="500"
+        src="https://www.youtube.com/embed/Qrg7rNRQ2q8?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=Qrg7rNRQ2q8&playsinline=1"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+      </iframe>
+      <div class="youtube_text">
+        <p>#제주항공 #jejuair #ai챗봇</p>
+        <h1 class="color">제주항공 (Jeju Air)</h1>
+        <p>
+          | 제주항공 하이제코<br>
+          항공사에서 만든 AI 챗봇은 여행 계획을 짤 수 있을까?🤔<br><br>
+          AI 챗봇한테 여행 계획 짜달라고 해본 뀰님 계신가요?<br><br>
+          전 세계 198개국 언어 소통은 물론,<br>
+          제주항공 홈페이지의 모든 것과<br>
+          여행지 추천, 여행 플레이리스트,<br>
+          심지어 **여행 계획**까지 짜드립니다!<br><br>
+          <span class="color">이제 하이제코와 함께 편리한 여행 준비하세요!</span>🛫🧡
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ##### notic ##### -->
+  <section class="notice_wrap">
+    <div class="inner">
+      <div class="notice_container">
+        <div class="notice_title">
+          <div>
+            <p>Notic</p>
+            <h2>공지사항</h2>
+          </div>
+          <a class="allmore_btn" href="/sub/notic.html">전체보기</a>
+        </div>
+        <div class="notice_item">
+          <button>
+            <span>중국 전자 입국 신고서 시행 안내</span>
+            <span class="notice_icon">+</span>
+          </button>
+          <div class="accordion_content">
+            <p>
+              중국으로 입국하는 모든 승객은 전자 입국 신고서를 작성하셔야 합니다.<br><br>
+              - 시행일 : 2025년 11월 20일 부<br>
+              - 대상 : 중국으로 입국하는 모든 승객 ( 성인, 소아, 유아 포함 , 중국 국적 제외 )<br>
+              - 면제 대상 : 중국 영구거류증 소지자, 홍콩 또는 마카오 거주 통행증 소지자(비중국국적), 단체비자 승객, 입국하지 않는 24시간 이내 환승객<br>
+              - 지원언어 : 영어 / 중국어<br>
+              - 전자 입국 신고서 작성 후, QR 코드 스캔하여 지참<br>
+              - 전자 입국 신고 사이트 : https://s.nia.gov.cn/ArrivalCardFillingPC/entry-registation-home
+            </p>
+          </div>
+        </div>
+        <div class="notice_item">
+          <button>
+            <span>인도네시아 바탐 향나딤공항 VOA(Visa On Arrival) 이용 안내</span>
+            <span class="notice_icon">+</span>
+          </button>
+          <div class="accordion_content">
+            <p>
+              안녕하세요. 제주항공 입니다.<br><br>
+              인도네시아 바탐 이민국 정책으로 인해 7일 VOA(Visa On Arrival) 이용시, 바탐 향나딤공항에서 출국이 제한됩니다.<br>
+              싱가포르 등에서 페리로 인도네시아에 입국할 경우 30일 VOA를 구매 후 공항에서 수속을 받아주시기 바랍니다.<br>
+              아울러, 공항 현장에서는 30일 VOA로 변경이 어려운 점 양해 부탁드립니다.<br><br>
+              자세한 내용은 아래 URL을 참고하십시오.<br><br>
+              https://evisa.imigrasi.go.id/<br><br>
+              감사합니다.
+            </p>
+          </div>
+        </div>
+        <div class="notice_item">
+          <button>
+            <span>국내선 유류할증료 (2025년 12월)</span>
+            <span class="notice_icon">+</span>
+          </button>
+          <div class="accordion_content">
+            <p>
+              편도운임 적용 기준이며 유가에 따라 유류할증료는 변동될 수 있습니다.<br>
+              유류할증료는 1개월 간격으로 사전 고지되며 탑승일과 관계없이 발권일 기준으로 적용됩니다.<br>
+              구매 후 탑승시점에 유류할증료가 인상되어도 차액을 징수하지 않으며, 인하되어도 환급되지 않습니다.<br>
+              부과대상 : 모든 유/무상 항공권<br>
+              면제대상 : 좌석을 점유하지 않는 만 2세 미만의 유아 (Infant)
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="notice_img">
+        <img src="https://cdn.pinpointnews.co.kr/news/photo/202510/383574_378647_2423.jpg" alt="제주항공">
+      </div>
+    </div>
+  </section>
+  <script>
+    const items = document.querySelectorAll(".notice_item");
+
+    items.forEach(item => {
+      const noticeBtn = item.querySelector(".notice_item button");
+
+      noticeBtn.addEventListener("click", () => {
+        const isActive = item.classList.contains("active");
+
+        // 모두 초기화
+        items.forEach(i => {
+          i.classList.remove("active");
+          i.querySelector("button").classList.remove("active");
+        });
+
+        // 클릭한 것만 열기
+        if (!isActive) {
+          item.classList.add("active");
+          noticeBtn.classList.add("active");
+        }
+      });
+    });
+  </script>
+
+  <!-- ##### footer ##### -->
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper(".mySwiper", {
+      speed: 1400,
+      autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+    });
+  </script>
+  <script src="/js/header.js"></script>
+  <script src="/js/footer.js"></script>
+  <script src="/js/ticket.js"></script>
+  <script src="/js/air_ticketData.js"></script>
+  <script src="/js/air_ticket.js"></script>
+  <script src="/js/convenienceData.js"></script>
+  <script src="/js/convenience.js"></script>
+</body>
+
+</html>
