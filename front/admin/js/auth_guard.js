@@ -32,7 +32,7 @@
     if (!isAuthorized) {
         // Security Protocol: Opaque redirection. No detailed error message.
         // Prevent storing admin page in history on bounce
-        window.location.replace('/index.html');
+        window.location.replace('../../index.html');
         return; // Halt execution immediately
     }
 
