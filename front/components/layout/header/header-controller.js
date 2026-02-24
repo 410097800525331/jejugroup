@@ -3,9 +3,13 @@
  * handles scroll effects and theme switching
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+let isHeaderControllerInitialized = false;
+
+function initHeaderController() {
+    if (isHeaderControllerInitialized) return;
     const header = document.getElementById('header');
     if (!header) return;
+    isHeaderControllerInitialized = true;
 
     const initHeaderScroll = () => {
         const handleScroll = () => {
@@ -38,4 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         initHeaderScroll();
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', initHeaderController);
+document.addEventListener('mainHeaderLoaded', initHeaderController);

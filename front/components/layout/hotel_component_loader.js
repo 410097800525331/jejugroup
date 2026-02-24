@@ -3,11 +3,15 @@
  * Handles dynamic injection of Header and Footer
  */
 
-async function loadComponent(elementId, path, callback) {
+async function loadComponent(elementId, path, basePath, callback) {
     try {
         const response = await fetch(path);
         if (!response.ok) throw new Error(`Failed to load ${path}`);
-        const html = await response.text();
+        let html = await response.text();
+        
+        // Dynamically replace {BASE_PATH} with the actual basePath
+        html = html.replace(/\{BASE_PATH\}/g, basePath);
+        
         document.getElementById(elementId).innerHTML = html;
         
         // Re-initialize Lucide icons if present
@@ -22,21 +26,32 @@ async function loadComponent(elementId, path, callback) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Use absolute paths for components
-    // Old heuristic removed since all paths are now domain-based and relative to root.
+    // Dynamically determine the base path from the script script
+    let basePath = '';
+    const scripts = document.getElementsByTagName('script');
+    for (let script of scripts) {
+        const src = script.getAttribute('src');
+        if (src && src.includes('hotel_component_loader.js')) {
+            basePath = src.split('components/layout/hotel_component_loader.js')[0];
+            break;
+        }
+    }
     
-    const headerPath = `/components/layout/header/header.html`;
-    const footerPath = `/components/layout/footer/footer.html`;
+    // Ensure basePath doesn't break if it's empty
+    const headerPath = `${basePath}components/layout/header/header.html`;
+    const footerPath = `${basePath}components/layout/footer/footer.html`;
 
-    loadComponent('hotel-header-placeholder', headerPath, () => {
+    loadComponent('hotel-header-placeholder', headerPath, basePath, () => {
         console.log('Header loaded');
+        document.dispatchEvent(new Event('mainHeaderLoaded'));
         // Initialize header scripts after injection
         if (typeof initHeader === 'function') initHeader();
         if (typeof initStaggerNav === 'function') initStaggerNav();
     });
     
-    loadComponent('hotel-footer-placeholder', footerPath, () => {
+    loadComponent('hotel-footer-placeholder', footerPath, basePath, () => {
         console.log('Footer loaded');
+        document.dispatchEvent(new Event('mainFooterLoaded'));
         // Initialize footer scripts after injection
         if (typeof initFooter === 'function') initFooter();
     });

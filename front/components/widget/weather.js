@@ -6,29 +6,85 @@
 const DEFAULT_LAT = 37.5665;
 const DEFAULT_LON = 126.9780;
 
-// DOM 캐싱
-const openBtn = document.getElementById('weather-open-btn');
-const overlay = document.getElementById('weather-overlay');
-const closeBtn = document.getElementById('weather-close-btn');
-const detailContainer = document.getElementById('weather-detail-container');
-const searchInput = document.getElementById('weather-search-input');
-const searchBtn = document.getElementById('weather-search-btn');
-const suggestionsList = document.getElementById('weather-suggestions');
+// DOM 캐싱 (동적 로드를 위해 함수 내에서 초기화)
+let openBtn, overlay, closeBtn, detailContainer, searchInput, searchBtn, suggestionsList;
 
 // 날씨 상태 저장 (전역)
 let currentWeatherData = null;
 let currentPollutionData = null;
 
+let isWeatherInitialized = false;
+
 /*
  * 날씨 앱 코어 로직
  */
 async function initWeather() {
-    try {
-        const coords = await getGeoLocation();
-        await updateWeatherData(coords.lat, coords.lon);
-    } catch (error) {
-        console.warn('Geolocation failed, falling back to Seoul:', error.message);
-        await updateWeatherData(DEFAULT_LAT, DEFAULT_LON);
+    if (isWeatherInitialized) return;
+    
+    // 동적 로드 후 DOM 캐싱
+    openBtn = document.getElementById('weather-open-btn');
+    overlay = document.getElementById('weather-overlay');
+    closeBtn = document.getElementById('weather-close-btn');
+    detailContainer = document.getElementById('weather-detail-container');
+    searchInput = document.getElementById('weather-search-input');
+    searchBtn = document.getElementById('weather-search-btn');
+    suggestionsList = document.getElementById('weather-suggestions');
+
+    // 이벤트 리스너 바인딩
+    if (openBtn) openBtn.onclick = () => {
+        overlay.classList.add('active');
+        renderOverlay();
+    };
+
+    if (closeBtn) closeBtn.onclick = () => overlay.classList.remove('active');
+
+    if (searchBtn) searchBtn.onclick = () => searchCityWeather(searchInput.value.trim());
+
+    if (searchInput) {
+        searchInput.oninput = (e) => {
+            showSuggestions(e.target.value.trim());
+        };
+        
+        searchInput.onkeydown = (e) => {
+            const items = suggestionsList.getElementsByTagName('li');
+            if (e.key === 'ArrowDown') {
+                currentFocus++;
+                addActive(items);
+            } else if (e.key === 'ArrowUp') {
+                currentFocus--;
+                addActive(items);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentFocus > -1 && items[currentFocus]) {
+                    items[currentFocus].click();
+                } else {
+                    searchCityWeather(searchInput.value.trim());
+                }
+            }
+        };
+    }
+
+    if (suggestionsList) {
+        // 추천 아이템 클릭 시
+        suggestionsList.onclick = (e) => {
+            const item = e.target.closest('.suggestion-item');
+            if (item) {
+                const cityKo = item.getAttribute('data-ko');
+                searchInput.value = cityKo;
+                searchCityWeather(cityKo);
+            }
+        };
+    }
+
+    if (openBtn) {
+        isWeatherInitialized = true;
+        try {
+            const coords = await getGeoLocation();
+            await updateWeatherData(coords.lat, coords.lon);
+        } catch (error) {
+            console.warn('Geolocation failed, falling back to Seoul:', error.message);
+            await updateWeatherData(DEFAULT_LAT, DEFAULT_LON);
+        }
     }
 }
 
@@ -243,42 +299,8 @@ function renderOverlay() {
     `;
 }
 
-// 이벤트 리스너
-if (openBtn) openBtn.onclick = () => {
-    overlay.classList.add('active');
-    renderOverlay();
-};
-
-if (closeBtn) closeBtn.onclick = () => overlay.classList.remove('active');
-
-if (searchBtn) searchBtn.onclick = () => searchCityWeather(searchInput.value.trim());
-
 // 검색창 키보드 네비게이션 변수
 let currentFocus = -1;
-
-if (searchInput) {
-    searchInput.oninput = (e) => {
-        showSuggestions(e.target.value.trim());
-    };
-    
-    searchInput.onkeydown = (e) => {
-        const items = suggestionsList.getElementsByTagName('li');
-        if (e.key === 'ArrowDown') {
-            currentFocus++;
-            addActive(items);
-        } else if (e.key === 'ArrowUp') {
-            currentFocus--;
-            addActive(items);
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            if (currentFocus > -1 && items[currentFocus]) {
-                items[currentFocus].click();
-            } else {
-                searchCityWeather(searchInput.value.trim());
-            }
-        }
-    };
-}
 
 function addActive(items) {
     if (!items) return;
@@ -286,7 +308,7 @@ function addActive(items) {
     if (currentFocus >= items.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = (items.length - 1);
     items[currentFocus].classList.add('autocomplete-active');
-    
+
     // 스크롤 자동 이동
     items[currentFocus].scrollIntoView({ block: 'nearest' });
 }
@@ -297,32 +319,23 @@ function removeActive(items) {
     }
 }
 
-// 추천 아이템 클릭 시
-suggestionsList.onclick = (e) => {
-    const item = e.target.closest('.suggestion-item');
-    if (item) {
-        const cityKo = item.getAttribute('data-ko');
-        searchInput.value = cityKo;
-        searchCityWeather(cityKo);
-    }
-};
-
 window.addEventListener('click', e => { 
-    if (e.target === overlay) {
+    if (overlay && e.target === overlay) {
         overlay.classList.remove('active');
-        suggestionsList.classList.remove('active');
+        if (suggestionsList) suggestionsList.classList.remove('active');
     }
     // 검색창 밖 클릭 시 추천 목록 닫기
-    if (!e.target.closest('.weather-search-bar')) {
+    if (suggestionsList && !e.target.closest('.weather-search-bar')) {
         suggestionsList.classList.remove('active');
     }
 });
 
 window.addEventListener('keydown', e => { 
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && overlay) {
         overlay.classList.remove('active');
-        suggestionsList.classList.remove('active');
+        if (suggestionsList) suggestionsList.classList.remove('active');
     }
 });
 
 document.addEventListener('DOMContentLoaded', initWeather);
+document.addEventListener('mainHeaderLoaded', initWeather);

@@ -1,5 +1,12 @@
 /* ==================== Strict Full Page Scroll Controller ==================== */
-document.addEventListener('DOMContentLoaded', () => {
+let isMainScrollInitialized = false;
+
+function initMainScroll() {
+    if (isMainScrollInitialized) return;
+    const header = document.querySelector('.header');
+    if (!header) return;
+    isMainScrollInitialized = true;
+    
     // --- Configuration ---
     const SCROLL_COOLDOWN = 1500; // Time in ms to ignore input after scroll
     const sections = document.querySelectorAll('.section');
@@ -12,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.contains('reservation-page');
     
     // UI Elements
-    const header = document.querySelector('.header');
     const topBtn = document.getElementById('topBtn');
     const navLinks = document.querySelectorAll('.gnb-link');
 
@@ -245,7 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollToCurrentIndex();
         });
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', initMainScroll);
+document.addEventListener('mainHeaderLoaded', initMainScroll);
 
 // ==================== ✨ 언어 토글 기능 (오류 수정 완료) ✨ =================
 // =======================================================================
@@ -278,11 +287,19 @@ const changeLanguage = (lang) => {
     document.documentElement.lang = lang;
 };
 
-const langToggleButton = document.querySelector('.lang-toggle');
+let isLangToggleInitialized = false;
 // 기본 언어 설정 (localStorage 또는 기본값)
 let currentLang = localStorage.getItem('jeju_lang') || 'ko';
 
-if (langToggleButton) {
+// Run initial translation immediately for static text
+changeLanguage(currentLang);
+
+function initLangToggle() {
+    if (isLangToggleInitialized) return;
+    const langToggleButton = document.querySelector('.lang-toggle');
+    if (!langToggleButton) return;
+    isLangToggleInitialized = true;
+
     langToggleButton.addEventListener('click', () => {
         currentLang = (currentLang === 'ko') ? 'en' : 'ko';
         // 버튼 텍스트 업데이트
@@ -294,18 +311,21 @@ if (langToggleButton) {
         document.dispatchEvent(new CustomEvent('languageChanged', { detail: currentLang }));
         document.dispatchEvent(new CustomEvent('fabLanguageChanged', { detail: currentLang }));
     });
+
+    langToggleButton.textContent = (currentLang === 'ko') ? 'English' : '한국어';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 버튼 초기 텍스트 설정
-    if (langToggleButton) {
-        langToggleButton.textContent = (currentLang === 'ko') ? 'English' : '한국어';
-    }
-    changeLanguage(currentLang);
-});
+document.addEventListener('DOMContentLoaded', initLangToggle);
+document.addEventListener('mainHeaderLoaded', initLangToggle);
 
 /* ==================== 비디오 전환 로직 ==================== */
-document.addEventListener('DOMContentLoaded', () => {
+let isVideoTransitionInitialized = false;
+
+function initVideoTransitions() {
+    if (isVideoTransitionInitialized) return;
+    if (!document.querySelector('.header')) return;
+    isVideoTransitionInitialized = true;
+
     // 호텔 페이지로 이동하는 모든 링크 선택 (버튼 포함)
     const hotelLinks = document.querySelectorAll('a[href="../hotel/jejuhotel.html"]');
     const videoOverlay = document.getElementById('video-overlay');
@@ -335,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const triggerNavigation = () => {
                     if (!navigationTriggered) {
                         navigationTriggered = true;
-                        window.location.href = '/pages/hotel/jejuhotel.html';
+                        window.location.href = './jejuhotel.html';
                     }
                 };
 
@@ -371,4 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', initVideoTransitions);
+document.addEventListener('mainHeaderLoaded', initVideoTransitions);

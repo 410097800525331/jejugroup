@@ -226,14 +226,16 @@ html {
 
 /* ==================== 이메일 및 휴대폰 입력 래퍼 ==================== */
 .email-input-wrapper,
-.phone-input-wrapper {
+.phone-input-wrapper,
+.input-btn-wrapper {
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
 .email-input-wrapper input,
-.phone-input-wrapper input {
+.phone-input-wrapper input,
+.input-btn-wrapper input {
     flex: 1;
 }
 
@@ -591,5 +593,144 @@ html {
 
     .signup-links {
         font-size: 13px;
+    }
+}
+/* ==================== 성공 모달 (Success Modal) ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: none; /* 초기값 */
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 50px 40px;
+    border-radius: 32px;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    transform: scale(0.8);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.success-icon {
+    font-size: 80px;
+    color: #00cc00;
+    margin-bottom: 24px;
+    filter: drop-shadow(0 4px 10px rgba(0,204,0,0.3));
+    animation: bounceIn 0.8s ease;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); opacity: 1; }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.modal-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 16px;
+}
+
+.modal-content p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.highlight {
+    color: #FF5000;
+    font-weight: 700;
+}
+
+/* 카운트다운 써클 */
+.countdown-circle {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin: 30px auto;
+}
+
+.countdown-circle svg {
+    transform: rotate(-90deg);
+    width: 90px;
+    height: 90px;
+}
+
+.countdown-circle circle {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+}
+
+.countdown-circle circle:first-child {
+    stroke: #f0f0f0;
+}
+
+.countdown-circle circle:last-child {
+    stroke: #FF5000;
+    stroke-dasharray: 251.2;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.seconds {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: 700;
+    color: #FF5000;
+}
+
+.sub-text {
+    font-size: 14px !important;
+    color: #999 !important;
+    margin-bottom: 30px;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 16px;
+    background: #222;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+    background: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 40px 24px;
     }
 }

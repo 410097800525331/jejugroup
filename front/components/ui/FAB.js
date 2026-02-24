@@ -179,7 +179,23 @@ function initFAB() {
 
     // 5. Card Actions
     document.getElementById('fabHome').addEventListener('click', () => {
-        window.location.href = '/index.html';
+        // Calculate relative path to root dynamically if possible, 
+        // but for now, since it's a small project, just use './index.html' 
+        // or '../../index.html' based on conventional depths.
+        // Robust way: find root or just use a simplified './'
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('/pages/') || currentPath.includes('/admin/')) {
+            const depth = (currentPath.match(/\//g) || []).length;
+            // index.html is at root (depth 1 or 2 depending on server)
+            // Simplified: if in subpages, go up.
+            if (currentPath.includes('/pages/auth/') || currentPath.includes('/pages/hotel/') || currentPath.includes('/pages/stay/') || currentPath.includes('/pages/travel/') || currentPath.includes('/pages/cs/') || currentPath.includes('/admin/pages/')) {
+                window.location.href = '../../index.html';
+            } else if (currentPath.includes('/pages/') || currentPath.includes('/admin/')) {
+                window.location.href = '../index.html';
+            }
+        } else {
+            window.location.href = './index.html';
+        }
     });
     
     document.getElementById('fabTop').addEventListener('click', () => {

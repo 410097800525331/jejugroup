@@ -20,35 +20,35 @@ const ADMIN_MENUS = Object.freeze([
         id: 'dashboard',
         label: '대시보드',
         icon: '📊',
-        path: '/admin/pages/dashboard.html',
+        path: 'dashboard.html',
         roles: [ADMIN_ROLES.SUPER_ADMIN, ADMIN_ROLES.HOTEL_ADMIN, ADMIN_ROLES.FLIGHT_ADMIN, ADMIN_ROLES.CS_ADMIN]
     }),
     Object.freeze({
         id: 'reservations',
         label: '예약/결제 관리',
         icon: '💳',
-        path: '/admin/pages/reservations.html',
+        path: 'reservations.html',
         roles: [ADMIN_ROLES.SUPER_ADMIN, ADMIN_ROLES.HOTEL_ADMIN, ADMIN_ROLES.FLIGHT_ADMIN]
     }),
     Object.freeze({
         id: 'lodging',
         label: '숙소 관리',
         icon: '🏨',
-        path: '/admin/pages/lodging.html',
+        path: 'lodging.html',
         roles: [ADMIN_ROLES.SUPER_ADMIN, ADMIN_ROLES.HOTEL_ADMIN]
     }),
     Object.freeze({
         id: 'members',
         label: '회원 관리',
         icon: '👥',
-        path: '/admin/pages/members.html',
+        path: 'members.html',
         roles: [ADMIN_ROLES.SUPER_ADMIN, ADMIN_ROLES.CS_ADMIN]
     }),
     Object.freeze({
         id: 'cms',
         label: '콘텐츠 (CMS)',
         icon: '📝',
-        path: '/admin/pages/cms.html',
+        path: 'cms.html',
         roles: [ADMIN_ROLES.SUPER_ADMIN, ADMIN_ROLES.CS_ADMIN]
     })
 ]);

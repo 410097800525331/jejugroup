@@ -12,41 +12,7 @@
 </head>
 
 <body>
-    <header class="header">
-        <div class="header-util" id="index-header-util">
-            <a href="./pages/auth/login.html" class="util-link" data-lang="login" id="indexLoginBtn">로그인</a>
-            <span class="util-divider">|</span>
-            <a href="./pages/auth/signup.html" class="util-link" data-lang="signup">회원가입</a>
-            <span class="util-divider">|</span>
-            <a href="./pages/stay/reservation_check.html" class="util-link" data-lang="reservationCheck">예약 확인</a>
-            <span class="util-divider">|</span>
-            <a href="./pages/cs/customer_center.html" class="util-link" data-lang="customerCenter">고객센터</a>
-        </div>
-
-        <div class="header-inner">
-            <div class="logo">
-                <a href="./index.html" class="logo-link"><img src="./images/logo_jejuGP.png" alt="제주그룹"></a>
-            </div>
-
-            <nav class="gnb" id="gnb">
-                <ul class="gnb-list">
-                    <li class="gnb-item"><a href="#section-2" class="gnb-link" data-lang="navAir">제주에어</a></li>
-                    <li class="gnb-item"><a href="#section-3" class="gnb-link" data-lang="navHotel">제주 스테이</a></li>
-                    <li class="gnb-item"><a href="#section-4" class="gnb-link" data-lang="navRentCar">제주 렌트카</a></li>
-                    <li class="gnb-item"><a href="#section-5" class="gnb-link" data-lang="navMembership">멤버십</a></li>
-                </ul>
-            </nav>
-
-            <div class="header-right-controls">
-                <button class="lang-toggle">English</button>
-                <div id="weather-widget" class="weather-widget">
-                    <button class="weather-header-btn" id="weather-open-btn">
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div id="main-header-placeholder"></div>
 
     <main class="main-content">
         <section class="section section-1" id="section-1">
@@ -213,31 +179,7 @@
         </section>
     </main>
 
-    <footer class="footer section" id="section-footer">
-        <div class="footer-content">
-            <div class="footer-info">
-                <p><strong data-lang="footerCompany">(주)제주 그룹</strong></p>
-                <p data-lang="footerCEO">대표이사: 김이배</p>
-                <p data-lang="footerBizNum">사업자등록번호: 616-81-50527</p>
-                <p data-lang="footerSaleNum">통신판매업신고: 제주 2006-125호</p>
-                <p data-lang="footerHosting">호스팅 사업자: AWS</p>
-                <br>
-                <p data-lang="footerAddr">주소: 제주특별자치도 제주시 신대로 64 (연동, 건설공제회관 3층)</p>
-                <p data-lang="footerCs">고객센터: 1599-1500 (09:00 ~ 19:00)</p>
-                <p data-lang="footerCsEmail">고객 문의: jejugroup.help@jejugroup.net</p>
-                <p data-lang="footerPartnerEmail">제휴 문의: partnership@jejugroup.net</p>
-            </div>
-            <div class="footer-social">
-                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
-            </div>
-        </div>
-        <div class="footer-copyright">
-            <p data-lang="footerCopyright">Copyright ⓒ Jeju Group. All Rights Reserved.</p>
-        </div>
-    </footer>
+    <div id="main-footer-placeholder"></div>
 
     <button class="top-btn" id="topBtn">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -276,19 +218,29 @@
     <script src="core/constants/city_data.js"></script>
     <script src="components/widget/weather.js"></script>
 
+    <!-- Component Loader for index.html -->
+    <script src="components/layout/component_loader.js"></script>
+
     <!-- UI State Reconciliation -> Sync Global Auth State -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        let isAuthSyncInitialized = false;
+
+        function initAuthSync() {
+            if (isAuthSyncInitialized) return;
+            const loginBtn = document.getElementById('indexLoginBtn');
+            const headerUtil = document.getElementById('index-header-util');
+            if (!loginBtn || !headerUtil) return; // Header not yet loaded
+
+            isAuthSyncInitialized = true;
+
             const rawSession = localStorage.getItem('userSession');
             if (!rawSession) return;
 
             try {
                 const sessionData = JSON.parse(rawSession);
-                const loginBtn = document.getElementById('indexLoginBtn');
-                const headerUtil = document.getElementById('index-header-util');
 
                 // 1. Mutate login to logout
-                if (loginBtn && sessionData) {
+                if (sessionData) {
                     loginBtn.textContent = '로그아웃';
                     loginBtn.href = '#';
                     loginBtn.removeAttribute('data-lang');
@@ -300,9 +252,9 @@
                 }
 
                 // 2. Inject Admin Link if applicable
-                if (headerUtil && sessionData.role && sessionData.role.includes('ADMIN')) {
+                if (sessionData.role && sessionData.role.includes('ADMIN')) {
                     const adminLink = document.createElement('a');
-                    adminLink.href = '/admin/pages/dashboard.html';
+                    adminLink.href = 'admin/pages/dashboard.html';
                     adminLink.className = 'util-link';
                     adminLink.style.color = '#FF5000';
                     adminLink.style.fontWeight = 'bold';
@@ -319,7 +271,10 @@
             } catch (e) {
                 console.error('Session parse exception', e);
             }
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', initAuthSync);
+        document.addEventListener('mainHeaderLoaded', initAuthSync);
     </script>
 </body>
 
