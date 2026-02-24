@@ -619,7 +619,8 @@ body {
 
 .membership-container {
     width: 100%;
-    max-width: 1440px;
+    max-width: 1120px;
+    margin: 0 auto;
     padding: 100px 40px;
     position: relative;
     top: 45px;

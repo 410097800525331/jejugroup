@@ -141,100 +141,57 @@ html {
     text-decoration: underline;
 }
 
-/* 헤더 스타일 고도화 (서브페이지용 화이트 테마) */
-.header#header,
-.header.transparent,
-.header.light-mode {
-    background: #ffffff !important;
-    background-color: #ffffff !important;
-    background-image: none !important;
-    backdrop-filter: blur(10px) !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
-    height: 72px !important;
-    opacity: 1 !important;
-    visibility: visible !important;
+/* 2. 헤더 가독성 강제 수정 (메인 CSS 덮어쓰기) */
+.reservation-page .header {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 로고 화이트 배경 대응 */
-.header .logo-img {
-    filter: none !important;
-    height: 40px !important; /* 일관된 높이 부여 */
-    width: auto !important;
+.reservation-page .gnb-link,
+.reservation-page .util-link,
+.reservation-page .header-util,
+.reservation-page .header-right-controls button {
+    color: #ffffff !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* 헤더 요소 정렬 보정 (Flex layout 강제) */
-.header-container {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    height: 100% !important;
-    padding: 0 60px !important;
+.reservation-page .lang-toggle {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: #ffffff !important;
 }
 
-.header .logo,
-.header .main-nav,
-.header .header-utils {
-    position: static !important;
-    display: flex !important;
-    align-items: center !important;
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    transform: none !important;
+.reservation-page .lang-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff !important;
 }
 
-.header .logo {
-    width: 200px !important;
+.reservation-page .util-divider {
+    color: rgba(255,255,255,0.4) !important;
 }
 
-.header .header-utils {
-    width: 200px !important;
-    justify-content: flex-end !important;
-    gap: 20px !important;
+.reservation-page a:hover {
+    color: #FF5000 !important;
 }
 
-/* 네비게이션 & 유틸 링크 색상 및 정렬 조정 */
-.header .nav-link,
-.header .util-link {
-    color: #333 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 14px !important;
-    text-shadow: none !important;
-}
-
-.header .nav-link:hover,
-.header .util-link:hover {
-    color: #ff6b00 !important;
-}
-
-/* 아이콘 정렬 */
-.nav-icon, .util-icon {
-    margin-bottom: 0 !important;
-}
-
-/* 푸터 화이트 스타일 */
+/* 푸터 디자인 (글래스모피즘 어둡게) */
 .footer {
-    background: #ffffff !important;
-    background-color: #ffffff !important;
-    border-top: 1px solid #eeeeee !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255,255,255,0.1) !important;
+    color: #ccc;
+    padding: 40px 0;
+    margin-top: auto;
 }
 
 .footer-info p, 
 .footer-info p strong,
 .footer-copyright p {
-    color: #555 !important;
-}
-
-.footer-copyright {
-    border-top: 1px solid #f0f0f0 !important;
+    color: #ddd !important;
 }
 
 .social-icon {
-    background-color: #f5f5f5 !important;
-    color: #333 !important;
+    color: #fff !important;
+    background: rgba(255,255,255,0.1) !important;
 }
 
 .social-icon:hover {

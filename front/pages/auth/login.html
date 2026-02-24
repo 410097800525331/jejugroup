@@ -13,37 +13,7 @@
 </head>
 
 <body class="login-page">
-  <header class="header">
-    <div class="header-util">
-      <a href="./login.html" class="util-link" data-lang="login">로그인</a>
-      <span class="util-divider">|</span>
-      <a href="./signup.html" class="util-link" data-lang="signup">회원가입</a>
-      <span class="util-divider">|</span>
-      <a href="../stay/reservation_check.html" class="util-link" data-lang="reservationCheck">예약 확인</a>
-      <span class="util-divider">|</span>
-      <a href="../cs/customer_center.html" class="util-link" data-lang="customerCenter">고객센터</a>
-    </div>
-
-    <div class="header-inner">
-      <div class="logo">
-        <a href="../../index.html" class="logo-link"><img src="../../images/logo_jejuGP.png" alt="제주그룹"></a>
-      </div>
-
-      <nav class="gnb" id="gnb">
-        <ul class="gnb-list">
-          <li class="gnb-item"><a href="../../index.html#section-2" class="gnb-link" data-lang="navAir">제주에어</a></li>
-          <li class="gnb-item"><a href="../../index.html#section-3" class="gnb-link" data-lang="navHotel">제주 스테이</a></li>
-          <li class="gnb-item"><a href="../../index.html#section-4" class="gnb-link" data-lang="navRentCar">제주 렌트카</a></li>
-          <li class="gnb-item"><a href="../../index.html#section-5" class="gnb-link" data-lang="navMembership">멤버십</a></li>
-        </ul>
-      </nav>
-
-      <div class="header-right-controls">
-        <button class="lang-toggle">English</button>
-        <button class="mypage-btn"><i class="fa-solid fa-plane-departure"></i></button>
-      </div>
-    </div>
-  </header>
+  <div id="main-header-placeholder"></div>
 
   <div class="login-wrapper">
     <div class="login-card">
@@ -77,31 +47,7 @@
     </div>
   </div>
 
-  <footer class="footer section" id="section-footer">
-    <div class="footer-content">
-      <div class="footer-info">
-        <p><strong data-lang="footerCompany">(주)제주 그룹</strong></p>
-        <p data-lang="footerCEO">대표이사: 김이배</p>
-        <p data-lang="footerBizNum">사업자등록번호: 616-81-50527</p>
-        <p data-lang="footerSaleNum">통신판매업신고: 제주 2006-125호</p>
-        <p data-lang="footerHosting">호스팅 사업자: AWS</p>
-        <br>
-        <p data-lang="footerAddr">주소: 제주특별자치도 제주시 신대로 64 (연동, 건설공제회관 3층)</p>
-        <p data-lang="footerCs">고객센터: 1599-1500 (09:00 ~ 19:00)</p>
-        <p data-lang="footerCsEmail">고객 문의: jejugroup.help@jejugroup.net</p>
-        <p data-lang="footerPartnerEmail">제휴 문의: partnership@jejugroup.net</p>
-      </div>
-      <div class="footer-social">
-        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
-        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
-      </div>
-    </div>
-    <div class="footer-copyright">
-      <p data-lang="footerCopyright">Copyright ⓒ Jeju Group. All Rights Reserved.</p>
-    </div>
-  </footer>
+  <div id="main-footer-placeholder"></div>
 
   <button class="top-btn" id="topBtn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -111,39 +57,65 @@
 
   <script src="../../core/constants/lang_data.js"></script>
   <script src="../hotel/main.js"></script>
+  <script src="../../components/layout/component_loader.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const loginForm = document.querySelector('.login-form');
       if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
           e.preventDefault();
-          const email = document.getElementById('email').value.trim();
-          const password = document.getElementById('password').value.trim();
+          const rawEmail = document.getElementById('email').value.trim();
+          const rawPassword = document.getElementById('password').value.trim();
 
-          // [WARNING] Developer Bypass Active. 
-          // Re-enabling this garbage hardcode because you demanded it for testing.
-          // In production, this WILL get your system compromised. I wash my hands of this.
-          if (email === 'admin' && password === '1234') {
-            console.warn('[SECURITY BREACH] Developer bypass used. Issuing SUPER_ADMIN offline token.');
-            const sessionData = {
-              role: 'SUPER_ADMIN',
-              name: '개발자(강제권한)'
-            };
-            localStorage.setItem('userSession', JSON.stringify({ ...sessionData }));
-            window.location.replace('/admin/pages/dashboard.html');
-          } else if (email && password) {
-            const sessionData = {
-              role: 'USER',
-              name: '제주 회원'
-            };
-            // Immutability doctrine: spread to new object
-            localStorage.setItem('userSession', JSON.stringify({ ...sessionData }));
+          // [SECURITY] Import parameter validation and DOM sanitization
+          import('../../core/utils/sanitizer.js').then(({ validateParam, sanitizeHTML }) => {
+            if (!validateParam(rawEmail) || !validateParam(rawPassword)) {
+              alert('잘못된 입력 형식이 포함되어 있습니다.');
+              return;
+            }
 
-            // Redirect to user landing page, NOT admin dashboard
-            window.location.replace('/index.html');
-          } else {
-            alert('이메일과 비밀번호를 정확히 입력해주세요.');
-          }
+            const email = sanitizeHTML(rawEmail);
+            const password = sanitizeHTML(rawPassword);
+
+            // [SECURITY] Enforcing secure backend authentication flow via API.
+            import('../../core/config/api_config.js').then(({ API_BASE_URL }) => {
+              const params = new URLSearchParams();
+              params.append('email', email);
+              params.append('password', password);
+
+              fetch(`${API_BASE_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+              })
+                .then(res => {
+                  if (!res.ok) {
+                    return res.json().then(err => { throw new Error(err.message || 'Authentication Failed'); });
+                  }
+                  return res.json();
+                })
+                .then(data => {
+                  // Immutability Doctrine: Create new object for session
+                  localStorage.setItem('userSession', JSON.stringify({ ...data.user }));
+
+                  if (data.user && data.user.role === 'ADMIN') {
+                    window.location.replace('../../admin/pages/dashboard.html');
+                  } else {
+                    window.location.replace('./../../index.html');
+                  }
+                })
+                .catch(err => {
+                  console.error('Login Error:', err);
+                  alert('이메일 또는 비밀번호가 올바르지 않거나 서버에 접속할 수 없습니다.');
+                });
+            }).catch(err => {
+              console.error('Config Load Error:', err);
+            });
+          }).catch(err => {
+            console.error('Sanitizer Load Error:', err);
+          });
         });
       }
     });

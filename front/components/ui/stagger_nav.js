@@ -4,9 +4,8 @@
  * Logic: Trigger -> Animate -> Wait -> Snap Back (Silent Reset)
  */
 
-document.addEventListener('DOMContentLoaded', () => {
-    initStaggerNav();
-});
+document.addEventListener('DOMContentLoaded', initStaggerNav);
+document.addEventListener('mainHeaderLoaded', initStaggerNav);
 
 function initStaggerNav() {
     const navLinks = document.querySelectorAll('.nav-link');
