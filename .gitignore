@@ -4,5 +4,6 @@
 /.metadata
 /target
 /bin
-/build
+node_modules/
+build/
 *.class
