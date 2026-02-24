@@ -1,5 +1,5 @@
 /* ========== Activities Page Styling ========== */
-@import url('/pages/hotel/hotel.css');
+@import url("../hotel/hotel.css");
 
 /* True Seamless Background */
 body.activities-page {

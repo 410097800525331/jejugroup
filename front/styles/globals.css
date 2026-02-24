@@ -461,7 +461,7 @@ body {
     background-color: #ffffff;
 }
 .section-2 .section-bg {
-    background-image: url(/images/jejuair_bg.jpg); /* 비행기 날개 이미지 */
+    background-image: url("../images/jejuair_bg.jpg"); /* 비행기 날개 이미지 */
     filter: blur(8px) brightness(0.7); /* 블러 및 밝기 조절 */
     transform: scale(1.1); /* 가장자리가 흐려지는 것을 방지 */
 }
@@ -473,19 +473,19 @@ body {
 }
 
 .section-4 .section-bg {
-    background-image: url(/images/section4_bg.jpg); /* 해안도로 드라이브 이미지 */
+    background-image: url("../images/section4_bg.jpg"); /* 해안도로 드라이브 이미지 */
     filter: blur(8px) brightness(0.7);
     transform: scale(1.1);
 }
 
 .section-2 .image-placeholder {
-    background-image: url(/images/airplainsit.jpeg);
+    background-image: url("../images/airplainsit.jpeg");
 }
 .section-3 .image-placeholder {
-    background-image: url(/images/hotellobby.jpg);
+    background-image: url("../images/hotellobby.jpg");
 }
 .section-4 .image-placeholder {
-    background-image: url(/images/rentcar.jpg);
+    background-image: url("../images/rentcar.jpg");
 }
 
 .service-intro {
@@ -612,7 +612,7 @@ body {
     align-items: center;
 }
 .section-5 .section-bg {
-    background-image: url(/images/sanghai.webp); /* 해안도로 드라이브 이미지 */
+    background-image: url("../images/sanghai.webp"); /* 해안도로 드라이브 이미지 */
     filter: blur(8px) brightness(0.7);
     transform: scale(1.1);
 }

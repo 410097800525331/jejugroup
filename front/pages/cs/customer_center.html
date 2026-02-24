@@ -16,10 +16,10 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/styles/globals.css"> <!-- Restored globals.css for header styles -->
-    <link rel="stylesheet" href="/pages/hotel/hotel.css">
-    <link rel="stylesheet" href="/components/widget/chatbot-style.css">
-    <link rel="stylesheet" href="/pages/cs/customer_center.css">
+    <link rel="stylesheet" href="../../styles/globals.css"> <!-- Restored globals.css for header styles -->
+    <link rel="stylesheet" href="../hotel/hotel.css">
+    <link rel="stylesheet" href="../../components/widget/chatbot-style.css">
+    <link rel="stylesheet" href="./customer_center.css">
 </head>
 
 <body class="customer-center-page">
@@ -28,7 +28,7 @@
         <div class="header-container">
             <!-- 로고 -->
             <a href="../hotel/jejuhotel.html" class="logo">
-                <img src="/images/logo_jejuhotel.png" alt="JEJU STAY" class="logo-img">
+                <img src="../../images/logo_jejuhotel.png" alt="JEJU STAY" class="logo-img">
             </a>
 
             <!-- 메인 네비게이션 -->
@@ -110,7 +110,7 @@
                     <i data-lucide="clipboard-list" class="util-icon"></i>
                     <span data-lang="navResCheck">예약 확인</span>
                 </a>
-                <a href="/pages/auth/login.html" class="util-link login-btn">
+                <a href="../auth/login.html" class="util-link login-btn">
                     <i data-lucide="user" class="util-icon"></i>
                     <span data-lang="navLogin">로그인</span>
                 </a>
@@ -136,7 +136,7 @@
                 <li><a href="../travel/esim.html" class="mobile-nav-link" data-lang="mobileNavEsim">eSIM</a></li>
                 <li><a href="../travel/travel_guide.html" class="mobile-nav-link" data-lang="mobileNavGuide">여행 가이드</a></li>
                 <li><a href="../stay/reservation_check.html" class="mobile-nav-link" data-lang="navResCheck">예약 확인</a></li>
-                <li><a href="/pages/auth/login.html" class="mobile-nav-link" data-lang="navLogin">로그인</a></li>
+                <li><a href="../auth/login.html" class="mobile-nav-link" data-lang="navLogin">로그인</a></li>
                 <li><a href="customer_center.html" class="mobile-nav-link" data-lang="navCs">고객센터</a></li>
             </ul>
         </div>
@@ -282,11 +282,11 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="/core/constants/lang_data.js"></script>
-    <script src="/components/layout/header/header-controller.js"></script>
-    <script src="/pages/hotel/main.js"></script>
-    <script src="/components/widget/chatbot.js"></script>
-    <script src="/components/ui/stagger_nav.js"></script>
+    <script src="../../core/constants/lang_data.js"></script>
+    <script src="../../components/layout/header/header-controller.js"></script>
+    <script src="../hotel/main.js"></script>
+    <script src="../../components/widget/chatbot.js"></script>
+    <script src="../../components/ui/stagger_nav.js"></script>
     <script>
         // Init Lucide Icons
         lucide.createIcons();
