@@ -1,0 +1,387 @@
+@charset "UTF-8";
+
+/* ==================== 헤더 버튼 스타일 (Minimalist) ==================== */
+.weather-header-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    color: #fff;
+    font-family: 'FlightSans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.weather-header-btn:hover {
+    border-color: #FF5000;
+    color: #FF5000;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 80, 0, 0.1);
+}
+
+.weather-header-btn img {
+    width: 24px;
+    height: 24px;
+    margin: -4px 0;
+}
+
+/* 섹션 이동에 따른 헤더 버튼 색상 대응 */
+.header.footer-header .weather-header-btn {
+    border-color: #ddd;
+    color: #333;
+}
+
+.header.footer-header .weather-header-btn:hover {
+    border-color: #FF5000;
+    color: #FF5000;
+}
+
+/* ==================== 날씨 오버레이 (Premium Overlay) ==================== */
+.weather-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.weather-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.weather-overlay-content {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 32px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.weather-overlay.active .weather-overlay-content {
+    transform: scale(1) translateY(0);
+}
+
+.weather-close-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.3s ease;
+}
+
+.weather-close-btn:hover {
+    color: #333;
+}
+
+/* ==================== 날씨 배경 효과 (Animations) ==================== */
+.weather-bg-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* 오버레이 컨텐츠보다 뒤에 배치 */
+    border-radius: 32px;
+    opacity: 0.6;
+}
+
+/* 1. Rain Effect */
+.weather-effect-rain {
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 100%);
+}
+.weather-effect-rain::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(transparent 95%, rgba(255, 255, 255, 0.4) 100%), 
+        linear-gradient(90deg, transparent 95%, rgba(255, 255, 255, 0.4) 100%);
+    background-size: 2px 40px, 40px 2px;
+    animation: rain-fall 0.8s linear infinite;
+}
+@keyframes rain-fall {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100vh); }
+}
+
+/* 2. Snow Effect */
+.weather-effect-snow {
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+}
+.weather-effect-snow::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(4px 4px at 20% 30%, rgba(255, 255, 255, 0.8) 50%, transparent 100%),
+        radial-gradient(6px 6px at 50% 80%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+        radial-gradient(3px 3px at 80% 40%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
+    background-size: 200px 200px;
+    animation: snow-fall 8s linear infinite;
+}
+@keyframes snow-fall {
+    0% { transform: translateY(-100px); }
+    100% { transform: translateY(100vh); }
+}
+
+/* 3. Clouds Effect */
+.weather-effect-clouds {
+    background: linear-gradient(to bottom, rgba(200, 200, 200, 0.1) 0%, rgba(150, 150, 150, 0.1) 100%);
+}
+.weather-effect-clouds::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: -50%;
+    width: 200%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
+    filter: blur(40px);
+    animation: clouds-drift 30s linear infinite alternate;
+}
+@keyframes clouds-drift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(20%); }
+}
+
+/* 4. Thunder Effect */
+.weather-effect-thunder {
+    background: rgba(0, 0, 0, 0.2);
+    animation: thunder-flash 4s infinite;
+}
+@keyframes thunder-flash {
+    0%, 90%, 100% { background-color: rgba(0, 0, 0, 0.2); }
+    92%, 96% { background-color: rgba(255, 255, 255, 0.3); } /* Flash */
+}
+
+/* 5. Clear Effect */
+.weather-effect-clear {
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+.weather-search-bar {
+    position: relative; /* 추천 목록 기준점 */
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    background: #fff;
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.weather-suggestions {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid #eee;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    display: none; /* 기본 숨김 */
+    z-index: 100;
+}
+
+.weather-suggestions.active {
+    display: block;
+}
+
+.suggestion-item {
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suggestion-item:hover,
+.suggestion-item.autocomplete-active {
+    background: rgba(255, 80, 0, 0.05);
+    color: #FF5000;
+}
+
+.suggestion-item .country-tag {
+    font-size: 11px;
+    color: #999;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* 스크롤바 커스텀 */
+.weather-suggestions::-webkit-scrollbar {
+    width: 6px;
+}
+.weather-suggestions::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.weather-search-bar:focus-within {
+    border-color: #FF5000;
+    box-shadow: 0 0 0 3px rgba(255, 80, 0, 0.1);
+}
+
+#weather-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: #333;
+    font-family: 'FlightSans', sans-serif;
+}
+
+#weather-search-btn {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+#weather-search-btn:hover {
+    color: #FF5000;
+}
+
+/* ==================== 오버레이 내부 상세 디자인 ==================== */
+.weather-detail-main {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.weather-detail-city {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.weather-detail-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.weather-detail-icon-fa {
+    font-size: 80px;
+    margin: 10px 0;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    animation: fadeInIcon 0.8s ease-out;
+}
+
+@keyframes fadeInIcon {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.weather-detail-temp {
+    font-size: 64px;
+    font-weight: 800;
+    color: #000;
+    line-height: 1;
+    margin: 10px 0;
+    font-family: 'FlightSans', sans-serif;
+}
+
+.weather-detail-desc {
+    font-size: 18px;
+    color: #333;
+    font-weight: 700;
+}
+
+.weather-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    border-top: 1px solid #eee;
+    padding-top: 24px;
+}
+
+.weather-detail-item {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.item-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.item-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: #333;
+}
+
+/* 미세먼지 수치 강조 */
+.weather-detail-dust.good .item-value { color: #059669; }
+.weather-detail-dust.fair .item-value { color: #d97706; }
+.weather-detail-dust.poor .item-value { color: #ea580c; }
+.weather-detail-dust.very-poor .item-value { color: #dc2626; }
+
+.weather-loading-large {
+    text-align: center;
+    padding: 60px 0;
+    color: #555;
+}
+
+.weather-loading-large i {
+    font-size: 40px;
+    margin-bottom: 16px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+

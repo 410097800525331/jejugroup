@@ -1,0 +1,499 @@
+/* ========== Hotel Card-Key FAB Styles (Flat Vector Edition) ========== */
+:root {
+    --fab-primary: #FF5000; /* Jeju Orange */
+    --fab-card-bg: #FFFFFF;
+    --fab-text: #333;
+    --card-width: 60px;
+    --card-height: 90px;
+    --card-radius: 8px;
+}
+
+.fab-wrapper {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: auto; /* Allow children to stack individually */
+    width: var(--card-width);
+    height: 80px; 
+    pointer-events: none; /* Pass clicks through wrapper */
+}
+
+/* Slot overlap effect (Refined) 
+   We use .fab-peek for the card sticking out, so this old pseudo might interfere.
+   Removing old card-holder::before logic in favor of .fab-peek.
+*/
+
+/* Card Holder Container */
+.card-holder {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 60px;
+    height: 80px;
+    z-index: 9997; /* Below Overlay (9998) */
+    cursor: pointer;
+    /* Container is transparent now to handle layering */
+    background: transparent; 
+    border: none;
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+    pointer-events: auto; /* Re-enable clicks */
+}
+
+/* ... skipped ... */
+
+/* The Cards */
+.fab-cards-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 65px; /* Widened for box model */
+    height: 95px; /* Taller */
+    z-index: 9996; /* Below Holder */
+    pointer-events: none;
+    /* Expanded clip path for fan out */
+    clip-path: inset(-200% -200% 0 -600%); 
+}
+
+/* The White Peeking Card */
+.fab-peek {
+    position: absolute;
+    top: -12px; /* 15% height emerging */
+    width: 50px;
+    height: 30px;
+    background: linear-gradient(145deg, #ffffff 0%, #f9f9f9 100%); /* Match Card */
+    border-radius: 8px 8px 0 0;
+    z-index: 0; /* Behind Body */
+    border: 1px solid rgba(0,0,0,0.06);
+    border-bottom: none;
+    box-shadow: 0 -1px 2px rgba(0,0,0,0.05);
+    
+    /* Ultra Smooth Transition */
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Peeking IC Chip (Top 10%) */
+.fab-peek::before {
+    content: '';
+    position: absolute;
+    top: 10px; /* Same offset as card */
+    left: 8px; /* Same offset as card based on relative width... wait, Peek is 50px, Card is 65px. 
+                  If peek is centered, we need to align carefully. 
+                  Actually, user said "Show top 10% of IC chip". 
+                  Let's place it to look like the main card. 
+                  Card width 65, Peek 50. Peek is likely visually inside?
+                  Actually, if it's the SAME card coming out, it should physically match.
+                  But the peek is narrower in previous design logic? 
+                  Previous logic: Peek width 50px. Card width 65px.
+                  Let's keep chip relative to the peek's left edge for now, or center it? 
+                  Cards have chip at left: 8px. 
+                  Let's put peek chip at left: 4px to accommodate narrower width?
+                  Or, better: User said "visual connection". 
+                  Let's assume the peek *is* the card.
+                  Let's put it at left: 6px.
+               */
+    top: 12px; /* Adjusted so only top peeks out */
+    left: 6px;
+    width: 12px;
+    height: 9px;
+    border-radius: 2px;
+    background: 
+        repeating-linear-gradient(90deg, transparent 0, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 3px),
+        linear-gradient(135deg, #e6c13b 0%, #f0d575 50%, #c49f18 100%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), inset 0 -1px 1px rgba(0,0,0,0.2);
+}
+
+/* The Flat Orange Body */
+.fab-body {
+    position: absolute;
+    bottom: 0;
+    width: 60px;
+    height: 80px;
+    background-color: var(--fab-primary); /* Flat Orange */
+    border-radius: 8px;
+    z-index: 1; /* In front of Peek */
+    
+    /* Stitching Details */
+    outline: 1.5px dashed rgba(255,255,255,0.9);
+    outline-offset: -4px;
+    
+    /* Slot Definition Line & Inset Shadow */
+    border-top: 2px solid #E05000;
+    box-shadow: 
+        0 4px 0 rgba(0,0,0,0.1), /* Outer shadow */
+        inset 0 3px 6px rgba(0,0,0,0.15); /* Deeper Inner slot shadow */
+    
+    /* Ultra Smooth Transition */
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-holder:hover .fab-body {
+    transform: translateY(-4px); /* Increased movement for feel */
+}
+.card-holder:hover .fab-peek {
+    transform: translateY(-8px); /* Interactive peek - moves more than body */
+}
+
+/* Logo Text */
+.fab-body::after {
+    content: 'JEJU\A GROUP';
+    white-space: pre;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.2;
+    font-family: 'FlightSans', sans-serif;
+    color: #FFFFFF; /* Flat White */
+    opacity: 1;
+}
+
+/* The Cards */
+.fab-cards-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 65px; /* Widened for box model */
+    height: 95px; /* Taller */
+    z-index: 1000;
+    pointer-events: none;
+    /* Expanded clip path for fan out */
+    clip-path: inset(-200% -200% 0 -600%); 
+}
+
+.fab-card {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 65px;
+    height: 95px;
+    /* Plastic Card Gradient */
+    background: linear-gradient(145deg, #ffffff 0%, #f9f9f9 100%);
+    border-radius: 10px; /* Radius 10px */
+    /* Card depth shadow + Faint White Outer Glow */
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.1), 
+        inset 0 0 0 1px rgba(255,255,255,0.5), 
+        0 0 0 0.5px rgba(255,255,255,0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden; /* Clips bottom stripe */
+    transform: translateY(20px);
+    opacity: 0;
+    pointer-events: none; /* Disabled when closed */
+    border: 1px solid rgba(0,0,0,0.06); /* Lighter border */
+    
+    /* Transition */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+}
+
+/* IC Chip Detail */
+.fab-card::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 8px;
+    width: 12px;
+    height: 9px;
+    border-radius: 2px;
+    /* Metallic Gold Gradient with Micro-Circuit Pattern */
+    background: 
+        repeating-linear-gradient(90deg, transparent 0, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 3px),
+        linear-gradient(135deg, #e6c13b 0%, #f0d575 50%, #c49f18 100%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), inset 0 -1px 1px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+/* Card Specifics */
+.fab-card.card-0 { z-index: 5; } /* Priority over others if needed */
+.fab-card.card-1 { z-index: 4; }
+.fab-card.card-2 { z-index: 3; }
+.fab-card.card-3 { z-index: 2; }
+.fab-card.card-4 { z-index: 1; }
+
+/* Brand Stripe */
+.fab-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px; /* Increased height */
+    background: #FF5C00;
+    z-index: 2;
+}
+
+.fab-card:hover {
+    /* Transform handled by GSAP to avoid conflict with X position */
+    box-shadow: 0 14px 24px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(0,0,0,0.05);
+}
+/* Note: GSAP controls transform during animation. Hover transform might conflict. 
+   Best to use specific class or ensure GSAP clears props after animation? 
+   Or rely on GSAP for hover? 
+   Simple CSS hover works if GSAP animation has finished and cleared or settled.
+   GSAP usually leaves style="translate...". 
+   Important: !important is risky. 
+   Better approach: `transition` in CSS handles hover lift relative to current state?
+   If GSAP sets `transform: matrix(...)`, CSS `transform` override might snap.
+   BUT, the prompt specifically asked for :hover effect. 
+   Risk accepted for visual demo.
+*/
+
+.fab-card:hover {
+    background: #FFFAF8;
+    border-color: var(--fab-primary);
+}
+
+.card-icon {
+    width: 20px; /* Reduced to 20px */
+    height: 20px;
+    color: #333;
+    margin-bottom: 3px; /* Tighter gap */
+    margin-top: 6px; /* Balance */
+    stroke-width: 2.5px;
+    pointer-events: none;
+}
+
+.card-label {
+    font-size: 10.5px; /* Bumped up */
+    font-weight: 700;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1.2px; /* Wide spacing */
+    font-family: 'FlightSans', sans-serif;
+    pointer-events: none;
+}
+
+/* Badge */
+.fab-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: #FF5C00;
+    color: white;
+    font-size: 9px;
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Layers */
+.fab-layer {
+    position: fixed;
+    bottom: 140px;
+    right: 40px;
+    width: 320px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 9998;
+}
+.fab-layer.active { display: flex; animation: slideUpFade 0.3s ease; }
+@keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Responsive */
+@media (max-width: 480px) {
+    .fab-wrapper { right: 20px; bottom: 80px; }
+    .fab-layer { right: 20px; left: 20px; width: auto; }
+}
+/* Wishlist Window Shared Element Transition */
+.wishlist-window {
+    position: fixed;
+    /* Initial state set by JS (matches card) */
+    z-index: 10000; /* Highest */
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 10px; /* Init matches card */
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    display: none; /* Initially hidden */
+    flex-direction: column;
+    
+    /* Transition Properties */
+    transition: 
+        top 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+        left 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+        width 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+        height 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+        border-radius 0.5s ease,
+        transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.wishlist-window.is-active {
+    /* Target State: Center Screen */
+    top: 50% !important;
+    left: 50% !important;
+    width: 400px !important;
+    height: 500px !important;
+    transform: translate(-50%, -50%) !important;
+    border-radius: 20px;
+}
+
+.wishlist-header {
+    background: #FF5C00;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0; /* Fade in */
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s;
+}
+
+.wishlist-window.is-active .wishlist-header {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.wishlist-header h3 {
+    margin: 0;
+    font-family: 'FlightSans', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.close-wishlist {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.wishlist-content {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.3s;
+}
+
+.wishlist-window.is-active .wishlist-content {
+    opacity: 1;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.6); /* Slightly darker for contrast */
+    z-index: 9998; /* Below Wishlist (10000), Above FAB (9997) */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Wishlist Items */
+.wishlist-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #94a3b8;
+    text-align: center;
+}
+
+.btn-explore {
+    padding: 10px 20px;
+    background: #FF5C00;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.wishlist-item-card {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.wishlist-item-card:last-child {
+    margin-bottom: 0;
+}
+
+.wishlist-thumb {
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.wishlist-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.wishlist-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+}
+
+.wishlist-location {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.wishlist-remove {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+}
+.wishlist-remove:hover {
+    color: #EF4444;
+}
+
+.wishlist-title {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.3;
+}
+
+.wishlist-price {
+    font-size: 14px;
+    font-weight: 800;
+    color: #FF5C00;
+}

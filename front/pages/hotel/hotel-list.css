@@ -1,0 +1,575 @@
+/* ==========================================================================
+   HOTEL-LIST.CSS
+   Description: Premium Hotel List Page Styles (Agoda-inspired)
+   Author: Ray (Cynical Genius Developer)
+   Design: Met-Design Quality (Awwwards/FWA style)
+   ========================================================================== */
+
+:root {
+    /* Core Color Palette - Sleek & Modern */
+    --primary-color: #5392f9; /* Agoda Blue */
+    --secondary-color: #737373;
+    --accent-color: #ff567d; /* Highlight pink/red */
+    --bg-light: #f8f9fa;
+    --white: #ffffff;
+    --text-main: #2a2a2e;
+    --text-muted: #666666;
+    --border-color: #e0e0e0;
+    --shadow-premium: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.12);
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-blur: blur(12px);
+}
+
+/* Base Reset & Layout */
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    font-family: 'Noto Sans KR', sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-top: 72px; /* Header Height */
+}
+
+/* Force Header Style (Always White/Scrolled State) */
+.header {
+    background: rgba(255, 255, 255, 1) !important;
+    backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+.header .nav-link,
+.header .util-link,
+.header .mobile-menu-btn {
+    color: var(--text-main) !important;
+}
+
+.header .logo-img {
+    filter: none !important;
+}
+
+.header .nav-link:hover,
+.header .util-link:hover {
+    color: var(--primary-color) !important;
+}
+
+.container-wide {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* ==========================================================================
+   STICKY SEARCH BAR
+   ================================================= */
+.sticky-search-wrapper {
+    position: sticky;
+    top: 72px; /* Sticks below the header */
+    z-index: 900; /* Below header (1000) */
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px 0;
+}
+
+.search-bar-compact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-item-mini {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 10px 16px;
+    border-radius: 4px; /* Agoda is slightly boxy */
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.search-item-mini:hover {
+    background: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color) inset;
+}
+
+.search-item-mini i {
+    color: var(--text-muted);
+    margin-right: 12px;
+    width: 20px;
+    height: 20px;
+}
+
+.search-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.search-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.search-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.4;
+}
+
+.search-btn-mini {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0 32px;
+    height: 52px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.search-btn-mini:hover {
+    background: #4480e6;
+}
+
+/* ==========================================================================
+   MAIN FEED STRUCTURE
+   ================================================= */
+.hotel-feed-container {
+    display: grid;
+    grid-template-columns: 260px 1fr; /* Fixed filtered sidebar width */
+    gap: 24px;
+    margin-top: 24px;
+    padding-bottom: 80px;
+}
+
+/* Sidebar Filters */
+.filter-sidebar {
+    position: relative; /* Changed from sticky to relative for single scroll flow */
+    height: auto;
+    overflow-y: visible;
+    padding-right: 0;
+}
+
+/* Map Widget */
+.map-banner-widget {
+    background: url('https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=300&q=80') center/cover;
+    height: 100px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.map-banner-widget::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.map-btn {
+    position: relative;
+    z-index: 2;
+    background: white;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.filter-section {
+    background: transparent;
+    padding: 20px 5px;
+    border: none;
+    border-bottom: 1px solid #e0e0e0; /* Small gray line separator */
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+}
+
+.filter-title {
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+}
+
+.filter-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.filter-checkbox input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #cdd0d2;
+    border-radius: 4px;
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.filter-checkbox input[type="checkbox"]:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='14px' height='14px'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.filter-checkbox:hover span {
+    color: var(--primary-color);
+}
+
+/* Price Slider Mock */
+.price-slider-wrapper {
+    padding: 10px 0;
+}
+
+.range-slider-mock {
+    position: relative;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    margin-bottom: 20px;
+}
+
+.range-bar {
+    position: absolute;
+    height: 100%;
+    background: var(--primary-color);
+}
+
+.range-thumb {
+    position: absolute;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+.price-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.price-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    flex: 1;
+}
+
+.price-box input {
+    border: none;
+    width: 100%;
+    font-size: 13px;
+    text-align: right;
+    outline: none;
+}
+
+/* Star Buttons */
+.filter-card-grid {
+    display: flex;
+    gap: 8px;
+}
+
+.star-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    background: white;
+    padding: 10px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.star-btn i {
+    color: #ffc107;
+    margin-left: 2px;
+}
+
+.star-btn:hover {
+    border-color: var(--primary-color);
+    background: #f0f7ff;
+}
+
+/* Hotel List */
+.hotel-main-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ==========================================================================
+   HOTEL CARD (PREMIUM)
+   ================================================= */
+.hotel-card-premium {
+    display: flex;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(41, 51, 57, .5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid transparent;
+}
+
+.hotel-card-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(41, 51, 57, .15);
+}
+
+.hotel-card-image {
+    width: 260px; /* Adjusted width */
+    height: 220px;
+    position: relative;
+    background: #eee;
+}
+
+.hotel-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.badge-overlay {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #f33; /* Agoda Red for deals */
+    color: white;
+    padding: 4px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.wishlist-btn-premium {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.wishlist-btn-premium:hover {
+    background: white;
+    color: #f33;
+}
+
+.hotel-card-content {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Fix flex overflow */
+}
+
+.hotel-card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.hotel-title-group h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #2a2a2e;
+}
+
+.hotel-stars {
+    color: #ffc107;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.review-badge {
+    text-align: right;
+    min-width: 80px;
+}
+
+.review-badge .score {
+    background: #5392f9;
+    color: white;
+    padding: 4px;
+    border-radius: 4px 4px 4px 0;
+    font-weight: 700;
+    font-size: 16px;
+    display: inline-block;
+}
+
+.hotel-location-text {
+    font-size: 12px;
+    color: #5392f9;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.hotel-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto; /* Push to bottom */
+}
+
+.tag-item {
+    border: 1px solid #dcdfe2;
+    color: #2a2a2e;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-size: 11px;
+}
+
+.hotel-price-zone {
+    text-align: right;
+    margin-top: 10px;
+    border-top: 1px solid #f2f2f2;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.price-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 12px;
+}
+
+.price-current {
+    font-size: 24px;
+    font-weight: 800;
+    color: #e12d2d;
+}
+
+.price-unit {
+    font-size: 11px;
+    color: #666;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ================================================= */
+@media (max-width: 900px) {
+    .hotel-feed-container {
+        grid-template-columns: 1fr;
+    }
+    .filter-sidebar {
+        display: none; /* Mobile filters usually hidden */
+    }
+    .hotel-card-premium {
+        flex-direction: column;
+    }
+    .hotel-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+/* Load More Button */
+.load-more-container {
+    padding: 40px 0;
+    text-align: center;
+    clear: both;
+}
+
+.btn-load-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 32px;
+    background-color: white;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.btn-load-more:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-load-more i {
+    font-size: 0.8em;
+    transition: transform 0.2s ease;
+}
+
+.btn-load-more:hover i {
+    transform: translateY(2px);
+}

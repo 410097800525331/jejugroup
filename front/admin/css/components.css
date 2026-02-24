@@ -1,0 +1,291 @@
+/*
+ * Admin Components - Cards, Tables, Badges
+ * Glassmorphism and premium data visualization foundations
+ */
+
+ /* Page Header */
+.admin-page-header {
+    margin-bottom: var(--admin-space-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--admin-text-primary);
+}
+
+/* KPI Cards Layer (Grid) */
+.admin-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--admin-space-lg);
+    margin-bottom: var(--admin-space-xl);
+}
+
+/* Card Component (Glassmorphism) */
+.admin-card {
+    background-color: var(--admin-surface);
+    border: 1px solid var(--admin-glass-border);
+    border-radius: 12px;
+    padding: var(--admin-space-lg);
+    box-shadow: var(--admin-shadow-sm);
+    transition: transform var(--admin-transition-fast), box-shadow var(--admin-transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-md);
+    border-color: rgba(255,255,255,0.15);
+}
+
+.admin-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--admin-space-md);
+}
+
+.admin-card-title {
+    font-size: 0.9rem;
+    color: var(--admin-text-secondary);
+    font-weight: 500;
+    margin: 0;
+}
+
+.admin-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--admin-accent);
+}
+
+.admin-card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    margin: 0 0 var(--admin-space-xs) 0;
+}
+
+.admin-card-trend {
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.admin-card-trend.positive { color: var(--admin-success); }
+.admin-card-trend.negative { color: var(--admin-danger); }
+
+/* Data Tables */
+.admin-table-container {
+    background-color: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: 12px;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-table th, .admin-table td {
+    padding: var(--admin-space-md) var(--admin-space-lg);
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table th {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--admin-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.admin-table tbody tr {
+    transition: background-color var(--admin-transition-fast);
+}
+
+.admin-table tbody tr:hover {
+    background-color: var(--admin-surface-hover);
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.admin-badge.success {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: var(--admin-success);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.admin-badge.warning {
+    background-color: rgba(241, 196, 15, 0.15);
+    color: var(--admin-warning);
+    border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+.admin-badge.danger {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: var(--admin-danger);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.admin-badge.neutral {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--admin-text-secondary);
+    border: 1px solid var(--admin-border);
+}
+
+/* Action Buttons */
+.admin-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-btn-primary {
+    background-color: var(--admin-accent);
+    color: #fff;
+}
+
+.admin-btn-primary:hover {
+    background-color: var(--admin-accent-hover);
+    box-shadow: 0 0 10px rgba(230, 126, 34, 0.4);
+}
+
+.admin-btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--admin-border);
+    color: var(--admin-text-primary);
+}
+
+.admin-btn-outline:hover {
+    background-color: var(--admin-surface-hover);
+    border-color: var(--admin-text-secondary);
+}
+
+/* Chart Container Styles */
+.admin-chart-container {
+    padding: var(--admin-space-lg);
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-chart-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--admin-space-md);
+    gap: var(--admin-space-sm);
+}
+
+.admin-chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+    margin: 0;
+}
+
+.admin-chart-filters {
+    display: flex;
+    gap: 4px;
+    background-color: rgba(0,0,0,0.1);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--admin-glass-border);
+}
+
+body.admin-mode[data-theme="light"] .admin-chart-filters {
+    background-color: rgba(0,0,0,0.03);
+}
+
+.chart-filter-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--admin-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+}
+
+.chart-filter-btn:hover {
+    color: var(--admin-text-primary);
+}
+
+.chart-filter-btn.active {
+    background-color: var(--admin-surface);
+    color: var(--admin-accent);
+    box-shadow: var(--admin-shadow-sm);
+    font-weight: 600;
+}
+
+/* Segment Control (Business Unit Filter) */
+.admin-segment-control {
+    display: inline-flex;
+    background-color: rgba(0,0,0,0.15);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--admin-glass-border);
+}
+
+body.admin-mode[data-theme="light"] .admin-segment-control {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.segment-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--admin-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--admin-transition-base);
+}
+
+.segment-btn:hover {
+    color: var(--admin-text-primary);
+}
+
+.segment-btn.active {
+    background-color: var(--admin-surface);
+    color: var(--admin-text-primary);
+    box-shadow: var(--admin-shadow-sm);
+}

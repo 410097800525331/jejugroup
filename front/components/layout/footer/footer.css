@@ -1,0 +1,81 @@
+/* Jeju Stay Component: Refined Footer Styles */
+
+.footer {
+    background: transparent !important;
+    background-color: transparent !important;
+    border-top: none !important;
+    padding: 100px 40px 60px;
+    margin-top: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto 15px;
+    gap: 40px;
+    background: transparent !important;
+}
+
+.footer-info {
+    flex: 1;
+}
+
+.footer-info p {
+    display: inline-block;
+    font-size: 11px;
+    color: #444444;
+    line-height: 1.8;
+    margin-bottom: 2px;
+}
+
+.footer-info p strong {
+    font-weight: 700;
+    color: #1A1A1A;
+}
+
+.footer-social {
+    display: flex;
+    gap: 12px;
+}
+
+.social-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+    transition: all 0.2s;
+}
+
+.social-icon:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.footer-copyright {
+    text-align: center;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.footer-copyright p {
+    font-size: 10px;
+    color: #999;
+}
+
+.footer.section {
+    min-height: auto !important;
+    height: auto !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}

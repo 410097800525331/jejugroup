@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제주여행 관리자 대시보드</title>
+
+    <!-- Security Protocol: Immediate route guard first -->
+    <script src="../js/auth_guard.js"></script>
+
+    <!-- Theme & Layout (Zero Monolith) -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Third-party: Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="admin-mode">
+    <!-- Floating Sidebar Toggle (Fixed coordinate) -->
+    <button class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="메뉴 토글">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:24px; height:24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div class="admin-layout">
+
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-logo">
+                <span>Jeju</span> Admin
+            </div>
+            <nav class="admin-menu" id="admin-sidebar-menu">
+                <!-- Dynamically populated by JS based on RBAC -->
+            </nav>
+        </aside>
+
+        <!-- Top Header Navigation -->
+        <header class="admin-header">
+            <!-- Right Side Controls -->
+            <div class="admin-header-right-group">
+                <!-- User Profile & Dropdown Container -->
+                <div class="admin-profile-container" id="admin-profile-container">
+                    <!-- Profile Trigger -->
+                    <div class="admin-user-profile" id="admin-profile-trigger">
+                        <div class="admin-user-info">
+                            <span class="admin-user-name" id="admin-user-name">Loading...</span>
+                            <span class="admin-user-role" id="admin-user-role">-</span>
+                        </div>
+                        <div class="admin-avatar">AD</div>
+                        <i data-lucide="chevron-down" class="admin-dropdown-icon"
+                            style="width:16px; margin-left:8px; color:var(--admin-text-secondary);"></i>
+                    </div>
+
+                    <!-- Premium Dropdown Menu -->
+                    <div class="admin-dropdown-menu" id="admin-dropdown-menu">
+                        <div class="dropdown-header">
+                            <strong data-lang="adminSettings">환경 설정</strong>
+                        </div>
+
+                        <div class="dropdown-section">
+                            <span class="dropdown-section-title">테마 모드</span>
+                            <div class="admin-theme-toggle" id="admin-theme-toggle">
+                                <button class="theme-btn active" data-theme="system" title="시스템 테마">💻</button>
+                                <button class="theme-btn" data-theme="dark" title="다크 모드">🌙</button>
+                                <button class="theme-btn" data-theme="light" title="라이트 모드">☀️</button>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-section">
+                            <span class="dropdown-section-title">언어 설정</span>
+                            <div class="admin-lang-toggle">
+                                <button class="lang-btn active" data-lang-val="ko">KOR</button>
+                                <button class="lang-btn" data-lang-val="en">ENG</button>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-divider"></div>
+
+                        <ul class="dropdown-menu-list">
+                            <li>
+                                <a href="#" class="dropdown-item">
+                                    <span
+                                        style="font-size:1.1rem; width:20px; display:inline-block; text-align:center;">👥</span>
+                                    <span>관리자 명단 보기</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="dropdown-item">
+                                    <span
+                                        style="font-size:1.1rem; width:20px; display:inline-block; text-align:center;">⚙️</span>
+                                    <span>내 프로필 설정</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="dropdown-item">
+                                    <span
+                                        style="font-size:1.1rem; width:20px; display:inline-block; text-align:center;">🔒</span>
+                                    <span>보안 로그 (Audit)</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="dropdown-divider"></div>
+
+                        <button class="dropdown-item danger-item" id="admin-logout-btn">
+                            <span
+                                style="font-size:1.1rem; width:20px; display:inline-block; text-align:center;">🚪</span>
+                            <span>로그아웃</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content (Dashboard Analytics) -->
+        <main class="admin-main">
+            <div class="admin-page-header">
+                <h1 class="admin-page-title">종합 대시보드</h1>
+                <div style="display: flex; gap: var(--admin-space-md); align-items: center;">
+                    <!-- Segment Control for Business Unit -->
+                    <div class="admin-segment-control" id="admin-domain-filters">
+                        <button class="segment-btn active" data-domain="all">전체(종합)</button>
+                        <button class="segment-btn" data-domain="flight">제주에어</button>
+                        <button class="segment-btn" data-domain="hotel">제주 스테이</button>
+                        <button class="segment-btn" data-domain="rentcar">제주 렌트카</button>
+                    </div>
+                    <button class="admin-btn admin-btn-primary">보고서 다운로드</button>
+                </div>
+            </div>
+
+            <!-- KPI Layer -->
+            <div class="admin-kpi-grid" id="admin-kpi-grid">
+                <!-- Dynamically populated by state store -->
+            </div>
+
+            <!-- Visualization Layer -->
+            <div class="admin-chart-container admin-card">
+                <div class="admin-chart-header">
+                    <h2 class="admin-chart-title">매출 및 예약 추이 시각화</h2>
+                    <div class="admin-chart-filters" id="admin-chart-filters">
+                        <!-- Filter Tabs -->
+                        <button class="chart-filter-btn" data-range="hour">시간</button>
+                        <button class="chart-filter-btn active" data-range="day">일</button>
+                        <button class="chart-filter-btn" data-range="week">주</button>
+                        <button class="chart-filter-btn" data-range="month">월</button>
+                        <button class="chart-filter-btn" data-range="halfYear">반년</button>
+                        <button class="chart-filter-btn" data-range="1year">1년</button>
+                        <button class="chart-filter-btn" data-range="2year">2년</button>
+                        <button class="chart-filter-btn" data-range="5year">5년</button>
+                    </div>
+                </div>
+                <!-- Canvas Wrap -->
+                <div class="admin-chart-wrapper" style="position: relative; height: 350px; width: 100%;">
+                    <canvas id="admin-main-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Activity Table / Charts Placeholder -->
+            <div class="admin-table-container" style="margin-top: var(--admin-space-xl);">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>유형</th>
+                            <th>내용</th>
+                            <th>발생 시간</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-recent-activity">
+                        <!-- Example Static Rows -->
+                        <tr>
+                            <td><span class="admin-badge success">RESERVATION</span></td>
+                            <td>신라호텔 2박 예약 완료 (결제 완료)</td>
+                            <td>10분 전</td>
+                            <td><span class="admin-badge success">승인</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="admin-badge danger">CANCEL</span></td>
+                            <td>대한항공 편도 취소 처리</td>
+                            <td>25분 전</td>
+                            <td><span class="admin-badge danger">환불</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="admin-badge warning">INQUIRY</span></td>
+                            <td>결제 오류 문의 (VIP 고객)</td>
+                            <td>1시간 전</td>
+                            <td><span class="admin-badge warning">대기중</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/rbac_config.js"></script>
+    <script src="../js/store.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,243 @@
+/* login.css 기반으로 작성됨 */
+
+/* 배경 및 레이아웃 */
+.reservation-page {
+    /* 밝은 해변 사진 */
+    background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80') no-repeat center center/cover;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    overflow-y: visible !important; /* Allow scroll */
+}
+
+/* ==================== Scroll Override for Full Page Logic ==================== */
+html {
+    overflow-y: auto !important;
+    height: auto !important;
+}
+
+/* 배경 오버레이 (헤더와 본문 구분) */
+.reservation-page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* 아주 연한 오버레이 */
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 0;
+}
+
+/* 컨텐츠 z-index */
+.reservation-wrapper {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh; /* 화면 꽉 채우기 */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 수직/수평 정앙 정렬 */
+    padding: 72px 20px 0; /* 헤더 높이만큼 상단 여백만 부여 */
+}
+
+.footer {
+    position: relative;
+    z-index: 1;
+}
+  
+/* 카드 디자인 */
+.reservation-card {
+    background: white;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+  
+/* 헤더 부분 */
+.reservation-header {
+    margin-bottom: 30px;
+}
+  
+.reservation-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+  
+.reservation-desc {
+    color: #666;
+    font-size: 14px;
+}
+  
+/* 폼 요소 */
+.reservation-form {
+    text-align: left;
+}
+  
+.input-group {
+    margin-bottom: 20px;
+}
+  
+.input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+  
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+  
+.input-group input:focus {
+    border-color: #ff6b00;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+}
+  
+/* 버튼 */
+.reservation-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #ff6b00, #ff8e33);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+}
+  
+.reservation-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+}
+  
+/* 링크 */
+.reservation-links {
+    margin-top: 25px;
+    font-size: 13px;
+    color: #888;
+}
+  
+.reservation-links a {
+    color: #ff6b00;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 5px;
+}
+  
+.reservation-links a:hover {
+    text-decoration: underline;
+}
+
+/* 헤더 스타일 고도화 (서브페이지용 화이트 테마) */
+.header#header,
+.header.transparent,
+.header.light-mode {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    backdrop-filter: blur(10px) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
+    height: 72px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 로고 화이트 배경 대응 */
+.header .logo-img {
+    filter: none !important;
+    height: 40px !important; /* 일관된 높이 부여 */
+    width: auto !important;
+}
+
+/* 헤더 요소 정렬 보정 (Flex layout 강제) */
+.header-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 100% !important;
+    padding: 0 60px !important;
+}
+
+.header .logo,
+.header .main-nav,
+.header .header-utils {
+    position: static !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+}
+
+.header .logo {
+    width: 200px !important;
+}
+
+.header .header-utils {
+    width: 200px !important;
+    justify-content: flex-end !important;
+    gap: 20px !important;
+}
+
+/* 네비게이션 & 유틸 링크 색상 및 정렬 조정 */
+.header .nav-link,
+.header .util-link {
+    color: #333 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 14px !important;
+    text-shadow: none !important;
+}
+
+.header .nav-link:hover,
+.header .util-link:hover {
+    color: #ff6b00 !important;
+}
+
+/* 아이콘 정렬 */
+.nav-icon, .util-icon {
+    margin-bottom: 0 !important;
+}
+
+/* 푸터 화이트 스타일 */
+.footer {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    border-top: 1px solid #eeeeee !important;
+}
+
+.footer-info p, 
+.footer-info p strong,
+.footer-copyright p {
+    color: #555 !important;
+}
+
+.footer-copyright {
+    border-top: 1px solid #f0f0f0 !important;
+}
+
+.social-icon {
+    background-color: #f5f5f5 !important;
+    color: #333 !important;
+}
+
+.social-icon:hover {
+    background-color: #ff6b00 !important;
+    color: #ffffff !important;
+}

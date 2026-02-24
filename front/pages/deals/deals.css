@@ -1,0 +1,614 @@
+/* ========================================
+   Deals Page Styles - Glassmorphism & Promotion
+   ======================================== */
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --promo-orange: #FF5000;
+    --promo-gradient: linear-gradient(135deg, #FF5000 0%, #FF8A00 100%);
+    --card-radius: 16px;
+}
+
+body.deals-page {
+    background: #f8f9fa; /* Slightly different background for deals */
+}
+
+/* Header Visibility Override for Deals Page */
+body.deals-page .header .logo,
+body.deals-page .header .nav-link,
+body.deals-page .header .util-link,
+body.deals-page .header .mobile-menu-btn {
+    color: var(--text-title);
+}
+
+body.deals-page .header .logo-divider {
+    color: var(--text-muted);
+}
+
+body.deals-page .header .logo-stay {
+    color: var(--primary);
+}
+
+body.deals-page .header .nav-link.active,
+body.deals-page .header .nav-link:hover,
+body.deals-page .header .util-link:hover {
+    color: var(--primary);
+}
+
+/* Optional: Subtle background for better contrast if needed, matches glass theme */
+body.deals-page .header {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+
+/* ========== Hero Section (Glassmorphism) ========== */
+/* ========== Hero Section (Glassmorphism) ========== */
+.hero-glass {
+    position: relative;
+    /* height: 480px; Removed for consistency */
+    display: block; /* Changed from flex */
+    padding: 160px 0 240px; /* Matches esim.html padding */
+    /* align-items: center; */
+    /* justify-content: center; */
+    overflow: hidden;
+    /* margin-top: var(--header-height); Removed to allow header overlay */
+    z-index: 0; /* Create stacking context */
+}
+
+/* Background Image via Pseudo-element for Blur */
+.hero-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/deals_hero.png');
+    background-size: cover;
+    background-position: center;
+    filter: blur(4px); /* Add Blur */
+    transform: scale(1.05); /* Prevent blurred edges */
+    z-index: -1;
+}
+
+/* Hide shapes as we now use a photo */
+.hero-bg-shapes {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+}
+
+.shape-1 {
+    width: 400px;
+    height: 400px;
+    background: #FF5000;
+    top: -100px;
+    left: -100px;
+}
+
+.shape-2 {
+    width: 300px;
+    height: 300px;
+    background: #00758F;
+    bottom: -50px;
+    right: -50px;
+}
+
+.shape-3 {
+    width: 200px;
+    height: 200px;
+    background: #facc15; /* Yellow */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.hero-content-glass {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 60px 100px;
+    text-align: center;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* Added for centering */
+    max-width: 800px; /* Ensure it doesn't span full width */
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: #1a1a1a;
+}
+
+.hero-title .highlight {
+    background: var(--promo-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-desc {
+    font-size: 1.2rem;
+    color: #4a4a4a;
+    line-height: 1.6;
+}
+
+/* ========== Sticky Category Navigation ========== */
+.sticky-cat-nav {
+    position: relative;
+    /* top: var(--header-height); Removed sticky top */
+    z-index: 1; /* Lower z-index as it doesn't need to overlay */
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 10px 0;
+    transition: box-shadow 0.3s ease;
+}
+
+.sticky-cat-nav.scrolled {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.cat-nav-inner {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 0;
+    scrollbar-width: none; /* Hide scrollbar */
+}
+
+.cat-nav-inner::-webkit-scrollbar {
+    display: none;
+}
+
+.cat-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: 50px;
+    background: #f1f3f5;
+    color: #495057;
+    font-weight: 500;
+    font-size: 1rem;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.cat-tab:hover {
+    background: #e9ecef;
+}
+
+.cat-tab.active {
+    background: #fff;
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(255, 80, 0, 0.15);
+}
+
+.cat-tab i {
+    width: 18px;
+    height: 18px;
+}
+
+/* ========== Coupon Wallet Section ========== */
+.coupon-section {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.coupon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.coupon-card {
+    display: flex;
+    background: #fff;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    border: 1px dashed #d1d5db;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coupon-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-style: solid;
+    border-color: var(--primary-light);
+}
+
+.coupon-left {
+    width: 30%;
+    background: var(--promo-gradient);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.coupon-left::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #f8f9fa; /* body bg */
+    border-radius: 50%;
+}
+
+.amount {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.unit {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.type {
+    font-size: 0.8rem;
+    margin-top: 4px;
+    opacity: 0.9;
+}
+
+.coupon-right {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.coupon-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.coupon-desc {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 12px;
+}
+
+.coupon-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.coupon-code {
+    font-family: monospace;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 1px;
+}
+
+.btn-copy {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-copy:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* ========== Flash Deal Grid ========== */
+.deal-section {
+    padding-bottom: 80px;
+}
+
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.timer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    color: var(--error);
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-left: 12px;
+    vertical-align: middle;
+}
+
+.sort-select {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    font-size: 0.95rem;
+    color: #4b5563;
+    cursor: pointer;
+}
+
+.deal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.deal-card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid transparent;
+}
+
+.deal-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.deal-image-wrapper {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.deal-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.deal-card:hover .deal-image {
+    transform: scale(1.05);
+}
+
+.deal-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--error);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.deal-content {
+    padding: 20px;
+}
+
+.deal-cat {
+    font-size: 0.8rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.deal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deal-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.deal-meta i {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+}
+
+/* Price Row Updates */
+.deal-price-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.price-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.discount-rate {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--error);
+    line-height: 1;
+}
+
+.original-price {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    text-decoration: line-through;
+}
+
+.final-price {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+.final-price span {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.deal-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #1a1a1a;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 16px;
+    transition: background 0.2s;
+}
+
+.deal-btn:hover {
+    background: var(--primary);
+}
+
+/* ========== Load More Button ========== */
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.load-more-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 40px;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    min-width: 180px;
+}
+
+.load-more-btn:hover {
+    background: #f8f9fa;
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.load-more-btn.loading .btn-text {
+    display: none;
+}
+
+.load-more-btn.loading .loading-spinner {
+    display: block;
+}
+
+.loading-spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 80, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-content-glass {
+        padding: 40px 20px;
+    }
+    
+    .section-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .deal-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+}

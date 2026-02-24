@@ -1,0 +1,302 @@
+/* ========================================
+   JEJU STAY - Private & Emotional Stay Styles
+   Concept: Clean Premium (Brand Aligned)
+   Colors: Jeju Orange (#FF5000) + Clean White
+   ======================================== */
+
+:root {
+    /* Brand Colors (Aligned with hotel.css) */
+    --private-primary: #FF5000; /* Jeju Orange */
+    --private-primary-dark: #cc4000;
+    --private-secondary: #00758F; /* Secondary Brand Blue */
+    --private-bg: #FFFFFF;
+    --private-surface: #F8F9FA; /* Light Grey Surface */
+    --private-text: #1E293B; /* Slate 900 */
+    --private-text-sub: #64748B; /* Slate 500 */
+    --private-border: #E2E8F0;
+    
+    /* Search Widget */
+    --search-radius: 50px;
+    --search-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Base Typography & Layout */
+body.private-stay-page {
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif; /* Clean Sans */
+    color: var(--private-text);
+    background: var(--private-bg);
+    overflow-x: hidden;
+}
+
+/* Typography Overrides */
+h1, h2, h3, .serif-font {
+    font-family: 'Noto Serif KR', serif; /* Keep Serif for Titles only */
+    letter-spacing: -0.02em;
+}
+
+/* Header Override */
+.private-stay-page .header {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.private-stay-page .header.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #f1f1f1;
+}
+
+/* Hero Section */
+.private-stay-page .hero-overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.2) 0%,
+        rgba(0, 0, 0, 0.1) 50%,
+        rgba(0, 0, 0, 0.4) 100%
+    );
+}
+
+.private-stay-page .hero-subtitle-top {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 400;
+    font-size: 1.8rem;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    margin-bottom: 40px;
+}
+
+/* ========== Search Widget (Clean Pill) ========== */
+.search-widget-large {
+    position: relative;
+    z-index: 100;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.search-bar-caption {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    background: rgba(0,0,0,0.2);
+    padding: 6px 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.global-search-container {
+    background: transparent;
+    border-radius: var(--search-radius);
+    padding: 0;
+    box-shadow: none;
+    border: none;
+}
+
+.global-search-bar {
+    display: flex;
+    align-items: center;
+    height: 72px;
+}
+
+/* Search Items */
+.search-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+    height: 100%;
+    cursor: pointer;
+    position: relative;
+    border-radius: 40px;
+    transition: background 0.2s;
+}
+
+.search-item:hover, .search-item.active {
+    background: #F1F5F9; 
+}
+
+.destination-item-new { flex: 1.4; }
+.date-item-new { flex: 1.2; }
+.guest-item-new { flex: 1; }
+
+.search-divider {
+    width: 1px;
+    height: 32px;
+    background: #E2E8F0;
+}
+
+.item-icon {
+    color: var(--private-text-sub);
+}
+.search-item:hover .item-icon { color: var(--private-primary); }
+
+.item-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.item-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--private-text-sub);
+    margin-bottom: 2px;
+    display: block;
+}
+
+.item-input {
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--private-text);
+    width: 100%;
+    outline: none;
+}
+.item-input::placeholder { color: #94A3B8; font-weight: 400; }
+
+.date-display-text, .guest-display-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--private-text);
+}
+.selected { color: var(--private-primary); }
+
+/* Search Button */
+.search-btn-integrated {
+    background: var(--private-primary);
+    color: white;
+    border: none;
+    padding: 0 40px;
+    height: 60px;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 80, 0, 0.25);
+    transition: all 0.3s;
+    margin-left: 8px;
+}
+
+.search-btn-integrated:hover {
+    background: #e64800;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(255, 80, 0, 0.35);
+}
+
+/* ========== Popups (Clean) ========== */
+[class$="-popup-new"], .destination-dropdown {
+    position: absolute;
+    top: calc(100% + 16px);
+    left: 0;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border: 1px solid #F1F5F9;
+    padding: 24px;
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.search-item.active [class$="-popup-new"], 
+.search-item.active .destination-dropdown {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Dropdown Headers */
+.dropdown-header {
+    background: #F8F9FA;
+    border-radius: 8px;
+    color: var(--private-text-sub);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* Calendar Accents */
+.DayPicker-Day--selected { background: var(--private-primary) !important; }
+.DayPicker-Day--inRange { background: #FFF3E0; color: var(--private-text); }
+.btn-confirm { background: var(--private-primary); }
+
+/* ========== Sections ========== */
+.section { padding: 100px 0; background: #fff; }
+
+.section-title {
+    font-size: 2.4rem;
+    color: var(--private-text);
+    margin-bottom: 12px;
+}
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--private-text-sub);
+    font-family: 'Noto Serif KR', serif;
+}
+
+/* Promo Cards (Bright) */
+.promo-section { margin-top: -60px; position: relative; z-index: 50; }
+.promo-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px; }
+
+.promo-card {
+    border-radius: 24px; padding: 32px; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: transform 0.3s;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+.promo-card:hover { transform: translateY(-5px); }
+
+/* Promo 1 (Main) */
+.promo-main {
+    background: linear-gradient(135deg, #FF5000 0%, #FF8A00 100%);
+    color: white;
+}
+.promo-main .promo-link { color: white; }
+.promo-main .promo-desc { color: rgba(255,255,255,0.9); }
+
+/* Promo Sub */
+.promo-sub { border: 1px solid #F1F5F9; }
+.promo-sub .promo-title { color: var(--private-text); }
+
+/* Destinations Grid */
+.destinations-grid {
+    display: grid;
+    grid-template-areas: "large large small1" "large large small2";
+    gap: 24px; height: 500px;
+}
+.destination-card { position: relative; border-radius: 24px; overflow: hidden; display: block; }
+.destination-card.large { grid-area: large; }
+.destination-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+.destination-card:hover .destination-image { transform: scale(1.05); }
+
+/* Listing Cards */
+.hotel-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    overflow: hidden;
+    transition: all 0.3s;
+}
+.hotel-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+.hotel-info { padding: 24px; }
+.jj-pick { background: var(--private-primary); color: white; }
+.price-final { color: var(--private-primary); }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .promo-grid, .destinations-grid, .hotel-list { grid-template-columns: 1fr; grid-template-areas: none; height: auto; }
+}

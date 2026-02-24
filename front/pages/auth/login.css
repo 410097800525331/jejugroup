@@ -1,0 +1,239 @@
+/* ==================== 웹폰트 설정 ==================== */
+@font-face {
+    font-family: 'FlightSans';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FlightSans';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* 1. 로그인 페이지 배경 및 레이아웃 설정 */
+.login-page {
+    font-family: 'FlightSans', sans-serif;
+    /* 제주 감성 배경 이미지 (밝은 해변) */
+    background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80') no-repeat center center/cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 헤더, 컨텐츠, 푸터 분배 */
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: visible !important; /* Allow scroll */
+}
+
+/* ==================== Scroll Override for Full Page Logic ==================== */
+html {
+    overflow-y: auto !important;
+    height: auto !important;
+}
+
+/* 배경 어둡게 처리 (헤더 가독성 확보 핵심) - 밝은 느낌을 위해 투명도 조절 */
+.login-page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.2) 100%);
+    z-index: 0;
+}
+
+/* 모든 컨텐츠는 오버레이 위에 위치 */
+.header, .login-wrapper, .footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* 2. 헤더 가독성 강제 수정 (메인 CSS 덮어쓰기) */
+.login-page .header {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login-page .gnb-link,
+.login-page .util-link,
+.login-page .header-util,
+.login-page .header-right-controls button {
+    color: #ffffff !important; /* 흰색 강제 */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.login-page .lang-toggle {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: #ffffff !important;
+}
+
+.login-page .lang-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff !important;
+}
+
+.login-page .util-divider {
+    color: rgba(255,255,255,0.4) !important;
+}
+
+.login-page a:hover {
+    color: #FF5000 !important;
+}
+
+/* 3. 로그인 카드 (글래스모피즘 적용) */
+.login-wrapper {
+    width: 100%;
+    max-width: 460px; /* 조금 더 넓게 */
+    margin: 100px auto 60px; /* 헤더 공간 확보 */
+    padding: 20px;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.90); /* 가독성을 위해 불투명도 약간 증가 */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 50px 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.6);
+    text-align: center;
+    animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); /* 더 부드러운 애니메이션 */
+}
+
+/* 애니메이션 정의 */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 상단 로고 및 설명 */
+.login-logo {
+    width: 140px;
+    margin-bottom: 20px;
+    /* 로고가 이미지가 아니라 텍스트라면 다르겠지만 이미지이므로 필터 등 불필요 */
+}
+
+.login-desc {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 40px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+}
+
+/* 4. 폼 디자인 */
+.login-form {
+    text-align: left;
+}
+
+.input-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 2px solid #eee;
+    background: rgba(255,255,255,0.9);
+    font-size: 15px;
+    font-family: 'FlightSans', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.input-group input::placeholder {
+    color: #bbb;
+}
+
+/* 포커스 효과 (포인트 컬러 활용) */
+.input-group input:focus {
+    outline: none;
+    border-color: #FF5000;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(255, 80, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* 5. 버튼 디자인 (그라데이션 & 글로우) */
+.login-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 16px 0;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #FF5000 0%, #FF8C00 100%);
+    color: #fff;
+    font-size: 16px;
+    font-family: 'FlightSans', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 80, 0, 0.3);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 80, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+.login-btn:active {
+    transform: scale(0.98);
+}
+
+/* 6. 하단 링크 */
+.login-links {
+    margin-top: 28px;
+    font-size: 14px;
+    color: #888;
+}
+
+.login-links span {
+    margin: 0 10px;
+    color: #ddd;
+}
+
+.login-links a {
+    color: #555;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.login-links a:hover {
+    color: #FF5000;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* 7. 푸터 스타일 조정 (배경 위에서 잘 보이도록) */
+.footer {
+    background: rgba(0, 0, 0, 0.6) !important; /* 헤더와 다르게 푸터는 배경색을 줌 */
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: #ccc;
+    padding: 40px 0;
+    margin-top: auto;
+}
+
+.footer strong, .footer p {
+    color: #ddd !important;
+}
+
+.footer-social .social-icon {
+    color: #fff !important;
+    background: rgba(255,255,255,0.1);
+}
+
+.footer-social .social-icon:hover {
+    background: #FF5000;
+    color: #fff;
+}

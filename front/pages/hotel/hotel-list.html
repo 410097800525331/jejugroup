@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEJU STAY | 호텔 검색 결과</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Stylesheets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./hotel.css">
+    <link rel="stylesheet" href="../../components/layout/header/header.css">
+    <link rel="stylesheet" href="../../components/layout/footer/footer.css">
+    <link rel="stylesheet" href="./hotel-list.css">
+    <!-- Chatbot & FAB -->
+    <link rel="stylesheet" href="../../components/ui/FAB.css">
+    <link rel="stylesheet" href="../../components/widget/chatbot-style.css">
+</head>
+
+<body>
+    <!-- 글로벌 헤더 -->
+    <div id="hotel-header-placeholder"></div>
+
+    <!-- 스티키 검색바 -->
+    <div class="sticky-search-wrapper" id="stickySearch">
+        <div class="container-wide">
+            <div class="search-bar-compact">
+                <div class="search-item-mini">
+                    <i data-lucide="map-pin"></i>
+                    <div class="search-info">
+                        <span class="search-label">여행지</span>
+                        <span class="search-value">히로시마, 일본</span>
+                    </div>
+                </div>
+                <div class="search-item-mini">
+                    <i data-lucide="calendar"></i>
+                    <div class="search-info">
+                        <span class="search-label">일정</span>
+                        <span class="search-value">2월 13일 - 2월 15일</span>
+                    </div>
+                </div>
+                <div class="search-item-mini">
+                    <i data-lucide="users"></i>
+                    <div class="search-info">
+                        <span class="search-label">인원</span>
+                        <span class="search-value">성인 1명, 객실 1개</span>
+                    </div>
+                </div>
+                <button class="search-btn-mini">검색</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="container-wide">
+        <div class="hotel-feed-container">
+            <!-- 필터 사이드바 (Agoda Clone - Detailed) -->
+            <aside class="filter-sidebar">
+                <!-- 지도 보기 배너 -->
+                <div class="map-banner-widget">
+                    <div class="map-bg"></div>
+                    <button class="map-btn">지도에서 호텔 보기</button>
+                </div>
+
+                <!-- 1. 히로시마 인기 검색 조건 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">히로시마 인기 검색 조건</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>주방</span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>지금 바로 결제</span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>다운타운</span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>기타</span></label>
+                        <label class="filter-checkbox"><input type="checkbox" checked> <span>투숙객 평점: 8+
+                                우수</span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>인터넷</span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>24시간 프런트 데스크</span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>스파/사우나</span></label>
+                    </div>
+                </div>
+
+                <!-- 2. 숙소 종류 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">숙소 종류</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>호텔 <span
+                                    class="count">(302)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>리조트 <span
+                                    class="count">(4)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>게스트하우스 / 비앤비 <span
+                                    class="count">(12)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>호스텔 <span
+                                    class="count">(11)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>아파트 <span
+                                    class="count">(53)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>서비스 아파트 <span
+                                    class="count">(4)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>인 <span
+                                    class="count">(1)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>리조트 빌라 <span
+                                    class="count">(1)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>료칸 <span
+                                    class="count">(20)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>프라이빗 하우스 전체 <span
+                                    class="count">(7)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>캡슐 호텔 <span
+                                    class="count">(4)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>러브호텔 <span
+                                    class="count">(1)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>빌라 <span
+                                    class="count">(2)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 3. 지역 (Data Dynamic) -->
+                <div class="filter-section" id="filter-region" data-dynamic-region="true">
+                    <h3 class="filter-title">지역</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>히로시마 <span
+                                    class="count">(306)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox">
+                            <span>미야지마 <span class="count">(63)</span>
+                                <span style="display:block; font-size:11px; color:#e12d2d; margin-top:2px;">럭셔리 숙박, 인기
+                                    명소</span>
+                            </span>
+                        </label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>하쓰카이치 <span
+                                    class="count">(12)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>나카 워드 <span
+                                    class="count">(8)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>기타 <span
+                                    class="count">(6)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>에타지마 <span
+                                    class="count">(6)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>다운타운 <span
+                                    class="count">(5)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>니시구 <span
+                                    class="count">(3)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>오타케 <span
+                                    class="count">(3)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>요코가와 <span
+                                    class="count">(3)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>가이타 <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>히로시마역 <span
+                                    class="count">(1)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 4. 결제 관련 옵션 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">결제 관련 옵션</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>예약 무료 취소 <span
+                                    class="count">(5)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>숙소에서 요금 결제 <span
+                                    class="count">(34)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>지금 바로 결제 <span
+                                    class="count">(157)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 5. 숙소 성급 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">숙소 성급</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox">
+                            <input type="checkbox">
+                            <span>Jeju Luxe <span class="count">(2)</span>
+                                <span
+                                    style="background:linear-gradient(135deg, #ff7a22, #ff9d42); color:white; font-size:9px; padding:1px 4px; border-radius:2px; margin-left:4px;">NEW</span>
+                                <span style="display:block; font-size:11px; color:#666; margin-top:2px;">투숙객이 뽑은 최고의 럭셔리
+                                    숙소</span>
+                            </span>
+                        </label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>5-성급 <span
+                                    class="count">(10)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>4-성급 <span
+                                    class="count">(47)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>3-성급 <span
+                                    class="count">(149)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>2-성급 <span
+                                    class="count">(63)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>1-성급 <span
+                                    class="count">(44)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 6. 이용 가능 서비스 / 옵션 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">이용 가능 서비스 / 옵션</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>조식 포함 <span
+                                    class="count">(63)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>석식(저녁) 포함 <span
+                                    class="count">(17)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>사우나 무료 이용 <span
+                                    class="count">(3)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>얼리 체크인 <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>레이트 체크아웃 <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>중식(점심) 포함 <span
+                                    class="count">(1)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>무료 셔틀 서비스 <span
+                                    class="count">(1)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 7. 숙소 편의 시설 및 서비스 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">숙소 편의 시설 및 서비스</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>수영장 <span
+                                    class="count">(5)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>인터넷 <span
+                                    class="count">(193)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>주차장 <span
+                                    class="count">(99)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>공항 이동 교통편 서비스 <span
+                                    class="count">(1)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>체육관/피트니스 <span
+                                    class="count">(6)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>24시간 프런트 데스크 <span
+                                    class="count">(92)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>가족/아동 여행객 친화형 시설 <span
+                                    class="count">(117)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>금연 <span
+                                    class="count">(133)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>스파/사우나 <span
+                                    class="count">(20)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>레스토랑 <span
+                                    class="count">(63)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>흡연 구역 <span
+                                    class="count">(94)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>반려동물 동반 가능 <span
+                                    class="count">(19)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>장애인용 편의 시설/서비스 <span
+                                    class="count">(42)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>비즈니스 관련 편의 시설 <span
+                                    class="count">(29)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 8. 투숙객 평가 점수 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">투숙객 평가 점수</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>9+ 최고 <span
+                                    class="count">(72)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>8+ 우수 <span
+                                    class="count">(228)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>7+ 좋음 <span
+                                    class="count">(290)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>6+ 양호 <span
+                                    class="count">(305)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 9. 객실 편의 시설/서비스 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">객실 편의 시설/서비스</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>난방 <span
+                                    class="count">(193)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>냉장고 <span
+                                    class="count">(185)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>TV <span
+                                    class="count">(177)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>욕조 <span
+                                    class="count">(155)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>에어컨 <span
+                                    class="count">(111)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>세탁기 <span
+                                    class="count">(78)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>인터넷 <span
+                                    class="count">(70)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>커피/티 메이커 <span
+                                    class="count">(43)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>발코니/테라스 <span
+                                    class="count">(39)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>주방 <span
+                                    class="count">(22)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>다림질 도구 <span
+                                    class="count">(20)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>반려동물 동반 가능 <span
+                                    class="count">(5)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>전용 수영장 <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>별관에 위치 <span
+                                    class="count">(1)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 10. 도심까지의 거리 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">도심까지의 거리</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>도심에 위치 <span
+                                    class="count">(96)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>도심까지 2km 미만 <span
+                                    class="count">(200)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>도심까지 2~5km <span
+                                    class="count">(16)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>도심까지 5~10km <span
+                                    class="count">(14)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>도심까지 10km 미만 <span
+                                    class="count">(92)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 11. 침대 종류 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">침대 종류</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>더블베드 <span
+                                    class="count">(251)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>싱글/트윈베드 <span
+                                    class="count">(151)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>퀸베드 <span
+                                    class="count">(73)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>벙크베드 <span
+                                    class="count">(24)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>킹베드 <span
+                                    class="count">(17)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 12. 가족 여행객에 인기 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">가족 여행객에 인기</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>아동 무료 투숙 가능</span></label>
+                    </div>
+                </div>
+
+                <!-- 13. 숙소 위치 평가 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">숙소 위치 평가</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>9+ 최고 <span
+                                    class="count">(72)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>8+ 우수 <span
+                                    class="count">(196)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>7+ 좋음 <span
+                                    class="count">(262)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 14. 주변 인기 명소 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">주변 인기 명소</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>오코노미무라 <span
+                                    class="count">(134)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>원폭 돔 <span
+                                    class="count">(128)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>히로시마 평화 기념관 <span
+                                    class="count">(113)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>평화 기념 공원 - 히로시마 <span
+                                    class="count">(111)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>추모비 <span
+                                    class="count">(111)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>피스 메모리얼 홀 <span
+                                    class="count">(109)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>평화의 종 <span
+                                    class="count">(108)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>어린이's 피스 기념비 <span
+                                    class="count">(105)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>수케이엔 정원 <span
+                                    class="count">(87)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>히로시마 성 <span
+                                    class="count">(45)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 15. 침실 수 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">침실 수</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>스튜디오 / 침실 1개 <span
+                                    class="count">(279)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>침실 2개 <span
+                                    class="count">(12)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>침실 3+개 <span
+                                    class="count">(6)</span></span></label>
+                    </div>
+                </div>
+
+                <!-- 16. 인기 호텔 브랜드 -->
+                <div class="filter-section">
+                    <h3 class="filter-title">인기 호텔 브랜드</h3>
+                    <div class="filter-items">
+                        <label class="filter-checkbox"><input type="checkbox"> <span>APA 호텔 <span
+                                    class="count">(3)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>호텔 라이브맥스 <span
+                                    class="count">(4)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>토요코 인 <span
+                                    class="count">(6)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>Nest Hotel <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>다이와 로이넷 호텔 <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>베셀 호텔 <span
+                                    class="count">(3)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>힐튼 월드와이드 <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>슈퍼 호텔 <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>Breakfast_JP <span
+                                    class="count">(2)</span></span></label>
+                        <label class="filter-checkbox"><input type="checkbox"> <span>GRAND BASE <span
+                                    class="count">(2)</span></span></label>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 호텔 리스트 -->
+            <section class="hotel-main-list" id="hotelList">
+                <!-- Hotel Card 1 -->
+                <article class="hotel-card-premium">
+                    <div class="hotel-card-image">
+                        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80"
+                            alt="Hotel Hiroshima">
+                        <span class="badge-overlay">특가 상품</span>
+                        <button class="wishlist-btn-premium"><i data-lucide="heart"></i></button>
+                    </div>
+                    <div class="hotel-card-content">
+                        <div class="hotel-card-header">
+                            <div class="hotel-title-group">
+                                <h3>히로시마 프리미엄 호텔</h3>
+                                <div class="hotel-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <div class="review-badge">
+                                9.2
+                                <span>Excellent</span>
+                            </div>
+                        </div>
+                        <div class="hotel-location-text">
+                            <i data-lucide="map-pin" style="width: 14px; display: inline; vertical-align: middle;"></i>
+                            히로시마 시내 중심 · 원폭 돔 인근
+                        </div>
+                        <div class="hotel-tags">
+                            <span class="tag-item">무료 Wi-Fi</span>
+                            <span class="tag-item">스파 & 마사지</span>
+                            <span class="tag-item">피트니스 센터</span>
+                        </div>
+                        <div class="hotel-price-zone">
+                            <div class="price-original">₩250,000</div>
+                            <div class="price-current">₩189,000</div>
+                            <div class="price-unit">1박당 / 세금 포함</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Hotel Card 2 -->
+                <article class="hotel-card-premium">
+                    <div class="hotel-card-image">
+                        <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80"
+                            alt="Miyajima Resort">
+                        <span class="badge-overlay">인기 숙소</span>
+                        <button class="wishlist-btn-premium"><i data-lucide="heart"></i></button>
+                    </div>
+                    <div class="hotel-card-content">
+                        <div class="hotel-card-header">
+                            <div class="hotel-title-group">
+                                <h3>미야지마 그랜드 리조트</h3>
+                                <div class="hotel-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <div class="review-badge">
+                                8.8
+                                <span>Great</span>
+                            </div>
+                        </div>
+                        <div class="hotel-location-text">
+                            <i data-lucide="map-pin" style="width: 14px; display: inline; vertical-align: middle;"></i>
+                            미야지마 해변가 · 선착장 도보 10분
+                        </div>
+                        <div class="hotel-tags">
+                            <span class="tag-item">조식 포함</span>
+                            <span class="tag-item">오션뷰</span>
+                            <span class="tag-item">공항 셔틀</span>
+                        </div>
+                        <div class="hotel-price-zone">
+                            <div class="price-original">₩320,000</div>
+                            <div class="price-current">₩265,000</div>
+                            <div class="price-unit">1박당 / 세금 포함</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- More cards will follow via JS -->
+            </section>
+
+            <!-- Load More Button (Hidden by default) -->
+            <div id="loadMoreContainer" class="load-more-container"
+                style="display: none; text-align: center; margin-top: 30px; padding-bottom: 20px;">
+                <button id="loadMoreBtn" class="btn-load-more">
+                    호텔 더 보기 <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 글로벌 푸터 -->
+    <div id="hotel-footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="../../core/constants/lang_data.js"></script>
+    <script src="../../components/layout/header/header.js"></script>
+    <script src="../../components/layout/footer/footer.js"></script>
+    <script src="../../components/ui/stagger_nav.js"></script>
+    <script src="../../components/layout/hotel_component_loader.js"></script>
+    <script src="./hotel-list.js"></script>
+    <script src="../../components/ui/FAB.js"></script>
+    <script src="../../components/widget/chatbot.js"></script>
+</body>
+
+</html>

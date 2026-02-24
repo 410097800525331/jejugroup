@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>예약 확인 | 제주그룹</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles/globals.css">
+    <link rel="stylesheet" href="/pages/hotel/hotel.css">
+    <link rel="stylesheet" href="/pages/stay/reservation.css">
+    <link rel="stylesheet" href="/components/ui/FAB.css">
+    <link rel="stylesheet" href="/components/widget/chatbot-style.css">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="reservation-page">
+    <header class="header" id="header">
+        <div class="header-container">
+            <!-- 로고 -->
+            <a href="/pages/hotel/jejuhotel.html" class="logo">
+                <img src="/images/logo_jejuhotel.png" alt="JEJU STAY" class="logo-img">
+            </a>
+
+            <!-- 메인 네비게이션 -->
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <!-- 1. Accommodations -->
+                    <li class="nav-item">
+                        <a href="../hotel/jejuhotel.html" class="nav-link">
+                            <i data-lucide="building-2" class="nav-icon"></i>
+                            <span data-lang="navAccommodations">숙소 예약</span>
+                        </a>
+                        <div class="mega-dropdown">
+                            <div class="mega-dropdown-inner">
+                                <ul class="mega-menu-list-horizontal">
+                                    <li><a href="../hotel/jejuhotel.html" class="mega-menu-link">호텔 & 리조트</a></li>
+                                    <li><a href="jejustay_life.html" class="mega-menu-link">전 세계 한 달 살기 <span
+                                                class="badge-new">NEW</span></a></li>
+                                    <li><a href="private_stay.html" class="mega-menu-link">프라이빗 감성 숙소</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 2. Travel -->
+                    <li class="nav-item">
+                        <a href="../travel/activities.html" class="nav-link">
+                            <i data-lucide="plane" class="nav-icon"></i>
+                            <span data-lang="navTravel">여행 상품</span>
+                        </a>
+                        <div class="mega-dropdown">
+                            <div class="mega-dropdown-inner">
+                                <ul class="mega-menu-list-horizontal">
+                                    <li><a href="../travel/activities.html" class="mega-menu-link">즐길 거리 (액티비티)</a></li>
+                                    <li><a href="../travel/esim.html" class="mega-menu-link">eSIM / 유심</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 3. Deals -->
+                    <li class="nav-item">
+                        <a href="../deals/deals.html" class="nav-link">
+                            <i data-lucide="percent" class="nav-icon"></i>
+                            <span data-lang="navDeals">특가 & 혜택</span>
+                        </a>
+                        <div class="mega-dropdown">
+                            <div class="mega-dropdown-inner">
+                                <ul class="mega-menu-list-horizontal">
+                                    <li><a href="../deals/deals.html" class="mega-menu-link">이달의 특가 프로모션</a></li>
+                                    <li><a href="../deals/deals_member.html" class="mega-menu-link">회원 전용 혜택</a></li>
+                                    <li><a href="../deals/deals_partner.html" class="mega-menu-link">제휴 카드 할인</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 4. Guide -->
+                    <li class="nav-item">
+                        <a href="../travel/travel_guide.html" class="nav-link">
+                            <i data-lucide="book-open" class="nav-icon"></i>
+                            <span data-lang="navGuide">여행 정보</span>
+                        </a>
+                        <div class="mega-dropdown">
+                            <div class="mega-dropdown-inner">
+                                <ul class="mega-menu-list-horizontal">
+                                    <li><a href="../travel/travel_guide.html" class="mega-menu-link">여행 가이드북</a></li>
+                                    <li><a href="../travel/travel_tips.html" class="mega-menu-link">국가별 여행 팁</a></li>
+                                    <li><a href="../travel/travel_checklist.html" class="mega-menu-link">여행 준비 체크리스트</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- 우측 유틸리티 -->
+            <div class="header-utils">
+                <a href="reservation_check.html" class="util-link">
+                    <i data-lucide="clipboard-list" class="util-icon"></i>
+                    <span data-lang="navResCheck">예약 확인</span>
+                </a>
+                <a href="/pages/auth/login.html" class="util-link login-btn">
+                    <i data-lucide="user" class="util-icon"></i>
+                    <span data-lang="navLogin">로그인</span>
+                </a>
+                <a href="../cs/customer_center.html" class="util-link">
+                    <i data-lucide="headphones" class="util-icon"></i>
+                    <span data-lang="navCs">고객센터</span>
+                </a>
+            </div>
+
+            <!-- 모바일 메뉴 버튼 -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="메뉴 열기">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+
+        <!-- 모바일 네비게이션 -->
+        <div class="mobile-nav" id="mobileNav">
+            <ul class="mobile-nav-list">
+                <li><a href="../hotel/jejuhotel.html" class="mobile-nav-link" data-lang="mobileNavHotel">숙소 예약</a></li>
+                <li><a href="jejustay_life.html" class="mobile-nav-link" data-lang="mobileNavLife">한 달 살기</a></li>
+                <li><a href="../travel/activities.html" class="mobile-nav-link" data-lang="mobileNavActivity">즐길 거리</a></li>
+                <li><a href="../deals/deals.html" class="mobile-nav-link" data-lang="mobileNavDeals">할인 쿠폰 & 특가</a></li>
+                <li><a href="../travel/esim.html" class="mobile-nav-link" data-lang="mobileNavEsim">eSIM</a></li>
+                <li><a href="../travel/travel_guide.html" class="mobile-nav-link" data-lang="mobileNavGuide">여행 가이드</a></li>
+                <li><a href="reservation_check.html" class="mobile-nav-link" data-lang="navResCheck">예약 확인</a>
+                </li>
+                <li><a href="/pages/auth/login.html" class="mobile-nav-link" data-lang="navLogin">로그인</a></li>
+                <li><a href="../cs/customer_center.html" class="mobile-nav-link" data-lang="navCs">고객센터</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="reservation-wrapper">
+        <div class="reservation-card">
+
+            <div class="reservation-header">
+                <h2 class="reservation-title" data-lang="resCheckTitle">비회원 예약 조회</h2>
+                <p class="reservation-desc" data-lang="resCheckDesc">예약 번호와 정보를 입력하여 예약을 확인하세요.</p>
+            </div>
+
+            <form class="reservation-form">
+                <div class="input-group">
+                    <label for="reservationNumber" data-lang="resNumLabel">예약 번호</label>
+                    <input type="text" id="reservationNumber" placeholder="예약 번호를 입력하세요"
+                        data-lang-placeholder="resNumPlaceholder" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email" data-lang="emailLabel">이메일</label>
+                    <input type="email" id="email" placeholder="예약 시 사용한 이메일"
+                        data-lang-placeholder="resEmailPlaceholder" required>
+                </div>
+
+                <button type="submit" class="reservation-btn" data-lang="checkButton">조회하기</button>
+            </form>
+
+            <div class="reservation-links">
+                <p><span data-lang="isMember">회원이신가요?</span> <a href="../auth/login.html" data-lang="loginCheckLink">로그인하여
+                        확인하기</a></p>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer section" id="section-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <p><strong data-lang="footerCompany">(주)제주 그룹</strong></p>
+                <p data-lang="footerCEO">대표이사: 김이배</p>
+                <p data-lang="footerBizNum">사업자등록번호: 616-81-50527</p>
+                <p data-lang="footerSaleNum">통신판매업신고: 제주 2006-125호</p>
+                <p data-lang="footerHosting">호스팅 사업자: AWS</p>
+                <br>
+                <p data-lang="footerAddr">주소: 제주특별자치도 제주시 신대로 64 (연동, 건설공제회관 3층)</p>
+                <p data-lang="footerCs">고객센터: 1599-1500 (09:00 ~ 19:00)</p>
+                <p data-lang="footerCsEmail">고객 문의: jejugroup.help@jejugroup.net</p>
+                <p data-lang="footerPartnerEmail">제휴 문의: partnership@jejugroup.net</p>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p data-lang="footerCopyright">Copyright ⓒ Jeju Group. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <button class="top-btn" id="topBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <script src="/core/constants/lang_data.js"></script>
+    <script src="/components/layout/header/header-controller.js"></script>
+    <script src="/pages/hotel/main.js"></script>
+    <script src="/components/ui/stagger_nav.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
