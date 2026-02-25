@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="../">
+  <title>제주항공 | 마이페이지</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/my_page.css">
+</head>
+
+<body>
+  <header id="header_wrap"></header>
+
+  <!-- 메인 컨테이너 -->
+  <div class="main-wrapper">
+    <!-- 환영 영역 -->
+    <section class="welcome-section">
+      <div class="welcome-card">
+        <div class="welcome-header">
+          <div class="welcome-text">
+            <h2>안녕하세요, 홍길동님!</h2>
+            <p>제주 여행의 모든 것을 한곳에서 관리하세요</p>
+          </div>
+          <div class="welcome-user-info">
+            <span class="user-level">VIP 회원</span>
+            <button class="logout-btn">로그아웃</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 통합 대시보드 -->
+    <section class="dashboard-section">
+      <div class="dashboard-grid">
+        <!-- 항공 대시보드 -->
+        <div class="service-dashboard air">
+          <div class="service-header">
+            <h3>제주항공</h3>
+          </div>
+          <div class="dashboard-stats">
+            <div class="stat">
+              <span class="stat-label">예약</span>
+              <span class="stat-value">2건</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">포인트</span>
+              <span class="stat-value">5,000P</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">쿠폰</span>
+              <span class="stat-value">2개</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 숙소 대시보드 -->
+        <div class="service-dashboard stay">
+          <div class="service-header">
+            <h3>제주스테이</h3>
+          </div>
+          <div class="dashboard-stats">
+            <div class="stat">
+              <span class="stat-label">예약</span>
+              <span class="stat-value">1건</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">포인트</span>
+              <span class="stat-value">3,500P</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">쿠폰</span>
+              <span class="stat-value">1개</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 렌터카 대시보드 -->
+        <div class="service-dashboard rent">
+          <div class="service-header">
+            <h3>제주렌트카</h3>
+          </div>
+          <div class="dashboard-stats">
+            <div class="stat">
+              <span class="stat-label">예약</span>
+              <span class="stat-value">1건</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">포인트</span>
+              <span class="stat-value">4,000P</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">쿠폰</span>
+              <span class="stat-value">2개</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 통합 포인트 및 멤버십 -->
+      <div class="integrated-info">
+        <div class="info-card points">
+          <h4>통합 포인트</h4>
+          <div class="info-value">12,500P</div>
+          <p class="info-desc">3개 서비스 포인트 합계</p>
+        </div>
+        <div class="info-card membership">
+          <h4>멤버십 등급</h4>
+          <div class="info-value">VIP</div>
+          <p class="info-desc">모든 서비스에서 VIP 혜택 적용</p>
+        </div>
+        <div class="info-card coupons">
+          <h4>보유 쿠폰</h4>
+          <div class="info-value">5개</div>
+          <p class="info-desc">사용 가능한 쿠폰</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 마이페이지 탭 네비게이션 -->
+    <section class="mypage-section">
+      <div class="tabs-navigation">
+        <button class="tab-nav-btn active" data-tab="reservations">
+          <span class="tab-label">나의 예약</span>
+        </button>
+        <button class="tab-nav-btn" data-tab="membership">
+          <span class="tab-label">멤버십</span>
+        </button>
+        <button class="tab-nav-btn" data-tab="coupons">
+          <span class="tab-label">쿠폰</span>
+        </button>
+        <button class="tab-nav-btn" data-tab="history">
+          <span class="tab-label">이용 내역</span>
+        </button>
+        <button class="tab-nav-btn" data-tab="wishlist">
+          <span class="tab-label">위시리스트</span>
+        </button>
+        <button class="tab-nav-btn" data-tab="support">
+          <span class="tab-label">고객센터</span>
+        </button>
+        <button class="tab-nav-btn" data-tab="settings">
+          <span class="tab-label">회원정보관리</span>
+        </button>
+      </div>
+
+      <!-- 탭 콘텐츠 -->
+      <div class="tabs-content">
+        <!-- 1. 나의 예약 -->
+        <div class="tab-pane active" id="reservations">
+          <div class="service-tabs">
+            <button class="service-tab-btn active" data-service="all">
+              <span>전체</span>
+            </button>
+            <button class="service-tab-btn" data-service="air">
+              <span>항공</span>
+            </button>
+            <button class="service-tab-btn" data-service="stay">
+              <span>숙소</span>
+            </button>
+            <button class="service-tab-btn" data-service="rent">
+              <span>렌트카</span>
+            </button>
+          </div>
+
+          <div class="reservations-container">
+            <!-- 항공 예약 -->
+            <div class="reservation-group air" data-service="air">
+              <h3>제주항공 예약</h3>
+              <div class="booking-list">
+                <div class="booking-card">
+                  <div class="booking-header">
+                    <div class="booking-title">
+                      <h4>서울(ICN) → 제주(CJU)</h4>
+                      <span class="booking-date">2024년 3월 15일 06:00</span>
+                    </div>
+                    <span class="status-badge confirmed">확정</span>
+                  </div>
+                  <div class="booking-details">
+                    <p><strong>예약번호:</strong> JJ-FLT-001</p>
+                    <p><strong>항공사:</strong> 제주항공</p>
+                    <p><strong>좌석:</strong> 12A</p>
+                    <p><strong>가격:</strong> 89,000원</p>
+                  </div>
+                  <div class="booking-actions">
+                    <button class="btn-detail">상세보기</button>
+                    <button class="btn-cancel">취소</button>
+                  </div>
+                </div>
+
+                <div class="booking-card">
+                  <div class="booking-header">
+                    <div class="booking-title">
+                      <h4>제주(CJU) → 서울(ICN)</h4>
+                      <span class="booking-date">2024년 3월 22일 18:00</span>
+                    </div>
+                    <span class="status-badge confirmed">확정</span>
+                  </div>
+                  <div class="booking-details">
+                    <p><strong>예약번호:</strong> JJ-FLT-002</p>
+                    <p><strong>항공사:</strong> 제주항공</p>
+                    <p><strong>좌석:</strong> 12B</p>
+                    <p><strong>가격:</strong> 89,000원</p>
+                  </div>
+                  <div class="booking-actions">
+                    <button class="btn-detail">상세보기</button>
+                    <button class="btn-cancel">취소</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 숙소 예약 -->
+            <div class="reservation-group stay" data-service="stay">
+              <h3>제주스테이 예약</h3>
+              <div class="booking-list">
+                <div class="booking-card">
+                  <div class="booking-header">
+                    <div class="booking-title">
+                      <h4>라마다 제주 호텔</h4>
+                      <span class="booking-date">2024년 3월 15일 - 22일 (7박)</span>
+                    </div>
+                    <span class="status-badge confirmed">확정</span>
+                  </div>
+                  <div class="booking-details">
+                    <p><strong>예약번호:</strong> JJ-HTL-001</p>
+                    <p><strong>객실:</strong> 디럭스 더블룸</p>
+                    <p><strong>체크인:</strong> 15:00 / 체크아웃: 11:00</p>
+                    <p><strong>가격:</strong> 1,260,000원</p>
+                  </div>
+                  <div class="booking-actions">
+                    <button class="btn-detail">상세보기</button>
+                    <button class="btn-cancel">취소</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 렌터카 예약 -->
+            <div class="reservation-group rent" data-service="rent">
+              <h3>제주렌트카 예약</h3>
+              <div class="booking-list">
+                <div class="booking-card">
+                  <div class="booking-header">
+                    <div class="booking-title">
+                      <h4>현대 쏘나타 (자동)</h4>
+                      <span class="booking-date">2024년 3월 15일 - 22일 (7일)</span>
+                    </div>
+                    <span class="status-badge confirmed">확정</span>
+                  </div>
+                  <div class="booking-details">
+                    <p><strong>예약번호:</strong> JJ-RNT-001</p>
+                    <p><strong>픽업:</strong> 제주공항 10:00</p>
+                    <p><strong>반납:</strong> 제주공항 10:00</p>
+                    <p><strong>가격:</strong> 455,000원</p>
+                  </div>
+                  <div class="booking-actions">
+                    <button class="btn-detail">상세보기</button>
+                    <button class="btn-cancel">취소</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 멤버십 -->
+        <div class="tab-pane" id="membership">
+          <div class="membership-grid">
+            <!-- 제주항공 멤버십 -->
+            <div class="membership-card air">
+              <div class="membership-header air">
+                <h3>제주항공</h3>
+              </div>
+              <div class="membership-info">
+                <div class="info-row">
+                  <span class="label">포인트</span>
+                  <span class="value">5,000P</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">등급</span>
+                  <span class="value">VIP</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">혜택</span>
+                  <span class="value">15% 할인</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 제주스테이 멤버십 -->
+            <div class="membership-card stay">
+              <div class="membership-header stay">
+                <h3>제주스테이</h3>
+              </div>
+              <div class="membership-info">
+                <div class="info-row">
+                  <span class="label">포인트</span>
+                  <span class="value">3,500P</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">등급</span>
+                  <span class="value">VIP</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">혜택</span>
+                  <span class="value">10% 할인</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 제주렌트카 멤버십 -->
+            <div class="membership-card rent">
+              <div class="membership-header rent">
+                <h3>제주렌트카</h3>
+              </div>
+              <div class="membership-info">
+                <div class="info-row">
+                  <span class="label">포인트</span>
+                  <span class="value">4,000P</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">등급</span>
+                  <span class="value">VIP</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">혜택</span>
+                  <span class="value">12% 할인</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 쿠폰 -->
+        <div class="tab-pane" id="coupons">
+          <div class="coupons-container">
+            <div class="coupon-tabs">
+              <button class="coupon-tab-btn active" data-coupon-tab="all">
+                전체 (5)
+              </button>
+              <button class="coupon-tab-btn" data-coupon-tab="air">
+                항공 (2)
+              </button>
+              <button class="coupon-tab-btn" data-coupon-tab="stay">
+                숙소 (1)
+              </button>
+              <button class="coupon-tab-btn" data-coupon-tab="rent">
+                렌트카 (2)
+              </button>
+            </div>
+
+            <div class="coupon-list">
+              <!-- 항공 쿠폰 -->
+              <div class="coupon-item air">
+                <div class="coupon-left">
+                  <div class="coupon-discount">15%</div>
+                </div>
+                <div class="coupon-middle">
+                  <h4>항공권 할인</h4>
+                  <p>모든 항공권에 사용 가능</p>
+                  <p class="coupon-date">~2024.04.30</p>
+                </div>
+                <div class="coupon-right">
+                  <button class="btn-use-coupon">사용</button>
+                </div>
+              </div>
+
+              <!-- 숙소 쿠폰 -->
+              <div class="coupon-item stay">
+                <div class="coupon-left">
+                  <div class="coupon-discount">10,000원</div>
+                </div>
+                <div class="coupon-middle">
+                  <h4>숙박 할인</h4>
+                  <p>50,000원 이상 예약 시</p>
+                  <p class="coupon-date">~2024.03.31</p>
+                </div>
+                <div class="coupon-right">
+                  <button class="btn-use-coupon">사용</button>
+                </div>
+              </div>
+
+              <!-- 렌트카 쿠폰 -->
+              <div class="coupon-item rent">
+                <div class="coupon-left">
+                  <div class="coupon-discount">20%</div>
+                </div>
+                <div class="coupon-middle">
+                  <h4>렌터카 할인</h4>
+                  <p>모든 차량에 사용 가능</p>
+                  <p class="coupon-date">~2024.05.15</p>
+                </div>
+                <div class="coupon-right">
+                  <button class="btn-use-coupon">사용</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 이용 내역 -->
+        <div class="tab-pane" id="history">
+          <div class="history-container">
+            <div class="history-item">
+              <div class="history-header">
+                <span class="history-date">2024년 2월 10-15일</span>
+                <span class="history-status completed">완료</span>
+              </div>
+              <div class="history-services">
+                <div class="history-service air">
+                  <span>제주항공</span>
+                  <p>서울 → 제주</p>
+                </div>
+                <div class="history-service stay">
+                  <span>제주스테이</span>
+                  <p>신라스테이 제주</p>
+                </div>
+                <div class="history-service rent">
+                  <span>제주렌트카</span>
+                  <p>현대 K5</p>
+                </div>
+              </div>
+              <div class="history-actions">
+                <button class="btn-review">리뷰</button>
+                <button class="btn-rebook">다시 예약</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. 위시리스트 -->
+        <div class="tab-pane" id="wishlist">
+          <div class="wishlist-container">
+            <div class="wishlist-section">
+              <h3>항공 위시리스트</h3>
+              <div class="wishlist-items">
+                <div class="wishlist-item">
+                  <p>서울 → 부산 (제주항공)</p>
+                  <button class="btn-remove">삭제</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="wishlist-section">
+              <h3>숙소 위시리스트</h3>
+              <div class="wishlist-items">
+                <div class="wishlist-item">
+                  <p>그랜드 하얏트 제주</p>
+                  <button class="btn-remove">삭제</button>
+                </div>
+                <div class="wishlist-item">
+                  <p>신라스테이 제주</p>
+                  <button class="btn-remove">삭제</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="wishlist-section">
+              <h3>렌트카 위시리스트</h3>
+              <div class="wishlist-items">
+                <div class="wishlist-item">
+                  <p>현대 쏘나타 (자동)</p>
+                  <button class="btn-remove">삭제</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. 고객센터 -->
+        <div class="tab-pane" id="support">
+          <div class="support-container">
+            <div class="support-grid">
+              <div class="support-card">
+                <h4>1:1 상담</h4>
+                <p>전문가와 상담하세요</p>
+                <button class="inquiry-btn" id="openChatbotBtn" data-lang="inquiryBtn">문의</button>
+              </div>
+              <div class="support-card">
+                <h4>FAQ</h4>
+                <p>자주 묻는 질문</p>
+                <button class="btn-support">보기</button>
+              </div>
+              <div class="support-card">
+                <h4>문의 내역</h4>
+                <p>이전 문의 확인</p>
+                <button class="btn-support">조회</button>
+              </div>
+              <div class="support-card">
+                <h4>공지사항</h4>
+                <p>최신 소식</p>
+                <button class="btn-support">확인</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. 회원정보관리 -->
+        <div class="tab-pane" id="settings">
+          <div class="settings-container">
+            <!-- 기본 정보 -->
+            <div class="settings-card">
+              <h3>기본 정보</h3>
+              <form class="settings-form">
+                <div class="form-group">
+                  <label>이름</label>
+                  <input type="text" value="김철수" readonly>
+                </div>
+                <div class="form-group">
+                  <label>이메일</label>
+                  <input type="email" value="kim.chulsu@example.com">
+                </div>
+                <div class="form-group">
+                  <label>휴대폰</label>
+                  <input type="tel" value="010-1234-5678">
+                </div>
+                <div class="form-group">
+                  <label>생년월일</label>
+                  <input type="date" value="1990-05-15">
+                </div>
+                <button type="button" class="btn-save">저장</button>
+              </form>
+            </div>
+
+            <!-- 비밀번호 변경 -->
+            <div class="settings-card">
+              <h3>비밀번호 변경</h3>
+              <form class="settings-form">
+                <div class="form-group">
+                  <label>현재 비밀번호</label>
+                  <input type="password" placeholder="현재 비밀번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                  <label>새 비밀번호</label>
+                  <input type="password" placeholder="새 비밀번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                  <label>비밀번호 확인</label>
+                  <input type="password" placeholder="새 비밀번호를 다시 입력하세요">
+                </div>
+                <button type="button" class="btn-save">변경</button>
+              </form>
+            </div>
+
+            <!-- 알림 설정 -->
+            <div class="settings-card">
+              <h3>알림 설정</h3>
+              <div class="notification-settings">
+                <div class="notification-item">
+                  <div class="notification-text">
+                    <p class="notification-title">이메일 알림</p>
+                    <p class="notification-desc">예약 확정, 변경 소식 등</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <div class="notification-text">
+                    <p class="notification-title">SMS 알림</p>
+                    <p class="notification-desc">중요 예약 정보</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <div class="notification-text">
+                    <p class="notification-title">마케팅 정보</p>
+                    <p class="notification-desc">할인, 이벤트 소식</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <button type="button" class="btn-save">저장</button>
+            </div>
+
+            <!-- 계정 관리 -->
+            <div class="settings-card">
+              <h3>계정 관리</h3>
+              <div class="account-management">
+                <div class="account-item">
+                  <div class="account-info">
+                    <p class="account-title">계정 탈퇴</p>
+                    <p class="account-desc">계정을 영구적으로 삭제합니다</p>
+                  </div>
+                  <button type="button" class="btn-danger">탈퇴</button>
+                </div>
+                <div class="account-item">
+                  <div class="account-info">
+                    <p class="account-title">개인정보 다운로드</p>
+                    <p class="account-desc">내 정보를 파일로 다운로드</p>
+                  </div>
+                  <button type="button" class="btn-secondary">다운로드</button>
+                </div>
+                <div class="account-item">
+                  <div class="account-info">
+                    <p class="account-title">로그인 기록</p>
+                    <p class="account-desc">최근 로그인 활동 확인</p>
+                  </div>
+                  <button type="button" class="btn-secondary">조회</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 모달 -->
+  <div id="detailModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/my_page.js"></script>
+</body>
+
+</html>
