@@ -60,3 +60,8 @@ temp/
 *.p12
 *.pem
 *.key
+
+# Eclipse project files
+.project
+.classpath
+.settings/
