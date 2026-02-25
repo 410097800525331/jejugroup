@@ -670,14 +670,21 @@
       return price[Math.floor(Math.random() * price.length)].toLocaleString();
     }
 
-    /*  */
-    document.querySelectorAll('.search_btn').forEach(btn => {
+    /* 결제 페이지 연결 */
+    document.querySelectorAll('#booking .search_btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.location.href = 'sub/payment.html';
+      });
+    });
+
+    /* 나머지 버튼은 기존 임시 동작 유지 */
+    document.querySelectorAll('#reserve .search_btn, #flight .search_btn').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.classList.add('loading');
         setTimeout(() => {
           btn.classList.remove('loading');
-          alert('항공편 조회 결과 페이지로 이동 (연결 예정)');
-        }, 1500);
+          alert('조회 결과 페이지 연결 예정입니다.');
+        }, 800);
       });
     });
   </script>

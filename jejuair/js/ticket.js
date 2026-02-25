@@ -679,4 +679,12 @@ $(document).ready(function () {
       calendarLayer.classList.remove('active');
     }
   });
+
+  /* 결제 페이지 이동 */
+  const bookingSearchBtn = document.querySelector('#tab_booking .search_btn');
+  if (bookingSearchBtn) {
+    bookingSearchBtn.addEventListener('click', () => {
+      window.location.href = 'sub/payment.html';
+    });
+  }
 });

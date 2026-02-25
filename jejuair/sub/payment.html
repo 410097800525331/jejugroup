@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="../">
+  <title>제주항공 | 결제</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/payment.css">
+</head>
+
+<body>
+  <header id="header_wrap"></header>
+
+  <main class="payment_page">
+    <section class="payment_hero">
+      <button id="backBtn" class="back_btn" type="button">이전</button>
+      <div>
+        <h1>결제</h1>
+        <p>제주 통합 결제 시스템</p>
+      </div>
+    </section>
+
+    <section id="paymentContainer" class="payment_container">
+      <div class="payment_layout">
+        <div class="payment_left">
+          <article class="payment_block">
+            <h2>결제 수단 선택</h2>
+            <label class="method_item">
+              <input type="radio" name="paymentMethod" value="card" checked>
+              <div>
+                <strong>신용카드 / 체크카드</strong>
+                <p>국내 모든 신용카드 및 체크카드 사용 가능</p>
+              </div>
+            </label>
+            <label class="method_item">
+              <input type="radio" name="paymentMethod" value="transfer">
+              <div>
+                <strong>계좌이체</strong>
+                <p>국내 모든 은행 계좌이체 가능</p>
+              </div>
+            </label>
+            <label class="method_item">
+              <input type="radio" name="paymentMethod" value="mobile">
+              <div>
+                <strong>휴대폰 결제</strong>
+                <p>SKT, KT, LG U+ 휴대폰 결제</p>
+              </div>
+            </label>
+          </article>
+
+          <article id="cardForm" class="payment_block">
+            <h2>카드 정보</h2>
+            <div class="field_group">
+              <label for="cardNumber">카드 번호</label>
+              <input id="cardNumber" type="text" placeholder="0000 0000 0000 0000" maxlength="19">
+            </div>
+            <div class="field_group">
+              <label for="cardHolder">카드 소유자명</label>
+              <input id="cardHolder" type="text" placeholder="HONG GILDONG">
+            </div>
+            <div class="field_inline">
+              <div class="field_group">
+                <label for="cardExpiry">유효기간</label>
+                <input id="cardExpiry" type="text" placeholder="MM/YY" maxlength="5">
+              </div>
+              <div class="field_group">
+                <label for="cardCvv">CVV</label>
+                <input id="cardCvv" type="password" placeholder="000" maxlength="3">
+              </div>
+            </div>
+          </article>
+
+          <article id="transferForm" class="payment_block hidden">
+            <h2>계좌이체</h2>
+            <p class="hint_text">아래 계좌로 입금하시면 결제가 완료됩니다.</p>
+            <div class="bank_box">
+              <p>예금주: 제주항공</p>
+              <p class="bank_account">국민은행 123-456-789012</p>
+            </div>
+          </article>
+
+          <article id="mobileForm" class="payment_block hidden">
+            <h2>휴대폰 결제</h2>
+            <div class="field_group">
+              <label for="mobileNumber">휴대폰 번호</label>
+              <input id="mobileNumber" type="tel" placeholder="010-0000-0000" maxlength="13">
+            </div>
+          </article>
+
+          <article class="payment_block">
+            <h2>약관 동의</h2>
+            <label class="terms_row">
+              <input id="agreeTerms" type="checkbox">
+              <span>결제 약관 및 개인정보 처리방침에 동의합니다.</span>
+            </label>
+          </article>
+        </div>
+
+        <aside class="payment_right">
+          <article class="summary_box">
+            <h3>결제 요약</h3>
+            <div class="summary_rows">
+              <div class="summary_row">
+                <span>항공권</span>
+                <strong id="airfareAmount">89,000원</strong>
+              </div>
+              <div class="summary_row">
+                <span>숙박</span>
+                <strong id="stayAmount">450,000원</strong>
+              </div>
+              <div class="summary_row">
+                <span>렌터카</span>
+                <strong id="carAmount">180,000원</strong>
+              </div>
+            </div>
+            <div class="summary_rows tax_rows">
+              <div class="summary_row">
+                <span>공급가액</span>
+                <strong id="supplyAmount">653,636원</strong>
+              </div>
+              <div class="summary_row">
+                <span>부가세</span>
+                <strong id="vatAmount">65,364원</strong>
+              </div>
+            </div>
+            <div class="summary_total">
+              <span>최종 결제금액</span>
+              <strong id="totalAmount">719,000원</strong>
+            </div>
+            <button id="payButton" class="pay_button" type="button">안전하게 결제</button>
+          </article>
+        </aside>
+      </div>
+    </section>
+
+    <section id="paymentSuccess" class="payment_success hidden">
+      <div class="success_box">
+        <h2>결제 완료</h2>
+        <p>제주 여행 예약이 정상적으로 접수되었습니다.</p>
+        <div class="success_meta">
+          <p><strong>예약번호</strong> JJU-2026-0001</p>
+          <p><strong>결제금액</strong> <span id="successAmount">719,000원</span></p>
+        </div>
+        <button id="successConfirmBtn" class="pay_button" type="button">확인</button>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/payment.js"></script>
+</body>
+
+</html>
