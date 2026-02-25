@@ -11,16 +11,15 @@ import java.io.Serializable;
 public class UserDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String loginId;
-    private String password;
-    private String name;
-    private String email;
-    private String role;
+    private String id;          // varchar(50)
+    private String pw;          // varchar(255)
+    private String name;        // varchar(20)
+    private String phone;       // varchar(30)
+    private String gender;      // char(1)
+    private String provider;    // varchar(10) (KAKAO, NAVER, PASS)
+    private String role;        // varchar(10) default 'USER'
     
-    // UI 폼 데이터
-    private String phone;
-    private String birthdate;
-    private String gender;
-    private String address;
+    // UI Form Data (Virtual layer for consent, etc.)
+    private boolean agreeTerms;
     private boolean agreeMarketing;
 }

@@ -25,14 +25,13 @@
 
       <form class="login-form">
         <div class="input-group">
-          <label for="email" data-lang="emailLabel">이메일/아이디</label>
-          <input type="text" id="email" placeholder="아이디 또는 이메일 입력" data-lang-placeholder="emailPlaceholder" required>
+          <label for="id" data-lang="emailLabel">이메일/아이디</label>
+          <input type="text" id="id" placeholder="아이디 또는 이메일 입력" data-lang-placeholder="emailPlaceholder" required>
         </div>
 
         <div class="input-group">
-          <label for="password" data-lang="passwordLabel">비밀번호</label>
-          <input type="password" id="password" placeholder="비밀번호 입력" data-lang-placeholder="passwordPlaceholder"
-            required>
+          <label for="pw" data-lang="passwordLabel">비밀번호</label>
+          <input type="password" id="pw" placeholder="비밀번호 입력" data-lang-placeholder="passwordPlaceholder" required>
         </div>
 
         <button type="submit" class="login-btn" data-lang="loginButton">로그인</button>
@@ -64,24 +63,24 @@
       if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
           e.preventDefault();
-          const rawEmail = document.getElementById('email').value.trim();
-          const rawPassword = document.getElementById('password').value.trim();
+          const rawId = document.getElementById('id').value.trim();
+          const rawPw = document.getElementById('pw').value.trim();
 
           // [SECURITY] Import parameter validation and DOM sanitization
           import('../../core/utils/sanitizer.js').then(({ validateParam, sanitizeHTML }) => {
-            if (!validateParam(rawEmail) || !validateParam(rawPassword)) {
+            if (!validateParam(rawId) || !validateParam(rawPw)) {
               alert('잘못된 입력 형식이 포함되어 있습니다.');
               return;
             }
 
-            const email = sanitizeHTML(rawEmail);
-            const password = sanitizeHTML(rawPassword);
+            const id = sanitizeHTML(rawId);
+            const pw = sanitizeHTML(rawPw);
 
             // [SECURITY] Enforcing secure backend authentication flow via API.
             import('../../core/config/api_config.js').then(({ API_BASE_URL }) => {
               const params = new URLSearchParams();
-              params.append('email', email);
-              params.append('password', password);
+              params.append('id', id);
+              params.append('pw', pw);
 
               fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',

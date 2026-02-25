@@ -40,6 +40,26 @@
     --admin-transition-fast: 150ms ease;
     --admin-transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Explicit Dark Theme overrides (to prevent default fallback failure) */
+body.admin-mode[data-theme="dark"] {
+    --admin-bg: hsl(220, 10%, 12%);
+    --admin-surface: hsl(220, 10%, 16%);
+    --admin-surface-hover: hsl(220, 10%, 20%);
+    --admin-border: hsl(220, 10%, 25%);
+    --admin-text-primary: hsl(0, 0%, 100%);
+    --admin-text-secondary: hsl(220, 10%, 65%);
+    --admin-accent: hsl(28, 90%, 55%);
+    --admin-accent-hover: hsl(28, 90%, 65%);
+    --admin-success: hsl(140, 60%, 45%);
+    --admin-warning: hsl(40, 90%, 55%);
+    --admin-danger: hsl(0, 70%, 55%);
+    --admin-glass-bg: rgba(30,33,39, 0.7);
+    --admin-glass-border: rgba(255,255,255, 0.1);
+    --admin-shadow-sm: 0 2px 4px rgba(0,0,0,0.2);
+    --admin-shadow-md: 0 4px 8px rgba(0,0,0,0.3);
+}
+
 /* Light Theme overrides */
 body.admin-mode[data-theme="light"] {
     --admin-bg: hsl(220, 20%, 97%); /* Light Gray */

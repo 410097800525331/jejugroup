@@ -1,0 +1,3 @@
+drwxr-xr-x    2 jejugroup jejugroup       33 Feb 19 07:58 .
+drwxr-xr-x    7 jejugroup jejugroup       94 Feb 19 07:30 ..
+-rw-r--r--    1 jejugroup jejugroup    19524 Feb 25 03:59 1019082.log

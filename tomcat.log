@@ -1,0 +1,261 @@
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 19, 2026 7:58:47 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 7:58:48 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [5817] milliseconds
+Feb 19, 2026 7:58:49 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 19, 2026 7:58:49 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 19, 2026 7:58:55 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 7:58:56 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [7971] milliseconds
+Feb 19, 2026 8:29:13 AM org.apache.coyote.AbstractProtocol pause
+INFO: Pausing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 8:29:13 AM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Site_1019082]
+Feb 19, 2026 8:29:13 AM org.apache.coyote.AbstractProtocol stop
+INFO: Stopping ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 8:29:13 AM org.apache.coyote.AbstractProtocol destroy
+INFO: Destroying ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 19, 2026 8:52:37 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 8:52:37 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [3475] milliseconds
+Feb 19, 2026 8:52:38 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 19, 2026 8:52:38 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 19, 2026 8:52:42 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory [/home/jejugroup/www/lee]
+Feb 19, 2026 8:52:43 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deployment of web application directory [/home/jejugroup/www/lee] has finished in [983] ms
+Feb 19, 2026 8:52:43 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 8:52:43 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [5984] milliseconds
+Feb 19, 2026 9:22:46 AM org.apache.coyote.AbstractProtocol pause
+INFO: Pausing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 9:22:46 AM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Site_1019082]
+Feb 19, 2026 9:22:46 AM org.apache.coyote.AbstractProtocol stop
+INFO: Stopping ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 9:22:46 AM org.apache.coyote.AbstractProtocol destroy
+INFO: Destroying ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 19, 2026 9:35:17 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 9:35:18 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [4517] milliseconds
+Feb 19, 2026 9:35:18 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 19, 2026 9:35:18 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 19, 2026 9:35:24 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory [/home/jejugroup/www/lee]
+Feb 19, 2026 9:35:24 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deployment of web application directory [/home/jejugroup/www/lee] has finished in [17] ms
+Feb 19, 2026 9:35:24 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 9:35:24 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [6023] milliseconds
+Feb 19, 2026 10:06:49 AM org.apache.coyote.AbstractProtocol pause
+INFO: Pausing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 10:06:49 AM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Site_1019082]
+Feb 19, 2026 10:06:49 AM org.apache.coyote.AbstractProtocol stop
+INFO: Stopping ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 19, 2026 10:06:49 AM org.apache.coyote.AbstractProtocol destroy
+INFO: Destroying ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 24, 2026 2:00:59 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 24, 2026 2:01:00 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [5832] milliseconds
+Feb 24, 2026 2:01:01 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 24, 2026 2:01:01 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 24, 2026 2:01:07 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory [/home/jejugroup/www/lee]
+Feb 24, 2026 2:01:07 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deployment of web application directory [/home/jejugroup/www/lee] has finished in [20] ms
+Feb 24, 2026 2:01:07 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 24, 2026 2:01:07 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [6035] milliseconds
+Feb 24, 2026 2:31:06 AM org.apache.coyote.AbstractProtocol pause
+INFO: Pausing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 24, 2026 2:31:06 AM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Site_1019082]
+Feb 24, 2026 2:31:06 AM org.apache.coyote.AbstractProtocol stop
+INFO: Stopping ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 24, 2026 2:31:06 AM org.apache.coyote.AbstractProtocol destroy
+INFO: Destroying ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 25, 2026 1:41:29 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 1:41:30 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [5385] milliseconds
+Feb 25, 2026 1:41:30 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 25, 2026 1:41:30 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 25, 2026 1:41:37 AM org.apache.catalina.util.SessionIdGeneratorBase createSecureRandom
+WARNING: Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [979] milliseconds.
+Feb 25, 2026 1:41:37 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory [/home/jejugroup/www/lee]
+Feb 25, 2026 1:41:37 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deployment of web application directory [/home/jejugroup/www/lee] has finished in [19] ms
+Feb 25, 2026 1:41:37 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 1:41:37 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [7057] milliseconds
+Feb 25, 2026 2:13:17 AM org.apache.coyote.AbstractProtocol pause
+INFO: Pausing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 2:13:17 AM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Site_1019082]
+Feb 25, 2026 2:13:17 AM org.apache.coyote.AbstractProtocol stop
+INFO: Stopping ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 2:13:17 AM org.apache.coyote.AbstractProtocol destroy
+INFO: Destroying ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 25, 2026 3:44:54 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:44:55 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [4283] milliseconds
+Feb 25, 2026 3:44:56 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 25, 2026 3:44:56 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 25, 2026 3:45:02 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory [/home/jejugroup/www/lee]
+Feb 25, 2026 3:45:03 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deployment of web application directory [/home/jejugroup/www/lee] has finished in [983] ms
+Feb 25, 2026 3:45:03 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:45:04 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [8964] milliseconds
+Feb 25, 2026 3:53:52 AM org.apache.coyote.AbstractProtocol pause
+INFO: Pausing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:53:52 AM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Site_1019082]
+Feb 25, 2026 3:53:52 AM org.apache.coyote.AbstractProtocol stop
+INFO: Stopping ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:53:52 AM org.apache.coyote.AbstractProtocol destroy
+INFO: Destroying ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 25, 2026 3:54:26 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:54:27 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [5285] milliseconds
+Feb 25, 2026 3:54:27 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 25, 2026 3:54:27 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 25, 2026 3:54:36 AM org.apache.jasper.servlet.TldScanner scanJars
+INFO: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+Feb 25, 2026 3:54:37 AM org.apache.catalina.util.SessionIdGeneratorBase createSecureRandom
+WARNING: Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [982] milliseconds.
+Feb 25, 2026 3:54:37 AM org.apache.catalina.core.StandardContext filterStart
+SEVERE: Exception starting filter [CorsFilter]
+java.lang.UnsupportedClassVersionError: util/CorsFilter has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version of the Java Runtime only recognizes class file versions up to 61.0 (unable to load class [util.CorsFilter])
+	at org.apache.catalina.loader.WebappClassLoaderBase.findClassInternal(WebappClassLoaderBase.java:2346)
+	at org.apache.catalina.loader.WebappClassLoaderBase.findClassInternal(WebappClassLoaderBase.java:2216)
+	at org.apache.catalina.loader.WebappClassLoaderBase.findClass(WebappClassLoaderBase.java:824)
+	at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1315)
+	at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1163)
+	at org.apache.catalina.core.DefaultInstanceManager.loadClass(DefaultInstanceManager.java:490)
+	at org.apache.catalina.core.DefaultInstanceManager.loadClassMaybePrivileged(DefaultInstanceManager.java:472)
+	at org.apache.catalina.core.DefaultInstanceManager.newInstance(DefaultInstanceManager.java:142)
+	at org.apache.catalina.core.ApplicationFilterConfig.getFilter(ApplicationFilterConfig.java:222)
+	at org.apache.catalina.core.ApplicationFilterConfig.<init>(ApplicationFilterConfig.java:97)
+	at org.apache.catalina.core.StandardContext.filterStart(StandardContext.java:3908)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4527)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1203)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1193)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:76)
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:749)
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:721)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1203)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1193)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:76)
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:749)
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:211)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:412)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:874)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+	at org.apache.catalina.startup.Catalina.start(Catalina.java:739)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:345)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:476)
+
+Feb 25, 2026 3:54:37 AM org.apache.catalina.core.StandardContext startInternal
+SEVERE: One or more Filters failed to start. Full details will be found in the appropriate container log file
+Feb 25, 2026 3:54:37 AM org.apache.catalina.core.StandardContext startInternal
+SEVERE: Context [] startup failed due to previous errors
+Feb 25, 2026 3:54:37 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:54:38 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [10995] milliseconds
+Feb 25, 2026 3:58:30 AM org.apache.coyote.AbstractProtocol pause
+INFO: Pausing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:58:30 AM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Site_1019082]
+Feb 25, 2026 3:58:30 AM org.apache.coyote.AbstractProtocol stop
+INFO: Stopping ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:58:30 AM org.apache.coyote.AbstractProtocol destroy
+INFO: Destroying ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 25, 2026 3:58:51 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:58:52 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [6159] milliseconds
+Feb 25, 2026 3:58:52 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 25, 2026 3:58:52 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 25, 2026 3:58:59 AM org.apache.jasper.servlet.TldScanner scanJars
+INFO: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+Feb 25, 2026 3:59:00 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 3:59:00 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [8007] milliseconds
+Feb 25, 2026 4:05:07 AM org.apache.coyote.AbstractProtocol pause
+INFO: Pausing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 4:05:07 AM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Site_1019082]
+Feb 25, 2026 4:05:07 AM org.apache.coyote.AbstractProtocol stop
+INFO: Stopping ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 4:05:07 AM org.apache.coyote.AbstractProtocol destroy
+INFO: Destroying ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+Feb 25, 2026 4:05:30 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 4:05:31 AM org.apache.catalina.startup.Catalina load
+INFO: Server initialization in [6569] milliseconds
+Feb 25, 2026 4:05:31 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Site_1019082]
+Feb 25, 2026 4:05:31 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.105]
+Feb 25, 2026 4:05:38 AM org.apache.jasper.servlet.TldScanner scanJars
+INFO: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+Feb 25, 2026 4:05:39 AM org.apache.catalina.util.SessionIdGeneratorBase createSecureRandom
+WARNING: Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [974] milliseconds.
+Feb 25, 2026 4:05:39 AM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-fd00:0:0:0:0:0:7:72f-8100"]
+Feb 25, 2026 4:05:40 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in [8989] milliseconds

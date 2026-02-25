@@ -25,6 +25,21 @@ async function loadComponent(elementId, path, basePath, callback) {
     }
 }
 
+// Utility to dynamically load scripts
+async function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) {
+            resolve();
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.body.appendChild(script);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Dynamically determine the base path from the script script
     let basePath = '';
@@ -41,12 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerPath = `${basePath}components/layout/header/header.html`;
     const footerPath = `${basePath}components/layout/footer/footer.html`;
 
-    loadComponent('hotel-header-placeholder', headerPath, basePath, () => {
+    loadComponent('hotel-header-placeholder', headerPath, basePath, async () => {
         console.log('Header loaded');
         document.dispatchEvent(new Event('mainHeaderLoaded'));
-        // Initialize header scripts after injection
-        if (typeof initHeader === 'function') initHeader();
-        if (typeof initStaggerNav === 'function') initStaggerNav();
+        
+        // Dynamically load header.js to ensure mega-menu logic works across all pages
+        try {
+            await loadScript(`${basePath}components/layout/header/header.js`);
+            // Initialize header scripts after injection and script load
+            if (typeof initHeader === 'function') initHeader();
+            if (typeof initStaggerNav === 'function') initStaggerNav();
+        } catch (error) {
+            console.error('Failed to load header script:', error);
+        }
     });
     
     loadComponent('hotel-footer-placeholder', footerPath, basePath, () => {

@@ -60,7 +60,9 @@ const ADMIN_MENUS = Object.freeze([
  * @returns {Array} Filtered menus
  */
 const getAccessibleMenus = (userRole) => {
-    return ADMIN_MENUS.filter(menu => menu.roles.includes(userRole)).map(menu => ({ ...menu }));
+    // Basic fallback: Map generic 'ADMIN' session role to 'SUPER_ADMIN'
+    const effectiveRole = userRole === 'ADMIN' ? ADMIN_ROLES.SUPER_ADMIN : userRole;
+    return ADMIN_MENUS.filter(menu => menu.roles.includes(effectiveRole)).map(menu => ({ ...menu }));
 };
 
 // Export for global usage if modules aren't fully integrated yet

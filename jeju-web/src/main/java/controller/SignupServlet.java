@@ -10,13 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-// web.xml에 수동 등록했으므로 @WebServlet 어노테이션 제거
 public class SignupServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("[SignupServlet] POST Request Received");
+        System.out.println("[SignupServlet] POST Request Received for Member Schema");
         
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=UTF-8");
@@ -24,44 +23,57 @@ public class SignupServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         try {
+            // Extract the exact 9 columns specified by the new architecture
+            String phone = request.getParameter("phone");
             String name = request.getParameter("name");
-            String loginId = request.getParameter("loginId");
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
+            String gender = request.getParameter("gender");
+            String id = request.getParameter("id");
+            String pw = request.getParameter("pw");
+            String provider = request.getParameter("provider");
 
-            // 디버깅용 (브라우저 응답에 포함되지 않음, 서버 콘솔 확인용)
-            System.out.println("Signup Attempt - Name: " + name + ", ID: " + loginId);
+            System.out.println("Signup Attempt - Name: " + name + ", ID: " + id + ", Phone: " + phone);
 
-            if (name == null || loginId == null || email == null || password == null || 
-                name.isEmpty() || loginId.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                sendJsonResponse(out, response, HttpServletResponse.SC_BAD_REQUEST, false, "필수 항목이 누락되었습니다.");
+            // Strict Validation against entirely empty payloads or missing required fields
+            if (phone == null || name == null || gender == null || id == null || pw == null || provider == null ||
+                phone.isEmpty() || name.isEmpty() || gender.isEmpty() || id.isEmpty() || pw.isEmpty() || provider.isEmpty()) {
+                
+                sendJsonResponse(out, response, HttpServletResponse.SC_BAD_REQUEST, false, "모든 필수 항목을 입력해주세요.");
                 return;
             }
 
             UserDTO userDTO = new UserDTO();
+            userDTO.setPhone(phone);
             userDTO.setName(name);
-            userDTO.setLoginId(loginId);
-            userDTO.setEmail(email);
-            userDTO.setPassword(password);
+            userDTO.setGender(gender);
+            userDTO.setId(id);
+            userDTO.setPw(pw);
+            userDTO.setProvider(provider);
 
             UserDAO dao = new UserDAO();
 
-            if (dao.checkEmailExists(userDTO.getEmail())) {
-                sendJsonResponse(out, response, HttpServletResponse.SC_CONFLICT, false, "이미 사용 중인 이메일입니다.");
+            // Check if ID is already registered (even though UI should pre-check, server must defend)
+            if (dao.checkIdExists(userDTO.getId())) {
+                sendJsonResponse(out, response, HttpServletResponse.SC_CONFLICT, false, "이미 사용 중인 아이디입니다.");
                 return;
             }
 
+            // Check if Phone is already registered (PASS 1-account-per-person policy)
+            if (dao.checkPhoneExists(userDTO.getPhone())) {
+                sendJsonResponse(out, response, HttpServletResponse.SC_CONFLICT, false, "이미 해당 번호로 가입된 계정이 존재합니다.");
+                return;
+            }
+            
+
+            // Execute DB Insertion
             if (dao.insertUser(userDTO)) {
-                sendJsonResponse(out, response, HttpServletResponse.SC_OK, true, "회원가입 완료.");
+                sendJsonResponse(out, response, HttpServletResponse.SC_OK, true, "회원가입이 성공적으로 완료되었습니다.");
             } else {
-                sendJsonResponse(out, response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, false, "데이터베이스 저장 실패.");
+                sendJsonResponse(out, response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, false, "회원 정보 저장에 실패했습니다.");
             }
 
         } catch (Throwable t) {
-            // [CRITICAL] 모든 에러를 JSON으로 변환하여 프론트에서 확인할 수 있게 함
             t.printStackTrace();
-            String errorMsg = t.getClass().getSimpleName() + ": " + t.getMessage();
-            sendJsonResponse(out, response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, false, "서버 내부 에러: " + errorMsg);
+            sendJsonResponse(out, response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, false, "서버 내부 오류가 발생했습니다.");
         } finally {
             out.flush();
         }

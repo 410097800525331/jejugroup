@@ -10,12 +10,12 @@ import util.DBConn;
 public class UserDAO {
     // 보안 프로토콜: 무조건 PreparedStatement로 바인딩 처리 (SQL 인젝션 방어기제)
     // 아이디 중복 확인 (보안 프로토콜: PreparedStatement 사용)
-    public boolean checkIdExists(String loginId) {
-        String query = "SELECT login_id FROM users WHERE login_id = ?";
+    public boolean checkIdExists(String id) {
+        String query = "SELECT id FROM users WHERE id = ?";
         try (Connection conn = DBConn.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
-            pstmt.setString(1, loginId);
+            pstmt.setString(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 return rs.next();
             }
@@ -25,13 +25,13 @@ public class UserDAO {
         return false;
     }
 
-    // 이메일 중복 확인 (기존 호환성 유지)
-    public boolean checkEmailExists(String email) {
-        String query = "SELECT email FROM users WHERE email = ?";
+    // 핸드폰 번호 중복 확인 (PASS 연동용, 1인 1계정)
+    public boolean checkPhoneExists(String phone) {
+        String query = "SELECT phone FROM users WHERE phone = ?";
         try (Connection conn = DBConn.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
-            pstmt.setString(1, email);
+            pstmt.setString(1, phone);
             try (ResultSet rs = pstmt.executeQuery()) {
                 return rs.next();
             }
@@ -43,16 +43,18 @@ public class UserDAO {
 
     public boolean insertUser(UserDTO user) {
         // 단일 책임 원칙: DB 맵핑 모델에만 데이터 전송 (나머지는 무시하거나 부가테이블에 추후 맵핑)
-        String query = "INSERT INTO users (login_id, password, name, email, role) VALUES (?, ?, ?, ?, 'USER')";
+        String query = "INSERT INTO users (id, pw, name, phone, gender, provider, role) VALUES (?, ?, ?, ?, ?, ?, 'USER')";
         
         try (Connection conn = DBConn.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
-            pstmt.setString(1, user.getLoginId());
+            pstmt.setString(1, user.getId());
             // 비밀번호는 추후 BCrypt 추가 모듈 필요 
-            pstmt.setString(2, user.getPassword());
+            pstmt.setString(2, user.getPw());
             pstmt.setString(3, user.getName());
-            pstmt.setString(4, user.getEmail());
+            pstmt.setString(4, user.getPhone());
+            pstmt.setString(5, user.getGender());
+            pstmt.setString(6, user.getProvider());
             
             int result = pstmt.executeUpdate();
             return result > 0;
@@ -64,21 +66,23 @@ public class UserDAO {
     }
 
     // 로그인 검증 로직 (보안 프로토콜: PreparedStatement 사용)
-    public UserDTO loginUser(String loginId, String password) {
-        String query = "SELECT login_id, name, email, role FROM users WHERE login_id = ? AND password = ?";
+    public UserDTO loginUser(String id, String pw) {
+        String query = "SELECT id, name, phone, gender, provider, role FROM users WHERE id = ? AND pw = ?";
         
         try (Connection conn = DBConn.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
-            pstmt.setString(1, loginId);
-            pstmt.setString(2, password);
+            pstmt.setString(1, id);
+            pstmt.setString(2, pw);
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     UserDTO user = new UserDTO();
-                    user.setLoginId(rs.getString("login_id"));
+                    user.setId(rs.getString("id"));
                     user.setName(rs.getString("name"));
-                    user.setEmail(rs.getString("email"));
+                    user.setPhone(rs.getString("phone"));
+                    user.setGender(rs.getString("gender"));
+                    user.setProvider(rs.getString("provider"));
                     user.setRole(rs.getString("role"));
                     return user;
                 }

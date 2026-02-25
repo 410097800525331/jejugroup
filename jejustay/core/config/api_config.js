@@ -1,15 +1,16 @@
 // core/config/api_config.js
 
+const REMOTE_API_BASE_URL = 'https://jejugroup.alwaysdata.net';
+const LOCAL_API_BASE_URL = 'http://localhost:8080';
+
 const getApiBaseUrl = () => {
-    const hostname = window.location.hostname;
-    
-    // 로컬 환경 (Live Server 등)
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return 'http://localhost:8080/jeju-web'; // Eclipse Context Path 추가
+    // Default to remote API even on localhost so DB stays always-on server side.
+    const params = new URLSearchParams(window.location.search);
+    const apiTarget = params.get('api');
+    if (apiTarget === 'local') {
+        return LOCAL_API_BASE_URL;
     }
-    
-    // 실섭 배포 환경 (Netlify -> Alwaysdata 호출)
-    return 'https://jejugroup.alwaysdata.net';
+    return REMOTE_API_BASE_URL;
 };
 
 export const API_BASE_URL = getApiBaseUrl();

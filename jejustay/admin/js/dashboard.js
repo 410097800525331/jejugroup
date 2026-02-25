@@ -187,7 +187,13 @@
         
         const activeFilterBtn = document.querySelector('.chart-filter-btn.active');
         const currentRange = activeFilterBtn ? activeFilterBtn.dataset.range : 'day';
-        initOrUpdateChart(currentRange, newState.ui.theme, newState.ui.domain);
+        
+        // Ensure theme UI reacts to store state changes instantly
+        if (typeof updateThemeDOM === 'function') {
+            updateThemeDOM(newState.ui.theme);
+        } else {
+             initOrUpdateChart(currentRange, newState.ui.theme, newState.ui.domain);
+        }
     });
 
     // 6. Chart Logic Implementation
