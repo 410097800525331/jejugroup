@@ -1,0 +1,28 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# ==========================================
+# Redirect Rules (Graceful Migration)
+# ==========================================
+
+# 1. Auth 도메인 구 경로 -> 신 경로 리다이렉트
+[[redirects]]
+  from = "/jejustay/pages/auth/*"
+  to = "/pages/auth/:splat"
+  status = 301
+  force = true
+
+# 2. CS (고객센터) 도메인 구 경로 -> 신 경로 리다이렉트
+[[redirects]]
+  from = "/jejustay/pages/cs/*"
+  to = "/pages/cs/:splat"
+  status = 301
+  force = true
+
+# 3. 마이페이지 도메인 구 경로 -> 신 경로 (존재 시)
+[[redirects]]
+  from = "/jejustay/pages/mypage/*"
+  to = "/pages/mypage/:splat"
+  status = 301
+  force = true

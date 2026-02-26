@@ -40,7 +40,7 @@ async function loadScript(src) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Dynamically determine the base path from the script script
     let basePath = '';
     const scripts = document.getElementsByTagName('script');
@@ -50,6 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
             basePath = src.split('components/layout/hotel_component_loader.js')[0];
             break;
         }
+    }
+
+    try {
+        const routerPath = `${basePath}core/utils/router_binder.js`;
+        const routerModule = await import(routerPath);
+        routerModule.initRouterBinder();
+    } catch (error) {
+        console.warn('Router Binder failed to load:', error);
     }
     
     // Ensure basePath doesn't break if it's empty

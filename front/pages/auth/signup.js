@@ -371,13 +371,14 @@ document.addEventListener('DOMContentLoaded', function() {
             countdownProgress.style.strokeDashoffset = 251.2 - (251.2 * (secondsLeft / 5));
             if (secondsLeft <= 0) {
                 clearInterval(interval);
-                window.location.replace('./login.html');
+                import('../../core/constants/routes.js').then(({ ROUTES }) => {
+                    window.location.replace(ROUTES.AUTH.LOGIN);
+                });
             }
         }, 1000);
 
         document.getElementById('goToLoginBtn').addEventListener('click', () => {
             clearInterval(interval);
-            window.location.replace('./login.html');
         });
     }
 });

@@ -7,13 +7,30 @@
  document.addEventListener('DOMContentLoaded', () => {
     'use strict';
 
+    const routeResolverPromise = import('../../core/utils/path_resolver.js');
+    const redirectByRoute = (routeKey, mode = 'replace') => {
+        routeResolverPromise
+            .then(({ resolveRoute }) => {
+                const targetUrl = resolveRoute(routeKey);
+                if (mode === 'assign') {
+                    window.location.assign(targetUrl);
+                    return;
+                }
+                window.location.replace(targetUrl);
+            })
+            .catch((error) => {
+                console.error('[AdminDashboard] Route resolution failed:', error);
+                window.location.replace(window.location.origin + '/');
+            });
+    };
+
     // 1. Initial State Load
     const state = AdminStore.getState();
     const session = window.AdminSession;
 
     // Security: Guard fallback just in case
     if (!session || !session.role) {
-        window.location.replace('../../index.html');
+        redirectByRoute('HOME');
         return;
     }
 
@@ -129,7 +146,7 @@
         logoutBtn.addEventListener('click', () => {
              // Security Protocol: Destroy session and rotate out
             localStorage.removeItem('userSession');
-            window.location.replace('../../index.html');
+            redirectByRoute('HOME');
         });
     }
 

@@ -52,7 +52,7 @@ export const triggerPassAuth = async () => {
 const SOCIAL_CONFIG = {
   KAKAO_JS_KEY: 'YOUR_KAKAO_JS_KEY', // 카카오 개발자 센터에서 발급받은 JS 키
   NAVER_CLIENT_ID: 'YOUR_NAVER_CLIENT_ID',
-  REDIRECT_URI: window.location.origin + '/jejustay/pages/auth/signup.html'
+  REDIRECT_URI: window.location.origin + '/pages/auth/signup.html'
 };
 
 // Initialize SDKs

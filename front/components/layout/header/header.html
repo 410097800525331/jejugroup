@@ -1,8 +1,8 @@
 <header class="header" id="header">
     <div class="header-container">
         <!-- 로고 -->
-        <a href="{BASE_PATH}pages/hotel/jejuhotel.html" class="logo">
-            <img src="{BASE_PATH}images/logo_jejuhotel.png" alt="JEJU STAY" class="logo-img">
+        <a href="#" class="logo route-link" data-route="SERVICES.STAY.MAIN">
+            <img src="{BASE_PATH}jejustay/images/logo_jejuhotel.png" alt="JEJU STAY" class="logo-img">
         </a>
 
         <!-- 메인 네비게이션 (고급화된 메가 메뉴 구조) -->
@@ -10,7 +10,7 @@
             <ul class="nav-list">
                 <!-- 1. Accommodations -->
                 <li class="nav-item">
-                    <a href="{BASE_PATH}pages/hotel/jejuhotel.html" class="nav-link">
+                    <a href="#" class="nav-link route-link" data-route="SERVICES.STAY.MAIN">
                         <i data-lucide="building-2" class="nav-icon"></i>
                         <span data-lang="navAccommodations">숙소 예약</span>
                     </a>
@@ -19,17 +19,17 @@
                     <div class="mega-dropdown">
                         <!-- Left: Menu List -->
                         <div class="mega-menu-list-container">
-                            <a href="{BASE_PATH}pages/hotel/jejuhotel.html" class="mega-menu-item" data-preview="preview-hotel">
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.STAY.MAIN" data-preview="preview-hotel">
                                 <i data-lucide="hotel" class="mega-menu-icon"></i>
                                 <span>호텔 & 리조트</span>
                             </a>
-                            <a href="{BASE_PATH}pages/stay/jejustay_life.html" class="mega-menu-item"
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.STAY.LIFE"
                                 data-preview="preview-month">
                                 <i data-lucide="calendar" class="mega-menu-icon"></i>
                                 <span>전 세계 한 달 살기</span>
                                 <span class="badge-new">NEW</span>
                             </a>
-                            <a href="{BASE_PATH}pages/stay/private_stay.html" class="mega-menu-item"
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.STAY.PRIVATE"
                                 data-preview="preview-private">
                                 <i data-lucide="home" class="mega-menu-icon"></i>
                                 <span>프라이빗 감성 숙소</span>
@@ -54,18 +54,18 @@
 
                 <!-- 2. Travel -->
                 <li class="nav-item">
-                    <a href="{BASE_PATH}pages/travel/activities.html" class="nav-link">
+                    <a href="#" class="nav-link route-link" data-route="SERVICES.TRAVEL.ACTIVITIES">
                         <i data-lucide="plane" class="nav-icon"></i>
                         <span data-lang="navTravel">여행 상품</span>
                     </a>
                     <div class="mega-dropdown">
                         <div class="mega-menu-list-container">
-                            <a href="{BASE_PATH}pages/travel/activities.html" class="mega-menu-item"
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.TRAVEL.ACTIVITIES"
                                 data-preview="preview-activity">
                                 <i data-lucide="compass" class="mega-menu-icon"></i>
                                 <span>즐길 거리 (액티비티)</span>
                             </a>
-                            <a href="{BASE_PATH}pages/travel/esim.html" class="mega-menu-item" data-preview="preview-esim">
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.TRAVEL.ESIM" data-preview="preview-esim">
                                 <i data-lucide="smartphone" class="mega-menu-icon"></i>
                                 <span>eSIM / 유심</span>
                             </a>
@@ -84,22 +84,22 @@
 
                 <!-- 3. Deals -->
                 <li class="nav-item">
-                    <a href="{BASE_PATH}pages/deals/deals.html" class="nav-link">
+                    <a href="#" class="nav-link route-link" data-route="SERVICES.DEALS.MAIN">
                         <i data-lucide="percent" class="nav-icon"></i>
                         <span data-lang="navDeals">특가 & 혜택</span>
                     </a>
                     <div class="mega-dropdown">
                         <div class="mega-menu-list-container">
-                            <a href="{BASE_PATH}pages/deals/deals.html" class="mega-menu-item" data-preview="preview-promo">
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.DEALS.MAIN" data-preview="preview-promo">
                                 <i data-lucide="gift" class="mega-menu-icon"></i>
                                 <span>이달의 특가 프로모션</span>
                             </a>
-                            <a href="{BASE_PATH}pages/deals/deals_member.html" class="mega-menu-item"
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.DEALS.MEMBER"
                                 data-preview="preview-member">
                                 <i data-lucide="users" class="mega-menu-icon"></i>
                                 <span>회원 전용 혜택</span>
                             </a>
-                            <a href="{BASE_PATH}pages/deals/deals_partner.html" class="mega-menu-item"
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.DEALS.PARTNER"
                                 data-preview="preview-partner">
                                 <i data-lucide="credit-card" class="mega-menu-icon"></i>
                                 <span>제휴 카드 할인</span>
@@ -122,23 +122,23 @@
 
                 <!-- 4. Guide -->
                 <li class="nav-item">
-                    <a href="{BASE_PATH}pages/travel/travel_guide.html" class="nav-link">
+                    <a href="#" class="nav-link route-link" data-route="SERVICES.TRAVEL.GUIDE">
                         <i data-lucide="book-open" class="nav-icon"></i>
                         <span data-lang="navGuide">여행 정보</span>
                     </a>
                     <!-- Mega Dropdown: Guide -->
                     <div class="mega-dropdown">
                         <div class="mega-menu-list-container">
-                            <a href="{BASE_PATH}pages/travel/travel_guide.html" class="mega-menu-item"
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.TRAVEL.GUIDE"
                                 data-preview="preview-guide">
                                 <i data-lucide="map" class="mega-menu-icon"></i>
                                 <span>여행 가이드북</span>
                             </a>
-                            <a href="{BASE_PATH}pages/travel/travel_tips.html" class="mega-menu-item" data-preview="preview-tips">
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.TRAVEL.TIPS" data-preview="preview-tips">
                                 <i data-lucide="lightbulb" class="mega-menu-icon"></i>
                                 <span>국가별 여행 팁</span>
                             </a>
-                            <a href="{BASE_PATH}pages/travel/travel_checklist.html" class="mega-menu-item"
+                            <a href="#" class="mega-menu-item route-link" data-route="SERVICES.TRAVEL.CHECKLIST"
                                 data-preview="preview-checklist">
                                 <i data-lucide="check-circle" class="mega-menu-icon"></i>
                                 <span>여행 준비 체크리스트</span>
@@ -163,20 +163,20 @@
 
         <!-- 우측 유틸리티 -->
         <div class="header-utils">
-            <a href="{BASE_PATH}admin/pages/dashboard.html" class="util-link admin-link" id="headerAdminBtn"
+            <a href="#" class="util-link admin-link route-link" data-route="ADMIN.DASHBOARD" id="headerAdminBtn"
                 style="display: none; color: var(--color-primary);">
                 <i data-lucide="shield-check" class="util-icon"></i>
                 <span>관리자 페이지</span>
             </a>
-            <a href="{BASE_PATH}pages/stay/reservation_check.html" class="util-link">
+            <a href="#" class="util-link route-link" data-route="SERVICES.STAY.RESERVATION_CHECK">
                 <i data-lucide="clipboard-list" class="util-icon"></i>
                 <span data-lang="navResCheck">예약 확인</span>
             </a>
-            <a href="{BASE_PATH}pages/auth/login.html" class="util-link login-btn" id="headerLoginBtn">
+            <a href="#" class="util-link login-btn route-link" data-route="AUTH.LOGIN" id="headerLoginBtn">
                 <i data-lucide="user" class="util-icon"></i>
                 <span data-lang="navLogin">로그인</span>
             </a>
-            <a href="{BASE_PATH}pages/cs/customer_center.html" class="util-link">
+            <a href="#" class="util-link route-link" data-route="CS.CUSTOMER_CENTER">
                 <i data-lucide="headphones" class="util-icon"></i>
                 <span data-lang="navCs">고객센터</span>
             </a>
@@ -191,20 +191,20 @@
     <!-- 모바일 네비게이션 -->
     <div class="mobile-nav" id="mobileNav">
         <ul class="mobile-nav-list">
-            <li><a href="{BASE_PATH}pages/hotel/jejuhotel.html" class="mobile-nav-link active" data-lang="mobileNavHotel">숙소
+            <li><a href="#" class="mobile-nav-link active route-link" data-route="SERVICES.STAY.MAIN" data-lang="mobileNavHotel">숙소
                     예약</a></li>
-            <li><a href="{BASE_PATH}pages/stay/jejustay_life.html" class="mobile-nav-link" data-lang="mobileNavLife">한 달 살기</a>
+            <li><a href="#" class="mobile-nav-link route-link" data-route="SERVICES.STAY.LIFE" data-lang="mobileNavLife">한 달 살기</a>
             </li>
-            <li><a href="{BASE_PATH}pages/travel/activities.html" class="mobile-nav-link" data-lang="mobileNavActivity">즐길 거리</a>
+            <li><a href="#" class="mobile-nav-link route-link" data-route="SERVICES.TRAVEL.ACTIVITIES" data-lang="mobileNavActivity">즐길 거리</a>
             </li>
-            <li><a href="{BASE_PATH}pages/travel/esim.html" class="mobile-nav-link" data-lang="mobileNavEsim">eSIM</a></li>
-            <li><a href="{BASE_PATH}pages/travel/travel_guide.html" class="mobile-nav-link" data-lang="mobileNavGuide">여행 가이드</a>
+            <li><a href="#" class="mobile-nav-link route-link" data-route="SERVICES.TRAVEL.ESIM" data-lang="mobileNavEsim">eSIM</a></li>
+            <li><a href="#" class="mobile-nav-link route-link" data-route="SERVICES.TRAVEL.GUIDE" data-lang="mobileNavGuide">여행 가이드</a>
             </li>
-            <li><a href="{BASE_PATH}pages/travel/travel_tips.html" class="mobile-nav-link" data-lang="mobileNavTips">여행 일정 팁</a>
+            <li><a href="#" class="mobile-nav-link route-link" data-route="SERVICES.TRAVEL.TIPS" data-lang="mobileNavTips">여행 일정 팁</a>
             </li>
-            <li><a href="{BASE_PATH}pages/stay/reservation_check.html" class="mobile-nav-link" data-lang="navResCheck">예약 확인</a>
+            <li><a href="#" class="mobile-nav-link route-link" data-route="SERVICES.STAY.RESERVATION_CHECK" data-lang="navResCheck">예약 확인</a>
             </li>
-            <li><a href="{BASE_PATH}pages/auth/login.html" class="mobile-nav-link" data-lang="navLogin">로그인</a></li>
+            <li><a href="#" class="mobile-nav-link route-link" data-route="AUTH.LOGIN" data-lang="navLogin">로그인</a></li>
         </ul>
     </div>
 </header>

@@ -6,6 +6,23 @@
  document.addEventListener('DOMContentLoaded', () => {
     'use strict';
 
+    const routeResolverPromise = import('../../core/utils/path_resolver.js');
+    const redirectByRoute = (routeKey, mode = 'replace') => {
+        routeResolverPromise
+            .then(({ resolveRoute }) => {
+                const targetUrl = resolveRoute(routeKey);
+                if (mode === 'assign') {
+                    window.location.assign(targetUrl);
+                    return;
+                }
+                window.location.replace(targetUrl);
+            })
+            .catch((error) => {
+                console.error('[AdminReservations] Route resolution failed:', error);
+                window.location.replace(window.location.origin + '/');
+            });
+    };
+
     const session = window.AdminSession;
     if (!session || !session.role) return;
 
@@ -111,7 +128,7 @@
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('userSession');
-            window.location.replace('../../index.html');
+            redirectByRoute('HOME');
         });
     }
 

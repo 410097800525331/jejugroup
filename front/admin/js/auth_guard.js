@@ -7,6 +7,24 @@
  (() => {
     'use strict';
 
+    const routeResolverPromise = import('../../core/utils/path_resolver.js');
+
+    const redirectByRoute = (routeKey, mode = 'replace') => {
+        routeResolverPromise
+            .then(({ resolveRoute }) => {
+                const targetUrl = resolveRoute(routeKey);
+                if (mode === 'assign') {
+                    window.location.assign(targetUrl);
+                    return;
+                }
+                window.location.replace(targetUrl);
+            })
+            .catch((error) => {
+                console.error('[AdminGuard] Route resolution failed:', error);
+                window.location.replace(window.location.origin + '/');
+            });
+    };
+
     // Security Protocol: Anti-flicker UI block to prevent layout leaks
     document.documentElement.style.display = 'none';
 
@@ -32,7 +50,7 @@
     if (!isAuthorized) {
         // Security Protocol: Opaque redirection. No detailed error message.
         // Prevent storing admin page in history on bounce
-        window.location.replace('../../index.html');
+        redirectByRoute('HOME');
         return; // Halt execution immediately
     }
 

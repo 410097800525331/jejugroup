@@ -83,7 +83,7 @@
                             <li><i class="fas fa-check"></i> <span data-lang="hotelFeature2">자연 친화적 설계</span></li>
                             <li><i class="fas fa-check"></i> <span data-lang="hotelFeature3">최고의 서비스</span></li>
                         </ul>
-                        <a href="pages/hotel/jejuhotel.html"><button class="cta-button" data-lang="hotelButton">객실
+                        <a href="#" class="route-link" data-route="SERVICES.STAY.MAIN"><button class="cta-button" data-lang="hotelButton">객실
                                 둘러보기</button></a>
                     </div>
                 </div>
@@ -214,7 +214,7 @@
     </div>
 
     <script src="core/constants/lang_data.js"></script>
-    <script src="pages/hotel/main.js"></script>
+    <script src="jejustay/pages/hotel/main.js"></script>
     <script src="core/constants/city_data.js"></script>
     <script src="components/widget/weather.js"></script>
 
@@ -246,6 +246,7 @@
                     loginBtn.removeAttribute('data-lang');
                     loginBtn.addEventListener('click', (e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         localStorage.removeItem('userSession');
                         window.location.reload();
                     });
@@ -254,8 +255,9 @@
                 // 2. Inject Admin Link if applicable
                 if (sessionData.role && sessionData.role.includes('ADMIN')) {
                     const adminLink = document.createElement('a');
-                    adminLink.href = 'admin/pages/dashboard.html';
-                    adminLink.className = 'util-link';
+                    adminLink.href = '#';
+                    adminLink.setAttribute('data-route', 'ADMIN.DASHBOARD');
+                    adminLink.className = 'util-link route-link';
                     adminLink.style.color = '#FF5000';
                     adminLink.style.fontWeight = 'bold';
                     adminLink.textContent = '관리자 페이지';

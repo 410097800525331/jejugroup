@@ -28,8 +28,10 @@ async function loadComponent(elementId, path, basePath, callback) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Dynamically determine the base path from the script script
+document.addEventListener('DOMContentLoaded', async () => {
+    let initRouterBinder;
+    
+    // 컴포넌트 로더의 위치가 기준이 되도록 basePath 탐색을 수행합니다.
     let basePath = '';
     const scripts = document.getElementsByTagName('script');
     for (let script of scripts) {
@@ -38,6 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
             basePath = src.split('components/layout/component_loader.js')[0];
             break;
         }
+    }
+
+    try {
+        // basePath를 이용하여 현재 페이지 깊이에 상관없이 정확히 core/utils 폴더를 찌르도록 수정
+        const routerPath = basePath + 'core/utils/router_binder.js';
+        const routerModule = await import(routerPath);
+        initRouterBinder = routerModule.initRouterBinder;
+        initRouterBinder(); 
+    } catch (e) {
+        console.warn('Router Binder failed to load:', e);
     }
     
     // Check if the current page needs the main header

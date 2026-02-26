@@ -327,7 +327,10 @@ function initVideoTransitions() {
     isVideoTransitionInitialized = true;
 
     // 호텔 페이지로 이동하는 모든 링크 선택 (버튼 포함)
-    const hotelLinks = document.querySelectorAll('a[href="../hotel/jejuhotel.html"]');
+    const hotelLinks = Array.from(document.querySelectorAll('a[href]')).filter(link => {
+        const href = link.getAttribute('href') || '';
+        return href.includes('hotel/jejuhotel.html');
+    });
     const videoOverlay = document.getElementById('video-overlay');
     const transitionVideo = document.getElementById('transition-video');
 
@@ -342,7 +345,12 @@ function initVideoTransitions() {
                 videoOverlay.classList.add('active');
                 
                 // 비디오 속성 세팅 및 명시적 로드
-                transitionVideo.src = 'assets/takeoff.mp4';
+                const targetHref = link.getAttribute('href') || './jejuhotel.html';
+
+                const transitionVideoSrc = window.location.pathname.includes('/jejustay/pages/')
+                    ? '../../../assets/videos/takeoff.mp4'
+                    : 'assets/videos/takeoff.mp4';
+                transitionVideo.src = transitionVideoSrc;
                 transitionVideo.load();
                 transitionVideo.muted = true;
                 transitionVideo.playsInline = true;
@@ -355,7 +363,7 @@ function initVideoTransitions() {
                 const triggerNavigation = () => {
                     if (!navigationTriggered) {
                         navigationTriggered = true;
-                        window.location.href = './jejuhotel.html';
+                        window.location.href = targetHref;
                     }
                 };
 

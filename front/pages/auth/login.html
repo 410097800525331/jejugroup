@@ -19,7 +19,7 @@
     <div class="login-card">
 
       <div class="login-header">
-        <img src="../../images/logo_jejuGP.png" alt="Jeju Group" class="login-logo">
+        <img src="../../jejustay/images/logo_jejuGP.png" alt="Jeju Group" class="login-logo">
         <p class="login-desc" data-lang="loginDesc">모든 여행을 제주그룹 하나로</p>
       </div>
 
@@ -38,7 +38,8 @@
       </form>
 
       <div class="login-links">
-        <a href="signup.html" data-lang="signup">회원가입</a>
+        <p data-lang="noAccount">계정이 없으신가요? <a href="#" class="route-link" data-route="AUTH.SIGNUP"
+            data-lang="signup">회원가입</a></p>
         <span>|</span>
         <a href="#" data-lang="findIdPw">아이디/비밀번호 찾기</a>
       </div>
@@ -55,7 +56,7 @@
   </button>
 
   <script src="../../core/constants/lang_data.js"></script>
-  <script src="../hotel/main.js"></script>
+  <script src="../../jejustay/pages/hotel/main.js"></script>
   <script src="../../components/layout/component_loader.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -99,11 +100,13 @@
                   // Immutability Doctrine: Create new object for session
                   localStorage.setItem('userSession', JSON.stringify({ ...data.user }));
 
-                  if (data.user && data.user.role === 'ADMIN') {
-                    window.location.replace('../../admin/pages/dashboard.html');
-                  } else {
-                    window.location.replace('./../../index.html');
-                  }
+                  import('../../core/constants/routes.js').then(({ ROUTES }) => {
+                    if (data.user && data.user.role && data.user.role.includes('ADMIN')) {
+                      window.location.replace(ROUTES.ADMIN.DASHBOARD);
+                    } else {
+                      window.location.replace(ROUTES.HOME);
+                    }
+                  });
                 })
                 .catch(err => {
                   console.error('Login Error:', err);

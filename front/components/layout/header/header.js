@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loginBtn.href = '#';
                     loginBtn.addEventListener('click', (e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         localStorage.removeItem('userSession');
                         window.location.reload();
                     });
