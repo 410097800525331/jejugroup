@@ -1,11 +1,29 @@
 import mysql.connector
+import os
+
+def clean_val(v):
+    v = v.strip()
+    if v.startsWith('[') and v.endswith(']'):
+        return v[1:-1]
+    return v
+
+env_vars = {}
+env_path = 'jeju-web/.env.alwaysdata'
+if os.path.exists(env_path):
+    with open(env_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startsWith('#'): continue
+            if '=' in line:
+                k, v = line.split('=', 1)
+                env_vars[k.strip()] = clean_val(v)
 
 try:
     conn = mysql.connector.connect(
-        host="mysql-jejugroup.alwaysdata.net",
-        user="jejugroup",
-        password="shmajo0821!",
-        database="jejugroup_db"
+        host=env_vars.get("ALWAYSDATA_DB_HOST", "mysql-jejugroup.alwaysdata.net"),
+        user=env_vars.get("ALWAYSDATA_DB_USER", "jejugroup"),
+        password=env_vars.get("ALWAYSDATA_DB_PASSWORD"),
+        database=env_vars.get("ALWAYSDATA_DB_NAME", "jejugroup_db")
     )
     cursor = conn.cursor()
 
