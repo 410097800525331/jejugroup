@@ -54,12 +54,26 @@ temp/
 *.sqlite
 *.db
 
-# ===== Secrets / Keys =====
+# ===== Secrets / Keys / Configs =====
 *.keystore
 *.jks
 *.p12
 *.pem
 *.key
+*.cer
+*.crt
+# Secret configs
+secrets/
+.secret
+.env*
+*.env
+auth.json
+credentials.json
+# Editor / OS
+*.log
+*.sqlite3
+.local/
+.config/
 
 # Eclipse project files
 .project
