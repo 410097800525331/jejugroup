@@ -52,7 +52,6 @@ export const triggerPassAuth = async () => {
 const SOCIAL_CONFIG = {
   KAKAO_JS_KEY: 'YOUR_KAKAO_JS_KEY', // 카카오 개발자 센터에서 발급받은 JS 키
   NAVER_CLIENT_ID: 'YOUR_NAVER_CLIENT_ID',
-  REDIRECT_URI: window.location.origin + '/pages/auth/signup.html'
 };
 
 // Initialize SDKs
@@ -104,7 +103,7 @@ export const triggerSocialAuth = async (provider) => {
       // 네이버는 별도 팝업이나 리다이렉트 방식 사용 (SDK v2 기준)
       const naverLogin = new naver.LoginWithNaverId({
         clientId: SOCIAL_CONFIG.NAVER_CLIENT_ID,
-        callbackUrl: SOCIAL_CONFIG.REDIRECT_URI,
+        callbackUrl: new URL('pages/auth/signup.html', window.location.href).href,
         isPopup: true,
         loginButton: { color: "green", type: 3, height: 60 }
       });

@@ -33,8 +33,7 @@ export const ROUTES = deepFreeze({
       MAIN: '/jejustay/pages/hotel/jejuhotel.html',
       HOTEL_LIST: '/jejustay/pages/hotel/hotel-list.html',
       LIFE: '/jejustay/pages/stay/jejustay_life.html',
-      PRIVATE: '/jejustay/pages/stay/private_stay.html',
-      RESERVATION_CHECK: '/jejustay/pages/stay/reservation_check.html'
+      PRIVATE: '/jejustay/pages/stay/private_stay.html'
     },
 
     TRAVEL: {

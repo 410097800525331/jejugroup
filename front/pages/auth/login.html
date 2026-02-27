@@ -100,11 +100,31 @@
                   // Immutability Doctrine: Create new object for session
                   localStorage.setItem('userSession', JSON.stringify({ ...data.user }));
 
-                  import('../../core/constants/routes.js').then(({ ROUTES }) => {
+              import('../../core/constants/routes.js').then(({ ROUTES }) => {
                     if (data.user && data.user.role && data.user.role.includes('ADMIN')) {
-                      window.location.replace(ROUTES.ADMIN.DASHBOARD);
+                      import('../../core/utils/path_resolver.js').then(({ resolveRoute }) => {
+                        const routeKey = 'ADMIN.DASHBOARD';
+                        const targetUrl = resolveRoute(routeKey);
+                        if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
+                          window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(targetUrl, 'login-success');
+                          return;
+                        }
+                        window.location.replace(targetUrl);
+                      }).catch(() => {
+                        window.location.replace(ROUTES.ADMIN.DASHBOARD);
+                      });
                     } else {
-                      window.location.replace(ROUTES.HOME);
+                      import('../../core/utils/path_resolver.js').then(({ resolveRoute }) => {
+                        const routeKey = 'HOME';
+                        const targetUrl = resolveRoute(routeKey);
+                        if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
+                          window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(targetUrl, 'login-success');
+                          return;
+                        }
+                        window.location.replace(targetUrl);
+                      }).catch(() => {
+                        window.location.replace(ROUTES.HOME);
+                      });
                     }
                   });
                 })

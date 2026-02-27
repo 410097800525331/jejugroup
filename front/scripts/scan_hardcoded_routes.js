@@ -73,11 +73,12 @@ function checkFile(filePath, ext) {
             }
 
             // [위반 체크 로직]
-            // 1. HTML 내 <a> 태그 하드코딩 라우팅 감지 (pages/ 포함 또는 .html 종료)
-            const isRoutingViolation = type === 'HTML/href' && (value.endsWith('.html') || value.includes('/pages/'));
+            // 1. HTML 내 <a> 태그 하드코딩 라우팅 감지 (pages/ 포함 또는 .html 종료 혹은 ?/# 파라미터 동반)
+            const cleanedValue = value.split('?')[0].split('#')[0];
+            const isRoutingViolation = type === 'HTML/href' && (cleanedValue.endsWith('.html') || cleanedValue.includes('/pages/'));
             
             // 2. JS 내 하드코딩 라우팅 감지 (location)
-            const isJsRoutingViolation = type === 'JS/location' && (value.endsWith('.html') || value.includes('/pages/'));
+            const isJsRoutingViolation = type === 'JS/location' && (cleanedValue.endsWith('.html') || cleanedValue.includes('/pages/'));
 
             // 3. 상대 경로 뎁스 이탈 (깨진 경로 추적)
             // 현재 작업 범위 내에서 '../../..' 이상의 경로 접근은 의심스러움 또는 

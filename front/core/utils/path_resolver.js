@@ -1,6 +1,8 @@
 ﻿import { ROUTES } from '../constants/routes.js';
 
 const TOKEN_PATTERN = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g;
+const APP_BASE_URL = new URL('../../', import.meta.url);
+const EXTERNAL_URL_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
 
 const getNestedValue = (object, keyPath) => {
   return keyPath.split('.').reduce((acc, key) => {
@@ -39,6 +41,15 @@ const appendQueryString = (url, params, consumedKeys) => {
   return `${url}${url.includes('?') ? '&' : '?'}${queryString}`;
 };
 
+const toAbsolutePath = (pathLike) => {
+  if (EXTERNAL_URL_PATTERN.test(pathLike)) {
+    return pathLike;
+  }
+
+  const normalizedPath = pathLike.startsWith('/') ? pathLike.slice(1) : pathLike;
+  return new URL(normalizedPath, APP_BASE_URL).href;
+};
+
 /**
  * Resolve route key to runtime URL path.
  *
@@ -73,5 +84,6 @@ export const resolveRoute = (routeKey, params = {}) => {
     return encodeURIComponent(String(tokenValue));
   });
 
-  return appendQueryString(resolvedPath, params, consumedKeys);
+  const absolutePath = toAbsolutePath(resolvedPath);
+  return appendQueryString(absolutePath, params, consumedKeys);
 };

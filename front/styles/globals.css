@@ -329,10 +329,10 @@ body {
     height: 100%;
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    /* background-attachment: fixed; - REMOVED: causes severe scroll jank with blur filters */
     z-index: 0;
     backface-visibility: hidden; /* 뒷면 렌더링 방지 */
-    transform: translateZ(0) scale(1.1); /* 3D 변환을 사용하여 GPU 가속 활성화 */
+    transform: translate3d(0, 0, 0) scale(1.1); /* 강제 하드웨어 가속 */
     will-change: transform; /* 변환 예정임을 브라우저에 알림 */
 }
 

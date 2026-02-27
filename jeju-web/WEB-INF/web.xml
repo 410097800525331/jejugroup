@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" 
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          id="WebApp_ID" version="4.0"
          metadata-complete="true">
   <display-name>jeju-web</display-name>
 
-  <!-- CORS 설정은 현재 분리 배포 구조 적용 시 불필요 (톰캣 시작 실패 원인으로 삭제) -->
+  <!-- CORS Filter -->
+  <filter>
+    <filter-name>CorsFilter</filter-name>
+    <filter-class>util.CorsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
-  <!-- 서블릿 직접 등록 (404 에러 방어) -->
+  <!-- Servlet mappings -->
   <servlet>
     <servlet-name>SignupServlet</servlet-name>
     <servlet-class>controller.SignupServlet</servlet-class>

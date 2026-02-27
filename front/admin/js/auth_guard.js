@@ -13,6 +13,10 @@
         routeResolverPromise
             .then(({ resolveRoute }) => {
                 const targetUrl = resolveRoute(routeKey);
+                if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
+                    window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(targetUrl, 'admin-guard', { mode });
+                    return;
+                }
                 if (mode === 'assign') {
                     window.location.assign(targetUrl);
                     return;
@@ -21,7 +25,12 @@
             })
             .catch((error) => {
                 console.error('[AdminGuard] Route resolution failed:', error);
-                window.location.replace(window.location.origin + '/');
+                const target = window.__JEJU_ROUTE_NAVIGATOR__?.homeUrl || new URL('index.html', window.location.href).href;
+                if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
+                    window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(target, 'admin-guard-fallback');
+                } else {
+                    window.location.replace(target);
+                }
             });
     };
 
@@ -45,12 +54,29 @@
     // or let it be null. But to test Admin, user would manually set this in console.
     // e.g., localStorage.setItem('userSession', JSON.stringify({ role: 'SUPER_ADMIN', name: '총괄관리자' }))
 
-    const isAuthorized = sessionData && sessionData.role && sessionData.role.includes('ADMIN');
+    const hasAdminRole = typeof sessionData?.role === 'string'
+        ? sessionData.role === 'ADMIN'
+        : Array.isArray(sessionData?.roles) && sessionData.roles.includes('ADMIN');
 
-    if (!isAuthorized) {
+    // Security Protocol: Strict Role and Malformation Check
+    // Prevent simple string manipulation by requiring a structured object
+    // Also simulate expiry checking
+    const isValidSession = sessionData 
+        && typeof sessionData === 'object'
+        && hasAdminRole
+        && sessionData.exp 
+        && new Date(sessionData.exp) > new Date(); // Ensure token is not expired
+
+    if (!isValidSession) {
         // Security Protocol: Opaque redirection. No detailed error message.
         // Prevent storing admin page in history on bounce
-        redirectByRoute('HOME');
+        try {
+            redirectByRoute('HOME');
+        } catch(e) {
+            // [6] Redirect fallback for environments where router breaks
+            const target = window.__JEJU_ROUTE_NAVIGATOR__?.homeUrl || new URL('index.html', window.location.href).href;
+            window.location.replace(target);
+        }
         return; // Halt execution immediately
     }
 
@@ -66,7 +92,8 @@
         
         // For local simulation, just store in local array imuuttably
         const logs = JSON.parse(localStorage.getItem('adminSysLogs') || '[]');
-        const newLogs = [...logs, { event: 'LOGIN', role: sessionData.role, time: timestamp }];
+        const role = sessionData.role || (Array.isArray(sessionData.roles) ? sessionData.roles.join(',') : 'UNKNOWN');
+        const newLogs = [...logs, { event: 'LOGIN', roles: role, time: timestamp }];
         localStorage.setItem('adminSysLogs', JSON.stringify(newLogs));
     };
 

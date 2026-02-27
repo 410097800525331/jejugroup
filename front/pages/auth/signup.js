@@ -372,7 +372,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (secondsLeft <= 0) {
                 clearInterval(interval);
                 import('../../core/constants/routes.js').then(({ ROUTES }) => {
-                    window.location.replace(ROUTES.AUTH.LOGIN);
+                    import('../../core/utils/path_resolver.js').then(({ resolveRoute }) => {
+                        const targetUrl = resolveRoute('AUTH.LOGIN');
+                        if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
+                            window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(targetUrl, 'signup-success');
+                            return;
+                        }
+                        window.location.replace(targetUrl);
+                    }).catch(() => {
+                        window.location.replace(ROUTES.AUTH.LOGIN);
+                    });
                 });
             }
         }, 1000);

@@ -20,7 +20,12 @@
             })
             .catch((error) => {
                 console.error('[AdminDashboard] Route resolution failed:', error);
-                window.location.replace(window.location.origin + '/');
+                const fallback = window.__JEJU_ROUTE_NAVIGATOR__?.homeUrl || new URL('index.html', window.location.href).href;
+                if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
+                    window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(fallback, 'admin-route-fallback');
+                    return;
+                }
+                window.location.replace(fallback);
             });
     };
 

@@ -31,6 +31,12 @@ const navigateToRoute = (element) => {
     const params = parseRouteParams(element);
     const targetUrl = resolveRoute(routeKey, params);
     const mode = element.getAttribute('data-route-mode') || 'assign';
+    const safeNavigator = window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate;
+
+    if (safeNavigator) {
+      safeNavigator(targetUrl, 'router-binder', { mode });
+      return;
+    }
 
     if (mode === 'replace') {
       window.location.replace(targetUrl);
@@ -115,6 +121,14 @@ export const initRouterBinder = () => {
   document.body.addEventListener('click', (event) => {
     const routeElement = event.target.closest('[data-route]');
     if (!routeElement) {
+      return;
+    }
+
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    if (routeElement.hasAttribute('data-route-animated-nav')) {
       return;
     }
 

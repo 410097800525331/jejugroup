@@ -1,0 +1,219 @@
+.res-drawer-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 15, 18, 0.6);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.res-drawer-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Premium Centered Modal */
+.res-drawer-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 28px;
+    z-index: 9999;
+    transform: translate(-50%, -40%) scale(0.95);
+    transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+    will-change: transform, opacity;
+    box-shadow: 
+        0 24px 48px rgba(0, 0, 0, 0.12),
+        0 8px 16px rgba(0, 0, 0, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.res-drawer-panel.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+/* Close Button (Absolute Top Right) */
+.res-drawer-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.4);
+    font-size: 20px;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 10;
+}
+
+.res-drawer-close:hover {
+    background: #FF5000;
+    color: #fff;
+    border-color: #FF5000;
+    transform: rotate(90deg) scale(1.1);
+}
+
+/* Visual Header Area */
+.res-drawer-visual {
+    position: relative;
+    padding: 60px 40px 40px;
+    /* 제주도 오름/비행기 감성의 메쉬 그라디언트 + 은은한 이미지 */
+    background: linear-gradient(135deg, rgba(255,80,0,0.9) 0%, rgba(255,140,0,0.85) 100%), 
+                url('https://images.unsplash.com/photo-1618773928121-c32242e63f39') center/cover no-repeat;
+    color: white;
+    text-align: center;
+}
+
+.res-drawer-visual::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(to top, #ffffff, transparent);
+}
+
+.res-drawer-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0 0 12px 0;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.res-drawer-desc {
+    color: rgba(255,255,255,0.9);
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.2px;
+    margin: 0;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* Body Area */
+.res-drawer-body {
+    padding: 10px 40px 40px;
+}
+
+.res-drawer-form .input-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Floating Label & Minimalist Input */
+.res-drawer-form input {
+    width: 100%;
+    padding: 18px 20px;
+    background: #f8f8fa;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    font-size: 15px;
+    color: #111;
+    outline: none;
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.res-drawer-form input::placeholder {
+    color: #9999a1;
+    transition: opacity 0.3s;
+}
+
+.res-drawer-form input:focus::placeholder {
+    opacity: 0;
+}
+
+.res-drawer-form input:focus {
+    background: #ffffff;
+    border-color: #FF5000;
+    box-shadow: 0 8px 20px rgba(255, 80, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Submit Button: Premium Orange */
+.res-drawer-btn {
+    width: 100%;
+    padding: 20px;
+    background: #FF5000;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: 0 4px 12px rgba(255, 80, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.res-drawer-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+
+.res-drawer-btn:hover {
+    background: #e64500;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(255, 80, 0, 0.4);
+}
+
+.res-drawer-btn:hover::after {
+    left: 150%;
+}
+
+.res-drawer-footer {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 14px;
+    color: #71717a;
+}
+
+.res-drawer-footer a {
+    color: #FF5000;
+    text-decoration: none;
+    font-weight: 800;
+    margin-left: 6px;
+    transition: color 0.3s;
+}
+
+.res-drawer-footer a:hover {
+    color: #cc4000;
+    text-decoration: underline;
+}
