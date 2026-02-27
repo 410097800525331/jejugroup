@@ -1,0 +1,141 @@
+@charset 'utf-8';
+
+/* login */
+.input_group {
+  margin-top: 20px;
+}
+.input_group label {
+  display: block;
+  margin-bottom: 6px;
+}
+.input_group input {
+  width: 100%;
+  height: 46px;
+  padding: 0 12px;
+  border: 1px solid var(--main-bg);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.input_group input.error {
+  border-color: var(--main-color);
+}
+.error_msg {
+  display: none;
+  margin-top: 8px;
+  color: var(--main-color);
+}
+.login_options {
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+.quick_login {
+  padding-top: 28px;
+  text-align: center;
+  border-top: 1px solid var(--main-bg);
+}
+.sns_login {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.sns_btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 46px;
+  border-radius: 8px;
+  border: 1px solid var(--main-bg);
+}
+.sns_btn.kakao {
+  background: #fee500;
+}
+.sns_btn.naver {
+  background: #03c75a;
+  color: #fff;
+}
+.sns_btn.apple {
+  background: #000;
+  color: #fff;
+}
+.simple_login {
+  margin-top: 12px;
+}
+.simple_login button {
+  width: 100%;
+  height: 46px;
+  border-radius: 8px;
+  border: 1px solid var(--gray_300);
+  background: #f3f3f3;
+}
+.guest_login {
+  margin-top: 20px;
+  text-align: center;
+}
+@media (max-width: 576px) {
+  .login_wrap {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+    padding: 24px;
+  }
+}
+
+/* join */
+.user_wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+.user_box {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px 32px;
+  border-radius: 12px;
+}
+.user_form {
+  margin-top: 30px;
+}
+.input_group {
+  margin-bottom: 20px;
+}
+.input_group label {
+  display: block;
+  text-align: left;
+  margin: 20px 6px 6px;
+  font-size: 1.2rem;
+}
+.input_group input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 6px;
+  font-size: 1.4rem;
+  border: 1px solid var(--main-bg);
+}
+.input_group input:focus {
+  border-color: var(--main-color);
+}
+.login_option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.3rem;
+  margin-bottom: 24px;
+}
+.agree_box label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .user_box {
+    padding: 32px 24px;
+  }
+}

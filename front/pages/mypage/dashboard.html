@@ -3,11 +3,35 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>MyPage Dashboard Placeholder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang="pageTitle">제주그룹 통합 마이페이지</title>
+
+    <!-- 공통 GNB, Footer 스타일 (제주그룹 메인 껄로 가져옴) -->
+    <link rel="stylesheet" href="../../styles/globals.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-<body>
-    <h1>마이페이지 대시보드 준비 중입니다.</h1>
+<body class="scroll-normal">
+
+    <!-- 헤더 플레이스홀더 -->
+    <div id="main-header-placeholder"></div>
+
+    <!-- [핵심] 마이페이지 대시보드 코어 위젯이 렌더링될 빈 껍데기 -->
+    <main id="mypage-dashboard-root"></main>
+
+    <!-- 푸터 플레이스홀더 -->
+    <div id="main-footer-placeholder"></div>
+
+    <!-- 언어/다국어/라우팅 설정 로더 (본 메인 것들) -->
+    <script src="../../core/constants/lang_data.js"></script>
+    <script src="../../core/constants/routes.js"></script>
+
+    <!-- 공통 레이아웃 주입기 -->
+    <script src="../../components/layout/component_loader.js"></script>
+
+    <!-- [핵심] 마이페이지 코어 대시보드 로더 (Type Module 필수) -->
+    <script type="module" src="../../core/components/mypage/dashboard_loader.js"></script>
+
 </body>
 
 </html>

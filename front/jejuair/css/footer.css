@@ -1,0 +1,95 @@
+@charset "utf-8";
+
+#footer_wrap {
+  background-color: var(--main-bg);
+  padding: 50px 0 40px;
+}
+/* footer_top */
+.footer_top {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 60px;
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #d0d0d0;
+}
+.footer_link h4 {
+  margin-bottom: 20px;
+  color: var(--text-mian);
+}
+.footer_link ul li {
+  margin-bottom: 12px;
+}
+.footer_link ul li a {
+  font-size: 1.4rem;
+  transition: color 0.2s;
+}
+.footer_link ul li a:hover {
+  color: var(--main-color);
+  text-decoration: underline;
+}
+/* footer_bottom */
+.footer_bottom {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+.company_info h3 {
+  margin-bottom: 20px;
+  color: var(--text-mian);
+}
+.company_details {
+  line-height: 1.8;
+}
+.copyright {
+  margin-top: 20px;
+}
+/* link container */
+.link_container {
+  text-align: right;
+}
+.sns_link img {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  margin: 0 8px;
+}
+.qr_link {
+  display: flex;
+  align-items: flex-end;
+}
+.qr_link img {
+  width: 80px; height: 80px;
+  margin: 60px 0 0 20px;
+}
+@media (max-width:1024px){
+#footer_wrap{padding:40px 0 30px}
+.footer_top{grid-template-columns:repeat(2,1fr);gap:40px}
+.footer_link h4{margin-bottom:0;font-size:1.6rem;cursor:pointer;position:relative;padding:10px 0}
+.footer_link h4::after{content:'+';position:absolute;right:0;top:10px}
+.footer_link.open h4::after{content:'-'}
+.footer_link ul{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.footer_link.open ul{max-height:600px;margin-top:15px}
+.footer_link ul li a{font-size:1.4rem}
+.footer_bottom{flex-direction:column;gap:30px}
+.link_container{text-align:left}
+.qr_link{align-items:center}
+.qr_link img{margin:10px 20px 0 0}
+.company_info h3{font-size:1.8rem}
+.company_details{font-size:1.4rem}
+.copyright{font-size:1.3rem}
+.qr_link{display:none}
+}
+@media (max-width:768px){
+.footer_top{grid-template-columns:1fr;gap:25px}
+.footer_link h4{font-size:1.5rem}
+.footer_link ul li a{font-size:1.3rem}
+.sns_link img{width:26px;height:26px;margin:0 6px 0 0}
+.company_info h3{font-size:1.6rem}
+.company_details{font-size:1.3rem}
+.copyright{font-size:1.2rem}
+}
+@media (max-width:380px){
+.footer_link h4{font-size:1.4rem}
+.footer_link ul li a{font-size:1.2rem}
+.company_details{font-size:1.2rem;line-height:1.6}
+}

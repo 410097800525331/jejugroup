@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <base href="../../">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/notic_service.css">
+</head>
+
+<body>
+  <header id="header_wrap"></header>
+  <div class="ticket"></div>
+  <section class="customer_wrap">
+    <div class="inner">
+      <h1>고객센터</h1>
+      <p>무엇을 도와드릴까요?</p>
+      <ul class="customer_quick">
+        <li><a href="#faq">자주 묻는 질문</a></li>
+        <li><a href="#own">1:1 문의</a></li>
+        <li><a href="#">예약 조회</a></li>
+        <li><a href="/jejuair/pages/baggage/preorderedBaggage.html">수하물 안내</a></li>
+      </ul>
+      <!-- FAQ -->
+      <div id="faq" class="faq_section">
+        <h2>자주 묻는 질문</h2>
+        <ul class="faq_list">
+          <li class="faq_item">
+            <div class="faq_question">
+              항공권 취소 및 환불은 어떻게 하나요?
+            </div>
+            <p class="faq_answer">
+              항공권 취소 및 환불은 예약 조회 메뉴에서 가능하며,
+              구매하신 운임 규정에 따라 수수료가 부과될 수 있습니다.
+            </p>
+          </li>
+          <li class="faq_item">
+            <div class="faq_question">
+              수하물은 몇 kg까지 무료인가요?
+            </div>
+            <p class="faq_answer">
+              무료 수하물 허용량은 노선 및 운임에 따라 상이하며,
+              사전 구매 시 할인 혜택을 받을 수 있습니다.
+            </p>
+          </li>
+          <li class="faq_item">
+            <div class="faq_question">
+              탑승 수속은 언제까지 해야 하나요?
+            </div>
+            <p class="faq_answer">
+              국내선은 출발 30분 전, 국제선은 출발 50분 전까지 완료해 주세요.
+            </p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="inquiry_section">
+        <h2>문의 유형별 안내</h2>
+        <ul class="inquiry_list">
+          <li>
+            <strong>예약 / 결제</strong>
+            <p>항공권 예약, 변경, 결제 관련 문의</p>
+          </li>
+          <li>
+            <strong>수하물</strong>
+            <p>위탁/기내 수하물 규정 및 추가 구매</p>
+          </li>
+          <li>
+            <strong>회원 / 포인트</strong>
+            <p>로그인, 포인트 적립 및 사용</p>
+          </li>
+          <li>
+            <strong>기타 문의</strong>
+            <p>서비스 불편, 제휴 혜택 관련</p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="customer_info">
+        <a href="#"><img src="assets/img/webchat_ko.gif" alt="하이재코">하이재코 문의</a>
+        <a href="#" id="own"><img src="assets/img/btn_chat_pc.gif" alt="1:1채팅 문의">1:1채팅 문의</a>
+      </div>
+    </div>
+  </section>
+  <script>
+    document.querySelectorAll('.faq_question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer = btn.nextElementSibling;
+        const isOpen = answer.style.display === 'block';
+
+        document.querySelectorAll('.faq_answer').forEach(a => {
+          a.style.display = 'none';
+        });
+
+        answer.style.display = isOpen ? 'none' : 'block';
+      });
+    });
+  </script>
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/ticket.js"></script>
+</body>
+
+</html>

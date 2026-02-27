@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <base href="../../">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/route.css">
+</head>
+
+<body>
+  <!-- ##### header ##### -->
+  <header id="header_wrap"></header>
+  <div class="ticket"></div>
+
+  <section class="route">
+    <div class="inner2">
+      <div>
+        <h1>인기 노선</h1>
+        <p>지금 가장 많이 선택되는 여행지를 확인해 보세요.</p>
+      </div>
+      <ul class="region_tabs">
+        <li class="active" data-region="domestic"><p>국내선</p></li>
+        <li data-region="asia_se"><p>동남아</p></li>
+        <li data-region="asia_ne"><p>동북아</p></li>
+        <li data-region="europe"><p>유럽</p></li>
+        <li data-region="america"><p>미주</p></li>
+        <li data-region="oceania"><p>대양주</p></li>
+      </ul>
+      <div class="route_grid" id="route_grid"></div>
+      <p class="warning">
+        * 유류할증료와 세금이 포함된 예상 최저가이며, 운임은 변동될 수 있습니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- ##### footer ##### -->
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/ticket.js"></script>
+  <script src="js/route.js"></script>
+</body>
+
+</html>

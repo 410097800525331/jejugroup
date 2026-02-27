@@ -333,17 +333,23 @@ const isVideoTransitionEligibleLink = (link) => {
         return false;
     }
 
-    if (route === 'SERVICES.STAY.MAIN') {
+    if (route === 'SERVICES.STAY.MAIN' || route === 'SERVICES.AIR.MAIN') {
         return true;
     }
 
-    return href.includes('hotel/jejuhotel.html');
+    return href.includes('hotel/jejuhotel.html') || href.includes('jejuair/index.html');
 };
 
 const resolveVideoTransitionTarget = (link) => {
+    const route = link.getAttribute('data-route') || '';
     const routeHref = link.getAttribute('href') || '';
+    
     if (routeHref && routeHref !== '#') {
         return routeHref;
+    }
+
+    if (route === 'SERVICES.AIR.MAIN') {
+        return 'jejuair/index.html';
     }
 
     return 'jejustay/pages/hotel/jejuhotel.html';

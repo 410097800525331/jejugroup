@@ -1,0 +1,315 @@
+/* core/styles/mypage.css */
+/* 제주그룹 통합 마이페이지 전역 디자인 특화 (Zero Monolith Style) */
+
+:root {
+  /* 글로벌 디자인 토큰 */
+  --jeju-orange: #ff5000;
+  --jeju-dark: #1a1a1a;
+  --jeju-light-gray: #f5f5f7;
+  --jeju-border: #e2e2e2;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  
+  /* 헤더/푸터 간섭 회피용 오프셋: 각 계열사 레이아웃에서 덮어씌움 */
+  --header-offset: 80px; 
+  --footer-offset: 0px;
+}
+
+#mypage-dashboard-root {
+  font-family: 'Pretendard', 'Inter', sans-serif;
+  color: var(--jeju-dark);
+  background-color: var(--jeju-light-gray);
+  
+  /* 헤더, 푸터 침범 방지 동적 여백 */
+  min-height: calc(100vh - var(--header-offset) - var(--footer-offset));
+  padding-top: calc(var(--header-offset) + 40px);
+  padding-bottom: 60px;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.mypage-container {
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* 1. 프로필 카드 위젯 (Glassmorphism & Stagger Animation) */
+.profile-card {
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+  
+  opacity: 0;
+  transform: translateY(20px);
+  animation: mypageFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #eee;
+  margin-right: 24px;
+  border: 2px solid white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.profile-name span {
+  font-weight: 400;
+  font-size: 20px;
+  color: #666;
+}
+
+.tier-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 20px;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.profile-meta {
+  display: flex;
+  gap: 24px;
+  color: #666;
+  font-size: 15px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-item strong {
+  color: var(--jeju-orange);
+  font-weight: 700;
+}
+
+/* 2. 여정 타임라인 위젯 (Journey Timeline) */
+.journey-section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  
+  opacity: 0;
+  transform: translateY(20px);
+  animation: mypageFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+.journey-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.journey-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  opacity: 0;
+  transform: translateY(20px);
+  animation: mypageFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.journey-card:nth-child(1) { animation-delay: 0.2s; }
+.journey-card:nth-child(2) { animation-delay: 0.3s; }
+.journey-card:nth-child(3) { animation-delay: 0.4s; }
+
+.journey-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+}
+
+.journey-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--jeju-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.journey-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.journey-date {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-upcoming {
+  background-color: rgba(255,80,0,0.1);
+  color: var(--jeju-orange);
+}
+
+.status-completed {
+  background-color: #f0f0f0;
+  color: #888;
+}
+
+/* 타임라인 노드 */
+.journey-body {
+  padding: 24px;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 16px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 20px;
+  left: 0;
+  width: 2px;
+  background-color: var(--jeju-border);
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 24px;
+  padding-bottom: 24px;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+/* 타임라인 아이콘 닷 */
+.timeline-dot {
+  position: absolute;
+  left: -20px;
+  top: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 2px solid var(--jeju-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  z-index: 2;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.timeline-item.active .timeline-dot {
+  border-color: var(--jeju-orange);
+  color: var(--jeju-orange);
+}
+
+.timeline-content {
+  background: var(--jeju-light-gray);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.tl-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.tl-provider {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.tl-status {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--jeju-orange);
+}
+
+.tl-main {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.tl-desc {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 로딩 & 에러 위젯 */
+.mypage-loading, .mypage-error {
+  width: 100%;
+  text-align: center;
+  padding: 60px 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.mypage-error {
+  color: #d32f2f;
+}
+
+@keyframes mypageFadeUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+  
+  .profile-avatar {
+    margin: 0 0 16px 0;
+  }
+  
+  .profile-meta {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

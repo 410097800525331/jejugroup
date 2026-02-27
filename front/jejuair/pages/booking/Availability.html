@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <base href="../../">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/Availability.css">
+</head>
+
+<body>
+  <header id="header_wrap"></header>
+
+  <section class="reservation_wrap">
+    <div class="inner2">
+      <!-- 탭 -->
+      <div class="reservation_tabs">
+        <div class="reservation_tab active" data-tab="booking">항공권 예매</div>
+        <div class="reservation_tab" data-tab="reserve">예약 조회</div>
+        <div class="reservation_tab" data-tab="flight">운항 조회</div>
+      </div>
+      <!-- ================= 항공권 예매 ================= -->
+      <div class="reservation_content active" id="booking">
+        <div class="trip_type booking_trip_type">
+          <button class="active" data-type="round">왕복</button>
+          <button data-type="oneway">편도</button>
+          <button data-type="multi">다구간</button>
+        </div>
+        <!-- 왕복 / 편도 -->
+        <div class="trip_form trip_round active">
+          <div class="form_row">
+            <div class="form_group">
+              <label>출발지</label>
+              <input readonly placeholder="선택">
+              <div class="dropdown">
+                <ul>
+                  <li>서울(인천)</li>
+                  <li>서울(김포)</li>
+                  <li>부산</li>
+                  <li>제주</li>
+                  <li>광주</li>
+                  <li>청주</li>
+                  <li>대구</li>
+                </ul>
+              </div>
+            </div>
+            <div class="swap_icon">
+              <span class="swap_symbol">↔</span>
+            </div>
+            <div class="form_group">
+              <label>도착지</label>
+              <input readonly placeholder="선택">
+              <div class="dropdown">
+                <ul>
+                  <li>대한민국</li>
+                  <li>일본</li>
+                  <li>동북아시아</li>
+                  <li>베트남</li>
+                  <li>필리핀</li>
+                  <li>인도네시아</li>
+                  <li>싱가포르</li>
+                  <li>태국/라오스</li>
+                  <li>말레이시아</li>
+                  <li>사이판</li>
+                  <li>몽골</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="form_row">
+            <div class="form_group">
+              <label>탑승일</label>
+              <input class="date_input" readonly placeholder="탑승일 선택">
+            </div>
+            <div class="form_group">
+              <label>탑승객</label>
+              <input readonly placeholder="성인 1">
+              <div class="dropdown">
+                <div class="passenger_row">
+                  <span>성인</span>
+                  <div class="counter">
+                    <button>-</button>
+                    <span>1</span>
+                    <button>+</button>
+                  </div>
+                </div>
+                <div class="passenger_row">
+                  <span>소아</span>
+                  <div class="counter">
+                    <button>-</button>
+                    <span>0</span>
+                    <button>+</button>
+                  </div>
+                </div>
+                <div class="passenger_row">
+                  <span>유아</span>
+                  <div class="counter">
+                    <button>-</button>
+                    <span>0</span>
+                    <button>+</button>
+                  </div>
+                </div>
+                <button class="passenger_apply_btn">적용</button>
+              </div>
+            </div>
+          </div>
+          <!-- 결제/할인 -->
+          <div class="payment_section">
+            <label>결제 방법</label>
+            <div class="payment_options">
+              <label><input type="radio" name="pay" checked> 일반</label>
+              <label><input type="radio" name="pay"> 포인트</label>
+              <label><input type="radio" name="pay"> 기프티켓</label>
+            </div>
+          </div>
+          <div class="discount_section">
+            <label class="form_group">할인 방법</label>
+            <input type="text" placeholder="프로모션 코드를 입력해주세요!">
+            <button class="coupon_btn">운임 할인 쿠폰 ></button>
+          </div>
+          <button class="search_btn">항공권 검색</button>
+        </div>
+        <!-- 다구간 -->
+        <div class="trip_form trip_multi">
+          <div class="form_row">
+            <div class="form_group">
+              <label>출발지 (1구간)</label>
+              <input readonly placeholder="선택">
+              <div class="dropdown">
+                <ul>
+                  <li>서울(인천)</li>
+                  <li>서울(김포)</li>
+                  <li>부산</li>
+                  <li>제주</li>
+                  <li>광주</li>
+                  <li>청주</li>
+                  <li>대구</li>
+                </ul>
+              </div>
+            </div>
+            <div class="form_group">
+              <label>도착지 (1구간)</label>
+              <input readonly placeholder="선택">
+              <div class="dropdown">
+                <ul>
+                  <li>대한민국</li>
+                  <li>일본</li>
+                  <li>동북아시아</li>
+                  <li>베트남</li>
+                  <li>필리핀</li>
+                  <li>인도네시아</li>
+                  <li>싱가포르</li>
+                  <li>태국/라오스</li>
+                  <li>말레이시아</li>
+                  <li>사이판</li>
+                  <li>몽골</li>
+                </ul>
+              </div>
+            </div>
+            <div class="form_group">
+              <label>탑승일 (1구간)</label>
+              <input class="date_input" readonly placeholder="탑승일 선택">
+            </div>
+          </div>
+          <div class="form_row">
+            <div class="form_group">
+              <label>출발지 (2구간)</label>
+              <input readonly placeholder="선택">
+              <div class="dropdown">
+                <ul>
+                  <li>서울(인천)</li>
+                  <li>서울(김포)</li>
+                  <li>부산</li>
+                  <li>제주</li>
+                  <li>광주</li>
+                  <li>청주</li>
+                  <li>대구</li>
+                </ul>
+              </div>
+            </div>
+            <div class="form_group">
+              <label>도착지 (2구간)</label>
+              <input readonly placeholder="선택">
+              <div class="dropdown">
+                <ul>
+                  <li>대한민국</li>
+                  <li>일본</li>
+                  <li>동북아시아</li>
+                  <li>베트남</li>
+                  <li>필리핀</li>
+                  <li>인도네시아</li>
+                  <li>싱가포르</li>
+                  <li>태국/라오스</li>
+                  <li>말레이시아</li>
+                  <li>사이판</li>
+                  <li>몽골</li>
+                </ul>
+              </div>
+            </div>
+            <div class="form_group">
+              <label>탑승일 (2구간)</label>
+              <input class="date_input" readonly placeholder="탑승일 선택">
+            </div>
+          </div>
+          <button class="search_btn">항공권 검색</button>
+        </div>
+      </div>
+      <!-- ================= 예약 조회 ================= -->
+      <div class="reservation_content" id="reserve">
+        <div class="form_row">
+          <div class="form_group">
+            <label>예약번호</label>
+            <input placeholder="예약번호">
+          </div>
+        </div>
+        <div class="form_row">
+          <div class="form_group">
+            <label>탑승일</label>
+            <input class="date_input" readonly placeholder="탑승일 선택">
+          </div>
+        </div>
+        <div class="form_row">
+          <div class="form_group">
+            <label>성 (Last Name)</label><input>
+          </div>
+          <div class="form_group">
+            <label>이름 (First Name)</label><input>
+          </div>
+        </div>
+        <ul class="info_list">
+          <li>- 여행사, 공항, 비회원 예약도 조회 가능합니다.</li>
+          <li>- 국제선은 영문명을 입력해주세요.</li>
+        </ul>
+        <button class="search_btn">예약 조회</button>
+      </div>
+      <!-- ================= 운항 조회 ================= -->
+      <!-- ================= 운항 조회 ================= -->
+      <div class="reservation_content" id="flight">
+        <div class="form_row">
+          <div class="form_group">
+            <label>출발지</label>
+            <input readonly placeholder="선택">
+            <div class="dropdown">
+              <ul>
+                <li>서울(인천)</li>
+                <li>서울(김포)</li>
+                <li>부산</li>
+                <li>제주</li>
+                <li>광주</li>
+                <li>청주</li>
+                <li>대구</li>
+              </ul>
+            </div>
+          </div>
+          <div class="form_group">
+            <label>도착지</label>
+            <input readonly placeholder="선택">
+            <div class="dropdown">
+              <ul>
+                <li>대한민국</li>
+                <li>일본</li>
+                <li>동북아시아</li>
+                <li>베트남</li>
+                <li>필리핀</li>
+                <li>인도네시아</li>
+                <li>싱가포르</li>
+                <li>태국/라오스</li>
+                <li>말레이시아</li>
+                <li>사이판</li>
+                <li>몽골</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="form_row">
+          <div class="form_group">
+            <label>탑승일</label>
+            <input class="date_input" readonly placeholder="탑승일 선택">
+          </div>
+        </div>
+        <div class="payment_options">
+          <label><input type="radio" name="type" checked> 왕복</label>
+          <label><input type="radio" name="type"> 편도</label>
+        </div>
+        <button class="search_btn">조회</button>
+      </div>
+      <div class="calendar_layer">
+        <div class="calendar_dim"></div>
+        <div class="calendar_box">
+          <header class="calendar_header">
+            <button class="cal_prev">‹</button>
+            <div class="cal_title">
+              <span class="month_left"></span>
+              <span class="month_right"></span>
+            </div>
+            <button class="cal_next">›</button>
+          </header>
+          <div class="calendar_body">
+            <div class="calendar_month" data-pos="left"></div>
+            <div class="calendar_month" data-pos="right"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footer_wrap"></footer>
+  <script>
+    /* ================= 탭 전환 ================= */
+    const tabs = document.querySelectorAll('.reservation_tab');
+    const contents = document.querySelectorAll('.reservation_content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    /* ================= 드롭다운 기본 ================= */
+    document.querySelectorAll('.form_group input[readonly]').forEach(input => {
+      input.addEventListener('click', e => {
+        e.stopPropagation();
+        const drop = input.nextElementSibling;
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+        if (drop) drop.classList.add('active');
+      });
+    });
+
+    /* dropdown 내부 클릭 시 닫히지 않게 */
+    document.querySelectorAll('.dropdown').forEach(drop => {
+      drop.addEventListener('click', e => {
+        e.stopPropagation();
+      });
+    });
+
+    /* 출발지 / 도착지 선택 */
+    document.querySelectorAll('.dropdown li').forEach(li => {
+      li.addEventListener('click', e => {
+        const group = li.closest('.form_group');
+        const input = group.querySelector('input');
+        input.value = li.textContent;
+        group.querySelector('.dropdown').classList.remove('active');
+      });
+    });
+
+    /* 바깥 클릭 시 dropdown 닫기 */
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+    });
+
+    /* ================= 출발지 / 도착지 스왑 ================= */
+    const swapBtn = document.querySelector('.swap_icon');
+    if (swapBtn) {
+      swapBtn.addEventListener('click', () => {
+        const inputs = document.querySelectorAll('.trip_round .form_row:first-child .form_group input');
+        if (inputs.length === 2) {
+          const temp = inputs[0].value;
+          inputs[0].value = inputs[1].value;
+          inputs[1].value = temp;
+        }
+      });
+    }
+
+    /* ================= 왕복 / 편도 / 다구간 ================= */
+    const booking = document.querySelector('#booking');
+    const tripBtns = booking.querySelectorAll('.booking_trip_type button');
+    const roundForm = booking.querySelector('.trip_round');
+    const multiForm = booking.querySelector('.trip_multi');
+    const swapSymbol = booking.querySelector('.swap_symbol');
+
+    tripBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tripBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        roundForm.classList.remove('active');
+        multiForm.classList.remove('active');
+
+        if (btn.dataset.type === 'round') {
+          roundForm.classList.add('active');
+          swapSymbol.textContent = '↔';
+        }
+
+        if (btn.dataset.type === 'oneway') {
+          roundForm.classList.add('active');
+          swapSymbol.textContent = '→';
+        }
+
+        if (btn.dataset.type === 'multi') {
+          multiForm.classList.add('active');
+        }
+      });
+    });
+
+    const tripTypeBtns = document.querySelectorAll('.booking_trip_type button');
+    const returnDate = document.querySelector('.return_date');
+
+    tripTypeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!returnDate) return;
+        returnDate.style.display = btn.dataset.type === 'round' ? 'block' : 'none';
+      });
+    });
+
+    /* ================= 날짜 최소값 설정 ================= */
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(date => {
+      date.min = today;
+    });
+
+    /* ================= 탑승객 선택 ================= */
+    const passengerGroup = document.querySelector(
+      '.form_group label[textContent], .form_group'
+    );
+
+    document.querySelectorAll('.form_group').forEach(group => {
+      const label = group.querySelector('label')?.textContent;
+      if (label !== '탑승객') return;
+
+      const input = group.querySelector('input[readonly]');
+      const dropdown = group.querySelector('.dropdown');
+      const rows = dropdown.querySelectorAll('.passenger_row');
+      const applyBtn = dropdown.querySelector('.passenger_apply_btn');
+
+      /* input 클릭 → dropdown 열기 */
+      input.addEventListener('click', e => {
+        e.stopPropagation();
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+        dropdown.classList.add('active');
+      });
+
+      /* dropdown 내부 클릭 시 닫히지 않음 */
+      dropdown.addEventListener('click', e => {
+        e.stopPropagation();
+      });
+
+      /* + / - 버튼 */
+      rows.forEach(row => {
+        const type = row.querySelector('span').textContent;
+        const minus = row.querySelector('.counter button:first-child');
+        const plus = row.querySelector('.counter button:last-child');
+        const countEl = row.querySelector('.counter span');
+
+        minus.addEventListener('click', e => {
+          e.stopPropagation();
+          let count = Number(countEl.textContent);
+
+          if (type === '성인' && count <= 1) return;
+          if (count <= 0) return;
+
+          countEl.textContent = count - 1;
+        });
+
+        plus.addEventListener('click', e => {
+          e.stopPropagation();
+
+          const total = [...rows].reduce((sum, r) => {
+            return sum + Number(r.querySelector('.counter span').textContent);
+          }, 0);
+
+          if (total >= 9) {
+            alert('탑승객은 최대 9명까지 선택할 수 있습니다.');
+            return;
+          }
+
+          if (type === '유아') {
+            const adultRow = [...rows].find(
+              r => r.querySelector('span').textContent === '성인'
+            );
+            const adultCount = Number(
+              adultRow.querySelector('.counter span').textContent
+            );
+
+            if (Number(countEl.textContent) >= adultCount) {
+              alert('유아는 성인 1명당 1명만 선택할 수 있습니다.');
+              return;
+            }
+          }
+
+          countEl.textContent = Number(countEl.textContent) + 1;
+        });
+      });
+
+      /* 적용 버튼 */
+      applyBtn.addEventListener('click', e => {
+        e.stopPropagation();
+
+        let result = [];
+
+        rows.forEach(row => {
+          const type = row.querySelector('span').textContent;
+          const count = Number(row.querySelector('.counter span').textContent);
+          if (count > 0) result.push(`${type} ${count}`);
+        });
+
+        input.value = result.join(', ');
+        dropdown.classList.remove('active');
+      });
+    });
+
+    /* 바깥 클릭 시 닫기 (탑승객만 예외) */
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown').forEach(drop => {
+        if (!drop.closest('.form_group')?.querySelector('label') ||
+          drop.closest('.form_group').querySelector('label').textContent !== '탑승객') {
+          drop.classList.remove('active');
+        }
+      });
+    });
+
+    /* 탑승일 *//* ================= 탑승일 커스텀 캘린더 ================= */
+
+    const dateInput = document.querySelector('.date_input');
+    const calendarLayer = document.querySelector('.calendar_layer');
+    const dim = document.querySelector('.calendar_dim');
+    const leftMonth = document.querySelector('[data-pos="left"]');
+    const rightMonth = document.querySelector('[data-pos="right"]');
+    const prevBtn = document.querySelector('.cal_prev');
+    const nextBtn = document.querySelector('.cal_next');
+
+    /* 상태값 */
+    let baseDate = new Date();   // 기준 월
+    baseDate.setDate(1);
+
+    let departDate = null;      // 출발일
+    let returnDate2 = null;      // 도착일
+    let selecting = 'depart';   // depart | return
+
+    /* input 클릭 → 캘린더 열기 */
+    dateInput.addEventListener('click', () => {
+      calendarLayer.classList.add('active');
+      renderCalendar();
+    });
+
+    /* dim 클릭 → 닫기 */
+    dim.addEventListener('click', () => {
+      calendarLayer.classList.remove('active');
+    });
+
+    /* 이전 / 다음 월 */
+    prevBtn.addEventListener('click', () => {
+      baseDate.setMonth(baseDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      baseDate.setMonth(baseDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    /* 캘린더 렌더 */
+    function renderCalendar() {
+      const left = new Date(baseDate);
+      const right = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 1);
+
+      renderMonth(leftMonth, left);
+      renderMonth(rightMonth, right);
+    }
+
+    /* 월 생성 */
+    function renderMonth(target, date) {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      let html = `<table>
+    <thead>
+      <tr><th colspan="7">${year}. ${month + 1}</th></tr>
+      <tr>
+        <th>일</th><th>월</th><th>화</th><th>수</th>
+        <th>목</th><th>금</th><th>토</th>
+      </tr>
+    </thead>
+    <tbody><tr>`;
+
+      for (let i = 0; i < firstDay; i++) html += `<td></td>`;
+
+      for (let d = 1; d <= lastDate; d++) {
+        const day = new Date(year, month, d);
+        day.setHours(0, 0, 0, 0);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const disabled = day < today ? 'disabled' : '';
+        const stateClass = getDateState(day);
+
+        html += `
+      <td class="${disabled} ${stateClass}" data-time="${day.getTime()}">
+        ${d}
+        <span class="price">${mockPrice()}</span>
+      </td>
+    `;
+
+        if ((firstDay + d) % 7 === 0) html += `</tr><tr>`;
+      }
+
+      html += `</tr></tbody></table>`;
+      target.innerHTML = html;
+
+      target.querySelectorAll('td[data-time]').forEach(td => {
+        if (td.classList.contains('disabled')) return;
+
+        td.addEventListener('click', () => {
+          onDateClick(new Date(Number(td.dataset.time)));
+        });
+      });
+    }
+
+    /* 날짜 클릭 로직 (범위 선택) */
+    function onDateClick(day) {
+      if (!departDate || selecting === 'depart') {
+        departDate = day;
+        returnDate2 = null;
+        selecting = 'return';
+      } else {
+        if (day < departDate) {
+          departDate = day;
+          returnDate2 = null;
+          selecting = 'return';
+        } else {
+          returnDate2 = day;
+          selecting = 'depart';
+          applyDate();
+        }
+      }
+      renderCalendar();
+    }
+
+    /* 날짜 상태 클래스 */
+    function getDateState(day) {
+      if (departDate && isSame(day, departDate)) return 'start';
+      if (returnDate2 && isSame(day, returnDate2)) return 'end';
+      if (departDate && returnDate2 && day > departDate && day < returnDate2) {
+        return 'in_range';
+      }
+      return '';
+    }
+
+    /* 날짜 동일 비교 */
+    function isSame(a, b) {
+      return a.getTime() === b.getTime();
+    }
+
+    /* input 값 반영 */
+    function applyDate() {
+      if (!departDate || !returnDate2) return;
+
+      const format = d =>
+        `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+
+      dateInput.value = `${format(departDate)} ~ ${format(returnDate2)}`;
+      calendarLayer.classList.remove('active');
+    }
+
+    /* 임시 요금 */
+    function mockPrice() {
+      const price = [38900, 41900, 44900, 50900, 59900, 68900];
+      return price[Math.floor(Math.random() * price.length)].toLocaleString();
+    }
+
+    /* 결제 페이지 연결 */
+    document.querySelectorAll('#booking .search_btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.location.href = '/jejuair/pages/booking/payment.html';
+      });
+    });
+
+    /* 나머지 버튼은 기존 임시 동작 유지 */
+    document.querySelectorAll('#reserve .search_btn, #flight .search_btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.add('loading');
+        setTimeout(() => {
+          btn.classList.remove('loading');
+          alert('조회 결과 페이지 연결 예정입니다.');
+        }, 800);
+      });
+    });
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+</body>
+
+</html>

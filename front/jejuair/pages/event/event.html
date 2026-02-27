@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <base href="../../">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/event.css">
+</head>
+
+<body>
+  <!-- ##### header ##### -->
+  <header id="header_wrap"></header>
+  <div class="ticket"></div>
+
+  <section class="event_wrap">
+    <div class="inner">
+      <header class="event_header">
+        <h1>이벤트</h1>
+        <p>지금 진행 중인 이벤트와 종료된 이벤트를 확인하세요.</p>
+        <div class="event_tab">
+          <button class="tab_btn active" data-tab="ongoing">진행 중 이벤트</button>
+          <button class="tab_btn" data-tab="ended">종료 이벤트</button>
+        </div>
+      </header>
+      <!-- event.js -->
+      <div class="event_grid ongoing"></div>
+      <div class="event_grid ended"></div>
+    </div>
+  </section>
+
+  <!-- ##### footer ##### -->
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/ticket.js"></script>
+  <script src="js/eventData.js"></script>
+  <script src="js/event.js"></script>
+</body>
+
+</html>

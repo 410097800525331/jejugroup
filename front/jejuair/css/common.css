@@ -1,0 +1,210 @@
+@charset "utf-8";
+/* max-width: 1024, 768, 400 */
+@font-face {
+  font-family: 'FlightSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FlightSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FlightSansTitle';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Title.woff2') format('woff2');
+  font-weight: normal;
+  font-display: swap;
+}
+
+/* common */
+:root {
+  --main-color: #FF5000;
+  --sub-color: #ff51002c;
+  --text-mian: #000;
+  --text-sub: #666;
+  --main-bg: #eee;
+  font-size: 10px;
+  scroll-behavior: smooth;
+}
+body {
+  font: 1.6rem/1.7 'FlightSans', sans-serif;
+  color: var(--text-sub);
+}
+a {
+  color: var(--text-sub);
+}
+p {
+  font-size: 1.5rem;
+}
+/* .main_nav.fixed + section {
+  margin-top: 90px;
+} */
+section {
+  margin: 80px 0 60px;
+}
+.inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.inner2 {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.warning {
+  background: #ff510011;
+  border-radius: 16px;
+  padding: 30px;
+}
+
+h1,
+.color {
+  color: var(--main-color);
+}
+input:focus,
+input:focus-visible {
+  outline: none;
+}
+input {
+  caret-color: var(--main-color);
+}
+input[type="radio"] {
+  accent-color: var(--main-color);
+}
+.input_box input:focus {
+  border-bottom: 2px solid var(--main-color);
+}
+
+.inner2 .btn {
+  width: 100%;
+  padding: 8px 0;
+  background: var(--main-color);
+  border: 1px solid var(--main-color);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 1.6rem;
+  margin: 20px 0;
+  font-weight: 700;
+}
+.more_btn {
+  width: 140px;
+  height: 42px;
+  border-radius: 22px;
+  margin-top: 20px;
+  color: #fff;
+  border: 1px solid #fff;
+  background: transparent;
+  cursor: pointer;
+  transition: .3s;
+}
+.more_btn:hover {
+  color: var(--main-color);
+  background: #fff;
+}
+.allmore_btn {
+  padding: 2px 24px;
+  border-radius: 22px;
+  margin-top: 20px;
+  text-align: center;
+  line-height: 42px;
+  color: var(--text-sub);
+  border: 1px solid var(--text-sub);
+  background: transparent;
+  cursor: pointer;
+  transition: .3s;
+}
+.allmore_btn:hover {
+  color: var(--main-color);
+  border: 1px solid var(--main-color);
+}
+.basic_btn {
+  display: block;
+  padding: 6px 90px;
+  background: var(--text-sub);
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  margin: 24px auto;
+  transition: .3s;
+}
+.basic_btn:hover {
+  background: var(--main-color);
+}
+@media (max-width:1024px){
+  .inner {
+    padding: 0 20px;
+  }
+  .inner2 {
+    padding: 0 20px;
+  }
+  p {
+    font-size: 1.4rem;
+  }
+  h1 {
+    font-size: 1.7rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+  h3 {
+    font-size: 1.4rem;
+  }
+  h4 {
+    font-size: 1.3rem;
+  }
+}
+
+/* reset (scope limited) */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.jejuair-main-content h1, .jejuair-main-content h2, .jejuair-main-content h3, .jejuair-main-content h4, .jejuair-main-content h5, .jejuair-main-content h6, .jejuair-main-content p, .jejuair-main-content pre, .jejuair-main-content a,
+.jejuair-main-content img, .jejuair-main-content strong, .jejuair-main-content i,
+.jejuair-main-content dl, .jejuair-main-content dt, .jejuair-main-content dd, .jejuair-main-content ol, .jejuair-main-content ul, .jejuair-main-content li,
+.jejuair-main-content fieldset, .jejuair-main-content form, .jejuair-main-content label, .jejuair-main-content legend,
+.jejuair-main-content table, .jejuair-main-content tr, .jejuair-main-content th, .jejuair-main-content td,
+.jejuair-main-content nav,
+.jejuair-main-content audio, .jejuair-main-content video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+}
+.jejuair-main-content ol, .jejuair-main-content ul {
+	list-style: none;
+}
+.jejuair-main-content a {
+  text-decoration: none;
+}
+.jejuair-main-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+.jejuair-main-content button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.jejuair-main-content input {
+  background: transparent;
+  border: none;
+  outline: none;
+}
+.jejuair-main-content address {
+  font-style: normal;
+}
