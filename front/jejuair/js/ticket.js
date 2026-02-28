@@ -16,7 +16,7 @@ $(document).ready(function () {
         <div class="tab_sub">
           <button class="ticket_sub_tab_btn active" data-tab="tab_round">왕복</button>
           <button class="ticket_sub_tab_btn" data-tab="tab_oneway">편도</button>
-          <button class="ticket_sub_tab_btn"><a href="/jejuair/pages/booking/Availability.html">다구간</a></button>
+          <button class="ticket_sub_tab_btn"><a href="pages/booking/Availability.html">다구간</a></button>
         </div>
         <!-- ticket top -->
         <div class="ticket_top" data-tab="tab_round">

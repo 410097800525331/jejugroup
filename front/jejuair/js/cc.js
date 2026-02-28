@@ -21,9 +21,9 @@ $(document).ready(function () {
         <li>
           <button class="mobile_menu_btn">제주항공</button>
           <ul class="mobile_sub_menu">
-            <li><a href="/jejuair/pages/about/about.html">회사소개</a></li>
-            <li><a href="/jejuair/pages/about/career.html">채용안내</a></li>
-            <li><a href="/jejuair/pages/about/ccm.html">소비자중심경영</a></li>
+            <li><a href="pages/about/about.html">회사소개</a></li>
+            <li><a href="pages/about/career.html">채용안내</a></li>
+            <li><a href="pages/about/ccm.html">소비자중심경영</a></li>
           </ul>
         </li>
     
@@ -39,16 +39,16 @@ $(document).ready(function () {
         <li>
           <button class="mobile_menu_btn">탑승 수속</button>
           <ul class="mobile_sub_menu">
-            <li><a href="/jejuair/pages/boarding/fastProcedure.html">빠른 수속</a></li>
-            <li><a href="/jejuair/pages/boarding/viewCheckin.html">모바일 탑승권</a></li>
-            <li><a href="/jejuair/pages/boarding/eDocument.html">사전 서약서</a></li>
+            <li><a href="pages/boarding/fastProcedure.html">빠른 수속</a></li>
+            <li><a href="pages/boarding/viewCheckin.html">모바일 탑승권</a></li>
+            <li><a href="pages/boarding/eDocument.html">사전 서약서</a></li>
           </ul>
         </li>
       </ul>
     
       <div class="mobile_bottom_menu">
         <a href="#">고객센터</a>
-        <a href="/jejuair/pages/cs/notic.html">공지사항</a>
+        <a href="pages/cs/notic.html">공지사항</a>
         <a href="#">한국어</a>
       </div>
     
