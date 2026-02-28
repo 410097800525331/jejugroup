@@ -20,7 +20,7 @@ $(document).ready(function () {
     <!-- gnb -->
     <nav class="main_nav">
       <div class="main_nav_container">
-        <h1 class="logo"><a href="index.html"><img src="assets/img/logo.png" alt="제주항공 로고"></a></h1>
+        <h1 class="logo"><a href="../index.html"><img src="assets/img/logo.png" alt="제주항공 로고"></a></h1>
         <button class="hamburger_btn" aria-label="menu">
           <span></span>
           <span></span>
