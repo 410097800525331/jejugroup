@@ -14,7 +14,7 @@
 <body>
   <!-- Effect cards -->
 
-  <!-- 제주에어 전용 헤더 마운트 포인트 -->
+  <!-- ##### header ##### -->
   <header id="header_wrap"></header>
 
   <!-- ##### ticket ##### -->
@@ -161,8 +161,8 @@
     </div>
   </section>
 
-  <!-- 공통 푸터 주입점 -->
-  <div id="main-footer-placeholder"></div>
+  <!-- ##### footer ##### -->
+  <footer id="footer_wrap"></footer>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -202,12 +202,9 @@
     });
   </script>
 
-  <!-- 전역 레이아웃/라우팅 의존성 -->
-  <script src="../core/constants/lang_data.js"></script>
-  <script src="../core/constants/routes.js"></script>
-  <script src="../components/layout/component_loader.js"></script>
-
   <!-- 제주에어 로컬 기능 스크립트 -->
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
   <script src="js/ticket.js"></script>
   <script src="js/air_ticketData.js"></script>
   <script src="js/air_ticket.js"></script>
