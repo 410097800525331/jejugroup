@@ -1,246 +1,272 @@
-/* Jeju Stay Premium Mega Menu Styles */
-
-:root {
-    --mega-menu-bg: rgba(255, 255, 255, 0.75);
-    --mega-menu-border: rgba(255, 255, 255, 0.3);
-    --mega-menu-accent: #ff7a22; /* 제주 오렌지 포인트 컬러 */
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Glassmorphism Header Effects */
+/* ==================== 헤더 스타일 ==================== */
 .header {
-    transition: var(--transition-smooth);
-    z-index: 1000;
-}
-
-/* Nav Icon & Chevron Alignment */
-.nav-icon {
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.nav-link, .util-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    line-height: 1;
-    transition: color var(--transition-smooth);
-}
-
-.nav-link span[data-lang] {
-    display: flex;
-    align-items: center;
-    line-height: 1;
-}
-
-.nav-link i, .util-link i {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.nav-link [data-lucide="chevron-down"] {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.3s ease;
-}
-
-.nav-item:hover [data-lucide="chevron-down"] {
-    transform: rotate(180deg);
-}
-
-.header.scrolled {
-    background: rgba(255, 255, 255, 1) !important;
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--mega-menu-border);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-}
-
-.header.scrolled .nav-link,
-.header.scrolled .util-link {
-    color: #333 !important;
-}
-
-.header.scrolled .nav-link:hover,
-.header.scrolled .util-link:hover {
-    color: var(--mega-menu-accent) !important;
-}
-
-/* Mega Dropdown Structure */
-.mega-dropdown {
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 0;
     left: 0;
-    width: 600px; /* 고정 너비 혹은 컨테이너 기준 */
-    background: var(--mega-menu-bg);
-    backdrop-filter: blur(25px);
-    border: 1px solid var(--mega-menu-border);
-    border-radius: 20px;
-    margin-top: 15px;
-    padding: 24px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(20px);
-    transition: var(--transition-smooth);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    display: flex; /* 좌우 레이아웃 */
+    right: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.95);
+    /* backdrop-filter: blur(10px); */
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+    transition: all 0.3s ease; /* 부드러운 전환 효과 */
+    will-change: background-color, transform; /* GPU 최적화 힌트 */
+    transform: translateZ(0); /* 강제 GPU 레이어 생성 */
+}
+.header.section2plus-header .gnb-link,
+.header.section2plus-header .mypage-btn {
+    color: #ffffff; /* 흰색으로 변경 */
+}
+.header.section2plus-header .lang-toggle {
+    color: #ffffff; /* 흰색으로 변경 */
+    border-color: rgba(255, 255, 255, 0.7); /* 테두리도 흰색 계열로 */
+}
+.header.section2plus-header .gnb-link,
+.header.section2plus-header .mypage-btn,
+.header.section2plus-header .lang-toggle {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* 활성화 상태 */
-.nav-item:hover .mega-dropdown,
-.mega-dropdown.active {
+.header.transparent {
+    background-color: rgba(255, 255, 255, 0);
+    backdrop-filter: none;
+}
+
+.header.transparent .header-util {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
 }
 
-/* Left Panel: Menu List */
-.mega-menu-list-container {
-    flex: 1;
-    padding-right: 20px;
+/* 섹션 1에서 헤더 흰색 배경 + 글자 흰색 */
+.header.section1-header {
+    background-color: rgba(255, 255, 255, 0) !important;
+    /* backdrop-filter: blur(10px) !important; */
 }
 
-.mega-menu-item {
+.header.section1-header .logo-link {
+    color: #f2f2f2;
+}
+
+.header.section1-header .gnb-link {
+    color: #f2f2f2;
+}
+
+.header.section1-header .gnb-link:hover {
+    color: #FF5000;
+}
+
+.header.section1-header .lang-toggle {
+    color: #f2f2f2;
+    border-color: #f2f2f2;
+}
+
+.header.section1-header .lang-toggle:hover {
+    border-color: #FF5000;
+    color: #FF5000;
+}
+
+.header.section1-header .mypage-btn {
+    color: #f2f2f2;
+}
+
+.header.section1-header .mypage-btn:hover {
+    color: #FF5000;
+}
+
+.header.section1-header .util-link {
+    color: #e0e0e0;
+}
+
+.header.section1-header .util-link:hover {
+    color: #FF5000;
+}
+
+.header.section1-header .util-divider {
+    color: #e0e0e0;
+}
+
+/* 섹션 2+ 헤더 투명 배경 */
+.header.section2plus-header {
+    background-color: rgba(255, 255, 255, 0) !important;
+    backdrop-filter: none !important;
+}
+
+.header.section2plus-header .logo-link {
+    color: #FF5000;
+}
+
+.header.section2plus-header .gnb-link {
+    color: #f2f2f2;
+}
+
+.header.section2plus-header .gnb-link:hover {
+    color: #FF5000;
+}
+
+.header.section2plus-header .lang-toggle {
+    color: #f2f2f2;
+    border-color: #999999;
+}
+
+.header.section2plus-header .lang-toggle:hover {
+    border-color: #FF5000;
+    color: #FF5000;
+}
+
+.header.section2plus-header .mypage-btn {
+    color: #f2f2f2;
+}
+
+.header.section2plus-header .mypage-btn:hover {
+    color: #FF5000;
+}
+
+/* Footer Header (When over footer) */
+.header.footer-header {
+    background-color: rgba(255, 255, 255, 1) !important; /* Solid white background */
+    border-bottom: 1px solid #eee;
+    backdrop-filter: none;
+}
+
+.header.footer-header .gnb-link,
+.header.footer-header .mypage-btn {
+    color: #333333; /* Dark text */
+    text-shadow: none;
+}
+
+.header.footer-header .gnb-link:hover,
+.header.footer-header .mypage-btn:hover {
+    color: #FF5000;
+}
+
+.header.footer-header .lang-toggle {
+    color: #333333;
+    border-color: #333333;
+    text-shadow: none;
+}
+
+.header.footer-header .lang-toggle:hover {
+    color: #FF5000;
+    border-color: #FF5000;
+}
+
+
+/* 헤더 유틸 */
+.header-util {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 40px 0 0;
+    font-size: 11px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+
+
+.util-link {
+    position: relative;
+    right: 130px;
+    color: #555;
+    text-decoration: none;
+    transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.util-link:hover {
+    color: #FF5000;
+}
+
+.util-divider {
+    position: relative;
+    right: 130px;
+    color: #ddd;
+}
+
+/* 섹션 2+ 에서 header-util 전체 숨김 */
+.header.section2plus-header .header-util {
+    display: none;
+}
+
+/* 헤더 내부 */
+.header-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+    padding: 16px 40px;
+    position: relative;
+}
+
+.logo {
+    position: absolute;
+    left: 160px;
+}
+
+.logo-link img {
+    width: 120px;
+}
+
+/* GNB 네비게이션 */
+.gnb-list {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+}
+
+.gnb-item {
+    padding: 26px 32px;
+}
+
+.gnb-link {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 800;
+    transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.gnb-link:hover {
+    color: #FF5000;
+}
+
+/* 헤더 우측 컨트롤 */
+.header-right-controls {
+    position: absolute;
+    right: 160px;
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    border-radius: 12px;
+    gap: 20px;
+}
+
+.lang-toggle {
+    min-width: 80px;
+    padding: 8px 16px;
+    border: 2px solid #f2f2f2;
+    background-color: transparent;
+    color: #f2f2f2;
+    border-radius: 20px;
     cursor: pointer;
-    transition: var(--transition-smooth);
-    text-decoration: none !important;
-    color: #333;
-    position: relative;
-    overflow: hidden;
-    font-weight: 500;
-    margin-bottom: 4px;
+    font-size: 12px;
+    font-family: 'FlightSans', sans-serif;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.mega-menu-item:hover {
-    color: #fff;
+.lang-toggle:hover {
+    border-color: #FF5000;
+    color: #FF5000;
 }
 
-/* 배경이 채워지는 Micro-interaction */
-.mega-menu-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 100%;
-    background: var(--mega-menu-accent);
-    transition: var(--transition-smooth);
-    z-index: -1;
-}
-
-.mega-menu-item:hover::before {
-    width: 100%;
-}
-
-.mega-menu-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 12px;
-    transition: var(--transition-smooth);
-}
-
-.mega-menu-item:hover .mega-menu-icon {
-    transform: scale(1.2) rotate(-5deg); /* Bounce & Tilt */
-}
-
-/* Right Panel: Preview Area */
-.mega-menu-preview {
-    width: 280px;
-    height: 320px;
-    border-radius: 16px;
-    overflow: hidden;
-    position: relative;
-    background: #f0f0f0;
-}
-
-.preview-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transition: opacity 0.6s ease-in-out;
-}
-
-.preview-image.active {
-    opacity: 1;
-}
-
-/* 유심(eSIM) 이미지 120% 크롭 및 위치 최종 조정 (20px, 20px) */
-#preview-esim.active {
-    transform: scale(1.2) translateX(20px) translateY(20px);
-}
-
-/* 로딩 애니메이션 및 자동 은닉 */
-.preview-loader {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ccc;
+.mypage-btn {
+    background: none;
+    border: none;
+    color: #f2f2f2;
     font-size: 24px;
-    transition: opacity 0.3s ease;
+    cursor: pointer;
+    transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* 이미지가 활성화되면 로더 숨김 (Zero-JS-distraction) */
-.mega-menu-preview:has(.preview-image.active) .preview-loader {
-    opacity: 0;
-    pointer-events: none;
+.mypage-btn:hover {
+    color: #FF5000;
 }
 
-/* Responsive (간략화) */
-@media (max-width: 1024px) {
-    .mega-dropdown {
-        width: 100vw;
-        left: 0;
-        border-radius: 0;
-        flex-direction: column;
-    }
-    .mega-menu-preview {
-        display: none; /* 모바일에서는 미리보기 생략 */
-    }
-}
-
-/* NEW Badge Styles */
-.badge-new {
-    background: linear-gradient(135deg, #ff7a22 0%, #ff9d42 100%);
-    color: #fff;
-    font-size: 9px;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(255, 122, 34, 0.3);
-    animation: pulse-badge 2s infinite;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transform: translateY(-1px);
-    position: relative;
-    margin-left: 8px; /* Replacement for ml-2 */
-}
-
-@keyframes pulse-badge {
-    0% { transform: translateY(-1px) scale(1); }
-    50% { transform: translateY(-1px) scale(1.1); }
-    100% { transform: translateY(-1px) scale(1); }
-}
-
-/* Layered Outline on Hover */
-.mega-menu-item:hover .badge-new {
-    border: 1.5px solid #fff;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-    background: linear-gradient(135deg, #ff8c42 0%, #ffb372 100%); /* Slightly brighter on hover */
-}
+/* ==================== 메인 컨텐츠 ==================== */
