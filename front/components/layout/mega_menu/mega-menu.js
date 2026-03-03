@@ -3,72 +3,123 @@
  * @author Ray (Cynical Genius Developer)
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+let isMegaScrollBound = false;
+
+const syncHeaderScrolledClass = () => {
     const header = document.querySelector('.header');
+    if (!header) {
+        return;
+    }
+
+    if (window.scrollY > 20) {
+        header.classList.add('scrolled');
+        return;
+    }
+
+    header.classList.remove('scrolled');
+};
+
+const bindScrollEffect = () => {
+    if (isMegaScrollBound) {
+        return;
+    }
+
+    isMegaScrollBound = true;
+    window.addEventListener('scroll', syncHeaderScrolledClass);
+    syncHeaderScrolledClass();
+};
+
+const bindDropdownHover = () => {
     const navItems = document.querySelectorAll('.nav-item');
-    let closeTimeout = null;
 
-    // 1. Header Scroll Interaction (Glassmorphism)
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+    navItems.forEach((item) => {
+        if (item.dataset.megaHoverBound === 'true') {
+            return;
         }
-    });
 
-    // 2. Mega Menu Hover Logic with Delay
-    navItems.forEach(item => {
         const dropdown = item.querySelector('.mega-dropdown');
-        if (!dropdown) return;
+        if (!dropdown) {
+            return;
+        }
+
+        item.dataset.megaHoverBound = 'true';
 
         item.addEventListener('mouseenter', () => {
-            if (closeTimeout) {
-                clearTimeout(closeTimeout);
-                closeTimeout = null;
-            }
-            // 모든 다른 드롭다운 닫기 (Zero Monolith: 필요한 로직만 수행)
-            document.querySelectorAll('.mega-dropdown').forEach(d => {
-                if (d !== dropdown) d.classList.remove('active');
+            document.querySelectorAll('.mega-dropdown.active').forEach((activeDropdown) => {
+                if (activeDropdown !== dropdown) {
+                    activeDropdown.classList.remove('active');
+                }
             });
+
             dropdown.classList.add('active');
         });
 
         item.addEventListener('mouseleave', () => {
-            // 의도치 않은 닫힘 방지를 위한 200ms 지연
-            closeTimeout = setTimeout(() => {
-                dropdown.classList.remove('active');
+            setTimeout(() => {
+                if (!item.matches(':hover')) {
+                    dropdown.classList.remove('active');
+                }
             }, 200);
         });
     });
+};
 
-    // 3. Image Preview Cross-fade Logic (Left menu hover -> Right image change)
+const bindPreviewHover = () => {
     const megaMenuItems = document.querySelectorAll('.mega-menu-item');
-    const previewImages = document.querySelectorAll('.preview-image');
 
-    megaMenuItems.forEach(menuItem => {
+    megaMenuItems.forEach((menuItem) => {
+        if (menuItem.dataset.previewHoverBound === 'true') {
+            return;
+        }
+
+        menuItem.dataset.previewHoverBound = 'true';
+
         menuItem.addEventListener('mouseenter', () => {
             const dropdown = menuItem.closest('.mega-dropdown');
             const targetId = menuItem.getAttribute('data-preview');
-            const targetImage = document.getElementById(targetId);
+            const targetImage = targetId ? document.getElementById(targetId) : null;
 
-            if (targetImage && dropdown) {
-                // 현재 드롭다운 내의 이미지만 비활성화 (전역 영향 방지)
-                dropdown.querySelectorAll('.preview-image').forEach(img => img.classList.remove('active'));
-                
-                // 타겟 이미지 활성화
-                targetImage.classList.add('active');
+            if (!dropdown || !targetImage) {
+                return;
+            }
 
-                // 로더 숨기기
-                const loader = dropdown.querySelector('.preview-loader');
-                if (loader) loader.style.display = 'none';
+            dropdown.querySelectorAll('.preview-image').forEach((img) => {
+                img.classList.remove('active');
+            });
+
+            targetImage.classList.add('active');
+
+            const loader = dropdown.querySelector('.preview-loader');
+            if (loader) {
+                loader.style.display = 'none';
             }
         });
     });
+};
 
-    // 4. Initial Image Display (첫 번째 메뉴 이미지 미리 로드/표시)
-    document.querySelectorAll('.mega-dropdown').forEach(dropdown => {
+const initInitialPreviewImage = () => {
+    document.querySelectorAll('.mega-dropdown').forEach((dropdown) => {
+        if (dropdown.dataset.previewInit === 'true') {
+            return;
+        }
+
+        dropdown.dataset.previewInit = 'true';
+
         const firstImage = dropdown.querySelector('.preview-image');
-        if (firstImage) firstImage.classList.add('active');
+        if (firstImage) {
+            firstImage.classList.add('active');
+        }
     });
-});
+};
+
+function initMegaMenu() {
+    bindScrollEffect();
+    bindDropdownHover();
+    bindPreviewHover();
+    initInitialPreviewImage();
+}
+
+window.initMegaMenu = initMegaMenu;
+
+document.addEventListener('DOMContentLoaded', initMegaMenu);
+document.addEventListener('mainHeaderLoaded', initMegaMenu);

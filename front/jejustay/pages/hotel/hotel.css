@@ -178,6 +178,7 @@ input {
     height: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 /* ========== Staggered Text Animation Styles ========== */
@@ -264,8 +265,8 @@ input {
 
 /* The Localized Dropdown Container */
 .mega-dropdown {
-    position: absolute;
-    top: 100%; /* Align perfectly with header bottom to avoid hover gap */
+    position: fixed;
+    top: var(--header-height, 72px); /* Align with header bottom */
     left: 50%;
     transform: translateX(-50%) translateY(0);
     width: max-content;
@@ -294,7 +295,8 @@ input {
 }
 
 /* Show on Hover */
-.nav-item:hover .mega-dropdown {
+.nav-item:hover .mega-dropdown,
+.hotel-header .nav-item:hover .mega-dropdown {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(5px); /* Move down slightly for premium feel */
@@ -471,7 +473,6 @@ input {
     font-size: 1.125rem; /* 18px */
     font-weight: var(--font-weight-medium);
     color: #FFFFFF; /* White Text */
-    padding: var(--space-sm) 0;
     transition: color 0.3s ease;
     white-space: nowrap;
 }

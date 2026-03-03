@@ -30,6 +30,34 @@ async function loadComponent(elementId, path, basePath, callback) {
   }
 }
 
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const isScriptLoaded = Array.from(document.scripts).some((script) => {
+      const rawSrc = script.getAttribute('src') || script.src;
+      if (!rawSrc) {
+        return false;
+      }
+
+      try {
+        return new URL(rawSrc, window.location.href).href === src;
+      } catch (error) {
+        return rawSrc === src;
+      }
+    });
+
+    if (isScriptLoaded) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.appendChild(script);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const parseRouteParams = (element) => {
     const raw = element.getAttribute('data-route-params');
@@ -86,6 +114,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const resolveFromRoot = (resourcePath) => new URL(resourcePath, appRoot).href;
 
+  const ensureHeaderScripts = async () => {
+    const headerScriptPath = resolveFromRoot('components/layout/header/header.js');
+    const megaMenuScriptPath = resolveFromRoot('components/layout/mega_menu/mega-menu.js');
+
+    try {
+      await Promise.all([loadScript(headerScriptPath), loadScript(megaMenuScriptPath)]);
+    } catch (error) {
+      console.warn('[Component Loader] Failed to load header scripts:', error);
+    }
+  };
+
+  const ensureFooterScript = async () => {
+    const footerScriptPath = resolveFromRoot('components/layout/footer/footer.js');
+    try {
+      await loadScript(footerScriptPath);
+    } catch (error) {
+      console.warn('[Component Loader] Failed to load footer script:', error);
+    }
+  };
+
+  const initHeaderFeatures = () => {
+    if (typeof window.initHeader === 'function') {
+      window.initHeader();
+    }
+
+    if (typeof window.initMegaMenu === 'function') {
+      window.initMegaMenu();
+    }
+
+    if (typeof window.initStaggerNav === 'function') {
+      window.initStaggerNav();
+    }
+  };
+
+  const initFooterFeatures = () => {
+    if (typeof window.initFooter === 'function') {
+      window.initFooter();
+    }
+  };
+
   const redirectByRoute = async (el) => {
     const routeKey = el.getAttribute('data-route');
     if (!routeKey) {
@@ -140,7 +208,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const mainHeaderPlaceholder = document.getElementById('main-header-placeholder');
   if (mainHeaderPlaceholder) {
     const headerPath = resolveFromRoot('components/layout/header/main_header.html');
-    loadComponent('main-header-placeholder', headerPath, appRoot, () => {
+    loadComponent('main-header-placeholder', headerPath, appRoot, async () => {
+      await ensureHeaderScripts();
+      initHeaderFeatures();
       console.log('Main Header loaded');
       document.dispatchEvent(new Event('mainHeaderLoaded'));
     });
@@ -149,7 +219,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const mainFooterPlaceholder = document.getElementById('main-footer-placeholder');
   if (mainFooterPlaceholder) {
     const footerPath = resolveFromRoot('components/layout/footer/main_footer.html');
-    loadComponent('main-footer-placeholder', footerPath, appRoot, () => {
+    loadComponent('main-footer-placeholder', footerPath, appRoot, async () => {
+      await ensureFooterScript();
+      initFooterFeatures();
       console.log('Main Footer loaded');
       document.dispatchEvent(new Event('mainFooterLoaded'));
     });

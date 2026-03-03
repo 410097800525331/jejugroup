@@ -9,43 +9,56 @@
   <!-- 메인과 동일 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="../../styles/globals.css">
+  <link rel="stylesheet" href="../../components/layout/header/header.css">
+  <link rel="stylesheet" href="../../components/layout/mega_menu/mega-menu.css">
+  <link rel="stylesheet" href="../../components/layout/footer/footer.css">
   <link rel="stylesheet" href="./login.css">
 </head>
 
 <body class="login-page">
   <div id="main-header-placeholder"></div>
 
-  <div class="login-wrapper">
-    <div class="login-card">
-
+  <section class="user_wrap">
+    <div class="user_box inner2 login-card">
       <div class="login-header">
-        <img src="../../jejustay/images/logo_jejuGP.png" alt="Jeju Group" class="login-logo">
-        <p class="login-desc" data-lang="loginDesc">모든 여행을 제주그룹 하나로</p>
+        <h1 class="login-title" data-lang="loginTitle">로그인</h1>
+        <p class="login-desc" data-lang="loginDesc">포인트 적립에서 운임할인까지 회원전용 혜택을 받아보세요.</p>
       </div>
 
-      <form class="login-form">
-        <div class="input-group">
-          <label for="id" data-lang="emailLabel">이메일/아이디</label>
-          <input type="text" id="id" placeholder="아이디 또는 이메일 입력" data-lang-placeholder="emailPlaceholder" required>
+      <form id="user_form" class="login-form">
+        <div class="input_group">
+          <label data-lang="emailLabel">이메일/아이디</label>
+          <input type="text" id="id" placeholder="아이디 또는 이메일 입력" required>
+        </div>
+        <div class="input_group">
+          <label data-lang="passwordLabel">비밀번호</label>
+          <input type="password" id="pw" placeholder="비밀번호 입력" required>
         </div>
 
-        <div class="input-group">
-          <label for="pw" data-lang="passwordLabel">비밀번호</label>
-          <input type="password" id="pw" placeholder="비밀번호 입력" data-lang-placeholder="passwordPlaceholder" required>
+        <div class="login_options">
+          <label><input type="checkbox"> 아이디 저장</label>
+          <a href="#" data-lang="findIdPw">아이디/비밀번호 찾기</a>
         </div>
 
-        <button type="submit" class="login-btn" data-lang="loginButton">로그인</button>
+        <button type="submit" class="login-btn btn" data-lang="loginButton">로그인</button>
       </form>
 
-      <div class="login-links">
-        <p data-lang="noAccount">계정이 없으신가요? <a href="#" class="route-link" data-route="AUTH.SIGNUP"
-            data-lang="signup">회원가입</a></p>
-        <span>|</span>
-        <a href="#" data-lang="findIdPw">아이디/비밀번호 찾기</a>
+      <div class="quick_login">3초 만에 빠른 로그인</div>
+      <div class="sns_login">
+        <button class="sns_btn kakao">카카오</button>
+        <button class="sns_btn naver">네이버</button>
+        <button class="sns_btn apple">Apple</button>
       </div>
 
+      <div class="simple_login">
+        <button class="simple_login-btn" type="button">휴대폰 간편 로그인</button>
+      </div>
+
+      <div class="guest_login">
+        <a href="#" class="route-link" data-route="AUTH.SIGNUP" data-lang="signup">비회원으로 예약 조회 / 로그인</a>
+      </div>
     </div>
-  </div>
+  </section>
 
   <div id="main-footer-placeholder"></div>
 
@@ -57,6 +70,12 @@
 
   <script src="../../core/constants/lang_data.js"></script>
   <script src="../../jejustay/pages/hotel/main.js"></script>
+
+  <!-- Component Scripts (Must load before component_loader.js) -->
+  <script src="../../components/layout/header/header.js"></script>
+  <script src="../../components/layout/mega_menu/mega-menu.js"></script>
+  <script src="../../components/layout/footer/footer.js"></script>
+
   <script src="../../components/layout/component_loader.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -100,7 +119,19 @@
                   // Immutability Doctrine: Create new object for session
                   localStorage.setItem('userSession', JSON.stringify({ ...data.user }));
 
-              import('../../core/constants/routes.js').then(({ ROUTES }) => {
+                  // [FEATURE] Centralized Auth Routing Parameter Extraction (O(1) Check)
+                  const urlParams = new URLSearchParams(window.location.search);
+                  const redirectUrl = urlParams.get('redirect');
+
+                  if (redirectUrl) {
+                    // XSS 방어: 프로토콜 검증 후 리다이렉트 (상대경로 또는 안전한 절대경로만 허용)
+                    if (!redirectUrl.startsWith('javascript:') && !redirectUrl.startsWith('data:')) {
+                      window.location.replace(redirectUrl);
+                      return; // Zero Monolith 방위망 - 바로 흐름 종료
+                    }
+                  }
+
+                  import('../../core/constants/routes.js').then(({ ROUTES }) => {
                     if (data.user && data.user.role && data.user.role.includes('ADMIN')) {
                       import('../../core/utils/path_resolver.js').then(({ resolveRoute }) => {
                         const routeKey = 'ADMIN.DASHBOARD';

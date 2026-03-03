@@ -22,9 +22,9 @@
 
 /* Mega Dropdown Structure */
 .mega-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
+    position: fixed;
+    top: var(--header-height, 72px);
+    left: 50%;
     width: 600px; /* 고정 너비 혹은 컨테이너 기준 */
     background: var(--mega-menu-bg);
     backdrop-filter: blur(25px);
@@ -34,7 +34,7 @@
     padding: 24px;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(20px);
+    transform: translateX(-50%) translateY(20px);
     transition: var(--transition-smooth);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -46,7 +46,7 @@
 .mega-dropdown.active {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Left Panel: Menu List */

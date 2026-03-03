@@ -1,3 +1,5 @@
+@import url("../mega_menu/mega-menu.css");
+
 /* ==================== 헤더 스타일 ==================== */
 .header {
     position: fixed;
@@ -151,8 +153,8 @@
 }
 
 
-/* 헤더 유틸 */
-.header-util {
+/* 헤더 유틸 - 메인 헤더 전용 */
+.main-header .header-util {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -162,9 +164,7 @@
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-
-
-.util-link {
+.main-header .util-link {
     position: relative;
     right: 130px;
     color: #555;
@@ -172,11 +172,11 @@
     transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.util-link:hover {
+.main-header .util-link:hover {
     color: #FF5000;
 }
 
-.util-divider {
+.main-header .util-divider {
     position: relative;
     right: 130px;
     color: #ddd;
@@ -197,13 +197,52 @@
     position: relative;
 }
 
-.logo {
+/* 메인 헤더 내부 레이아웃 */
+.main-header .logo {
     position: absolute;
     left: 160px;
 }
 
-.logo-link img {
-    width: 120px;
+/* 호텔 헤더 내부 레이아웃 - 3단 그리드로 완벽한 중앙 정렬 보장 */
+.hotel-header .header-container {
+    height: var(--header-height, 72px);
+    display: grid;
+    grid-template-columns: minmax(170px, 1fr) auto minmax(170px, 1fr);
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 60px;
+}
+
+.hotel-header .logo {
+    justify-self: start;
+    display: flex;
+    align-items: center;
+}
+
+.hotel-header .main-nav {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+}
+
+.hotel-header .header-utils {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.hotel-header .nav-item {
+    position: relative; /* 서브 메뉴의 기준점 확보 */
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.main-header .logo-link img,
+.hotel-header .logo-img {
+    width: 150px;
 }
 
 /* GNB 네비게이션 */
@@ -229,8 +268,8 @@
     color: #FF5000;
 }
 
-/* 헤더 우측 컨트롤 */
-.header-right-controls {
+/* 헤더 우측 컨트롤 - 메인 헤더 전용 */
+.main-header .header-right-controls {
     position: absolute;
     right: 160px;
     display: flex;

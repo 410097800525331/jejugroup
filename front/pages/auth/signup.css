@@ -1,4 +1,4 @@
-/* ==================== 웹폰트 설정 ==================== */
+/* ==================== ?뱁룿???ㅼ젙 ==================== */
 @font-face {
     font-family: 'FlightSans';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Regular.woff2') format('woff2');
@@ -32,18 +32,17 @@
   --transition-duration: 400ms;
 }
 
-/* 1. 회원가입 페이지 배경 및 레이아웃 설정 (login.css 복붙 후 세부조정) */
+/* 1. ?뚯썝媛???섏씠吏 諛곌꼍 諛??덉씠?꾩썐 ?ㅼ젙 (login.css 蹂듬텤 ???몃?議곗젙) */
+/* 1. ?뚯썝媛???섏씠吏 諛곌꼍 諛??덉씠?꾩썐 ?ㅼ젙 (login.css 蹂듬텤 ???몃?議곗젙) */
 body.signup-page {
   font-family: 'FlightSans', sans-serif;
   background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80') no-repeat center center/cover;
   background-attachment: fixed;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   position: relative;
   overflow-x: hidden;
-  overflow-y: visible !important;
+  display: flex;
+  flex-direction: column;
 }
 
 html {
@@ -62,7 +61,7 @@ body.signup-page::before {
 
 #main-header-placeholder {
   position: relative;
-  z-index: 100; /* 헤더를 무조건 최상단으로 */
+  z-index: 100; /* ?ㅻ뜑瑜?臾댁“嫄?理쒖긽?⑥쑝濡?*/
 }
 
 .signup-wrapper, #main-footer-placeholder {
@@ -70,7 +69,7 @@ body.signup-page::before {
   z-index: 1;
 }
 
-/* 2. 헤더 가독성 강제 수정 (login.css 동일) */
+/* 2. ?ㅻ뜑 媛?낆꽦 媛뺤젣 ?섏젙 (login.css ?숈씪) */
 .signup-page .header {
   background-color: transparent !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -81,7 +80,12 @@ body.signup-page::before {
 .signup-page .header-util,
 .signup-page .header-right-controls button {
   color: #ffffff !important;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* 濡쒓퀬?대?吏 諛깆깋 媛뺤젣 */
+.signup-page .logo-img {
+  filter: brightness(0) invert(1) !important;
 }
 
 .signup-page .lang-toggle {
@@ -102,25 +106,60 @@ body.signup-page::before {
   color: #FF5000 !important;
 }
 
+/* Auth Footer Overrides - Restore from Transparent Hack in Footer.css */
+.signup-page .footer {
+  background-color: #f7f9fa !important;
+  border-top: 1px solid #eeeeee !important;
+  padding: 40px 60px !important;
+  display: block !important;
+}
+
+.signup-page .footer-content,
+.signup-page .footer-info p {
+  background-color: transparent !important;
+  color: #666666 !important;
+}
+
+.signup-page .footer-info p strong,
+.signup-page .footer-copyright p {
+  color: #333333 !important;
+}
+
+.signup-page .footer-social .social-icon {
+  background: #e5e5e5 !important;
+  color: #666666 !important;
+}
+
+.signup-page .footer-social .social-icon:hover {
+  background: #FF5000 !important;
+  color: #ffffff !important;
+}
+
 .signup-wrapper {
   width: 100%;
-  margin: 150px auto 60px; /* 헤더 공간 확보 (150px로 하향 조정) 및 중앙 정렬 */
+  flex: 1 0 auto;
+  margin: 100px auto 60px; /* ?ㅻ뜑 怨듦컙 ?뺣낫 諛?以묒븰 ?뺣젹 */
   padding: 0 20px;
   display: flex;
   justify-content: center;
 }
 
-/* 3. 회원가입 카드 (글래스모피즘 적용) */
+#main-footer-placeholder {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* 3. ?뚯썝媛??移대뱶 (?⑥씪 ?ㅽ뀦 ?듯빀 - Zero Monolith) */
 .signup-container {
   background: var(--color-surface);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   width: 100%;
-  max-width: 520px; /* 기존 580px에서 약간 축소 */
+  max-width: 600px; /* ?쒖＜??났 ???덈퉬 諛섏쁺 */
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255,255,255,0.6);
-  overflow: hidden;
+  padding: 40px 32px;
   position: relative;
   animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -130,182 +169,65 @@ body.signup-page::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Progress Bar */
-.progress-bar-container {
-  width: 100%;
-  height: 6px;
-  background: rgba(0,0,0,0.05); /* 투명하게 */
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #FF8C00 0%, #FF5000 100%);
-  width: 20%;
-  transition: width var(--transition-duration) var(--transition-smooth);
-}
-
-.step-indicator {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2.5rem 3rem 1rem;
-}
-
-.step-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #f1f5f9;
-  color: #94a3b8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
-  z-index: 2;
-  position: relative;
-  border: 2px solid transparent;
-}
-
-.step-dot.active {
-  background: #fff;
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(255, 80, 0, 0.1);
-}
-
-.step-dot.completed {
-  background: var(--color-success);
-  border-color: var(--color-success);
-  color: white;
-}
-
-.step-line {
-  flex: 1;
-  height: 2px;
-  background: #e2e8f0;
-  margin: 0 8px;
-  transition: background 0.3s ease;
-}
-
-.step-line.completed {
-  background: var(--color-success);
-}
-
 /* Header */
 .step-header {
-  padding: 1rem 3rem;
-  position: relative;
-}
-
-.btn-back {
-  background: none;
-  border: none;
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  padding: 0.5rem 0;
-  margin-bottom: 0.5rem;
-  transition: color 0.2s;
-  font-family: inherit;
-}
-
-.btn-back:hover {
-  color: var(--color-primary);
-}
-
-.btn-back.hidden {
-  opacity: 0;
-  pointer-events: none;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .step-title {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--color-text-main);
   margin-bottom: 0.5rem;
-  transition: opacity 0.3s ease;
 }
 
 .step-desc {
   color: var(--color-text-muted);
-  font-size: 0.95rem;
-  transition: opacity 0.3s ease;
+  font-size: 1rem;
 }
 
-/* Form Slider */
-.form-slider-viewport {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
+/* 4. ???붿옄??(?쒖＜??났 O(1) 紐⑤뱢 ?댁떇) */
+.user_form {
+  margin-top: 30px;
 }
 
-.form-slider-track {
-  display: flex;
-  width: 400%; /* 4 steps */
-  transition: transform var(--transition-duration) var(--transition-smooth);
-  will-change: transform;
-}
-
-.step-panel {
-  width: 25%; /* 100% / 4 */
-  flex-shrink: 0;
-  padding: 1rem 3rem 3rem;
-  opacity: 0.4;
-  transition: opacity var(--transition-duration) var(--transition-smooth);
-}
-
-.step-panel.active-panel {
-  opacity: 1;
-}
-
-/* 4. 폼 디자인 (login.css 동일 컨셉) */
-.step-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.input_group {
+  margin-bottom: 20px;
   position: relative;
 }
 
-.input-group label {
+.input_group label {
+  display: block;
+  text-align: left;
+  margin: 16px 6px 6px;
   font-size: 14px;
-  color: #444;
   font-weight: 700;
+  color: #444;
 }
 
-.input-group input {
+.input_group input {
   width: 100%;
-  padding: 14px 16px;
+  height: 48px;
+  padding: 0 16px;
   border-radius: 12px;
-  border: 2px solid #eee;
-  background: rgba(255,255,255,0.9);
   font-size: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* 湲?섏뒪紐⑦뵾利??곸뒪 異붽? */
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   font-family: 'FlightSans', sans-serif;
-  transition: all 0.3s ease;
 }
 
-.input-group input::placeholder {
+.input_group input::placeholder {
   color: #bbb;
 }
 
-.input-group input:focus {
+.input_group input:focus {
   outline: none;
   border-color: #FF5000;
   background: #fff;
-  box-shadow: 0 4px 12px rgba(255, 80, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(255, 80, 0, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.02);
   transform: translateY(-2px);
 }
 
@@ -318,7 +240,7 @@ body.signup-page::before {
   flex: 1;
 }
 
-/* 5. 버튼 디자인 (그라데이션 & 글로우 - login.css 공통) */
+/* 5. 踰꾪듉 ?붿옄??(洹몃씪?곗씠??& 湲濡쒖슦 - login.css 怨듯넻) */
 .btn-primary, .btn-secondary {
   border: none;
   font-family: 'FlightSans', sans-serif;
@@ -404,97 +326,41 @@ body.signup-page::before {
 }
 
 /* Terms Checkbox */
-.terms-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.agree_box {
   background: rgba(255, 255, 255, 0.5);
   padding: 1.5rem;
   border-radius: 16px;
   border: 1px solid var(--color-border);
+  margin-top: 30px;
+  margin-bottom: 20px;
   transition: all 0.3s ease;
 }
 
-.terms-group:hover {
+.agree_box:hover {
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
-.terms-divider {
-  border: none;
-  border-top: 1px dashed var(--color-border);
-  margin: 0.5rem 0;
-}
-
-.checkbox-label {
+.agree_box label {
   display: flex;
   align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
   cursor: pointer;
-  position: relative;
-  font-size: 0.95rem;
   color: var(--color-text-main);
-  transition: transform 0.2s ease;
 }
 
-.checkbox-label:hover {
-  transform: translateX(4px);
-}
-
-.checkbox-label input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.checkbox-custom {
-  height: 24px;
-  width: 24px;
-  background-color: white;
-  border: 2px solid var(--color-border);
-  border-radius: 6px;
-  margin-right: 12px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.checkbox-label:hover .checkbox-custom {
-  border-color: var(--color-primary);
-}
-
-.checkbox-label input:checked ~ .checkbox-custom {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.checkbox-custom:after {
-  content: "";
-  display: none;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-  margin-bottom: 2px;
-}
-
-.checkbox-label input:checked ~ .checkbox-custom:after {
-  display: block;
-}
-
-.term-link {
-  margin-left: auto;
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-  text-decoration: underline;
-  transition: color 0.2s;
-}
-
-.term-link:hover {
+.agree_box label span {
+  font-weight: 700;
   color: var(--color-primary);
+}
+
+.agree_box input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #FF5000;
+  cursor: pointer;
 }
 
 /* Auth Buttons */
@@ -601,29 +467,7 @@ body.signup-page::before {
 .input-feedback.error { color: var(--color-error); }
 .input-feedback.success { color: var(--color-success); }
 
-/* 푸터 스타일 조정 (login.css 동일) */
-.signup-page .footer {
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255,255,255,0.1);
-  color: #ccc;
-  padding: 40px 0;
-  margin-top: auto;
-}
 
-.signup-page .footer strong, .signup-page .footer p {
-  color: #ddd !important;
-}
-
-.signup-page .footer-social .social-icon {
-  color: #fff !important;
-  background: rgba(255,255,255,0.1);
-}
-
-.signup-page .footer-social .social-icon:hover {
-  background: #FF5000;
-  color: #fff;
-}
 
 /* Animations */
 @keyframes slideDown {
@@ -660,3 +504,5 @@ body.signup-page::before {
     padding: 1.5rem 1.5rem 0.5rem;
   }
 }
+
+
