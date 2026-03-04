@@ -5,7 +5,7 @@ $(document).ready(function () {
     <!-- top bar -->
     <div class="top_bar_container">
       <div class="top_bar_left">
-        <a href="sub/customerService.html">고객센터</a>
+        <a href="service/service.html">고객센터</a>
         <a href="sub/notic.html">공지사항</a>
       </div>
       <div class="top_bar_right">
@@ -181,7 +181,7 @@ $(document).ready(function () {
       </li>
     </ul>
     <div class="mobile_bottom_menu">
-      <a href="sub/customerService.html">고객센터</a>
+      <a href="service/service.html">고객센터</a>
       <a href="sub/notic.html">공지사항</a>
       <a href="#">한국어</a>
     </div>

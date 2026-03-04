@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>제주 통합 고객센터</title>
+  <link rel="stylesheet" href="service.css" />
+</head>
+<body>
+
+<main class="hc-main">
+
+  <!-- 히어로 -->
+  <section class="hc-hero">
+    <div class="hc-hero__inner">
+      <h1 class="hc-hero__title">통합 고객센터</h1>
+      <p class="hc-hero__desc">제주항공 · 제주스테이 · 제주렌터카의 모든 문의를 한 곳에서 해결하세요.</p>
+    </div>
+  </section>
+
+  <!-- 브랜드 탭 -->
+  <section class="hc-brand-tabs">
+    <div class="hc-container">
+      <div class="hc-tabs">
+        <button class="hc-tab active" onclick="switchBrand('air')">제주항공</button>
+        <button class="hc-tab" onclick="switchBrand('stay')">제주스테이</button>
+        <button class="hc-tab" onclick="switchBrand('car')">제주렌터카</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="hc-container">
+
+    <!-- 빠른 링크 (전화상담 제거 → 1:1 문의 추가) -->
+    <div class="hc-quick-links">
+      <button class="hc-quick-link" onclick="scrollToInquiry()">1:1 문의</button>
+      <button class="hc-quick-link" onclick="openChatbot()">챗봇 상담</button>
+    </div>
+
+    <!-- ==============================
+         통합 1:1 문의 게시판
+         ============================== -->
+    <section class="hc-board" id="inquiry-section">
+
+      <div class="hc-section-header">
+        <h2 class="hc-section-title">통합 1:1 문의</h2>
+        <button class="hc-btn-primary" onclick="openInquiryForm()">문의하기</button>
+      </div>
+
+      <!-- 목록 -->
+      <div id="inquiry-list-view">
+        <table class="hc-board-table">
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>브랜드</th>
+              <th>제목</th>
+              <th>작성자</th>
+              <th>등록일</th>
+            </tr>
+          </thead>
+          <tbody id="inquiry-tbody"></tbody>
+        </table>
+
+        <div class="hc-pagination" id="inquiry-pagination"></div>
+      </div>
+
+      <!-- 상세 -->
+      <div id="inquiry-detail-view" style="display:none;"></div>
+
+      <!-- 작성/수정 -->
+      <div id="inquiry-form-view" style="display:none;">
+        <form id="inquiry-form">
+          <input type="hidden" id="inquiry-id">
+
+          <div class="hc-form-group">
+            <label>브랜드</label>
+            <select id="inquiry-brand" required>
+              <option value="제주항공">제주항공</option>
+              <option value="제주스테이">제주스테이</option>
+              <option value="제주렌터카">제주렌터카</option>
+            </select>
+          </div>
+
+          <div class="hc-form-group">
+            <label>작성자</label>
+            <input type="text" id="inquiry-writer" required />
+          </div>
+
+          <div class="hc-form-group">
+            <label>제목</label>
+            <input type="text" id="inquiry-title" required />
+          </div>
+
+          <div class="hc-form-group">
+            <label>내용</label>
+            <textarea id="inquiry-content" rows="6" required></textarea>
+          </div>
+
+          <div class="hc-form-actions">
+            <button type="submit" class="hc-btn-primary">저장</button>
+            <button type="button" onclick="cancelInquiry()">취소</button>
+          </div>
+        </form>
+      </div>
+
+    </section>
+
+  </div>
+</main>
+
+<script src="service.js"></script>
+</body>
+</html>

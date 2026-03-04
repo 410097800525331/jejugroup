@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <base href="../">
+  <title>제주항공</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="service/service.css">
+</head>
+
+<body>
+  <header id="header_wrap"></header>
+  <main class="hc-main" id="hc-main">
+
+    <!-- 히어로 배너 -->
+    <div class="hc-hero" id="hc-hero">
+      <div class="hc-hero__inner">
+        <h1 class="hc-hero__title">무엇을 도와드릴까요?</h1>
+        <p class="hc-hero__desc">제주항공 · 제주스테이 · 제주렌터카의 모든 문의를 한 곳에서 해결하세요.</p>
+        <div class="hc-hero__search">
+          <input type="text" id="hc-search-input" class="hc-hero__search-input" placeholder="궁금한 내용을 검색해 보세요."
+            aria-label="통합 검색" />
+          <button class="hc-hero__search-btn" onclick="handleSearch()" aria-label="검색">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 브랜드 탭 -->
+    <div class="hc-brand-tabs" id="hc-brand-tabs">
+      <div class="hc-container">
+        <div class="hc-tabs" role="tablist" aria-label="브랜드 선택">
+          <button class="hc-tab hc-tab--air active" role="tab" aria-selected="true" aria-controls="panel-air"
+            id="tab-air" onclick="switchBrand('air')">
+            <span class="hc-tab__label">제주항공</span>
+          </button>
+          <button class="hc-tab hc-tab--stay" role="tab" aria-selected="false" aria-controls="panel-stay" id="tab-stay"
+            onclick="switchBrand('stay')">
+            <span class="hc-tab__label">제주스테이</span>
+          </button>
+          <button class="hc-tab hc-tab--car" role="tab" aria-selected="false" aria-controls="panel-car" id="tab-car"
+            onclick="switchBrand('car')">
+            <span class="hc-tab__label">제주렌터카</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 브랜드 패널 공통 래퍼 -->
+    <div class="hc-container hc-panels">
+
+      <!-- ===== 제주항공 패널 ===== -->
+      <div class="hc-panel hc-panel--air active" id="panel-air" role="tabpanel" aria-labelledby="tab-air">
+
+        <!-- 빠른 링크 -->
+        <div class="hc-quick-links">
+          <button class="hc-quick-link hc-quick-link--air" onclick="scrollToSection('air-notice')">
+            <img src="/jejuair/assets/img/service1.png" alt="공지사항">공지사항
+          </button>
+          <button class="hc-quick-link hc-quick-link--air" onclick="scrollToSection('air-faq')">
+            <img src="/jejuair/assets/img/service2.png" alt="자주 묻는 질문">자주 묻는 질문
+          </button>
+          <button class="hc-quick-link hc-quick-link--air" onclick="openChatbot()">
+            <img src="/jejuair/assets/img/service3.png" alt="챗봇 상담">챗봇 상담
+          </button>
+          <button class="hc-quick-link hc-quick-link--air" onclick="window.location.href='tel:1599-1500'">
+            <img src="/jejuair/assets/img/service4.png" alt="1:1문의">1:1 문의
+          </button>
+        </div>
+
+        <!-- 공지사항 게시판 -->
+        <section class="hc-board" id="air-notice">
+          <div class="hc-section-header">
+            <h2 class="hc-section-title hc-section-title--air">공지사항</h2>
+            <div class="hc-board-controls">
+              <select class="hc-board-filter" id="air-notice-filter" onchange="filterNotice('air')"
+                aria-label="카테고리 필터">
+                <option value="all">전체</option>
+                <option value="안내">안내</option>
+                <option value="신규">신규</option>
+                <option value="프로모션">프로모션</option>
+                <option value="중요">중요</option>
+                <option value="변경">변경</option>
+                <option value="이벤트">이벤트</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="hc-board-table" id="air-notice-table" aria-label="제주항공 공지사항 목록">
+            <colgroup>
+              <col style="width:60px">
+              <col style="width:80px">
+              <col>
+              <col style="width:120px">
+              <col style="width:80px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">번호</th>
+                <th scope="col">구분</th>
+                <th scope="col">제목</th>
+                <th scope="col">등록일</th>
+                <th scope="col">조회수</th>
+              </tr>
+            </thead>
+            <tbody id="air-notice-body">
+              <!-- JS로 렌더링 -->
+            </tbody>
+          </table>
+
+          <!-- 페이지네이션 -->
+          <div class="hc-pagination" id="air-notice-pagination" aria-label="공지사항 페이지 탐색">
+            <!-- JS로 렌더링 -->
+          </div>
+        </section>
+
+        <!-- 공지사항 상세 모달 -->
+        <div class="hc-modal" id="air-notice-modal" role="dialog" aria-modal="true" aria-labelledby="air-modal-title"
+          style="display:none;">
+          <div class="hc-modal__backdrop" onclick="closeModal('air-notice-modal')"></div>
+          <div class="hc-modal__content">
+            <div class="hc-modal__header hc-modal__header--air">
+              <span class="hc-modal__badge" id="air-modal-badge"></span>
+              <h3 class="hc-modal__title" id="air-modal-title"></h3>
+              <button class="hc-modal__close" onclick="closeModal('air-notice-modal')" aria-label="닫기">✕</button>
+            </div>
+            <div class="hc-modal__meta">
+              <span id="air-modal-date"></span>
+              <span id="air-modal-views"></span>
+            </div>
+            <div class="hc-modal__body" id="air-modal-body"></div>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <section class="hc-faq" id="air-faq">
+          <div class="hc-section-header">
+            <h2 class="hc-section-title hc-section-title--air">자주 묻는 질문</h2>
+          </div>
+          <div class="hc-accordion" id="air-faq-list">
+            <!-- JS로 렌더링 -->
+          </div>
+        </section>
+
+      </div><!-- /panel-air -->
+
+      <!-- ===== 제주스테이 패널 ===== -->
+      <div class="hc-panel hc-panel--stay" id="panel-stay" role="tabpanel" aria-labelledby="tab-stay" hidden>
+
+        <div class="hc-quick-links">
+          <button class="hc-quick-link hc-quick-link--stay" onclick="scrollToSection('stay-notice')">
+            <span class="hc-quick-link__icon">📢</span>공지사항
+          </button>
+          <button class="hc-quick-link hc-quick-link--stay" onclick="scrollToSection('stay-faq')">
+            <span class="hc-quick-link__icon">❓</span>자주 묻는 질문
+          </button>
+          <button class="hc-quick-link hc-quick-link--stay" onclick="openChatbot()">
+            <span class="hc-quick-link__icon">💬</span>챗봇 상담
+          </button>
+          <button class="hc-quick-link hc-quick-link--stay" onclick="window.location.href='tel:1599-2000'">
+            <span class="hc-quick-link__icon">📞</span>전화 상담
+          </button>
+        </div>
+
+        <section class="hc-board" id="stay-notice">
+          <div class="hc-section-header">
+            <h2 class="hc-section-title hc-section-title--stay">공지사항</h2>
+            <div class="hc-board-controls">
+              <select class="hc-board-filter" id="stay-notice-filter" onchange="filterNotice('stay')"
+                aria-label="카테고리 필터">
+                <option value="all">전체</option>
+                <option value="안내">안내</option>
+                <option value="신규">신규</option>
+                <option value="프로모션">프로모션</option>
+                <option value="중요">중요</option>
+                <option value="변경">변경</option>
+                <option value="이벤트">이벤트</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="hc-board-table" id="stay-notice-table" aria-label="제주스테이 공지사항 목록">
+            <colgroup>
+              <col style="width:60px">
+              <col style="width:80px">
+              <col>
+              <col style="width:120px">
+              <col style="width:80px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">번호</th>
+                <th scope="col">구분</th>
+                <th scope="col">제목</th>
+                <th scope="col">등록일</th>
+                <th scope="col">조회수</th>
+              </tr>
+            </thead>
+            <tbody id="stay-notice-body">
+            </tbody>
+          </table>
+
+          <div class="hc-pagination" id="stay-notice-pagination" aria-label="공지사항 페이지 탐색"></div>
+        </section>
+
+        <div class="hc-modal" id="stay-notice-modal" role="dialog" aria-modal="true" aria-labelledby="stay-modal-title"
+          style="display:none;">
+          <div class="hc-modal__backdrop" onclick="closeModal('stay-notice-modal')"></div>
+          <div class="hc-modal__content">
+            <div class="hc-modal__header hc-modal__header--stay">
+              <span class="hc-modal__badge" id="stay-modal-badge"></span>
+              <h3 class="hc-modal__title" id="stay-modal-title"></h3>
+              <button class="hc-modal__close" onclick="closeModal('stay-notice-modal')" aria-label="닫기">✕</button>
+            </div>
+            <div class="hc-modal__meta">
+              <span id="stay-modal-date"></span>
+              <span id="stay-modal-views"></span>
+            </div>
+            <div class="hc-modal__body" id="stay-modal-body"></div>
+          </div>
+        </div>
+
+        <section class="hc-faq" id="stay-faq">
+          <div class="hc-section-header">
+            <h2 class="hc-section-title hc-section-title--stay">자주 묻는 질문</h2>
+          </div>
+          <div class="hc-accordion" id="stay-faq-list"></div>
+        </section>
+
+      </div><!-- /panel-stay -->
+
+      <!-- ===== 제주렌터카 패널 ===== -->
+      <div class="hc-panel hc-panel--car" id="panel-car" role="tabpanel" aria-labelledby="tab-car" hidden>
+
+        <div class="hc-quick-links">
+          <button class="hc-quick-link hc-quick-link--car" onclick="scrollToSection('car-notice')">
+            <span class="hc-quick-link__icon">📢</span>공지사항
+          </button>
+          <button class="hc-quick-link hc-quick-link--car" onclick="scrollToSection('car-faq')">
+            <span class="hc-quick-link__icon">❓</span>자주 묻는 질문
+          </button>
+          <button class="hc-quick-link hc-quick-link--car" onclick="openChatbot()">
+            <span class="hc-quick-link__icon">💬</span>챗봇 상담
+          </button>
+          <button class="hc-quick-link hc-quick-link--car" onclick="window.location.href='tel:1599-3000'">
+            <span class="hc-quick-link__icon">📞</span>전화 상담
+          </button>
+        </div>
+
+        <section class="hc-board" id="car-notice">
+          <div class="hc-section-header">
+            <h2 class="hc-section-title hc-section-title--car">공지사항</h2>
+            <div class="hc-board-controls">
+              <select class="hc-board-filter" id="car-notice-filter" onchange="filterNotice('car')"
+                aria-label="카테고리 필터">
+                <option value="all">전체</option>
+                <option value="안내">안내</option>
+                <option value="신규">신규</option>
+                <option value="프로모션">프로모션</option>
+                <option value="중요">중요</option>
+                <option value="변경">변경</option>
+                <option value="이벤트">이벤트</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="hc-board-table" id="car-notice-table" aria-label="제주렌터카 공지사항 목록">
+            <colgroup>
+              <col style="width:60px">
+              <col style="width:80px">
+              <col>
+              <col style="width:120px">
+              <col style="width:80px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">번호</th>
+                <th scope="col">구분</th>
+                <th scope="col">제목</th>
+                <th scope="col">등록일</th>
+                <th scope="col">조회수</th>
+              </tr>
+            </thead>
+            <tbody id="car-notice-body">
+            </tbody>
+          </table>
+
+          <div class="hc-pagination" id="car-notice-pagination" aria-label="공지사항 페이지 탐색"></div>
+        </section>
+
+        <div class="hc-modal" id="car-notice-modal" role="dialog" aria-modal="true" aria-labelledby="car-modal-title"
+          style="display:none;">
+          <div class="hc-modal__backdrop" onclick="closeModal('car-notice-modal')"></div>
+          <div class="hc-modal__content">
+            <div class="hc-modal__header hc-modal__header--car">
+              <span class="hc-modal__badge" id="car-modal-badge"></span>
+              <h3 class="hc-modal__title" id="car-modal-title"></h3>
+              <button class="hc-modal__close" onclick="closeModal('car-notice-modal')" aria-label="닫기">✕</button>
+            </div>
+            <div class="hc-modal__meta">
+              <span id="car-modal-date"></span>
+              <span id="car-modal-views"></span>
+            </div>
+            <div class="hc-modal__body" id="car-modal-body"></div>
+          </div>
+        </div>
+
+        <section class="hc-faq" id="car-faq">
+          <div class="hc-section-header">
+            <h2 class="hc-section-title hc-section-title--car">자주 묻는 질문</h2>
+          </div>
+          <div class="hc-accordion" id="car-faq-list"></div>
+        </section>
+
+      </div><!-- /panel-car -->
+
+    </div><!-- /hc-panels -->
+
+  </main><!-- /hc-main -->
+  <footer id="footer_wrap"></footer>
+  
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="service/service.js"></script>
+</body>
+
+</html>
