@@ -1,0 +1,187 @@
+@charset 'utf-8';
+
+.inq-main {
+  min-height: calc(100vh - 120px);
+  background: #f8fafc;
+}
+
+.inq-hero {
+  padding: 72px 24px 56px;
+}
+
+.inq-wrap {
+  margin-top: 36px;
+}
+
+.inq-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.inq-primary-btn,
+.inq-secondary-btn,
+.inq-danger-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.inq-primary-btn {
+  background: #ff5100;
+  color: #fff;
+}
+
+.inq-primary-btn:hover {
+  background: #e64900;
+}
+
+.inq-secondary-btn {
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.inq-secondary-btn:hover {
+  background: #f3f4f6;
+}
+
+.inq-danger-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.inq-danger-btn:hover {
+  background: #fecaca;
+}
+
+.inq-form-card {
+  margin-top: 20px;
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.inq-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.inq-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.inq-field span {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.inq-field input,
+.inq-field select,
+.inq-field textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 12px;
+  font-size: 1.4rem;
+  color: #111827;
+}
+
+.inq-field textarea {
+  resize: vertical;
+}
+
+.inq-field input:focus,
+.inq-field select:focus,
+.inq-field textarea:focus {
+  border-color: #ff5100;
+  outline: 0;
+}
+
+.inq-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.inq-link-btn {
+  border: 0;
+  background: none;
+  color: #111827;
+  text-align: left;
+  font-size: 1.4rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.inq-link-btn:hover {
+  color: #ff5100;
+  text-decoration: underline;
+}
+
+.inq-empty {
+  text-align: center;
+  padding: 34px 12px;
+  color: #6b7280;
+  font-size: 1.4rem;
+}
+
+.inq-detail-content {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+  padding: 16px;
+  color: #1f2937;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  min-height: 120px;
+}
+
+.inq-detail-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 900px) {
+  .inq-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .inq-hero {
+    padding: 60px 16px 48px;
+  }
+
+  .inq-wrap {
+    margin-top: 24px;
+  }
+
+  .inq-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inq-primary-btn,
+  .inq-secondary-btn,
+  .inq-danger-btn {
+    width: 100%;
+  }
+
+  .inq-form-actions {
+    flex-direction: column-reverse;
+  }
+}

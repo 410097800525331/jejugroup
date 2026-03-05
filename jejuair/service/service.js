@@ -8,7 +8,6 @@ const ITEMS_PER_PAGE = 10;
 const HC_DATA = {
   air: {
     brand: '제주항공',
-    tel: '1599-1500',
     notices: [
       {
         id: 15, category: '이벤트',
@@ -122,7 +121,6 @@ const HC_DATA = {
 
   stay: {
     brand: '제주스테이',
-    tel: '1599-2000',
     notices: [
       {
         id: 15, category: '이벤트',
@@ -236,7 +234,6 @@ const HC_DATA = {
 
   car: {
     brand: '제주렌터카',
-    tel: '1599-3000',
     notices: [
       {
         id: 15, category: '이벤트',
@@ -594,7 +591,7 @@ function handleSearch() {
   });
 
   if (!found) {
-    alert(`'${keyword}'에 대한 검색 결과가 없습니다.\n고객센터(${HC_DATA[brand].tel})로 문의해 주세요.`);
+    alert(`'${keyword}'에 대한 검색 결과가 없습니다.\n1:1 문의를 남겨 주세요.`);
   }
 }
 

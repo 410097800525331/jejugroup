@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="../">
+  <title>제주 통합 1:1 문의</title>
+  <link rel="ico" href="favicon.ico">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="service/service.css">
+  <link rel="stylesheet" href="service/inquiry.css">
+</head>
+
+<body>
+  <header id="header_wrap"></header>
+
+  <main class="hc-main inq-main">
+    <div class="hc-hero inq-hero">
+      <div class="hc-hero__inner">
+        <h1 class="hc-hero__title">통합 1:1 문의</h1>
+        <p class="hc-hero__desc">제주항공, 제주스테이, 제주렌터카 문의를 한 번에 등록하고 확인하세요.</p>
+      </div>
+    </div>
+
+    <section class="hc-container inq-wrap">
+      <div class="inq-toolbar">
+        <h2 class="hc-section-title hc-section-title--air">문의 내역</h2>
+        <button type="button" class="inq-primary-btn" onclick="openInquiryForm()">문의 작성</button>
+      </div>
+
+      <section class="hc-board">
+        <table class="hc-board-table" aria-label="1:1 문의 목록">
+          <colgroup>
+            <col style="width:80px">
+            <col style="width:140px">
+            <col>
+            <col style="width:130px">
+            <col style="width:120px">
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">번호</th>
+              <th scope="col">브랜드</th>
+              <th scope="col">제목</th>
+              <th scope="col">작성자</th>
+              <th scope="col">등록일</th>
+            </tr>
+          </thead>
+          <tbody id="inq-table-body"></tbody>
+        </table>
+        <div class="hc-pagination" id="inq-pagination" aria-label="문의 목록 페이지"></div>
+      </section>
+
+      <section class="hc-board inq-form-card" id="inq-form-card" hidden>
+        <div class="hc-section-header">
+          <h2 class="hc-section-title hc-section-title--air">문의 작성</h2>
+        </div>
+        <form id="inq-form">
+          <div class="inq-form-grid">
+            <label class="inq-field">
+              <span>브랜드</span>
+              <select id="inq-brand" required>
+                <option value="제주항공">제주항공</option>
+                <option value="제주스테이">제주스테이</option>
+                <option value="제주렌터카">제주렌터카</option>
+              </select>
+            </label>
+            <label class="inq-field">
+              <span>작성자</span>
+              <input type="text" id="inq-writer" maxlength="20" required>
+            </label>
+          </div>
+          <label class="inq-field">
+            <span>제목</span>
+            <input type="text" id="inq-title" maxlength="80" required>
+          </label>
+          <label class="inq-field">
+            <span>문의 내용</span>
+            <textarea id="inq-content" rows="7" maxlength="1500" required></textarea>
+          </label>
+          <div class="inq-form-actions">
+            <button type="button" class="inq-secondary-btn" onclick="closeInquiryForm()">취소</button>
+            <button type="submit" class="inq-primary-btn">등록</button>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <div class="hc-modal" id="inq-detail-modal" role="dialog" aria-modal="true" aria-labelledby="inq-detail-title"
+    style="display:none;">
+    <div class="hc-modal__backdrop" onclick="closeInquiryDetail()"></div>
+    <div class="hc-modal__content">
+      <div class="hc-modal__header hc-modal__header--air">
+        <span class="hc-modal__badge" id="inq-detail-brand"></span>
+        <h3 class="hc-modal__title" id="inq-detail-title"></h3>
+        <button class="hc-modal__close" onclick="closeInquiryDetail()" aria-label="닫기">×</button>
+      </div>
+      <div class="hc-modal__meta">
+        <span id="inq-detail-writer"></span>
+        <span id="inq-detail-date"></span>
+      </div>
+      <div class="hc-modal__body">
+        <div class="inq-detail-content" id="inq-detail-content"></div>
+        <div class="inq-detail-actions">
+          <button type="button" class="inq-danger-btn" onclick="deleteInquiry()">문의 삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer_wrap"></footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="service/inquiry.js"></script>
+</body>
+
+</html>
