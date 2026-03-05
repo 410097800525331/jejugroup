@@ -7,26 +7,32 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    background-color: rgba(255, 255, 255, 0.95);
-    /* backdrop-filter: blur(10px); */
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
-    transition: all 0.3s ease; /* 부드러운 전환 효과 */
-    will-change: background-color, transform; /* GPU 최적화 힌트 */
-    transform: translateZ(0); /* 강제 GPU 레이어 생성 */
+    background-color: transparent;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: background-color, transform;
 }
-.header.section2plus-header .gnb-link,
-.header.section2plus-header .mypage-btn {
-    color: #ffffff; /* 흰색으로 변경 */
+
+.header.scrolled {
+    background-color: rgba(255, 255, 255, 0.1); /* 투명도 확 올려서 롤백 */
+    backdrop-filter: blur(20px); /* 섹션과 구분되도록 블러는 강화 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.15); /* 그림자로 띄워줌 */
 }
-.header.section2plus-header .lang-toggle {
-    color: #ffffff; /* 흰색으로 변경 */
-    border-color: rgba(255, 255, 255, 0.7); /* 테두리도 흰색 계열로 */
+
+.header.scrolled .gnb-link,
+.header.scrolled .mypage-btn,
+.header.scrolled .util-link {
+    color: #ffffff;
 }
-.header.section2plus-header .gnb-link,
-.header.section2plus-header .mypage-btn,
-.header.section2plus-header .lang-toggle {
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+.header.scrolled .lang-toggle {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+.header.scrolled .gnb-link,
+.header.scrolled .mypage-btn,
+.header.scrolled .lang-toggle,
+.header.scrolled .util-link {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* 그림자 0.3으로 완화 */
 }
 
 .header.transparent {
@@ -41,8 +47,8 @@
 
 /* 섹션 1에서 헤더 흰색 배경 + 글자 흰색 */
 .header.section1-header {
-    background-color: rgba(255, 255, 255, 0) !important;
-    /* backdrop-filter: blur(10px) !important; */
+    background-color: rgba(255, 255, 255, 0);
+    /* backdrop-filter: blur(10px); */
 }
 
 .header.section1-header .logo-link {
@@ -87,30 +93,25 @@
     color: #e0e0e0;
 }
 
-/* 섹션 2+ 헤더 투명 배경 */
+/* 섹션 2+ 헤더 투명 배경 - 이제 스크롤된 상태(scrolled)와 결합하여 제어 */
 .header.section2plus-header {
-    background-color: rgba(255, 255, 255, 0) !important;
-    backdrop-filter: none !important;
+    /* IntersectionObserver에서 scrolled와 결합되어 흰색 배경이 됨 */
 }
 
-.header.section2plus-header .logo-link {
-    color: #FF5000;
+/* 개별 컴포넌트 색상 강제 지정 (명시도 확보) */
+.header.section1-header .gnb-link,
+.header.section1-header .mypage-btn,
+.header.section1-header .lang-toggle,
+.header.section1-header .util-link {
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* 그림자 0.3으로 완화 */
 }
 
-.header.section2plus-header .gnb-link {
-    color: #f2f2f2;
+.header.section1-header .lang-toggle {
+    border-color: rgba(255, 255, 255, 0.8);
 }
 
-.header.section2plus-header .gnb-link:hover {
-    color: #FF5000;
-}
-
-.header.section2plus-header .lang-toggle {
-    color: #f2f2f2;
-    border-color: #999999;
-}
-
-.header.section2plus-header .lang-toggle:hover {
+.header.scrolled .lang-toggle:hover {
     border-color: #FF5000;
     color: #FF5000;
 }
@@ -125,7 +126,7 @@
 
 /* Footer Header (When over footer) */
 .header.footer-header {
-    background-color: rgba(255, 255, 255, 1) !important; /* Solid white background */
+    background-color: rgba(255, 255, 255, 1); /* Solid white background */
     border-bottom: 1px solid #eee;
     backdrop-filter: none;
 }
@@ -159,14 +160,15 @@
     justify-content: flex-end;
     align-items: center;
     gap: 12px;
-    padding: 11px 40px 0 0;
+    padding: 11px 0 0 0;
     font-size: 11px;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    width: 95%;
+    max-width: 1440px;
+    margin: 0 auto;
 }
 
 .main-header .util-link {
-    position: relative;
-    right: 130px;
     color: #555;
     text-decoration: none;
     transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -177,8 +179,6 @@
 }
 
 .main-header .util-divider {
-    position: relative;
-    right: 130px;
     color: #ddd;
 }
 
@@ -187,20 +187,42 @@
     display: none;
 }
 
-/* 헤더 내부 */
+/* 헤더 내부 - 3단 컨테이너 완전 분리 (정중앙 네비게이션 보장) */
 .header-inner {
+    height: var(--header-height, 72px);
     display: flex;
-    justify-content: center;
+    justify-content: space-between; /* 양 끝단 로고/유틸 배치용 */
     align-items: center;
-    gap: 100px;
-    padding: 16px 40px;
-    position: relative;
+    width: 95%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 8px 0;
+    position: relative; /* GNB 절대 중앙 배치를 위한 기준점 */
 }
 
-/* 메인 헤더 내부 레이아웃 */
+/* 메인 헤더 - 좌측 로고 (자연스러운 Y축 중앙화) */
 .main-header .logo {
+    display: flex;
+    align-items: center;
+    position: relative;
+    top: 2px; /* 로고 이미지 시각적 Y축 미세 조정 */
+}
+
+/* 메인 헤더 - GNB 무조건 X축 정중앙 배치 */
+.main-header .gnb {
     position: absolute;
-    left: 160px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+/* 메인 헤더 - 우측 라이트 컨트롤 (유틸리티) */
+.main-header .header-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 24px;
 }
 
 /* 호텔 헤더 내부 레이아웃 - 3단 그리드로 완벽한 중앙 정렬 보장 */
@@ -242,7 +264,8 @@
 
 .main-header .logo-link img,
 .hotel-header .logo-img {
-    width: 150px;
+    width: auto;
+    height: 60px;
 }
 
 /* GNB 네비게이션 */
@@ -259,7 +282,7 @@
 .gnb-link {
     color: #f2f2f2;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 800;
     transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -268,19 +291,23 @@
     color: #FF5000;
 }
 
-/* 헤더 우측 컨트롤 - 메인 헤더 전용 */
+/* 헤더 우측 컨트롤 (포지션 초기화해서 우측 flex 흐름 타게 만듦) */
 .main-header .header-right-controls {
-    position: absolute;
-    right: 160px;
+    /* position: absolute; 지우고 정상 문서 흐름으로 */
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
 .lang-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 40px; /* 고정 높이 지정 */
     min-width: 80px;
-    padding: 8px 16px;
-    border: 2px solid #f2f2f2;
+    padding: 0 16px;
+    border: 2px solid #cccccc;
     background-color: transparent;
     color: #f2f2f2;
     border-radius: 20px;

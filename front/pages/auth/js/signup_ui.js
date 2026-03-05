@@ -1,208 +1,224 @@
-import { checkIdAvailability, triggerPassAuth, submitSignup } from './signup_api.js';
-import { 
-  getState, 
-  updateTermsAction,
-  setAccountDataAction
-} from './signup_state.js';
-
-// DOM Elements
-const _dom = {
-  form: document.getElementById('signup_form'),
-  userId: document.getElementById('userId'),
-  pw: document.getElementById('password'),
-  pwConfirm: document.getElementById('passwordConfirm'),
-  userName: document.getElementById('userName'),
-  userEmail: document.getElementById('userEmail'),
-  btnCheckId: document.getElementById('btnCheckId'),
-  feedbackId: document.getElementById('feedbackId'),
-  feedbackPw: document.getElementById('feedbackPw'),
-  feedbackPwConfirm: document.getElementById('feedbackPwConfirm'),
-  btnSignupSubmit: document.getElementById('btnSignupSubmit'),
-  termAll: document.getElementById('termAll'),
-  allTerms: document.querySelectorAll('.term-item'),
-  reqTerms: document.querySelectorAll('.term-item.req'),
-  btnAuthPass: document.querySelector('.auth-btn.pass'),
-  authNotice: document.getElementById('authNotice'),
-  authMessage: document.getElementById('authMessage'),
-  verifiedName: document.getElementById('verifiedName'),
-  verifiedPhone: document.getElementById('verifiedPhone'),
-  verifiedGender: document.getElementById('verifiedGender')
-};
-
-// Validation Tracking Flags (O(1) Check)
-const _validity = {
-  isIdChecked: false,
-  isPwValid: false,
-  isPwMatch: false,
-  isAuthDone: false,
-  isTermsValid: false
-};
-
 export const initUI = () => {
-  bindFormEvents();
-};
+    console.log('[SignUp] UI Initialized');
 
-const validateTotalForm = () => {
-  // All essential flags must be true to enable submit
-  const isReady = _validity.isIdChecked && 
-                  _validity.isPwValid && 
-                  _validity.isPwMatch && 
-                  _validity.isTermsValid && 
-                  (_dom.userName.value.trim() !== '' || _validity.isAuthDone) &&
-                  _dom.userEmail.value.trim() !== '';
+    // -------------------------------------------------------------
+    // 1. Step Navigation & Progress Bar Logic
+    // -------------------------------------------------------------
+    const steps = [
+        document.getElementById('step1'),
+        document.getElementById('step2'),
+        document.getElementById('step3'),
+        document.getElementById('step4')
+    ];
+    const circles = document.querySelectorAll('.step-circle');
+    const progressBar = document.getElementById('progressBar');
+    
+    // UI Progress update
+    const updateProgress = (stepIndex) => { // 1-based index
+        const progressPercentages = { 1: '0%', 2: '33.3%', 3: '66.6%', 4: '100%' };
+        progressBar.style.width = progressPercentages[stepIndex];
 
-  // Button remains active but throws alert on click if invalid rules are bypassed natively
-  // But visually we don't strictly disable it to let users know what they missed upon click
-};
+        circles.forEach(circle => {
+            const circleStep = parseInt(circle.dataset.step);
+            circle.classList.remove('active', 'completed');
+            if (circleStep === stepIndex) {
+                circle.classList.add('active');
+            } else if (circleStep < stepIndex) {
+                circle.classList.add('completed');
+            }
+            
+            // Handle airplane icon logic
+            if (circle.querySelector('.fa-plane')) {
+                circle.querySelector('.fa-plane').remove();
+            }
+            if (circleStep === stepIndex) {
+                circle.insertAdjacentHTML('afterbegin', '<i class="fa-solid fa-plane"></i>');
+            }
+        });
+    };
 
-const bindFormEvents = () => {
+    const goToStep = (stepIndex) => {
+        steps.forEach((step, idx) => {
+            if (step) {
+                if (idx + 1 === stepIndex) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            }
+        });
+        updateProgress(stepIndex);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-  // 1. ID Check (Debounce implied / Click Triggered)
-  _dom.btnCheckId.addEventListener('click', async () => {
-    const val = _dom.userId.value.trim();
-    if (val.length < 4) {
-      _dom.feedbackId.textContent = '아이디는 4자 이상 입력해주세요.';
-      _dom.feedbackId.className = 'input-feedback error';
-      return;
+    // -------------------------------------------------------------
+    // 2. Step 1: Terms Agreement Logic
+    // -------------------------------------------------------------
+    const termAll = document.getElementById('termAll');
+    const termItems = document.querySelectorAll('.term-item');
+    const reqItems = document.querySelectorAll('.term-item.req');
+    const btnNext1 = document.getElementById('btnNext1');
+
+    if (termAll && termItems.length > 0) {
+        termAll.addEventListener('change', (e) => {
+            termItems.forEach(item => item.checked = e.target.checked);
+            checkRequiredTerms();
+        });
+
+        termItems.forEach(item => {
+            item.addEventListener('change', () => {
+                const allChecked = Array.from(termItems).every(i => i.checked);
+                termAll.checked = allChecked;
+                checkRequiredTerms();
+            });
+        });
     }
-    const isAvail = await checkIdAvailability(val);
-    if (isAvail) {
-      _dom.feedbackId.textContent = '사용 가능한 아이디입니다.';
-      _dom.feedbackId.className = 'input-feedback success';
-      _validity.isIdChecked = true;
-    } else {
-      _dom.feedbackId.textContent = '이미 사용 중인 아이디입니다.';
-      _dom.feedbackId.className = 'input-feedback error';
-      _validity.isIdChecked = false;
+
+    const checkRequiredTerms = () => {
+        const allReqChecked = Array.from(reqItems).every(req => req.checked);
+        if (btnNext1) {
+            btnNext1.disabled = !allReqChecked;
+        }
+    };
+
+    if (btnNext1) {
+        btnNext1.addEventListener('click', () => {
+            goToStep(2);
+        });
     }
-    validateTotalForm();
-  });
 
-  _dom.userId.addEventListener('input', () => {
-    _validity.isIdChecked = false;
-    _dom.feedbackId.textContent = '';
-    validateTotalForm();
-  });
+    // -------------------------------------------------------------
+    // 3. Step 2: Kakao/Naver SDK Integration (Mocked for UI/UX)
+    // -------------------------------------------------------------
+    const btnKakao = document.getElementById('btnKakao');
+    const btnNaver = document.getElementById('btnNaver');
 
-  // 2. PW Check
-  const checkPwComplexity = (password) => {
-     const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-     return regex.test(password);
-  };
+    const handleSocialLogin = (provider) => {
+        console.log(`[SignUp] Initiating ${provider} Login...`);
+        // Fake SDK delay
+        setTimeout(() => {
+            console.log(`[SignUp] ${provider} SDK Callback Success! Auto-navigating to Complete.`);
+            // Skip Step 3, go directly to Step 4 (Complete)
+            goToStep(4);
+        }, 1500);
+    };
 
-  _dom.pw.addEventListener('input', () => {
-    if (checkPwComplexity(_dom.pw.value)) {
-      _dom.feedbackPw.textContent = '안전한 비밀번호입니다.';
-      _dom.feedbackPw.className = 'input-feedback success';
-      _validity.isPwValid = true;
-    } else {
-      _dom.feedbackPw.textContent = '영문, 숫자, 특수문자를 포함해 8자 이상 입력해주세요.';
-      _dom.feedbackPw.className = 'input-feedback error';
-      _validity.isPwValid = false;
+    if (btnKakao) btnKakao.addEventListener('click', () => handleSocialLogin('Kakao'));
+    if (btnNaver) btnNaver.addEventListener('click', () => handleSocialLogin('Naver'));
+
+
+    // -------------------------------------------------------------
+    // 4. Step 2: PASS Phone Auth Mock UI Logic
+    // -------------------------------------------------------------
+    const btnPass = document.getElementById('btnPass');
+    const passModal = document.getElementById('passModal');
+    const passScreens = [
+        document.getElementById('passScreen1'),
+        document.getElementById('passScreen2'),
+        document.getElementById('passScreen3'),
+        document.getElementById('passScreen4'),
+        document.getElementById('passScreen5')
+    ];
+
+    const showPassScreen = (screenIndex) => { // 1-based index
+        passScreens.forEach((screen, idx) => {
+            if (screen) {
+                if (idx + 1 === screenIndex) {
+                    screen.classList.add('active');
+                } else {
+                    screen.classList.remove('active');
+                }
+            }
+        });
+    };
+
+    if (btnPass) {
+        btnPass.addEventListener('click', () => {
+            passModal.classList.remove('hidden');
+            showPassScreen(1); // Start with Telecom Selection
+        });
     }
-    triggerPwConfirmCheck();
-    validateTotalForm();
-  });
 
-  const triggerPwConfirmCheck = () => {
-    if (_dom.pwConfirm.value === '') return;
-    if (_dom.pw.value === _dom.pwConfirm.value) {
-      _dom.feedbackPwConfirm.textContent = '비밀번호가 일치합니다.';
-      _dom.feedbackPwConfirm.className = 'input-feedback success';
-      _validity.isPwMatch = true;
-    } else {
-      _dom.feedbackPwConfirm.textContent = '비밀번호가 일치하지 않습니다.';
-      _dom.feedbackPwConfirm.className = 'input-feedback error';
-      _validity.isPwMatch = false;
+    // PASS Screen 1 -> Screen 2 (Click any telecom)
+    const telecomBtns = document.querySelectorAll('.telecom-btn');
+    telecomBtns.forEach(btn => {
+        btn.addEventListener('click', () => showPassScreen(2));
+    });
+
+    // PASS Screen 2 -> Screen 3 (Click SMS Auth)
+    const btnSelectSms = document.getElementById('btnSelectSms');
+    if (btnSelectSms) {
+        btnSelectSms.addEventListener('click', () => showPassScreen(3));
     }
-  };
 
-  _dom.pwConfirm.addEventListener('input', () => {
-    triggerPwConfirmCheck();
-    validateTotalForm();
-  });
-
-  // 3. PASS Auth Mock
-  if (_dom.btnAuthPass) {
-    _dom.btnAuthPass.addEventListener('click', async () => {
-      const result = await triggerPassAuth();
-      if (result && result.success) {
-        _dom.authNotice.classList.remove('hidden');
-        _dom.authMessage.textContent = '본인인증이 완료되었습니다.';
-        _dom.userName.value = result.data.name;
-        _dom.userName.readOnly = true;
-        
-        _dom.verifiedName.value = result.data.name;
-        _dom.verifiedPhone.value = result.data.phone;
-        _dom.verifiedGender.value = result.data.gender;
-        
-        _validity.isAuthDone = true;
-        validateTotalForm();
-      }
-    });
-  }
-
-  // 4. Terms Check
-  const checkTermsValidity = () => {
-    _validity.isTermsValid = Array.from(_dom.reqTerms).every(t => t.checked);
-    validateTotalForm();
-  };
-
-  if (_dom.termAll) {
-    _dom.termAll.addEventListener('change', (e) => {
-      const isChecked = e.target.checked;
-      _dom.allTerms.forEach(term => term.checked = isChecked);
-      checkTermsValidity();
-    });
-  }
-
-  _dom.allTerms.forEach(term => {
-    term.addEventListener('change', () => {
-      if (_dom.termAll) {
-        _dom.termAll.checked = Array.from(_dom.allTerms).every(t => t.checked);
-      }
-      checkTermsValidity();
-    });
-  });
-
-  // 5. Submit Event (O(1) Data Gathering)
-  _dom.form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    if (!_validity.isIdChecked) return alert('아이디 중복확인을 진행해주세요.');
-    if (!_validity.isPwValid) return alert('비밀번호가 보안 규칙에 맞지 않습니다.');
-    if (!_validity.isPwMatch) return alert('비밀번호가 일치하지 않습니다.');
-    if (!_validity.isTermsValid) return alert('필수 약관에 동의해주세요.');
-
-    // Update state architecture centrally
-    updateTermsAction({
-      service: document.querySelector('input[name="termService"]').checked,
-      privacy: document.querySelector('input[name="termPrivacy"]').checked,
-      marketing: document.querySelector('input[name="termMarketing"]')?.checked || false,
-    });
-
-    setAccountDataAction({
-      password: _dom.pw.value
-    });
-
-    const result = await submitSignup(getState());
-    if (result.success) {
-       alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
-       
-       // Handle dynamic redirect logic similarly to login for zero-monolith flow
-       const urlParams = new URLSearchParams(window.location.search);
-       const redirectUrl = urlParams.get('redirect');
-       
-       import('../../core/constants/routes.js').then(({ ROUTES }) => {
-          if (redirectUrl && !redirectUrl.startsWith('javascript:')) {
-            window.location.replace(`login.html?redirect=${encodeURIComponent(redirectUrl)}`);
-          } else {
-            window.location.replace('login.html');
-          }
-       });
-    } else {
-       alert('회원가입 처리 중 오류가 발생했습니다.');
+    // PASS Screen 3 -> Screen 4 (Name to Phone)
+    const btnPassNextToPhone = document.getElementById('btnPassNextToPhone');
+    if (btnPassNextToPhone) {
+        btnPassNextToPhone.addEventListener('click', () => showPassScreen(4));
     }
-  });
+
+    // PASS Screen 4 -> Screen 5 (Phone to App Wait)
+    const btnPassSubmitAuth = document.getElementById('btnPassSubmitAuth');
+    if (btnPassSubmitAuth) {
+        btnPassSubmitAuth.addEventListener('click', () => showPassScreen(5));
+    }
+
+    // PASS Screen 5 -> Step 3 (Final Confirm with 3 sec delay)
+    const btnPassFinalConfirm = document.getElementById('btnPassFinalConfirm');
+    if (btnPassFinalConfirm) {
+        btnPassFinalConfirm.addEventListener('click', (e) => {
+            const btn = e.target;
+            const originalText = btn.innerText;
+            btn.innerHTML = '<div class="pass-loader" style="display:block; margin:0 auto; border-color: rgba(255,255,255,0.3); border-top-color:#fff; width:20px; height:20px;"></div>';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // Success! Close Modal and populate Step 3
+                passModal.classList.add('hidden');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+                // Sync data to Step 3 inputs and lock them (Immutability for verified data)
+                const passName = document.getElementById('passNameInput').value || '홍길동';
+                const passPhone = document.getElementById('passPhoneInput').value || '01012345678';
+                
+                const step3Name = document.getElementById('userName');
+                const step3Phone = document.getElementById('verifiedPhone');
+                
+                if (step3Name) {
+                    step3Name.value = passName;
+                    step3Name.setAttribute('readonly', true);
+                    step3Name.classList.add('readonly-input');
+                }
+                if (step3Phone) {
+                    step3Phone.value = passPhone;
+                    step3Phone.setAttribute('readonly', true);
+                    step3Phone.classList.add('readonly-input');
+                }
+
+                // Proceed to Info Input
+                goToStep(3);
+            }, 3000); // 3-second fake processing time
+        });
+    }
+
+    // -------------------------------------------------------------
+    // 5. Step 3: Form Submit -> Step 4
+    // -------------------------------------------------------------
+    const signupForm = document.getElementById('signup_form');
+    if (signupForm) {
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log('[SignUp] Form Verified and Submitted. Going to Step 4.');
+            goToStep(4);
+        });
+    }
+
+    // Close Modal on clicking outside of pass-modal-content for convenience
+    if (passModal) {
+        passModal.addEventListener('click', (e) => {
+            if (e.target === passModal) passModal.classList.add('hidden');
+        });
+    }
 
 };

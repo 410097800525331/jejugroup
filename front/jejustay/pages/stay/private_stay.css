@@ -225,7 +225,7 @@ h1, h2, h3, .serif-font {
 }
 
 /* Calendar Accents */
-.DayPicker-Day--selected { background: var(--private-primary) !important; }
+.DayPicker-Day--selected { background: var(--private-primary); }
 .DayPicker-Day--inRange { background: #FFF3E0; color: var(--private-text); }
 .btn-confirm { background: var(--private-primary); }
 

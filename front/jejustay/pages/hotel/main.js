@@ -191,12 +191,13 @@ function initMainScroll() {
 
                 // Header Style
                 if (entry.target.id === 'section-1') {
-                    header.classList.remove('transparent', 'section2plus-header', 'footer-header');
+                    header.classList.remove('scrolled', 'section2plus-header', 'footer-header');
                     header.classList.add('section1-header');
                     if (topBtn) topBtn.classList.remove('show');
                 } else {
+                    // 섹션 2부터는 흰색 배경에 어두운 글자 스타일 (scrolled 클래스 활용)
                     header.classList.remove('section1-header', 'footer-header');
-                    header.classList.add('transparent', 'section2plus-header');
+                    header.classList.add('scrolled', 'section2plus-header');
                     if (topBtn) topBtn.classList.add('show');
                 }
 

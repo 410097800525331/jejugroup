@@ -28,84 +28,226 @@
     <div id="main-header-placeholder"></div>
 
     <main class="signup-wrapper">
-        <section class="signup-container user_box inner2">
-            <!-- Step Header -->
+        <section class="signup-container">
+            <!-- Step Header & Progress -->
             <header class="step-header">
-                <h1 class="step-title" id="stepTitle">회원가입</h1>
-                <p class="step-desc" id="stepDesc">모든 여행을 제주그룹 하나로 누려보세요.</p>
+                <div class="step-header-text">
+                    <h1 class="step-title" id="stepTitle">약관동의</h1>
+                </div>
+
+                <div class="step-indicator">
+                    <div class="progress-bg"></div>
+                    <div class="progress-bar" id="progressBar"></div>
+                    <div class="step-circles">
+                        <div class="step-circle active" data-step="1"><i class="fa-solid fa-plane"></i> <span
+                                class="step-label">약관 동의</span></div>
+                        <div class="step-circle" data-step="2"><span class="step-label">본인 인증</span></div>
+                        <div class="step-circle" data-step="3"><span class="step-label">정보 입력</span></div>
+                        <div class="step-circle" data-step="4"><span class="step-label">가입 완료</span></div>
+                    </div>
+                </div>
             </header>
 
-            <form id="signup_form" class="user_form step-form">
-                <!-- 계정 정보 (Account Info) -->
-                <div class="input_group">
-                    <label for="userId">아이디</label>
-                    <div class="input-with-button">
-                        <input type="text" id="userId" name="userId" placeholder="영문, 숫자 4~20자" required>
-                        <button type="button" class="btn-secondary btn-verify" id="btnCheckId">중복확인</button>
+            <form id="signup_form" class="user_form">
+
+                <!-- Step 1: 약관 동의 -->
+                <div class="step-panel active" id="step1">
+                    <div class="agree_box flat-agree-box">
+                        <label class="custom-chk check-all">
+                            <input type="checkbox" id="termAll" class="hidden-chk">
+                            <span class="chk-mark"></span>
+                            <span>전체 동의</span>
+                        </label>
+                        <div class="agree-desc">
+                            전체동의에는 필수 및 선택동의가 포함되며, 개별적으로 동의를 선택할 수 있습니다.
+                            선택항목 동의여부 관계없이 정상적 서비스 이용가능합니다.
+                        </div>
+                        <hr class="terms-divider">
+                        <label class="custom-chk">
+                            <input type="checkbox" class="term-item req hidden-chk" name="termService" required>
+                            <span class="chk-mark"></span>
+                            [필수] 이용약관 동의 <i class="fa-solid fa-chevron-right arrow-right"></i>
+                        </label>
+                        <label class="custom-chk">
+                            <input type="checkbox" class="term-item req hidden-chk" name="termPrivacy" required>
+                            <span class="chk-mark"></span>
+                            [필수] 개인정보 수집 및 이용 동의 <i class="fa-solid fa-chevron-right arrow-right"></i>
+                        </label>
+                        <label class="custom-chk opt-chk">
+                            <input type="checkbox" class="term-item opt hidden-chk" name="termMarketing">
+                            <span class="chk-mark"></span>
+                            [선택] 마케팅 정보 수신 동의 <i class="fa-solid fa-chevron-right arrow-right"></i>
+                        </label>
+                        <div class="opt-desc">
+                            * 마케팅 정보 수신에 동의하시면 특가 및 이벤트 정보를 받아보실 수 있으며, 미동의 시에도 서비스 이용은 가능합니다.
+                        </div>
                     </div>
-                    <span class="input-feedback" id="feedbackId"></span>
-                </div>
-
-                <div class="input_group">
-                    <label for="password">비밀번호</label>
-                    <input type="password" id="password" name="password" placeholder="영문, 숫자, 특수문자 조합 8자 이상" required>
-                    <span class="input-feedback" id="feedbackPw"></span>
-                </div>
-
-                <div class="input_group">
-                    <label for="passwordConfirm">비밀번호 확인</label>
-                    <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호 다시 입력"
-                        required>
-                    <span class="input-feedback" id="feedbackPwConfirm"></span>
-                </div>
-
-                <div class="input_group">
-                    <label for="userName">이름</label>
-                    <div class="input-with-button">
-                        <input type="text" id="userName" name="userName" placeholder="이름 입력 (또는 휴대전화 인증)" required>
-                        <button type="button" class="btn-secondary btn-verify pass" data-method="pass">본인인증</button>
+                    <div class="form-actions flat-actions">
+                        <button type="button" class="btn-flat" id="btnNext1" disabled>다음</button>
                     </div>
                 </div>
 
-                <!-- Hidden inputs to store verified data securely -->
-                <input type="hidden" name="verifiedName" id="verifiedName" value="">
-                <input type="hidden" name="verifiedPhone" id="verifiedPhone" value="">
-                <input type="hidden" name="verifiedGender" id="verifiedGender" value="">
-
-                <div id="authNotice" class="auth-notice hidden" style="margin-bottom: 20px;">
-                    <i class="fa-solid fa-circle-check"></i> <span id="authMessage">인증이 완료되었습니다.</span>
+                <!-- Step 2: 본인 인증 -->
+                <div class="step-panel" id="step2">
+                    <div class="auth-methods">
+                        <button type="button" class="auth-btn kakao" id="btnKakao"><i class="fa-solid fa-comment"></i>
+                            카카오로 3초만에 가입하기</button>
+                        <button type="button" class="auth-btn naver" id="btnNaver"><i class="fa-solid fa-n"
+                                style="font-weight:900;"></i> 네이버로 가입하기</button>
+                        <button type="button" class="auth-btn pass" id="btnPass">
+                            <div class="pass-logo-text">PASS</div> 휴대전화 인증
+                        </button>
+                    </div>
                 </div>
 
-                <div class="input_group">
-                    <label for="userEmail">이메일</label>
-                    <input type="email" id="userEmail" name="userEmail" placeholder="example@email.com" required>
+                <!-- Step 3: 정보 입력 -->
+                <div class="step-panel" id="step3">
+                    <div class="input_group">
+                        <label for="userName">이름</label>
+                        <input type="text" id="userName" name="userName" readonly class="readonly-input">
+                    </div>
+                    <div class="input_group">
+                        <label for="verifiedPhone">휴대전화번호</label>
+                        <input type="text" id="verifiedPhone" name="verifiedPhone" readonly class="readonly-input">
+                        <input type="hidden" name="verifiedGender" id="verifiedGender" value="">
+                    </div>
+                    <div class="input_group">
+                        <label for="userId">아이디</label>
+                        <div class="input-with-button">
+                            <input type="text" id="userId" name="userId" placeholder="영문, 숫자 4~20자" required>
+                            <button type="button" class="btn-secondary btn-verify" id="btnCheckId">중복확인</button>
+                        </div>
+                        <span class="input-feedback" id="feedbackId"></span>
+                    </div>
+
+                    <div class="input_group">
+                        <label for="password">비밀번호</label>
+                        <input type="password" id="password" name="password" placeholder="영문, 숫자, 특수문자 조합 8자 이상"
+                            required>
+                        <span class="input-feedback" id="feedbackPw"></span>
+                    </div>
+
+                    <div class="input_group">
+                        <label for="passwordConfirm">비밀번호 확인</label>
+                        <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호 다시 입력"
+                            required>
+                        <span class="input-feedback" id="feedbackPwConfirm"></span>
+                    </div>
+
+                    <div class="input_group">
+                        <label for="userEmail">이메일</label>
+                        <input type="email" id="userEmail" name="userEmail" placeholder="example@email.com" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="btnSignupSubmit">가입 완료</button>
+                    </div>
                 </div>
 
-                <!-- 약관 동의 (Terms Agreement) -->
-                <div class="agree_box">
-                    <label class="check-all">
-                        <input type="checkbox" id="termAll">
-                        <span>모두 동의합니다.</span>
-                    </label>
-                    <hr class="terms-divider">
-                    <label>
-                        <input type="checkbox" class="term-item req" name="termService" required>
-                        [필수] 이용약관 동의
-                    </label>
-                    <label>
-                        <input type="checkbox" class="term-item req" name="termPrivacy" required>
-                        [필수] 개인정보 수집 및 이용 동의
-                    </label>
-                    <label>
-                        <input type="checkbox" class="term-item opt" name="termMarketing">
-                        [선택] 마케팅 정보 수신 동의
-                    </label>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn-primary" id="btnSignupSubmit">가입 완료</button>
+                <!-- Step 4: 가입 완료 -->
+                <div class="step-panel" id="step4">
+                    <div class="success-content">
+                        <i class="fa-solid fa-circle-check success-icon"></i>
+                        <h2 class="success-title">환영합니다!</h2>
+                        <p class="success-desc">제주그룹의 회원이 되신 것을 진심으로 환영합니다.</p>
+                        <div class="form-actions">
+                            <a href="login.html" class="btn-primary">로그인 페이지로 이동</a>
+                        </div>
+                    </div>
                 </div>
             </form>
+
+            <!-- PASS Fake UI Modal -->
+            <div id="passModal" class="pass-modal hidden">
+                <div class="pass-modal-content">
+                    <div class="pass-header">
+                        <div class="pass-logo-red">PASS</div>
+                        <div class="pass-header-text">인증을 넘어<br>일상으로 PASS</div>
+                    </div>
+
+                    <!-- Screen 1: Telecom Selection -->
+                    <div class="pass-screen active" id="passScreen1">
+                        <h2 class="pass-title">이용중인 통신사를<br>선택해 주세요</h2>
+                        <div class="telecom-grid">
+                            <button type="button" class="telecom-btn">SKT</button>
+                            <button type="button" class="telecom-btn">KT</button>
+                            <button type="button" class="telecom-btn">LG U+</button>
+                            <button type="button" class="telecom-btn mvno">SKT<br>알뜰폰</button>
+                            <button type="button" class="telecom-btn mvno">KT<br>알뜰폰</button>
+                            <button type="button" class="telecom-btn mvno">LG U+<br>알뜰폰</button>
+                        </div>
+                    </div>
+
+                    <!-- Screen 2: Auth Method -->
+                    <div class="pass-screen" id="passScreen2">
+                        <h2 class="pass-title">인증방법을<br>선택해주세요</h2>
+                        <div class="authmethod-list">
+                            <button type="button" class="authmethod-btn">
+                                <div class="method-info">
+                                    <strong>PASS 인증</strong>
+                                    <span>앱으로 간편하고 안전하게!</span>
+                                </div>
+                            </button>
+                            <button type="button" class="authmethod-btn sms-btn" id="btnSelectSms">
+                                <div class="method-info">
+                                    <strong>문자(SMS) 인증</strong>
+                                    <span>SMS 인증번호로 본인확인</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Screen 3: Name Input -->
+                    <div class="pass-screen" id="passScreen3">
+                        <h2 class="pass-title">이름을<br>입력해 주세요</h2>
+                        <div class="pass-input-group">
+                            <input type="text" id="passNameInput" placeholder="이름" value="홍길동">
+                        </div>
+                        <button type="button" class="pass-next-btn" id="btnPassNextToPhone">다음</button>
+                    </div>
+
+                    <!-- Screen 4: Phone & Captcha Input -->
+                    <div class="pass-screen" id="passScreen4">
+                        <h2 class="pass-title">보안문자를<br>입력해 주세요</h2>
+                        <div class="pass-input-group">
+                            <input type="text" value="홍길동" readonly class="readonly">
+                        </div>
+                        <div class="pass-input-group">
+                            <input type="text" id="passPhoneInput" placeholder="01012345678" value="01012345678">
+                        </div>
+                        <div class="captcha-box">
+                            <div class="captcha-img">986534</div>
+                        </div>
+                        <div class="pass-input-group">
+                            <input type="text" placeholder="보안문자 입력" value="986534">
+                        </div>
+                        <button type="button" class="pass-next-btn" id="btnPassSubmitAuth">다음</button>
+                    </div>
+
+                    <!-- Screen 5: Confirm App Wait -->
+                    <div class="pass-screen" id="passScreen5">
+                        <div class="pass-confirm-ui">
+                            <div class="pass-title-center"><span class="red-text">PASS 앱</span> 알림 확인하고<br>인증을 진행해주세요
+                            </div>
+                            <div class="phone-mockup">
+                                <div class="phone-alert">
+                                    <div class="alert-logo">PASS</div>
+                                    <div class="alert-text">
+                                        <strong>PASS 인증을 요청했어요</strong>
+                                        <span>알림을 눌러 확인해주세요</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="pass-next-btn confirm" id="btnPassFinalConfirm">인증 완료</button>
+                        </div>
+                    </div>
+
+                    <div class="pass-footer">
+                        이용약관 <strong>개인정보처리방침</strong><br>
+                        VeriSign 256-bit SSL 암호화 적용
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 

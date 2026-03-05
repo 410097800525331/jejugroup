@@ -1532,9 +1532,9 @@ body.long-stay-page {
 
 /* 라이프 페이지용 경계 없는 푸터 */
 .footer {
-    background: transparent !important;
-    background-color: transparent !important;
-    border-top: none !important;
+    background: transparent;
+    background-color: transparent;
+    border-top: none;
 }
 
 /* ========== 히어로 가독성 및 브랜딩 ========== */
@@ -1564,20 +1564,20 @@ body.long-stay-page {
 
 /* 로그인 버튼 브랜딩 -> 아웃라인 스타일 */
 .login-btn {
-    background-color: transparent !important;
-    color: var(--primary) !important;
-    border: 1.5px solid var(--primary) !important;
+    background-color: transparent;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
     border-radius: var(--radius-sm);
     padding: 7px 16px; /* 테두리를 위해 약간 조정됨 */
     font-weight: 700;
     transition: all 0.2s;
 }
 .login-btn:hover {
-    background-color: rgba(255, 80, 0, 0.05) !important;
+    background-color: rgba(255, 80, 0, 0.05);
     transform: translateY(-1px);
 }
 .login-btn .util-icon {
-    color: var(--primary) !important;
+    color: var(--primary);
 }
 
 /* ========== 히어로 위치 오버라이드 ========== */
@@ -1656,7 +1656,7 @@ body.long-stay-page {
 /* 활성 상태: 배경 반전 및 하단 모서리 조정 */
 /* 활성 상태: 배경 반전 */
 .search-item-v2.active {
-    background: #F8F9FA !important;
+    background: #F8F9FA;
     box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
     z-index: 2000;
 }
@@ -1752,12 +1752,12 @@ body.long-stay-page {
 .Popup[role="dialog"] {
     background: #FFFFFF;
     border: none;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.15) !important;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.15);
     position: absolute;
-    top: 100% !important; /* Zero gap for seamless attachment */
+    top: 100%; /* Zero gap for seamless attachment */
     z-index: 1000;
     padding: 24px;
-    margin-top: 0 !important;
+    margin-top: 0;
 
     /* Animation Base State (Invisible) */
     opacity: 0;
@@ -1780,8 +1780,8 @@ body.long-stay-page {
 
 /* [Fix] Disable Animation for Calendar to prevent layout conflict */
 #calendarPopup.active {
-    animation: none !important;
-    clip-path: inset(0 0 0 0) !important;
+    animation: none;
+    clip-path: inset(0 0 0 0);
     transition: opacity 0.2s ease;
 }
 
@@ -1844,21 +1844,21 @@ body.long-stay-page {
 .guest-popup-new,
 .options-popup-new,
 .Popup[role="dialog"] {
-    left: 24px !important; /* 아이콘 위치에 맞춰 정렬 */
-    right: auto !important;
-    transform: none !important;
-    border-radius: 0 24px 24px 24px !important; /* Flatten Top-Left to attach */
-    top: calc(100% + 8px) !important; /* 1px 더 올려서 8px로 조정 */
-    border: none !important; /* 이중 테두리 방지 */
-    z-index: 90 !important; /* 검색바 아래로 배치 */
+    left: 24px; /* 아이콘 위치에 맞춰 정렬 */
+    right: auto;
+    transform: none;
+    border-radius: 0 24px 24px 24px; /* Flatten Top-Left to attach */
+    top: calc(100% + 8px); /* 1px 더 올려서 8px로 조정 */
+    border: none; /* 이중 테두리 방지 */
+    z-index: 90; /* 검색바 아래로 배치 */
 }
 
 /* 캘린더 내부 레이아웃 문제에 대한 특정 오버라이드 (있는 경우) */
 .Popup[role="dialog"] .Popup__content {
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    padding: 0;
 }
 
 /* 글래스 텍스처 오버레이 (선택 사항) */
@@ -1877,40 +1877,40 @@ body.long-stay-page {
 
 /* 컴팩트 모드: 잘림 방지를 위한 수정 */
 .Popup[role="dialog"] .DayPicker-Day {
-    padding: 6px !important; /* 셀 패딩 축소 (기존에는 더 컸음) */
-    width: 36px !important; /* 더 작은 너비의 터치 타겟 */
-    height: 36px !important; /* 더 작은 높이 */
-    line-height: 36px !important;
-    font-size: 0.9rem !important;
+    padding: 6px; /* 셀 패딩 축소 (기존에는 더 컸음) */
+    width: 36px; /* 더 작은 너비의 터치 타겟 */
+    height: 36px; /* 더 작은 높이 */
+    line-height: 36px;
+    font-size: 0.9rem;
 }
 
 .Popup[role="dialog"] .DayPicker-Caption {
-    margin-bottom: 12px !important; /* 더 좁은 달 제목 간격 */
-    font-size: 1rem !important;
+    margin-bottom: 12px; /* 더 좁은 달 제목 간격 */
+    font-size: 1rem;
 }
 
 .Popup[role="dialog"] .RangePicker-Header {
-    margin-bottom: 2px !important; /* 헤더 간격 축소 */
-    padding-bottom: 8px !important;
+    margin-bottom: 2px; /* 헤더 간격 축소 */
+    padding-bottom: 8px;
 }
 
 .Popup[role="dialog"] .RangePicker-Tabs {
-    margin-bottom: 12px !important;
+    margin-bottom: 12px;
 }
 
 .Popup[role="dialog"] .DayPicker-Months {
-    gap: 12px !important; /* 달 사이의 더 좁은 간격 */
+    gap: 12px; /* 달 사이의 더 좁은 간격 */
 }
 
 /* 푸터 버튼이 컴팩트하게 보이도록 보장 */
 .Popup[role="dialog"] .RangePicker-Footer {
-    padding-top: 12px !important;
-    margin-top: 8px !important;
+    padding-top: 12px;
+    margin-top: 8px;
 }
 
 .Popup[role="dialog"] .ActionBtn {
-    height: 40px !important;
-    font-size: 0.9rem !important;
+    height: 40px;
+    font-size: 0.9rem;
 }
 
 /* ========== Restored Calendar Styles (from hotel.css) ========== */
@@ -1956,21 +1956,21 @@ body.long-stay-page {
 }
 /* Selection Logic Specificity Fix */
 .Popup[role="dialog"] .DayPicker-Day--selected {
-    background-color: var(--v2-orange) !important;
-    color: #fff !important;
-    border-radius: 50% !important;
+    background-color: var(--v2-orange);
+    color: #fff;
+    border-radius: 50%;
 }
 
 .Popup[role="dialog"] .DayPicker-Day--inRange {
-    background: rgba(255, 80, 0, 0.15) !important;
-    color: #222 !important;
-    border-radius: 0 !important;
+    background: rgba(255, 80, 0, 0.15);
+    color: #222;
+    border-radius: 0;
 }
 
 .Popup[role="dialog"] .DayPicker-Day--checkIn {
-    background: var(--v2-orange) !important;
-    color: #fff !important;
-    border-radius: 50% !important;
+    background: var(--v2-orange);
+    color: #fff;
+    border-radius: 50%;
     position: relative;
     z-index: 2;
 }
@@ -1982,14 +1982,14 @@ body.long-stay-page {
     right: 0;
     width: 50%;
     height: 100%;
-    background: rgba(255, 80, 0, 0.15) !important;
+    background: rgba(255, 80, 0, 0.15);
     z-index: -1;
 }
 
 .Popup[role="dialog"] .DayPicker-Day--checkOut {
-    background: var(--v2-orange) !important;
-    color: #fff !important;
-    border-radius: 50% !important;
+    background: var(--v2-orange);
+    color: #fff;
+    border-radius: 50%;
     position: relative;
     z-index: 2;
 }
@@ -2001,25 +2001,25 @@ body.long-stay-page {
     left: 0;
     width: 50%;
     height: 100%;
-    background: rgba(255, 80, 0, 0.15) !important;
+    background: rgba(255, 80, 0, 0.15);
     z-index: -1;
 }
 
 /* Hover Range */
 .Popup[role="dialog"] .DayPicker-Day--hoverRange {
-    background: rgba(255, 80, 0, 0.1) !important;
-    border-radius: 0 !important;
+    background: rgba(255, 80, 0, 0.1);
+    border-radius: 0;
 }
 
 /* Sync with Hotel Page Design */
 .Popup[role="dialog"] .DayPicker-Day--disabled {
-    color: #e0e0e0 !important;
-    cursor: not-allowed !important;
-    text-decoration: none !important; /* Remove line-through for cleaner look */
+    color: #e0e0e0;
+    cursor: not-allowed;
+    text-decoration: none; /* Remove line-through for cleaner look */
     opacity: 0.6;
 }
 
 .Popup[role="dialog"] .DayPicker-Day--today {
-    color: var(--v2-orange) !important;
-    font-weight: 800 !important;
+    color: var(--v2-orange);
+    font-weight: 800;
 }

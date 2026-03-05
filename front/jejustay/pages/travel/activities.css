@@ -9,8 +9,8 @@ body.activities-page {
 
 /* Footer Overrides for Seamless Integration */
 .activities-page .footer {
-    background: transparent !important;
-    border-top: none !important;
+    background: transparent;
+    border-top: none;
     padding-top: 100px;
     margin-top: 0; /* Ensure no gap if there was margin */
 }

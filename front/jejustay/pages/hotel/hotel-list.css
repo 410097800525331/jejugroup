@@ -33,25 +33,25 @@ body {
 
 /* Force Header Style (Always White/Scrolled State) */
 .header {
-    background: rgba(255, 255, 255, 1) !important;
-    backdrop-filter: blur(20px) !important;
-    border-bottom: 1px solid var(--border-color) !important;
+    background: rgba(255, 255, 255, 1);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
 .header .nav-link,
 .header .util-link,
 .header .mobile-menu-btn {
-    color: var(--text-main) !important;
+    color: var(--text-main);
 }
 
 .header .logo-img {
-    filter: none !important;
+    filter: none;
 }
 
 .header .nav-link:hover,
 .header .util-link:hover {
-    color: var(--primary-color) !important;
+    color: var(--primary-color);
 }
 
 .container-wide {

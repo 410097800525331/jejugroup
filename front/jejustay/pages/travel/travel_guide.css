@@ -8,9 +8,9 @@
 
 /* FIX: Override Global Gradient from hotel.css */
 body {
-    background: #ffffff !important;
-    background-image: none !important;
-    background-attachment: scroll !important;
+    background: #ffffff;
+    background-image: none;
+    background-attachment: scroll;
 }
 
 /* Wrapper for specific travel guide sections */

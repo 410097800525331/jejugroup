@@ -161,7 +161,7 @@ input {
 }
 
 .hidden {
-    display: none !important;
+    display: none;
 }
 
 /* ========== Horizontal Mega Menu Styles ========== */
@@ -185,13 +185,13 @@ input {
 
 /* Disable previous underline effect */
 .nav-link::after {
-    display: none !important;
+    display: none;
 }
 
 /* Ensure Nav Link changes color on hover throughout the entire area */
 .nav-item:hover .nav-link,
 .nav-link:hover {
-    color: var(--primary) !important;
+    color: var(--primary);
 }
 
 /* Wrapper for the split text */
@@ -354,10 +354,10 @@ input {
 
 /* Text color fix for Transparent Header situations */
 .header .mega-menu-link {
-    color: #333 !important;
+    color: #333;
 }
 .header .mega-menu-link:hover {
-    color: #FF5000 !important;
+    color: #FF5000;
 }
 
 /* ========== Header ========== */
@@ -840,7 +840,7 @@ input {
     left: 20px;
     border-radius: 24px;
     box-shadow: 0 16px 48px rgba(0,0,0,0.12);
-    width: 650px !important; /* Increased width */
+    width: 650px; /* Increased width */
     white-space: nowrap;
     background: #fff; /* Fix transparency */
     z-index: 2000; /* Ensure on top */
@@ -857,7 +857,7 @@ input {
     display: none; /* Changed from visibility/opacity */
     margin-left: 0; /* Reset */
     box-shadow: 0 16px 48px rgba(0,0,0,0.12);
-    width: 700px !important; /* Force expansion for two months */
+    width: 700px; /* Force expansion for two months */
     min-width: 700px;
     background: #fff; /* Fix transparency */
     z-index: 2000;
@@ -866,7 +866,7 @@ input {
 }
 .Popup.RangePicker.active {
     transform: none;
-    display: block !important; /* Force show */
+    display: block; /* Force show */
 }
 /* Beak/Arrow for popup is optional, skipping for cleaner look */
 
@@ -1010,20 +1010,20 @@ input {
     .destination-dropdown,
     .guest-popup-new,
     .Popup.RangePicker {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        width: 90% !important;
-        max-width: 400px !important;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 400px;
         /* Mobile override - reset min-width/width */
-        min-width: 0 !important;
-        max-height: 80vh !important;
-        overflow-y: auto !important;
-        z-index: 2000 !important;
-        margin: 0 !important;
-        right: auto !important;
-        bottom: auto !important;
+        min-width: 0;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 2000;
+        margin: 0;
+        right: auto;
+        bottom: auto;
     }
 }
 
@@ -1093,12 +1093,12 @@ input {
 
 /* [Fix] Range Highlight Logic */
 .DayPicker-Day--inRange {
-    background: rgba(255, 80, 0, 0.15) !important;
+    background: rgba(255, 80, 0, 0.15);
     color: var(--text-title);
     border-radius: 0;
 }
 .DayPicker-Day--checkIn {
-    background: var(--primary) !important;
+    background: var(--primary);
     color: #fff;
     border-radius: 50%;
     position: relative;
@@ -1117,7 +1117,7 @@ input {
 }
 
 .DayPicker-Day--checkOut {
-    background: var(--primary) !important;
+    background: var(--primary);
     color: #fff;
     border-radius: 50%;
     position: relative;
@@ -1270,7 +1270,7 @@ input {
     display: none;
 }
 .RangePicker-Panel.active {
-    display: block !important;
+    display: block;
     animation: fadeIn 0.3s ease-out forwards;
 }
 
@@ -2794,9 +2794,9 @@ input {
 
 /* ==================== Seamless Footer ==================== */
 .footer {
-    background: transparent !important;
-    background-color: transparent !important;
-    border-top: none !important; /* Zero Border */
+    background: transparent;
+    background-color: transparent;
+    border-top: none; /* Zero Border */
     padding: 100px 40px 60px; /* Space as Divider */
     margin-top: 0;
     width: 100%;
@@ -2812,7 +2812,7 @@ input {
     max-width: 1200px;
     margin: 0 auto 15px;
     gap: 40px;
-    background: transparent !important; /* Ensure no background on content */
+    background: transparent; /* Ensure no background on content */
 }
 
 .footer-info {
@@ -2868,10 +2868,10 @@ input {
 
 /* Footer가 section 클래스를 가질 때 100vh 제거 */
 .footer.section {
-    min-height: auto !important;
-    height: auto !important;
-    align-items: flex-start !important;
-    justify-content: flex-start !important;
+    min-height: auto;
+    height: auto;
+    align-items: flex-start;
+    justify-content: flex-start;
     padding-top: 60px;
     padding-bottom: 60px;
 }
@@ -2915,6 +2915,6 @@ input {
 
 /* Calendar Hover Effect */
 .DayPicker-Day--hoverRange {
-    background-color: rgba(255, 80, 0, 0.15) !important; /* Light Orange */
+    background-color: rgba(255, 80, 0, 0.15); /* Light Orange */
     color: var(--primary);
 }

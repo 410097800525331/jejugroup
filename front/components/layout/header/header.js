@@ -131,7 +131,7 @@ const updateLoginButtonAsLogout = (loginBtn) => {
 };
 
 const appendIndexAdminLink = (headerUtil) => {
-    if (document.getElementById('indexAdminBtn')) {
+    if (headerUtil.querySelector('[data-route="ADMIN.DASHBOARD"]')) {
         return;
     }
 
@@ -142,14 +142,14 @@ const appendIndexAdminLink = (headerUtil) => {
     adminLink.setAttribute('data-route', 'ADMIN.DASHBOARD');
     adminLink.style.color = '#FF5000';
     adminLink.style.fontWeight = '700';
-    adminLink.textContent = '관리자 페이지';
+    adminLink.textContent = '관리자가 가라사대';
 
     const divider = document.createElement('span');
     divider.className = 'util-divider';
     divider.textContent = '|';
 
-    headerUtil.insertBefore(divider, headerUtil.firstChild);
-    headerUtil.insertBefore(adminLink, divider);
+    // 최신 트렌드: 왼쪽 끝에 붙여서 다른 유틸 메뉴와 구분
+    headerUtil.prepend(adminLink, divider);
 };
 
 const syncHeaderAuthState = () => {
@@ -174,7 +174,10 @@ const syncHeaderAuthState = () => {
             adminBtn.style.display = 'flex';
         }
 
-        if (isAdmin && !adminBtn && indexHeaderUtil) {
+        const adminExists = Array.from(indexHeaderUtil.querySelectorAll('.util-link'))
+            .some(link => link.getAttribute('data-route') === 'ADMIN.DASHBOARD');
+
+        if (isAdmin && !adminExists && indexHeaderUtil) {
             appendIndexAdminLink(indexHeaderUtil);
         }
 

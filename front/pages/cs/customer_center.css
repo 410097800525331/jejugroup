@@ -15,59 +15,59 @@
 
 /* ==================== Scroll Override for Full Page Logic ==================== */
 html {
-    overflow-y: auto !important; /* Restore scrollbar overridden by globals.css */
-    height: auto !important;
+    overflow-y: auto; /* Restore scrollbar overridden by globals.css */
+    height: auto;
 }
 
 body.customer-center-page {
     font-family: 'FlightSans', 'Noto Sans KR', sans-serif;
     background-color: #F8F9FA;
     color: #333;
-    overflow-y: visible !important; /* Ensure body allows scrolling */
+    overflow-y: visible; /* Ensure body allows scrolling */
 }
 
 /* ==================== Header Overrides (Standardizing for White Bg) ==================== */
 /* We target the generic .header class when inside .customer-center-page */
 .customer-center-page .header {
-    background: #FFFFFF !important;
+    background: #FFFFFF;
     border-bottom: 1px solid #E5E5E5;
     position: fixed;
     /* Ensure no gradients from globals.css affect visibility */
-    background-image: none !important; 
+    background-image: none; 
 }
 
 /* Force dark text for visibility */
 .customer-center-page .gnb-link {
-    color: #111 !important;
+    color: #111;
 }
 
 .customer-center-page .gnb-link:hover {
-    color: #FF5000 !important;
+    color: #FF5000;
 }
 
 .customer-center-page .util-link {
-    color: #555 !important;
-    font-size: 11px !important;
+    color: #555;
+    font-size: 11px;
 }
 .customer-center-page .util-link:hover,
 .customer-center-page .util-link.active {
-    color: #FF5000 !important;
+    color: #FF5000;
 }
 
 .customer-center-page .lang-toggle {
-    color: #333 !important;
-    border-color: #DDD !important;
+    color: #333;
+    border-color: #DDD;
 }
 .customer-center-page .lang-toggle:hover {
-    color: #FF5000 !important;
-    border-color: #FF5000 !important;
+    color: #FF5000;
+    border-color: #FF5000;
 }
 
 .customer-center-page .mypage-btn {
-    color: #333 !important;
+    color: #333;
 }
 .customer-center-page .mypage-btn:hover {
-    color: #FF5000 !important;
+    color: #FF5000;
 }
 
 

@@ -262,8 +262,8 @@ class HotelChatbot {
         });
         
         try {
-            // RayPersona: Secure Call to Netlify Function
-            const response = await fetch('/.netlify/functions/chat', {
+            // RayPersona: Secure Call to AlwaysData Backend
+            const response = await fetch('https://jejugroup.alwaysdata.net/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -123,7 +123,7 @@ async function searchCityWeather(cityQuery) {
     suggestionsList.classList.remove('active');
 
     try {
-        const weatherRes = await fetch(`/.netlify/functions/weather?type=search&q=${encodeURIComponent(searchTerm)}`);
+        const weatherRes = await fetch(`https://jejugroup.alwaysdata.net/api/weather?type=search&q=${encodeURIComponent(searchTerm)}`);
         if (weatherRes.status === 404) throw new Error('CITY_NOT_FOUND');
         if (!weatherRes.ok) throw new Error('SEARCH_FAILED');
         
@@ -188,15 +188,15 @@ function getGeoLocation() {
     });
 }
 
-// API 호출부 (이제 넷리파이 함수로 프록시 쏴줌)
+// API 호출부 (이제 넷리파이 함수 대신 AlwaysData 백엔드 직접 호출)
 async function fetchWeatherData(lat, lon) {
-    const res = await fetch(`/.netlify/functions/weather?type=current&lat=${lat}&lon=${lon}`);
+    const res = await fetch(`https://jejugroup.alwaysdata.net/api/weather?type=current&lat=${lat}&lon=${lon}`);
     if (res.status === 401) throw new Error('API_KEY_INVALID');
     return await res.json();
 }
 
 async function fetchPollutionData(lat, lon) {
-    const res = await fetch(`/.netlify/functions/weather?type=pollution&lat=${lat}&lon=${lon}`);
+    const res = await fetch(`https://jejugroup.alwaysdata.net/api/weather?type=pollution&lat=${lat}&lon=${lon}`);
     return await res.json();
 }
 

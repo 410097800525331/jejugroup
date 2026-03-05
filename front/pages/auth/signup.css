@@ -36,8 +36,7 @@
 /* 1. ?뚯썝媛???섏씠吏 諛곌꼍 諛??덉씠?꾩썐 ?ㅼ젙 (login.css 蹂듬텤 ???몃?議곗젙) */
 body.signup-page {
   font-family: 'FlightSans', sans-serif;
-  background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80') no-repeat center center/cover;
-  background-attachment: fixed;
+  background-color: #ffffff;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -46,17 +45,8 @@ body.signup-page {
 }
 
 html {
-  overflow-y: auto !important;
-  height: auto !important;
-}
-
-body.signup-page::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.2) 100%);
-  z-index: 0;
-  pointer-events: none;
+  overflow-y: auto;
+  height: auto;
 }
 
 #main-header-placeholder {
@@ -69,76 +59,47 @@ body.signup-page::before {
   z-index: 1;
 }
 
-/* 2. ?ㅻ뜑 媛?낆꽦 媛뺤젣 ?섏젙 (login.css ?숈씪) */
+/* 2. Header / Footer Sync (Login Style) */
 .signup-page .header {
-  background-color: transparent !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid #eeeeee !important;
+  position: relative !important;
 }
 
-.signup-page .gnb-link,
-.signup-page .util-link,
-.signup-page .header-util,
-.signup-page .header-right-controls button {
-  color: #ffffff !important;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+.signup-page .header .gnb-link,
+.signup-page .header .util-link,
+.signup-page .header .lang-toggle,
+.signup-page .header .mypage-btn,
+.signup-page .header .util-divider {
+  color: #333333 !important;
+  text-shadow: none !important;
 }
 
-/* 濡쒓퀬?대?吏 諛깆깋 媛뺤젣 */
-.signup-page .logo-img {
-  filter: brightness(0) invert(1) !important;
+.signup-page .header .logo-img {
+  filter: none !important;
 }
 
 .signup-page .lang-toggle {
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  color: #ffffff !important;
-}
-
-.signup-page .lang-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: #ffffff !important;
-}
-
-.signup-page .util-divider {
-  color: rgba(255,255,255,0.4) !important;
-}
-
-.signup-page a:hover {
-  color: #FF5000 !important;
-}
-
-/* Auth Footer Overrides - Restore from Transparent Hack in Footer.css */
-.signup-page .footer {
-  background-color: #f7f9fa !important;
-  border-top: 1px solid #eeeeee !important;
-  padding: 40px 60px !important;
-  display: block !important;
-}
-
-.signup-page .footer-content,
-.signup-page .footer-info p {
-  background-color: transparent !important;
-  color: #666666 !important;
-}
-
-.signup-page .footer-info p strong,
-.signup-page .footer-copyright p {
+  border-color: #ddd !important;
   color: #333333 !important;
 }
 
-.signup-page .footer-social .social-icon {
-  background: #e5e5e5 !important;
-  color: #666666 !important;
+.signup-page .footer {
+  background-color: #EEEEEE !important;
+  padding: 60px 40px !important;
+  display: block !important;
 }
 
-.signup-page .footer-social .social-icon:hover {
-  background: #FF5000 !important;
-  color: #ffffff !important;
+.signup-page .footer-copyright {
+  border-top: none !important;
 }
 
+/* Page Layout Wrapper */
 .signup-wrapper {
   width: 100%;
   flex: 1 0 auto;
-  margin: 100px auto 60px; /* ?ㅻ뜑 怨듦컙 ?뺣낫 諛?以묒븰 ?뺣젹 */
+  margin: 40px auto 60px; /* Reduced since header is relative */
   padding: 0 20px;
   display: flex;
   justify-content: center;
@@ -149,17 +110,15 @@ body.signup-page::before {
   flex-shrink: 0;
 }
 
-/* 3. ?뚯썝媛??移대뱶 (?⑥씪 ?ㅽ뀦 ?듯빀 - Zero Monolith) */
+/* 3. Signup Container - Flat UI */
 .signup-container {
-  background: var(--color-surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: transparent;
   width: 100%;
-  max-width: 600px; /* ?쒖＜??났 ???덈퉬 諛섏쁺 */
-  border-radius: 20px;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255,255,255,0.6);
-  padding: 40px 32px;
+  max-width: 800px;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  padding: 40px 0;
   position: relative;
   animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -314,7 +273,7 @@ body.signup-page::before {
 
 .btn-verify:hover {
   background: linear-gradient(135deg, #FF5000 0%, #FF8C00 100%);
-  color: #fff !important;
+  color: #fff;
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(255, 80, 0, 0.3);
   filter: brightness(1.1);
@@ -421,7 +380,7 @@ body.signup-page::before {
 }
 
 .hidden {
-  display: none !important;
+  display: none;
 }
 
 /* Success Step */
@@ -468,6 +427,549 @@ body.signup-page::before {
 .input-feedback.success { color: var(--color-success); }
 
 
+
+/* ==================== 4-Step Wizard Layout ==================== */
+.step-panel {
+  display: none;
+  animation: fadeInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.step-panel.active {
+  display: block;
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Step Indicator (Progress - JejuAir style right-aligned) */
+.step-indicator {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0; 
+  padding-right: 10px;
+}
+
+.progress-bg {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #ddd;
+  z-index: 1;
+}
+
+.progress-bar {
+  display: none; /* 제주항공 시안엔 연결선 애니메이션 바가 없음. 점과 점 사이의 선만 존재. */
+}
+
+.step-circles {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  z-index: 3;
+}
+
+.step-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  font-size: 0;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.step-circle.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  transform: none;
+  box-shadow: none;
+}
+
+.step-circle.completed {
+  background-color: #fff;
+  border-color: #ddd;
+}
+
+.step-label {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  font-weight: 700;
+  display: none; /* 기본적으로 텍스트 숨김 (아이콘 옆 텍스트) */
+}
+
+/* 활성화된 스텝만 왼쪽에 텍스트 노출 */
+.step-circle.active .step-label {
+  display: block;
+}
+
+/* Readonly Input Styling */
+.readonly-input {
+  background-color: #f7f7f7 !important;
+  color: #666;
+  border-color: #e0e0e0 !important;
+  cursor: not-allowed;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* ==================== PASS Mock UI ==================== */
+.pass-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f7f7f7;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.pass-modal.hidden {
+  display: none;
+}
+
+.pass-modal-content {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 480px) {
+  .pass-modal-content {
+      min-height: auto;
+      height: 800px;
+      margin: 40px auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid #ddd;
+  }
+}
+
+.pass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 30px 20px 20px;
+}
+
+.pass-logo-red {
+  background-color: #f7323f;
+  color: #fff;
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: 5px;
+  padding: 4px 10px;
+  line-height: 1;
+  display: inline-block;
+}
+
+/* Auth btn logo text */
+.pass-logo-text {
+  background-color: #111;
+  color: #fff;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.pass-header-text {
+  text-align: right;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.pass-screen {
+  display: none;
+  flex: 1;
+  padding: 20px;
+  animation: fade 0.3s ease;
+}
+
+.pass-screen.active {
+  display: block;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pass-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.3;
+  margin-bottom: 30px;
+}
+
+/* Screen 1: Telecom */
+.telecom-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.telecom-btn {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  height: 80px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.telecom-btn.mvno {
+  background: #f7f7f7;
+  font-size: 14px;
+  color: #666;
+}
+
+.telecom-btn:hover, .telecom-btn:focus {
+  border-color: #111;
+  border-width: 2px;
+}
+
+/* Screen 2: Auth Method */
+.authmethod-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.authmethod-btn {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.authmethod-btn:hover {
+  border-color: #111;
+}
+
+.method-info strong {
+  display: block;
+  font-size: 18px;
+  color: #111;
+  margin-bottom: 5px;
+}
+
+.method-info span {
+  font-size: 13px;
+  color: #888;
+}
+
+/* Screen 3 & 4: Inputs */
+.pass-input-group {
+  margin-bottom: 15px;
+}
+
+.pass-input-group input {
+  width: 100%;
+  height: 54px;
+  border: 1px solid #111;
+  border-radius: 10px;
+  padding: 0 16px;
+  font-size: 16px;
+  background: #fff;
+}
+
+.pass-input-group input.readonly {
+  background: #fdfdfd;
+  border-color: #ddd;
+  color: #111;
+}
+
+.pass-next-btn {
+  width: 100%;
+  height: 56px;
+  background: #f7323f;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.pass-next-btn:active {
+  background: #d82b37;
+}
+
+.captcha-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+}
+
+.captcha-img {
+  font-size: 34px;
+  font-weight: 900;
+  color: #111;
+  letter-spacing: -2px;
+  transform: skewX(-10deg);
+  text-decoration: line-through;
+}
+
+/* Screen 5: Confirm Wait */
+.pass-confirm-ui {
+  text-align: center;
+  padding-top: 20px;
+}
+
+.pass-title-center {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 30px;
+}
+.pass-title-center .red-text {
+  color: #f7323f;
+}
+
+.phone-mockup {
+  width: 200px;
+  height: 120px;
+  border: 4px solid #333;
+  border-bottom: none;
+  border-radius: 24px 24px 0 0;
+  margin: 0 auto 30px;
+  position: relative;
+  background: #fff;
+  box-shadow: 0 -10px 20px rgba(0,0,0,0.05);
+}
+
+.phone-mockup::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 15px;
+  background: #333;
+  border-radius: 0 0 10px 10px;
+}
+
+.phone-alert {
+  background: #f5f5f5;
+  margin: 30px 10px 0;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.alert-logo {
+  background: #f7323f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+
+.alert-text strong {
+  display: block;
+  font-size: 13px;
+  color: #111;
+}
+.alert-text span {
+  font-size: 11px;
+  color: #888;
+}
+
+/* Loader */
+.pass-loader {
+  display: none;
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(247, 50, 63, 0.3);
+  border-top-color: #f7323f;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin { 
+  to { transform: rotate(360deg); } 
+}
+
+.pass-footer {
+  margin-top: auto;
+  background: #eee;
+  padding: 20px;
+  font-size: 11px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* ==================== Flat UI Elements (JejuAir Style) ==================== */
+.flat-agree-box {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.agree-desc, .opt-desc {
+  font-size: 13px;
+  color: #666;
+  padding-left: 36px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.opt-desc {
+  font-size: 11px;
+  color: #888;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+/* Custom Rounded Checkbox */
+.custom-chk {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.custom-chk.check-all {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.custom-chk .hidden-chk {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-chk .chk-mark {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  margin-right: 12px;
+  transition: all 0.2s ease;
+}
+
+/* Check icon (SVG tick) inside the circle */
+.custom-chk .chk-mark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 8px;
+  top: 4px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-chk input:checked ~ .chk-mark {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.custom-chk input:checked ~ .chk-mark::after {
+  display: block;
+}
+
+.arrow-right {
+  margin-left: auto;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Flat Grey to Orange Button */
+.flat-actions {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.btn-flat {
+  width: 100%;
+  max-width: 400px;
+  height: 60px;
+  background-color: #ccc;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 4px; /* 살짝 둥근 모서리 */
+  cursor: not-allowed;
+  transition: background-color 0.3s ease;
+}
+
+.btn-flat:not([disabled]) {
+  background-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.btn-flat:not([disabled]):hover {
+  background-color: var(--color-primary-hover);
+}
 
 /* Animations */
 @keyframes slideDown {
