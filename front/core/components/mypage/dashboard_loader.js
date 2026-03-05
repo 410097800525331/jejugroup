@@ -7,6 +7,9 @@
 import { globalDashboardStore } from '../../store/user_dashboard.js';
 import { createProfileCard } from './widgets/profile_card.js';
 import { createJourneyTimeline } from './widgets/journey_timeline.js';
+import { createSmartPass } from './widgets/smart_pass.js';
+import { createPointDashboard } from './widgets/point_dashboard.js';
+import { createAiCuration } from './widgets/ai_curation.js';
 
 class DashboardLoader {
   constructor(rootElementId) {
@@ -101,12 +104,29 @@ class DashboardLoader {
 
     // 조립
     const profileHtml = createProfileCard(data.user);
+    const pointHtml = createPointDashboard(data.user);
+    const smartPassHtml = createSmartPass(data.journeys);
     const timelineHtml = createJourneyTimeline(data.journeys);
+    const aiHtml = createAiCuration(data.journeys);
 
     this.rootEl.innerHTML = `
       <div class="mypage-container">
-        ${profileHtml}
-        ${timelineHtml}
+        <!-- 상단: 프로필 및 포인트 -->
+        <div class="mypage-top-section">
+          ${profileHtml}
+          ${pointHtml}
+        </div>
+        
+        <!-- 중단: 스마트 패스 및 AI 추천 -->
+        <div class="mypage-middle-section">
+          ${smartPassHtml}
+          ${aiHtml}
+        </div>
+        
+        <!-- 하단: 여정 타임라인 -->
+        <div class="mypage-bottom-section">
+          ${timelineHtml}
+        </div>
       </div>
     `;
   }

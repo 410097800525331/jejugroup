@@ -15,6 +15,8 @@ public class UserDTO implements Serializable {
     private String pw;          // varchar(255)
     private String name;        // varchar(20)
     private String phone;       // varchar(30)
+    private String email;       // varchar(100)
+    private String birthDate;   // date (yyyy-MM-dd)
     private String gender;      // char(1)
     private String provider;    // varchar(10) (KAKAO, NAVER, PASS)
     private String role;        // varchar(10) default 'USER'

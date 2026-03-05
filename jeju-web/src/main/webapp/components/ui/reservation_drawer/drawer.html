@@ -1,0 +1,33 @@
+<div class="res-drawer-backdrop" id="resDrawerBackdrop"></div>
+<div class="res-drawer-panel" id="resDrawerPanel">
+    <button class="res-drawer-close" id="resDrawerClose">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"></path>
+        </svg>
+    </button>
+
+    <div class="res-drawer-visual">
+        <h2 class="res-drawer-title" data-lang="resCheckTitle">비회원 예약 조회</h2>
+        <p class="res-drawer-desc" data-lang="resCheckDesc">예약 번호와 정보를 입력하여 내역을 확인하세요.</p>
+    </div>
+
+    <div class="res-drawer-body">
+        <form class="res-drawer-form" id="resDrawerForm">
+            <div class="input-group">
+                <input type="text" id="drawerResNum" placeholder="예약 번호 입력" data-lang-placeholder="resNumPlaceholder"
+                    required>
+                <div class="input-focus-bg"></div>
+            </div>
+            <div class="input-group">
+                <input type="email" id="drawerEmail" placeholder="가입한 이메일 입력"
+                    data-lang-placeholder="resEmailPlaceholder" required>
+                <div class="input-focus-bg"></div>
+            </div>
+            <button type="submit" class="res-drawer-btn" data-lang="checkButton">조회하기</button>
+        </form>
+        <div class="res-drawer-footer">
+            <span data-lang="isMember">회원이신가요?</span>
+            <a href="#" class="route-link" data-route="AUTH.LOGIN" data-lang="loginCheckLink">로그인하고 관리하기</a>
+        </div>
+    </div>
+</div>

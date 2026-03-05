@@ -40,6 +40,8 @@ public class LoginServlet extends HttpServlet {
             if (user != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
+                // 로그인 유지 UX 강화를 위해 세션 유휴 만료 시간을 7일로 확장
+                session.setMaxInactiveInterval(60 * 60 * 24 * 7);
 
                 StringBuilder json = new StringBuilder();
                 json.append("{");

@@ -6,7 +6,7 @@
 export const createProfileCard = (user) => {
   if (!user) return '';
 
-  const tierBadgeColor = user.tierColor || '#333';
+  const tierBadgeColor = user.tierColor || 'var(--jeju-orange)';
   const tierClass = user.tier.toLowerCase();
   
   return `
@@ -22,7 +22,7 @@ export const createProfileCard = (user) => {
         <div class="profile-meta">
           <div class="meta-item">
             <i class="fa-solid fa-coins"></i>
-            보유 포인트 <strong>${user.miles.toLocaleString()}</strong>P
+            보유 멤버십 포인트 <strong class="color-orange">${user.miles.toLocaleString()}</strong>P
           </div>
           <div class="meta-item">
             <i class="fa-regular fa-envelope"></i>

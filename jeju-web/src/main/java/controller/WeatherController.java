@@ -1,6 +1,6 @@
 package controller;
 
-import util.ConfigReader;
+import util.EnvLoader;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,7 +27,7 @@ public class WeatherController extends HttpServlet {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET");
         
-        String apiKey = ConfigReader.get("OPENWEATHER_API_KEY");
+        String apiKey = EnvLoader.get("OPENWEATHER_API_KEY");
         if (apiKey == null || apiKey.isEmpty()) {
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "API key configuration missing");
             return;

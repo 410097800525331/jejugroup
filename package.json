@@ -1,8 +1,20 @@
 {
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sync": "node scripts/pipelines/sync-front.js",
+    "build": "npm run sync && node scripts/pipelines/build-war.js",
+    "deploy": "npm run build && node scripts/pipelines/deploy.js",
+    "publish": "npm run deploy"
+  },
   "dependencies": {
-    "@faker-js/faker": "^10.3.0",
+    "dotenv": "^17.3.1",
     "mysql2": "^3.18.0",
     "node-ssh": "^13.2.1",
     "ssh2": "^1.17.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.3.0",
+    "bcryptjs": "^3.0.3",
+    "fs-extra": "^11.3.4"
   }
 }

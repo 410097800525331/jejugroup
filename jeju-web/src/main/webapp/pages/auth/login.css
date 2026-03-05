@@ -1,0 +1,368 @@
+@charset "utf-8";
+
+/* ==================== 웹폰트 설정 ==================== */
+@font-face {
+  font-family: 'FlightSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FlightSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* ==================== Reset & Base ==================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'FlightSans', 'Noto Sans KR', sans-serif;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 전역 full-page 잠금 해제용 오버라이드 */
+html {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: auto;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body.login-page {
+  background: #ffffff;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ==================== Header/Footer Layout Overrides ==================== */
+.login-page #main-header-placeholder,
+.login-page #main-footer-placeholder {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* Auth Footer Overrides - Restore from Transparent Hack in Hotel.css */
+.login-page .footer {
+  background-color: #f7f9fa; /* Standard Light Footer Background */
+  border-top: 1px solid #eeeeee;
+  padding: 40px 60px;
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+.login-page .footer-content,
+.login-page .footer-info p {
+  background-color: transparent;
+  color: #666666;
+}
+
+.login-page .footer-info p strong,
+.login-page .footer-copyright p {
+  color: #333333;
+}
+
+.login-page .footer-social .social-icon {
+  background: #e5e5e5;
+  color: #666666;
+}
+
+.login-page .footer-social .social-icon:hover {
+  background: #FF5000;
+  color: #ffffff;
+}
+
+/* Auth Header Overrides - Ensure Default Colors */
+.login-page .header {
+  background: #ffffff;
+  box-shadow: none;
+  border-bottom: 1px solid #eeeeee;
+  position: relative;
+}
+
+.login-page .header .gnb-link,
+.login-page .header .util-link,
+.login-page .header .lang-toggle {
+  color: #333333;
+  text-shadow: none;
+}
+
+.login-page .header .logo-img {
+  filter: none; /* Original Orange Color */
+}
+
+/* ==================== Login Container Layout ==================== */
+.user_wrap {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align closer to top like the screenshot */
+  padding: 120px 20px 80px 20px; /* Top padding spacing below fixed header */
+  background-color: #ffffff;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  /* Flat Design: Minimal shadow or no shadow depending on user preference. The screenshot looks very flat. */
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* ==================== Title & Headers ==================== */
+.login-header {
+  text-align: left;
+  margin-bottom: 40px;
+}
+
+/* The first screenshot shows an orange title "로그인" */
+.login-logo {
+  display: none; /* Hide the image logo in the box, use text instead */
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #FF5000;
+  margin: 0 0 16px 0;
+}
+
+.login-desc {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ==================== Form Inputs ==================== */
+.login-form {
+  width: 100%;
+}
+
+.input_group {
+  margin-bottom: 24px;
+}
+
+.input_group label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.input_group input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #e5e5e5;
+  background-color: #ffffff;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: 'FlightSans', sans-serif;
+  color: #333;
+  transition: border-color 0.2s;
+}
+
+.input_group input::placeholder {
+  color: #aaaaaa;
+}
+
+.input_group input:focus {
+  outline: none;
+  border-color: #FF5000;
+}
+
+/* 유효하지 않은 입력 상태 */
+.input_group.invalid input {
+  border-color: #e53935;
+}
+
+.error-wrapper {
+  margin: -16px 0 20px 0;
+  animation: fadeIn 0.3s ease;
+}
+
+.error-msg {
+  color: #e53935;
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== Options (Save ID, Find) ==================== */
+.login_options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.login_options label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.login_options input[type="checkbox"] {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  accent-color: #FF5000;
+  border: 1px solid #ccc; /* Sometimes checkbox styling needs custom wrappers for exact match, relying on accent for now */
+}
+
+.login_options a {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.login_options a:hover {
+  text-decoration: underline;
+  color: #FF5000;
+}
+
+.login_options .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login_options .divider {
+  color: #e5e5e5;
+  font-size: 11px;
+}
+
+/* ==================== Buttons ==================== */
+.login-btn {
+  width: 100%;
+  height: 48px;
+  background-color: #FF5000; /* Flat Orange */
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.login-btn:hover {
+  background-color: #E64800;
+}
+
+/* ==================== Divider ==================== */
+.quick_login {
+  position: relative;
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin: 20px 0 20px 0;
+  font-weight: 400;
+}
+
+/* Create the horizontal lines before and after text */
+.quick_login::before,
+.quick_login::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 70px); /* Adjust spacing based on text width */
+  height: 1px;
+  background-color: #eeeeee;
+}
+
+.quick_login::before { left: 0; }
+.quick_login::after { right: 0; }
+
+/* ==================== Social Media Buttons ==================== */
+.sns_login {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sns_btn {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.2s;
+}
+
+.sns_btn:hover {
+  opacity: 0.9;
+}
+
+.sns_btn.kakao { background-color: #FEE500; color: #3C1E1E; }
+.sns_btn.naver { background-color: #03C75A; color: #FFFFFF; }
+.sns_btn.apple { background-color: #000000; color: #FFFFFF; }
+
+.simple_login {
+  margin-bottom: 30px;
+}
+
+.simple_login-btn { /* Changed class for phone login to avoid conflict */
+  width: 100%;
+  height: 48px;
+  background-color: #e5e5e5; /* One step darker than #eee for better distinction */
+  color: #333333;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.simple_login-btn:hover {
+  background-color: #dcdcdc;
+}
+
+
+
+
+/* ==================== Login Page Footer Overlay ==================== */
+.login-page .footer {
+  background-color: #EEEEEE;
+  padding: 60px 40px;
+}
+
+.login-page .footer-copyright {
+  border-top: none;
+}

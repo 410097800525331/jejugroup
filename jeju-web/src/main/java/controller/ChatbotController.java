@@ -1,6 +1,6 @@
 package controller;
 
-import util.ConfigReader;
+import util.EnvLoader;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +29,7 @@ public class ChatbotController extends HttpServlet {
         response.setHeader("Access-Control-Allow-Methods", "POST");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         
-        String apiKey = ConfigReader.get("OPENAI_API_KEY");
+        String apiKey = EnvLoader.get("OPENAI_API_KEY");
         if (apiKey == null || apiKey.isEmpty()) {
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "API key configuration missing");
             return;

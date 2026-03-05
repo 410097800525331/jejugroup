@@ -8,10 +8,10 @@ const DUMMY_USER_SESSION = {
   user: {
     name: "홍길동",
     tier: "GOLD",
-    tierColor: "#FFC107",
+    tierColor: "var(--jeju-orange)",
     miles: 12500,
     email: "hong@jejugroup.example.com",
-    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=hong"
+    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=hong&backgroundColor=ff5000"
   },
   journeys: [
     {

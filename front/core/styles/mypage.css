@@ -296,12 +296,306 @@
   100% { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes shimmer {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+/* 유틸리티 컬러 */
+.color-orange {
+  color: var(--jeju-orange);
+}
+
+/* ==========================================================================
+   레이아웃 분할 (Grid/Flex)
+   ========================================================================== */
+.mypage-top-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.mypage-middle-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+/* --------------------------------------------------------------------------
+   3. 스마트 패스 (NFC Ticket Layout)
+   -------------------------------------------------------------------------- */
+.smart-pass-widget {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: mypageFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+.smart-pass-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(26,26,26,0.9), rgba(40,40,40,0.95));
+  border-radius: 24px;
+  padding: 32px;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.1);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.sp-glow {
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,80,0,0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.sp-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.sp-icon-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255,80,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jeju-orange);
+  font-size: 24px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,80,0,0.3);
+}
+
+.sp-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.sp-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.5;
+  margin-bottom: 32px;
+  max-width: 80%;
+}
+
+.sp-barcode-container {
+  margin-top: auto;
+  align-self: flex-start;
+  background: rgba(255,255,255,0.1);
+  padding: 16px 24px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.sp-barcode {
+  height: 40px;
+  width: 180px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #fff,
+    #fff 2px,
+    transparent 2px,
+    transparent 4px,
+    #fff 4px,
+    #fff 8px,
+    transparent 8px,
+    transparent 11px
+  );
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.sp-barcode-text {
+  font-family: monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   4. 포인트 대시보드 (Point & Level)
+   -------------------------------------------------------------------------- */
+.point-dashboard-widget {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  opacity: 0;
+  transform: translateY(20px);
+  animation: mypageFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+.pd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.pd-label, .pd-target-label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.pd-points {
+  color: var(--jeju-dark);
+}
+
+.pd-points strong {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.pd-unit {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--jeju-orange);
+}
+
+.pd-target {
+  text-align: right;
+}
+
+.pd-target-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--jeju-dark);
+}
+
+.pd-progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pd-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff8a00, var(--jeju-orange));
+  border-radius: 10px;
+  position: relative;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.pd-progress-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: shimmer 2.5s infinite linear;
+}
+
+/* --------------------------------------------------------------------------
+   5. AI 큐레이션
+   -------------------------------------------------------------------------- */
+.ai-curation-widget {
+  background: linear-gradient(to right, rgba(255,248,242,0.9), rgba(255,255,255,0.95));
+  border: 1px solid rgba(255,80,0,0.15);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  opacity: 0;
+  transform: translateY(20px);
+  animation: mypageFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+.ai-icon-box {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #ff8a00, var(--jeju-orange));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(255,80,0,0.3);
+}
+
+.ai-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.ai-desc {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.ai-action-btn {
+  background: #fff;
+  border: 1px solid var(--jeju-border);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--jeju-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.ai-action-btn:hover {
+  background: var(--jeju-light-gray);
+  border-color: #ddd;
+  transform: scale(1.02);
+}
+
 /* Responsive */
+@media (max-width: 900px) {
+  .mypage-top-section,
+  .mypage-middle-section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
 @media (max-width: 768px) {
   .profile-card {
     flex-direction: column;
     text-align: center;
     padding: 24px;
+    margin-bottom: 0;
   }
   
   .profile-avatar {
