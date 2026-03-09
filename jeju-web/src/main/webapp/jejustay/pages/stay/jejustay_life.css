@@ -15,12 +15,11 @@
 
 /* 스크롤 기반 석양 배경 -> 트와일라잇 시레니티 (Twilight Serenity) */
 body.long-stay-page {
-    background: linear-gradient(135deg, 
-        #FFFFFF 0%, 
-        #F5EFFF 30%, 
-        #FFF0F5 60%, 
-        #FFE8D6 100%
-    );
+    background: linear-gradient(135deg,
+            #FFFFFF 0%,
+            #F5EFFF 30%,
+            #FFF0F5 60%,
+            #FFE8D6 100%);
     background-attachment: fixed;
     min-height: 100vh;
 }
@@ -45,6 +44,7 @@ body.long-stay-page {
     padding: var(--space-3xl) 0;
     background: transparent;
 }
+
 .magazine-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -52,6 +52,7 @@ body.long-stay-page {
     align-items: center;
     margin-bottom: var(--space-3xl);
 }
+
 .magazine-image img {
     width: 100%;
     height: 500px;
@@ -63,6 +64,7 @@ body.long-stay-page {
 .magazine-content {
     padding: var(--space-xl);
 }
+
 .magazine-tag {
     color: var(--primary);
     font-weight: 700;
@@ -71,18 +73,21 @@ body.long-stay-page {
     margin-bottom: var(--space-md);
     display: block;
 }
+
 .magazine-title {
     font-size: 2.5rem;
     margin-bottom: var(--space-md);
     line-height: 1.2;
     font-weight: 700;
 }
+
 .magazine-desc {
     font-size: 1.125rem;
     color: var(--text-body);
     line-height: 1.8;
     margin-bottom: var(--space-lg);
 }
+
 .btn-text {
     color: var(--text-title);
     font-weight: 700;
@@ -91,6 +96,7 @@ body.long-stay-page {
     align-items: center;
     gap: 4px;
 }
+
 .btn-text:hover {
     color: var(--primary);
 }
@@ -102,6 +108,7 @@ body.long-stay-page {
     gap: var(--space-lg);
     margin-top: var(--space-xl);
 }
+
 .curation-card {
     position: relative;
     height: 400px;
@@ -110,34 +117,40 @@ body.long-stay-page {
     cursor: pointer;
     transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
+
 .curation-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
 }
+
 .curation-bg {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
 }
+
 .curation-card:hover .curation-bg {
     transform: scale(1.05);
 }
+
 .curation-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     padding: var(--space-xl);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     color: #fff;
 }
+
 .curation-title {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: var(--space-xs);
 }
+
 .curation-desc {
     font-size: 0.9375rem;
     opacity: 0.9;
@@ -146,9 +159,10 @@ body.long-stay-page {
 
 /* ========== 글로벌 네비게이션 헤더 디테일 ========== */
 .header {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, transparent 100%);
     transition: background 0.3s ease;
 }
+
 .header.scrolled {
     background: var(--mega-bg);
 }
@@ -168,16 +182,43 @@ body.long-stay-page {
 }
 
 /* Crazy Raccoon Style Stagger */
-.stagger-wrapper { position: relative; display: inline-block; overflow: hidden; vertical-align: bottom; }
-.stagger-char { display: inline-block; transition: transform 0s linear; }
+.stagger-wrapper {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+}
+
+.stagger-char {
+    display: inline-block;
+    transition: transform 0s linear;
+}
+
 .nav-link.is-animating .stagger-char {
     transition-duration: 0.3s;
     transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
-.nav-link.is-animating .stagger-original .stagger-char { transform: translateY(-100%); }
-.nav-link.is-animating .stagger-clone .stagger-char { transform: translateY(0); }
-.stagger-clone { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-.stagger-clone .stagger-char { transform: translateY(100%); color: var(--v2-orange); }
+
+.nav-link.is-animating .stagger-original .stagger-char {
+    transform: translateY(-100%);
+}
+
+.nav-link.is-animating .stagger-clone .stagger-char {
+    transform: translateY(0);
+}
+
+.stagger-clone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.stagger-clone .stagger-char {
+    transform: translateY(100%);
+    color: var(--v2-orange);
+}
 
 /* Hover Color Consistency */
 .nav-link:hover .stagger-original .stagger-char,
@@ -205,8 +246,8 @@ body.long-stay-page {
 }
 */
 
-.mega-dropdown.active { 
-    display: block; 
+.mega-dropdown.active {
+    display: block;
     opacity: 1;
     transform: translateY(0);
 }
@@ -225,8 +266,22 @@ body.long-stay-page {
     flex-direction: column;
     justify-content: center;
 }
-.mega-label { font-size: 12px; font-weight: 700; color: var(--v2-orange); margin-bottom: 12px; letter-spacing: 2px; }
-.mega-heading { font-size: 24px; font-weight: 800; color: var(--text-title); line-height: 1.4; margin: 0; }
+
+.mega-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--v2-orange);
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+}
+
+.mega-heading {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-title);
+    line-height: 1.4;
+    margin: 0;
+}
 
 .mega-grid {
     display: grid;
@@ -235,7 +290,9 @@ body.long-stay-page {
 }
 
 /* 기존 리스트 스타일 제거 또는 초기화 필요 시 여기 추가 */
-.mega-menu-list-horizontal { display: none; } 
+.mega-menu-list-horizontal {
+    display: none;
+}
 
 .mega-card {
     display: flex;
@@ -251,23 +308,39 @@ body.long-stay-page {
 .mega-card:hover {
     background: #fff;
     border-color: var(--v2-orange);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
     transform: translateY(-5px);
 }
 
 .card-icon-wrap {
-    width: 44px; height: 44px;
+    width: 44px;
+    height: 44px;
     background: var(--v2-orange);
     color: #fff;
     border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 16px;
     transition: transform 0.3s ease;
 }
-.mega-card:hover .card-icon-wrap { transform: rotate(-5deg) scale(1.1); }
 
-.card-name { font-size: 16px; font-weight: 700; color: var(--text-title); margin-bottom: 4px; }
-.card-desc { font-size: 13px; color: var(--text-body); line-height: 1.5; }
+.mega-card:hover .card-icon-wrap {
+    transform: rotate(-5deg) scale(1.1);
+}
+
+.card-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-title);
+    margin-bottom: 4px;
+}
+
+.card-desc {
+    font-size: 13px;
+    color: var(--text-body);
+    line-height: 1.5;
+}
 
 /* 카드 내 편의시설 배지 */
 .amenity-badge-group {
@@ -276,6 +349,7 @@ body.long-stay-page {
     margin-top: 12px;
     flex-wrap: wrap;
 }
+
 .amenity-badge {
     display: flex;
     align-items: center;
@@ -287,6 +361,7 @@ body.long-stay-page {
     color: var(--text-body);
     font-weight: 500;
 }
+
 .amenity-badge svg {
     width: 14px;
     height: 14px;
@@ -303,12 +378,14 @@ body.long-stay-page {
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s;
 }
+
 .air-synergy-banner:hover {
     transform: translateY(-2px);
 }
+
 .synergy-icon {
     background: var(--primary);
     color: white;
@@ -320,18 +397,22 @@ body.long-stay-page {
     justify-content: center;
     flex-shrink: 0;
 }
+
 .synergy-text {
     flex-grow: 1;
 }
+
 .synergy-text strong {
     color: var(--primary);
     display: block;
     margin-bottom: 2px;
 }
+
 .synergy-text span {
     color: var(--text-body);
     font-size: 0.9375rem;
 }
+
 .synergy-link {
     display: flex;
     align-items: center;
@@ -341,6 +422,7 @@ body.long-stay-page {
     transition: color 0.2s;
     white-space: nowrap;
 }
+
 .synergy-link:hover {
     color: var(--primary);
 }
@@ -356,16 +438,19 @@ body.long-stay-page {
     padding: var(--space-2xl);
     box-shadow: var(--shadow-sm);
 }
+
 .infra-list {
     list-style: none;
     margin-top: var(--space-xl);
 }
+
 .infra-list li {
     display: flex;
     align-items: center;
     gap: 16px;
     margin-bottom: 20px;
 }
+
 .infra-icon {
     width: 48px;
     height: 48px;
@@ -376,15 +461,18 @@ body.long-stay-page {
     align-items: center;
     justify-content: center;
 }
+
 .infra-list strong {
     display: block;
     font-size: 1.1rem;
     margin-bottom: 2px;
 }
+
 .infra-list span {
     color: var(--text-body);
     font-size: 0.9rem;
 }
+
 .infra-map-placeholder {
     width: 100%;
     height: 400px;
@@ -405,21 +493,25 @@ body.long-stay-page {
     gap: var(--space-lg);
     margin-top: var(--space-xl);
 }
+
 .review-card {
     background: #F9FAFB;
     padding: var(--space-xl);
     border-radius: var(--radius-lg);
     transition: background 0.2s;
 }
+
 .review-card:hover {
     background: #F0F4F8;
 }
+
 .review-user {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 16px;
 }
+
 .user-avatar {
     width: 44px;
     height: 44px;
@@ -432,20 +524,24 @@ body.long-stay-page {
     font-weight: 700;
     font-size: 1rem;
 }
+
 .user-info strong {
     display: block;
     font-size: 1rem;
 }
+
 .user-info span {
     font-size: 0.85rem;
     color: #64748b;
 }
+
 .review-text {
     line-height: 1.6;
     color: var(--text-body);
     font-style: italic;
     margin-bottom: 16px;
 }
+
 .review-tags span {
     display: inline-block;
     background: #fff;
@@ -467,13 +563,16 @@ body.long-stay-page {
     margin-bottom: 6px;
     font-weight: 500;
 }
+
 .utility-info.warning {
     color: #E65100;
 }
+
 .utility-info svg {
     width: 14px;
     height: 14px;
 }
+
 .price-discount-tag {
     background: #FFF3E0;
     color: var(--primary);
@@ -490,32 +589,41 @@ body.long-stay-page {
         grid-template-columns: 1fr;
         gap: var(--space-lg);
     }
+
     .magazine-image img {
         height: 300px;
     }
+
     .curation-grid {
         grid-template-columns: 1fr;
     }
+
     .air-synergy-banner {
         flex-direction: column;
         align-items: flex-start;
         text-align: left;
     }
+
     .synergy-text {
         margin-bottom: 8px;
     }
+
     .synergy-link {
         margin-left: 0;
     }
+
     .infra-layout {
         grid-template-columns: 1fr;
     }
+
     .infra-map-placeholder {
         height: 250px;
     }
+
     .review-grid {
         grid-template-columns: 1fr;
     }
+
     /* 모바일 검색 위젯 */
     .search-summary-view {
         display: flex;
@@ -524,35 +632,50 @@ body.long-stay-page {
         padding: 16px 20px;
         cursor: pointer;
     }
+
     .summary-icon {
         color: var(--primary);
         margin-right: 12px;
     }
+
     .summary-text {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
+
     .summary-title {
         font-weight: 700;
         font-size: 0.95rem;
     }
+
     .summary-desc {
         font-size: 0.8rem;
         color: #64748b;
     }
+
     .search-form-content {
-        display: none; /* 모바일에서는 기본적으로 숨김 */
+        display: none;
+        /* 모바일에서는 기본적으로 숨김 */
         padding: 20px;
         border-top: 1px solid #eee;
     }
+
     .search-widget-large.expanded .search-form-content {
         display: block;
         animation: slideDown 0.3s ease-out;
     }
+
     @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 }
 
@@ -572,7 +695,7 @@ body.long-stay-page {
        따라서 이 블록은 새 버튼에 대해 사용되지 않는 코드일 가능성이 높지만, 예전 구조가 남아있다면 영향을 줄 수 있습니다.
        주석 처리하거나 .search-btn-new에 특정된 것이라면 그대로 두겠습니다.
     */
-    display: none; 
+    display: none;
 }
 
 /* 신규 검색 버튼 (텍스트) - 고밀도 및 모던 스타일 */
@@ -581,30 +704,39 @@ body.long-stay-page {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px; /* 아이콘과 텍스트 사이 간격 */
-    top: 100%; /* 컨테이너보다 약간 작게 */
-    padding: 0 32px; /* 넓은 패딩 */
-    background: linear-gradient(135deg, #FF5000 0%, #FF8A00 100%); /* 제주 오렌지 그라데이션 */
+    gap: 8px;
+    /* 아이콘과 텍스트 사이 간격 */
+    top: calc(100% + 8px);
+    /* 기준 간격 통일 */
+    padding: 0 32px;
+    /* 넓은 패딩 */
+    background: linear-gradient(135deg, #FF5000 0%, #FF8A00 100%);
+    /* 제주 오렌지 그라데이션 */
     color: #fff;
     border: none;
-    border-radius: 100px; /* 완전한 알약 모양 */
+    border-radius: 100px;
+    /* 완전한 알약 모양 */
     cursor: pointer;
     font-size: 1.05rem;
-    font-weight: 800; /* 굵은 글꼴 */
-    box-shadow: 0 4px 15px rgba(255, 80, 0, 0.3); /* 강한 그림자 */
+    font-weight: 800;
+    /* 굵은 글꼴 */
+    box-shadow: 0 4px 15px rgba(255, 80, 0, 0.3);
+    /* 강한 그림자 */
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
-    
-    /* 플로팅 위치 로직은 부모 또는 필요한 경우 인라인 오버라이드에서 처리되지만, 
-       여기서는 버튼 스타일 자체를 정의합니다. 
-       사용자는 "내부에 떠 있는" 느낌 또는 "돌출된" 느낌을 원하나요? 
-       "서치바 위로 확실히 튀어나와 보이게" -> 그림자가 이 역할을 수행합니다. 
+
+    /* 플로팅 위치 로직은 부모 또는 필요한 경우 인라인 오버라이드에서 처리되지만,
+       여기서는 버튼 스타일 자체를 정의합니다.
+       사용자는 "내부에 떠 있는" 느낌 또는 "돌출된" 느낌을 원하나요?
+       "서치바 위로 확실히 튀어나와 보이게" -> 그림자가 이 역할을 수행합니다.
     */
 }
 
 .search-btn-pill-expanded:hover {
-    transform: scale(1.05); /* 커지는 효과 */
-    box-shadow: 0 8px 25px rgba(255, 80, 0, 0.5); /* 더 강한 그림자 */
+    transform: scale(1.05);
+    /* 커지는 효과 */
+    box-shadow: 0 8px 25px rgba(255, 80, 0, 0.5);
+    /* 더 강한 그림자 */
     filter: brightness(1.1);
 }
 
@@ -612,7 +744,8 @@ body.long-stay-page {
 .search-btn-pill-expanded svg {
     width: 20px;
     height: 20px;
-    stroke-width: 3px; /* Lucide 아이콘에 유효함 */
+    stroke-width: 3px;
+    /* Lucide 아이콘에 유효함 */
 }
 
 /* 레거시 지원 제거 또는 단순 유지 */
@@ -621,7 +754,8 @@ body.long-stay-page {
 /* 검색 구분선 - 최적화된 높이 */
 .search-divider {
     width: 1px;
-    height: 28px; /* 컨테이너 높이의 약 50-60% */
+    height: 28px;
+    /* 컨테이너 높이의 약 50-60% */
     background: #e2e8f0;
     margin: 0 12px;
     opacity: 0.8;
@@ -629,7 +763,8 @@ body.long-stay-page {
 
 /* 게스트 항목 스타일 (Hotel.css 구조와 일치) */
 .guest-item-new {
-    flex: 1; /* 더 균형 잡힌 flex */
+    flex: 1;
+    /* 더 균형 잡힌 flex */
     position: relative;
     cursor: pointer;
     padding: 8px 16px;
@@ -639,12 +774,14 @@ body.long-stay-page {
     gap: 12px;
     transition: background 0.2s;
 }
+
 .guest-item-new:hover {
     background: rgba(241, 245, 249, 0.8);
 }
+
 .guest-item-new.active {
     background: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .guest-display-text {
@@ -659,17 +796,20 @@ body.long-stay-page {
 /* 게스트 팝업 (Hotel.css에서 복사/수정됨) */
 .guest-popup-new {
     position: absolute;
-    top: 100%; /* 검색바에 딱 붙임 */
+    top: calc(100% + 8px);
+    /* 기준 간격 통일 */
     right: 0;
     width: 340px;
     background: #fff;
     border-radius: 20px;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
     padding: 24px;
     display: none;
     display: none;
-    z-index: 90; /* Global Z-index override will handle this, but explicit here too */
+    z-index: 90;
+    /* Global Z-index override will handle this, but explicit here too */
 }
+
 .guest-popup-new.active {
     display: block;
     animation: fadeIn 0.15s ease-out;
@@ -681,27 +821,33 @@ body.long-stay-page {
     justify-content: space-between;
     margin-bottom: 20px;
 }
+
 .guest-row-new:last-child {
     margin-bottom: 0;
 }
+
 .guest-info-new {
     display: flex;
     flex-direction: column;
 }
+
 .guest-type-new {
     font-weight: 700;
     color: var(--text-title);
     font-size: 1rem;
 }
+
 .guest-desc-new {
     font-size: 0.8rem;
     color: var(--text-muted);
 }
+
 .guest-counter-new {
     display: flex;
     align-items: center;
     gap: 12px;
 }
+
 .counter-btn-new {
     width: 32px;
     height: 32px;
@@ -715,10 +861,12 @@ body.long-stay-page {
     color: var(--text-body);
     transition: all 0.2s;
 }
+
 .counter-btn-new:hover {
     border-color: var(--primary);
     color: var(--primary);
 }
+
 .counter-value-new {
     font-weight: 700;
     width: 20px;
@@ -734,14 +882,17 @@ body.long-stay-page {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: #FFF9F6; /* 조정된 배경색 */
-    border: 1px solid rgba(255, 80, 0, 0.2); /* 은은한 오렌지색 테두리 */
+    background: #FFF9F6;
+    /* 조정된 배경색 */
+    border: 1px solid rgba(255, 80, 0, 0.2);
+    /* 은은한 오렌지색 테두리 */
     border-radius: 12px;
     padding: 20px 24px;
     border-radius: 12px;
     padding: 20px 24px;
-    margin-top: 60px; /* 요청에 따라 60px 아래로 이동 */
-    margin-bottom: 0; 
+    margin-top: 60px;
+    /* 요청에 따라 60px 아래로 이동 */
+    margin-bottom: 0;
     width: 100%;
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -760,7 +911,7 @@ body.long-stay-page {
     align-items: center;
     justify-content: center;
     color: var(--primary);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .synergy-text {
@@ -802,7 +953,7 @@ body.long-stay-page {
     padding: 24px;
     border-radius: 16px;
     border: 1px solid #eee;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
     transition: transform 0.2s;
 }
 
@@ -878,12 +1029,14 @@ body.long-stay-page {
     .review-grid {
         grid-template-columns: 1fr;
     }
+
     .air-synergy-banner {
         flex-direction: column;
         align-items: flex-start;
         text-align: left;
         gap: 12px;
     }
+
     .synergy-link {
         align-self: flex-end;
     }
@@ -905,18 +1058,21 @@ body.long-stay-page {
     display: flex;
     background: #fff;
     border-radius: 12px;
-    border: none; /* 마스크와 함께 그림자가 매끄럽게 작동하도록 테두리 제거 */
-    overflow: hidden; /* 내부 콘텐츠를 위해 overflow: hidden 유지, 단 그림자는 부모/필터에 위치함 */
-    height: 240px; /* 일관성을 위해 고정 높이 설정 */
+    border: none;
+    /* 마스크와 함께 그림자가 매끄럽게 작동하도록 테두리 제거 */
+    overflow: hidden;
+    /* 내부 콘텐츠를 위해 overflow: hidden 유지, 단 그림자는 부모/필터에 위치함 */
+    height: 240px;
+    /* 일관성을 위해 고정 높이 설정 */
     transition: transform 0.2s, list-style 0.2s;
-    
+
     /* 티켓 스타일링 */
     position: relative;
     /* 구분선 위치(calc(100% - 250px))의 컷아웃(상단 및 하단) 마스크 */
-    -webkit-mask: 
+    -webkit-mask:
         radial-gradient(circle at calc(100% - 250px) 0, transparent 8px, black 8.5px) top left,
         radial-gradient(circle at calc(100% - 250px) 100%, transparent 8px, black 8.5px) bottom left;
-    mask: 
+    mask:
         radial-gradient(circle at calc(100% - 250px) 0, transparent 8px, black 8.5px) top left,
         radial-gradient(circle at calc(100% - 250px) 100%, transparent 8px, black 8.5px) bottom left;
     -webkit-mask-size: 100% 51%;
@@ -925,13 +1081,13 @@ body.long-stay-page {
     mask-repeat: no-repeat;
 
     /* 모양을 따라가기 위해 box-shadow 대신 drop-shadow 사용 */
-    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
 }
 
 .hotel-card-horizontal:hover {
     transform: translateY(-4px);
     /* 호버 시 강화된 드롭 섀도우 */
-    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.12));
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.12));
 }
 
 /* 1. 이미지 섹션 */
@@ -961,7 +1117,7 @@ body.long-stay-page {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     color: #ccc;
     transition: all 0.2s;
 }
@@ -970,10 +1126,12 @@ body.long-stay-page {
     transform: scale(1.1);
     color: #ff5000;
 }
+
 .card-image-wrap .wishlist-btn.active {
     color: #ff5000;
     fill: #ff5000;
 }
+
 .card-image-wrap .wishlist-btn svg {
     width: 20px;
     height: 20px;
@@ -987,7 +1145,8 @@ body.long-stay-page {
 
 /* 정보 파트 */
 .card-info {
-    flex: 1; /* 남은 공간 차지 */
+    flex: 1;
+    /* 남은 공간 차지 */
     padding: 24px;
     display: flex;
     flex-direction: column;
@@ -1017,6 +1176,7 @@ body.long-stay-page {
     gap: 2px;
     color: #FFB300;
 }
+
 .star-rating svg {
     width: 14px;
     height: 14px;
@@ -1037,6 +1197,7 @@ body.long-stay-page {
     gap: 4px;
     margin-bottom: 16px;
 }
+
 .card-location svg {
     width: 14px;
     height: 14px;
@@ -1046,8 +1207,10 @@ body.long-stay-page {
 .card-specs {
     display: flex;
     gap: 16px;
-    margin-bottom: auto; /* 리뷰 배지를 아래로 밀어냄 */
+    margin-bottom: auto;
+    /* 리뷰 배지를 아래로 밀어냄 */
 }
+
 .card-specs span {
     display: flex;
     align-items: center;
@@ -1055,10 +1218,12 @@ body.long-stay-page {
     font-size: 0.85rem;
     color: #555;
 }
+
 .card-specs svg {
     width: 16px;
     height: 16px;
-    color: #26C6DA; /* 청록색 계열 */
+    color: #26C6DA;
+    /* 청록색 계열 */
 }
 
 .card-review-badge {
@@ -1066,14 +1231,17 @@ body.long-stay-page {
     align-items: center;
     gap: 8px;
 }
+
 .card-review-badge .score {
-    background: #006064; /* 다크 틸 (Dark Teal) */
+    background: #006064;
+    /* 다크 틸 (Dark Teal) */
     color: white;
     font-weight: 700;
     padding: 6px 10px;
     border-radius: 8px 8px 8px 0;
     font-size: 1rem;
 }
+
 .card-review-badge .label {
     font-size: 0.9rem;
     color: #666;
@@ -1082,7 +1250,8 @@ body.long-stay-page {
 
 /* 가격 파트 (회색 배경의 우측 섹션) */
 .card-price-section {
-    width: 200px; /* 고정 너비 */
+    width: 200px;
+    /* 고정 너비 */
     background: #F9FAFB;
     border-left: 1px solid #f0f0f0;
     padding: 24px;
@@ -1129,17 +1298,21 @@ body.long-stay-page {
         flex-direction: column;
         height: auto;
     }
+
     .card-image-wrap {
         width: 100%;
         height: 200px;
     }
+
     .card-content {
         flex-direction: column;
     }
+
     .card-info {
         padding: 20px;
         order: 1;
     }
+
     .card-price-section {
         width: 100%;
         border-left: none;
@@ -1150,6 +1323,7 @@ body.long-stay-page {
         padding: 16px 20px;
         order: 2;
     }
+
     .price-final {
         font-size: 1.25rem;
     }
@@ -1165,7 +1339,8 @@ body.long-stay-page {
 /* 스티키 검색 위젯 */
 .search-widget-large {
     position: sticky;
-    top: 80px; /* 헤더 높이에 따라 조정 */
+    top: 80px;
+    /* 헤더 높이에 따라 조정 */
     z-index: 90;
     transition: all 0.3s ease;
 }
@@ -1174,7 +1349,8 @@ body.long-stay-page {
 .card-price-section {
     width: 250px;
     background: #F9FAFB;
-    border-left: 2px dashed #d1d5db; /* 점선/파선 */
+    border-left: 2px dashed #d1d5db;
+    /* 점선/파선 */
     padding: 24px;
     display: flex;
     flex-direction: column;
@@ -1189,19 +1365,21 @@ body.long-stay-page {
     position: absolute;
     top: 12px;
     left: 12px;
-    background: #D32F2F; /* 진한 빨강 */
+    background: #D32F2F;
+    /* 진한 빨강 */
     color: white;
     font-size: 0.75rem;
     font-weight: 700;
     padding: 4px 8px;
     border-radius: 4px;
     z-index: 2;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* 필요한 경우 기존 절약 배너 스타일 로직 제거 또는 재사용 */
 .savings-banner {
-    display: none; /* 가격 섹션에서 숨기고 이미지로 이동함 */
+    display: none;
+    /* 가격 섹션에서 숨기고 이미지로 이동함 */
 }
 
 /* 가격 계층 구조 */
@@ -1220,12 +1398,14 @@ body.long-stay-page {
 }
 
 .monthly-price {
-    color: #333; /* Tone-on-tone Dark Gray */
+    color: #333;
+    /* Tone-on-tone Dark Gray */
     font-size: 1.8rem;
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.5px;
 }
+
 .monthly-price.highlight {
     color: var(--jeju-orange);
 }
@@ -1267,7 +1447,8 @@ body.long-stay-page {
 }
 
 .tax-label {
-    font-size: 0.65rem; /* 크기 축소 */
+    font-size: 0.65rem;
+    /* 크기 축소 */
     color: #ccc;
     margin-top: 12px;
 }
@@ -1306,11 +1487,14 @@ body.long-stay-page {
         text-align: center;
         padding: 20px;
     }
+
     .monthly-price {
         font-size: 1.5rem;
     }
+
     .search-widget-large {
-        position: relative; /* 공간이 부족할 경우 모바일에서 스티키 비활성화 */
+        position: relative;
+        /* 공간이 부족할 경우 모바일에서 스티키 비활성화 */
         top: 0;
     }
 }
@@ -1318,16 +1502,18 @@ body.long-stay-page {
 /* 드롭다운 개선 (구분선 및 호버) */
 .dropdown-column {
     position: relative;
-    padding-right: 0; /* 기본값 초기화 */
+    padding-right: 0;
+    /* 기본값 초기화 */
 }
 
 /* 수직 구분선 */
 .dropdown-column:not(:last-child)::after {
     content: "";
     position: absolute;
-    top: 4px; 
+    top: 4px;
     bottom: 4px;
-    right: -12px; /* 그리드 간격(24px)의 정확히 중간에 위치 */
+    right: -12px;
+    /* 그리드 간격(24px)의 정확히 중간에 위치 */
     width: 1px;
     background-color: #e0e0e0;
 }
@@ -1345,7 +1531,8 @@ body.long-stay-page {
 }
 
 .destination-item:hover {
-    background-color: #f0f4f8; /* 밝은 호버 배경색 */
+    background-color: #f0f4f8;
+    /* 밝은 호버 배경색 */
 }
 
 /* 이미지 호버 애니메이션 */
@@ -1354,13 +1541,15 @@ body.long-stay-page {
     height: 56px;
     border-radius: 10px;
     object-fit: cover;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* 바운시 효과 */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* 바운시 효과 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .destination-item:hover img {
-    transform: scale(1.15) rotate(2deg); /* 약간의 확대 및 기울기 */
-    box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    transform: scale(1.15) rotate(2deg);
+    /* 약간의 확대 및 기울기 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
 }
 
 /* 더 나은 정렬을 위해 텍스트 미세 조정 */
@@ -1414,10 +1603,12 @@ body.long-stay-page {
 }
 
 .standard-card {
-    background: rgba(255, 255, 255, 0.45); /* 글래스모피즘 베이스 - 트와일라잇 시레니티 */
+    background: rgba(255, 255, 255, 0.45);
+    /* 글래스모피즘 베이스 - 트와일라잇 시레니티 */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-radius: 28px; /* 프리미엄 반경 */
+    border-radius: 28px;
+    /* 프리미엄 반경 */
     padding: var(--space-xl);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.6);
@@ -1432,7 +1623,8 @@ body.long-stay-page {
 
 .standard-card:hover {
     transform: translateY(-15px) rotateX(5deg);
-    box-shadow: 0 25px 50px rgba(255, 80, 0, 0.15); /* 오렌지 글로우 (Glow) */
+    box-shadow: 0 25px 50px rgba(255, 80, 0, 0.15);
+    /* 오렌지 글로우 (Glow) */
     background: rgba(255, 255, 255, 0.7);
     border-color: var(--primary);
 }
@@ -1449,7 +1641,7 @@ body.long-stay-page {
     margin-bottom: var(--space-md);
 }
 
-.card-icon-wrapper i, 
+.card-icon-wrapper i,
 .card-icon-wrapper svg {
     width: 24px;
     height: 24px;
@@ -1459,7 +1651,8 @@ body.long-stay-page {
     font-size: 1.125rem;
     font-weight: 700;
     margin-bottom: var(--space-sm);
-    color: #1A1A2E; /* 트와일라잇 네이비 (Twilight Navy) */
+    color: #1A1A2E;
+    /* 트와일라잇 네이비 (Twilight Navy) */
     word-break: keep-all;
 }
 
@@ -1481,6 +1674,7 @@ body.long-stay-page {
     .standards-grid {
         grid-template-columns: 1fr;
     }
+
     .standard-card {
         padding: var(--space-lg);
     }
@@ -1527,7 +1721,8 @@ body.long-stay-page {
 /* 섹션 전환 미세 조정 */
 .promo-section {
     background: transparent;
-    padding: 80px 0; /* 숨 쉴 공간을 위해 패딩 추가 */
+    padding: 80px 0;
+    /* 숨 쉴 공간을 위해 패딩 추가 */
 }
 
 /* 라이프 페이지용 경계 없는 푸터 */
@@ -1544,22 +1739,28 @@ body.long-stay-page {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* 가독성을 위해 훨씬 어두운 오버레이 적용 */
+    background: rgba(0, 0, 0, 0.5);
+    /* 가독성을 위해 훨씬 어두운 오버레이 적용 */
     z-index: 1;
 }
 
 .hero-subtitle-top {
-    text-shadow: 0 4px 20px rgba(0,0,0,0.8); /* 극강의 대비를 위해 더 강력한 그림자 적용 */
-    color: #fff; /* 흰색 텍스트 보장 */
-    margin-bottom: 48px; /* 검색바와의 간격 확대 */
-    font-size: 2.2rem; /* 훨씬 크게 설정 */
-    font-weight: 800; /* 울트라 볼드 */
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    /* 극강의 대비를 위해 더 강력한 그림자 적용 */
+    color: #fff;
+    /* 흰색 텍스트 보장 */
+    margin-bottom: 48px;
+    /* 검색바와의 간격 확대 */
+    font-size: 2.2rem;
+    /* 훨씬 크게 설정 */
+    font-weight: 800;
+    /* 울트라 볼드 */
     line-height: 1.3;
 }
 
-.hero-content h2, 
+.hero-content h2,
 .hero-content strong {
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* 로그인 버튼 브랜딩 -> 아웃라인 스타일 */
@@ -1568,23 +1769,28 @@ body.long-stay-page {
     color: var(--primary);
     border: 1.5px solid var(--primary);
     border-radius: var(--radius-sm);
-    padding: 7px 16px; /* 테두리를 위해 약간 조정됨 */
+    padding: 7px 16px;
+    /* 테두리를 위해 약간 조정됨 */
     font-weight: 700;
     transition: all 0.2s;
 }
+
 .login-btn:hover {
     background-color: rgba(255, 80, 0, 0.05);
     transform: translateY(-1px);
 }
+
 .login-btn .util-icon {
     color: var(--primary);
 }
 
 /* ========== 히어로 위치 오버라이드 ========== */
 .hero-content {
-    padding-bottom: 240px; /* 더 강력한 리프트 효과 (기존 120px) */
+    padding-bottom: 240px;
+    /* 더 강력한 리프트 효과 (기존 120px) */
     position: relative;
-    top: -40px; /* 추가적인 위치 미세 조정 */
+    top: -40px;
+    /* 추가적인 위치 미세 조정 */
 }
 
 /* ============================================================
@@ -1594,7 +1800,8 @@ body.long-stay-page {
 
 /* 1. 컨테이너 및 캡션 */
 .search-widget-v2 {
-    max-width: 1200px; /* 다시 최적화된 컴팩트 너비 */
+    max-width: 1200px;
+    /* 다시 최적화된 컴팩트 너비 */
     width: 95%;
     margin: 0 auto;
     position: relative;
@@ -1610,7 +1817,7 @@ body.long-stay-page {
     font-weight: 700;
     margin-bottom: 16px;
     padding-left: 24px;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* 2. 메인 검색바 (솔리드 화이트 프리미엄) */
@@ -1622,10 +1829,11 @@ body.long-stay-page {
     align-items: center;
     height: 84px;
     border: none;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
     transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     position: relative;
-    z-index: 100; /* 팝업보다 위에 위치하여 가림 처리 */
+    z-index: 100;
+    /* 팝업보다 위에 위치하여 가림 처리 */
 }
 
 /* 3. 검색 항목 */
@@ -1639,25 +1847,40 @@ body.long-stay-page {
     position: relative;
     border-radius: 100px;
     transition: all 0.4s ease;
-    flex: 1; /* 기본적으로 유연하게 설정 */
-    min-width: 0; /* 텍스트 넘침 방지 */
+    flex: 1;
+    /* 기본적으로 유연하게 설정 */
+    min-width: 0;
+    /* 텍스트 넘침 방지 */
 }
 
 /* 개별 필드 너비 조정: 날짜 필드만 292px로 고정하여 흔들림 방지 */
-#destinationFieldLarge { flex: 1.2; }
-#checkInField { flex: 0 0 292px; } /* 흔들림 방지를 위해 날짜 필드만 고정 */
-#guestFieldLarge { flex: 1; }
-#optionsFieldLarge { flex: 1; }
+#destinationFieldLarge {
+    flex: 1.2;
+}
+
+#checkInField {
+    flex: 0 0 292px;
+}
+
+/* 흔들림 방지를 위해 날짜 필드만 고정 */
+#guestFieldLarge {
+    flex: 1;
+}
+
+#optionsFieldLarge {
+    flex: 1;
+}
 
 .search-item-v2:hover {
-    background: rgba(0, 0, 0, 0.03); /* 화이트 배경 대비 전용 호버 */
+    background: rgba(0, 0, 0, 0.03);
+    /* 화이트 배경 대비 전용 호버 */
 }
 
 /* 활성 상태: 배경 반전 및 하단 모서리 조정 */
 /* 활성 상태: 배경 반전 */
 .search-item-v2.active {
     background: #F8F9FA;
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.02);
     z-index: 2000;
 }
 
@@ -1681,17 +1904,21 @@ body.long-stay-page {
 
 .item-label-v2 {
     font-size: 11px;
-    font-weight: 700; /* 더 깔끔해 보이도록 800에서 축소 */
-    color: #666; /* 더 부드러운 색상 */
+    font-weight: 700;
+    /* 더 깔끔해 보이도록 800에서 축소 */
+    color: #666;
+    /* 더 부드러운 색상 */
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 3px;
 }
 
-.item-input-v2, 
+.item-input-v2,
 .display-text-v2 {
-    font-size: 15px; /* 우아함을 위해 약간 작게 */
-    font-weight: 600; /* 700에서 축소 */
+    font-size: 15px;
+    /* 우아함을 위해 약간 작게 */
+    font-weight: 600;
+    /* 700에서 축소 */
     color: #222;
     background: transparent;
     border: none;
@@ -1704,14 +1931,15 @@ body.long-stay-page {
 }
 
 .item-input-v2::placeholder {
-    color: #777; /* Increased contrast from #888 */
+    color: #777;
+    /* Increased contrast from #888 */
 }
 
 /* 4. 구분선 및 버튼 */
 .v2-divider {
     width: 1px;
     height: 32px;
-    background: rgba(0,0,0,0.08);
+    background: rgba(0, 0, 0, 0.08);
     flex-shrink: 0;
 }
 
@@ -1721,7 +1949,8 @@ body.long-stay-page {
     border: none;
     border-radius: 100px;
     height: 68px;
-    padding: 0 28px; /* 버튼 가독성 확보 */
+    padding: 0 28px;
+    /* 버튼 가독성 확보 */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1730,8 +1959,10 @@ body.long-stay-page {
     font-size: 16px;
     box-shadow: 0 10px 25px rgba(255, 80, 0, 0.25);
     transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-    white-space: nowrap; /* 글자 찌그러짐 방지 */
-    flex-shrink: 0; /* 버튼 압축 방지 */
+    white-space: nowrap;
+    /* 글자 찌그러짐 방지 */
+    flex-shrink: 0;
+    /* 버튼 압축 방지 */
 }
 
 .search-btn-v2:hover {
@@ -1752,30 +1983,26 @@ body.long-stay-page {
 .Popup[role="dialog"] {
     background: #FFFFFF;
     border: none;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.15);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
     position: absolute;
-    top: 100%; /* Zero gap for seamless attachment */
+    top: calc(100% + 8px);
+    /* jejuhotel 기준 간격 통일 */
     z-index: 1000;
     padding: 24px;
     margin-top: 0;
-
-    /* Animation Base State (Invisible) */
-    opacity: 0;
-    visibility: hidden;
-    clip-path: inset(0 100% 100% 0); /* Start as a point at top-left */
-    pointer-events: none;
+    display: none;
 }
 
-/* Active Animation State (L-Shape Reveal) */
 .destination-dropdown.active,
 .guest-popup-new.active,
 .options-popup-new.active,
 .Popup[role="dialog"].active {
+    display: block;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    animation: lShapeReveal 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-    animation-delay: 0.4s; /* Updated to 0.4s */
+    clip-path: inset(0 0 0 0);
+    animation: none;
 }
 
 /* [Fix] Disable Animation for Calendar to prevent layout conflict */
@@ -1790,10 +2017,12 @@ body.long-stay-page {
         /* Start from a thin vertical line at the left edge (aligned with icon) */
         clip-path: inset(0 99.7% 100% 0);
     }
+
     30% {
         /* Line grows down fully */
         clip-path: inset(0 99.7% 0 0);
     }
+
     100% {
         /* Expands to the right */
         clip-path: inset(0 0 0 0);
@@ -1812,27 +2041,64 @@ body.long-stay-page {
    but original plan says starting after L-shape is done. L-shape starts at 0.4s and takes 1.5s total? 
    No, L-shape animation is 1.5s. So after 1.5s it's fully open. 
    Keeping 1.5s delays for consistency with previous setup.) */
-.active.is-opening .destination-item:nth-child(1) { animation-delay: 1.5s; }
-.active.is-opening .destination-item:nth-child(2) { animation-delay: 1.55s; }
-.active.is-opening .destination-item:nth-child(3) { animation-delay: 1.6s; }
-.active.is-opening .destination-item:nth-child(4) { animation-delay: 1.65s; }
+.active.is-opening .destination-item:nth-child(1) {
+    animation-delay: 1.5s;
+}
 
-.active.is-opening .guest-row-new:nth-child(1) { animation-delay: 1.5s; }
-.active.is-opening .guest-row-new:nth-child(2) { animation-delay: 1.55s; }
-.active.is-opening .guest-row-new:nth-child(3) { animation-delay: 1.6s; }
+.active.is-opening .destination-item:nth-child(2) {
+    animation-delay: 1.55s;
+}
 
-.active.is-opening .option-check-item:nth-child(1) { animation-delay: 1.5s; }
-.active.is-opening .option-check-item:nth-child(2) { animation-delay: 1.54s; }
-.active.is-opening .option-check-item:nth-child(3) { animation-delay: 1.58s; }
-.active.is-opening .option-check-item:nth-child(4) { animation-delay: 1.62s; }
-.active.is-opening .option-check-item:nth-child(5) { animation-delay: 1.66s; }
-.active.is-opening .option-check-item:nth-child(6) { animation-delay: 1.7s; }
+.active.is-opening .destination-item:nth-child(3) {
+    animation-delay: 1.6s;
+}
+
+.active.is-opening .destination-item:nth-child(4) {
+    animation-delay: 1.65s;
+}
+
+.active.is-opening .guest-row-new:nth-child(1) {
+    animation-delay: 1.5s;
+}
+
+.active.is-opening .guest-row-new:nth-child(2) {
+    animation-delay: 1.55s;
+}
+
+.active.is-opening .guest-row-new:nth-child(3) {
+    animation-delay: 1.6s;
+}
+
+.active.is-opening .option-check-item:nth-child(1) {
+    animation-delay: 1.5s;
+}
+
+.active.is-opening .option-check-item:nth-child(2) {
+    animation-delay: 1.54s;
+}
+
+.active.is-opening .option-check-item:nth-child(3) {
+    animation-delay: 1.58s;
+}
+
+.active.is-opening .option-check-item:nth-child(4) {
+    animation-delay: 1.62s;
+}
+
+.active.is-opening .option-check-item:nth-child(5) {
+    animation-delay: 1.66s;
+}
+
+.active.is-opening .option-check-item:nth-child(6) {
+    animation-delay: 1.7s;
+}
 
 @keyframes itemReveal {
     from {
         opacity: 0;
         transform: translateX(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -1844,13 +2110,18 @@ body.long-stay-page {
 .guest-popup-new,
 .options-popup-new,
 .Popup[role="dialog"] {
-    left: 24px; /* 아이콘 위치에 맞춰 정렬 */
+    left: 24px;
+    /* 아이콘 위치에 맞춰 정렬 */
     right: auto;
     transform: none;
-    border-radius: 0 24px 24px 24px; /* Flatten Top-Left to attach */
-    top: calc(100% + 8px); /* 1px 더 올려서 8px로 조정 */
-    border: none; /* 이중 테두리 방지 */
-    z-index: 90; /* 검색바 아래로 배치 */
+    border-radius: 24px;
+    /* 네 모서리를 모두 둥글게 통일 */
+    top: calc(100% + 8px);
+    /* 1px 더 올려서 8px로 조정 */
+    border: none;
+    /* 이중 테두리 방지 */
+    z-index: 2000;
+    /* 검색바 위로 노출 */
 }
 
 /* 캘린더 내부 레이아웃 문제에 대한 특정 오버라이드 (있는 경우) */
@@ -1865,7 +2136,10 @@ body.long-stay-page {
 .global-search-bar-v2::after {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     border-radius: 100px;
     background: url('https://www.transparenttextures.com/patterns/white-diamond.png');
     opacity: 0.03;
@@ -1875,22 +2149,15 @@ body.long-stay-page {
 
 /* ========== hotel.css에서 상속된 캘린더 스타일 ========== */
 
-/* 컴팩트 모드: 잘림 방지를 위한 수정 */
-.Popup[role="dialog"] .DayPicker-Day {
-    padding: 6px; /* 셀 패딩 축소 (기존에는 더 컸음) */
-    width: 36px; /* 더 작은 너비의 터치 타겟 */
-    height: 36px; /* 더 작은 높이 */
-    line-height: 36px;
-    font-size: 0.9rem;
-}
-
 .Popup[role="dialog"] .DayPicker-Caption {
-    margin-bottom: 12px; /* 더 좁은 달 제목 간격 */
+    margin-bottom: 12px;
+    /* 더 좁은 달 제목 간격 */
     font-size: 1rem;
 }
 
 .Popup[role="dialog"] .RangePicker-Header {
-    margin-bottom: 2px; /* 헤더 간격 축소 */
+    margin-bottom: 2px;
+    /* 헤더 간격 축소 */
     padding-bottom: 8px;
 }
 
@@ -1899,7 +2166,8 @@ body.long-stay-page {
 }
 
 .Popup[role="dialog"] .DayPicker-Months {
-    gap: 12px; /* 달 사이의 더 좁은 간격 */
+    gap: 12px;
+    /* 달 사이의 더 좁은 간격 */
 }
 
 /* 푸터 버튼이 컴팩트하게 보이도록 보장 */
@@ -1917,6 +2185,7 @@ body.long-stay-page {
 .DayPicker-Month {
     flex: 1;
 }
+
 .DayPicker-Caption {
     text-align: center;
     font-weight: 700;
@@ -1924,21 +2193,25 @@ body.long-stay-page {
     font-size: 1.1rem;
     color: var(--text-title);
 }
+
 .DayPicker-Weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     margin-bottom: 8px;
 }
+
 .DayPicker-Weekday {
     text-align: center;
     font-size: 0.85rem;
     color: var(--text-muted);
     font-weight: 500;
 }
+
 .DayPicker-Body {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
 }
+
 .DayPicker-Day {
     height: 44px;
     display: flex;
@@ -1948,34 +2221,35 @@ body.long-stay-page {
     font-size: 0.95rem;
     color: var(--text-title);
     position: relative;
-    border-radius: 0; /* 필(Pill) 디자인을 위해 반경 제거 */
+    border-radius: 4px;
 }
-.DayPicker-Day:hover:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected) {
-    background-color: #f5f5f5;
+
+.DayPicker-Day:hover:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--inRange):not(.DayPicker-Day--outside) {
+    background-color: rgba(255, 80, 0, 0.14);
     border-radius: 50%;
 }
-/* Selection Logic Specificity Fix */
-.Popup[role="dialog"] .DayPicker-Day--selected {
-    background-color: var(--v2-orange);
+
+.DayPicker-Day--selected {
+    background-color: var(--primary);
     color: #fff;
     border-radius: 50%;
 }
 
-.Popup[role="dialog"] .DayPicker-Day--inRange {
+.DayPicker-Day--inRange {
     background: rgba(255, 80, 0, 0.15);
-    color: #222;
+    color: var(--text-title);
     border-radius: 0;
 }
 
-.Popup[role="dialog"] .DayPicker-Day--checkIn {
-    background: var(--v2-orange);
+.DayPicker-Day--checkIn {
+    background: var(--primary);
     color: #fff;
     border-radius: 50%;
     position: relative;
     z-index: 2;
 }
 
-.Popup[role="dialog"] .DayPicker-Day--checkIn.DayPicker-Day--hasRange::before {
+.DayPicker-Day--checkIn.DayPicker-Day--hasRange::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1986,15 +2260,15 @@ body.long-stay-page {
     z-index: -1;
 }
 
-.Popup[role="dialog"] .DayPicker-Day--checkOut {
-    background: var(--v2-orange);
+.DayPicker-Day--checkOut {
+    background: var(--primary);
     color: #fff;
     border-radius: 50%;
     position: relative;
     z-index: 2;
 }
 
-.Popup[role="dialog"] .DayPicker-Day--checkOut.DayPicker-Day--hasRange::before {
+.DayPicker-Day--checkOut.DayPicker-Day--hasRange::before {
     content: '';
     position: absolute;
     top: 0;
@@ -2006,20 +2280,25 @@ body.long-stay-page {
 }
 
 /* Hover Range */
-.Popup[role="dialog"] .DayPicker-Day--hoverRange {
+.DayPicker-Day--hoverRange {
     background: rgba(255, 80, 0, 0.1);
     border-radius: 0;
 }
 
-/* Sync with Hotel Page Design */
-.Popup[role="dialog"] .DayPicker-Day--disabled {
+.DayPicker-Day--disabled {
     color: #e0e0e0;
     cursor: not-allowed;
-    text-decoration: none; /* Remove line-through for cleaner look */
-    opacity: 0.6;
+    text-decoration: line-through;
 }
 
-.Popup[role="dialog"] .DayPicker-Day--today {
-    color: var(--v2-orange);
-    font-weight: 800;
+.DayPicker-Day--today {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.DayPicker-Day--today.DayPicker-Day--selected,
+.DayPicker-Day--today.DayPicker-Day--checkIn,
+.DayPicker-Day--today.DayPicker-Day--checkOut {
+    color: #fff;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
 }

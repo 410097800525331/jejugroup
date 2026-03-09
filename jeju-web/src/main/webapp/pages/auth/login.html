@@ -85,22 +85,79 @@
     document.addEventListener('DOMContentLoaded', () => {
       const loginForm = document.querySelector('.login-form');
       if (loginForm) {
+        const errorWrapper = document.getElementById('login-error-wrapper');
+
+        const resetErrorState = () => {
+          if (errorWrapper) {
+            errorWrapper.style.display = 'none';
+          }
+
+          loginForm.querySelectorAll('.input_group').forEach(group => {
+            group.classList.remove('invalid');
+          });
+        };
+
+        const showErrorState = () => {
+          if (errorWrapper) {
+            errorWrapper.style.display = 'block';
+          }
+
+          loginForm.querySelectorAll('.input_group').forEach(group => {
+            group.classList.add('invalid');
+          });
+        };
+
+        const navigateAfterLogin = async (sessionData) => {
+          const [{ ROUTES }, { resolveRoute }, { isLocalFrontEnvironment }] = await Promise.all([
+            import('../../core/constants/routes.js'),
+            import('../../core/utils/path_resolver.js'),
+            import('../../core/auth/local_admin.js')
+          ]);
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirectUrl = urlParams.get('redirect');
+
+          if (redirectUrl && !redirectUrl.startsWith('javascript:') && !redirectUrl.startsWith('data:')) {
+            window.location.replace(redirectUrl);
+            return;
+          }
+
+          const routeKey = isLocalFrontEnvironment() && sessionData && sessionData.role && sessionData.role.includes('ADMIN')
+            ? 'ADMIN.DASHBOARD'
+            : 'HOME';
+
+          try {
+            const targetUrl = resolveRoute(routeKey);
+            if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
+              window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(targetUrl, 'login-success');
+              return;
+            }
+            window.location.replace(targetUrl);
+          } catch (error) {
+            window.location.replace(routeKey === 'ADMIN.DASHBOARD' ? ROUTES.ADMIN.DASHBOARD : ROUTES.HOME);
+          }
+        };
+
         // 입력 시작하면 에러 상태 초기화
         loginForm.querySelectorAll('input').forEach(input => {
           input.addEventListener('input', () => {
-            const errorWrapper = document.getElementById('login-error-wrapper');
-            if (errorWrapper) errorWrapper.style.display = 'none';
-            loginForm.querySelectorAll('.input_group').forEach(group => group.classList.remove('invalid'));
+            resetErrorState();
           });
         });
 
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
           e.preventDefault();
           const rawId = document.getElementById('id').value.trim();
           const rawPw = document.getElementById('pw').value.trim();
 
-          // [SECURITY] Import parameter validation and DOM sanitization
-          import('../../core/utils/sanitizer.js').then(({ validateParam, sanitizeHTML }) => {
+          try {
+            // [SECURITY] Import parameter validation and DOM sanitization
+            const [{ validateParam, sanitizeHTML }, { saveSession }, { API_BASE_URL }] = await Promise.all([
+              import('../../core/utils/sanitizer.js'),
+              import('../../core/auth/session_manager.js'),
+              import('../../core/config/api_config.js')
+            ]);
+
             if (!validateParam(rawId) || !validateParam(rawPw)) {
               alert('잘못된 입력 형식이 포함되어 있습니다.');
               return;
@@ -109,89 +166,39 @@
             const id = sanitizeHTML(rawId);
             const pw = sanitizeHTML(rawPw);
 
-            // [SECURITY] Enforcing secure backend authentication flow via API.
-            import('../../core/config/api_config.js').then(({ API_BASE_URL }) => {
-              const params = new URLSearchParams();
-              params.append('id', id);
-              params.append('pw', pw);
+            const params = new URLSearchParams();
+            params.append('id', id);
+            params.append('pw', pw);
 
-              fetch(`${API_BASE_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                credentials: 'include',
-                body: params
-              })
-                .then(res => {
-                  if (!res.ok) {
-                    return res.json().then(err => { throw new Error(err.message || 'Authentication Failed'); });
-                  }
-                  return res.json();
-                })
-                .then(async data => {
-                  const { saveSession } = await import('../../core/auth/session_manager.js');
-                  saveSession(data.user);
-
-                  // [FEATURE] Centralized Auth Routing Parameter Extraction (O(1) Check)
-                  const urlParams = new URLSearchParams(window.location.search);
-                  const redirectUrl = urlParams.get('redirect');
-
-                  if (redirectUrl) {
-                    // XSS 방어: 프로토콜 검증 후 리다이렉트 (상대경로 또는 안전한 절대경로만 허용)
-                    if (!redirectUrl.startsWith('javascript:') && !redirectUrl.startsWith('data:')) {
-                      window.location.replace(redirectUrl);
-                      return; // Zero Monolith 방위망 - 바로 흐름 종료
-                    }
-                  }
-
-                  import('../../core/constants/routes.js').then(({ ROUTES }) => {
-                    if (data.user && data.user.role && data.user.role.includes('ADMIN')) {
-                      import('../../core/utils/path_resolver.js').then(({ resolveRoute }) => {
-                        const routeKey = 'ADMIN.DASHBOARD';
-                        const targetUrl = resolveRoute(routeKey);
-                        if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
-                          window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(targetUrl, 'login-success');
-                          return;
-                        }
-                        window.location.replace(targetUrl);
-                      }).catch(() => {
-                        window.location.replace(ROUTES.ADMIN.DASHBOARD);
-                      });
-                    } else {
-                      import('../../core/utils/path_resolver.js').then(({ resolveRoute }) => {
-                        const routeKey = 'HOME';
-                        const targetUrl = resolveRoute(routeKey);
-                        if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
-                          window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(targetUrl, 'login-success');
-                          return;
-                        }
-                        window.location.replace(targetUrl);
-                      }).catch(() => {
-                        window.location.replace(ROUTES.HOME);
-                      });
-                    }
-                  });
-                })
-                .catch(err => {
-                  console.error('Login Error:', err);
-                  // 팝업 치우고 인라인 에러 표시
-                  const errorWrapper = document.getElementById('login-error-wrapper');
-                  if (errorWrapper) {
-                    errorWrapper.style.display = 'block';
-                  }
-
-                  // 인풋 박스 테두리 빨간색으로 변경
-                  document.querySelectorAll('.input_group').forEach(group => {
-                    group.classList.add('invalid');
-                  });
-                });
-            }).catch(err => {
-              console.error('Config Load Error:', err);
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              credentials: 'include',
+              body: params
             });
-          }).catch(err => {
-            console.error('Sanitizer Load Error:', err);
-          });
+
+            if (!response.ok) {
+              let message = 'Authentication Failed';
+
+              try {
+                const errorPayload = await response.json();
+                message = errorPayload.message || message;
+              } catch (parseError) {
+                // 에러 응답 파싱 실패는 무시
+              }
+
+              throw new Error(message);
+            }
+
+            const data = await response.json();
+            const savedSession = saveSession(data.user);
+            await navigateAfterLogin(savedSession);
+          } catch (err) {
+            console.error('Login Error:', err);
+            showErrorState();
+          }
         });
       }
     });

@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   successConfirmBtn.addEventListener("click", () => {
-    window.location.href = "/jejuair/pages/auth/my_page.html";
+    window.location.href = "/pages/mypage/dashboard.html?shell=air";
   });
 
   backBtn.addEventListener("click", () => {

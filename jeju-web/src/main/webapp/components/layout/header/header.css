@@ -13,26 +13,39 @@
 }
 
 .header.scrolled {
-    background-color: rgba(255, 255, 255, 0.1); /* 투명도 확 올려서 롤백 */
-    backdrop-filter: blur(20px); /* 섹션과 구분되도록 블러는 강화 */
+    background-color: rgba(255, 255, 255, 0.1);
+    /* 투명도 확 올려서 롤백 */
+    backdrop-filter: blur(20px);
+    /* 섹션과 구분되도록 블러는 강화 */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.15); /* 그림자로 띄워줌 */
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.15);
+    /* 그림자로 띄워줌 */
 }
 
-.header.scrolled .gnb-link,
-.header.scrolled .mypage-btn,
-.header.scrolled .util-link {
+.header.scrolled:not(.hotel-header) .gnb-link,
+.header.scrolled:not(.hotel-header) .mypage-btn,
+.header.scrolled:not(.hotel-header) .lang-toggle,
+.header.scrolled:not(.hotel-header) .util-link {
     color: #ffffff;
 }
+
+.header.scrolled .gnb-link:hover,
+.header.scrolled .mypage-btn:hover,
+.header.scrolled .util-link:hover {
+    color: #FF5000;
+}
+
 .header.scrolled .lang-toggle {
     color: #ffffff;
     border-color: rgba(255, 255, 255, 0.5);
 }
+
 .header.scrolled .gnb-link,
 .header.scrolled .mypage-btn,
 .header.scrolled .lang-toggle,
 .header.scrolled .util-link {
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* 그림자 0.3으로 완화 */
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    /* 그림자 0.3으로 완화 */
 }
 
 .header.transparent {
@@ -94,9 +107,6 @@
 }
 
 /* 섹션 2+ 헤더 투명 배경 - 이제 스크롤된 상태(scrolled)와 결합하여 제어 */
-.header.section2plus-header {
-    /* IntersectionObserver에서 scrolled와 결합되어 흰색 배경이 됨 */
-}
 
 /* 개별 컴포넌트 색상 강제 지정 (명시도 확보) */
 .header.section1-header .gnb-link,
@@ -104,7 +114,8 @@
 .header.section1-header .lang-toggle,
 .header.section1-header .util-link {
     color: #ffffff;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* 그림자 0.3으로 완화 */
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    /* 그림자 0.3으로 완화 */
 }
 
 .header.section1-header .lang-toggle {
@@ -126,14 +137,16 @@
 
 /* Footer Header (When over footer) */
 .header.footer-header {
-    background-color: rgba(255, 255, 255, 1); /* Solid white background */
+    background-color: rgba(255, 255, 255, 1);
+    /* Solid white background */
     border-bottom: 1px solid #eee;
     backdrop-filter: none;
 }
 
 .header.footer-header .gnb-link,
 .header.footer-header .mypage-btn {
-    color: #333333; /* Dark text */
+    color: #333333;
+    /* Dark text */
     text-shadow: none;
 }
 
@@ -191,13 +204,15 @@
 .header-inner {
     height: var(--header-height, 72px);
     display: flex;
-    justify-content: space-between; /* 양 끝단 로고/유틸 배치용 */
+    justify-content: space-between;
+    /* 양 끝단 로고/유틸 배치용 */
     align-items: center;
     width: 95%;
     max-width: 1440px;
     margin: 0 auto;
     padding: 8px 0;
-    position: relative; /* GNB 절대 중앙 배치를 위한 기준점 */
+    position: relative;
+    /* GNB 절대 중앙 배치를 위한 기준점 */
 }
 
 /* 메인 헤더 - 좌측 로고 (자연스러운 Y축 중앙화) */
@@ -205,7 +220,8 @@
     display: flex;
     align-items: center;
     position: relative;
-    top: 2px; /* 로고 이미지 시각적 Y축 미세 조정 */
+    top: 2px;
+    /* 로고 이미지 시각적 Y축 미세 조정 */
 }
 
 /* 메인 헤더 - GNB 무조건 X축 정중앙 배치 */
@@ -256,7 +272,8 @@
 }
 
 .hotel-header .nav-item {
-    position: relative; /* 서브 메뉴의 기준점 확보 */
+    position: relative;
+    /* 서브 메뉴의 기준점 확보 */
     height: 100%;
     display: flex;
     align-items: center;
@@ -304,7 +321,8 @@
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    height: 40px; /* 고정 높이 지정 */
+    height: 40px;
+    /* 고정 높이 지정 */
     min-width: 80px;
     padding: 0 16px;
     border: 2px solid #cccccc;

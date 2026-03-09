@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file reservations.js
  * @description Reservation Management View logic. Domains are synced with Store.
  */
@@ -47,11 +47,11 @@
 
     // MOCK DATA FACTORY (Immutability enforced via creating new arrays)
     const MOCK_RESERVATIONS = Object.freeze([
-        { id: 'REV-001', domain: 'hotel', title: '?좊씪?명뀛 ?쒖＜ 2諛?, name: '源?쒗삎', phone: '010-1234-5678', price: 850000, date: '2026-02-20', status: 'CONFIRMED' },
-        { id: 'REV-002', domain: 'flight', title: '?쒖＜??났 GMP-CJU ?몃룄', name: '諛뺤?誘?, phone: '010-9876-5432', price: 45000, date: '2026-02-19', status: 'PENDING' },
-        { id: 'REV-003', domain: 'rentcar', title: '?ㅽ??뚰꽣移??쒕꽕?쒖뒪 G80', name: '?대룄??, phone: '010-1111-2222', price: 125000, date: '2026-02-18', status: 'CANCELED' },
-        { id: 'REV-004', domain: 'hotel', title: '濡?뜲?명뀛 ?쒖＜ ?鍮뚮씪', name: '?꾩젙援?, phone: '010-3333-4444', price: 1200000, date: '2026-02-18', status: 'CONFIRMED' },
-        { id: 'REV-005', domain: 'flight', title: '??쒗빆怨?GMP-CJU ?뺣났', name: '理쒖뿰以', phone: '010-5555-6666', price: 155000, date: '2026-02-17', status: 'CONFIRMED' }
+        { id: 'REV-001', domain: 'hotel', title: '신라호텔 제주 2박', name: '김태형', phone: '010-1234-5678', price: 850000, date: '2026-02-20', status: 'CONFIRMED' },
+        { id: 'REV-002', domain: 'flight', title: '제주항공 GMP-CJU 편도', name: '박지민', phone: '010-9876-5432', price: 45000, date: '2026-02-19', status: 'PENDING' },
+        { id: 'REV-003', domain: 'rentcar', title: '스타렌터카 제네시스 G80', name: '이도현', phone: '010-1111-2222', price: 125000, date: '2026-02-18', status: 'CANCELED' },
+        { id: 'REV-004', domain: 'hotel', title: '롯데호텔 제주 풀빌라', name: '전정국', phone: '010-3333-4444', price: 1200000, date: '2026-02-18', status: 'CONFIRMED' },
+        { id: 'REV-005', domain: 'flight', title: '대한항공 GMP-CJU 왕복', name: '최연준', phone: '010-5555-6666', price: 155000, date: '2026-02-17', status: 'CONFIRMED' }
     ]);
 
     // RENDER LOGIC (Pure pure functions)
@@ -67,18 +67,18 @@
 
     const getStatusBadge = (status) => {
         switch(status) {
-            case 'CONFIRMED': return '<span class="admin-badge success">寃곗젣?꾨즺</span>';
-            case 'PENDING': return '<span class="admin-badge warning">寃곗젣?湲?/span>';
-            case 'CANCELED': return '<span class="admin-badge danger">?섎텋/痍⑥냼</span>';
+            case 'CONFIRMED': return '<span class="admin-badge success">결제완료</span>';
+            case 'PENDING': return '<span class="admin-badge warning">결제대기</span>';
+            case 'CANCELED': return '<span class="admin-badge danger">환불/취소</span>';
             default: return '<span class="admin-badge neutral">-</span>';
         }
     };
 
     const getDomainBadge = (domain) => {
         switch(domain) {
-            case 'hotel': return '<span class="admin-badge neutral" style="color:hsl(28, 90%, 55%); border-color:hsl(28, 90%, 55%);">?ㅽ뀒??/span>';
-            case 'flight': return '<span class="admin-badge neutral" style="color:hsl(210, 80%, 60%); border-color:hsl(210, 80%, 60%);">?먯뼱</span>';
-            case 'rentcar': return '<span class="admin-badge neutral" style="color:hsl(140, 60%, 45%); border-color:hsl(140, 60%, 45%);">?뚰꽣移?/span>';
+            case 'hotel': return '<span class="admin-badge neutral" style="color:hsl(28, 90%, 55%); border-color:hsl(28, 90%, 55%);">스테이</span>';
+            case 'flight': return '<span class="admin-badge neutral" style="color:hsl(210, 80%, 60%); border-color:hsl(210, 80%, 60%);">에어</span>';
+            case 'rentcar': return '<span class="admin-badge neutral" style="color:hsl(140, 60%, 45%); border-color:hsl(140, 60%, 45%);">렌터카</span>';
             default: return '';
         }
     };
@@ -89,7 +89,7 @@
             : MOCK_RESERVATIONS.filter(item => item.domain === domain);
         
         if (filtered.length === 0) {
-            return `<tr><td colspan="8" style="text-align:center; padding: 40px;">?대떦 遺臾몄쓽 ?덉빟 ?댁뿭???놁뒿?덈떎.</td></tr>`;
+            return `<tr><td colspan="8" style="text-align:center; padding: 40px;">해당 부문의 예약 내역이 없습니다.</td></tr>`;
         }
 
         return filtered.map(item => `
@@ -98,12 +98,12 @@
                 <td>${getDomainBadge(item.domain)}</td>
                 <td>${item.title}</td>
                 <td>${item.name} <br> <small style="color:var(--admin-text-secondary);">${item.phone}</small></td>
-                <td>??{item.price.toLocaleString('ko-KR')}</td>
+                <td>₩${item.price.toLocaleString('ko-KR')}</td>
                 <td style="color:var(--admin-text-secondary);">${item.date}</td>
                 <td>${getStatusBadge(item.status)}</td>
                 <td>
-                    <button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">?곸꽭</button>
-                    ${item.status !== 'CANCELED' ? `<button class="admin-btn" style="padding: 4px 8px; font-size: 0.75rem; background:var(--admin-danger); color:white; border:none;">痍⑥냼</button>` : ''}
+                    <button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">상세</button>
+                    ${item.status !== 'CANCELED' ? `<button class="admin-btn" style="padding: 4px 8px; font-size: 0.75rem; background:var(--admin-danger); color:white; border:none;">취소</button>` : ''}
                 </td>
             </tr>
         `).join('');
@@ -131,13 +131,8 @@
     }
 
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                const { logoutSession } = await import('../../core/auth/session_manager.js');
-                await logoutSession();
-            } catch (error) {
-                localStorage.removeItem('userSession');
-            }
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('userSession');
             redirectByRoute('HOME');
         });
     }
@@ -205,4 +200,3 @@
     updateThemeDOM(initialState.ui.theme);
     if (tableBody) tableBody.innerHTML = renderTable(initialState.ui.domain);
 });
-

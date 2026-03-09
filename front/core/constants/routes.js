@@ -116,9 +116,9 @@ export const ROUTES = deepFreeze({
       },
       
       AUTH: {
-        LOGIN: '/jejuair/pages/auth/login.html',
-        JOIN: '/jejuair/pages/auth/join.html',
-        SIGNUP: '/jejuair/pages/auth/join.html',
+        LOGIN: '/pages/auth/login.html',
+        JOIN: '/pages/auth/signup.html',
+        SIGNUP: '/pages/auth/signup.html',
         MYPAGE: '/pages/mypage/dashboard.html?shell=air'
       },
       

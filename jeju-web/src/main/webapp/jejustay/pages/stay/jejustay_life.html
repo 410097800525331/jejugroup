@@ -66,7 +66,7 @@
                                         data-lang-placeholder="lifeDestPlaceholder">
                                 </div>
                                 <!-- 여행지 드롭다운 (ID 보존 및 콘텐츠 유지) -->
-                                <div class="destination-dropdown" id="destinationDropdown" style="top: 100%; left: 0;">
+                                <div class="destination-dropdown" id="destinationDropdown">
                                     <div class="dropdown-columns"
                                         style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
                                         <!-- 열 1: 일본 / 중국 -->
@@ -221,8 +221,7 @@
                                 </div>
                                 <!-- 캘린더 팝업 (ID 보존) -->
                                 <div class="Popup RangePicker RangePicker--checkIn RangePicker--with-dayuse"
-                                    id="calendarPopup" role="dialog" aria-modal="true" aria-label="체크인 날짜 선택 달력"
-                                    style="left: 0; top: 120%;">
+                                    id="calendarPopup" role="dialog" aria-modal="true" aria-label="체크인 날짜 선택 달력">
                                     <div class="Popup__content Popup__content_Occupancy">
                                         <span class="ScreenReaderOnly">엔터 키를 눌러 캘린더를 여세요. 방향키를 사용해 체크인 및 체크아웃 날짜를 탐색할 수
                                             있습니다.</span>
@@ -303,7 +302,7 @@
                                     <div class="display-text-v2" id="guestSummary">성인 1명, 객실 1개</div>
                                 </div>
                                 <!-- 인원 설정 팝업 (ID 보존) -->
-                                <div class="guest-popup-new" id="guestPopupLarge" style="left: -20px; top: 120%;">
+                                    <div class="guest-popup-new" id="guestPopupLarge">
                                     <div class="guest-row-new">
                                         <div class="guest-info-new">
                                             <span class="guest-type-new" data-lang="guestRooms">객실</span>
@@ -684,6 +683,7 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="../../../core/constants/lang_data.js"></script>
+    <script src="../../../components/ui/range_calendar.js"></script>
     <script src="./jejustay_life.js"></script>
     <script src="../../../components/ui/FAB.js"></script>
     <script src="../../../components/widget/chatbot.js"></script>

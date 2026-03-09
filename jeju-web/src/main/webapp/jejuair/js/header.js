@@ -99,7 +99,7 @@ $(document).ready(function () {
   <a href="#" class="btn_search" title="search">
     <img src="assets/img/ico-search.png" alt="search">
   </a>
-  <a href="pages/auth/my_page.html" title="my page">
+  <a href="../pages/mypage/dashboard.html?shell=air" title="my page">
     <img src="assets/img/icon-login.png" alt="my page">
   </a>
 </div>
@@ -121,7 +121,7 @@ $(document).ready(function () {
     <div class="mobile_user_area">
       <a href="pages/auth/login.html">로그인</a>
       <a href="pages/auth/join.html">회원가입</a>
-      <a href="pages/auth/my_page.html">마이페이지</a>
+      <a href="../pages/mypage/dashboard.html?shell=air">마이페이지</a>
     </div>
     <div class="mobile_search">
       <input type="text" placeholder="검색어를 입력하세요">

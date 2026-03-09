@@ -7,6 +7,7 @@ let isHeaderAuthSyncQueued = false;
 const SESSION_STORAGE_KEY = 'userSession';
 const SESSION_UPDATE_EVENT = 'jeju:session-updated';
 const sessionManagerPromise = import('../../../core/auth/session_manager.js');
+const localAdminPromise = import('../../../core/auth/local_admin.js');
 
 const getCurrentHeader = () => {
     return document.getElementById('header') || document.querySelector('.header');
@@ -150,7 +151,7 @@ const appendIndexAdminLink = (headerUtil) => {
     adminLink.setAttribute('data-route', 'ADMIN.DASHBOARD');
     adminLink.style.color = '#FF5000';
     adminLink.style.fontWeight = '700';
-    adminLink.textContent = '관리자가 가라사대';
+    adminLink.textContent = '관리자 페이지';
 
     const divider = document.createElement('span');
     divider.className = 'util-divider';
@@ -181,18 +182,17 @@ const syncHeaderAuthState = async () => {
     const indexHeaderUtil = document.getElementById('index-header-util');
 
     try {
-        const sessionData = await resolveSessionData();
+        const [sessionData, { isLocalFrontEnvironment }] = await Promise.all([
+            resolveSessionData(),
+            localAdminPromise
+        ]);
 
-        if (!sessionData) {
-            return;
-        }
-
-        if (loginBtn) {
+        if (sessionData && loginBtn) {
             updateLoginButtonAsLogout(loginBtn);
         }
 
-        const isAdmin = Boolean(sessionData.role && sessionData.role.includes('ADMIN'));
-        if (isAdmin && adminBtn) {
+        const canOpenAdmin = isLocalFrontEnvironment();
+        if (canOpenAdmin && adminBtn) {
             adminBtn.style.display = 'flex';
         }
 
@@ -201,7 +201,7 @@ const syncHeaderAuthState = async () => {
                 .some(link => link.getAttribute('data-route') === 'ADMIN.DASHBOARD')
             : false;
 
-        if (isAdmin && !adminExists && indexHeaderUtil) {
+        if (canOpenAdmin && !adminExists && indexHeaderUtil) {
             appendIndexAdminLink(indexHeaderUtil);
         }
 

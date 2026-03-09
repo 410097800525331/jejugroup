@@ -7,12 +7,13 @@
     'use strict';
 
     const routeResolverPromise = import('../../core/utils/path_resolver.js');
-    const sessionManagerPromise = import('../../core/auth/session_manager.js');
+    const localAdminPromise = import('../../core/auth/local_admin.js');
 
-    const redirectByRoute = (routeKey, mode = 'replace') => {
+    const redirectByRoute = (routeKey, options = {}) => {
+        const { mode = 'replace', params = {} } = options;
         routeResolverPromise
             .then(({ resolveRoute }) => {
-                const targetUrl = resolveRoute(routeKey);
+                const targetUrl = resolveRoute(routeKey, params);
                 if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
                     window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(targetUrl, 'admin-guard', { mode });
                     return;
@@ -34,18 +35,6 @@
             });
     };
 
-    const hasAdminRole = (session) => {
-        if (!session || typeof session !== 'object') {
-            return false;
-        }
-
-        if (typeof session.role === 'string') {
-            return session.role.includes('ADMIN');
-        }
-
-        return Array.isArray(session.roles) && session.roles.includes('ADMIN');
-    };
-
     const logAdminAccess = (sessionData) => {
         const timestamp = new Date().toISOString();
         const logs = JSON.parse(localStorage.getItem('adminSysLogs') || '[]');
@@ -58,26 +47,19 @@
         document.documentElement.style.display = 'none';
 
         try {
-            const { resolveSession, clearSession } = await sessionManagerPromise;
-            const sessionData = await resolveSession();
+            const { isLocalFrontEnvironment, buildLocalFrontAdminSession } = await localAdminPromise;
 
-            if (!hasAdminRole(sessionData)) {
-                clearSession();
+            if (!isLocalFrontEnvironment()) {
                 redirectByRoute('HOME');
                 return;
             }
 
+            const sessionData = buildLocalFrontAdminSession();
             window.AdminSession = Object.freeze({ ...sessionData });
             logAdminAccess(sessionData);
             document.documentElement.style.display = '';
         } catch (error) {
             console.error('[AdminGuard] Session verification failed:', error);
-            try {
-                const { clearSession } = await sessionManagerPromise;
-                clearSession();
-            } catch (clearError) {
-                // 세션 정리 실패는 무시하고 리다이렉트 우선
-            }
             redirectByRoute('HOME');
         }
     };

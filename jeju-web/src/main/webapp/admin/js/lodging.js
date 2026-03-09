@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file lodging.js
  * @description Product/Inventory Management View logic. Domains are synced with Store.
  */
@@ -47,12 +47,12 @@
 
     // MOCK DATA FACTORY
     const MOCK_INVENTORY = Object.freeze([
-        { id: 'INV-H01', domain: 'hotel', title: '?좊씪?명뀛 ?쒖＜ - ?ㅽ깲?ㅻ뱶 ?몄쐢', price: 350000, stock: 12, status: 'OPEN' },
-        { id: 'INV-H02', domain: 'hotel', title: '?뚮Ⅴ?섏뒪 ?명뀛 ?쒖＜ - ?鍮뚮씪', price: 1200000, stock: 0, status: 'SOLD_OUT' },
-        { id: 'INV-F01', domain: 'flight', title: '?쒖＜??났 7C141 (GMP-CJU)', price: 45000, stock: 45, status: 'OPEN' },
-        { id: 'INV-R01', domain: 'rentcar', title: '?ㅽ??뚰꽣移?- ?꾩씠?ㅻ땳 5 濡깅젅?몄?', price: 95000, stock: 3, status: 'WARNING' },
-        { id: 'INV-F02', domain: 'flight', title: '??쒗빆怨?KE1231 (CJU-GMP)', price: 85000, stock: 2, status: 'WARNING' },
-        { id: 'INV-R02', domain: 'rentcar', title: '臾댁?媛쒕젋?곗뭅 - 移대땲諛?9?몄듅', price: 155000, stock: 1, status: 'WARNING' }
+        { id: 'INV-H01', domain: 'hotel', title: '신라호텔 제주 - 스탠다드 트윈', price: 350000, stock: 12, status: 'OPEN' },
+        { id: 'INV-H02', domain: 'hotel', title: '파르나스 호텔 제주 - 풀빌라', price: 1200000, stock: 0, status: 'SOLD_OUT' },
+        { id: 'INV-F01', domain: 'flight', title: '제주항공 7C141 (GMP-CJU)', price: 45000, stock: 45, status: 'OPEN' },
+        { id: 'INV-R01', domain: 'rentcar', title: '스타렌터카 - 아이오닉 5 롱레인지', price: 95000, stock: 3, status: 'WARNING' },
+        { id: 'INV-F02', domain: 'flight', title: '대한항공 KE1231 (CJU-GMP)', price: 85000, stock: 2, status: 'WARNING' },
+        { id: 'INV-R02', domain: 'rentcar', title: '무지개렌터카 - 카니발 9인승', price: 155000, stock: 1, status: 'WARNING' }
     ]);
 
     // RENDER LOGIC
@@ -68,18 +68,18 @@
 
     const getStatusBadge = (status) => {
         switch(status) {
-            case 'OPEN': return '<span class="admin-badge success">?먮ℓ以?/span>';
-            case 'WARNING': return '<span class="admin-badge warning">?덉젅 ?꾨컯</span>';
-            case 'SOLD_OUT': return '<span class="admin-badge danger">?먮ℓ ?꾨즺 (?덉젅)</span>';
+            case 'OPEN': return '<span class="admin-badge success">판매중</span>';
+            case 'WARNING': return '<span class="admin-badge warning">품절 임박</span>';
+            case 'SOLD_OUT': return '<span class="admin-badge danger">판매 완료 (품절)</span>';
             default: return '<span class="admin-badge neutral">-</span>';
         }
     };
 
     const getDomainBadge = (domain) => {
         switch(domain) {
-            case 'hotel': return '<span class="admin-badge neutral" style="color:hsl(28, 90%, 55%); border-color:hsl(28, 90%, 55%);">?ㅽ뀒??/span>';
-            case 'flight': return '<span class="admin-badge neutral" style="color:hsl(210, 80%, 60%); border-color:hsl(210, 80%, 60%);">?먯뼱</span>';
-            case 'rentcar': return '<span class="admin-badge neutral" style="color:hsl(140, 60%, 45%); border-color:hsl(140, 60%, 45%);">?뚰꽣移?/span>';
+            case 'hotel': return '<span class="admin-badge neutral" style="color:hsl(28, 90%, 55%); border-color:hsl(28, 90%, 55%);">스테이</span>';
+            case 'flight': return '<span class="admin-badge neutral" style="color:hsl(210, 80%, 60%); border-color:hsl(210, 80%, 60%);">에어</span>';
+            case 'rentcar': return '<span class="admin-badge neutral" style="color:hsl(140, 60%, 45%); border-color:hsl(140, 60%, 45%);">렌터카</span>';
             default: return '';
         }
     };
@@ -90,7 +90,7 @@
             : MOCK_INVENTORY.filter(item => item.domain === domain);
         
         if (filtered.length === 0) {
-            return `<tr><td colspan="7" style="text-align:center; padding: 40px;">?대떦 遺꾨쪟???ш퀬 ?곗씠?곌? ?놁뒿?덈떎.</td></tr>`;
+            return `<tr><td colspan="7" style="text-align:center; padding: 40px;">해당 분류의 재고 데이터가 없습니다.</td></tr>`;
         }
 
         return filtered.map(item => `
@@ -98,12 +98,12 @@
                 <td><strong>${item.id}</strong></td>
                 <td>${getDomainBadge(item.domain)}</td>
                 <td>${item.title}</td>
-                <td>??{item.price.toLocaleString('ko-KR')}</td>
-                <td style="font-weight:bold; color: ${item.stock < 5 ? 'var(--admin-danger)' : 'var(--admin-text-primary)'}">${item.stock} 媛?/td>
+                <td>₩${item.price.toLocaleString('ko-KR')}</td>
+                <td style="font-weight:bold; color: ${item.stock < 5 ? 'var(--admin-danger)' : 'var(--admin-text-primary)'}">${item.stock} 개</td>
                 <td>${getStatusBadge(item.status)}</td>
                 <td>
-                    <button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">?ш퀬 ?섏젙</button>
-                    <button class="admin-btn" style="padding: 4px 8px; font-size: 0.75rem; background:var(--admin-surface-hover); color:var(--admin-text-primary); border:1px solid var(--admin-border);">?곸꽭</button>
+                    <button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">재고 수정</button>
+                    <button class="admin-btn" style="padding: 4px 8px; font-size: 0.75rem; background:var(--admin-surface-hover); color:var(--admin-text-primary); border:1px solid var(--admin-border);">상세</button>
                 </td>
             </tr>
         `).join('');
@@ -131,13 +131,8 @@
     }
 
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                const { logoutSession } = await import('../../core/auth/session_manager.js');
-                await logoutSession();
-            } catch (error) {
-                localStorage.removeItem('userSession');
-            }
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('userSession');
             redirectByRoute('HOME');
         });
     }
@@ -202,4 +197,3 @@
     updateThemeDOM(initialState.ui.theme);
     if (tableBody) tableBody.innerHTML = renderTable(initialState.ui.domain);
 });
-

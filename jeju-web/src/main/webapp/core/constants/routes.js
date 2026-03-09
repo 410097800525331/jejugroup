@@ -1,4 +1,4 @@
-﻿import { deepFreeze } from '../utils/object_util.js';
+import { deepFreeze } from '../utils/object_util.js';
 
 /**
  * Frontend route registry (Single Source of Truth)
@@ -24,8 +24,8 @@ export const ROUTES = deepFreeze({
 
   MYPAGE: {
     DASHBOARD: '/pages/mypage/dashboard.html',
-    PROFILE: '/pages/mypage/profile.html',
-    BOOKINGS: '/pages/mypage/bookings.html'
+    PROFILE: '/pages/mypage/dashboard.html',
+    BOOKINGS: '/pages/mypage/dashboard.html'
   },
 
   ADMIN: {
@@ -119,7 +119,7 @@ export const ROUTES = deepFreeze({
         LOGIN: '/jejuair/pages/auth/login.html',
         JOIN: '/jejuair/pages/auth/join.html',
         SIGNUP: '/jejuair/pages/auth/join.html',
-        MYPAGE: '/jejuair/pages/auth/my_page.html'
+        MYPAGE: '/pages/mypage/dashboard.html?shell=air'
       },
       
       EVENT: '/jejuair/pages/event/event.html'

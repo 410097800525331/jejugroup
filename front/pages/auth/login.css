@@ -49,15 +49,16 @@ body.login-page {
 }
 
 /* ==================== Header/Footer Layout Overrides ==================== */
-.login-page #main-header-placeholder,
-.login-page #main-footer-placeholder {
+.login-page #mypage-shell-header,
+.login-page #mypage-shell-footer {
   width: 100%;
   flex-shrink: 0;
 }
 
 /* Auth Footer Overrides - Restore from Transparent Hack in Hotel.css */
-.login-page .footer {
-  background-color: #f7f9fa; /* Standard Light Footer Background */
+/* Default Footer Style (Main/Stay) */
+.login-page:not([data-mypage-shell="air"]) .footer {
+  background-color: #f7f9fa;
   border-top: 1px solid #eeeeee;
   padding: 40px 60px;
   display: block;
@@ -87,7 +88,8 @@ body.login-page {
 }
 
 /* Auth Header Overrides - Ensure Default Colors */
-.login-page .header {
+/* Default Header Style (Main/Stay) */
+.login-page:not([data-mypage-shell="air"]) .header {
   background: #ffffff;
   box-shadow: none;
   border-bottom: 1px solid #eeeeee;
@@ -331,7 +333,6 @@ body.login-page {
 
 .sns_btn.kakao { background-color: #FEE500; color: #3C1E1E; }
 .sns_btn.naver { background-color: #03C75A; color: #FFFFFF; }
-.sns_btn.apple { background-color: #000000; color: #FFFFFF; }
 
 .simple_login {
   margin-bottom: 30px;

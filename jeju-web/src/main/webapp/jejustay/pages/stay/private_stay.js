@@ -4,15 +4,13 @@
  */
 
 // 전역 변수
-let currentMonth = new Date();
 let calendarState = {
     checkIn: null,  // 확정된 체크인 (Timestamp)
     checkOut: null, // 확정된 체크아웃 (Timestamp)
     tempCheckIn: null,  // 팝업 내 임시 체크인
     tempCheckOut: null  // 팝업 내 임시 체크아웃
 };
-let hoverDate = null;
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+let calendarController = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Icons
@@ -83,6 +81,7 @@ function initPremiumAnimations() {
 /* ========== 공통 기능 ========== */
 function initHeader() {
     const header = document.getElementById('header');
+    if (!header) return;
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) header.classList.add('scrolled');
         else header.classList.remove('scrolled');
@@ -265,7 +264,7 @@ class PrivateSearchManager {
 
 /* ========== Global Helpers ========== */
 function closeAllPopups(excludeId = null) {
-    const popups = document.querySelectorAll('.destination-dropdown, .calendar-popup-new, .guest-popup-new, .options-popup-new');
+    const popups = document.querySelectorAll('.destination-dropdown, #calendarPopup, .guest-popup-new, .options-popup-new');
     const items = document.querySelectorAll('.search-item');
 
     popups.forEach(p => {
@@ -276,7 +275,7 @@ function closeAllPopups(excludeId = null) {
     });
     
     items.forEach(i => {
-        const popup = i.querySelector('.destination-dropdown, .calendar-popup-new, .guest-popup-new');
+        const popup = i.querySelector('.destination-dropdown, #calendarPopup, .guest-popup-new');
         if (popup && popup.id !== excludeId) i.classList.remove('active');
     });
 }
@@ -299,158 +298,33 @@ function updateDateDisplay(type, dateObj) {
 
 /* ========== Calendar Logic (Simplified for Private Stay) ========== */
 function initCalendar() {
-    const calendarPopup = document.getElementById('calendarPopup');
-    const dateFieldContainer = document.getElementById('checkInField'); 
+    if (!window.JJRangeCalendar || calendarController) return;
 
-    if (!calendarPopup || !dateFieldContainer) return;
-
-    // Toggle
-    dateFieldContainer.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isActive = calendarPopup.classList.contains('active');
-        closeAllPopups('calendarPopup');
-
-        if (!isActive) {
-            calendarState.tempCheckIn = calendarState.checkIn;
-            calendarState.tempCheckOut = calendarState.checkOut;
-            calendarPopup.classList.add('active');
-            dateFieldContainer.classList.add('active');
-            renderCalendar(); 
-        }
-    });
-
-    calendarPopup.addEventListener('click', e => e.stopPropagation());
-
-    // Navigation
-    document.getElementById('prevMonth')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        currentMonth.setMonth(currentMonth.getMonth() - 1);
-        renderCalendar();
-    });
-    document.getElementById('nextMonth')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        currentMonth.setMonth(currentMonth.getMonth() + 1);
-        renderCalendar();
-    });
-
-    // Clear & Confirm
-    document.getElementById('btn-clear')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        calendarState = { checkIn: null, checkOut: null, tempCheckIn: null, tempCheckOut: null };
-        updateDateDisplay('checkIn', null);
-        updateDateDisplay('checkOut', null);
-        renderCalendar();
-    });
-
-    document.getElementById('btn-confirm')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        calendarState.checkIn = calendarState.tempCheckIn;
-        calendarState.checkOut = calendarState.tempCheckOut;
-        closeAllPopups();
-    });
+    calendarController = window.JJRangeCalendar.createRangeCalendar({
+        state: calendarState,
+        weekStartsOn: 'sunday',
+        weekdayLabels: ['일', '월', '화', '수', '목', '금', '토'],
+        monthLabelFormatter: (dateObj) => `${dateObj.getFullYear()}년 ${dateObj.getMonth() + 1}월`,
+        showHoverRange: false,
+        enableTabs: true,
+        enableFlexibleOptions: true,
+        toggleMode: 'open-only',
+        toggleFieldActiveClass: true,
+        closeAllPopups: (exceptId) => closeAllPopups(exceptId),
+        onTempChange: () => updateResults()
+    }).init();
 }
 
 function renderCalendar() {
-    const container = document.getElementById('calendarMonths');
-    if (!container) return;
-
-    container.innerHTML = '';
-    const leftDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-    const rightDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
-
-    [leftDate, rightDate].forEach(date => {
-        const monthDiv = document.createElement('div');
-        monthDiv.className = 'DayPicker-Month';
-        
-        const caption = document.createElement('div');
-        caption.className = 'DayPicker-Caption';
-        caption.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
-        monthDiv.appendChild(caption);
-
-        const weekdays = document.createElement('div');
-        weekdays.className = 'DayPicker-Weekdays';
-        ['일','월','화','수','목','금','토'].forEach(d => {
-            const wd = document.createElement('div');
-            wd.className = 'DayPicker-Weekday';
-            wd.textContent = d;
-            weekdays.appendChild(wd);
-        });
-        monthDiv.appendChild(weekdays);
-
-        const body = document.createElement('div');
-        body.className = 'DayPicker-Body';
-        body.innerHTML = generateMonthDaysHTML(date);
-        monthDiv.appendChild(body);
-
-        container.appendChild(monthDiv);
-    });
-
-    attachDayListeners();
-}
-
-function generateMonthDaysHTML(dateObj) {
-    const year = dateObj.getFullYear();
-    const month = dateObj.getMonth();
-    const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
-    // We want Sun as first column? Yes, standard.
-    const startOffset = firstDay; 
-    const lastDate = new Date(year, month + 1, 0).getDate();
-    const todayTs = new Date().setHours(0,0,0,0);
-    let html = '';
-
-    for(let i=0; i<startOffset; i++) html += `<div class="DayPicker-Day DayPicker-Day--outside"></div>`;
-
-    for(let d=1; d<=lastDate; d++) {
-        const currentTs = new Date(year, month, d).getTime();
-        let classes = ['DayPicker-Day'];
-        
-        if (currentTs < todayTs) classes.push('DayPicker-Day--disabled');
-        if (currentTs === todayTs) classes.push('DayPicker-Day--today');
-
-        const { tempCheckIn, tempCheckOut, checkIn, checkOut } = calendarState;
-        const selStart = tempCheckIn || checkIn;
-        const selEnd = tempCheckOut || checkOut;
-
-        if (selStart && currentTs === selStart) classes.push('DayPicker-Day--selected', 'DayPicker-Day--checkIn');
-        if (selEnd && currentTs === selEnd) classes.push('DayPicker-Day--selected', 'DayPicker-Day--checkOut');
-        if (selStart && selEnd && currentTs > selStart && currentTs < selEnd) classes.push('DayPicker-Day--inRange');
-
-        html += `<div class="${classes.join(' ')}" data-timestamp="${currentTs}">${d}</div>`;
+    if (calendarController) {
+        calendarController.renderCalendar();
     }
-    return html;
-}
-
-function attachDayListeners() {
-    document.querySelectorAll('.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)').forEach(day => {
-        day.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const ts = parseInt(day.dataset.timestamp);
-            handleDateClick(ts);
-        });
-    });
-}
-
-function handleDateClick(ts) {
-    const { tempCheckIn, tempCheckOut } = calendarState;
-
-    if (!tempCheckIn || (tempCheckIn && tempCheckOut)) {
-        calendarState.tempCheckIn = ts;
-        calendarState.tempCheckOut = null;
-    } else {
-        if (ts < tempCheckIn) {
-            calendarState.tempCheckIn = ts;
-        } else if (ts === tempCheckIn) {
-            return;
-        } else {
-            calendarState.tempCheckOut = ts;
-        }
-    }
-    
-    updateResults();
-    renderCalendar();
 }
 
 function updateResults() {
     if (calendarState.tempCheckIn) updateDateDisplay('checkIn', new Date(calendarState.tempCheckIn));
+    else updateDateDisplay('checkIn', null);
+
     if (calendarState.tempCheckOut) updateDateDisplay('checkOut', new Date(calendarState.tempCheckOut));
+    else updateDateDisplay('checkOut', null);
 }

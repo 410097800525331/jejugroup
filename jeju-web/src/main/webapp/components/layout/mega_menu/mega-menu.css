@@ -3,7 +3,8 @@
 :root {
     --mega-menu-bg: rgba(255, 255, 255, 0.75);
     --mega-menu-border: rgba(255, 255, 255, 0.3);
-    --mega-menu-accent: #ff7a22; /* 제주 오렌지 포인트 컬러 */
+    --mega-menu-accent: #ff7a22;
+    /* 제주 오렌지 포인트 컬러 */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -25,12 +26,12 @@
     position: fixed;
     top: var(--header-height, 72px);
     left: 50%;
-    width: 600px; /* 고정 너비 혹은 컨테이너 기준 */
+    width: 600px;
+    /* 고정 너비 혹은 컨테이너 기준 */
     background: var(--mega-menu-bg);
     backdrop-filter: blur(25px);
     border: 1px solid var(--mega-menu-border);
     border-radius: 20px;
-    margin-top: 15px;
     padding: 24px;
     opacity: 0;
     visibility: hidden;
@@ -38,7 +39,8 @@
     transition: var(--transition-smooth);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    display: flex; /* 좌우 레이아웃 */
+    display: flex;
+    /* 좌우 레이아웃 */
 }
 
 /* 활성화 상태 */
@@ -99,7 +101,8 @@
 }
 
 .mega-menu-item:hover .mega-menu-icon {
-    transform: scale(1.2) rotate(-5deg); /* Bounce & Tilt */
+    transform: scale(1.2) rotate(-5deg);
+    /* Bounce & Tilt */
 }
 
 /* Right Panel: Preview Area */
@@ -157,8 +160,10 @@
         border-radius: 0;
         flex-direction: column;
     }
+
     .mega-menu-preview {
-        display: none; /* 모바일에서는 미리보기 생략 */
+        display: none;
+        /* 모바일에서는 미리보기 생략 */
     }
 }
 
@@ -182,14 +187,23 @@
 }
 
 @keyframes pulse-badge {
-    0% { transform: translateY(-1px) scale(1); }
-    50% { transform: translateY(-1px) scale(1.1); }
-    100% { transform: translateY(-1px) scale(1); }
+    0% {
+        transform: translateY(-1px) scale(1);
+    }
+
+    50% {
+        transform: translateY(-1px) scale(1.1);
+    }
+
+    100% {
+        transform: translateY(-1px) scale(1);
+    }
 }
 
 /* Layered Outline on Hover */
 .mega-menu-item:hover .badge-new {
     border: 1.5px solid #fff;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-    background: linear-gradient(135deg, #ff8c42 0%, #ffb372 100%); /* Slightly brighter on hover */
+    background: linear-gradient(135deg, #ff8c42 0%, #ffb372 100%);
+    /* Slightly brighter on hover */
 }

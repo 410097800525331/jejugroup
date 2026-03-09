@@ -195,7 +195,7 @@ h1, h2, h3, .serif-font {
 /* ========== Popups (Clean) ========== */
 [class$="-popup-new"], .destination-dropdown {
     position: absolute;
-    top: calc(100% + 16px);
+    top: calc(100% + 8px);
     left: 0;
     background: #fff;
     border-radius: 20px;
@@ -207,6 +207,10 @@ h1, h2, h3, .serif-font {
     opacity: 0;
     transform: translateY(-10px);
     transition: opacity 0.2s, transform 0.2s;
+}
+
+.Popup.RangePicker {
+    top: calc(100% + 8px);
 }
 
 .search-item.active [class$="-popup-new"], 
@@ -225,8 +229,6 @@ h1, h2, h3, .serif-font {
 }
 
 /* Calendar Accents */
-.DayPicker-Day--selected { background: var(--private-primary); }
-.DayPicker-Day--inRange { background: #FFF3E0; color: var(--private-text); }
 .btn-confirm { background: var(--private-primary); }
 
 /* ========== Sections ========== */

@@ -16,7 +16,7 @@
 </head>
 
 <body class="login-page">
-  <div id="main-header-placeholder"></div>
+  <div id="mypage-shell-header"></div>
 
   <section class="user_wrap">
     <div class="user_box inner2 login-card">
@@ -55,7 +55,7 @@
       <div class="sns_login">
         <button class="sns_btn kakao">카카오</button>
         <button class="sns_btn naver">네이버</button>
-        <button class="sns_btn apple">Apple</button>
+
       </div>
 
       <div class="simple_login">
@@ -64,7 +64,7 @@
     </div>
   </section>
 
-  <div id="main-footer-placeholder"></div>
+  <div id="mypage-shell-footer"></div>
 
   <button class="top-btn" id="topBtn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -75,12 +75,14 @@
   <script src="../../core/constants/lang_data.js"></script>
   <script src="../../jejustay/pages/hotel/main.js"></script>
 
-  <!-- Component Scripts (Must load before component_loader.js) -->
-  <script src="../../components/layout/header/header.js"></script>
-  <script src="../../components/layout/mega_menu/mega-menu.js"></script>
-  <script src="../../components/layout/footer/footer.js"></script>
+  <!-- Reuse existing MyPage Shell Logic -->
+  <script type="module">
+    import { mountMyPageShell } from '../mypage/dashboard_shell.js';
+    document.addEventListener('DOMContentLoaded', () => {
+      mountMyPageShell();
+    });
+  </script>
 
-  <script src="../../components/layout/component_loader.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const loginForm = document.querySelector('.login-form');
