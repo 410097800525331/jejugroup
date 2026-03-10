@@ -1,191 +1,185 @@
-import { Button } from "@/components/ui/button";
-import { Plane, Home as HomeIcon, Car, ChevronLeft } from "lucide-react";
+import { useState, useMemo } from "react";
+import { ChevronLeft, Calendar, Bell } from "lucide-react";
 import { Link } from "wouter";
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+// 데이터 및 타입 임포트
+import { NOTICES, getServiceLabel } from "../data/serviceCenterData";
+import { ServiceType } from "../types/service-center";
+
+// 공통 컴포넌트 임포트
+import SearchBar from "../components/serviceCenter/SearchBar";
+import SectionHeader from "../components/serviceCenter/SectionHeader";
+import HomeButton from "../components/serviceCenter/HomeButton";
 
 /**
- * 공지사항 페이지
- * 기존 헤더/푸터를 고려한 디자인
+ * 프리미엄 타임라인이 적용된 공지사항 페이지
+ * 레이어드 애니메이션과 세련된 타이포그래피 적용
  */
 export default function Notices() {
-  const [activeService, setActiveService] = useState("all");
+  const [activeService, setActiveService] = useState<ServiceType | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // 공지사항 데이터
-  const allNotices = [
-    {
-      id: 1,
-      service: "jeju-air",
-      title: "2026년 2월 제주항공 신규 노선 운항 안내",
-      date: "2026-02-27",
-      content:
-        "제주항공에서 새로운 국제선 노선을 개설합니다. 서울 인천공항에서 방콕, 홍콩, 타이페이로 운항하는 신규 노선이 2026년 3월부터 시작됩니다.",
-      color: "from-orange-400 to-orange-600",
-      icon: Plane,
-    },
-    {
-      id: 2,
-      service: "jeju-stay",
-      title: "제주스테이 봄 시즌 특가 이벤트 시작",
-      date: "2026-02-25",
-      content:
-        "제주스테이에서 봄 시즌 특가 이벤트를 진행합니다. 2026년 3월 1일부터 5월 31일까지 최대 40% 할인된 가격으로 예약하실 수 있습니다.",
-      color: "from-cyan-400 to-cyan-600",
-      icon: HomeIcon,
-    },
-    {
-      id: 3,
-      service: "jeju-rental",
-      title: "제주렌터카 예약 시스템 업그레이드 완료",
-      date: "2026-02-23",
-      content:
-        "더욱 편리해진 예약 시스템으로 차량 예약이 더 쉬워졌습니다. 새로운 시스템에서는 실시간 차량 가용성 확인, 빠른 결제, 자동 확인 문자 발송 등의 기능이 추가되었습니다.",
-      color: "from-emerald-400 to-emerald-600",
-      icon: Car,
-    },
-    {
-      id: 4,
-      service: "jeju-air",
-      title: "제주항공 마일리지 프로그램 개편 안내",
-      date: "2026-02-20",
-      content:
-        "더욱 혜택이 많아진 마일리지 프로그램이 시작됩니다. 기존 회원님들은 자동으로 새로운 프로그램에 등록되며, 더 많은 마일리지를 적립하고 사용할 수 있게 됩니다.",
-      color: "from-orange-400 to-orange-600",
-      icon: Plane,
-    },
-    {
-      id: 5,
-      service: "jeju-stay",
-      title: "제주스테이 새로운 숙소 추가 오픈",
-      date: "2026-02-18",
-      content:
-        "제주스테이에 새로운 프리미엄 숙소들이 추가되었습니다. 제주의 아름다운 자연을 감상할 수 있는 오션뷰 펜션, 전통 한옥 게스트하우스 등 다양한 숙소를 선택하실 수 있습니다.",
-      color: "from-cyan-400 to-cyan-600",
-      icon: HomeIcon,
-    },
-    {
-      id: 6,
-      service: "jeju-rental",
-      title: "제주렌터카 전기차 추가 도입",
-      date: "2026-02-15",
-      content:
-        "제주렌터카에서 환경 친화적인 전기차를 추가로 도입했습니다. 테슬라, 현대 아이오닉 등 최신 전기차를 저렴한 가격에 렌탈하실 수 있습니다.",
-      color: "from-emerald-400 to-emerald-600",
-      icon: Car,
-    },
-  ];
-
-  // 필터링된 공지사항
-  const filteredNotices =
-    activeService === "all"
-      ? allNotices
-      : allNotices.filter((notice) => notice.service === activeService);
-
-  const getServiceLabel = (service: string) => {
-    const labels: Record<string, string> = {
-      "jeju-air": "제주항공",
-      "jeju-stay": "제주스테이",
-      "jeju-rental": "제주렌터카",
-    };
-    return labels[service] || "전체";
+  // 챗봇 핸들러
+  const handleChatbotClick = () => {
+    alert("공지사항에 대해 궁금한 점이 있으시면 팻봇에게 물어보세요!");
   };
 
+  // 필터링된 공지사항
+  const filteredNotices = useMemo(() => {
+    let result = activeService === "all" 
+      ? NOTICES 
+      : NOTICES.filter((n) => n.service === activeService);
+    
+    if (searchQuery) {
+      result = result.filter(n => 
+        n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (n.content && n.content.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+    return result;
+  }, [activeService, searchQuery]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* 메인 콘텐츠 */}
-      <main className="py-12">
-        <div className="max-w-4xl mx-auto px-4">
-          {/* 페이지 헤더 */}
-          <div className="mb-12">
+    <div className="min-h-screen bg-white">
+      {/* 고정 홈 버튼 */}
+      <HomeButton href="/index.html" />
+
+      {/* 검색바 */}
+      <SearchBar 
+        query={searchQuery} 
+        setQuery={setSearchQuery} 
+        onChatbotClick={handleChatbotClick} 
+      />
+
+      <main className="py-24 px-4">
+        <div className="max-w-5xl mx-auto">
+          {/* 헤더 섹션 */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-20"
+          >
             <Link href="/">
-              <a className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-semibold mb-6">
-                <ChevronLeft size={20} />
-                돌아가기
+              <a className="inline-flex items-center gap-3 text-orange-600 hover:text-orange-700 font-black text-lg mb-10 group bg-orange-50 px-6 py-3 rounded-2xl transition-all hover:gap-6 shadow-sm">
+                <ChevronLeft size={24} />
+                메인 고객센터로 돌아가기
               </a>
             </Link>
-            <h2 className="text-4xl font-bold text-gray-900 mb-3">
-              최신 소식
-            </h2>
-            <p className="text-lg text-gray-600">
-              제주항공, 제주스테이, 제주렌터카의 최신 정보를 확인하세요.
-            </p>
-          </div>
+            
+            <SectionHeader 
+              title="LATEST ANNOUNCEMENTS" 
+              description="제주 그룹의 변화와 새로운 소식을 가장 입체적인 타임라인으로 확인하세요."
+            />
+          </motion.div>
 
-          {/* 필터 버튼 */}
-          <div className="flex gap-3 mb-12 flex-wrap">
+          {/* 서비스 필터 탭 */}
+          <div className="flex gap-4 mb-20 overflow-x-auto pb-4 no-scrollbar">
             {["all", "jeju-air", "jeju-stay", "jeju-rental"].map((service) => (
               <button
                 key={service}
-                onClick={() => setActiveService(service)}
-                className={`px-4 py-2 rounded-full font-medium transition-all ${
+                onClick={() => setActiveService(service as ServiceType | "all")}
+                className={`flex-shrink-0 px-8 py-3 rounded-2xl font-black text-sm tracking-widest uppercase transition-all shadow-md ${
                   activeService === service
-                    ? "bg-orange-500 text-white shadow-lg"
-                    : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
+                    ? "bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-orange-500/20 scale-105"
+                    : "bg-white text-gray-400 hover:text-gray-900 border border-gray-100 hover:border-gray-200"
                 }`}
               >
-                {service === "all"
-                  ? "전체"
-                  : getServiceLabel(service)}
+                {service === "all" ? "EXPLORE ALL" : getServiceLabel(service).toUpperCase()}
               </button>
             ))}
           </div>
 
-          {/* 타임라인 공지사항 */}
-          <div className="space-y-6">
-            {filteredNotices.map((notice, index) => {
-              const IconComponent = notice.icon;
-              return (
-                <div key={notice.id} className="relative">
-                  {/* 타임라인 연결선 */}
-                  {index < filteredNotices.length - 1 && (
-                    <div className="absolute left-8 top-20 w-1 h-12 bg-gradient-to-b from-orange-300 to-transparent" />
-                  )}
+          {/* 프리미엄 타임라인 리스트 */}
+          <div className="relative">
+            {/* 중앙 타임라인 선 */}
+            <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500/50 via-gray-100 to-transparent transform md:-translate-x-1/2 -z-10 bg-[length:100%_200%] animate-gradient-y" />
 
-                  {/* 공지사항 카드 */}
-                  <div className="flex gap-6">
-                    {/* 타임라인 점 */}
-                    <div className="flex flex-col items-center flex-shrink-0">
-                      <div
-                        className={`w-16 h-16 rounded-full bg-gradient-to-br ${notice.color} flex items-center justify-center shadow-lg`}
+            <div className="space-y-24 md:space-y-32">
+              <AnimatePresence mode="popLayout">
+                {filteredNotices.length > 0 ? (
+                  filteredNotices.map((notice, index) => {
+                    const IconComponent = notice.icon;
+                    const isEven = index % 2 === 0;
+
+                    return (
+                      <motion.div
+                        key={notice.id}
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                        className={`relative flex flex-col md:flex-row items-center gap-12 ${
+                          isEven ? "md:flex-row-reverse" : ""
+                        }`}
                       >
-                        <IconComponent className="text-white" size={28} />
-                      </div>
-                    </div>
+                        {/* 타임라인 아이콘 센터 */}
+                        <div className="absolute left-0 md:left-1/2 top-0 transform md:-translate-x-1/2 w-10 h-10 rounded-full bg-white border-4 border-orange-500 z-10 shadow-xl shadow-orange-500/20" />
 
-                    {/* 콘텐츠 */}
-                    <div className="flex-1 bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-1">
-                            {notice.title}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            {getServiceLabel(notice.service)} • {notice.date}
-                          </p>
+                        {/* 카드 영역 */}
+                        <div className="w-full md:w-[calc(50%-3rem)] pl-12 md:pl-0">
+                          <div className={`group relative bg-white/50 backdrop-blur-sm p-8 md:p-12 rounded-[3.5rem] border border-gray-100 hover:border-orange-200 transition-all shadow-2xl shadow-gray-200/50 hover:shadow-orange-500/10 cursor-pointer overflow-hidden`}>
+                            {/* 데코 레이어 */}
+                            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${notice.color} opacity-5 group-hover:opacity-10 transition-opacity rounded-bl-[5rem]`} />
+                            
+                            <div className="flex items-center gap-4 mb-8">
+                              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${notice.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                                <IconComponent className="text-white" size={28} />
+                              </div>
+                              <div className="space-y-1">
+                                <span className={`text-xs font-black tracking-[0.2em] uppercase bg-gradient-to-r ${notice.color} bg-clip-text text-transparent`}>
+                                  {getServiceLabel(notice.service)}
+                                </span>
+                                <div className="flex items-center gap-2 text-gray-400 font-bold text-xs uppercase tracking-widest">
+                                  <Calendar size={14} />
+                                  {notice.date}
+                                </div>
+                              </div>
+                            </div>
+
+                            <h3 className="text-2xl font-black text-gray-900 mb-6 leading-tight group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-gray-500 group-hover:bg-clip-text group-hover:text-transparent transition-all">
+                              {notice.title}
+                            </h3>
+                            
+                            <p className="text-gray-500 font-medium leading-relaxed mb-8">
+                              {notice.content}
+                            </p>
+
+                            <button className="flex items-center gap-3 text-sm font-black text-orange-500 uppercase tracking-widest hover:gap-5 transition-all">
+                              READ FULL ARTICLE
+                              <Bell size={18} />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <p className="text-gray-700 leading-relaxed">
-                        {notice.content}
-                      </p>
-                      <button className="mt-4 text-orange-600 hover:text-orange-700 font-semibold text-sm">
-                        자세히 보기 →
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
 
-          {/* 빈 상태 */}
-          {filteredNotices.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">
-                검색 결과가 없습니다.
-              </p>
+                        {/* 비어있는 반대편 영역 (데스크탑 좌우 배치를 위해) */}
+                        <div className="hidden md:block w-[calc(50%-3rem)]" />
+                      </motion.div>
+                    );
+                  })
+                ) : (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="py-32 text-center"
+                  >
+                    <p className="text-gray-300 font-black text-2xl italic tracking-widest uppercase">
+                      NO MATCHING NOTICE FOUND
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          )}
+          </div>
         </div>
       </main>
+
+      {/* 하단 안내 문구 */}
+      <footer className="py-16 border-t border-gray-100 text-center bg-gray-50/10">
+        <p className="text-gray-300 font-black tracking-[0.2em] text-xs uppercase">
+          © 2026 JEJU GROUP INTEGRATED SERVICE CENTER. ALL RIGHTS RESERVED.
+        </p>
+      </footer>
     </div>
   );
 }
