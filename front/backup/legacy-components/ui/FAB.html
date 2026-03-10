@@ -1,0 +1,59 @@
+<div class="fab-wrapper" id="fabSystem">
+    <!-- Quick View Layers -->
+    <div class="fab-layer" id="chatbotLayer">
+        <div class="layer-header">
+            <h3>AI Chatbot</h3>
+            <button class="close-layer"><i data-lucide="x"></i></button>
+        </div>
+        <div class="layer-content placeholder">
+            <div class="chat-bubble bot">안녕하세요! 무엇을 도와드릴까요?</div>
+            <div class="chat-input-area">
+                <input type="text" placeholder="메시지 입력...">
+                <button><i data-lucide="send"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fab-layer" id="wishlistLayer">
+        <div class="layer-header">
+            <h3>Recent & Wishlist</h3>
+            <button class="close-layer"><i data-lucide="x"></i></button>
+        </div>
+        <div class="layer-content" id="wishlistContent">
+            <!-- JS Rendered -->
+            <p class="empty-msg">최근 본 상품이 없습니다.</p>
+        </div>
+    </div>
+
+    <!-- Actions Menu -->
+    <div class="fab-menu" id="fabMenu">
+        <!-- Currency Toggle -->
+        <button class="fab-action" id="fabCurrency" data-label="화폐 변경">
+            <span class="curr-text">KRW</span>
+        </button>
+
+        <!-- Wishlist -->
+        <button class="fab-action" id="fabWishlist" data-label="위시리스트">
+            <i data-lucide="heart"></i>
+            <span class="fab-badge" id="fabWishlistCount">0</span>
+        </button>
+
+        <!-- Chatbot -->
+        <button class="fab-action" id="fabChatbot" data-label="AI 챗봇">
+            <i data-lucide="message-circle"></i>
+        </button>
+    </div>
+
+    <!-- Main Buttons -->
+    <div class="fab-controls">
+        <button class="fab-btn fab-top hidden" id="fabTop" aria-label="Top">
+            <i data-lucide="arrow-up"></i>
+        </button>
+
+        <button class="fab-btn fab-main" id="fabMain" aria-label="Menu">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/22/Jeju_Air_Logo.png" alt="Jeju"
+                class="fab-logo-img">
+            <i data-lucide="x" class="fab-close-icon"></i>
+        </button>
+    </div>
+</div>

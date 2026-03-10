@@ -1,0 +1,215 @@
+/* ========== Calendar Component Styles ========== */
+
+.DayPicker-Month {
+    flex: 1;
+}
+
+.DayPicker-Caption {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+    color: var(--text-title);
+}
+
+.DayPicker-Weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 8px;
+}
+
+.DayPicker-Weekday {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.DayPicker-Body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 4px;
+}
+
+.DayPicker-Day {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-title);
+    position: relative;
+    border-radius: 4px;
+}
+
+.DayPicker-Day:hover:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected) {
+    background-color: #f5f5f5;
+    border-radius: 50%;
+}
+
+.DayPicker-Day--selected {
+    background-color: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+}
+
+/* Range Highlight Logic */
+.DayPicker-Day--inRange {
+    background: rgba(255, 80, 0, 0.15);
+    color: var(--text-title);
+    border-radius: 0;
+}
+
+.DayPicker-Day--checkIn {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+.DayPicker-Day--checkIn.DayPicker-Day--hasRange::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: rgba(255, 80, 0, 0.15);
+    z-index: -1;
+}
+
+.DayPicker-Day--checkOut {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+.DayPicker-Day--checkOut.DayPicker-Day--hasRange::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: rgba(255, 80, 0, 0.15);
+    z-index: -1;
+}
+
+.RangePicker-Header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    position: relative;
+    padding: 0 10px;
+}
+
+.RangePicker-Tabs {
+    display: flex;
+    gap: 8px;
+    background: #f5f5f5;
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.TabBtn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.TabBtn.active {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.NavBtn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--text-title);
+    transition: background 0.2s;
+}
+
+.NavBtn:hover {
+    background: #f5f5f5;
+    color: var(--primary);
+}
+
+.DayPicker-Day--disabled {
+    color: #e0e0e0;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.DayPicker-Day--today {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.RangePicker-Footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+    margin-top: 10px;
+    border-top: 1px solid var(--border-light);
+}
+
+.ActionBtn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ActionBtn--clear {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid transparent;
+}
+
+.ActionBtn--clear:hover {
+    background: var(--primary-light);
+}
+
+.ActionBtn--confirm {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+}
+
+.ActionBtn--confirm:hover {
+    background: #e64800;
+}
+
+.DayPicker-Months {
+    display: flex;
+    gap: 20px;
+}
+
+.RangePicker-Panel {
+    display: none;
+}
+
+.RangePicker-Panel.active {
+    display: block;
+}
+
+.DayPicker-Day--hoverRange {
+    background: rgba(255, 80, 0, 0.1);
+}

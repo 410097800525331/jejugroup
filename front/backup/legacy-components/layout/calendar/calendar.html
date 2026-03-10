@@ -1,0 +1,58 @@
+<div class="Popup RangePicker RangePicker--checkIn RangePicker--with-dayuse" id="calendarPopup" role="dialog"
+    aria-modal="true" aria-label="체크인 날짜 선택 달력">
+    <div class="Popup__content Popup__content_Occupancy">
+        <span class="ScreenReaderOnly">엔터 키를 눌러 캘린더를 여세요. 방향키를 사용해 체크인 및 체크아웃 날짜를
+            탐색할 수
+            있습니다.</span>
+        <div class="RangePicker-Header">
+            <div class="RangePicker-NavPrev">
+                <button type="button" class="NavBtn NavBtn--prev" id="prevMonth" aria-label="Previous Month">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+            </div>
+            <div role="tablist" class="RangePicker-Tabs">
+                <div class="RangePicker-Tab Item">
+                    <button role="tab" aria-selected="true" id="tab-calendar" class="TabBtn active"
+                        data-lang="calTitle">캘린더</button>
+                    <div class="TabIndicator"></div>
+                </div>
+                <div class="RangePicker-Tab Item">
+                    <button role="tab" aria-selected="false" id="tab-flexible" class="TabBtn" data-lang="calFlexible">날짜
+                        미정</button>
+                </div>
+            </div>
+            <div class="RangePicker-NavNext">
+                <button type="button" class="NavBtn NavBtn--next" id="nextMonth" aria-label="Next Month">
+                    <i data-lucide="chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div role="tabpanel" id="panel-calendar" class="RangePicker-Panel active">
+            <div class="DayPicker" id="dayPickerContainer">
+                <div class="DayPicker-wrapper">
+                    <div class="DayPicker-Months" id="calendarMonths"></div>
+                </div>
+            </div>
+            <div class="RangePicker-Footer">
+                <button type="button" class="ActionBtn ActionBtn--clear" id="btn-clear">
+                    <span data-lang="btnReset">선택 해제</span>
+                </button>
+                <button type="button" class="ActionBtn ActionBtn--confirm" id="btn-confirm">
+                    <span data-lang="btnConfirm">확인</span>
+                </button>
+            </div>
+        </div>
+
+        <div role="tabpanel" id="panel-flexible" class="RangePicker-Panel">
+            <div class="Flexible-Content">
+                <h3 data-lang="calFlexTitle">투숙 기간은 얼마나 되시나요?</h3>
+                <div class="Flexible-Options">
+                    <button class="Flexible-Option" data-val="3" data-lang="calFlex3">3박</button>
+                    <button class="Flexible-Option" data-val="7" data-lang="calFlex7">1주일</button>
+                    <button class="Flexible-Option" data-val="30" data-lang="calFlex30">1개월</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
