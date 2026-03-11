@@ -1,7 +1,7 @@
-﻿const { execSync } = require('child_process');
-const os = require('os');
+﻿const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
+const { runJavaTool } = require('../utils/run-java-tool');
 
 const rootDir = path.resolve(__dirname, '../../');
 const jejuWebDir = path.join(rootDir, 'jeju-web');
@@ -13,10 +13,6 @@ const legacyBinDir = path.join(jejuWebDir, 'bin');
 const servletApiJarPath = path.join(rootDir, 'scripts', 'lib', 'servlet-api.jar');
 const bcryptJarPath = path.join(rootDir, 'scripts', 'lib', 'jbcrypt-0.4.jar');
 const warPath = path.join(jejuWebDir, 'ROOT.war');
-
-const run = (command) => {
-    execSync(command, { stdio: 'inherit', cwd: rootDir });
-};
 
 const ensureDependency = async (filePath, message) => {
     if (!(await fs.pathExists(filePath))) {
@@ -77,7 +73,9 @@ const compileJavaSources = async () => {
 
     try {
         await fs.writeFile(sourcesFilePath, javaFiles.join('\n'), 'utf8');
-        run(`javac --release 17 -encoding UTF-8 -cp ${classPath} -d "${classesDir}" @"${sourcesFilePath}"`);
+        runJavaTool(`javac --release 17 -encoding UTF-8 -cp ${classPath} -d "${classesDir}" @"${sourcesFilePath}"`, {
+            cwd: rootDir
+        });
     } finally {
         // 예외 발생 여부와 무관하게 임시 파일 정리
         await fs.remove(sourcesFilePath);
@@ -115,7 +113,9 @@ async function buildWar() {
             await fs.remove(warPath);
         }
 
-        run(`jar -cvfM "${warPath}" -C "${webappDir}" .`);
+        runJavaTool(`jar -cvfM "${warPath}" -C "${webappDir}" .`, {
+            cwd: rootDir
+        });
 
         console.log('[BUILD] ROOT.war 생성 완료');
         console.log(`[BUILD] 산출물: ${warPath}`);

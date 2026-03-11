@@ -1,6 +1,6 @@
 import type { ChangeEventHandler, HTMLAttributes, HTMLInputTypeAttribute, ReactNode } from "react";
-import { StatusMessage } from "./StatusMessage";
-import type { FeedbackTone } from "./state/types";
+import { StatusMessage } from "@front-components/auth/StatusMessage";
+import type { FeedbackTone } from "@front-components/auth/state/types";
 
 interface FormFieldProps {
   autoComplete?: string;

@@ -1,5 +1,5 @@
-import { TELECOM_OPTIONS } from "./data";
-import { usePassAuthController } from "../hooks/usePassAuthController";
+import { usePassAuthController } from "@front-components/auth/hooks/usePassAuthController";
+import { TELECOM_OPTIONS } from "@front-components/auth/passauth/data";
 
 export const PassTelecomStep = () => {
   const { handleSelectTelecom } = usePassAuthController();

@@ -1,4 +1,4 @@
-# 한글/인코딩 가드레일
+﻿# 한글/인코딩 가드레일
 
 ## 저장 규칙
 
@@ -7,6 +7,9 @@
 - 저장 규칙의 기준 파일은 루트 `.editorconfig`
 - 에디터가 EditorConfig를 지원하면 반드시 활성화
 - 안티그래비티를 쓰더라도 UTF-8/LF 기준은 동일
+- 배포·가드레일·운영 유틸 스크립트와 이 문서는 Windows 직접 확인 편의를 위해 UTF-8 BOM 허용
+- Windows PowerShell 5에서 BOM 없는 UTF-8 파일을 직접 확인할 때는 `Get-Content -Encoding utf8` 사용
+- Windows 배포 빌드는 `javac`, `jar` 로그를 UTF-8 기준으로 고정
 
 ## 커밋 전 차단
 
@@ -46,4 +49,3 @@ corepack pnpm run setup:hooks
 - `jeju-web/src/main/webapp/**/assets/*.css`
 
 빌드 산출물은 원본이 아니라 결과물 상태
-

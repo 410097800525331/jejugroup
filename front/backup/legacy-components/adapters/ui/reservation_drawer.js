@@ -2,7 +2,7 @@ let runtimePromise = null;
 
 const getRuntime = () => {
   if (!runtimePromise) {
-    const runtimeUrl = new URL("../../runtime/shell-runtime.js", import.meta.url).href;
+    const runtimeUrl = new URL("../../../../components/runtime/shell-runtime.js", import.meta.url).href;
     runtimePromise = import(runtimeUrl);
   }
 

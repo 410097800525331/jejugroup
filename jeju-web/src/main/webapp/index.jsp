@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 
 <head>
@@ -60,7 +60,7 @@
                             <li><i class="fas fa-check"></i> <span data-lang="airFeature2">편안한 객실</span></li>
                             <li><i class="fas fa-check"></i> <span data-lang="airFeature3">친절한 서비스</span></li>
                         </ul>
-                        <a href="jejuair/index.html" class="route-link" data-route="SERVICES.AIR.MAIN"><button
+                        <a href="#" class="route-link" data-route="SERVICES.AIR.MAIN"><button
                                 class="cta-button" data-lang="airButton">항공권 예약하기</button></a>
                     </div>
                 </div>
@@ -217,7 +217,6 @@
 
     <script src="core/constants/lang_data.js"></script>
     <script src="jejustay/pages/hotel/main.js"></script>
-    <script src="core/constants/city_data.js"></script>
 <!-- Component Loader for index.html -->
 <!-- UI State Reconciliation -> Sync Global Auth State -->
     <script>

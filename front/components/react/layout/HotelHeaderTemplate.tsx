@@ -1,5 +1,5 @@
-import { HotelMegaMenuItem } from "./HotelMegaMenuItem";
-import { HOTEL_MOBILE_NAV_ITEMS, HOTEL_NAV_ITEMS } from "./hotelHeaderData";
+import { HotelMegaMenuItem } from "@front-components/layout/HotelMegaMenuItem";
+import { HOTEL_MOBILE_NAV_ITEMS, HOTEL_NAV_ITEMS } from "@front-components/layout/hotelHeaderData";
 
 interface HotelHeaderTemplateProps {
   basePath: string;

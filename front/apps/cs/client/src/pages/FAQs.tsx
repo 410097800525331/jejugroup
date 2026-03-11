@@ -4,13 +4,13 @@ import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 
 // 데이터 및 타입 임포트
-import { ALL_FAQS, getServiceLabel } from "../data/serviceCenterData";
-import { ServiceType } from "../types/service-center";
+import { ALL_FAQS, getServiceLabel } from "@/data/serviceCenterData";
+import { ServiceType } from "@/types/service-center";
 
 // 공통 컴포넌트 임포트
-import SearchBar from "../components/serviceCenter/SearchBar";
-import SectionHeader from "../components/serviceCenter/SectionHeader";
-import FAQItem from "../components/serviceCenter/FAQItem";
+import SearchBar from "@/components/serviceCenter/SearchBar";
+import SectionHeader from "@/components/serviceCenter/SectionHeader";
+import FAQItem from "@/components/serviceCenter/FAQItem";
 import FAB from "@front-fab/FABContainer";
 
 /**

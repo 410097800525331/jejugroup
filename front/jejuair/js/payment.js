@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   successConfirmBtn.addEventListener("click", () => {
-    window.location.href = "/pages/mypage/dashboard.html?shell=air";
+    window.jejuAirRoute?.navigate("SERVICES.AIR.AUTH.MYPAGE");
   });
 
   backBtn.addEventListener("click", () => {
@@ -171,6 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    window.location.href = "/jejuair/pages/booking/Availability.html";
+    window.jejuAirRoute?.navigate("SERVICES.AIR.BOOKING.AVAILABILITY");
   });
 });

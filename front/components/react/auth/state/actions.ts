@@ -10,7 +10,7 @@ import type {
   SignupStep,
   SignupTermsState,
   VerifiedIdentity,
-} from "./types";
+} from "@front-components/auth/state/types";
 
 export interface AuthActions {
   completeSignup: (completedName: string) => void;

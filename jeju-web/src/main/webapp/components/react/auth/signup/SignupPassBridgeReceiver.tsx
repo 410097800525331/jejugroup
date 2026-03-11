@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { isPassAuthSuccessMessage } from "../services/passBridge";
-import { useAuthActions } from "../state/context";
+import { isPassAuthSuccessMessage } from "@front-components/auth/services/passBridge";
+import { useAuthActions } from "@front-components/auth/state/context";
 
 export const SignupPassBridgeReceiver = () => {
   const actions = useAuthActions();

@@ -1,4 +1,4 @@
-import { useAuthState } from "../state/context";
+import { useAuthState } from "@front-components/auth/state/context";
 
 export const SignupSuccessStep = () => {
   const { signup } = useAuthState();

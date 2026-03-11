@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { fetchRecaptchaSiteKey } from "../services/passAuthApi";
-import { useAuthActions, useAuthState } from "../state/context";
+import { fetchRecaptchaSiteKey } from "@front-components/auth/services/passAuthApi";
+import { useAuthActions, useAuthState } from "@front-components/auth/state/context";
 
 export const PassAuthSiteKeyLoader = () => {
   const { passAuth } = useAuthState();

@@ -1,4 +1,4 @@
-import type { AuthAction, AuthState } from "./types";
+import type { AuthAction, AuthState } from "@front-components/auth/state/types";
 
 export const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {

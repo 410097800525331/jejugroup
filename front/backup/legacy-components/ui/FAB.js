@@ -180,7 +180,7 @@ function initFAB() {
     // 5. Card Actions
     document.getElementById('fabHome').addEventListener('click', async () => {
         try {
-            const { resolveRoute } = await import('../../core/utils/path_resolver.js');
+            const { resolveRoute } = await import('../../../core/utils/path_resolver.js');
             window.location.assign(resolveRoute('HOME'));
         } catch (error) {
             console.error('[FAB] Failed to resolve HOME route:', error);

@@ -673,7 +673,7 @@
     /* 결제 페이지 연결 */
     document.querySelectorAll('#booking .search_btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        window.location.href = '/jejuair/pages/booking/payment.html';
+        window.jejuAirRoute?.navigate("SERVICES.AIR.BOOKING.PAYMENT");
       });
     });
 

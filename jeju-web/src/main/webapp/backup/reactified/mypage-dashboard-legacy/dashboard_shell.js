@@ -5,6 +5,10 @@ const SHELLS = new Set(['main', 'stay', 'air']);
 const APP_ROOT = new URL('../../', import.meta.url).href;
 const DRAWER_ACTION = 'OPEN_RESERVATION_DRAWER';
 const LUCIDE_CDN_URL = 'https://unpkg.com/lucide@latest';
+const AIR_SHELL_BASE_PATH = '../jejuair/';
+const AIR_SHELL_STYLE_PATH = `${AIR_SHELL_BASE_PATH}css/main.css`;
+const AIR_SHELL_HEADER_SCRIPT_PATH = `${AIR_SHELL_BASE_PATH}js/header.js`;
+const AIR_SHELL_FOOTER_SCRIPT_PATH = `${AIR_SHELL_BASE_PATH}js/footer.js`;
 
 let commonBindingsReady = false;
 let mountedShell = null;
@@ -72,7 +76,7 @@ const setDocumentBase = (shell) => {
       baseElement.id = 'mypage-shell-base';
       document.head.prepend(baseElement);
     }
-    baseElement.href = toAbsoluteUrl('jejuair/');
+    baseElement.href = toAbsoluteUrl(AIR_SHELL_BASE_PATH);
     document.body.classList.add('jejuair-main-content');
     return;
   }
@@ -142,7 +146,7 @@ const initCommonBindings = async () => {
 
   commonBindingsReady = true;
 
-  const { initRouterBinder } = await import('../../core/utils/router_binder.js');
+  const { initRouterBinder } = await import('../../../core/utils/router_binder.js');
   initRouterBinder();
 
   document.body.addEventListener('click', async (event) => {
@@ -154,7 +158,7 @@ const initCommonBindings = async () => {
     event.preventDefault();
 
     try {
-      const { reservationDrawer } = await import('../../components/adapters/ui/reservation_drawer.js');
+      const { reservationDrawer } = await import('../../legacy-components/adapters/ui/reservation_drawer.js');
       reservationDrawer.open();
     } catch (error) {
       console.error('[MyPageShell] Drawer open failed:', error);
@@ -169,17 +173,17 @@ const dispatchShellEvents = () => {
 
 const renderMainShell = async () => {
   const [headerHtml, footerHtml] = await Promise.all([
-    loadText('components/assets/layout/header/main_header.html'),
-    loadText('components/assets/layout/footer/main_footer.html')
+    loadText('legacy-components/layout/header/main_header.html'),
+    loadText('legacy-components/layout/footer/footer.html')
   ]);
 
   headerHost.innerHTML = headerHtml.replace(/\{BASE_PATH\}/g, APP_ROOT);
   footerHost.innerHTML = footerHtml.replace(/\{BASE_PATH\}/g, APP_ROOT);
 
   await Promise.all([
-    loadScript('components/adapters/layout/header.js'),
-    loadScript('components/adapters/layout/mega-menu.js'),
-    loadScript('components/adapters/layout/footer.js')
+    loadScript('legacy-components/layout/header/header.js'),
+    loadScript('legacy-components/layout/mega_menu/mega-menu.js'),
+    loadScript('legacy-components/layout/footer/footer.js')
   ]);
 
   if (typeof window.initHeader === 'function') {
@@ -192,8 +196,8 @@ const renderMainShell = async () => {
 
 const renderStayShell = async () => {
   const [headerHtml, footerHtml] = await Promise.all([
-    loadText('components/assets/layout/header/header.html'),
-    loadText('components/assets/layout/footer/footer.html')
+    loadText('legacy-components/layout/header/header.html'),
+    loadText('legacy-components/layout/footer/footer.html')
   ]);
 
   headerHost.innerHTML = headerHtml.replace(/\{BASE_PATH\}/g, APP_ROOT);
@@ -201,9 +205,9 @@ const renderStayShell = async () => {
 
   await Promise.all([
     loadScript(LUCIDE_CDN_URL),
-    loadScript('components/adapters/layout/header.js'),
-    loadScript('components/adapters/layout/mega-menu.js'),
-    loadScript('components/adapters/layout/footer.js')
+    loadScript('legacy-components/layout/header/header.js'),
+    loadScript('legacy-components/layout/mega_menu/mega-menu.js'),
+    loadScript('legacy-components/layout/footer/footer.js')
   ]);
 
   if (typeof window.initHeader === 'function') {
@@ -222,13 +226,13 @@ const renderStayShell = async () => {
 };
 
 const renderAirShell = async () => {
-  loadStyle('jejuair/css/main.css');
+  loadStyle(AIR_SHELL_STYLE_PATH);
   headerHost.innerHTML = '<header id="header_wrap"></header>';
   footerHost.innerHTML = '<footer id="footer_wrap"></footer>';
 
   await loadScript('https://code.jquery.com/jquery-3.7.1.min.js');
-  await loadScript('jejuair/js/header.js');
-  await loadScript('jejuair/js/footer.js');
+  await loadScript(AIR_SHELL_HEADER_SCRIPT_PATH);
+  await loadScript(AIR_SHELL_FOOTER_SCRIPT_PATH);
 };
 
 export const mountMyPageShell = async () => {

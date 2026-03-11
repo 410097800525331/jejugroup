@@ -1,4 +1,4 @@
-const { execFileSync } = require("node:child_process");
+﻿const { execFileSync } = require("node:child_process");
 
 const configs = [
   ["core.hooksPath", ".githooks"],

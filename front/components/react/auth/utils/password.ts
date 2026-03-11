@@ -1,4 +1,4 @@
-import type { FeedbackState, PasswordStrength } from "../state/types";
+import type { FeedbackState, PasswordStrength } from "@front-components/auth/state/types";
 
 const BASE_PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_\-+={}\[\]|;:'",.<>/?]{8,}$/;
 const SPECIAL_CHARACTER_PATTERN = /[!@#$%^&*()_\-+={}\[\]|;:'",.<>/?]/;

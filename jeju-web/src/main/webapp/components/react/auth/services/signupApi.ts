@@ -17,9 +17,9 @@ interface AvailabilityResult {
 
 const loadSignupModules = async () => {
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const sanitizerModule = import("../../../../core/utils/sanitizer.js");
+  const sanitizerModule = import("../../../../core/modules/utils/sanitizer.module.js");
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const configModule = import("../../../../core/config/api_config.js");
+  const configModule = import("../../../../core/modules/config/api_config.module.js");
 
   return Promise.all([sanitizerModule, configModule]);
 };

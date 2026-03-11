@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, type ChangeEventHandler } from "react";
-import { notifySignupWindow, type PassAuthSuccessPayload } from "../services/passBridge";
-import { verifyRecaptchaToken, waitForPassAuthCompletion } from "../services/passAuthApi";
-import { useAuthActions, useAuthState } from "../state/context";
-import { deriveGenderFromRrnDigit, formatPhoneNumber, isValidBirthSix, isValidRrnDigit, toBirthDate, toDigitsOnly } from "../utils/format";
+import { notifySignupWindow, type PassAuthSuccessPayload } from "@front-components/auth/services/passBridge";
+import { verifyRecaptchaToken, waitForPassAuthCompletion } from "@front-components/auth/services/passAuthApi";
+import { useAuthActions, useAuthState } from "@front-components/auth/state/context";
+import { deriveGenderFromRrnDigit, formatPhoneNumber, isValidBirthSix, isValidRrnDigit, toBirthDate, toDigitsOnly } from "@front-components/auth/utils/format";
 
 export const usePassAuthController = () => {
   const { errors, passAuth } = useAuthState();

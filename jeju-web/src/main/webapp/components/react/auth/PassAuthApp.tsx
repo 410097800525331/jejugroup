@@ -1,12 +1,12 @@
-import { AuthProvider, useAuthState } from "./state/context";
-import { StepHeader } from "./StepHeader";
-import { PASS_AUTH_STEP_ITEMS } from "./passauth/data";
-import { PassAuthSiteKeyLoader } from "./passauth/PassAuthSiteKeyLoader";
-import { PassIdentityStep } from "./passauth/PassIdentityStep";
-import { PassMethodStep } from "./passauth/PassMethodStep";
-import { PassNameStep } from "./passauth/PassNameStep";
-import { PassTelecomStep } from "./passauth/PassTelecomStep";
-import { PassWaitingStep } from "./passauth/PassWaitingStep";
+import { StepHeader } from "@front-components/auth/StepHeader";
+import { PassAuthSiteKeyLoader } from "@front-components/auth/passauth/PassAuthSiteKeyLoader";
+import { PassIdentityStep } from "@front-components/auth/passauth/PassIdentityStep";
+import { PassMethodStep } from "@front-components/auth/passauth/PassMethodStep";
+import { PassNameStep } from "@front-components/auth/passauth/PassNameStep";
+import { PASS_AUTH_STEP_ITEMS } from "@front-components/auth/passauth/data";
+import { PassTelecomStep } from "@front-components/auth/passauth/PassTelecomStep";
+import { PassWaitingStep } from "@front-components/auth/passauth/PassWaitingStep";
+import { AuthProvider, useAuthState } from "@front-components/auth/state/context";
 
 const getPassStepTitle = (step: number, shouldShowPhoneField: boolean, shouldShowRecaptcha: boolean) => {
   if (step === 1) {

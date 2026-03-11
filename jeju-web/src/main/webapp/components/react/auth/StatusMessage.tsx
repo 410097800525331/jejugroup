@@ -1,4 +1,4 @@
-import type { FeedbackTone } from "./state/types";
+import type { FeedbackTone } from "@front-components/auth/state/types";
 
 interface StatusMessageProps {
   className?: string;

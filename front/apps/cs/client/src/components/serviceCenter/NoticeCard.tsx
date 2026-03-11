@@ -1,6 +1,6 @@
 import { LucideIcon, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { getServiceLabel } from "../../data/serviceCenterData";
+import { getServiceLabel } from "@/data/serviceCenterData";
 
 interface NoticeCardProps {
   id: number;

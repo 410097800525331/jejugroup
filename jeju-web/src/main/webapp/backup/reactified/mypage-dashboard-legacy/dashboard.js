@@ -1,6 +1,6 @@
 import { getDashboardData } from './dashboard_data.js';
 import { createDashboardMarkup, createErrorMarkup, createLoadingMarkup } from './dashboard_markup.js';
-import { mountPageShellBridgeRuntime } from '../../components/runtime/shell-runtime.js';
+import { mountPageShellBridgeRuntime } from '../../../components/runtime/shell-runtime.js';
 
 // ==========================================
 // Meta-Design Controller

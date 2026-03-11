@@ -6,10 +6,10 @@ $(document).ready(function () {
         <div class="footer_link">
           <h4>제주항공</h4>
           <ul>
-            <li><a href="pages/about/about.html">회사소개</a></li>
-            <li><a href="pages/about/career.html">채용안내</a></li>
-            <li><a href="pages/about/ccm.html">소비자중심경영</a></li>
-            <li><a href="pages/cs/notic.html">공지사항</a></li>
+            <li><a href="#" class="route-link" data-route="SERVICES.AIR.ABOUT.COMPANY">회사소개</a></li>
+            <li><a href="#" class="route-link" data-route="SERVICES.AIR.ABOUT.CAREER">채용안내</a></li>
+            <li><a href="#" class="route-link" data-route="SERVICES.AIR.ABOUT.CCM">소비자중심경영</a></li>
+            <li><a href="#" class="route-link" data-route="SERVICES.AIR.CS.NOTICE">공지사항</a></li>
           </ul>
         </div>
         <div class="footer_link">
@@ -35,7 +35,7 @@ $(document).ready(function () {
         <div class="footer_link">
           <h4>이벤트/제휴</h4>
           <ul>
-            <li><a href="pages/event/event.html">이벤트</a></li>
+            <li><a href="#" class="route-link" data-route="SERVICES.AIR.EVENT">이벤트</a></li>
             <li><a href="https://jejurentcar.netlify.app/" target="_blank">렌터카</a></li>
             <li><a href="https://jejuteam.netlify.app/jejustay/pages/hotel/jejuhotel.html" target="_blank">호텔/숙소</a></li>
           </ul>

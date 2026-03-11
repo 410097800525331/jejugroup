@@ -1,4 +1,4 @@
-import { HotelNavItem } from "./hotelHeaderData";
+import { HotelNavItem } from "@front-components/layout/hotelHeaderData";
 
 interface HotelMegaMenuItemProps {
   item: HotelNavItem;

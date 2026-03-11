@@ -4,18 +4,18 @@ import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 
 // 데이터 및 타입 임포트
-import { NOTICES, ALL_FAQS, CONTACTS, getServiceLabel } from "../data/serviceCenterData";
-import { ServiceType } from "../types/service-center";
+import { NOTICES, ALL_FAQS, CONTACTS, getServiceLabel } from "@/data/serviceCenterData";
+import { ServiceType } from "@/types/service-center";
 
 // 추출한 원자적 컴포넌트 임포트
-import SearchBar from "../components/serviceCenter/SearchBar";
-import Hero from "../components/serviceCenter/Hero";
-import SectionHeader from "../components/serviceCenter/SectionHeader";
-import ServiceCard from "../components/serviceCenter/ServiceCard";
-import NoticeCard from "../components/serviceCenter/NoticeCard";
-import FAQItem from "../components/serviceCenter/FAQItem";
+import SearchBar from "@/components/serviceCenter/SearchBar";
+import Hero from "@/components/serviceCenter/Hero";
+import SectionHeader from "@/components/serviceCenter/SectionHeader";
+import ServiceCard from "@/components/serviceCenter/ServiceCard";
+import NoticeCard from "@/components/serviceCenter/NoticeCard";
+import FAQItem from "@/components/serviceCenter/FAQItem";
 import { Button } from "@/components/ui/button";
-import ContactCard from "../components/serviceCenter/ContactCard";
+import ContactCard from "@/components/serviceCenter/ContactCard";
 import FAB from "@front-fab/FABContainer";
 
 /**

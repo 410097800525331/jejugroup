@@ -1,8 +1,8 @@
 import { createContext, useContext, useMemo, useReducer, type ReactNode } from "react";
-import { createAuthActions, type AuthActions } from "./actions";
-import { createAuthInitialState } from "./initialState";
-import { authReducer } from "./reducer";
-import type { AuthState } from "./types";
+import { createAuthActions, type AuthActions } from "@front-components/auth/state/actions";
+import { createAuthInitialState } from "@front-components/auth/state/initialState";
+import { authReducer } from "@front-components/auth/state/reducer";
+import type { AuthState } from "@front-components/auth/state/types";
 
 interface AuthProviderProps {
   children: ReactNode;

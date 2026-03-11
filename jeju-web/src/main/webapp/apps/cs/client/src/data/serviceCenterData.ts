@@ -1,5 +1,5 @@
 import { Plane, Home as HomeIcon, Car } from "lucide-react";
-import { Notice, FAQ, Contact } from "../types/service-center";
+import { Notice, FAQ, Contact } from "@/types/service-center";
 
 export const NOTICES: Notice[] = [
   {

@@ -8,9 +8,9 @@ import {
   Heart, 
   MessageCircle 
 } from "lucide-react";
-import ActionCard from "./ActionCard";
-import WishlistLayer from "./WishlistLayer";
-import CardHolder from "./CardHolder";
+import ActionCard from "@front-fab/ActionCard";
+import WishlistLayer from "@front-fab/WishlistLayer";
+import CardHolder from "@front-fab/CardHolder";
 
 // GSAP 플러그인 등록 (필요한 경우 여기에 추가)
 if (typeof window !== "undefined") {

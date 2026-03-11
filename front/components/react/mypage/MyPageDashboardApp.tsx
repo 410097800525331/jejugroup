@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from "react";
-import { BOOKINGS, PROFILE, STATS, SUPPORT_ITEMS } from "./data";
-import { DashboardProvider, useDashboardState } from "./state";
-import { SectionCard } from "./SectionCard";
-import { StatusPill } from "./StatusPill";
-import type { BookingType } from "./types";
+import { BOOKINGS, PROFILE, STATS, SUPPORT_ITEMS } from "@front-components/mypage/data";
+import { SectionCard } from "@front-components/mypage/SectionCard";
+import { DashboardProvider, useDashboardState } from "@front-components/mypage/state";
+import { StatusPill } from "@front-components/mypage/StatusPill";
+import type { BookingType } from "@front-components/mypage/types";
 
 const FILTERS: Array<"all" | BookingType> = ["all", "air", "stay", "rent"];
 
@@ -198,4 +198,3 @@ export const MyPageDashboardApp = () => {
     </DashboardProvider>
   );
 };
-

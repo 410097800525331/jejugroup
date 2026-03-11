@@ -1,4 +1,4 @@
-import { formatPhoneNumber } from "../utils/format";
+import { formatPhoneNumber } from "@front-components/auth/utils/format";
 
 interface SocialConfig {
   KAKAO_JS_KEY: string;
@@ -40,7 +40,7 @@ const fetchSocialConfig = async () => {
 
   try {
     // @ts-expect-error 레거시 JS 모듈 로딩 목적
-    const { API_BASE_URL } = await import("../../../../core/config/api_config.js");
+    const { API_BASE_URL } = await import("../../../../core/modules/config/api_config.module.js");
     const response = await fetch(`${API_BASE_URL}/api/public/config`, {
       credentials: "same-origin",
       method: "GET",

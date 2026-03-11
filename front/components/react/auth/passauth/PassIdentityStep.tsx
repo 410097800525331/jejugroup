@@ -1,5 +1,5 @@
-import { StatusMessage } from "../StatusMessage";
-import { usePassAuthController } from "../hooks/usePassAuthController";
+import { usePassAuthController } from "@front-components/auth/hooks/usePassAuthController";
+import { StatusMessage } from "@front-components/auth/StatusMessage";
 
 export const PassIdentityStep = () => {
   const {

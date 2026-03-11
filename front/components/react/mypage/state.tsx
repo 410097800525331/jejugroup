@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useReducer, type Dispatch, type ReactNode } from "react";
-import { BOOKINGS } from "./data";
-import type { BookingItem, BookingType } from "./types";
+import { BOOKINGS } from "@front-components/mypage/data";
+import type { BookingItem, BookingType } from "@front-components/mypage/types";
 
 type BookingFilter = "all" | BookingType;
 
@@ -57,4 +57,3 @@ export const useDashboardState = () => {
   }
   return context;
 };
-

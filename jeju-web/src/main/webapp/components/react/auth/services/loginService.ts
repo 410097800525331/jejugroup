@@ -1,10 +1,10 @@
 const loadLoginModules = async () => {
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const sanitizerModule = import("../../../../core/utils/sanitizer.js");
+  const sanitizerModule = import("../../../../core/modules/utils/sanitizer.module.js");
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const sessionModule = import("../../../../core/auth/session_manager.js");
+  const sessionModule = import("../../../../core/modules/auth/session_manager.module.js");
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const configModule = import("../../../../core/config/api_config.js");
+  const configModule = import("../../../../core/modules/config/api_config.module.js");
 
   return Promise.all([sanitizerModule, sessionModule, configModule]);
 };
@@ -48,11 +48,11 @@ export const loginWithCredentials = async (loginId: string, password: string) =>
 
 export const navigateAfterLogin = async (sessionData: Record<string, unknown>) => {
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const routesModule = import("../../../../core/constants/routes.js");
+  const routesModule = import("../../../../core/modules/constants/routes.module.js");
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const pathResolverModule = import("../../../../core/utils/path_resolver.js");
+  const pathResolverModule = import("../../../../core/modules/utils/path_resolver.module.js");
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const localAdminModule = import("../../../../core/auth/local_admin.js");
+  const localAdminModule = import("../../../../core/modules/auth/local_admin.module.js");
 
   const [{ ROUTES }, { resolveRoute }, { isLocalFrontEnvironment }] = await Promise.all([
     routesModule,

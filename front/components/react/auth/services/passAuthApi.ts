@@ -5,7 +5,7 @@ const wait = (duration: number) => new Promise<void>((resolve) => window.setTime
 export const fetchRecaptchaSiteKey = async () => {
   try {
     // @ts-expect-error 레거시 JS 모듈 로딩 목적
-    const { API_BASE_URL } = await import("../../../../core/config/api_config.js");
+    const { API_BASE_URL } = await import("../../../../core/modules/config/api_config.module.js");
     const response = await fetch(`${API_BASE_URL}/api/auth/verify`);
     const payload = await response.json().catch(() => ({}));
 
@@ -22,7 +22,7 @@ export const fetchRecaptchaSiteKey = async () => {
 export const verifyRecaptchaToken = async (token: string) => {
   try {
     // @ts-expect-error 레거시 JS 모듈 로딩 목적
-    const { API_BASE_URL } = await import("../../../../core/config/api_config.js");
+    const { API_BASE_URL } = await import("../../../../core/modules/config/api_config.module.js");
     const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
       body: new URLSearchParams({
         action: "verifyRecaptcha",

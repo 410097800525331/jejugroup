@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, type ChangeEventHandler, type FormEventHandler } from "react";
-import { useAuthActions, useAuthState } from "../state/context";
-import { loginWithCredentials, navigateAfterLogin } from "../services/loginService";
+import { loginWithCredentials, navigateAfterLogin } from "@front-components/auth/services/loginService";
+import { useAuthActions, useAuthState } from "@front-components/auth/state/context";
 
 const SAVED_ID_KEY = "jeju:login-id";
 

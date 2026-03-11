@@ -1,5 +1,5 @@
-import { PASS_METHOD_OPTIONS } from "./data";
-import { usePassAuthController } from "../hooks/usePassAuthController";
+import { usePassAuthController } from "@front-components/auth/hooks/usePassAuthController";
+import { PASS_METHOD_OPTIONS } from "@front-components/auth/passauth/data";
 
 export const PassMethodStep = () => {
   const { handleSelectMethod } = usePassAuthController();

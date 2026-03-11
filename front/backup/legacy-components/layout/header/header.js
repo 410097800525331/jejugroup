@@ -6,8 +6,8 @@ let isHeaderScrollBound = false;
 let isHeaderAuthSyncQueued = false;
 const SESSION_STORAGE_KEY = 'userSession';
 const SESSION_UPDATE_EVENT = 'jeju:session-updated';
-const sessionManagerPromise = import('../../../core/auth/session_manager.js');
-const localAdminPromise = import('../../../core/auth/local_admin.js');
+const sessionManagerPromise = import('../../../../core/auth/session_manager.js');
+const localAdminPromise = import('../../../../core/auth/local_admin.js');
 
 const getCurrentHeader = () => {
     return document.getElementById('header') || document.querySelector('.header');

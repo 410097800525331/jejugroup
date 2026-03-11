@@ -16,7 +16,7 @@ $(document).ready(function () {
         <div class="tab_sub">
           <button class="ticket_sub_tab_btn active" data-tab="tab_round">왕복</button>
           <button class="ticket_sub_tab_btn" data-tab="tab_oneway">편도</button>
-          <button class="ticket_sub_tab_btn"><a href="pages/booking/Availability.html">다구간</a></button>
+          <button class="ticket_sub_tab_btn"><a href="#" class="route-link" data-route="SERVICES.AIR.BOOKING.AVAILABILITY">다구간</a></button>
         </div>
         <!-- ticket top -->
         <div class="ticket_top" data-tab="tab_round">
@@ -684,7 +684,7 @@ $(document).ready(function () {
   const bookingSearchBtn = document.querySelector('#tab_booking .search_btn');
   if (bookingSearchBtn) {
     bookingSearchBtn.addEventListener('click', () => {
-      window.location.href = '/jejuair/pages/booking/payment.html';
+      window.jejuAirRoute?.navigate("SERVICES.AIR.BOOKING.PAYMENT");
     });
   }
 });

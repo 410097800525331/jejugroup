@@ -1,5 +1,5 @@
-import { SIGNUP_TERM_ITEMS } from "./data";
-import { useSignupController } from "../hooks/useSignupController";
+import { useSignupController } from "@front-components/auth/hooks/useSignupController";
+import { SIGNUP_TERM_ITEMS } from "@front-components/auth/signup/data";
 
 export const SignupTermsStep = () => {
   const { allTermsChecked, goToVerificationStep, handleToggleAllTerms, handleToggleTerm, requiredTermsChecked, signup } =

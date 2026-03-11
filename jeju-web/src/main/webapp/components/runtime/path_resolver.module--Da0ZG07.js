@@ -1,4 +1,4 @@
-import { ROUTES as S } from "./routes-a0eotWQr.js";
+import { ROUTES as S } from "./routes.module-D27PSM83.js";
 const y = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, m = new URL("../../", import.meta.url), R = /^[a-z][a-z0-9+.-]*:/i, d = "shell", w = "jeju:mypage-shell", E = /* @__PURE__ */ new Set(["main", "stay", "air"]), g = "/pages/auth/", p = (e, t) => t.split(".").reduce((r, n) => {
   if (r && typeof r == "object" && n in r)
     return r[n];

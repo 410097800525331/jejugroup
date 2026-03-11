@@ -15,3 +15,17 @@ trim_trailing_whitespace = false
 charset = utf-8
 end_of_line = lf
 
+[scripts/guards/**.{js,cjs,mjs}]
+charset = utf-8-bom
+
+[scripts/pipelines/**.{js,cjs,mjs}]
+charset = utf-8-bom
+
+[scripts/utils/**.{js,cjs,mjs}]
+charset = utf-8-bom
+
+[docs/text-integrity-guardrails.md]
+charset = utf-8-bom
+
+[docs/transition-architecture.md]
+charset = utf-8-bom

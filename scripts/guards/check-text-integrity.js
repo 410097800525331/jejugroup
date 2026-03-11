@@ -1,4 +1,4 @@
-const fs = require("node:fs");
+﻿const fs = require("node:fs");
 const { collectTargetFiles, isTextCandidate } = require("./lib/target-files");
 
 const LITERAL_PATTERNS = [

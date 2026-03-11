@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, LucideIcon, HelpCircle } from "lucide-react";
-import { getServiceLabel } from "../../data/serviceCenterData";
+import { getServiceLabel } from "@/data/serviceCenterData";
 
 interface FAQItemProps {
   id: number;

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { AuthCard } from "./AuthCard";
-import { FormField } from "./FormField";
-import { useLoginController, getSavedLoginId } from "./hooks/useLoginController";
-import { AuthProvider } from "./state/context";
+import { AuthCard } from "@front-components/auth/AuthCard";
+import { FormField } from "@front-components/auth/FormField";
+import { useLoginController, getSavedLoginId } from "@front-components/auth/hooks/useLoginController";
+import { AuthProvider } from "@front-components/auth/state/context";
 
 const LoginContent = () => {
   const { errorMessage, handleIdChange, handlePasswordChange, handleRememberChange, handleSubmit, isDisabled, login } =

@@ -1,2 +1,1 @@
-export { MyPageDashboardApp } from "./MyPageDashboardApp";
-
+export { MyPageDashboardApp } from "@front-components/mypage/MyPageDashboardApp";

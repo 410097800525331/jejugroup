@@ -1,9 +1,9 @@
 import { useCallback, useMemo, type ChangeEvent, type ChangeEventHandler, type FormEventHandler } from "react";
-import { useAuthActions, useAuthState } from "../state/context";
-import { checkSignupIdAvailability, submitSignupRequest } from "../services/signupApi";
-import { openPassAuthPopup } from "../services/passBridge";
-import { triggerSocialAuth } from "../services/socialAuth";
-import { getPasswordConfirmFeedback, getPasswordMeta } from "../utils/password";
+import { openPassAuthPopup } from "@front-components/auth/services/passBridge";
+import { checkSignupIdAvailability, submitSignupRequest } from "@front-components/auth/services/signupApi";
+import { triggerSocialAuth } from "@front-components/auth/services/socialAuth";
+import { useAuthActions, useAuthState } from "@front-components/auth/state/context";
+import { getPasswordConfirmFeedback, getPasswordMeta } from "@front-components/auth/utils/password";
 
 const ID_PATTERN = /^[A-Za-z0-9]{4,20}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -1,6 +1,6 @@
-import { FormField } from "../FormField";
-import { StatusMessage } from "../StatusMessage";
-import { useSignupController } from "../hooks/useSignupController";
+import { FormField } from "@front-components/auth/FormField";
+import { useSignupController } from "@front-components/auth/hooks/useSignupController";
+import { StatusMessage } from "@front-components/auth/StatusMessage";
 
 const getCheckButtonLabel = (status: string) => {
   if (status === "loading") {

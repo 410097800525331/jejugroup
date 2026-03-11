@@ -1,4 +1,4 @@
-import type { PassAuthMethod } from "../state/types";
+import type { PassAuthMethod } from "@front-components/auth/state/types";
 
 export const PASS_AUTH_MESSAGE_TYPE = "JEJU_PASS_AUTH_SUCCESS";
 

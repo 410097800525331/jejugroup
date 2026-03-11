@@ -1,4 +1,4 @@
-import type { BookingItem, StatItem, SupportItem } from "./types";
+import type { BookingItem, StatItem, SupportItem } from "@front-components/mypage/types";
 
 export const PROFILE = {
   email: "minji.hong@jejugroup.example",
@@ -58,4 +58,3 @@ export const SUPPORT_ITEMS: SupportItem[] = [
   { count: 0, href: "#", id: "notice", label: "운항 및 예약 공지" },
   { count: null, href: "#", id: "faq", label: "자주 묻는 질문" },
 ];
-

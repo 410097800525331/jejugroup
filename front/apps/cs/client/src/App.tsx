@@ -3,11 +3,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Router, Switch } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
-import Notices from "./pages/Notices";
-import FAQs from "./pages/FAQs";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import Home from "@/pages/Home";
+import Notices from "@/pages/Notices";
+import FAQs from "@/pages/FAQs";
 
 
 function AppRoutes() {

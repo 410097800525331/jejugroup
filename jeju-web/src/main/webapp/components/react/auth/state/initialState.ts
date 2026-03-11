@@ -1,4 +1,4 @@
-import type { AuthState, FeedbackState, VerifiedIdentity } from "./types";
+import type { AuthState, FeedbackState, VerifiedIdentity } from "@front-components/auth/state/types";
 
 const createFeedback = (): FeedbackState => ({
   message: "",

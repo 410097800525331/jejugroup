@@ -1,11 +1,11 @@
-import { AuthProvider, useAuthState } from "./state/context";
-import { StepHeader } from "./StepHeader";
-import { SIGNUP_STEP_ITEMS } from "./signup/data";
-import { SignupDetailsStep } from "./signup/SignupDetailsStep";
-import { SignupPassBridgeReceiver } from "./signup/SignupPassBridgeReceiver";
-import { SignupSuccessStep } from "./signup/SignupSuccessStep";
-import { SignupTermsStep } from "./signup/SignupTermsStep";
-import { SignupVerifyStep } from "./signup/SignupVerifyStep";
+import { StepHeader } from "@front-components/auth/StepHeader";
+import { AuthProvider, useAuthState } from "@front-components/auth/state/context";
+import { SignupDetailsStep } from "@front-components/auth/signup/SignupDetailsStep";
+import { SignupPassBridgeReceiver } from "@front-components/auth/signup/SignupPassBridgeReceiver";
+import { SignupSuccessStep } from "@front-components/auth/signup/SignupSuccessStep";
+import { SIGNUP_STEP_ITEMS } from "@front-components/auth/signup/data";
+import { SignupTermsStep } from "@front-components/auth/signup/SignupTermsStep";
+import { SignupVerifyStep } from "@front-components/auth/signup/SignupVerifyStep";
 
 const getSignupTitle = (step: number) => {
   if (step === 1) {

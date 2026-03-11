@@ -1,5 +1,5 @@
-import { StatusMessage } from "../StatusMessage";
-import { useSignupController } from "../hooks/useSignupController";
+import { useSignupController } from "@front-components/auth/hooks/useSignupController";
+import { StatusMessage } from "@front-components/auth/StatusMessage";
 
 export const SignupVerifyStep = () => {
   const { errorMessage, handleOpenPassAuth, handleSocialSignup } = useSignupController();
