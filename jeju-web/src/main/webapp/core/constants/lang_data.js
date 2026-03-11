@@ -1,4 +1,4 @@
-const langData = {
+﻿const langData = {
     ko: {
         // Global
         pageTitle: "제주 그룹 - 모든 여행을 제주그룹 하나로",

@@ -1,4 +1,4 @@
-/* ==================== ?뱁룿???ㅼ젙 ==================== */
+﻿/* ==================== ?뱁룿???ㅼ젙 ==================== */
 @font-face {
     font-family: 'FlightSans';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Regular.woff2') format('woff2');
@@ -32,8 +32,8 @@
   --transition-duration: 400ms;
 }
 
-/* 1. ?뚯썝媛???섏씠吏 諛곌꼍 諛??덉씠?꾩썐 ?ㅼ젙 (login.css 蹂듬텤 ???몃?議곗젙) */
-/* 1. ?뚯썝媛???섏씠吏 諛곌꼍 諛??덉씠?꾩썐 ?ㅼ젙 (login.css 蹂듬텤 ???몃?議곗젙) */
+/* 1. 회원가입 페이지 배경과 레이아웃 조정 */
+/* 1. 회원가입 페이지 배경과 레이아웃 조정 */
 body.signup-page {
   font-family: 'FlightSans', sans-serif;
   background-color: #ffffff;
@@ -49,18 +49,18 @@ html {
   height: auto;
 }
 
-#mypage-shell-header {
+#main-header-placeholder {
   position: relative;
-  z-index: 100;
+  z-index: 100; /* ?ㅻ뜑瑜?臾댁“嫄?理쒖긽?⑥쑝濡?*/
 }
 
-#jeju-signup-app, #mypage-shell-footer {
+.signup-wrapper, #main-footer-placeholder {
   position: relative;
   z-index: 1;
 }
 
 /* 2. Header / Footer Sync (Login Style) */
-.signup-page:not([data-mypage-shell="air"]) .header {
+.signup-page .header {
   background: #ffffff !important;
   box-shadow: none !important;
   border-bottom: 1px solid #eeeeee !important;
@@ -85,7 +85,7 @@ html {
   color: #333333 !important;
 }
 
-.signup-page:not([data-mypage-shell="air"]) .footer {
+.signup-page .footer {
   background-color: #EEEEEE !important;
   padding: 60px 40px !important;
   display: block !important;
@@ -96,23 +96,22 @@ html {
 }
 
 /* Page Layout Wrapper */
-#jeju-signup-app {
+.signup-wrapper {
   width: 100%;
   flex-grow: 1;
   display: flex;
   justify-content: center;
-  align-items: center; /* Center for balance */
-  padding: 100px 20px 60px; /* Increased top padding for fixed headers */
-  background-color: #ffffff !important;
+  align-items: flex-start;
+  padding: 60px 20px 80px 20px;
 }
 
-#mypage-shell-footer {
+#main-footer-placeholder {
   width: 100%;
   flex-shrink: 0;
 }
 
 /* 3. Signup Container - Match Login Card Size */
-#jeju-signup-app .signup-container {
+.signup-container {
   background: transparent;
   width: 100%;
   max-width: 480px;
@@ -130,14 +129,14 @@ html {
 }
 
 /* Header */
-#jeju-signup-app .step-header {
+.step-header {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   padding-bottom: 20px;
-  margin-bottom: 0;
-  border-bottom: 2px solid #222;
+  margin-bottom: 0; /* Changed from 40px */
+  border-bottom: 2px solid #222; /* 타이트한 언더라인 바 */
   gap: 20px;
 }
 
@@ -158,12 +157,12 @@ html {
   margin-top: 15px; /* Reduced from 30px */
 }
 
-#jeju-signup-app .input_group {
+.input_group {
   margin-bottom: 20px;
   position: relative;
 }
 
-#jeju-signup-app .input_group label {
+.input_group label {
   display: block;
   text-align: left;
   margin: 16px 6px 6px;
@@ -172,7 +171,7 @@ html {
   color: #444;
 }
 
-#jeju-signup-app .input_group input {
+.input_group input {
   width: 100%;
   height: 48px;
   padding: 0 16px;
@@ -220,15 +219,15 @@ html {
   will-change: transform;
 }
 
-#jeju-signup-app .btn-primary {
+.btn-primary {
   width: 100%;
   margin-top: 10px;
   padding: 16px 0;
   border-radius: 14px;
-  background: linear-gradient(135deg, #FF5000 0%, #FF8C00 100%) !important;
-  color: #fff !important;
+  background: linear-gradient(135deg, #FF5000 0%, #FF8C00 100%);
+  color: #fff;
   font-size: 16px;
-  box-shadow: 0 4px 15px rgba(255, 80, 0, 0.3) !important;
+  box-shadow: 0 4px 15px rgba(255, 80, 0, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -292,7 +291,7 @@ html {
 }
 
 /* Terms Checkbox */
-#jeju-signup-app .agree_box {
+.agree_box {
   background: rgba(255, 255, 255, 0.5);
   padding: 1.5rem;
   border-radius: 16px;
@@ -765,44 +764,3 @@ html {
 .strength-strong #meterBar2,
 .strength-strong #meterBar3 { background-color: #52c41a; }
 .strength-strong #strengthText { color: #52c41a; }
-
-/* ==================== Shell Specific Overrides ==================== */
-
-/* Stay Shell Overrides */
-[data-mypage-shell="stay"],
-[data-mypage-shell="stay"] html {
-  overflow: auto !important;
-  height: auto !important;
-}
-
-[data-mypage-shell="stay"] body {
-  background: #ffffff !important;
-  overflow: auto !important;
-}
-
-#jeju-signup-app h1, 
-#jeju-signup-app p, 
-#jeju-signup-app input {
-  margin: initial;
-  padding: initial;
-  border: initial;
-  background: initial;
-  font-family: 'FlightSans', sans-serif !important;
-}
-
-#jeju-signup-app button {
-  margin: initial;
-  padding: initial;
-  font-family: 'FlightSans', sans-serif !important;
-}
-
-#jeju-signup-app .input_group input {
-  border: 2px solid #ddd !important;
-  background-color: #ffffff !important;
-  display: block !important;
-}
-
-#jeju-signup-app .btn-primary {
-  background: linear-gradient(135deg, #FF5000 0%, #FF8C00 100%) !important;
-  color: #fff !important;
-}
