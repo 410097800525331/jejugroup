@@ -33,27 +33,6 @@ const isAuthPage = () => window.location.pathname.toLowerCase().includes(AUTH_PA
 
 const normalizeShellForPage = (shell: string) => (shell === "stay" && isAuthPage() ? "main" : shell);
 
-const loadScript = (src: string) => {
-  return new Promise<void>((resolve, reject) => {
-    const absoluteSrc = /^[a-z]+:/i.test(src) ? src : toAbsoluteUrl(src);
-    const alreadyLoaded = Array.from(document.scripts).some((script) => {
-      const currentSrc = script.getAttribute("src") || script.src;
-      return currentSrc === absoluteSrc;
-    });
-
-    if (alreadyLoaded) {
-      resolve();
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = absoluteSrc;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`failed to load script: ${absoluteSrc}`));
-    document.body.appendChild(script);
-  });
-};
-
 const loadStyle = (href: string) => {
   const absoluteHref = /^[a-z]+:/i.test(href) ? href : toAbsoluteUrl(href);
   const alreadyLoaded = Array.from(document.styleSheets).some((sheet) => sheet.href === absoluteHref);
@@ -167,7 +146,6 @@ const mountAirShell = async () => {
       headerHost,
     },
     {
-      loadScript,
       loadStyle,
     },
   );
