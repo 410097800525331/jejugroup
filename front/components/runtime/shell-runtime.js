@@ -1,3 +1,5 @@
+globalThis.process = globalThis.process || { env: { NODE_ENV: "production" } };
+var process = globalThis.process;
 var AM = Object.defineProperty;
 var zM = (g, l, s) => l in g ? AM(g, l, { enumerable: !0, configurable: !0, writable: !0, value: s }) : g[l] = s;
 var nf = (g, l, s) => zM(g, typeof l != "symbol" ? l + "" : l, s);

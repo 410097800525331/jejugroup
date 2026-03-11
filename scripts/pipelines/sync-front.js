@@ -26,7 +26,7 @@ const shouldExclude = (srcPath) => {
 };
 
 async function sync() {
-    console.log('🔄 프런트엔드 소스 -> 제이유 백엔드(webapp) 합병을 시작한다');
+    console.log('🔄 front 단일 원본 -> jeju-web webapp 미러 동기화를 시작한다');
 
     try {
         // webapp 루트 정리. WEB-INF/META-INF는 보존
@@ -39,7 +39,8 @@ async function sync() {
         }
         console.log('🧹 webapp 폴더 청소 완료 (WEB-INF 제외)');
 
-        // front -> webapp 동기화
+        // front 만 사람이 수정하는 원본이다. webapp 은 배포용 미러로만 유지한다.
+        // webapp 직접 수정은 금지하고, 항상 front 기준으로 덮어쓴다.
         await fs.copy(frontDir, webappDir, {
             filter: (src) => !shouldExclude(src)
         });
@@ -55,7 +56,7 @@ async function sync() {
             console.log('🧷 index.jsp 생성 완료 (index.html도 유지)');
         }
 
-        console.log('✨ 프런트엔드 정적 파일 합동 작전 성공');
+        console.log('✨ front 원본 기준 webapp 미러 동기화 성공');
         console.log(`📍 경로: ${webappDir}`);
     } catch (err) {
         console.error('❌ 동기화 작업 중 치명적인 에러 발생:', err);
