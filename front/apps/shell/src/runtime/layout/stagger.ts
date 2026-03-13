@@ -17,15 +17,15 @@ const createSplitGroup = (text: string, className: string) => {
 };
 
 export const initStaggerNav = () => {
-  const navLinks = document.querySelectorAll<HTMLElement>(".nav-link");
+  const navLinks = document.querySelectorAll<HTMLElement>(".hotel-shell-nav-link, .nav-link");
 
   navLinks.forEach((link) => {
-    if (link.querySelector(".stagger-wrapper")) {
+    const textSpan = link.querySelector<HTMLElement>("span[data-lang]") || link.querySelector<HTMLElement>("span");
+    if (!textSpan) {
       return;
     }
 
-    const textSpan = link.querySelector<HTMLElement>("span[data-lang]") || link.querySelector<HTMLElement>("span");
-    if (!textSpan) {
+    if (textSpan.querySelector(".stagger-wrapper")) {
       return;
     }
 

@@ -3,41 +3,15 @@
  * hotel.js 기반, 장기 체류 로직을 위해 확장됨
  */
 
-// 전역 변수
-let calendarState = {
-    checkIn: null,  // 확정된 체크인 (Timestamp)
-    checkOut: null, // 확정된 체크아웃 (Timestamp)
-    tempCheckIn: null,  // 팝업 내 임시 체크인
-    tempCheckOut: null  // 팝업 내 임시 체크아웃
-};
-let calendarController = null;
-
-// 상수
-const MIN_STAY_DAYS = 14;
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-
 document.addEventListener('DOMContentLoaded', function() {
     // 아이콘 초기화
     if (window.lucide) {
         lucide.createIcons();
     }
 
-    initHeader();
-    initMobileMenu();
     initWishlistButtons();
     initScrollAnimations();
-    // initSearchTabs(); // 롱스테이 페이지는 탭 없음
-    initDestinationDropdown(); // 기존 목적지 검색 유지
-    initCalendar(); // 롱스테이 전용 로직 포함
-    initGuestSelector(); // [New] Guest Selector
-    initOptionsPopup(); // [New] Options Selector
-    initMobileSearch();
-    
-    // 팝업 외부 클릭 시 모든 팝업을 닫는 글로벌 클릭 리스너
-    // (트리거/팝업의 stopPropagation에 의존함)
-    document.addEventListener('click', () => {
-        closeAllPopups();
-    });
+    initSearchLogic();
     
     // GSAP 애니메이션
     initStandardsAnimation();
@@ -101,22 +75,6 @@ function initStandardsAnimation() {
 }
 
 /* ========== 공통 기능 (hotel.js와 동일) ========== */
-function initHeader() {
-    const header = document.getElementById('header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) header.classList.add('scrolled');
-        else header.classList.remove('scrolled');
-    });
-}
-
-function initMobileMenu() {
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const mobileNav = document.getElementById('mobileNav');
-    if (menuBtn && mobileNav) {
-        menuBtn.addEventListener('click', () => mobileNav.classList.toggle('active'));
-    }
-}
-
 function initWishlistButtons() {
     document.querySelectorAll('.wishlist-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -160,322 +118,9 @@ function initScrollAnimations() {
     document.querySelectorAll('.hotel-card, .destination-card, .curation-card').forEach(el => observer.observe(el));
     
     // 글로벌 언어 변경 리스너
-    document.addEventListener('fabLanguageChanged', (e) => {
-        // 1. 캘린더 다시 렌더링 (월 이름 등)
-        renderCalendar();
-        
-        // 2. 호텔 리스트 다시 렌더링 (현지화된 데이터)
+    document.addEventListener('fabLanguageChanged', () => {
         renderLongStayHotels();
-        
-        // 3. 편의시설 필터 요약 업데이트 재실행하여 텍스트 갱신
-        const amenityField = document.getElementById('amenityField');
-        if (amenityField && typeof amenityField.updateSummary === 'function') {
-            amenityField.updateSummary();
-        }
-        
-        // 4. 선택된 경우 요약 날짜 업데이트
-        updateDateDisplay('checkIn', calendarState.tempCheckIn ? new Date(calendarState.tempCheckIn) : calendarState.checkIn ? new Date(calendarState.checkIn) : null);
-        updateDateDisplay('checkOut', calendarState.tempCheckOut ? new Date(calendarState.tempCheckOut) : calendarState.checkOut ? new Date(calendarState.checkOut) : null);
-
-        // 5. 경고 메시지가 있는 경우 업데이트
-        if (document.getElementById('stayWarning').style.display === 'block') {
-             // 유효성 검사 로직을 다시 실행하거나 오래된 텍스트를 피하기 위해 숨김 처리?
-             updateWarning(document.getElementById('stayWarning').textContent); // 로직이 허용되면 업데이트 트리거, 아니면 리셋
-        }
-        
-        // 6. 패키지 요금이 적용된 경우 검색 버튼 텍스트 업데이트
-        checkPackageRate();
     });
-}
-
-function initDestinationDropdown() {
-    const destField = document.getElementById('destinationFieldLarge');
-    const destInput = document.getElementById('destinationInput');
-    const destDropdown = document.getElementById('destinationDropdown');
-    
-    if (destField && destDropdown) {
-        // 드롭다운 토글
-        destField.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isActive = destDropdown.classList.contains('active');
-            closeAllPopups('destinationDropdown'); // 다른 팝업 닫기
-            
-            if (!isActive) {
-                destDropdown.classList.add('active');
-                destField.classList.add('active');
-            }
-        });
-
-        // 아이템 클릭 핸들링
-        document.querySelectorAll('.destination-item, .destination-item-text').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const val = item.dataset.value;
-                if (destInput) destInput.value = val;
-                closeAllPopups();
-            });
-        });
-    }
-}
-
-// 모든 팝업을 닫는 헬퍼 함수
-function closeAllPopups(exceptId = null) {
-    const popups = {
-        'destinationDropdown': document.getElementById('destinationDropdown'),
-        'calendarPopup': document.getElementById('calendarPopup'),
-        'guestPopupLarge': document.getElementById('guestPopupLarge'),
-        'optionsPopupLarge': document.getElementById('optionsPopupLarge')
-    };
-    
-    for (const [id, el] of Object.entries(popups)) {
-        if (id !== exceptId && el) {
-            el.classList.remove('active');
-            
-            // 필요한 경우 부모 필드에서 활성 상태 제거
-             if (id === 'guestPopupLarge') document.getElementById('guestFieldLarge')?.classList.remove('active');
-             if (id === 'calendarPopup') document.getElementById('checkInField')?.classList.remove('active');
-             if (id === 'destinationDropdown') document.getElementById('destinationFieldLarge')?.classList.remove('active');
-             if (id === 'optionsPopupLarge') document.getElementById('optionsFieldLarge')?.classList.remove('active');
-        }
-    }
-}
-
-/* ========== [리팩토링] 인원 선택 (Guest) ========== */
-function initGuestSelector() {
-    const guestField = document.getElementById('guestFieldLarge');
-    const guestPopup = document.getElementById('guestPopupLarge');
-    
-    if (!guestField || !guestPopup) return;
-
-    // 1. 토글
-    guestField.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isActive = guestPopup.classList.contains('active');
-        closeAllPopups('guestPopupLarge');
-        
-        if (!isActive) {
-            guestPopup.classList.add('active');
-            guestField.classList.add('active');
-        } else {
-            guestPopup.classList.remove('active');
-            guestField.classList.remove('active');
-        }
-    });
-
-    // 2. 팝업 내부 클릭 방지
-    guestPopup.addEventListener('click', (e) => e.stopPropagation());
-
-    // 3. 증감 버튼 로직
-    document.querySelectorAll('.counter-btn-new').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation(); // 버튼 클릭 시 팝업 닫히지 않게
-            
-            const target = btn.dataset.target; // 'rooms', 'adults', 'children'
-            const span = document.getElementById(`${target}CountLarge`);
-            if (!span) return;
-
-            let val = parseInt(span.textContent);
-            const minValues = { 'rooms': 1, 'adults': 1, 'children': 0 };
-
-            if (btn.classList.contains('plus')) {
-                val++;
-            } else {
-                if (val > minValues[target]) val--;
-            }
-            
-            span.textContent = val;
-            updateGuestSummary();
-        });
-    });
-}
-
-function updateGuestSummary() {
-    const rooms = parseInt(document.getElementById('roomsCountLarge').textContent || 1);
-    const adults = parseInt(document.getElementById('adultsCountLarge').textContent || 1);
-    const children = parseInt(document.getElementById('childrenCountLarge').textContent || 0);
-    
-    // 1. 게스트 요약 (성인 + 아동, 객실) -> Hotel 페이지 포맷과 일관성 유지
-    const guestSummaryEl = document.getElementById('guestSummary');
-    if (guestSummaryEl) {
-        let guestText = `성인 ${adults}명`;
-        if (children > 0) guestText += `, 아동 ${children}명`;
-        guestText += `, 객실 ${rooms}개`;
-        guestSummaryEl.textContent = guestText;
-    }
-}
-
-
-/* ========== [New] Options Selector ========== */
-function initOptionsPopup() {
-    const optionsField = document.getElementById('optionsFieldLarge');
-    const optionsPopup = document.getElementById('optionsPopupLarge');
-    const optionsSummary = document.getElementById('optionsSummary');
-
-    if (optionsField && optionsPopup) {
-        optionsField.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isActive = optionsPopup.classList.contains('active');
-            closeAllPopups('optionsPopupLarge');
-            
-            if (!isActive) {
-                optionsPopup.classList.add('active');
-                optionsField.classList.add('active');
-            } else {
-                optionsPopup.classList.remove('active');
-                optionsField.classList.remove('active');
-            }
-        });
-
-        optionsPopup.addEventListener('click', (e) => e.stopPropagation());
-
-        // 체크박스 로직
-        const checkboxes = optionsPopup.querySelectorAll('.option-checkbox');
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', () => {
-                updateOptionsSummary();
-            });
-        });
-
-        function updateOptionsSummary() {
-            const checked = Array.from(optionsPopup.querySelectorAll('.option-checkbox:checked')).map(cb => cb.value);
-            if (checked.length === 0) {
-                optionsSummary.textContent = "선택사항 없음";
-                optionsSummary.style.color = "#777"; // Increased contrast from #999
-            } else {
-                if(checked.length > 2) {
-                     optionsSummary.textContent = `${checked[0]}, ${checked[1]} 외 ${checked.length - 2}`;
-                } else {
-                     optionsSummary.textContent = checked.join(', ');
-                }
-                optionsSummary.style.color = "#222"; // Use solid dark color for active state
-            }
-        }
-    }
-}
-
-
-/* ========== Mobile Search Interaction ========== */
-function initMobileSearch() {
-    const summaryView = document.getElementById('mobileSearchSummary');
-    const searchWidget = document.querySelector('.search-widget-v2');
-    
-    if (summaryView && searchWidget) {
-        summaryView.addEventListener('click', () => {
-            searchWidget.classList.toggle('expanded');
-        });
-    }
-}
-
-
-
-/* ========== 장기 체류 캘린더 로직 (장기 체류 유효성 검사가 포함된 hotel.js에서 이식됨) ========== */
-function initCalendar() {
-    if (!window.JJRangeCalendar || calendarController) return;
-
-    calendarController = window.JJRangeCalendar.createRangeCalendar({
-        state: calendarState,
-        weekStartsOn: 'monday',
-        weekdayLabels: ['월', '화', '수', '목', '금', '토', '일'],
-        monthLabelFormatter: (dateObj) => `${dateObj.getFullYear()}년 ${dateObj.getMonth() + 1}월`,
-        showHoverRange: true,
-        enableTabs: true,
-        enableFlexibleOptions: true,
-        toggleMode: 'toggle',
-        cancelOnToggleClose: true,
-        toggleFieldActiveClass: true,
-        closeAllPopups: (exceptId) => closeAllPopups(exceptId),
-        onTempChange: () => updateResults(),
-        onCancel: () => {
-            updateDateDisplay('checkIn', calendarState.checkIn ? new Date(calendarState.checkIn) : null);
-            updateDateDisplay('checkOut', calendarState.checkOut ? new Date(calendarState.checkOut) : null);
-        },
-        onClear: () => updateWarning(null),
-        onBeforeConfirm: (state) => {
-            // 유효성 검사: 선택 안 함 상태에서 확인 누르면 초기화 허용
-            if (!state.tempCheckIn && !state.tempCheckOut) {
-                return true;
-            }
-
-            // 유효성 검사: 하나만 선택된 경우
-            if (!state.tempCheckIn || !state.tempCheckOut) {
-                alert('체크인과 체크아웃 날짜를 모두 선택해주세요.');
-                return false;
-            }
-
-            // 유효성 검사: 최소 체류 기간 확인
-            const days = (state.tempCheckOut - state.tempCheckIn) / ONE_DAY_MS;
-            if (days < MIN_STAY_DAYS) {
-                alert(`장기 체류 서비스는 최소 ${MIN_STAY_DAYS}박부터 예약 가능합니다.`);
-                return false;
-            }
-
-            return true;
-        },
-        onConfirm: () => {
-            updateDateDisplay('checkIn', calendarState.checkIn ? new Date(calendarState.checkIn) : null);
-            updateDateDisplay('checkOut', calendarState.checkOut ? new Date(calendarState.checkOut) : null);
-            checkPackageRate();
-        }
-    }).init();
-
-    updateWarning(null);
-}
-
-function updateWarning(message) {
-    const warningEl = document.getElementById('stayWarning');
-    if (!warningEl) return;
-    
-    if (message) {
-        warningEl.textContent = message;
-        warningEl.style.display = 'block';
-    } else {
-        warningEl.style.display = 'none';
-    }
-}
-
-function checkPackageRate() {
-    if (calendarState.checkIn && calendarState.checkOut) {
-        const days = (calendarState.checkOut - calendarState.checkIn) / ONE_DAY_MS;
-        if (days >= 28) {
-            const searchBtn = document.getElementById('searchBtn');
-            if(searchBtn) {
-                searchBtn.style.background = 'linear-gradient(45deg, #FF5000, #FF8A00)';
-                searchBtn.title = `한 달 살기 특가 적용 (${days}박)`;
-            }
-        }
-    }
-}
-
-function renderCalendar() {
-    if (calendarController) {
-        calendarController.renderCalendar();
-    }
-}
-
-function updateResults() {
-    if (calendarState.tempCheckIn) updateDateDisplay('checkIn', new Date(calendarState.tempCheckIn));
-    else updateDateDisplay('checkIn', null);
-
-    if (calendarState.tempCheckOut) updateDateDisplay('checkOut', new Date(calendarState.tempCheckOut));
-    else updateDateDisplay('checkOut', null);
-}
-
-function updateDateDisplay(type, dateObj) {
-    const displayId = type === 'checkIn' ? 'checkInDisplay' : 'checkOutDisplay';
-    const elDisplay = document.getElementById(displayId);
-    
-    if (!elDisplay) return;
-
-    if (!dateObj) {
-        elDisplay.textContent = '날짜 선택';
-        return;
-    }
-
-    const y = dateObj.getFullYear();
-    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const d = String(dateObj.getDate()).padStart(2, '0');
-    
-    elDisplay.textContent = `${y}-${m}-${d}`;
 }
 
 
@@ -773,30 +418,48 @@ document.addEventListener('fabWishlistUpdated', (e) => {
 });
 
 // v2.0 Search Logic
-function initSearchLogic() {
-    const btn = document.getElementById('searchBtn');
-    if(!btn) return;
+const LONG_STAY_SEARCH_SUBMIT_EVENT = 'jeju:life-search-submit';
 
-    btn.addEventListener('click', () => {
-        // Get Filters
-        const destInput = document.getElementById('destinationInput')?.value.trim();
-        const checkedAmenities = Array.from(document.querySelectorAll('.amenity-option input[type="checkbox"]:checked')).map(c => c.value);
-        
-        // Filter Data
-        let filtered = longStayHotels;
-        
-        if (destInput) {
-            filtered = filtered.filter(h => h.name.includes(destInput) || h.location.includes(destInput));
+const REQUIRED_OPTION_AMENITY_MAP = {
+    'kitchen': ['kitchen'],
+    'washer': ['washer'],
+    'full-kitchen': ['kitchen'],
+    'washer-dryer': ['washer'],
+    'desk': ['desk'],
+    'parking': ['parking']
+};
+
+function filterLongStayHotels(filters = {}) {
+    const destination = (filters.destination || '').trim();
+    const requiredOptions = Array.isArray(filters.requiredOptions) ? filters.requiredOptions : [];
+
+    return longStayHotels.filter((hotel) => {
+        const matchesDestination = !destination || hotel.name.includes(destination) || hotel.location.includes(destination);
+
+        if (!matchesDestination) {
+            return false;
         }
-        
-        if (checkedAmenities.length > 0) {
-            filtered = filtered.filter(h => {
-                 return checkedAmenities.every(req => h.amenities.includes(req));
-            });
+
+        if (requiredOptions.length === 0) {
+            return true;
         }
-        
-        // Render
-        renderLongStayHotels(filtered);
+
+        return requiredOptions.every((requiredOption) => {
+            const amenityKeys = REQUIRED_OPTION_AMENITY_MAP[requiredOption] || [requiredOption];
+            return amenityKeys.some((amenityKey) => hotel.amenities.includes(amenityKey));
+        });
+    });
+}
+
+function initSearchLogic() {
+    document.addEventListener(LONG_STAY_SEARCH_SUBMIT_EVENT, (event) => {
+        const filters = event.detail || {};
+        const filteredHotels = filterLongStayHotels(filters);
+        renderLongStayHotels(filteredHotels);
+
+        if (filteredHotels.length > 0) {
+            updateInfraUI(filteredHotels[0].id);
+        }
     });
 }
 
@@ -804,7 +467,6 @@ function initSearchLogic() {
 document.addEventListener('DOMContentLoaded', () => {
     // Run Init Logic
     renderLongStayHotels();
-    initSearchLogic();
     
     // Initial Infra Load (Data for first hotel)
     if(longStayHotels.length > 0) updateInfraUI(longStayHotels[0].id);

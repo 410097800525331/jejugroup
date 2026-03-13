@@ -14,6 +14,7 @@ const ENTRY_POINTS = [
   path.join(ROOT_DIR, "pages", "auth", "pass_auth.html"),
   path.join(ROOT_DIR, "pages", "mypage", "dashboard.html"),
   path.join(ROOT_DIR, "jejustay", "pages", "hotel", "jejuhotel.html"),
+  path.join(ROOT_DIR, "jejustay", "pages", "travel", "travel_checklist.html"),
 ];
 const server = createStaticServerController({
   fallbackPath: "/index.html",
@@ -131,6 +132,21 @@ test("jeju stay hotel landing smoke", async ({ page }) => {
   await expect(page).toHaveTitle(/JEJU STAY/);
   await expect(page.locator(".hero-subtitle-top")).toBeVisible();
   await expect(page.locator(".deals-section .section-title")).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju stay travel checklist smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejustay/pages/travel/travel_checklist.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle(/JEJU STAY/);
+  await expect(page.locator("#jeju-travel-checklist-app .travel-checklist-shell")).toBeVisible();
+  await expect(page.locator(".travel-checklist-progress-card")).toBeVisible();
+  await expect(page.locator(".travel-checklist-section-card")).toHaveCount(4);
 
   expectNoRuntimeIssues(issues);
 });

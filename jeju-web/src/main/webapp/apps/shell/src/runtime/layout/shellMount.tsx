@@ -37,11 +37,20 @@ const dispatchLoadedEvent = (eventName: "mainHeaderLoaded" | "mainFooterLoaded")
   document.dispatchEvent(new Event(eventName));
 };
 
-const ensureLucideIcons = () => {
+const ensureLucideIcons = (attempt = 0) => {
   const lucide = (window as { lucide?: { createIcons?: () => void } }).lucide;
   if (lucide?.createIcons) {
     lucide.createIcons();
+    return;
   }
+
+  if (attempt >= 30) {
+    return;
+  }
+
+  window.setTimeout(() => {
+    ensureLucideIcons(attempt + 1);
+  }, 100);
 };
 
 export const mountMainShell = async () => {

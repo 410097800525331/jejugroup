@@ -157,185 +157,6 @@ body.long-stay-page {
     line-height: 1.5;
 }
 
-/* ========== 글로벌 네비게이션 헤더 디테일 ========== */
-.header {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, transparent 100%);
-    transition: background 0.3s ease;
-}
-
-.header.scrolled {
-    background: var(--mega-bg);
-}
-
-/* SEARCH BAR V2 REFINEMENT */
-.item-label-v2 {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--v2-orange);
-    margin-bottom: 2px;
-    display: block;
-}
-
-.item-input-v2 {
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-/* Crazy Raccoon Style Stagger */
-.stagger-wrapper {
-    position: relative;
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: bottom;
-}
-
-.stagger-char {
-    display: inline-block;
-    transition: transform 0s linear;
-}
-
-.nav-link.is-animating .stagger-char {
-    transition-duration: 0.3s;
-    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.nav-link.is-animating .stagger-original .stagger-char {
-    transform: translateY(-100%);
-}
-
-.nav-link.is-animating .stagger-clone .stagger-char {
-    transform: translateY(0);
-}
-
-.stagger-clone {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.stagger-clone .stagger-char {
-    transform: translateY(100%);
-    color: var(--v2-orange);
-}
-
-/* Hover Color Consistency */
-.nav-link:hover .stagger-original .stagger-char,
-.nav-link:hover .nav-icon {
-    color: var(--v2-orange);
-}
-
-/* ========== 리뉴얼된 메가 메뉴 제거 (hotel.css에서 표준 처리됨) ========== */
-/*
-.mega-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: var(--mega-bg);
-    backdrop-filter: blur(25px);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    padding: 40px 0;
-    display: none;
-    z-index: 999;
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-*/
-
-.mega-dropdown.active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.mega-dropdown-inner {
-    max-width: 1440px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 50px;
-    padding: 0 40px;
-}
-
-.mega-title-zone {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.mega-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--v2-orange);
-    margin-bottom: 12px;
-    letter-spacing: 2px;
-}
-
-.mega-heading {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--text-title);
-    line-height: 1.4;
-    margin: 0;
-}
-
-.mega-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-}
-
-/* 기존 리스트 스타일 제거 또는 초기화 필요 시 여기 추가 */
-.mega-menu-list-horizontal {
-    display: none;
-}
-
-.mega-card {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    border-radius: var(--radius-card);
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.mega-card:hover {
-    background: #fff;
-    border-color: var(--v2-orange);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-    transform: translateY(-5px);
-}
-
-.card-icon-wrap {
-    width: 44px;
-    height: 44px;
-    background: var(--v2-orange);
-    color: #fff;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-    transition: transform 0.3s ease;
-}
-
-.mega-card:hover .card-icon-wrap {
-    transform: rotate(-5deg) scale(1.1);
-}
-
-.card-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-title);
-    margin-bottom: 4px;
-}
-
 .card-desc {
     font-size: 13px;
     color: var(--text-body);
@@ -682,195 +503,6 @@ body.long-stay-page {
 /* 모바일 요소를 위한 데스크톱 기본값 */
 .search-summary-view {
     display: none;
-}
-
-/* 절대 위치 검색 버튼 (텍스트) */
-.search-widget-large .search-btn-new {
-    /* 레거시 오버라이드 제거 또는 안전을 위해 유지? 글로벌 검색바가 이제 내부적으로 버튼을 처리함. */
-    /* 이 규칙은 바 아래의 플로팅 버튼을 위한 것이었나요? 
-       새 레이아웃에서는 검색바 내부(.search-btn-wrapper)에 버튼이 있습니다.
-       따라서 이 규칙을 해제하거나 충돌하지 않도록 해야 합니다. 
-       변경된 HTML 구조에서는 .search-btn-new를 더 이상 사용하지 않나요?
-       예, .search-btn-text로 대체되었습니다.
-       따라서 이 블록은 새 버튼에 대해 사용되지 않는 코드일 가능성이 높지만, 예전 구조가 남아있다면 영향을 줄 수 있습니다.
-       주석 처리하거나 .search-btn-new에 특정된 것이라면 그대로 두겠습니다.
-    */
-    display: none;
-}
-
-/* 신규 검색 버튼 (텍스트) - 고밀도 및 모던 스타일 */
-/* 신규 검색 버튼 (확장된 알약 모양) - 리팩토링됨 */
-.search-btn-pill-expanded {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    /* 아이콘과 텍스트 사이 간격 */
-    top: calc(100% + 8px);
-    /* 기준 간격 통일 */
-    padding: 0 32px;
-    /* 넓은 패딩 */
-    background: linear-gradient(135deg, #FF5000 0%, #FF8A00 100%);
-    /* 제주 오렌지 그라데이션 */
-    color: #fff;
-    border: none;
-    border-radius: 100px;
-    /* 완전한 알약 모양 */
-    cursor: pointer;
-    font-size: 1.05rem;
-    font-weight: 800;
-    /* 굵은 글꼴 */
-    box-shadow: 0 4px 15px rgba(255, 80, 0, 0.3);
-    /* 강한 그림자 */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    white-space: nowrap;
-
-    /* 플로팅 위치 로직은 부모 또는 필요한 경우 인라인 오버라이드에서 처리되지만,
-       여기서는 버튼 스타일 자체를 정의합니다.
-       사용자는 "내부에 떠 있는" 느낌 또는 "돌출된" 느낌을 원하나요?
-       "서치바 위로 확실히 튀어나와 보이게" -> 그림자가 이 역할을 수행합니다.
-    */
-}
-
-.search-btn-pill-expanded:hover {
-    transform: scale(1.05);
-    /* 커지는 효과 */
-    box-shadow: 0 8px 25px rgba(255, 80, 0, 0.5);
-    /* 더 강한 그림자 */
-    filter: brightness(1.1);
-}
-
-.search-btn-pill-expanded i,
-.search-btn-pill-expanded svg {
-    width: 20px;
-    height: 20px;
-    stroke-width: 3px;
-    /* Lucide 아이콘에 유효함 */
-}
-
-/* 레거시 지원 제거 또는 단순 유지 */
-/* .search-btn-text { ... } HTML을 업데이트하면 위 규칙으로 대체됨 */
-
-/* 검색 구분선 - 최적화된 높이 */
-.search-divider {
-    width: 1px;
-    height: 28px;
-    /* 컨테이너 높이의 약 50-60% */
-    background: #e2e8f0;
-    margin: 0 12px;
-    opacity: 0.8;
-}
-
-/* 게스트 항목 스타일 (Hotel.css 구조와 일치) */
-.guest-item-new {
-    flex: 1;
-    /* 더 균형 잡힌 flex */
-    position: relative;
-    cursor: pointer;
-    padding: 8px 16px;
-    border-radius: 100px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: background 0.2s;
-}
-
-.guest-item-new:hover {
-    background: rgba(241, 245, 249, 0.8);
-}
-
-.guest-item-new.active {
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.guest-display-text {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-title);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* 게스트 팝업 (Hotel.css에서 복사/수정됨) */
-.guest-popup-new {
-    position: absolute;
-    top: calc(100% + 8px);
-    /* 기준 간격 통일 */
-    right: 0;
-    width: 340px;
-    background: #fff;
-    border-radius: 20px;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
-    padding: 24px;
-    display: none;
-    display: none;
-    z-index: 90;
-    /* Global Z-index override will handle this, but explicit here too */
-}
-
-.guest-popup-new.active {
-    display: block;
-    animation: fadeIn 0.15s ease-out;
-}
-
-.guest-row-new {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.guest-row-new:last-child {
-    margin-bottom: 0;
-}
-
-.guest-info-new {
-    display: flex;
-    flex-direction: column;
-}
-
-.guest-type-new {
-    font-weight: 700;
-    color: var(--text-title);
-    font-size: 1rem;
-}
-
-.guest-desc-new {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.guest-counter-new {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.counter-btn-new {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid #e2e8f0;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--text-body);
-    transition: all 0.2s;
-}
-
-.counter-btn-new:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
-.counter-value-new {
-    font-weight: 700;
-    width: 20px;
-    text-align: center;
 }
 
 /* ========== 글로벌 세부 조정 ========== */
@@ -1725,13 +1357,6 @@ body.long-stay-page {
     /* 숨 쉴 공간을 위해 패딩 추가 */
 }
 
-/* 라이프 페이지용 경계 없는 푸터 */
-.footer {
-    background: transparent;
-    background-color: transparent;
-    border-top: none;
-}
-
 /* ========== 히어로 가독성 및 브랜딩 ========== */
 .hero-overlay {
     position: absolute;
@@ -1761,27 +1386,6 @@ body.long-stay-page {
 .hero-content h2,
 .hero-content strong {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-/* 로그인 버튼 브랜딩 -> 아웃라인 스타일 */
-.login-btn {
-    background-color: transparent;
-    color: var(--primary);
-    border: 1.5px solid var(--primary);
-    border-radius: var(--radius-sm);
-    padding: 7px 16px;
-    /* 테두리를 위해 약간 조정됨 */
-    font-weight: 700;
-    transition: all 0.2s;
-}
-
-.login-btn:hover {
-    background-color: rgba(255, 80, 0, 0.05);
-    transform: translateY(-1px);
-}
-
-.login-btn .util-icon {
-    color: var(--primary);
 }
 
 /* ========== 히어로 위치 오버라이드 ========== */
@@ -1855,7 +1459,7 @@ body.long-stay-page {
 
 /* 개별 필드 너비 조정: 날짜 필드만 292px로 고정하여 흔들림 방지 */
 #destinationFieldLarge {
-    flex: 1.2;
+    flex: 1.35;
 }
 
 #checkInField {
@@ -1874,6 +1478,37 @@ body.long-stay-page {
 .search-item-v2:hover {
     background: rgba(0, 0, 0, 0.03);
     /* 화이트 배경 대비 전용 호버 */
+}
+
+.long-stay-search-widget #calendarPopup {
+    top: calc(100% + 8px);
+    left: 0;
+}
+
+.long-stay-search-widget #guestPopupLarge {
+    top: calc(100% + 8px);
+    left: 0;
+}
+
+.long-stay-search-widget #optionsPopupLarge {
+    left: 24px;
+    top: calc(100% + 8px);
+}
+
+.long-stay-search-widget #destinationDropdown {
+    top: calc(100% + 8px);
+    left: -10px;
+    width: calc(100% + 100px);
+}
+
+.long-stay-search-widget .life-search-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.long-stay-search-widget .life-search-button-icon {
+    width: 20px;
+    height: 20px;
 }
 
 /* 활성 상태: 배경 반전 및 하단 모서리 조정 */
@@ -1974,164 +1609,6 @@ body.long-stay-page {
     transform: scale(0.96);
 }
 
-/* 5. 팝업 (Popups) */
-/* 통일된 드롭다운 스타일 (순백색) */
-/* Unified Dropdown Base Styles */
-.destination-dropdown,
-.guest-popup-new,
-.options-popup-new,
-.Popup[role="dialog"] {
-    background: #FFFFFF;
-    border: none;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
-    position: absolute;
-    top: calc(100% + 8px);
-    /* jejuhotel 기준 간격 통일 */
-    z-index: 1000;
-    padding: 24px;
-    margin-top: 0;
-    display: none;
-}
-
-.destination-dropdown.active,
-.guest-popup-new.active,
-.options-popup-new.active,
-.Popup[role="dialog"].active {
-    display: block;
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    clip-path: inset(0 0 0 0);
-    animation: none;
-}
-
-/* [Fix] Disable Animation for Calendar to prevent layout conflict */
-#calendarPopup.active {
-    animation: none;
-    clip-path: inset(0 0 0 0);
-    transition: opacity 0.2s ease;
-}
-
-@keyframes lShapeReveal {
-    0% {
-        /* Start from a thin vertical line at the left edge (aligned with icon) */
-        clip-path: inset(0 99.7% 100% 0);
-    }
-
-    30% {
-        /* Line grows down fully */
-        clip-path: inset(0 99.7% 0 0);
-    }
-
-    100% {
-        /* Expands to the right */
-        clip-path: inset(0 0 0 0);
-    }
-}
-
-/* Staggered Item Animation (Start after L-shape expansion) */
-.active.is-opening .destination-item,
-.active.is-opening .guest-row-new,
-.active.is-opening .option-check-item,
-.active.is-opening .DayPicker-Month {
-    animation: itemReveal 0.4s ease-out backwards;
-}
-
-/* Incremental Delays for the 'Fluid' feel (Starting after 0.4s delay of L-shape expansion if you want it faster, 
-   but original plan says starting after L-shape is done. L-shape starts at 0.4s and takes 1.5s total? 
-   No, L-shape animation is 1.5s. So after 1.5s it's fully open. 
-   Keeping 1.5s delays for consistency with previous setup.) */
-.active.is-opening .destination-item:nth-child(1) {
-    animation-delay: 1.5s;
-}
-
-.active.is-opening .destination-item:nth-child(2) {
-    animation-delay: 1.55s;
-}
-
-.active.is-opening .destination-item:nth-child(3) {
-    animation-delay: 1.6s;
-}
-
-.active.is-opening .destination-item:nth-child(4) {
-    animation-delay: 1.65s;
-}
-
-.active.is-opening .guest-row-new:nth-child(1) {
-    animation-delay: 1.5s;
-}
-
-.active.is-opening .guest-row-new:nth-child(2) {
-    animation-delay: 1.55s;
-}
-
-.active.is-opening .guest-row-new:nth-child(3) {
-    animation-delay: 1.6s;
-}
-
-.active.is-opening .option-check-item:nth-child(1) {
-    animation-delay: 1.5s;
-}
-
-.active.is-opening .option-check-item:nth-child(2) {
-    animation-delay: 1.54s;
-}
-
-.active.is-opening .option-check-item:nth-child(3) {
-    animation-delay: 1.58s;
-}
-
-.active.is-opening .option-check-item:nth-child(4) {
-    animation-delay: 1.62s;
-}
-
-.active.is-opening .option-check-item:nth-child(5) {
-    animation-delay: 1.66s;
-}
-
-.active.is-opening .option-check-item:nth-child(6) {
-    animation-delay: 1.7s;
-}
-
-@keyframes itemReveal {
-    from {
-        opacity: 0;
-        transform: translateX(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* 요청에 따라 모든 팝업을 왼쪽 정렬 / 왼쪽에 부착하도록 통일 */
-.destination-dropdown,
-.guest-popup-new,
-.options-popup-new,
-.Popup[role="dialog"] {
-    left: 24px;
-    /* 아이콘 위치에 맞춰 정렬 */
-    right: auto;
-    transform: none;
-    border-radius: 24px;
-    /* 네 모서리를 모두 둥글게 통일 */
-    top: calc(100% + 8px);
-    /* 1px 더 올려서 8px로 조정 */
-    border: none;
-    /* 이중 테두리 방지 */
-    z-index: 2000;
-    /* 검색바 위로 노출 */
-}
-
-/* 캘린더 내부 레이아웃 문제에 대한 특정 오버라이드 (있는 경우) */
-.Popup[role="dialog"] .Popup__content {
-    background: transparent;
-    box-shadow: none;
-    border: none;
-    padding: 0;
-}
-
 /* 글래스 텍스처 오버레이 (선택 사항) */
 .global-search-bar-v2::after {
     content: '';
@@ -2147,158 +1624,26 @@ body.long-stay-page {
 }
 
 
-/* ========== hotel.css에서 상속된 캘린더 스타일 ========== */
-
-.Popup[role="dialog"] .DayPicker-Caption {
-    margin-bottom: 12px;
-    /* 더 좁은 달 제목 간격 */
-    font-size: 1rem;
-}
-
-.Popup[role="dialog"] .RangePicker-Header {
-    margin-bottom: 2px;
-    /* 헤더 간격 축소 */
-    padding-bottom: 8px;
-}
-
-.Popup[role="dialog"] .RangePicker-Tabs {
-    margin-bottom: 12px;
-}
-
-.Popup[role="dialog"] .DayPicker-Months {
-    gap: 12px;
-    /* 달 사이의 더 좁은 간격 */
-}
-
-/* 푸터 버튼이 컴팩트하게 보이도록 보장 */
-.Popup[role="dialog"] .RangePicker-Footer {
-    padding-top: 12px;
-    margin-top: 8px;
-}
-
-.Popup[role="dialog"] .ActionBtn {
-    height: 40px;
-    font-size: 0.9rem;
-}
-
-/* ========== Restored Calendar Styles (from hotel.css) ========== */
-.DayPicker-Month {
-    flex: 1;
-}
-
-.DayPicker-Caption {
-    text-align: center;
-    font-weight: 700;
-    margin-bottom: 16px;
-    font-size: 1.1rem;
-    color: var(--text-title);
-}
-
-.DayPicker-Weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 8px;
-}
-
-.DayPicker-Weekday {
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-.DayPicker-Body {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-}
-
-.DayPicker-Day {
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: var(--text-title);
-    position: relative;
-    border-radius: 4px;
-}
-
-.DayPicker-Day:hover:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--inRange):not(.DayPicker-Day--outside) {
-    background-color: rgba(255, 80, 0, 0.14);
-    border-radius: 50%;
-}
-
-.DayPicker-Day--selected {
-    background-color: var(--primary);
-    color: #fff;
-    border-radius: 50%;
-}
-
-.DayPicker-Day--inRange {
-    background: rgba(255, 80, 0, 0.15);
-    color: var(--text-title);
-    border-radius: 0;
-}
-
-.DayPicker-Day--checkIn {
-    background: var(--primary);
-    color: #fff;
-    border-radius: 50%;
-    position: relative;
-    z-index: 2;
-}
-
-.DayPicker-Day--checkIn.DayPicker-Day--hasRange::before {
-    content: '';
+/* 5. 팝업 (Popups) */
+.options-popup-new {
+    background: #FFFFFF;
+    border: none;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 50%;
-    height: 100%;
-    background: rgba(255, 80, 0, 0.15);
-    z-index: -1;
+    top: calc(100% + 8px);
+    left: 24px;
+    right: auto;
+    transform: none;
+    border-radius: 24px;
+    z-index: 2000;
+    padding: 24px;
+    margin-top: 0;
+    display: none;
 }
 
-.DayPicker-Day--checkOut {
-    background: var(--primary);
-    color: #fff;
-    border-radius: 50%;
-    position: relative;
-    z-index: 2;
-}
-
-.DayPicker-Day--checkOut.DayPicker-Day--hasRange::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    background: rgba(255, 80, 0, 0.15);
-    z-index: -1;
-}
-
-/* Hover Range */
-.DayPicker-Day--hoverRange {
-    background: rgba(255, 80, 0, 0.1);
-    border-radius: 0;
-}
-
-.DayPicker-Day--disabled {
-    color: #e0e0e0;
-    cursor: not-allowed;
-    text-decoration: line-through;
-}
-
-.DayPicker-Day--today {
-    color: var(--primary);
-    font-weight: 700;
-}
-
-.DayPicker-Day--today.DayPicker-Day--selected,
-.DayPicker-Day--today.DayPicker-Day--checkIn,
-.DayPicker-Day--today.DayPicker-Day--checkOut {
-    color: #fff;
-    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
+.options-popup-new.active {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }

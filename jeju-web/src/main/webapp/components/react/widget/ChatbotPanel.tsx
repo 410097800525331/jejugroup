@@ -11,7 +11,6 @@ interface MessageItem {
 
 interface ChatbotPanelProps {
   isOpen: boolean;
-  onOpen: () => void;
   onClose: () => void;
   language: ChatbotLanguage;
   onLanguageChange: (language: ChatbotLanguage) => void;
@@ -21,7 +20,7 @@ const createWelcomeText = (language: ChatbotLanguage) => {
   return language === "en" ? "Hello, I am your Jeju Group assistant" : "안녕 나는 제주그룹 안내 도우미";
 };
 
-export const ChatbotPanel = ({ isOpen, onOpen, onClose, language, onLanguageChange }: ChatbotPanelProps) => {
+export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: ChatbotPanelProps) => {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -134,55 +133,45 @@ export const ChatbotPanel = ({ isOpen, onOpen, onClose, language, onLanguageChan
   };
 
   return (
-    <>
-      <button
-        className={`chatbot-toggle-btn ${isOpen ? "hidden" : ""}`}
-        aria-label={language === "en" ? "Open chatbot" : "챗봇 열기"}
-        onClick={onOpen}
-      >
-        <i data-lucide="message-circle" />
-      </button>
-
-      <div className={`chatbot-container ${isOpen ? "active" : ""}`}>
-        <div className="chatbot-header">
-          <h3>{language === "en" ? "Jeju Chatbot" : "제주 챗봇"}</h3>
-          <button className="chatbot-close-btn" onClick={onClose}>
-            닫기
-          </button>
-        </div>
-
-        <div className="chatbot-messages" ref={containerRef}>
-          {messages.map((message) => (
-            <div key={message.id} className={`message ${message.type}`}>
-              <div className="message-bubble">{message.content}</div>
-              <div className="message-time">
-                {message.timestamp.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
-              </div>
-            </div>
-          ))}
-          {loading ? (
-            <div className="message bot">
-              <div className="typing-indicator">
-                <div className="typing-dot" />
-                <div className="typing-dot" />
-                <div className="typing-dot" />
-              </div>
-            </div>
-          ) : null}
-        </div>
-
-        <form className="chatbot-input-area" onSubmit={onSubmit}>
-          <input
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder={language === "en" ? "Type a message" : "메시지 입력"}
-          />
-          <button type="submit" disabled={loading}>
-            {language === "en" ? "Send" : "전송"}
-          </button>
-        </form>
+    <div className={`chatbot-container ${isOpen ? "active" : ""}`}>
+      <div className="chatbot-header">
+        <h3>{language === "en" ? "Jeju Chatbot" : "제주 챗봇"}</h3>
+        <button className="chatbot-close-btn" onClick={onClose}>
+          닫기
+        </button>
       </div>
-    </>
+
+      <div className="chatbot-messages" ref={containerRef}>
+        {messages.map((message) => (
+          <div key={message.id} className={`message ${message.type}`}>
+            <div className="message-bubble">{message.content}</div>
+            <div className="message-time">
+              {message.timestamp.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+            </div>
+          </div>
+        ))}
+        {loading ? (
+          <div className="message bot">
+            <div className="typing-indicator">
+              <div className="typing-dot" />
+              <div className="typing-dot" />
+              <div className="typing-dot" />
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      <form className="chatbot-input-area" onSubmit={onSubmit}>
+        <input
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder={language === "en" ? "Type a message" : "메시지 입력"}
+        />
+        <button type="submit" disabled={loading}>
+          {language === "en" ? "Send" : "전송"}
+        </button>
+      </form>
+    </div>
   );
 };

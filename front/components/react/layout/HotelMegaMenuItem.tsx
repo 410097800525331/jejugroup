@@ -1,4 +1,5 @@
 import { HotelNavItem } from "@front-components/layout/hotelHeaderData";
+import { HotelShellIcon } from "@front-components/layout/HotelShellIcon";
 
 interface HotelMegaMenuItemProps {
   item: HotelNavItem;
@@ -6,31 +7,38 @@ interface HotelMegaMenuItemProps {
 
 export const HotelMegaMenuItem = ({ item }: HotelMegaMenuItemProps) => {
   return (
-    <li className="nav-item">
-      <a href="#" className="nav-link route-link" data-route={item.route}>
-        <i data-lucide={item.icon} className="nav-icon" />
+    <li className="hotel-shell-nav-item">
+      <a href="#" className="hotel-shell-nav-link route-link" data-route={item.route}>
+        <span className="hotel-shell-nav-icon-roll stagger-wrapper" aria-hidden="true">
+          <span className="hotel-shell-nav-icon-layer stagger-original">
+            <HotelShellIcon name={item.icon} className="hotel-shell-nav-icon" />
+          </span>
+          <span className="hotel-shell-nav-icon-layer stagger-clone">
+            <HotelShellIcon name={item.icon} className="hotel-shell-nav-icon" />
+          </span>
+        </span>
         <span data-lang={item.dataLang}>{item.label}</span>
       </a>
 
-      <div className="mega-dropdown">
-        <div className="mega-menu-list-container">
+      <div className="hotel-shell-mega-dropdown">
+        <div className="hotel-shell-mega-menu-list-container">
           {item.menuItems.map((menuItem) => (
             <a
               key={`${menuItem.route}-${menuItem.previewId}`}
               href="#"
-              className="mega-menu-item route-link"
+              className="hotel-shell-mega-menu-item route-link"
               data-route={menuItem.route}
               data-preview={menuItem.previewId}
             >
-              <i data-lucide={menuItem.icon} className="mega-menu-icon" />
+              <HotelShellIcon name={menuItem.icon} className="hotel-shell-mega-menu-icon" />
               <span>{menuItem.label}</span>
-              {menuItem.isNew ? <span className="badge-new">NEW</span> : null}
+              {menuItem.isNew ? <span className="hotel-shell-badge-new">NEW</span> : null}
             </a>
           ))}
         </div>
 
-        <div className="mega-menu-preview">
-          <div className="preview-loader">
+        <div className="hotel-shell-mega-menu-preview">
+          <div className="hotel-shell-preview-loader">
             <i className="fas fa-spinner fa-spin" />
           </div>
           {item.previews.map((preview, index) => (
@@ -39,7 +47,7 @@ export const HotelMegaMenuItem = ({ item }: HotelMegaMenuItemProps) => {
               id={preview.id}
               src={preview.src}
               alt={preview.alt}
-              className={`preview-image ${index === 0 ? "active" : ""}`}
+              className={`hotel-shell-preview-image ${index === 0 ? "active" : ""}`}
             />
           ))}
         </div>

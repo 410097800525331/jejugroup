@@ -9,7 +9,11 @@ let headerScrollBound = false;
 let headerAuthSyncQueued = false;
 
 const getCurrentHeader = () => {
-  return document.getElementById("header") || document.querySelector<HTMLElement>(".header");
+  return (
+    document.getElementById("header") ||
+    document.querySelector<HTMLElement>(".hotel-shell-header") ||
+    document.querySelector<HTMLElement>(".header")
+  );
 };
 
 const syncHeaderScrollState = () => {
@@ -28,6 +32,7 @@ const syncHeaderScrollState = () => {
 
 const bindHeaderScroll = () => {
   if (headerScrollBound) {
+    syncHeaderScrollState();
     return;
   }
 
@@ -37,7 +42,7 @@ const bindHeaderScroll = () => {
 };
 
 const bindMegaPreview = () => {
-  const megaItems = document.querySelectorAll<HTMLElement>(".mega-menu-item");
+  const megaItems = document.querySelectorAll<HTMLElement>(".hotel-shell-mega-menu-item");
   megaItems.forEach((item) => {
     if (item.dataset.previewBound === "true") {
       return;
@@ -46,17 +51,17 @@ const bindMegaPreview = () => {
     item.dataset.previewBound = "true";
     item.addEventListener("mouseenter", () => {
       const previewId = item.dataset.preview;
-      const parentDropdown = item.closest<HTMLElement>(".mega-dropdown");
+      const parentDropdown = item.closest<HTMLElement>(".hotel-shell-mega-dropdown");
       if (!previewId || !parentDropdown) {
         return;
       }
 
-      const previewArea = parentDropdown.querySelector<HTMLElement>(".mega-menu-preview");
+      const previewArea = parentDropdown.querySelector<HTMLElement>(".hotel-shell-mega-menu-preview");
       if (!previewArea) {
         return;
       }
 
-      previewArea.querySelectorAll<HTMLElement>(".preview-image").forEach((image) => {
+      previewArea.querySelectorAll<HTMLElement>(".hotel-shell-preview-image").forEach((image) => {
         image.classList.toggle("active", image.id === previewId);
       });
     });
@@ -85,17 +90,28 @@ const getLoginButton = () => {
   return document.getElementById("headerLoginBtn") || document.getElementById("indexLoginBtn");
 };
 
+const hydrateLucideIcons = (attempt = 0) => {
+  const lucide = (window as { lucide?: { createIcons?: () => void } }).lucide;
+  if (lucide?.createIcons) {
+    lucide.createIcons();
+    return;
+  }
+
+  if (attempt >= 30) {
+    return;
+  }
+
+  window.setTimeout(() => {
+    hydrateLucideIcons(attempt + 1);
+  }, 100);
+};
+
 const updateLoginButtonAsLogout = async (loginButton: HTMLElement & { href?: string }) => {
   const span = loginButton.querySelector("span");
   if (span) {
     span.textContent = "로그아웃";
   } else {
     loginButton.textContent = "로그아웃";
-  }
-
-  const icon = loginButton.querySelector("i");
-  if (icon) {
-    icon.setAttribute("data-lucide", "log-out");
   }
 
   if ("href" in loginButton) {
@@ -195,10 +211,7 @@ const syncHeaderAuthState = async () => {
     appendIndexAdminLink(indexHeaderUtil);
   }
 
-  if ((window as { lucide?: { createIcons?: () => void } }).lucide?.createIcons) {
-    const runtimeWindow = window as unknown as { lucide: { createIcons: () => void } };
-    runtimeWindow.lucide.createIcons();
-  }
+  hydrateLucideIcons();
 };
 
 const queueHeaderAuthSync = () => {
@@ -213,9 +226,14 @@ const queueHeaderAuthSync = () => {
   }, 0);
 };
 
-export const initHeader = () => {
+export const initHeader = (attempt = 0) => {
   const header = getCurrentHeader();
   if (!header) {
+    if (attempt < 20) {
+      window.setTimeout(() => {
+        initHeader(attempt + 1);
+      }, 50);
+    }
     return;
   }
 

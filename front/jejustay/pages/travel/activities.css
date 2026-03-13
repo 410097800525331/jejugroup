@@ -7,14 +7,6 @@ body.activities-page {
     min-height: 100vh;
 }
 
-/* Footer Overrides for Seamless Integration */
-.activities-page .footer {
-    background: transparent;
-    border-top: none;
-    padding-top: 100px;
-    margin-top: 0; /* Ensure no gap if there was margin */
-}
-
 /* Hero Section */
 .activity-hero {
     position: relative;
@@ -535,38 +527,3 @@ body.activities-page {
     margin-top: 10px;
 }
 
-/* Header Scroll View */
-.header.scrolled {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-}
-
-.header.scrolled .logo-group,
-.header.scrolled .logo-stay,
-.header.scrolled .logo-divider {
-    color: #000;
-}
-
-.header.scrolled .nav-link {
-    color: #333;
-}
-
-.header.scrolled .nav-link:hover,
-.header.scrolled .nav-link.active {
-    color: #FF5000;
-}
-
-.header.scrolled .util-link {
-    color: #333;
-}
-
-.header.scrolled .search-icon,
-.header.scrolled .util-icon {
-    /* If icons rely on inheritance */
-    color: inherit;
-}
-
-.header.scrolled .mobile-menu-btn {
-    color: #000;
-}

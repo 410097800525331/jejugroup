@@ -15,35 +15,6 @@ body.deals-page {
     background: #f8f9fa; /* Slightly different background for deals */
 }
 
-/* Header Visibility Override for Deals Page */
-body.deals-page .header .logo,
-body.deals-page .header .nav-link,
-body.deals-page .header .util-link,
-body.deals-page .header .mobile-menu-btn {
-    color: var(--text-title);
-}
-
-body.deals-page .header .logo-divider {
-    color: var(--text-muted);
-}
-
-body.deals-page .header .logo-stay {
-    color: var(--primary);
-}
-
-body.deals-page .header .nav-link.active,
-body.deals-page .header .nav-link:hover,
-body.deals-page .header .util-link:hover {
-    color: var(--primary);
-}
-
-/* Optional: Subtle background for better contrast if needed, matches glass theme */
-body.deals-page .header {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(4px);
-}
-
-
 /* ========== Hero Section (Glassmorphism) ========== */
 /* ========== Hero Section (Glassmorphism) ========== */
 .hero-glass {

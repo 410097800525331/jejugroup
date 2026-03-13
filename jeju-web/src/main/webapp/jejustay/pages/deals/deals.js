@@ -123,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initStickyNav();
     initTimer();
     initEventHandlers();
-    initMobileMenu();
 });
 
 /* ========== Coupons ========== */
@@ -374,17 +373,3 @@ function pad(n) {
     return n < 10 ? '0' + n : n;
 }
 
-function initMobileMenu() {
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const mobileNav = document.getElementById('mobileNav');
-    if (menuBtn && mobileNav) {
-        menuBtn.addEventListener('click', () => {
-            mobileNav.classList.toggle('active');
-            if (mobileNav.classList.contains('active')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        });
-    }
-}

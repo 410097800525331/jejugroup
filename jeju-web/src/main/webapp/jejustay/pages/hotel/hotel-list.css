@@ -31,29 +31,6 @@ body {
     padding-top: 72px; /* Header Height */
 }
 
-/* Force Header Style (Always White/Scrolled State) */
-.header {
-    background: rgba(255, 255, 255, 1);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-}
-
-.header .nav-link,
-.header .util-link,
-.header .mobile-menu-btn {
-    color: var(--text-main);
-}
-
-.header .logo-img {
-    filter: none;
-}
-
-.header .nav-link:hover,
-.header .util-link:hover {
-    color: var(--primary-color);
-}
-
 .container-wide {
     max-width: 1180px;
     margin: 0 auto;

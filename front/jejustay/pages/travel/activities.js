@@ -16,14 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Initialize Animations (Pre-hide to prevent FOUC)
     gsap.set(".activity-card", { autoAlpha: 0, y: 50 });
 
-    // 6. Initialize Header Scroll Logic
-    initHeaderScroll();
-
-    // 7. Initialize Wishlist Buttons
+    // 6. Initialize Wishlist Buttons
     initWishlistButtons();
-
-    // 8. Initialize Mobile Menu
-    initMobileMenu();
 });
 
 // Trigger Animation when everything is loaded (Images, Fonts)
@@ -178,24 +172,6 @@ function animateCards() {
     });
 }
 
-/* --- Header Scroll Logic --- */
-function initHeaderScroll() {
-    const header = document.getElementById('header');
-    
-    // Initial check
-    if (window.scrollY > 10) {
-        header.classList.add('scrolled');
-    }
-
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 10) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
-}
-
 /* --- Wishlist Button Logic --- */
 function initWishlistButtons() {
     const buttons = document.querySelectorAll('.wishlist-btn');
@@ -228,17 +204,3 @@ function initWishlistButtons() {
     });
 }
 
-function initMobileMenu() {
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const mobileNav = document.getElementById('mobileNav');
-    if (menuBtn && mobileNav) {
-        menuBtn.addEventListener('click', () => {
-            mobileNav.classList.toggle('active');
-            if (mobileNav.classList.contains('active')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        });
-    }
-}

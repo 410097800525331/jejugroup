@@ -241,6 +241,9 @@ export const createRangeCalendar = (userConfig?: RangeCalendarConfig): RangeCale
       }
       if (config.showHoverRange && checkIn && !checkOut && hoverDate && ts > checkIn && ts <= hoverDate) {
         classNames.push("DayPicker-Day--hoverRange");
+        if (ts === hoverDate) {
+          classNames.push("DayPicker-Day--hoverEnd");
+        }
       }
 
       html += `<div class="${classNames.join(" ")}" data-timestamp="${ts}" data-day="${day}">${formatDayLabel(day, ts)}</div>`;
@@ -257,6 +260,7 @@ export const createRangeCalendar = (userConfig?: RangeCalendarConfig): RangeCale
 
     popup.querySelectorAll<HTMLElement>(".DayPicker-Day").forEach((dayElement) => {
       dayElement.classList.remove("DayPicker-Day--hoverRange");
+      dayElement.classList.remove("DayPicker-Day--hoverEnd");
       if (!config.showHoverRange) {
         return;
       }
@@ -268,6 +272,9 @@ export const createRangeCalendar = (userConfig?: RangeCalendarConfig): RangeCale
 
       if (state.tempCheckIn && !state.tempCheckOut && hoverDate && ts > state.tempCheckIn && ts <= hoverDate) {
         dayElement.classList.add("DayPicker-Day--hoverRange");
+        if (ts === hoverDate) {
+          dayElement.classList.add("DayPicker-Day--hoverEnd");
+        }
       }
     });
   };

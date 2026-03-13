@@ -14,10 +14,6 @@ const rerender = () => {
   chatbotRoot.render(
     <ChatbotPanel
       isOpen={chatbotOpen}
-      onOpen={() => {
-        chatbotOpen = true;
-        rerender();
-      }}
       onClose={() => {
         chatbotOpen = false;
         rerender();

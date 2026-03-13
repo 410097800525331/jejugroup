@@ -22,10 +22,10 @@
     /* 그림자로 띄워줌 */
 }
 
-.header.scrolled:not(.hotel-header) .gnb-link,
-.header.scrolled:not(.hotel-header) .mypage-btn,
-.header.scrolled:not(.hotel-header) .lang-toggle,
-.header.scrolled:not(.hotel-header) .util-link {
+.header.scrolled:not(.hotel-shell-header) .gnb-link,
+.header.scrolled:not(.hotel-shell-header) .mypage-btn,
+.header.scrolled:not(.hotel-shell-header) .lang-toggle,
+.header.scrolled:not(.hotel-shell-header) .util-link {
     color: #ffffff;
 }
 
@@ -242,36 +242,52 @@
 }
 
 /* 호텔 헤더 내부 레이아웃 - 3단 그리드로 완벽한 중앙 정렬 보장 */
-.hotel-header .header-container {
+.hotel-shell-header .hotel-shell-header-container {
     height: var(--header-height, 72px);
-    display: grid;
-    grid-template-columns: minmax(170px, 1fr) auto minmax(170px, 1fr);
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    position: relative;
     width: 100%;
+    max-width: 1488px;
     margin: 0 auto;
-    padding: 0 60px;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.hotel-header .logo {
-    justify-self: start;
+.hotel-shell-header .hotel-shell-logo {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    min-width: 0;
 }
 
-.hotel-header .main-nav {
-    justify-self: center;
+.hotel-shell-header .hotel-shell-main-nav {
     display: flex;
     align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 528px);
+    min-width: 0;
 }
 
-.hotel-header .header-utils {
-    justify-self: end;
+.hotel-shell-header .hotel-shell-header-utils {
     display: flex;
     align-items: center;
     gap: 24px;
+    flex: 0 0 auto;
+    min-width: 0;
+    margin-left: auto;
+    justify-content: flex-end;
 }
 
-.hotel-header .nav-item {
+.hotel-shell-header .hotel-shell-nav-item {
     position: relative;
     /* 서브 메뉴의 기준점 확보 */
     height: 100%;
@@ -280,9 +296,279 @@
 }
 
 .main-header .logo-link img,
-.hotel-header .logo-img {
-    width: auto;
-    height: 60px;
+.hotel-shell-header .hotel-shell-logo-img {
+    width: 160px;
+    height: 32px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-nav-list {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 40px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.hotel-shell-header .hotel-shell-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #ffffff;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-nav-link::after {
+    display: none;
+}
+
+.hotel-shell-header .hotel-shell-nav-item:hover>.hotel-shell-nav-link,
+.hotel-shell-header .hotel-shell-nav-link:hover {
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-nav-icon-roll {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.hotel-shell-header .hotel-shell-nav-icon-layer {
+    position: absolute;
+    inset: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hotel-shell-header .hotel-shell-nav-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.hotel-shell-header .hotel-shell-nav-icon-roll .stagger-original {
+    transform: translateY(0);
+}
+
+.hotel-shell-header .hotel-shell-nav-icon-roll .stagger-clone {
+    transform: translateY(130%);
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .hotel-shell-nav-icon-roll .stagger-original,
+.hotel-shell-header .hotel-shell-nav-link.is-animating .hotel-shell-nav-icon-roll .stagger-clone {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .hotel-shell-nav-icon-roll .stagger-original {
+    transform: translateY(-130%);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .hotel-shell-nav-icon-roll .stagger-clone {
+    transform: translateY(0);
+}
+
+.hotel-shell-header .hotel-shell-util-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #ffffff;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-util-link:hover {
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-util-link:hover span {
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-util-link:hover .hotel-shell-util-icon {
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-util-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.header.scrolled.hotel-shell-header .hotel-shell-nav-link,
+.header.scrolled.hotel-shell-header .hotel-shell-util-link,
+.header.scrolled.hotel-shell-header .hotel-shell-mobile-menu-btn {
+    color: var(--text-title, #1f2937);
+    text-shadow: none;
+    -webkit-text-stroke: 0.3px currentColor;
+}
+
+.header.scrolled.hotel-shell-header .hotel-shell-logo-img {
+    filter: none;
+}
+
+.header.scrolled.hotel-shell-header .hotel-shell-nav-icon,
+.header.scrolled.hotel-shell-header .hotel-shell-util-icon,
+.header.scrolled.hotel-shell-header .hotel-shell-mobile-menu-btn svg {
+    stroke-width: 2.15px;
+}
+
+.header:not(.scrolled).hotel-shell-header .hotel-shell-nav-link,
+.header:not(.scrolled).hotel-shell-header .hotel-shell-util-link,
+.header:not(.scrolled).hotel-shell-header .hotel-shell-mobile-menu-btn {
+    color: #ffffff;
+    text-shadow: 0 2px 12px rgba(15, 23, 42, 0.28);
+}
+
+.hotel-shell-header .stagger-wrapper {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.hotel-shell-header .stagger-original,
+.hotel-shell-header .stagger-clone {
+    display: block;
+}
+
+.hotel-shell-header .stagger-original {
+    position: relative;
+}
+
+.hotel-shell-header .stagger-clone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.hotel-shell-header .stagger-char {
+    display: inline-block;
+    will-change: transform;
+    transition: transform 0s linear;
+}
+
+.hotel-shell-header .stagger-original .stagger-char {
+    transform: translateY(0);
+}
+
+.hotel-shell-header .stagger-clone .stagger-char {
+    transform: translateY(100%);
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .stagger-char {
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .stagger-original .stagger-char {
+    transform: translateY(-100%);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .stagger-clone .stagger-char {
+    transform: translateY(0);
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-mobile-menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #ffffff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface, #ffffff);
+    border-top: 1px solid var(--border, #e5e7eb);
+    padding: var(--space-md, 16px);
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav.active {
+    display: block;
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm, 8px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav-link {
+    display: block;
+    padding: var(--space-md, 16px);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-title, #111827);
+    text-decoration: none;
+    border-radius: var(--radius-md, 12px);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav-link:hover,
+.hotel-shell-header .hotel-shell-mobile-nav-link.active {
+    background: var(--primary-light, rgba(255, 80, 0, 0.08));
+    color: var(--primary, #FF5000);
+}
+
+@media (max-width: 1600px) {
+    .hotel-shell-header .hotel-shell-nav-list {
+        gap: 20px;
+    }
+
+    .hotel-shell-header .hotel-shell-header-utils {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 1180px) {
+    .hotel-shell-header .hotel-shell-header-container {
+        justify-content: space-between;
+    }
+
+    .hotel-shell-header .hotel-shell-main-nav,
+    .hotel-shell-header .hotel-shell-header-utils {
+        display: none;
+    }
+
+    .hotel-shell-header .hotel-shell-mobile-menu-btn {
+        display: flex;
+    }
 }
 
 /* GNB 네비게이션 */

@@ -102,6 +102,14 @@ export default function FABContainer() {
     document.dispatchEvent(new CustomEvent('fabCurrencyChanged', { detail: nextCurr }));
   };
 
+  const handleChatbotOpen = () => {
+    window.hotelChatbot?.openChatbot();
+
+    if (isOpen) {
+      toggleFab();
+    }
+  };
+
   const removeWishlist = (id: number) => {
     const newWishlist = wishlist.filter((i: WishlistItem) => i.id !== id);
     setWishlist(newWishlist);
@@ -164,6 +172,7 @@ export default function FABContainer() {
             className="card-4"
             label="CHAT"
             icon={MessageCircle}
+            onClick={handleChatbotOpen}
             onMouseEnter={() => handleCardHover(".card-4", true)}
             onMouseLeave={() => handleCardHover(".card-4", false)}
           />

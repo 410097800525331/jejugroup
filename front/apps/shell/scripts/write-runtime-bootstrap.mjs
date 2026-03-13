@@ -17,6 +17,9 @@ const bootstrapSource = `import {
   mountHotelShellRuntime,
   mountMainShellRuntime,
   mountMyPageRuntime,
+  mountHotelSearchWidgetPageRuntime,
+  mountLifeSearchWidgetPageRuntime,
+  mountTravelChecklistPageRuntime,
   setupLegacyChatbotRuntime,
   setupLegacyFabRuntime,
   setupWeatherWidgetRuntime
@@ -150,6 +153,12 @@ const hasPassAuthIsland = () => Boolean(document.getElementById("jeju-pass-auth-
 
 const hasMyPageIsland = () => Boolean(document.getElementById("mypage-dashboard-root"));
 
+const hasTravelChecklistIsland = () => Boolean(document.getElementById("jeju-travel-checklist-app"));
+
+const hasHotelSearchWidgetIsland = () => Boolean(document.getElementById("hotel-search-widget-root"));
+
+const hasLifeSearchWidgetIsland = () => Boolean(document.getElementById("life-search-widget-root"));
+
 const hasPageShellHosts = () =>
   Boolean(
     document.getElementById("jeju-page-shell-header") ||
@@ -197,6 +206,18 @@ const bootRuntime = async () => {
   if (hasMyPageIsland()) {
     mountMyPageRuntime();
   }
+
+  if (hasHotelSearchWidgetIsland()) {
+    await mountHotelSearchWidgetPageRuntime();
+  }
+
+  if (hasLifeSearchWidgetIsland()) {
+    await mountLifeSearchWidgetPageRuntime();
+  }
+
+  if (hasTravelChecklistIsland()) {
+    await mountTravelChecklistPageRuntime();
+  }
 };
 
 const start = () => {
@@ -214,6 +235,9 @@ const start = () => {
       !hasSignupIsland() &&
       !hasPassAuthIsland() &&
       !hasMyPageIsland() &&
+      !hasHotelSearchWidgetIsland() &&
+      !hasLifeSearchWidgetIsland() &&
+      !hasTravelChecklistIsland() &&
       !hasPageShellHosts()
     ) {
       ensureNavigator();

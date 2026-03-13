@@ -1,6 +1,6 @@
 export const MainFooterTemplate = () => {
   return (
-    <footer className="footer section" id="section-footer">
+    <footer className="footer section shell-footer" id="section-footer">
       <div className="footer-content">
         <div className="footer-info">
           <p>

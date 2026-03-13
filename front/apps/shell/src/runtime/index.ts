@@ -9,6 +9,9 @@ import { mountPassAuthRuntime } from "@runtime/pages/passAuth";
 import { mountMyPageDashboardRuntime } from "@runtime/pages/mypage";
 import { mountPageShellRuntime } from "@runtime/pages/pageShell";
 import { mountSignupRuntime } from "@runtime/pages/signup";
+import { mountTravelChecklistRuntime } from "@runtime/pages/travelChecklist";
+import { mountHotelSearchWidgetRuntime } from "@runtime/pages/hotelSearchWidget";
+import { mountLifeSearchWidgetRuntime } from "@runtime/pages/lifeSearchWidget";
 import { reservationDrawer } from "@runtime/ui/drawer";
 import { setupLegacyFab } from "@runtime/ui/fab";
 import { setupLegacyChatbot } from "@runtime/widget/chatbot";
@@ -90,6 +93,18 @@ export const mountAuthPassRuntime = () => {
 
 export const mountMyPageRuntime = () => {
   mountMyPageDashboardRuntime();
+};
+
+export const mountTravelChecklistPageRuntime = async () => {
+  await mountTravelChecklistRuntime();
+};
+
+export const mountHotelSearchWidgetPageRuntime = async () => {
+  await mountHotelSearchWidgetRuntime();
+};
+
+export const mountLifeSearchWidgetPageRuntime = async () => {
+  await mountLifeSearchWidgetRuntime();
 };
 
 export const runtimeReservationDrawer = reservationDrawer;
