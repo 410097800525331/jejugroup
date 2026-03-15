@@ -1,6 +1,7 @@
 import { initMegaMenu } from "@runtime/layout/megaMenu";
 import { initStaggerNav } from "@runtime/layout/stagger";
-import { resolveFromAppRoot } from "@runtime/utils/appRoot";
+import { isLocalFrontEnvironment } from "@front-core-auth/local_admin.js";
+import { logoutSession, resolveSession } from "@front-core-auth/session_manager.js";
 
 const SESSION_STORAGE_KEY = "userSession";
 const SESSION_UPDATE_EVENT = "jeju:session-updated";
@@ -130,11 +131,7 @@ const updateLoginButtonAsLogout = async (loginButton: HTMLElement & { href?: str
     event.stopPropagation();
 
     try {
-      const modulePath = resolveFromAppRoot("core/auth/session_manager.js");
-      const sessionModule = await import(modulePath);
-      if (typeof sessionModule.logoutSession === "function") {
-        await sessionModule.logoutSession();
-      }
+      await logoutSession();
     } catch (_error) {
       localStorage.removeItem(SESSION_STORAGE_KEY);
     }
@@ -166,11 +163,7 @@ const appendIndexAdminLink = (headerUtil: HTMLElement) => {
 
 const resolveSessionData = async () => {
   try {
-    const modulePath = resolveFromAppRoot("core/auth/session_manager.js");
-    const sessionModule = await import(modulePath);
-    if (typeof sessionModule.resolveSession === "function") {
-      return await sessionModule.resolveSession();
-    }
+    return await resolveSession();
   } catch (_error) {
   }
 
@@ -184,9 +177,7 @@ const resolveSessionData = async () => {
 
 const canOpenAdmin = async () => {
   try {
-    const modulePath = resolveFromAppRoot("core/auth/local_admin.js");
-    const adminModule = await import(modulePath);
-    return typeof adminModule.isLocalFrontEnvironment === "function" && adminModule.isLocalFrontEnvironment();
+    return isLocalFrontEnvironment();
   } catch (_error) {
     return false;
   }

@@ -12,8 +12,9 @@ import {
   mountTravelChecklistPageRuntime,
   setupLegacyChatbotRuntime,
   setupLegacyFabRuntime,
-  setupWeatherWidgetRuntime
+  setupWeatherWidgetRuntime,
 } from "./shell-runtime.js";
+import { installRuntimeLifecycle, markRuntimeReady } from "./shell-runtime.js";
 
 const BOOT_FLAG = "__JEJU_RUNTIME_BOOTSTRAP_PROMISE__";
 const NAV_LOCK_TTL_MS = 1200;
@@ -89,13 +90,14 @@ const ensureNavigator = () => {
     window.__JEJU_ROUTE_NAVIGATOR__ = {
       appRoot: APP_ROOT,
       homeUrl: new URL("index.html", APP_ROOT).href,
-      safeNavigate
+      safeNavigate,
     };
     return;
   }
 
   window.__JEJU_ROUTE_NAVIGATOR__.appRoot = window.__JEJU_ROUTE_NAVIGATOR__.appRoot || APP_ROOT;
-  window.__JEJU_ROUTE_NAVIGATOR__.homeUrl = window.__JEJU_ROUTE_NAVIGATOR__.homeUrl || new URL("index.html", APP_ROOT).href;
+  window.__JEJU_ROUTE_NAVIGATOR__.homeUrl =
+    window.__JEJU_ROUTE_NAVIGATOR__.homeUrl || new URL("index.html", APP_ROOT).href;
   if (!window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate) {
     window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate = safeNavigate;
   }
@@ -131,7 +133,7 @@ const hasWeatherUi = () => {
   return Boolean(
     document.getElementById("weather-open-btn") ||
       document.getElementById("weather-overlay") ||
-      document.getElementById("weather-detail-container")
+      document.getElementById("weather-detail-container"),
   );
 };
 
@@ -150,12 +152,11 @@ const hasHotelSearchWidgetIsland = () => Boolean(document.getElementById("hotel-
 const hasLifeSearchWidgetIsland = () => Boolean(document.getElementById("life-search-widget-root"));
 
 const hasPageShellHosts = () =>
-  Boolean(
-    document.getElementById("jeju-page-shell-header") ||
-      document.getElementById("jeju-page-shell-footer")
-  );
+  Boolean(document.getElementById("jeju-page-shell-header") || document.getElementById("jeju-page-shell-footer"));
 
 const bootRuntime = async () => {
+  installRuntimeLifecycle();
+  markRuntimeReady("bootstrap");
   ensureNavigator();
   installLegacyGlobals();
 

@@ -16,6 +16,7 @@ import { reservationDrawer } from "@runtime/ui/drawer";
 import { setupLegacyFab } from "@runtime/ui/fab";
 import { setupLegacyChatbot } from "@runtime/widget/chatbot";
 import { setupWeatherWidget } from "@runtime/widget/weather";
+export { installRuntimeLifecycle, markRuntimeReady, whenRuntimeReady } from "@runtime/lifecycle";
 
 export const mountMainShellRuntime = async () => {
   installLegacyGlobals();

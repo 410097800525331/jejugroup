@@ -60,39 +60,39 @@ html {
 }
 
 /* 2. Header / Footer Sync (Login Style) */
-.signup-page .header {
-  background: #ffffff !important;
-  box-shadow: none !important;
-  border-bottom: 1px solid #eeeeee !important;
-  position: relative !important;
+body.signup-page .header {
+  background: #ffffff;
+  box-shadow: none;
+  border-bottom: 1px solid #eeeeee;
+  position: relative;
 }
 
-.signup-page .header .gnb-link,
-.signup-page .header .util-link,
-.signup-page .header .lang-toggle,
-.signup-page .header .mypage-btn,
-.signup-page .header .util-divider {
-  color: #333333 !important;
-  text-shadow: none !important;
+body.signup-page .header .gnb-link,
+body.signup-page .header .util-link,
+body.signup-page .header .lang-toggle,
+body.signup-page .header .mypage-btn,
+body.signup-page .header .util-divider {
+  color: #333333;
+  text-shadow: none;
 }
 
-.signup-page .header .logo-img {
-  filter: none !important;
+body.signup-page .header .logo-img {
+  filter: none;
 }
 
-.signup-page .lang-toggle {
-  border-color: #ddd !important;
-  color: #333333 !important;
+body.signup-page .lang-toggle {
+  border-color: #ddd;
+  color: #333333;
 }
 
-.signup-page .footer {
-  background-color: #EEEEEE !important;
-  padding: 60px 40px !important;
-  display: block !important;
+body.signup-page .footer {
+  background-color: #EEEEEE;
+  padding: 60px 40px;
+  display: block;
 }
 
-.signup-page .footer-copyright {
-  border-top: none !important;
+body.signup-page .footer-copyright {
+  border-top: none;
 }
 
 /* Page Layout Wrapper */
@@ -537,12 +537,12 @@ html {
 
 /* Readonly Input Styling */
 .readonly-input {
-  background-color: #f7f7f7 !important;
+  background-color: #f7f7f7;
   color: #666;
-  border-color: #e0e0e0 !important;
+  border-color: #e0e0e0;
   cursor: not-allowed;
-  box-shadow: none !important;
-  transform: none !important;
+  box-shadow: none;
+  transform: none;
 }
 
 

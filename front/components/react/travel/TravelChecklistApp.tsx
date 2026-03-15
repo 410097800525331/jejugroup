@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { RotateCcw, Sparkles } from "lucide-react";
 import { TravelChecklistSection } from "@front-components/travel/TravelChecklistSection";
 import { TRAVEL_CHECKLIST_SECTIONS } from "@front-components/travel/travelChecklistData";
+import { useAnimatedNumber } from "@front-components/travel/useAnimatedNumber";
 
 const STORAGE_KEY = "jeju:travel-checklist-items";
 
@@ -21,6 +22,8 @@ const getStoredChecklist = () => {
 
 export const TravelChecklistApp = () => {
   const [checkedIds, setCheckedIds] = useState<string[]>(() => getStoredChecklist());
+  const [isProgressAnimating, setIsProgressAnimating] = useState(false);
+  const [isCompletionCelebrating, setIsCompletionCelebrating] = useState(false);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedIds));
@@ -41,6 +44,42 @@ export const TravelChecklistApp = () => {
 
     return Math.round((checkedIds.length / totalCount) * 100);
   }, [checkedIds.length, totalCount]);
+
+  const animatedProgress = useAnimatedNumber(progress);
+  const animatedProgressLabel = useMemo(() => {
+    return Math.round(animatedProgress);
+  }, [animatedProgress]);
+  const previousProgressRef = useRef(progress);
+  const isComplete = progress === 100;
+
+  useEffect(() => {
+    setIsProgressAnimating(true);
+    const timeoutId = window.setTimeout(() => {
+      setIsProgressAnimating(false);
+    }, 480);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [progress]);
+
+  useEffect(() => {
+    const previousProgress = previousProgressRef.current;
+    previousProgressRef.current = progress;
+
+    if (progress !== 100 || previousProgress === 100) {
+      return undefined;
+    }
+
+    setIsCompletionCelebrating(true);
+    const timeoutId = window.setTimeout(() => {
+      setIsCompletionCelebrating(false);
+    }, 1400);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [progress]);
 
   const progressLabel = useMemo(() => {
     if (progress === 100) {
@@ -80,22 +119,36 @@ export const TravelChecklistApp = () => {
             마지막에 허둥대지 않게 한 화면에 묶어둔 여행 준비판
           </p>
         </div>
-        <aside className="travel-checklist-progress-card">
-          <div className="travel-checklist-progress-ring" style={{ "--progress": `${progress}%` } as CSSProperties}>
-            <div className="travel-checklist-progress-ring-inner">
-              <strong>{progress}%</strong>
-              <span>
-                {checkedIds.length} / {totalCount}
-              </span>
-            </div>
-          </div>
-          <p className="travel-checklist-progress-label">{progressLabel}</p>
-          <button className="travel-checklist-reset" onClick={handleReset} type="button">
-            <RotateCcw size={16} strokeWidth={2.4} />
-            초기화
-          </button>
-        </aside>
       </section>
+
+      <aside
+        className={`travel-checklist-progress-card${isComplete ? " is-complete" : ""}${isCompletionCelebrating ? " is-celebrating" : ""}`}
+      >
+        <div
+          className={`travel-checklist-progress-ring${isProgressAnimating ? " is-animating" : ""}${isComplete ? " is-complete" : ""}${isCompletionCelebrating ? " is-celebrating" : ""}`}
+          style={{ "--progress": `${animatedProgress}%` } as CSSProperties}
+        >
+          <div className="travel-checklist-progress-ring-inner">
+            <strong>
+              <span className="travel-checklist-progress-value">{animatedProgressLabel}</span>
+              <span className="travel-checklist-progress-unit">%</span>
+            </strong>
+            <span>
+              {checkedIds.length} / {totalCount}
+            </span>
+          </div>
+        </div>
+        <p className="travel-checklist-progress-label">{progressLabel}</p>
+        {isComplete ? (
+          <span className={`travel-checklist-complete-badge${isCompletionCelebrating ? " is-celebrating" : ""}`}>
+            출국 준비 완료
+          </span>
+        ) : null}
+        <button className="travel-checklist-reset" onClick={handleReset} type="button">
+          <RotateCcw size={16} strokeWidth={2.4} />
+          초기화
+        </button>
+      </aside>
 
       <section className="travel-checklist-summary">
         <div className="travel-checklist-summary-card">

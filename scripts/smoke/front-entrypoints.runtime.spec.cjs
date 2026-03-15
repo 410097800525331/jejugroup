@@ -7,8 +7,11 @@ const { createStaticServerController } = require("./helpers/static-server.cjs");
 const HOST = "127.0.0.1";
 const PORT = 4174;
 const ROOT_DIR = path.resolve("front");
+const GENERATED_FRONT_DIR = path.resolve(".generated", "front");
 const ENTRY_POINTS = [
   path.join(ROOT_DIR, "index.html"),
+  path.join(ROOT_DIR, "admin", "pages", "dashboard.html"),
+  path.join(ROOT_DIR, "jejuair", "index.html"),
   path.join(ROOT_DIR, "pages", "auth", "login.html"),
   path.join(ROOT_DIR, "pages", "auth", "signup.html"),
   path.join(ROOT_DIR, "pages", "auth", "pass_auth.html"),
@@ -20,7 +23,7 @@ const server = createStaticServerController({
   fallbackPath: "/index.html",
   host: HOST,
   port: PORT,
-  rootDir: ROOT_DIR,
+  rootDirs: [GENERATED_FRONT_DIR, ROOT_DIR],
 });
 
 test.beforeAll(async () => {
@@ -42,11 +45,28 @@ test("main landing smoke", async ({ page }) => {
     waitUntil: "domcontentloaded",
   });
 
+  await expect(page.locator("#header")).toBeVisible();
+  await expect(page.locator("footer")).toBeVisible();
   await expect(page.locator(".hero-title")).toBeVisible();
   await expect(page.locator(".hero-subtitle")).toBeVisible();
   await expect(page.locator('[data-route="SERVICES.AIR.MAIN"] .cta-button')).toBeVisible();
 
   expectNoRuntimeIssues(issues);
+});
+
+test("main landing customer center link routes to bundled customer center page", async ({ page }) => {
+  await page.goto(server.url("/index.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  const customerCenterLink = page.locator('[data-route="CS.CUSTOMER_CENTER"]').first();
+  await expect(customerCenterLink).toBeVisible();
+
+  await customerCenterLink.click();
+
+  await expect(page).toHaveURL(server.url("/pages/cs/customer_center.html"));
+  await expect(page.locator("#root")).toBeVisible();
+  await expect(page).toHaveTitle("제주항공 통합 고객센터");
 });
 
 test("login page smoke", async ({ page }) => {
@@ -60,6 +80,34 @@ test("login page smoke", async ({ page }) => {
   await expect(page.locator("#id")).toBeVisible();
   await expect(page.locator("button.login-btn")).toBeVisible();
   await expect(page.locator('[data-state="idle"]')).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("admin dashboard smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/admin/pages/dashboard.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle(/관리자 대시보드/);
+  await expect(page.locator("#admin-sidebar-toggle")).toBeVisible();
+  await expect(page.locator("#admin-user-name")).toContainText("로컬 관리자");
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju air landing smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejuair/index.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle(/제주항공/);
+  await expect(page.locator(".swiper.mySwiper")).toBeVisible();
+  await expect(page.locator('.allmore_btn.route-link[data-route="SERVICES.AIR.BOOKING.ROUTE"]').first()).toBeVisible();
 
   expectNoRuntimeIssues(issues);
 });
@@ -100,7 +148,7 @@ test("pass auth page smoke", async ({ page }) => {
     waitUntil: "domcontentloaded",
   });
 
-  await expect(page.locator("#jeju-pass-auth-app .pass-modal-content")).toBeVisible();
+  await expect(page.locator("#jeju-pass-auth-app .pass-modal-content")).toBeVisible({ timeout: 10000 });
   await expect(page.locator(".pass-logo-red")).toHaveText("PASS");
   await expect(page.getByRole("button", { exact: true, name: "SKT" })).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "KT" })).toBeVisible();

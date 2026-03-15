@@ -64,24 +64,25 @@
 
         .tier-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, min-min(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
             margin-top: 50px;
         }
 
         .tier-card {
-            background: #fff;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 30%, #e2e8f0 50%, #f3f4f6 70%, #ffffff 100%);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.05), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 0.4s ease;
             position: relative;
             overflow: hidden;
-            border: 1px solid #eee;
+            border: 1px solid #cbd5e1;
         }
 
         .tier-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-12px);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.08);
         }
 
         .tier-header {
@@ -94,23 +95,28 @@
         .tier-icon {
             width: 50px;
             height: 50px;
-            background: #f3f4f6;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
         }
 
         .tier-name {
             font-size: 1.5rem;
-            font-weight: 700;
+            font-weight: 800;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
         }
 
         .tier-benefits {
             list-style: none;
             padding: 0;
             margin: 0;
+            position: relative;
+            z-index: 1;
         }
 
         .tier-benefits li {
@@ -125,25 +131,63 @@
             color: #ff7800;
         }
 
+        .tier-card-price {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .popular-badge {
+            font-size: 0.8125rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            color: #b45309;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 4px 10px;
+            border-radius: 999px;
+            margin-left: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid #fcd34d;
+        }
+
         /* Gold Tier */
         .tier-card.gold {
-            border: 2px solid #ffd700;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef08a 30%, #eab308 50%, #fef08a 70%, #fffbeb 100%);
+            border: 1px solid #ca8a04;
+            box-shadow: 0 14px 40px rgba(234, 179, 8, 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.9);
         }
 
         .tier-card.gold .tier-icon {
-            background: #fff9db;
-            color: #f59f00;
+            background: rgba(255, 255, 255, 0.7);
+            color: #ca8a04;
+            border: 1px solid #fef08a;
         }
 
-        /* Diamond Tier */
-        .tier-card.diamond {
-            background: linear-gradient(to bottom, #fff, #f8faff);
-            border: 2px solid #70a1ff;
+        /* Platinum Tier */
+        .tier-card.platinum {
+            background: linear-gradient(135deg, #3f3f46 0%, #52525b 30%, #18181b 50%, #52525b 70%, #3f3f46 100%);
+            border: 1px solid #09090b;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+            color: #f4f4f5;
         }
 
-        .tier-card.diamond .tier-icon {
-            background: #e7f5ff;
-            color: #339af0;
+        .tier-card.platinum .tier-icon {
+            background: rgba(39, 39, 42, 0.8);
+            color: #f4f4f5;
+            border: 1px solid #52525b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .tier-card.platinum .tier-name {
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+        
+        .tier-card.platinum .tier-card-price,
+        .tier-card.platinum .tier-benefits li {
+            color: #e4e4e7;
         }
 
         .exclusive-deals {
@@ -244,10 +288,12 @@
                             <div class="tier-icon"><i data-lucide="award"></i></div>
                             <span class="tier-name">SILVER</span>
                         </div>
+                        <p class="tier-card-price">월 29,900원</p>
                         <ul class="tier-benefits">
-                            <li><i data-lucide="check-circle"></i> 숙소 예약 시 포인트 1% 적립</li>
-                            <li><i data-lucide="check-circle"></i> 회원 전용 특가 상품 구매 권한</li>
-                            <li><i data-lucide="check-circle"></i> 신규 가입 시 5,000원 쿠폰팩</li>
+                            <li><i data-lucide="check-circle"></i> 항공권 5% 할인</li>
+                            <li><i data-lucide="check-circle"></i> 호텔 예약 10% 할인</li>
+                            <li><i data-lucide="check-circle"></i> 렌트카 기본료 할인</li>
+                            <li><i data-lucide="check-circle"></i> 우선 고객 지원</li>
                         </ul>
                     </div>
 
@@ -257,26 +303,33 @@
                             <div class="tier-icon"><i data-lucide="award"></i></div>
                             <span class="tier-name">GOLD</span>
                         </div>
+                        <p class="tier-card-price" style="display: flex; align-items: center;">
+                            월 49,900원
+                            <span class="popular-badge">인기</span>
+                        </p>
                         <ul class="tier-benefits">
-                            <li><i data-lucide="check-circle"></i> 숙소 예약 시 포인트 3% 적립</li>
-                            <li><i data-lucide="check-circle"></i> 인기 호텔 무료 조식 혜택 (일부)</li>
-                            <li><i data-lucide="check-circle"></i> 레이트 체크아웃 1시간 (가능 시)</li>
-                            <li><i data-lucide="check-circle"></i> 매달 10% 추가 할인 쿠폰 제공</li>
+                            <li><i data-lucide="check-circle"></i> 항공권 10% 할인</li>
+                            <li><i data-lucide="check-circle"></i> 호텔 예약 15% 할인</li>
+                            <li><i data-lucide="check-circle"></i> 렌트카 기본료 20% 할인</li>
+                            <li><i data-lucide="check-circle"></i> 무료 공항 라운지</li>
+                            <li><i data-lucide="check-circle"></i> 우선 예약 서비스</li>
                         </ul>
                     </div>
 
-                    <!-- Diamond -->
-                    <div class="tier-card diamond">
+                    <!-- Platinum -->
+                    <div class="tier-card platinum">
                         <div class="tier-header">
                             <div class="tier-icon"><i data-lucide="gem"></i></div>
-                            <span class="tier-name">DIAMOND</span>
+                            <span class="tier-name">PLATINUM</span>
                         </div>
+                        <p class="tier-card-price">월 79,900원</p>
                         <ul class="tier-benefits">
-                            <li><i data-lucide="check-circle"></i> 숙소 예약 시 포인트 5% 적립</li>
-                            <li><i data-lucide="check-circle"></i> 무료 객실 업그레이드 (가능 시)</li>
-                            <li><i data-lucide="check-circle"></i> 24시간 전담 상담 센터 연결</li>
-                            <li><i data-lucide="check-circle"></i> 공항 라운지 무료 이용권 (연 2회)</li>
-                            <li><i data-lucide="check-circle"></i> 전 세계 어트랙션 우선 입장</li>
+                            <li><i data-lucide="check-circle"></i> 항공권 15% 할인</li>
+                            <li><i data-lucide="check-circle"></i> 호텔 예약 20% 할인</li>
+                            <li><i data-lucide="check-circle"></i> 렌트카 기본료 30% 할인</li>
+                            <li><i data-lucide="check-circle"></i> VIP 라운지 이용</li>
+                            <li><i data-lucide="check-circle"></i> 전담 컨시어지 서비스</li>
+                            <li><i data-lucide="check-circle"></i> 무료 취소 정책</li>
                         </ul>
                     </div>
                 </div>

@@ -14,19 +14,34 @@ const CONTENT_TYPES = {
   ".webp": "image/webp",
 };
 
-const createStaticServerController = ({ fallbackPath, host, port, rootDir }) => {
+const normalizeRootDirs = ({ rootDir, rootDirs }) => {
+  if (Array.isArray(rootDirs) && rootDirs.length > 0) {
+    return rootDirs.map((dir) => path.resolve(dir));
+  }
+
+  return [path.resolve(rootDir)];
+};
+
+const createStaticServerController = ({ fallbackPath, host, port, rootDir, rootDirs }) => {
   let server;
+  const resolvedRootDirs = normalizeRootDirs({ rootDir, rootDirs });
 
   const resolveFilePath = (requestUrl = "/") => {
     const pathname = decodeURIComponent(new URL(requestUrl, `http://${host}:${port}`).pathname);
     const normalizedPath = pathname === "/" ? fallbackPath : pathname;
-    const filePath = path.resolve(rootDir, `.${normalizedPath}`);
 
-    if (!filePath.startsWith(rootDir)) {
-      return null;
+    for (const currentRootDir of resolvedRootDirs) {
+      const filePath = path.resolve(currentRootDir, `.${normalizedPath}`);
+      if (!filePath.startsWith(currentRootDir)) {
+        continue;
+      }
+
+      if (fs.existsSync(filePath)) {
+        return filePath;
+      }
     }
 
-    return filePath;
+    return path.resolve(resolvedRootDirs[resolvedRootDirs.length - 1], `.${normalizedPath}`);
   };
 
   const createStaticServer = () =>

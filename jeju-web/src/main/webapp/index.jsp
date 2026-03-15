@@ -216,7 +216,7 @@
     </div>
 
     <script src="core/constants/lang_data.js"></script>
-    <script src="jejustay/pages/hotel/main.js"></script>
+    <script src="core/pages/landing/main.js"></script>
 <!-- Component Loader for index.html -->
 <!-- UI State Reconciliation -> Sync Global Auth State -->
     <script>
@@ -279,5 +279,4 @@
 </body>
 
 </html>
-
 

@@ -8,7 +8,7 @@ export default defineConfig({
   },
   plugins: [react()],
   build: {
-    outDir: path.resolve(import.meta.dirname, "../../components/runtime"),
+    outDir: path.resolve(import.meta.dirname, "../../../.generated/front/components/runtime"),
     emptyOutDir: true,
     lib: {
       entry: path.resolve(import.meta.dirname, "src/runtime/index.ts"),
@@ -26,7 +26,9 @@ export default defineConfig({
     alias: {
       "@runtime": path.resolve(import.meta.dirname, "src/runtime"),
       "@front-fab": path.resolve(import.meta.dirname, "../../components/react/ui/FAB"),
-      "@front-components": path.resolve(import.meta.dirname, "../../components/react")
+      "@front-components": path.resolve(import.meta.dirname, "../../components/react"),
+      "@front-core-auth": path.resolve(import.meta.dirname, "../../core/auth"),
+      "@front-core-utils": path.resolve(import.meta.dirname, "../../core/utils")
     }
   },
   server: {

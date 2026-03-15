@@ -1,7 +1,9 @@
 {
   "private": true,
   "workspaces": [
-    "front/apps/cs"
+    "front/apps/cs",
+    "front/apps/shell",
+    "front/components/react"
   ],
   "scripts": {
     "scan:routes": "node front/scripts/scan_hardcoded_routes.js",
@@ -9,6 +11,7 @@
     "test:build": "pnpm run build:shell && pnpm run build:cs",
     "test:smoke": "pnpm run smoke:cs && pnpm run smoke:front",
     "test": "pnpm run lint && pnpm run test:build",
+    "dev:front": "vite --config vite.front.config.mjs",
     "dev:cs": "pnpm -C front/apps/cs dev",
     "check:cs": "pnpm -C front/apps/cs check",
     "build:cs": "pnpm -C front/apps/cs build",
@@ -32,8 +35,10 @@
     "ssh2": "^1.17.0"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
     "@faker-js/faker": "^10.3.0",
     "bcryptjs": "^3.0.3",
-    "fs-extra": "^11.3.4"
+    "fs-extra": "^11.3.4",
+    "vite": "^5.4.14"
   }
 }

@@ -21,8 +21,14 @@
 }
 
 html {
-    overflow: hidden; /* Disable native scroll (hide scrollbar) */
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
     /* Removed height: 100% to allow document to grow */
+}
+
+html::-webkit-scrollbar {
+    display: none;
 }
 
 body {
@@ -31,6 +37,7 @@ body {
     background-color: #ffffff;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
     /* Removed height: 100% and overflow: hidden so body grows with content */
 }
 

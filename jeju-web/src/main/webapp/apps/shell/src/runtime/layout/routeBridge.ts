@@ -1,5 +1,6 @@
-import { resolveFromAppRoot } from "@runtime/utils/appRoot";
 import { getFallbackHomeUrl, safeNavigate } from "@runtime/utils/navigation";
+import { resolveRoute } from "@front-core-utils/path_resolver.js";
+import { initRouterBinder } from "@front-core-utils/router_binder.js";
 
 const parseRouteParams = (element: Element) => {
   const raw = element.getAttribute("data-route-params");
@@ -22,9 +23,7 @@ const redirectByRoute = async (element: Element) => {
   }
 
   try {
-    const resolverPath = resolveFromAppRoot("core/utils/path_resolver.js");
-    const resolverModule = await import(resolverPath);
-    const targetUrl = resolverModule.resolveRoute(routeKey, parseRouteParams(element));
+    const targetUrl = resolveRoute(routeKey, parseRouteParams(element));
     safeNavigate(targetUrl, "shell-runtime-fallback");
   } catch (_error) {
     safeNavigate(getFallbackHomeUrl(), "shell-runtime-fallback-home");
@@ -41,9 +40,7 @@ export const ensureRouteBinder = async () => {
   binderInitialized = true;
 
   try {
-    const binderPath = resolveFromAppRoot("core/utils/router_binder.js");
-    const binderModule = await import(binderPath);
-    binderModule.initRouterBinder();
+    initRouterBinder();
     return;
   } catch (error) {
     console.warn("[ShellRuntime] router binder load failed", error);

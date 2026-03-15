@@ -1,6 +1,7 @@
 import { clearAirShellBase, mountAirPageShell, syncAirShellBase } from "@runtime/pages/airShell";
 import { installLegacyGlobals } from "@runtime/globals";
 import { mountHotelShell, mountMainShell } from "@runtime/layout/shellMount";
+import { markRuntimeReady } from "@runtime/lifecycle";
 import { getAppRoot } from "@runtime/utils/appRoot";
 
 const SHELL_QUERY_KEY = "shell";
@@ -105,11 +106,6 @@ const persistShell = (shell: string) => {
   document.body.dataset.mypageShell = shell;
 };
 
-const dispatchShellEvents = () => {
-  document.dispatchEvent(new Event("mainHeaderLoaded"));
-  document.dispatchEvent(new Event("mainFooterLoaded"));
-};
-
 const mountReactMainShell = async () => {
   const { footerHost, headerHost } = getPageShellHosts();
   if (!headerHost || !footerHost) {
@@ -166,7 +162,7 @@ export const mountPageShellRuntime = async () => {
   installLegacyGlobals();
 
   if (mountedShell === shell && headerHost.childElementCount > 0 && footerHost.childElementCount > 0) {
-    dispatchShellEvents();
+    markRuntimeReady("page-shell");
     return shell;
   }
 
@@ -180,6 +176,6 @@ export const mountPageShellRuntime = async () => {
   }
 
   mountedShell = shell;
-  dispatchShellEvents();
+  markRuntimeReady("page-shell");
   return shell;
 };

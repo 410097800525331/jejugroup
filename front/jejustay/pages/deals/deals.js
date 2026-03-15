@@ -324,20 +324,19 @@ function loadMoreDeals() {
 }
 
 function initStickyNav() {
-    /* Sticky behavior disabled by user request
     const nav = document.getElementById('stickyCatNav');
-    const header = document.querySelector('header');
-    
     if (!nav) return;
 
+    // Throttle via rAF for performance if necessary, but standard scroll listener is fine for toggling one class
     window.addEventListener('scroll', () => {
-        if (window.scrollY > header.offsetHeight + 400) { // Approx after Hero
+        // Due to "top: 72px", element will stick exactly at boundingClientRect = 72.
+        // We use <= 73 to cover fractional sub-pixel scroll values.
+        if (nav.getBoundingClientRect().top <= 73) {
             nav.classList.add('scrolled');
         } else {
             nav.classList.remove('scrolled');
         }
     });
-    */
 }
 
 function initTimer() {

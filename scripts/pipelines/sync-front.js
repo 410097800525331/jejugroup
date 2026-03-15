@@ -3,6 +3,7 @@ const path = require('path');
 
 const rootDir = path.resolve(__dirname, '../../');
 const frontDir = path.join(rootDir, 'front');
+const generatedFrontDir = path.join(rootDir, '.generated', 'front');
 const webappDir = path.join(rootDir, 'jeju-web', 'src', 'main', 'webapp');
 
 const EXCLUDE_BASENAMES = new Set([
@@ -18,11 +19,22 @@ const EXCLUDE_PATTERNS = [
 ];
 
 const shouldExclude = (srcPath) => {
-    const basename = path.basename(srcPath);
-    if (EXCLUDE_BASENAMES.has(basename)) {
-        return true;
-    }
-    return EXCLUDE_PATTERNS.some((pattern) => pattern.test(basename));
+  const basename = path.basename(srcPath);
+  if (EXCLUDE_BASENAMES.has(basename)) {
+    return true;
+  }
+
+  const relativePath = path.relative(frontDir, srcPath).replace(/\\/g, '/');
+  if (
+    relativePath === 'components/runtime' ||
+    relativePath.startsWith('components/runtime/') ||
+    relativePath === 'pages/cs' ||
+    relativePath.startsWith('pages/cs/')
+  ) {
+    return true;
+  }
+
+  return EXCLUDE_PATTERNS.some((pattern) => pattern.test(basename));
 };
 
 async function sync() {
@@ -44,6 +56,10 @@ async function sync() {
         await fs.copy(frontDir, webappDir, {
             filter: (src) => !shouldExclude(src)
         });
+
+        if (await fs.pathExists(generatedFrontDir)) {
+            await fs.copy(generatedFrontDir, webappDir, { overwrite: true });
+        }
 
         // index.html을 JSP 진입점으로 복제
         const htmlPath = path.join(webappDir, 'index.html');

@@ -1480,25 +1480,31 @@ body.long-stay-page {
     /* 화이트 배경 대비 전용 호버 */
 }
 
-.long-stay-search-widget #calendarPopup {
-    top: calc(100% + 8px);
+.long-stay-search-widget .search-item-v2 > #calendarPopup,
+.long-stay-search-widget .search-item-v2 > #guestPopupLarge,
+.long-stay-search-widget .search-item-v2 > #optionsPopupLarge,
+.long-stay-search-widget .search-item-v2 > #destinationDropdown {
+    top: 100%;
+    margin-top: 20px;
+    transform: translateY(0);
+}
+
+.long-stay-search-widget .search-item-v2 > #calendarPopup {
     left: 0;
 }
 
-.long-stay-search-widget #guestPopupLarge {
-    top: calc(100% + 8px);
+.long-stay-search-widget .search-item-v2 > #guestPopupLarge {
     left: 0;
 }
 
-.long-stay-search-widget #optionsPopupLarge {
-    left: 24px;
-    top: calc(100% + 8px);
+.long-stay-search-widget .search-item-v2 > #optionsPopupLarge {
+    left: 0;
 }
 
-.long-stay-search-widget #destinationDropdown {
-    top: calc(100% + 8px);
+.long-stay-search-widget .search-item-v2 > #destinationDropdown {
     left: -10px;
-    width: calc(100% + 100px);
+    width: 440px;
+    max-width: calc(100vw - 32px);
 }
 
 .long-stay-search-widget .life-search-icon {

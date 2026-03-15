@@ -1,10 +1,45 @@
 @charset "utf-8";
 
+@property --progress {
+  inherits: false;
+  initial-value: 0%;
+  syntax: "<percentage>";
+}
+
 .travel-checklist-page {
   background:
     radial-gradient(circle at top, rgba(255, 120, 0, 0.12), transparent 32%),
     linear-gradient(180deg, #fffaf4 0%, #f7f3ed 100%);
   color: #1f2937;
+}
+
+/* Header Component Contextual Overrides */
+.travel-checklist-page .header:not(.scrolled) .gnb-link,
+.travel-checklist-page .header:not(.scrolled) .util-link,
+.travel-checklist-page .header:not(.scrolled) .mypage-btn,
+.travel-checklist-page .header:not(.scrolled) .hotel-shell-nav-link,
+.travel-checklist-page .header:not(.scrolled) .hotel-shell-util-link,
+.travel-checklist-page .header:not(.scrolled) .hotel-shell-mobile-menu-btn {
+  color: #1f2937;
+  text-shadow: none;
+  -webkit-text-stroke: 0.3px currentColor;
+}
+
+.travel-checklist-page .header:not(.scrolled) .logo-link img,
+.travel-checklist-page .header:not(.scrolled) .hotel-shell-logo-img {
+  filter: none;
+}
+
+.travel-checklist-page .header:not(.scrolled) .lang-toggle {
+  border-color: #1f2937;
+  color: #1f2937;
+  text-shadow: none;
+}
+
+.travel-checklist-page .header:not(.scrolled) .hotel-shell-nav-icon,
+.travel-checklist-page .header:not(.scrolled) .hotel-shell-util-icon,
+.travel-checklist-page .header:not(.scrolled) .hotel-shell-mobile-menu-btn svg {
+  stroke-width: 2.15px;
 }
 
 .travel-checklist-page-main {
@@ -28,15 +63,25 @@
 }
 
 .travel-checklist-shell {
+  align-items: start;
   display: grid;
   gap: 28px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
 }
 
 .travel-checklist-hero {
   align-items: stretch;
   display: grid;
   gap: 24px;
-  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 360px);
+  grid-column: 1;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+.travel-checklist-summary,
+.travel-checklist-grid {
+  grid-column: 1;
+  min-width: 0;
 }
 
 .travel-checklist-hero-copy,
@@ -99,9 +144,21 @@
   align-content: start;
   display: grid;
   gap: 18px;
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  isolation: isolate;
+  overflow: hidden;
   padding: 28px;
   position: sticky;
   top: 108px;
+}
+
+.travel-checklist-progress-card.is-complete {
+  background:
+    linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(255, 247, 237, 0.94)),
+    rgba(255, 255, 255, 0.9);
+  border-color: rgba(249, 115, 22, 0.16);
+  box-shadow: 0 24px 68px rgba(249, 115, 22, 0.1);
 }
 
 .travel-checklist-progress-ring {
@@ -111,34 +168,85 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92));
   border-radius: 999px;
   display: grid;
-  height: 148px;
+  height: 180px;
   margin: 0 auto;
   place-items: center;
-  width: 148px;
+  position: relative;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  width: 180px;
+}
+
+.travel-checklist-progress-ring::before,
+.travel-checklist-progress-ring::after {
+  border-radius: 999px;
+  content: "";
+  inset: -18px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.travel-checklist-progress-ring.is-complete::before {
+  background: radial-gradient(circle, rgba(255, 168, 76, 0.18) 0%, rgba(255, 168, 76, 0.08) 36%, transparent 72%);
+  opacity: 1;
+}
+
+.travel-checklist-progress-ring.is-celebrating::after {
+  animation: travelChecklistCompleteBurst 1s ease-out forwards;
+  border: 2px solid rgba(255, 153, 51, 0.3);
+}
+
+.travel-checklist-progress-ring.is-animating {
+  box-shadow: 0 24px 48px rgba(255, 122, 0, 0.22);
+  transform: scale(1.04);
 }
 
 .travel-checklist-progress-ring-inner {
+  align-content: center;
   background: #fff8f2;
   border-radius: 999px;
   display: grid;
-  height: 114px;
-  place-items: center;
+  gap: 2px;
+  height: 140px;
+  justify-items: center;
   text-align: center;
-  width: 114px;
+  transition: transform 0.35s ease;
+  width: 140px;
+}
+
+.travel-checklist-progress-ring.is-animating .travel-checklist-progress-ring-inner {
+  transform: scale(0.96);
 }
 
 .travel-checklist-progress-ring-inner strong {
-  color: #111827;
-  display: block;
-  font-size: 28px;
+  align-items: baseline;
+  display: inline-flex;
+  font-family: "FlightSans", "Noto Sans KR", sans-serif;
+  font-variant-numeric: proportional-nums;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  gap: 2px;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.travel-checklist-progress-ring-inner span {
+.travel-checklist-progress-ring-inner .travel-checklist-progress-value {
+  color: #1f2937;
+  font-size: 40px;
+}
+
+.travel-checklist-progress-ring-inner .travel-checklist-progress-unit {
+  color: #9a3412;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  opacity: 0.72;
+}
+
+.travel-checklist-progress-ring-inner > span:last-child {
   color: #6b7280;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .travel-checklist-progress-label {
@@ -147,6 +255,26 @@
   line-height: 1.65;
   margin: 0;
   text-align: center;
+}
+
+.travel-checklist-complete-badge {
+  align-items: center;
+  background: rgba(249, 115, 22, 0.1);
+  border: 1px solid rgba(249, 115, 22, 0.14);
+  border-radius: 999px;
+  color: #9a3412;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 800;
+  justify-content: center;
+  letter-spacing: 0.08em;
+  margin: -4px auto 0;
+  padding: 10px 14px;
+  text-transform: uppercase;
+}
+
+.travel-checklist-complete-badge.is-celebrating {
+  animation: travelChecklistCompleteBadgeLift 0.8s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 .travel-checklist-reset {
@@ -253,9 +381,21 @@
   display: grid;
   gap: 14px;
   grid-template-columns: auto 1fr;
+  overflow: hidden;
   padding: 16px 18px;
+  position: relative;
   text-align: left;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.travel-checklist-item::after {
+  background: linear-gradient(120deg, transparent 15%, rgba(255, 255, 255, 0.78) 48%, transparent 80%);
+  content: "";
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-120%);
 }
 
 .travel-checklist-item:hover {
@@ -265,8 +405,13 @@
 }
 
 .travel-checklist-item.is-checked {
+  animation: travelChecklistItemPop 0.34s cubic-bezier(0.2, 0.9, 0.2, 1);
   background: linear-gradient(180deg, rgba(255, 248, 242, 0.96), rgba(255, 255, 255, 0.96));
   border-color: rgba(255, 120, 0, 0.36);
+}
+
+.travel-checklist-item.is-checked::after {
+  animation: travelChecklistItemSheen 0.52s ease-out;
 }
 
 .travel-checklist-item-check {
@@ -278,12 +423,23 @@
   height: 24px;
   margin-top: 3px;
   place-items: center;
+  transition:
+    background-color 0.24s ease,
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    transform 0.24s ease;
   width: 24px;
 }
 
 .travel-checklist-item.is-checked .travel-checklist-item-check {
   background: #ff7a00;
   border-color: #ff7a00;
+  box-shadow: 0 10px 22px rgba(255, 122, 0, 0.28);
+  transform: scale(1.08);
+}
+
+.travel-checklist-item.is-checked .travel-checklist-item-check svg {
+  animation: travelChecklistCheckBounce 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .travel-checklist-item-copy {
@@ -304,16 +460,115 @@
   line-height: 1.5;
 }
 
+@keyframes travelChecklistItemPop {
+  0% {
+    transform: scale(0.985);
+  }
+
+  55% {
+    transform: scale(1.012);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes travelChecklistItemSheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+@keyframes travelChecklistCheckBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+
+  72% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes travelChecklistCompleteBurst {
+  0% {
+    opacity: 0;
+    transform: scale(0.78);
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.16);
+  }
+}
+
+@keyframes travelChecklistCompleteBadgeLift {
+  0% {
+    opacity: 0.4;
+    transform: translateY(6px) scale(0.96);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .travel-checklist-progress-ring,
+  .travel-checklist-progress-ring-inner,
+  .travel-checklist-item,
+  .travel-checklist-item-check {
+    transition: none;
+  }
+
+  .travel-checklist-item.is-checked,
+  .travel-checklist-item.is-checked::after,
+  .travel-checklist-item.is-checked .travel-checklist-item-check svg,
+  .travel-checklist-progress-ring.is-celebrating::after,
+  .travel-checklist-complete-badge.is-celebrating {
+    animation: none;
+  }
+}
+
 @media (max-width: 980px) {
   .travel-checklist-page-main {
     padding: 118px 18px 72px;
   }
 
-  .travel-checklist-hero {
+  .travel-checklist-shell {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .travel-checklist-progress-card {
+    grid-column: auto;
+    grid-row: auto;
     position: static;
   }
 

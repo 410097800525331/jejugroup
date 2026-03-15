@@ -5,6 +5,7 @@ const path = require("node:path");
 const HOST = process.env.FRONT_STATIC_HOST || "127.0.0.1";
 const PORT = Number(process.env.FRONT_STATIC_PORT || "4175");
 const ROOT_DIR = path.resolve(__dirname, "../../front");
+const GENERATED_FRONT_DIR = path.resolve(__dirname, "../../.generated/front");
 
 const CONTENT_TYPES = {
   ".avif": "image/avif",
@@ -29,11 +30,23 @@ const CONTENT_TYPES = {
 const server = http.createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url || "/", `http://${HOST}:${PORT}`).pathname);
   const normalizedPath = pathname === "/" ? "/index.html" : pathname;
-  const filePath = path.resolve(ROOT_DIR, `.${normalizedPath}`);
+  const candidateRoots = [GENERATED_FRONT_DIR, ROOT_DIR];
+  const filePath = candidateRoots.reduce((resolved, currentRootDir) => {
+    if (resolved) {
+      return resolved;
+    }
 
-  if (!filePath.startsWith(ROOT_DIR)) {
-    response.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
-    response.end("Forbidden");
+    const nextPath = path.resolve(currentRootDir, `.${normalizedPath}`);
+    if (!nextPath.startsWith(currentRootDir)) {
+      return null;
+    }
+
+    return fs.existsSync(nextPath) ? nextPath : null;
+  }, null);
+
+  if (!filePath) {
+    response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+    response.end("Not Found");
     return;
   }
 
