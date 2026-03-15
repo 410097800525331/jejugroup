@@ -1,116 +1,161 @@
 import { deepFreeze } from "../utils/object_util.module.js";
 
-/**
- * 프런트 라우트 단일 원본
- * 여기엔 정적 값만 둠
- */
-export const ROUTES = deepFreeze({
-  HOME: "/index.html",
+const pageRoute = (path, options = {}) =>
+  Object.freeze({
+    kind: "page",
+    path,
+    ...options,
+  });
+
+const hashPageRoute = (path, hash, options = {}) =>
+  Object.freeze({
+    kind: "hash-page",
+    path,
+    hash,
+    ...options,
+  });
+
+const externalRoute = (url, options = {}) =>
+  Object.freeze({
+    kind: "external",
+    url,
+    ...options,
+  });
+
+const serializeRouteMetadata = (routeMeta) => {
+  if (!routeMeta || typeof routeMeta !== "object") {
+    return routeMeta;
+  }
+
+  if ("kind" in routeMeta) {
+    if (routeMeta.kind === "external") {
+      return routeMeta.url;
+    }
+
+    const queryString = routeMeta.defaultQuery
+      ? `?${new URLSearchParams(routeMeta.defaultQuery).toString()}`
+      : "";
+    const hash = routeMeta.hash ?? "";
+
+    return `${routeMeta.path}${queryString}${hash}`;
+  }
+
+  return Object.fromEntries(
+    Object.entries(routeMeta).map(([key, value]) => [key, serializeRouteMetadata(value)]),
+  );
+};
+
+export const ROUTE_METADATA = deepFreeze({
+  HOME: pageRoute("/index.html"),
 
   AUTH: {
-    LOGIN: "/pages/auth/login.html",
-    SIGNUP: "/pages/auth/signup.html",
-    OAUTH_CALLBACK: "/pages/auth/oauth_callback.html",
+    LOGIN: pageRoute("/pages/auth/login.html", { shellStrategy: "auth-shell" }),
+    SIGNUP: pageRoute("/pages/auth/signup.html", { shellStrategy: "auth-shell" }),
+    PASS_AUTH: pageRoute("/pages/auth/pass_auth.html"),
+    OAUTH_CALLBACK: pageRoute("/pages/auth/oauth_callback.html"),
   },
 
   CS: {
-    CUSTOMER_CENTER: "/pages/cs/customer_center.html",
-    FAQ: "/pages/cs/faq.html",
-    INQUIRY: "/pages/cs/inquiry.html",
+    CUSTOMER_CENTER: pageRoute("/pages/cs/customer_center.html"),
+    FAQ: hashPageRoute("/pages/cs/customer_center.html", "#/faqs"),
+    INQUIRY: pageRoute("/pages/cs/customer_center.html"),
   },
 
   MYPAGE: {
-    DASHBOARD: "/pages/mypage/dashboard.html",
-    PROFILE: "/pages/mypage/dashboard.html",
-    BOOKINGS: "/pages/mypage/dashboard.html",
+    DASHBOARD: pageRoute("/pages/mypage/dashboard.html"),
+    PROFILE: pageRoute("/pages/mypage/dashboard.html"),
+    BOOKINGS: pageRoute("/pages/mypage/dashboard.html"),
   },
 
   ADMIN: {
-    DASHBOARD: "/admin/pages/dashboard.html",
-    RESERVATIONS: "/admin/pages/reservations.html",
-    LODGING: "/admin/pages/lodging.html",
-    MEMBERS: "/admin/pages/members.html",
-    CMS: "/admin/pages/cms.html",
+    DASHBOARD: pageRoute("/admin/pages/dashboard.html"),
+    RESERVATIONS: pageRoute("/admin/pages/reservations.html"),
+    LODGING: pageRoute("/admin/pages/lodging.html"),
+    MEMBERS: pageRoute("/admin/pages/members.html"),
+    CMS: pageRoute("/admin/pages/cms.html"),
   },
 
   SERVICES: {
-    RENT_CAR: "https://jejurentcar.netlify.app/",
+    RENT_CAR: externalRoute("https://jejurentcar.netlify.app/"),
 
     STAY: {
-      MAIN: "/jejustay/pages/hotel/jejuhotel.html",
-      HOTEL_LIST: "/jejustay/pages/hotel/hotel-list.html",
-      LIFE: "/jejustay/pages/stay/jejustay_life.html",
-      PRIVATE: "/jejustay/pages/stay/private_stay.html",
+      MAIN: pageRoute("/jejustay/pages/hotel/jejuhotel.html"),
+      HOTEL_LIST: pageRoute("/jejustay/pages/hotel/hotel-list.html"),
+      LIFE: pageRoute("/jejustay/pages/stay/jejustay_life.html"),
+      PRIVATE: pageRoute("/jejustay/pages/stay/private_stay.html"),
     },
 
     TRAVEL: {
-      ACTIVITIES: "/jejustay/pages/travel/activities.html",
-      ESIM: "/jejustay/pages/travel/esim.html",
-      GUIDE: "/jejustay/pages/travel/travel_guide.html",
-      TIPS: "/jejustay/pages/travel/travel_tips.html",
-      CHECKLIST: "/jejustay/pages/travel/travel_checklist.html",
+      ACTIVITIES: pageRoute("/jejustay/pages/travel/activities.html"),
+      ESIM: pageRoute("/jejustay/pages/travel/esim.html"),
+      GUIDE: pageRoute("/jejustay/pages/travel/travel_guide.html"),
+      TIPS: pageRoute("/jejustay/pages/travel/travel_tips.html"),
+      CHECKLIST: pageRoute("/jejustay/pages/travel/travel_checklist.html"),
     },
 
     DEALS: {
-      MAIN: "/jejustay/pages/deals/deals.html",
-      MEMBER: "/jejustay/pages/deals/deals_member.html",
-      PARTNER: "/jejustay/pages/deals/deals_partner.html",
+      MAIN: pageRoute("/jejustay/pages/deals/deals.html"),
+      MEMBER: pageRoute("/jejustay/pages/deals/deals_member.html"),
+      PARTNER: pageRoute("/jejustay/pages/deals/deals_partner.html"),
     },
 
     AIR: {
-      MAIN: "/jejuair/index.html",
+      MAIN: pageRoute("/jejuair/index.html"),
 
       ABOUT: {
-        COMPANY: "/jejuair/pages/about/about.html",
-        CAREER: "/jejuair/pages/about/career.html",
-        CCM: "/jejuair/pages/about/ccm.html",
+        COMPANY: pageRoute("/jejuair/pages/about/about.html"),
+        CAREER: pageRoute("/jejuair/pages/about/career.html"),
+        CCM: pageRoute("/jejuair/pages/about/ccm.html"),
       },
 
       BOOKING: {
-        AVAILABILITY: "/jejuair/pages/booking/Availability.html",
-        ROUTE: "/jejuair/pages/booking/route.html",
-        PAYMENT: "/jejuair/pages/booking/payment.html",
-        GUEST_RESERVATION: "/jejuair/pages/booking/viewOnOffReservationList.html",
+        AVAILABILITY: pageRoute("/jejuair/pages/booking/Availability.html"),
+        ROUTE: pageRoute("/jejuair/pages/booking/route.html"),
+        PAYMENT: pageRoute("/jejuair/pages/booking/payment.html"),
+        GUEST_RESERVATION: pageRoute("/jejuair/pages/booking/viewOnOffReservationList.html"),
       },
 
       BOARDING: {
-        FAST_PROCEDURE: "/jejuair/pages/boarding/fastProcedure.html",
-        MOBILE_CHECKIN: "/jejuair/pages/boarding/viewCheckin.html",
-        E_DOCUMENT: "/jejuair/pages/boarding/eDocument.html",
+        FAST_PROCEDURE: pageRoute("/jejuair/pages/boarding/fastProcedure.html"),
+        MOBILE_CHECKIN: pageRoute("/jejuair/pages/boarding/viewCheckin.html"),
+        E_DOCUMENT: pageRoute("/jejuair/pages/boarding/eDocument.html"),
       },
 
       BAGGAGE: {
-        PREORDERED: "/jejuair/pages/baggage/preorderedBaggage.html",
-        CABIN: "/jejuair/pages/baggage/cabinBaggage.html",
-        LIMITATION: "/jejuair/pages/baggage/transportLimitation.html",
-        LIABILITY: "/jejuair/pages/baggage/liability.html",
+        PREORDERED: pageRoute("/jejuair/pages/baggage/preorderedBaggage.html"),
+        CABIN: pageRoute("/jejuair/pages/baggage/cabinBaggage.html"),
+        LIMITATION: pageRoute("/jejuair/pages/baggage/transportLimitation.html"),
+        LIABILITY: pageRoute("/jejuair/pages/baggage/liability.html"),
       },
 
       PET: {
-        PASS: "/jejuair/pages/pet/petPass.html",
-        SERVICE: "/jejuair/pages/pet/petService.html",
+        PASS: pageRoute("/jejuair/pages/pet/petPass.html"),
+        SERVICE: pageRoute("/jejuair/pages/pet/petService.html"),
       },
 
       JMEMBERS: {
-        SIGHTSEEING: "/jejuair/pages/jmembers/jmembersSightseeing.html",
-        AIRPLANE: "/jejuair/pages/jmembers/jmembersAirplane.html",
-        GOLF: "/jejuair/pages/jmembers/jmembersGolf.html",
-        INSURANCE: "/jejuair/pages/jmembers/jmembersInsurance.html",
+        SIGHTSEEING: pageRoute("/jejuair/pages/jmembers/jmembersSightseeing.html"),
+        AIRPLANE: pageRoute("/jejuair/pages/jmembers/jmembersAirplane.html"),
+        GOLF: pageRoute("/jejuair/pages/jmembers/jmembersGolf.html"),
+        INSURANCE: pageRoute("/jejuair/pages/jmembers/jmembersInsurance.html"),
       },
 
       CS: {
-        CUSTOMER_SERVICE: "/jejuair/pages/cs/customerService.html",
-        NOTICE: "/jejuair/pages/cs/notic.html",
+        CUSTOMER_SERVICE: pageRoute("/jejuair/pages/cs/customerService.html"),
+        NOTICE: pageRoute("/jejuair/pages/cs/notic.html"),
       },
 
       AUTH: {
-        LOGIN: "/pages/auth/login.html",
-        JOIN: "/pages/auth/signup.html",
-        SIGNUP: "/pages/auth/signup.html",
-        MYPAGE: "/pages/mypage/dashboard.html?shell=air",
+        LOGIN: pageRoute("/pages/auth/login.html", { shellStrategy: "auth-shell" }),
+        JOIN: pageRoute("/pages/auth/signup.html", { shellStrategy: "auth-shell" }),
+        PASS_AUTH: pageRoute("/pages/auth/pass_auth.html"),
+        SIGNUP: pageRoute("/pages/auth/signup.html", { shellStrategy: "auth-shell" }),
+        MYPAGE: pageRoute("/pages/mypage/dashboard.html", { defaultQuery: { shell: "air" } }),
       },
 
-      EVENT: "/jejuair/pages/event/event.html",
+      EVENT: pageRoute("/jejuair/pages/event/event.html"),
     },
   },
 });
+
+export const ROUTES = deepFreeze(serializeRouteMetadata(ROUTE_METADATA));

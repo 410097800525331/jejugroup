@@ -1,80 +1,117 @@
-﻿# 전환기 구조 운영 문서
+# 하이브리드 구조 운영 문서
 
-## 목적
+## 문서 성격
 
-이 저장소는 아직 최종 구조가 아님
+- 파일명은 기존 참조 경로를 유지하기 위해 `transition-architecture.md` 를 그대로 사용
+- 하지만 현재 운영 기준은 `전면 React 전환 중` 이 아니라 `하이브리드 구조 확정` 이다
+- 이 문서는 `front` 와 `jeju-web` 을 어떻게 다뤄야 하는지, 어떤 영역이 React 앱이고 어떤 영역이 고정 정적인지 정리하는 운영 기준서다
 
-프런트엔드 리액트 전환이 진행 중이고, 동시에 백엔드도 함께 개발 중이라서 한동안은 임시 운영 구조를 유지함
+## 구조 결론
 
-에이전트와 작업자는 이 문서를 먼저 읽고 현재 구성이 의도된 임시 체계라는 점을 전제로 작업해야 함
+- `jejuair` 는 비전환 고정 영역이다
+- `front` 는 사람이 직접 수정하는 단일 원본이다
+- `front/apps/cs` 는 독립 React 앱 원본이다
+- `front/apps/shell` 은 공용 하이브리드 런타임 원본이다
+- `front/components/react` 는 공용 React 컴포넌트 원본이다
+- `jejustay`, `auth`, `mypage`, 메인 랜딩은 정적 HTML + 셸 런타임 + React island 조합을 허용하는 하이브리드 영역이다
+- `jeju-web/src/main/webapp` 는 계속 배포 미러로 사용한다
 
-## 지금 이렇게 굴리는 이유
-
-- 프런트엔드 전환이 완료되지 않음
-- 일정이 촉박해서 구조 정리를 기다릴 수 없음
-- 백엔드 개발도 병행 중이라 배포 경로를 단번에 갈아엎기 어려움
-- 그래서 `front` 에서 수정한 결과를 바로 `jeju-web` 쪽 배포 미러로 복사하고 JSP 진입점으로 변환한 뒤 서버에 올리는 흐름을 유지함
-
-## 현재 작업 기준 경로
+## 디렉터리 역할
 
 ### `front`
 
 - 사람이 직접 수정하는 프런트엔드 원본
-- 화면, 마크업, 스타일, 런타임 스크립트 수정은 기본적으로 여기서 시작
+- 화면 마크업, 스타일, 공용 런타임, 앱 엔트리 수정은 여기서 시작
+
+### `front/apps/cs`
+
+- 고객센터 React 앱 원본
+- 개발 엔트리는 `front/apps/cs/client/index.html`
+- 실제 서비스 경로 `/pages/cs/customer_center.html` 은 빌드 산출물 또는 개발 서버 middleware 로 연결
+
+### `front/apps/shell`
+
+- 하이브리드 페이지 공용 런타임 원본
+- 페이지 셸, island 마운트, 런타임 브리지, 공용 부트스트랩 로직 담당
+
+### `front/components/react`
+
+- 공용 React 컴포넌트 원본
+- layout, auth, hotel, life, travel, ui, widget 계열을 관리
+
+### `front/jejuair`
+
+- 비전환 고정 영역
+- 현재 구조와 정적 페이지 흐름을 유지
+- 기능 수정은 가능하지만 React 전환 대상으로 간주하지 않는다
+
+### `front/jejustay`
+
+- 하이브리드 운영 영역
+- 정적 HTML 엔트리를 유지하되 필요 구간은 셸 런타임과 island 로 통합
+
+### `front/pages`
+
+- 인증, 마이페이지 등 공용 서비스 페이지
+- 일부는 React island 호스트를 포함하는 하이브리드 페이지다
 
 ### `jeju-web/src/main/webapp`
 
 - 배포용 미러
-- `front` 내용을 복사한 결과를 유지하는 위치
-- JSP 진입점 생성과 WAR 패키징 때문에 당장은 필요함
-- 원본처럼 취급하면 안 됨
+- `front` 원본에서 동기화된 결과를 유지하는 위치
+- 직접 수정 금지
 
-### `front/backup`
+## 렌더링 모드 기준
 
-- 리액트 전환 중 디자인이 깨질 때 비교 복구용으로 남겨둔 참조본
-- 당장 삭제 대상이 아니라 전환기 안전핀 역할
-- 원본도 아니고 최종 산출물도 아님
+### 고정 정적
 
-### `jeju-web/src/main/java`
+- `front/jejuair/**`
+- `front/admin/pages/**`
+- `front/pages/auth/oauth_callback.html`
 
-- 백엔드 개발 영역
-- 현재 프런트엔드 전환과 병행 중이므로 배포 파이프라인에서 함께 고려해야 함
+### 하이브리드 정적 + 셸 런타임
+
+- `front/index.html`
+- `front/jejustay/pages/deals/**`
+- `front/jejustay/pages/hotel/hotel-list.html`
+- `front/jejustay/pages/travel/activities.html`
+- `front/jejustay/pages/travel/esim.html`
+- `front/jejustay/pages/travel/travel_guide.html`
+- `front/jejustay/pages/travel/travel_tips.html`
+
+### 하이브리드 정적 + 셸 런타임 + React island
+
+- `front/pages/auth/login.html`
+- `front/pages/auth/signup.html`
+- `front/pages/auth/pass_auth.html`
+- `front/pages/mypage/dashboard.html`
+- `front/jejustay/pages/hotel/jejuhotel.html`
+- `front/jejustay/pages/stay/jejustay_life.html`
+- `front/jejustay/pages/stay/private_stay.html`
+- `front/jejustay/pages/travel/travel_checklist.html`
+
+### 독립 React 앱
+
+- `front/apps/cs`
 
 ## 현재 배포 흐름
 
-1. `front` 에서 프런트엔드 수정
+1. `front` 원본 수정
 2. `pnpm run sync` 로 `jeju-web/src/main/webapp` 미러 반영
-3. `index.html` 기반으로 `index.jsp` 생성
-4. `pnpm run build` 또는 `pnpm run deploy` 로 WAR 생성 및 서버 업로드
+3. `index.html` 기반 `index.jsp` 생성
+4. `pnpm run build` 또는 `pnpm run deploy` 로 WAR 생성 및 배포
 
-## 에이전트 작업 규칙
+## 운영 규칙
 
 - 프런트엔드 수정은 항상 `front` 기준으로 판단
-- `jeju-web/src/main/webapp` 직접 수정은 예외 상황이 아니면 금지
-- `front/backup` 은 임시 참조본이므로 함부로 삭제, 이동, 대규모 개편 금지
-- 현재 미러 구조를 보고 중복이라고 단정하고 제거하지 말 것
-- 배포, 빌드, JSP 변환, 한글 인코딩 관련 변경은 기존 파이프라인과 충돌 여부를 먼저 확인할 것
-- 구조를 정리하는 작업이 아니라면 과도한 대공사 리팩터링보다 현재 흐름 보존을 우선할 것
+- `jeju-web/src/main/webapp` 직접 수정 금지
+- 빌드 산출물 `front/pages/**/assets/*`, `front/components/runtime/*`, `.generated/**` 직접 수정 금지
+- `jejuair` 는 비전환 고정 정책을 유지
+- 새 페이지를 추가할 때는 `고정 정적`, `하이브리드`, `독립 앱` 중 하나를 먼저 선언하고 시작할 것
 
-## 종료 조건
+## 같이 봐야 하는 문서
 
-아래 조건이 충족되기 전까지는 전환기 구조를 임시로 유지함
-
-- 리액트 전환 대상 화면이 충분히 안정화됨
-- 디자인 복구를 위해 `front/backup` 을 다시 볼 일이 사실상 없어짐
-- `front` 와 배포 산출물 사이의 미러 운영 필요성이 줄어듦
-- JSP 변환과 WAR 배포 경로를 더 단순한 구조로 대체할 수 있음
-
-## 정리 대상
-
-전환기 종료 후 우선 검토할 정리 항목은 아래와 같음
-
-- `front/backup`
-- `front -> jeju-web/src/main/webapp` 미러 운영 방식
-- JSP 진입점 자동 생성 방식
-- 전환기 대응용 가드와 예외 규칙
-
-## 같이 읽을 문서
-
-- `AGENTS.md`
-- `docs/text-integrity-guardrails.md`
+- [하이브리드 실행 체크리스트](D:/git/jejugroup/docs/hybrid-execution-checklist.md)
+- [front 엔트리포인트 인벤토리](D:/git/jejugroup/docs/front-entrypoint-inventory.md)
+- [텍스트 무결성 가드레일](D:/git/jejugroup/docs/text-integrity-guardrails.md)
+- [메인 Vite 개발 서버 문서](D:/git/jejugroup/docs/front-main-vite-dev-server-2026-03-14.md)

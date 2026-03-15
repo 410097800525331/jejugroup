@@ -24,7 +24,6 @@ const TEXT_EXTENSIONS = new Set([
 const IGNORED_SEGMENTS = new Set([
   ".git",
   ".next",
-  "backup",
   "build",
   "coverage",
   "dist",

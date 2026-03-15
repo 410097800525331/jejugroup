@@ -8,8 +8,11 @@ const fs = require('fs');
 const path = require('path');
 
 const FRONT_DIR = path.resolve(__dirname, '../');
+const GENERATED_FRONT_DIR = path.resolve(__dirname, '../../.generated/front');
+const ROUTE_MODULE_PATH = path.resolve(FRONT_DIR, 'core/modules/constants/routes.module.js');
 const IGNORE_DIRS = ['node_modules', '.git', 'scripts', 'assets'];
 const ALLOWED_VALUES = ['#', 'javascript:void(0)', '', '/'];
+const ROUTE_ENTRY_IGNORE = new Set(['apps/cs/client/index.html']);
 
 // HTML(href, src), JS(import, window.location, replace/href=), CSS(url) 매칭용 통합 정규식
 const MATCHERS = [
@@ -23,6 +26,69 @@ const MATCHERS = [
 ];
 
 let violationCount = 0;
+
+function normalizeRelativePath(filePath) {
+    return path.relative(FRONT_DIR, filePath).replace(/\\/g, '/');
+}
+
+function generatedOverlayPath(targetPath) {
+    const relativePath = normalizeRelativePath(targetPath);
+    if (relativePath.startsWith('components\\runtime') || relativePath.startsWith('components/runtime')) {
+        return path.resolve(GENERATED_FRONT_DIR, relativePath);
+    }
+
+    if (relativePath.startsWith('pages\\cs') || relativePath.startsWith('pages/cs')) {
+        return path.resolve(GENERATED_FRONT_DIR, relativePath);
+    }
+
+    return null;
+}
+
+function collectHtmlEntrypoints(dir, collected = []) {
+    const files = fs.readdirSync(dir);
+
+    files.forEach(file => {
+        const fullPath = path.join(dir, file);
+        const stat = fs.statSync(fullPath);
+
+        if (stat.isDirectory()) {
+            if (!IGNORE_DIRS.includes(file)) {
+                collectHtmlEntrypoints(fullPath, collected);
+            }
+            return;
+        }
+
+        if (path.extname(file).toLowerCase() === '.html') {
+            collected.push(normalizeRelativePath(fullPath));
+        }
+    });
+
+    return collected;
+}
+
+function collectRouteHtmlPaths() {
+    const source = fs.readFileSync(ROUTE_MODULE_PATH, 'utf8');
+    const matches = source.matchAll(/(?:pageRoute|hashPageRoute)\(\s*["']([^"']+\.html)["']/g);
+    return new Set(
+        Array.from(matches, (match) => match[1].replace(/^\.?\//, ''))
+    );
+}
+
+function validateEntrypointCoverage() {
+    const routePaths = collectRouteHtmlPaths();
+    const htmlEntrypoints = collectHtmlEntrypoints(FRONT_DIR)
+        .filter((relativePath) => !ROUTE_ENTRY_IGNORE.has(relativePath));
+
+    htmlEntrypoints.forEach((relativePath) => {
+        if (routePaths.has(relativePath)) {
+            return;
+        }
+
+        console.error(`[MISSING_ROUTE] 발견: ${relativePath}`);
+        console.error('  -> 권장 사항: ROUTE_METADATA 에 경로를 추가하거나 엔트리 제외 규칙을 명시하세요.\n');
+        violationCount++;
+    });
+}
 
 function scanDirectory(dir) {
     const files = fs.readdirSync(dir);
@@ -89,7 +155,8 @@ function checkFile(filePath, ext) {
                     // split으로 파라미터나 해시 제거 (? 또는 #)
                     const cleanPath = value.split('?')[0].split('#')[0];
                     const targetPath = path.resolve(path.dirname(filePath), cleanPath);
-                    if (!fs.existsSync(targetPath)) {
+                    const overlayPath = generatedOverlayPath(targetPath);
+                    if (!fs.existsSync(targetPath) && !overlayPath) {
                         isBrokenPath = true;
                     }
                 } catch(e) {}
@@ -112,6 +179,7 @@ function checkFile(filePath, ext) {
 
 console.log('--- 하드코딩 경로 및 깨진 에셋 스캔 시작 ---');
 scanDirectory(FRONT_DIR);
+validateEntrypointCoverage();
 
 if (violationCount > 0) {
     console.error(`\n총 ${violationCount} 개의 위반 및 깨진 참조가 발견되었습니다.`);

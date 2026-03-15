@@ -1,4 +1,5 @@
 import type { PassAuthMethod } from "@front-components/auth/state/types";
+import { resolveRoute } from "@front-core-utils/path_resolver.js";
 
 export const PASS_AUTH_MESSAGE_TYPE = "JEJU_PASS_AUTH_SUCCESS";
 
@@ -24,7 +25,7 @@ export const openPassAuthPopup = () => {
   const height = 800;
   const left = window.screenX + Math.max(0, (window.outerWidth - width) / 2);
   const top = window.screenY + Math.max(0, (window.outerHeight - height) / 2);
-  const popupUrl = new URL("pass_auth.html", window.location.href).toString();
+  const popupUrl = resolveRoute("AUTH.PASS_AUTH");
 
   return window.open(
     popupUrl,
