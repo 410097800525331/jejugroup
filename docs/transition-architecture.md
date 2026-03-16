@@ -97,15 +97,15 @@
 ## 현재 배포 흐름
 
 1. `front` 원본 수정
-2. `pnpm run sync` 로 `jeju-web/src/main/webapp` 미러 반영
-3. `index.html` 기반 `index.jsp` 생성
+2. `pnpm run prepare:webapp` 또는 `pnpm run sync` 로 `jeju-web/src/main/webapp` 미러 반영
+3. sync 단계에서 webapp 내 HTML 엔트리를 대응 JSP 로 자동 미러 생성
 4. `pnpm run build` 또는 `pnpm run deploy` 로 WAR 생성 및 배포
 
 ## 운영 규칙
 
 - 프런트엔드 수정은 항상 `front` 기준으로 판단
 - `jeju-web/src/main/webapp` 직접 수정 금지
-- 빌드 산출물 `front/pages/**/assets/*`, `front/components/runtime/*`, `.generated/**` 직접 수정 금지
+- 빌드 산출물 `front/components/runtime/*`, `front/.generated/**` 직접 수정 금지
 - `jejuair` 는 비전환 고정 정책을 유지
 - 새 페이지를 추가할 때는 `고정 정적`, `하이브리드`, `독립 앱` 중 하나를 먼저 선언하고 시작할 것
 

@@ -10,7 +10,7 @@
 
 | 서비스 | 개발 원본 | 실제 경로 | 수정 위치 | 비고 |
 | --- | --- | --- | --- | --- |
-| 고객센터 | `front/apps/cs/client/index.html` | `/pages/cs/customer_center.html` | `front/apps/cs/**` | 빌드 산출물 `front/pages/cs/**` 직접 수정 금지 |
+| 고객센터 | `front/apps/cs/client/index.html` | `/pages/cs/customer_center.html` | `front/apps/cs/**` | 빌드 산출물 `front/.generated/webapp-overlay/pages/cs/**` 직접 수정 금지 |
 
 ## 2. 하이브리드 정적 + 셸 런타임 + React island
 
@@ -69,8 +69,8 @@
 
 ## 5. 수정 금지 산출물
 
-- `front/pages/cs/assets/**`
+- `front/.generated/webapp-overlay/pages/cs/assets/**`
 - `front/pages/**/assets/**`
 - `front/components/runtime/**`
-- `.generated/front/**`
+- `front/.generated/webapp-overlay/**`
 - `jeju-web/src/main/webapp/**` 직접 원본처럼 수정 금지

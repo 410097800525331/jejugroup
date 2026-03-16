@@ -7,7 +7,7 @@ const { createStaticServerController } = require("./helpers/static-server.cjs");
 const HOST = "127.0.0.1";
 const PORT = 4174;
 const ROOT_DIR = path.resolve("front");
-const GENERATED_FRONT_DIR = path.resolve(".generated", "front");
+const GENERATED_WEBAPP_OVERLAY_DIR = path.resolve("front", ".generated", "webapp-overlay");
 const ENTRY_POINTS = [
   path.join(ROOT_DIR, "index.html"),
   path.join(ROOT_DIR, "admin", "pages", "dashboard.html"),
@@ -23,7 +23,7 @@ const server = createStaticServerController({
   fallbackPath: "/index.html",
   host: HOST,
   port: PORT,
-  rootDirs: [GENERATED_FRONT_DIR, ROOT_DIR],
+  rootDirs: [GENERATED_WEBAPP_OVERLAY_DIR, ROOT_DIR],
 });
 
 test.beforeAll(async () => {

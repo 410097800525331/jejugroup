@@ -8,7 +8,8 @@
   "scripts": {
     "scan:routes": "node front/scripts/scan_hardcoded_routes.js",
     "lint": "pnpm run guard:text && pnpm run scan:routes && pnpm run check:shell && pnpm run check:cs",
-    "test:build": "pnpm run build:shell && pnpm run build:cs",
+    "build:front": "pnpm run build:shell && pnpm run build:cs",
+    "test:build": "pnpm run build:front",
     "test:smoke": "pnpm run smoke:cs && pnpm run smoke:front",
     "test": "pnpm run lint && pnpm run test:build",
     "dev:front": "vite --config vite.front.config.mjs",
@@ -24,7 +25,8 @@
     "smoke:cs": "pnpm dlx @playwright/test test scripts/smoke/cs-customer-center.smoke.spec.cjs --reporter=list",
     "smoke:front": "pnpm dlx @playwright/test test scripts/smoke/front-entrypoints.runtime.spec.cjs --reporter=list",
     "sync": "node scripts/pipelines/sync-front.js",
-    "build": "pnpm run build:cs && pnpm run sync && node scripts/pipelines/build-war.js",
+    "prepare:webapp": "pnpm run build:front && pnpm run sync",
+    "build": "pnpm run prepare:webapp && node scripts/pipelines/build-war.js",
     "deploy": "pnpm run build && node scripts/pipelines/deploy.js",
     "publish": "pnpm run deploy"
   },

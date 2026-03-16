@@ -1,14 +1,16 @@
-﻿const fs = require('fs-extra');
+const fs = require('fs-extra');
 const path = require('path');
+const { generateJspMirrors } = require('./lib/jsp-mirror');
 
 const rootDir = path.resolve(__dirname, '../../');
 const frontDir = path.join(rootDir, 'front');
-const generatedFrontDir = path.join(rootDir, '.generated', 'front');
+const generatedWebappOverlayDir = path.join(frontDir, '.generated', 'webapp-overlay');
 const webappDir = path.join(rootDir, 'jeju-web', 'src', 'main', 'webapp');
 
 const EXCLUDE_BASENAMES = new Set([
     'node_modules',
     '.git',
+    '.generated',
     'package.json',
     'package-lock.json',
     'scripts'
@@ -57,20 +59,13 @@ async function sync() {
             filter: (src) => !shouldExclude(src)
         });
 
-        if (await fs.pathExists(generatedFrontDir)) {
-            await fs.copy(generatedFrontDir, webappDir, { overwrite: true });
+        if (await fs.pathExists(generatedWebappOverlayDir)) {
+            await fs.copy(generatedWebappOverlayDir, webappDir, { overwrite: true });
         }
 
-        // index.html을 JSP 진입점으로 복제
-        const htmlPath = path.join(webappDir, 'index.html');
-        const jspPath = path.join(webappDir, 'index.jsp');
-
-        if (await fs.pathExists(htmlPath)) {
-            const content = await fs.readFile(htmlPath, 'utf8');
-            const jspHeader = `<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>\n`;
-            await fs.writeFile(jspPath, jspHeader + content, 'utf8');
-            console.log('🧷 index.jsp 생성 완료 (index.html도 유지)');
-        }
+        // webapp 에 복제된 HTML 엔트리를 JSP 미러로 전부 생성한다.
+        const { jspFileCount } = await generateJspMirrors(webappDir);
+        console.log(`🧷 JSP 미러 ${jspFileCount}개 생성 완료`);
 
         console.log('✨ front 원본 기준 webapp 미러 동기화 성공');
         console.log(`📍 경로: ${webappDir}`);

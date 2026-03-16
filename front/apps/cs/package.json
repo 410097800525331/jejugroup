@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && move ..\\..\\..\\.generated\\front\\pages\\cs\\index.html ..\\..\\..\\.generated\\front\\pages\\cs\\customer_center.html",
+    "build": "vite build && move ..\\..\\.generated\\webapp-overlay\\pages\\cs\\index.html ..\\..\\.generated\\webapp-overlay\\pages\\cs\\customer_center.html",
     "build:lib": "vite build --config vite.config.ts",
     "preview": "vite preview",
     "check": "tsc"

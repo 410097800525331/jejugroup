@@ -6,7 +6,7 @@ const { createStaticServerController } = require("./helpers/static-server.cjs");
 
 const HOST = "127.0.0.1";
 const PORT = 4173;
-const ROOT_DIR = path.resolve("front/pages");
+const ROOT_DIR = path.resolve("front", ".generated", "webapp-overlay", "pages");
 const ENTRY_PATH = path.join(ROOT_DIR, "cs", "customer_center.html");
 const server = createStaticServerController({
   fallbackPath: "/cs/customer_center.html",
@@ -95,4 +95,3 @@ test("FAQ 라우트 스모크 체크", async ({ page }) => {
 
   expectNoRuntimeIssues(issues);
 });
-

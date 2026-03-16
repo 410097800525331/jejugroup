@@ -23,7 +23,7 @@
 
 ### 3. 런타임 경계 정리
 
-- [ ] `front/components/runtime/*` 와 `.generated/front/*` 를 수정 금지 산출물로 공식화할 것
+- [ ] `front/components/runtime/*` 와 `front/.generated/webapp-overlay/*` 를 수정 금지 산출물로 공식화할 것
 - [ ] 개발 서버에서만 소스 직결되는 경로와 빌드 산출물 경로를 문서로 분리할 것
 
 ### 4. 백업 정책 고정

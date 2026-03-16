@@ -19,7 +19,7 @@
 
 ## 다음으로 해야 할 것
 
-1. `front -> jeju-web` 미러, `.generated`, `components/runtime` 경계를 더 명확하게 문서와 스크립트에 고정
+1. `front -> jeju-web` 미러, `front/.generated`, `components/runtime` 경계를 더 명확하게 문서와 스크립트에 고정
 2. 현재 dirty worktree 를 기능 단위로 다시 잘라 커밋 범위를 정리
 3. smoke 대상 엔트리 범위를 하이브리드 구조 기준으로 재점검
 4. 하이브리드 페이지별 수정 위치와 소유 경로를 팀 규칙으로 더 짧게 정리

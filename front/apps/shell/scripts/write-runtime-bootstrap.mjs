@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const outputDir = path.resolve(__dirname, "../../../../.generated/front/components/runtime");
+const outputDir = path.resolve(__dirname, "../../../.generated/webapp-overlay/components/runtime");
 const outputFile = path.join(outputDir, "bootstrap.js");
 const sourceFile = path.resolve(__dirname, "../src/runtime/bootstrap.js");
 const bootstrapImportRewrites = [

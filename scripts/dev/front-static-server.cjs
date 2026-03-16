@@ -5,7 +5,7 @@ const path = require("node:path");
 const HOST = process.env.FRONT_STATIC_HOST || "127.0.0.1";
 const PORT = Number(process.env.FRONT_STATIC_PORT || "4175");
 const ROOT_DIR = path.resolve(__dirname, "../../front");
-const GENERATED_FRONT_DIR = path.resolve(__dirname, "../../.generated/front");
+const GENERATED_WEBAPP_OVERLAY_DIR = path.resolve(__dirname, "../../front/.generated/webapp-overlay");
 
 const CONTENT_TYPES = {
   ".avif": "image/avif",
@@ -30,7 +30,7 @@ const CONTENT_TYPES = {
 const server = http.createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url || "/", `http://${HOST}:${PORT}`).pathname);
   const normalizedPath = pathname === "/" ? "/index.html" : pathname;
-  const candidateRoots = [GENERATED_FRONT_DIR, ROOT_DIR];
+  const candidateRoots = [GENERATED_WEBAPP_OVERLAY_DIR, ROOT_DIR];
   const filePath = candidateRoots.reduce((resolved, currentRootDir) => {
     if (resolved) {
       return resolved;

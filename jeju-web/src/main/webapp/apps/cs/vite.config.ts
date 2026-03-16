@@ -20,7 +20,7 @@ export default defineConfig({
   envDir: path.resolve(import.meta.dirname),
   root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "../../../.generated/front/pages/cs"),
+    outDir: path.resolve(import.meta.dirname, "../../.generated/webapp-overlay/pages/cs"),
     emptyOutDir: true,
     rollupOptions: {
       input: {

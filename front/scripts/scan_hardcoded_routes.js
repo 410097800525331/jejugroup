@@ -8,9 +8,9 @@ const fs = require('fs');
 const path = require('path');
 
 const FRONT_DIR = path.resolve(__dirname, '../');
-const GENERATED_FRONT_DIR = path.resolve(__dirname, '../../.generated/front');
+const GENERATED_WEBAPP_OVERLAY_DIR = path.resolve(__dirname, '../.generated/webapp-overlay');
 const ROUTE_MODULE_PATH = path.resolve(FRONT_DIR, 'core/modules/constants/routes.module.js');
-const IGNORE_DIRS = ['node_modules', '.git', 'scripts', 'assets'];
+const IGNORE_DIRS = ['node_modules', '.git', '.generated', 'scripts', 'assets'];
 const ALLOWED_VALUES = ['#', 'javascript:void(0)', '', '/'];
 const ROUTE_ENTRY_IGNORE = new Set(['apps/cs/client/index.html']);
 
@@ -34,11 +34,11 @@ function normalizeRelativePath(filePath) {
 function generatedOverlayPath(targetPath) {
     const relativePath = normalizeRelativePath(targetPath);
     if (relativePath.startsWith('components\\runtime') || relativePath.startsWith('components/runtime')) {
-        return path.resolve(GENERATED_FRONT_DIR, relativePath);
+        return path.resolve(GENERATED_WEBAPP_OVERLAY_DIR, relativePath);
     }
 
     if (relativePath.startsWith('pages\\cs') || relativePath.startsWith('pages/cs')) {
-        return path.resolve(GENERATED_FRONT_DIR, relativePath);
+        return path.resolve(GENERATED_WEBAPP_OVERLAY_DIR, relativePath);
     }
 
     return null;

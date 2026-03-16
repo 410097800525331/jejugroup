@@ -20,6 +20,8 @@ build/
 .next/
 out/
 coverage/
+.generated/
+front/.generated/
 
 # ===== Java / Eclipse / IntelliJ =====
 *.class
