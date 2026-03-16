@@ -12,7 +12,11 @@ const bootstrapRoutePath = "/components/runtime/bootstrap.js";
 const shellRuntimeRoutePath = "/components/runtime/shell-runtime.js";
 const shellRuntimeSourcePath = "/apps/shell/src/runtime/index.ts";
 const bootstrapSourcePath = "/apps/shell/src/runtime/bootstrap.js";
+const bootstrapVirtualModuleId = "virtual:jeju-runtime-bootstrap";
+const shellRuntimeVirtualModuleId = "virtual:jeju-runtime-shell";
 const sharedNodeModulesDir = path.resolve(rootDir, "components", "react", "node_modules");
+const runtimeBootstrapSpecifiers = new Set([bootstrapRoutePath, bootstrapRoutePath.slice(1)]);
+const runtimeShellSpecifiers = new Set([shellRuntimeRoutePath, shellRuntimeRoutePath.slice(1)]);
 const localNavigatorScript = `
 window.__JEJU_ROUTE_NAVIGATOR__ = {
   ...(window.__JEJU_ROUTE_NAVIGATOR__ || {}),
@@ -109,6 +113,28 @@ export default defineConfig({
     {
       name: "jeju-front-unified-customer-center-dev",
       apply: "serve",
+      load(id) {
+        if (id === bootstrapVirtualModuleId) {
+          return bootstrapProxyModule;
+        }
+
+        if (id === shellRuntimeVirtualModuleId) {
+          return shellRuntimeProxyModule;
+        }
+
+        return null;
+      },
+      resolveId(source) {
+        if (runtimeBootstrapSpecifiers.has(source)) {
+          return bootstrapVirtualModuleId;
+        }
+
+        if (runtimeShellSpecifiers.has(source)) {
+          return shellRuntimeVirtualModuleId;
+        }
+
+        return null;
+      },
       async configureServer(server) {
         if (!server.httpServer) {
           return;
