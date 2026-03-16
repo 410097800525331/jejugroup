@@ -1,7 +1,9 @@
 const ccScriptUrl = document.currentScript?.src || new URL("cc.js", window.location.href).href;
+// 일반 스크립트에서 Vite import 변환을 피하려고 런타임 import를 우회한다
+const loadCcModule = (moduleUrl) => Function("url", "return import(url);")(moduleUrl);
 
 const ensureCcRouteBinder = async () => {
-  const binderModule = await import(new URL("../../core/utils/router_binder.js", ccScriptUrl).href);
+  const binderModule = await loadCcModule(new URL("../../core/utils/router_binder.js", ccScriptUrl).href);
   binderModule.initRouterBinder();
 };
 

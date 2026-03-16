@@ -2,12 +2,14 @@
 // 레거시 제주항공 페이지에서도 routes.js 기반 라우팅을 공용으로 쓰기 위한 브리지
 const jejuAirHeaderScriptUrl = document.currentScript?.src || new URL("header.js", window.location.href).href;
 let jejuAirRouteBridgePromise = null;
+// 일반 스크립트에서 Vite import 변환을 피하려고 런타임 import를 우회한다
+const loadJejuAirModule = (moduleUrl) => Function("url", "return import(url);")(moduleUrl);
 
 const getJejuAirRouteBridge = async () => {
   if (!jejuAirRouteBridgePromise) {
     jejuAirRouteBridgePromise = Promise.all([
-      import(new URL("../../core/utils/path_resolver.js", jejuAirHeaderScriptUrl).href),
-      import(new URL("../../core/utils/router_binder.js", jejuAirHeaderScriptUrl).href),
+      loadJejuAirModule(new URL("../../core/utils/path_resolver.js", jejuAirHeaderScriptUrl).href),
+      loadJejuAirModule(new URL("../../core/utils/router_binder.js", jejuAirHeaderScriptUrl).href),
     ]).then(([resolverModule, binderModule]) => {
       binderModule.initRouterBinder();
 
