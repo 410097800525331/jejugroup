@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jeju-spring migration bootstrap</title>
-    <link rel="stylesheet" th:href="@{/assets/css/dashboard.css}" href="/assets/css/dashboard.css">
+    <th:block th:replace="~{fragments/common :: pageHead('jeju-spring migration hub')}"></th:block>
+    <link rel="stylesheet" th:href="@{/assets/css/migration/dashboard.css}" href="/assets/css/migration/dashboard.css">
 </head>
 <body>
 <main class="page-shell">
     <section class="hero-card">
         <p class="eyebrow">Spring Boot 3.5.11 + Thymeleaf</p>
-        <h1>jeju-spring bootstrap</h1>
+        <h1>jeju-spring migration hub</h1>
         <p class="hero-copy">
             기존 <code>front</code> / <code>jeju-web</code>를 바로 뒤엎지 않고,
             Spring + Thymeleaf 배포로 넘어가기 위한 독립 모듈을 먼저 세웠다.
         </p>
         <div class="hero-meta">
             <span>WAR packaging</span>
-            <span th:text="'shared env: ' + ${sharedEnvPath}">shared env path</span>
-            <span th:text="'health: ' + ${healthPath}">health path</span>
+            <span th:text="'shared env: ' + ${dashboard.sharedEnvPath}">shared env path</span>
+            <span th:text="'health: ' + ${dashboard.healthPath}">health path</span>
+            <span th:text="'config readiness: ' + ${dashboard.configuredCount} + '/' + ${dashboard.totalConfigCount}">config readiness</span>
         </div>
     </section>
 
@@ -28,14 +27,14 @@
                 <p class="eyebrow">Shared Config</p>
                 <h2>jeju-web .env reuse</h2>
             </div>
-            <p class="path-chip" th:text="${sharedEnvPath}">../jeju-web/.env</p>
+            <p class="path-chip" th:text="${dashboard.sharedEnvPath}">../jeju-web/.env</p>
             <p class="panel-copy">
                 기본값은 위 경로고, 서버에서는 <code>JEJU_SHARED_ENV_PATH</code>로 override 하면 된다.
                 배포 SSH와 alwaysdata 키는 새로 쪼개지 않는다.
             </p>
             <div class="detail-box">
                 <span class="detail-label">remote deploy path</span>
-                <strong th:text="${remoteDeployPath}">/home/jejugroup/ROOT.war</strong>
+                <strong th:text="${dashboard.remoteDeployPath}">/home/jejugroup/ROOT.war</strong>
             </div>
         </article>
 
@@ -45,16 +44,58 @@
                 <h2>migration notes</h2>
             </div>
             <ul class="note-list">
-                <li th:each="note : ${notes}" th:text="${note}">note</li>
+                <li th:each="note : ${dashboard.notes}" th:text="${note}">note</li>
+            </ul>
+        </article>
+
+        <article class="panel progress-card">
+            <div class="panel-head">
+                <p class="eyebrow">Readiness</p>
+                <h2>module scaffolding progress</h2>
+            </div>
+            <p class="progress-copy">
+                환경 키와 운영 라우트를 한곳에서 점검할 수 있게 구성했다.
+                이후 페이지 이관과 Spring MVC 전환은 이 구조 위에서 진행하면 된다.
+            </p>
+            <div class="progress-bar" aria-hidden="true">
+                <div
+                    class="progress-fill"
+                    th:style="|width:${dashboard.totalConfigCount == 0 ? 0 : (dashboard.configuredCount * 100 / dashboard.totalConfigCount)}%;|"
+                    style="width: 0%;"
+                ></div>
+            </div>
+            <div class="summary-chips">
+                <span class="summary-chip" th:text="'configured ' + ${dashboard.configuredCount} + ' / ' + ${dashboard.totalConfigCount}">configured 0 / 0</span>
+                <span class="summary-chip">HTML + JSON entry points ready</span>
+            </div>
+        </article>
+    </section>
+
+    <section class="content-grid">
+        <article class="panel">
+            <div class="panel-head">
+                <p class="eyebrow">Module Routes</p>
+                <h2>entry points</h2>
+            </div>
+            <ul class="route-list">
+                <li th:each="route : ${dashboard.routes}">
+                    <div class="route-copy">
+                        <div>
+                            <strong th:text="${route.label}">route label</strong>
+                            <p th:text="${route.description}">route description</p>
+                        </div>
+                    </div>
+                    <a class="route-link" th:href="${route.path}" th:text="${route.path}" href="/">/</a>
+                </li>
             </ul>
         </article>
     </section>
 
     <section class="status-grid">
-        <article class="panel" th:each="section : ${configSections}">
+        <article class="panel" th:each="section : ${dashboard.configSections}">
             <div class="panel-head">
                 <p class="eyebrow">Config readiness</p>
-                <h2 th:text="${section.title}">section title</h2>
+                <h2 th:text="|${section.title} (${section.readyCount}/${#lists.size(section.items)})|">section title</h2>
             </div>
             <ul class="status-list">
                 <li th:each="item : ${section.items}" th:classappend="${item.configured} ? 'ready' : 'missing'">

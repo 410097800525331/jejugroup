@@ -109,11 +109,11 @@ const DEALS = [
     { id: 12, category: 'pension', image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=500&q=80', badge: '풀빌라', title: '발리 스미냑 프라이빗 풀빌라', location: '인도네시아, 발리', rating: 4.9, reviews: 450, oldPrice: 450000, newPrice: 280000 },
     { id: 13, category: 'hotel', image: 'https://lh3.googleusercontent.com/p/AF1QipN3DmDaDnxNEbJ8e0btW2OXHskV76AWwZjj_rUf=w500-q80-k-no', badge: '시내 중심', title: 'JR 규슈 호텔 블라썸 하카타', location: '후쿠오카', rating: 4.7, reviews: 3100, oldPrice: 180000, newPrice: 110000 },
     { id: 14, category: 'hotel', image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=500&q=80', badge: '조식 포함', title: '소테츠 프레사 인 도쿄 롯폰기', location: '도쿄', rating: 4.4, reviews: 1850, oldPrice: 150000, newPrice: 89000 },
-    { id: 15, category: 'activity', image: 'https://images.unsplash.com/photo-1545562083-c583d9941ac2?w=500&q=80', badge: '필수 코스', title: '파리 에펠탑 패스트트랙 입장권', location: '프랑스, 파리', rating: 4.8, reviews: 12400, oldPrice: 45000, newPrice: 38000 },
+    { id: 15, category: 'activity', image: '../../images/paris.jpg', badge: '필수 코스', title: '파리 에펠탑 패스트트랙 입장권', location: '프랑스, 파리', rating: 4.8, reviews: 12400, oldPrice: 45000, newPrice: 38000 },
     { id: 16, category: 'rentacar', image: 'https://images.unsplash.com/photo-1550136513-548af4445338?w=500&q=80', badge: '전기차', title: '제주 아이오닉5 롱레인지', location: '제주도', rating: 4.9, reviews: 560, oldPrice: 120000, newPrice: 48000 },
     { id: 17, category: 'hotel', image: 'https://images.unsplash.com/photo-1455587734955-081b22074882?w=500&q=80', badge: '특가', title: '호텔 리솔 트리니티 삿포로', location: '삿포로', rating: 4.7, reviews: 2200, oldPrice: 190000, newPrice: 125000 },
     { id: 18, category: 'pension', image: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=500&q=80', badge: '감성 숙소', title: '교토 전통 마치야 스테이', location: '교토', rating: 4.9, reviews: 320, oldPrice: 350000, newPrice: 280000 },
-    { id: 19, category: 'activity', image: 'https://images.unsplash.com/photo-1528659578137-b4528a402512?w=500&q=80', badge: '야경 명소', title: '홍콩 피크트램 스카이패스', location: '홍콩', rating: 4.6, reviews: 8900, oldPrice: 22000, newPrice: 15000 },
+    { id: 19, category: 'activity', image: '../../images/train.webp', badge: '야경 명소', title: '홍콩 피크트램 스카이패스', location: '홍콩', rating: 4.6, reviews: 8900, oldPrice: 22000, newPrice: 15000 },
     { id: 20, category: 'hotel', image: 'https://images.unsplash.com/photo-1572148884483-794c9b6c6963?w=800&q=80&fit=crop&crop=focalpoint&fp-y=0.8', badge: '럭셔리', title: '마리나 베이 샌즈', location: '싱가포르', rating: 4.9, reviews: 45000, oldPrice: 890000, newPrice: 650000 }
 ];
 
@@ -371,4 +371,3 @@ function initTimer() {
 function pad(n) {
     return n < 10 ? '0' + n : n;
 }
-

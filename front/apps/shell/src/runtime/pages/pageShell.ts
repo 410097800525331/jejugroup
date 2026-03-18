@@ -7,8 +7,6 @@ import { getAppRoot } from "@runtime/utils/appRoot";
 const SHELL_QUERY_KEY = "shell";
 const SHELL_STORAGE_KEY = "jeju:mypage-shell";
 const SHELLS = new Set(["main", "stay", "air"]);
-const AUTH_PATH_SEGMENT = "/pages/auth/";
-
 let mountedShell: string | null = null;
 
 const getHeaderHost = () => {
@@ -28,9 +26,7 @@ const getPageShellHosts = () => {
 
 const toAbsoluteUrl = (resourcePath: string) => new URL(resourcePath, getAppRoot()).href;
 
-const isAuthPage = () => window.location.pathname.toLowerCase().includes(AUTH_PATH_SEGMENT);
-
-const normalizeShellForPage = (shell: string) => (shell === "stay" && isAuthPage() ? "main" : shell);
+const normalizeShellForPage = (shell: string) => shell;
 
 const loadStyle = (href: string) => {
   const absoluteHref = /^[a-z]+:/i.test(href) ? href : toAbsoluteUrl(href);

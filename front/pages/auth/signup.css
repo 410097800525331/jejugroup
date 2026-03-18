@@ -76,6 +76,13 @@ body.signup-page .header .util-divider {
   text-shadow: none;
 }
 
+body.signup-page .header .gnb-link:hover,
+body.signup-page .header .util-link:hover,
+body.signup-page .header .lang-toggle:hover,
+body.signup-page .header .mypage-btn:hover {
+  color: #FF5000;
+}
+
 body.signup-page .header .logo-img {
   filter: none;
 }
@@ -768,6 +775,31 @@ body.signup-page .footer-copyright {
 #jeju-signup-app {
   max-width: 480px;
   width: 100%;
+}
+
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header {
+  background: #ffffff;
+  border-bottom: 1px solid #eeeeee;
+  box-shadow: none;
+  position: relative;
+}
+
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-logo-img {
+  filter: none;
+}
+
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-nav-link,
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-util-link,
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-mobile-menu-btn {
+  color: #1f2937;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+}
+
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-nav-link:hover,
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-util-link:hover,
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-mobile-menu-btn:hover {
+  color: #FF5000;
 }
 
 .auth-method-note {

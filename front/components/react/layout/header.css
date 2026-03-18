@@ -295,7 +295,14 @@
     align-items: center;
 }
 
-.main-header .logo-link img,
+.main-header .logo-link img {
+    width: auto;
+    height: 45px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
 .hotel-shell-header .hotel-shell-logo-img {
     width: 160px;
     height: 32px;

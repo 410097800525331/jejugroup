@@ -57,6 +57,7 @@ export const ROUTE_METADATA = deepFreeze({
 
   CS: {
     CUSTOMER_CENTER: pageRoute("/pages/cs/customer_center.html"),
+    NOTICE: hashPageRoute("/pages/cs/customer_center.html", "#/notices"),
     FAQ: hashPageRoute("/pages/cs/customer_center.html", "#/faqs"),
     INQUIRY: pageRoute("/pages/cs/customer_center.html"),
   },
@@ -141,8 +142,8 @@ export const ROUTE_METADATA = deepFreeze({
       },
 
       CS: {
-        CUSTOMER_SERVICE: pageRoute("/jejuair/pages/cs/customerService.html"),
-        NOTICE: pageRoute("/jejuair/pages/cs/notic.html"),
+        CUSTOMER_SERVICE: pageRoute("/pages/cs/customer_center.html"),
+        NOTICE: hashPageRoute("/pages/cs/customer_center.html", "#/notices"),
       },
 
       AUTH: {

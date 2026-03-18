@@ -27,6 +27,43 @@ function initMainScroll(retryCount = 0) {
     const topBtn = document.getElementById('topBtn');
     const navLinks = document.querySelectorAll('.gnb-link');
 
+    const normalizePathname = (pathname) => {
+        if (!pathname || pathname === '/') {
+            return '/index.html';
+        }
+
+        if (pathname.endsWith('/')) {
+            return `${pathname}index.html`;
+        }
+
+        return pathname;
+    };
+
+    const resolveSectionIdFromHref = (href) => {
+        if (!href) {
+            return null;
+        }
+
+        try {
+            if (href.startsWith('#')) {
+                return href.substring(1) || null;
+            }
+
+            const resolvedUrl = new URL(href, window.location.href);
+            const currentUrl = new URL(window.location.href);
+            if (
+                normalizePathname(resolvedUrl.pathname) !== normalizePathname(currentUrl.pathname) ||
+                !resolvedUrl.hash
+            ) {
+                return null;
+            }
+
+            return resolvedUrl.hash.substring(1) || null;
+        } catch (_error) {
+            return null;
+        }
+    };
+
     // --- State ---
     let currentSectionIndex = 0; // 0 to sections.length (where last index is Footer)
     let isScrolling = false;
@@ -208,7 +245,8 @@ function initMainScroll(retryCount = 0) {
 
                 // Nav Link Active State
                 navLinks.forEach(link => {
-                    if (link.getAttribute('href') === `#${entry.target.id}`) {
+                    const targetSectionId = resolveSectionIdFromHref(link.getAttribute('href'));
+                    if (targetSectionId === entry.target.id) {
                         link.classList.add('active'); 
                     } else {
                         link.classList.remove('active');
@@ -226,18 +264,19 @@ function initMainScroll(retryCount = 0) {
     // GNB Links
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            // Internal links only
-            const href = link.getAttribute('href');
-            if (href.startsWith('#')) {
-                e.preventDefault();
-                const targetId = href.substring(1);
-                const targetSection = document.getElementById(targetId);
-                if (targetSection) {
-                    // Update index based on target
-                    currentSectionIndex = Array.from(sections).indexOf(targetSection);
-                    scrollToCurrentIndex();
-                }
+            const targetId = resolveSectionIdFromHref(link.getAttribute('href'));
+            if (!targetId) {
+                return;
             }
+
+            const targetSection = document.getElementById(targetId);
+            if (!targetSection) {
+                return;
+            }
+
+            e.preventDefault();
+            currentSectionIndex = Array.from(sections).indexOf(targetSection);
+            scrollToCurrentIndex();
         });
     });
 

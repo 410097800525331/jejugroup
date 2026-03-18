@@ -12,7 +12,13 @@
 - Java `17`
 - Packaging `war`
 - Thymeleaf 기본 엔트리: `/`, `/migration`
+- Readiness JSON 엔트리: `/migration/readiness`
 - Actuator health: `/actuator/health`
+- 내부 패키지 기준:
+  - `config`: 공용 설정 바인딩
+  - `migration/application`: migration dashboard 조합 로직
+  - `migration/web`: HTML + JSON 엔트리
+  - `migration/view`: Thymeleaf/API 응답 record
 
 ## 환경 변수 규칙
 
@@ -26,6 +32,7 @@
 - `pnpm run spring:run`
 - `pnpm run spring:test`
 - `pnpm run spring:package`
+- 루트 스크립트는 `JAVA_HOME`이 비어 있으면 PATH 또는 대표 설치 경로에서 JDK를 먼저 찾는다.
 
 ## 첫 이행 원칙
 
@@ -34,6 +41,7 @@
 - 공용 CSS/이미지는 필요한 범위만 `jeju-spring/src/main/resources/static`으로 가져온다.
 - JDBC 의존성은 넣어뒀지만, 실제 DB 마이그레이션 전까지는 datasource auto configuration을 끈 상태로 둔다.
 - 기존 `jeju-web` deploy script는 당장 건드리지 않는다. Spring WAR 배포 파이프라인은 템플릿 이관 후 별도로 연결한다.
+- 공용 스타일은 `assets/css/app.css`, 페이지별 스타일은 기능 폴더 아래로 분리한다.
 
 ## 다음 추천 순서
 

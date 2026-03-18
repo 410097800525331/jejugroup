@@ -128,6 +128,11 @@ const resolveCurrentShell = () => {
     }
   }
 
+  const pathnameShell = resolveShellFromPathname(window.location.pathname);
+  if (pathnameShell) {
+    return pathnameShell;
+  }
+
   try {
     const storedShell = normalizeShell(window.sessionStorage?.getItem(SHELL_STORAGE_KEY));
     if (storedShell) {
@@ -137,7 +142,7 @@ const resolveCurrentShell = () => {
     // no-op
   }
 
-  return resolveShellFromPathname(window.location.pathname);
+  return 'main';
 };
 
 const injectRouteDefaults = (routeMeta, params) => {
@@ -157,11 +162,10 @@ const injectRouteDefaults = (routeMeta, params) => {
   }
 
   const currentShell = resolveCurrentShell();
-  const authShell = currentShell === 'stay' ? 'main' : currentShell;
 
   return {
     ...withDefaultQuery,
-    [SHELL_QUERY_KEY]: authShell
+    [SHELL_QUERY_KEY]: currentShell
   };
 };
 
