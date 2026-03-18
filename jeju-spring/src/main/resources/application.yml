@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: jeju-spring
+  config:
+    import: "optional:file:${JEJU_SHARED_ENV_PATH:../jeju-web/.env}[.properties]"
+  thymeleaf:
+    cache: false
+
+server:
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    shared-env-path: ${JEJU_SHARED_ENV_PATH:../jeju-web/.env}
+
+app:
+  migration:
+    shared-env-path: ${JEJU_SHARED_ENV_PATH:../jeju-web/.env}
+    notes:
+      - front stays as the editable source until each page is migrated to Thymeleaf
+      - jeju-web deploy credentials remain the shared source for alwaysdata and ssh
+      - JDBC dependency is ready, but datasource auto-configuration stays disabled until DB migration starts
+  alwaysdata:
+    db-url: ${ALWAYSDATA_DB_URL:}
+    db-user: ${ALWAYSDATA_DB_USER:}
+    db-password: ${ALWAYSDATA_DB_PASSWORD:}
+    ssh-host: ${ALWAYSDATA_SSH_HOST:${SSH_HOST:}}
+    ssh-user: ${ALWAYSDATA_SSH_USER:${SSH_USER:}}
+    ssh-password: ${ALWAYSDATA_SSH_PASSWORD:${SSH_PASSWORD:}}
+    admin-email: ${ALWAYSDATA_ADMIN_EMAIL:${ADMIN_EMAIL:}}
+    admin-password: ${ALWAYSDATA_ADMIN_PASSWORD:${ADMIN_PASSWORD:}}
+    remote-deploy-path: ${REMOTE_DEPLOY_PATH:/home/jejugroup/ROOT.war}
+  external:
+    openweather-api-key: ${OPENWEATHER_API_KEY:}
+    openai-api-key: ${OPENAI_API_KEY:}
+  social:
+    naver-client-id: ${NAVER_CLIENT_ID:}
+    naver-client-secret: ${NAVER_CLIENT_SECRET:}
+    kakao-js-key: ${KAKAO_JS_KEY:}

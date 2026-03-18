@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jeju-spring migration bootstrap</title>
+    <link rel="stylesheet" th:href="@{/assets/css/dashboard.css}" href="/assets/css/dashboard.css">
+</head>
+<body>
+<main class="page-shell">
+    <section class="hero-card">
+        <p class="eyebrow">Spring Boot 3.5.11 + Thymeleaf</p>
+        <h1>jeju-spring bootstrap</h1>
+        <p class="hero-copy">
+            기존 <code>front</code> / <code>jeju-web</code>를 바로 뒤엎지 않고,
+            Spring + Thymeleaf 배포로 넘어가기 위한 독립 모듈을 먼저 세웠다.
+        </p>
+        <div class="hero-meta">
+            <span>WAR packaging</span>
+            <span th:text="'shared env: ' + ${sharedEnvPath}">shared env path</span>
+            <span th:text="'health: ' + ${healthPath}">health path</span>
+        </div>
+    </section>
+
+    <section class="content-grid">
+        <article class="panel">
+            <div class="panel-head">
+                <p class="eyebrow">Shared Config</p>
+                <h2>jeju-web .env reuse</h2>
+            </div>
+            <p class="path-chip" th:text="${sharedEnvPath}">../jeju-web/.env</p>
+            <p class="panel-copy">
+                기본값은 위 경로고, 서버에서는 <code>JEJU_SHARED_ENV_PATH</code>로 override 하면 된다.
+                배포 SSH와 alwaysdata 키는 새로 쪼개지 않는다.
+            </p>
+            <div class="detail-box">
+                <span class="detail-label">remote deploy path</span>
+                <strong th:text="${remoteDeployPath}">/home/jejugroup/ROOT.war</strong>
+            </div>
+        </article>
+
+        <article class="panel">
+            <div class="panel-head">
+                <p class="eyebrow">Next Slice</p>
+                <h2>migration notes</h2>
+            </div>
+            <ul class="note-list">
+                <li th:each="note : ${notes}" th:text="${note}">note</li>
+            </ul>
+        </article>
+    </section>
+
+    <section class="status-grid">
+        <article class="panel" th:each="section : ${configSections}">
+            <div class="panel-head">
+                <p class="eyebrow">Config readiness</p>
+                <h2 th:text="${section.title}">section title</h2>
+            </div>
+            <ul class="status-list">
+                <li th:each="item : ${section.items}" th:classappend="${item.configured} ? 'ready' : 'missing'">
+                    <div class="status-copy">
+                        <span class="status-dot"></span>
+                        <div>
+                            <strong th:text="${item.label}">key label</strong>
+                            <p th:text="${item.sourceKey}">ENV_KEY</p>
+                        </div>
+                    </div>
+                    <span class="status-badge" th:text="${item.configured} ? 'ready' : 'missing'">ready</span>
+                </li>
+            </ul>
+        </article>
+    </section>
+</main>
+</body>
+</html>

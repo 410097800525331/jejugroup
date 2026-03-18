@@ -28,7 +28,10 @@
     "prepare:webapp": "pnpm run build:front && pnpm run sync",
     "build": "pnpm run prepare:webapp && node scripts/pipelines/build-war.js",
     "deploy": "pnpm run build && node scripts/pipelines/deploy.js",
-    "publish": "pnpm run deploy"
+    "publish": "pnpm run deploy",
+    "spring:run": "node scripts/spring/run-jeju-spring-maven.cjs spring-boot:run",
+    "spring:test": "node scripts/spring/run-jeju-spring-maven.cjs test",
+    "spring:package": "node scripts/spring/run-jeju-spring-maven.cjs package"
   },
   "dependencies": {
     "dotenv": "^17.3.1",
