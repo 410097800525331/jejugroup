@@ -50,6 +50,12 @@
     border-radius: 50%;
     display: flex;
     align-items: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
     justify-content: center;
     color: #444;
     transition: all 0.2s;
@@ -58,6 +64,14 @@
 .footer.shell-footer .social-icon:hover {
     background: var(--primary);
     color: white;
+}
+
+.footer-right-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+    z-index: 50;
 }
 
 .footer.shell-footer .footer-copyright {

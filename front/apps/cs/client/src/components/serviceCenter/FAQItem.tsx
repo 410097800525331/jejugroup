@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, LucideIcon, HelpCircle } from "lucide-react";
 import { getServiceLabel } from "@/data/serviceCenterData";
+import { Link } from "wouter";
 
 interface FAQItemProps {
   id: number;
@@ -102,7 +103,9 @@ export default function FAQItem({ id, question, answer, category, service, color
                 </p>
                 <div className="mt-8 flex items-center gap-4 text-sm text-gray-400 font-bold border-t border-gray-200/50 pt-6">
                   <span>추가 도움이 필요하신가요?</span>
-                  <button className="text-orange-600 hover:underline">상담원 연결하기</button>
+                  <Link href="/inquiries">
+                    <a className="text-orange-600 hover:underline">문의하기</a>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -12,8 +12,8 @@ interface SearchBarProps {
  */
 export default function SearchBar({ query, setQuery, onChatbotClick }: SearchBarProps) {
   return (
-    <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
+    <div className="sticky inset-x-0 top-0 z-50 border-b border-orange-100/70 bg-white/88 shadow-[0_10px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/72">
+      <div className="max-w-7xl mx-auto px-4 py-3.5 flex items-center gap-4">
         <div className="flex-1 relative group">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors" size={18} />
           <input
@@ -30,7 +30,7 @@ export default function SearchBar({ query, setQuery, onChatbotClick }: SearchBar
           title="챗봇 열기"
         >
           <MessageCircle size={18} />
-          <span className="hidden sm:inline text-sm">팻봇</span>
+          <span className="hidden sm:inline text-sm">챗봇</span>
         </button>
       </div>
     </div>

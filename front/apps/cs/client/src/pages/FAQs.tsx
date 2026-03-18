@@ -11,7 +11,7 @@ import { ServiceType } from "@/types/service-center";
 import SearchBar from "@/components/serviceCenter/SearchBar";
 import SectionHeader from "@/components/serviceCenter/SectionHeader";
 import FAQItem from "@/components/serviceCenter/FAQItem";
-import FAB from "@front-fab/FABContainer";
+import ServiceCenterFooter from "@/components/serviceCenter/ServiceCenterFooter";
 
 /**
  * FAQ 전용 라이브러리 페이지 (리팩토링 완료)
@@ -24,7 +24,7 @@ export default function FAQs() {
 
   // 챗봇 핸들러
   const handleChatbotClick = () => {
-    alert("제주 그룹 스마트 챗봇 '팻봇'이 상담 대기 중입니다!");
+    alert("제주 그룹 스마트 챗봇이 상담 대기 중입니다!");
   };
 
   // FAQ 아코디언 토글 핸들러
@@ -61,9 +61,6 @@ export default function FAQs() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* 프리미엄 FAB */}
-      <FAB />
-
       {/* 검색바 */}
       <SearchBar 
         query={searchQuery} 
@@ -144,11 +141,7 @@ export default function FAQs() {
       </main>
 
       {/* 하단 안내 문구 */}
-      <footer className="py-16 border-t border-gray-100 text-center bg-gray-50/30">
-        <p className="text-gray-300 font-black tracking-[0.2em] text-xs uppercase">
-          © 2026 JEJU GROUP INTEGRATED SERVICE CENTER. ALL RIGHTS RESERVED.
-        </p>
-      </footer>
+      <ServiceCenterFooter />
     </div>
   );
 }

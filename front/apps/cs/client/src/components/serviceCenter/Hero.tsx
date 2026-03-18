@@ -47,8 +47,13 @@ export default function Hero() {
               </Button>
             </Link>
             <Link href="/faqs">
-              <Button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-6 text-lg rounded-2xl transition-all shadow-xl shadow-orange-500/30 border-none cursor-pointer">
+              <Button className="w-full sm:w-auto bg-gray-900/50 backdrop-blur-md hover:bg-black/50 text-white font-bold px-8 py-6 text-lg rounded-2xl transition-all border border-white/20 cursor-pointer">
                 자주 묻는 질문
+              </Button>
+            </Link>
+            <Link href="/inquiries">
+              <Button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-6 text-lg rounded-2xl transition-all shadow-xl shadow-orange-500/30 border-none cursor-pointer">
+                1:1 문의하기
               </Button>
             </Link>
           </div>

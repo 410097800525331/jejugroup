@@ -8,7 +8,9 @@
     "build": "vite build && move ..\\..\\.generated\\webapp-overlay\\pages\\cs\\index.html ..\\..\\.generated\\webapp-overlay\\pages\\cs\\customer_center.html",
     "build:lib": "vite build --config vite.config.ts",
     "preview": "vite preview",
-    "check": "tsc"
+    "check": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -70,16 +72,20 @@
   "devDependencies": {
     "@builder.io/vite-plugin-jsx-loc": "^0.1.1",
     "@tailwindcss/vite": "^4.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "esbuild": "^0.24.0",
+    "jsdom": "^29.0.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.14",
-    "vite-plugin-manus-runtime": "^0.0.2"
+    "vite-plugin-manus-runtime": "^0.0.2",
+    "vitest": "^3.0.7"
   }
 }

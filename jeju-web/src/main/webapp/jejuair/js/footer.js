@@ -57,6 +57,23 @@ $(document).ready(function () {
         </div>
         <!-- link container -->
         <div class="link_container">
+          <!-- Radial Menu for Family Site -->
+          <div class="radial-menu-container" id="radialFamilyMenu">
+            <button class="radial-btn" title="Family Sites">
+              <span style="font-size: 1.5rem;">+</span>
+            </button>
+            <div class="radial-items">
+              <a href="../../index.html" class="radial-item item-1" title="제주그룹 메인">
+                <span style="font-size: 1.2rem;">🏠</span>
+              </a>
+              <a href="../../jejustay/pages/hotel/jejuhotel.html" class="radial-item item-2" title="제주스테이">
+                <span style="font-size: 1.2rem;">🏨</span>
+              </a>
+              <a href="https://jejurentcar.netlify.app/" class="radial-item item-3" title="제주렌트카">
+                <span style="font-size: 1.2rem;">🚗</span>
+              </a>
+            </div>
+          </div>
           <div class="sns_link">
             <a href="https://www.youtube.com/@jejuair_official"><img src="assets/img/20250804165831645.png" alt="유튜브"></a>
             <a href="https://www.instagram.com/jejuair_official/"><img src="assets/img/20250804165841751.png" alt="인스타그램"></a>
@@ -78,4 +95,22 @@ $(document).on('click', '.footer_link h4', function () {
   if (window.innerWidth <= 1024) {
     $(this).parent().toggleClass('open')
   }
-})
+});
+
+// Family Site Radial Menu Toggle
+$(document).on('click', '#radialFamilyMenu .radial-btn', function (e) {
+  e.stopPropagation();
+  const container = $(this).parent();
+  
+  container.toggleClass('active');
+  $(this).toggleClass('active');
+});
+
+// Close radial menu when clicking outside
+$(document).on('click', function() {
+  const container = $('#radialFamilyMenu');
+  if (container.hasClass('active')) {
+    container.removeClass('active');
+    container.find('.radial-btn').removeClass('active');
+  }
+});

@@ -94,6 +94,7 @@ export default defineConfig({
     alias: {
       "@runtime": path.resolve(rootDir, "apps", "shell", "src", "runtime"),
       "@front-fab": path.resolve(rootDir, "components", "react", "ui", "FAB"),
+      "@front-layout": path.resolve(rootDir, "components", "react", "layout"),
       "@front-components": path.resolve(rootDir, "components", "react"),
       "@front-core-auth": path.resolve(rootDir, "core", "auth"),
       "@front-core-utils": path.resolve(rootDir, "core", "utils"),

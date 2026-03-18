@@ -1,6 +1,7 @@
 import { LucideIcon } from "lucide-react";
 
-export type ServiceType = "jeju-air" | "jeju-stay" | "jeju-rental";
+export type ServiceType = "jeju-air" | "jeju-stay" | "jeju-rental" | "common";
+export type InquiryStatus = "pending" | "completed";
 
 export interface Notice {
   id: number;
@@ -29,4 +30,21 @@ export interface Contact {
   hours: string;
   color: string;
   icon: LucideIcon;
+}
+
+export interface InquirySubmission {
+  service: ServiceType;
+  inquiryType: string;
+  name: string;
+  email: string;
+  phone: string;
+  title: string;
+  content: string;
+  agreement: boolean;
+}
+
+export interface InquiryRecord extends Omit<InquirySubmission, "agreement"> {
+  id: number;
+  date: string;
+  status: InquiryStatus;
 }

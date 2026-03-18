@@ -1,4 +1,4 @@
-﻿import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
+import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
@@ -14,7 +14,8 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "client", "src"),
       "@shared": path.resolve(import.meta.dirname, "shared"),
       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
-      "@front-fab": path.resolve(import.meta.dirname, "../../components/react/ui/FAB")
+      "@front-fab": path.resolve(import.meta.dirname, "../../components/react/ui/FAB"),
+      "@front-layout": path.resolve(import.meta.dirname, "../../components/react/layout")
     },
   },
   envDir: path.resolve(import.meta.dirname),
@@ -33,6 +34,12 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
+  },
   server: {
     port: 3000,
     strictPort: false,
@@ -43,6 +50,7 @@ export default defineConfig({
       allow: [
         path.resolve(import.meta.dirname, "client"),
         path.resolve(import.meta.dirname, "../../components/react/ui/FAB"),
+        path.resolve(import.meta.dirname, "../../components/react/layout"),
       ],
       deny: ["**/.*"],
     },

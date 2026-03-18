@@ -1,3 +1,33 @@
+import { Building2, Car, Plane } from "lucide-react";
+import FamilyRadialMenu from "./FamilyRadialMenu";
+
+const STAY_FAMILY_RADIAL_ITEMS = [
+  {
+    href: "../../../jejuair/index.html",
+    icon: Plane,
+    key: "air",
+    rel: "noreferrer",
+    target: "_blank",
+    title: "제주에어",
+  },
+  {
+    href: "../../../jejustay/pages/hotel/jejuhotel.html",
+    icon: Building2,
+    key: "stay",
+    rel: "noreferrer",
+    target: "_blank",
+    title: "제주스테이",
+  },
+  {
+    href: "https://jejurentcar.netlify.app/",
+    icon: Car,
+    key: "rentcar",
+    rel: "noreferrer",
+    target: "_blank",
+    title: "제주렌터카",
+  },
+];
+
 export const MainFooterTemplate = () => {
   return (
     <footer className="footer section shell-footer" id="section-footer">
@@ -17,19 +47,23 @@ export const MainFooterTemplate = () => {
           <p data-lang="footerPartnerEmail">제휴 문의: partnership@jejugroup.net</p>
         </div>
 
-        <div className="footer-social">
-          <a href="#" className="social-icon" aria-label="YouTube">
-            <i className="fab fa-youtube" />
-          </a>
-          <a href="#" className="social-icon" aria-label="Instagram">
-            <i className="fab fa-instagram" />
-          </a>
-          <a href="#" className="social-icon" aria-label="TikTok">
-            <i className="fab fa-tiktok" />
-          </a>
-          <a href="#" className="social-icon" aria-label="Facebook">
-            <i className="fab fa-facebook" />
-          </a>
+        <div className="footer-right-group">
+          <FamilyRadialMenu items={STAY_FAMILY_RADIAL_ITEMS} radiusPx={72} />
+
+          <div className="footer-social">
+            <a href="#" className="social-icon" aria-label="YouTube">
+              <i className="fab fa-youtube" />
+            </a>
+            <a href="#" className="social-icon" aria-label="Instagram">
+              <i className="fab fa-instagram" />
+            </a>
+            <a href="#" className="social-icon" aria-label="TikTok">
+              <i className="fab fa-tiktok" />
+            </a>
+            <a href="#" className="social-icon" aria-label="Facebook">
+              <i className="fab fa-facebook" />
+            </a>
+          </div>
         </div>
       </div>
 

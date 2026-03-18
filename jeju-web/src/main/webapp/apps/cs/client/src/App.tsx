@@ -1,13 +1,15 @@
-﻿import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Router, Switch } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Home from "@/pages/Home";
 import Notices from "@/pages/Notices";
 import FAQs from "@/pages/FAQs";
+import Inquiries from "@/pages/Inquiries";
 
 
 function AppRoutes() {
@@ -16,6 +18,7 @@ function AppRoutes() {
       <Route path={"/"} component={Home} />
       <Route path={"/notices"} component={Notices} />
       <Route path={"/faqs"} component={FAQs} />
+      <Route path={"/inquiries"} component={Inquiries} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -31,17 +34,19 @@ function AppRoutes() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router hook={useHashLocation}>
-            <AppRoutes />
-          </Router>
-        </TooltipProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider
+          defaultTheme="light"
+          // switchable
+        >
+          <TooltipProvider>
+            <Toaster />
+            <Router hook={useHashLocation}>
+              <AppRoutes />
+            </Router>
+          </TooltipProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }

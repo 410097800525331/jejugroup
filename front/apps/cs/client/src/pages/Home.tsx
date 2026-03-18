@@ -14,9 +14,9 @@ import SectionHeader from "@/components/serviceCenter/SectionHeader";
 import ServiceCard from "@/components/serviceCenter/ServiceCard";
 import NoticeCard from "@/components/serviceCenter/NoticeCard";
 import FAQItem from "@/components/serviceCenter/FAQItem";
+import ServiceCenterFooter from "@/components/serviceCenter/ServiceCenterFooter";
 import { Button } from "@/components/ui/button";
 import ContactCard from "@/components/serviceCenter/ContactCard";
-import FAB from "@front-fab/FABContainer";
 
 /**
  * 제주항공 통합 고객센터 - 메인 페이지 (리팩토링 완료)
@@ -31,7 +31,7 @@ export default function Home() {
   // 챗봇 핸들러
   const handleChatbotClick = () => {
     // 챗봇 연동 로직 (추후 구현)
-    alert("제주 그룹 스마트 챗봇 '팻봇'이 준비 중입니다. 잠시만 기다려 주세요!");
+    alert("제주 그룹 스마트 챗봇 가동 중입니다. 잠시만 기다려 주세요!");
   };
 
   // FAQ 아코디언 토글 핸들러
@@ -71,13 +71,10 @@ export default function Home() {
   }, [activeService, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#fafafa] selection:bg-orange-100 selection:text-orange-600 relative overflow-hidden">
+    <div className="min-h-screen bg-[#fafafa] selection:bg-orange-100 selection:text-orange-600 relative">
       {/* 백그라운드 데코 */}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-40 -z-10" />
       
-      {/* 프리미엄 FAB (시스템 통합) */}
-      <FAB />
-
       {/* 1. 검색 및 상단 네비게이션 */}
       <SearchBar 
         query={searchQuery} 
@@ -240,15 +237,20 @@ export default function Home() {
               <ContactCard key={contact.name} {...contact} />
             ))}
           </div>
+
+          <div className="mt-20 text-center">
+            <Link href="/inquiries">
+              <a className="inline-flex items-center gap-4 bg-white hover:bg-orange-50 text-orange-600 border-2 border-orange-100 hover:border-orange-500 px-12 py-5 rounded-3xl font-black text-xl transition-all shadow-xl hover:shadow-orange-500/20 group">
+                상담원과 1:1 문의하기
+                <ChevronRight className="group-hover:translate-x-2 transition-transform" />
+              </a>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* 7. 하단 안내 문구 */}
-      <footer className="py-16 border-t border-gray-100 text-center">
-        <p className="text-gray-300 font-black tracking-[0.2em] text-xs uppercase">
-          © 2026 JEJU GROUP INTEGRATED SERVICE CENTER. ALL RIGHTS RESERVED.
-        </p>
-      </footer>
+      <ServiceCenterFooter />
     </div>
   );
 }
