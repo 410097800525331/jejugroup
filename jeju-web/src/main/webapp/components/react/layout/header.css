@@ -1,0 +1,642 @@
+@import url("./mega-menu.css");
+
+/* ==================== 헤더 스타일 ==================== */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: transparent;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: background-color, transform;
+}
+
+.header.scrolled {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* 투명도 확 올려서 롤백 */
+    backdrop-filter: blur(20px);
+    /* 섹션과 구분되도록 블러는 강화 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.15);
+    /* 그림자로 띄워줌 */
+}
+
+.header.scrolled:not(.hotel-shell-header) .gnb-link,
+.header.scrolled:not(.hotel-shell-header) .mypage-btn,
+.header.scrolled:not(.hotel-shell-header) .lang-toggle,
+.header.scrolled:not(.hotel-shell-header) .util-link {
+    color: #ffffff;
+}
+
+.header.scrolled .gnb-link:hover,
+.header.scrolled .mypage-btn:hover,
+.header.scrolled .util-link:hover {
+    color: #FF5000;
+}
+
+.header.scrolled .lang-toggle {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.header.scrolled .gnb-link,
+.header.scrolled .mypage-btn,
+.header.scrolled .lang-toggle,
+.header.scrolled .util-link {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    /* 그림자 0.3으로 완화 */
+}
+
+.header.transparent {
+    background-color: rgba(255, 255, 255, 0);
+    backdrop-filter: none;
+}
+
+.header.transparent .header-util {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 섹션 1에서 헤더 흰색 배경 + 글자 흰색 */
+.header.section1-header {
+    background-color: rgba(255, 255, 255, 0);
+    /* backdrop-filter: blur(10px); */
+}
+
+.header.section1-header .logo-link {
+    color: #f2f2f2;
+}
+
+.header.section1-header .gnb-link {
+    color: #f2f2f2;
+}
+
+.header.section1-header .gnb-link:hover {
+    color: #FF5000;
+}
+
+.header.section1-header .lang-toggle {
+    color: #f2f2f2;
+    border-color: #f2f2f2;
+}
+
+.header.section1-header .lang-toggle:hover {
+    border-color: #FF5000;
+    color: #FF5000;
+}
+
+.header.section1-header .mypage-btn {
+    color: #f2f2f2;
+}
+
+.header.section1-header .mypage-btn:hover {
+    color: #FF5000;
+}
+
+.header.section1-header .util-link {
+    color: #e0e0e0;
+}
+
+.header.section1-header .util-link:hover {
+    color: #FF5000;
+}
+
+.header.section1-header .util-divider {
+    color: #e0e0e0;
+}
+
+/* 섹션 2+ 헤더 투명 배경 - 이제 스크롤된 상태(scrolled)와 결합하여 제어 */
+
+/* 개별 컴포넌트 색상 강제 지정 (명시도 확보) */
+.header.section1-header .gnb-link,
+.header.section1-header .mypage-btn,
+.header.section1-header .lang-toggle,
+.header.section1-header .util-link {
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    /* 그림자 0.3으로 완화 */
+}
+
+.header.section1-header .lang-toggle {
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.header.scrolled .lang-toggle:hover {
+    border-color: #FF5000;
+    color: #FF5000;
+}
+
+.header.section2plus-header .mypage-btn {
+    color: #f2f2f2;
+}
+
+.header.section2plus-header .mypage-btn:hover {
+    color: #FF5000;
+}
+
+/* Footer Header (When over footer) */
+.header.footer-header {
+    background-color: rgba(255, 255, 255, 1);
+    /* Solid white background */
+    border-bottom: 1px solid #eee;
+    backdrop-filter: none;
+}
+
+.header.footer-header .gnb-link,
+.header.footer-header .mypage-btn {
+    color: #333333;
+    /* Dark text */
+    text-shadow: none;
+}
+
+.header.footer-header .gnb-link:hover,
+.header.footer-header .mypage-btn:hover {
+    color: #FF5000;
+}
+
+.header.footer-header .lang-toggle {
+    color: #333333;
+    border-color: #333333;
+    text-shadow: none;
+}
+
+.header.footer-header .lang-toggle:hover {
+    color: #FF5000;
+    border-color: #FF5000;
+}
+
+
+/* 헤더 유틸 - 메인 헤더 전용 */
+.main-header .header-util {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0 0 0;
+    font-size: 11px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    width: 95%;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.main-header .util-link {
+    color: #555;
+    text-decoration: none;
+    transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.main-header .util-link:hover {
+    color: #FF5000;
+}
+
+.main-header .util-divider {
+    color: #ddd;
+}
+
+/* 섹션 2+ 에서 header-util 전체 숨김 */
+.header.section2plus-header .header-util {
+    display: none;
+}
+
+/* 헤더 내부 - 3단 컨테이너 완전 분리 (정중앙 네비게이션 보장) */
+.header-inner {
+    height: var(--header-height, 72px);
+    display: flex;
+    justify-content: space-between;
+    /* 양 끝단 로고/유틸 배치용 */
+    align-items: center;
+    width: 95%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 8px 0;
+    position: relative;
+    /* GNB 절대 중앙 배치를 위한 기준점 */
+}
+
+/* 메인 헤더 - 좌측 로고 (자연스러운 Y축 중앙화) */
+.main-header .logo {
+    display: flex;
+    align-items: center;
+    position: relative;
+    top: 2px;
+    /* 로고 이미지 시각적 Y축 미세 조정 */
+}
+
+/* 메인 헤더 - GNB 무조건 X축 정중앙 배치 */
+.main-header .gnb {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+/* 메인 헤더 - 우측 라이트 컨트롤 (유틸리티) */
+.main-header .header-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+/* 호텔 헤더 내부 레이아웃 - 3단 그리드로 완벽한 중앙 정렬 보장 */
+.hotel-shell-header .hotel-shell-header-container {
+    height: var(--header-height, 72px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    max-width: 1488px;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.hotel-shell-header .hotel-shell-logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    min-width: 0;
+}
+
+.hotel-shell-header .hotel-shell-main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 528px);
+    min-width: 0;
+}
+
+.hotel-shell-header .hotel-shell-header-utils {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex: 0 0 auto;
+    min-width: 0;
+    margin-left: auto;
+    justify-content: flex-end;
+}
+
+.hotel-shell-header .hotel-shell-nav-item {
+    position: relative;
+    /* 서브 메뉴의 기준점 확보 */
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.main-header .logo-link img,
+.hotel-shell-header .hotel-shell-logo-img {
+    width: 160px;
+    height: 32px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-nav-list {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 40px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.hotel-shell-header .hotel-shell-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #ffffff;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-nav-link::after {
+    display: none;
+}
+
+.hotel-shell-header .hotel-shell-nav-item:hover>.hotel-shell-nav-link,
+.hotel-shell-header .hotel-shell-nav-link:hover {
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-nav-icon-roll {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.hotel-shell-header .hotel-shell-nav-icon-layer {
+    position: absolute;
+    inset: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hotel-shell-header .hotel-shell-nav-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.hotel-shell-header .hotel-shell-nav-icon-roll .stagger-original {
+    transform: translateY(0);
+}
+
+.hotel-shell-header .hotel-shell-nav-icon-roll .stagger-clone {
+    transform: translateY(130%);
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .hotel-shell-nav-icon-roll .stagger-original,
+.hotel-shell-header .hotel-shell-nav-link.is-animating .hotel-shell-nav-icon-roll .stagger-clone {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .hotel-shell-nav-icon-roll .stagger-original {
+    transform: translateY(-130%);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .hotel-shell-nav-icon-roll .stagger-clone {
+    transform: translateY(0);
+}
+
+.hotel-shell-header .hotel-shell-util-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #ffffff;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-util-link:hover {
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-util-link:hover span {
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-util-link:hover .hotel-shell-util-icon {
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-util-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.header.scrolled.hotel-shell-header .hotel-shell-nav-link,
+.header.scrolled.hotel-shell-header .hotel-shell-util-link,
+.header.scrolled.hotel-shell-header .hotel-shell-mobile-menu-btn {
+    color: var(--text-title, #1f2937);
+    text-shadow: none;
+    -webkit-text-stroke: 0.3px currentColor;
+}
+
+.header.scrolled.hotel-shell-header .hotel-shell-logo-img {
+    filter: none;
+}
+
+.header.scrolled.hotel-shell-header .hotel-shell-nav-icon,
+.header.scrolled.hotel-shell-header .hotel-shell-util-icon,
+.header.scrolled.hotel-shell-header .hotel-shell-mobile-menu-btn svg {
+    stroke-width: 2.15px;
+}
+
+.header:not(.scrolled).hotel-shell-header .hotel-shell-nav-link,
+.header:not(.scrolled).hotel-shell-header .hotel-shell-util-link,
+.header:not(.scrolled).hotel-shell-header .hotel-shell-mobile-menu-btn {
+    color: #ffffff;
+    text-shadow: 0 2px 12px rgba(15, 23, 42, 0.28);
+}
+
+.hotel-shell-header .stagger-wrapper {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.hotel-shell-header .stagger-original,
+.hotel-shell-header .stagger-clone {
+    display: block;
+}
+
+.hotel-shell-header .stagger-original {
+    position: relative;
+}
+
+.hotel-shell-header .stagger-clone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.hotel-shell-header .stagger-char {
+    display: inline-block;
+    will-change: transform;
+    transition: transform 0s linear;
+}
+
+.hotel-shell-header .stagger-original .stagger-char {
+    transform: translateY(0);
+}
+
+.hotel-shell-header .stagger-clone .stagger-char {
+    transform: translateY(100%);
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .stagger-char {
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .stagger-original .stagger-char {
+    transform: translateY(-100%);
+}
+
+.hotel-shell-header .hotel-shell-nav-link.is-animating .stagger-clone .stagger-char {
+    transform: translateY(0);
+    color: var(--primary, #FF5000);
+}
+
+.hotel-shell-header .hotel-shell-mobile-menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #ffffff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface, #ffffff);
+    border-top: 1px solid var(--border, #e5e7eb);
+    padding: var(--space-md, 16px);
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav.active {
+    display: block;
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm, 8px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav-link {
+    display: block;
+    padding: var(--space-md, 16px);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-title, #111827);
+    text-decoration: none;
+    border-radius: var(--radius-md, 12px);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.hotel-shell-header .hotel-shell-mobile-nav-link:hover,
+.hotel-shell-header .hotel-shell-mobile-nav-link.active {
+    background: var(--primary-light, rgba(255, 80, 0, 0.08));
+    color: var(--primary, #FF5000);
+}
+
+@media (max-width: 1600px) {
+    .hotel-shell-header .hotel-shell-nav-list {
+        gap: 20px;
+    }
+
+    .hotel-shell-header .hotel-shell-header-utils {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 1180px) {
+    .hotel-shell-header .hotel-shell-header-container {
+        justify-content: space-between;
+    }
+
+    .hotel-shell-header .hotel-shell-main-nav,
+    .hotel-shell-header .hotel-shell-header-utils {
+        display: none;
+    }
+
+    .hotel-shell-header .hotel-shell-mobile-menu-btn {
+        display: flex;
+    }
+}
+
+/* GNB 네비게이션 */
+.gnb-list {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+}
+
+.gnb-item {
+    padding: 26px 32px;
+}
+
+.gnb-link {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 800;
+    transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.gnb-link:hover {
+    color: #FF5000;
+}
+
+/* 헤더 우측 컨트롤 (포지션 초기화해서 우측 flex 흐름 타게 만듦) */
+.main-header .header-right-controls {
+    /* position: absolute; 지우고 정상 문서 흐름으로 */
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 40px;
+    /* 고정 높이 지정 */
+    min-width: 80px;
+    padding: 0 16px;
+    border: 2px solid #cccccc;
+    background-color: transparent;
+    color: #f2f2f2;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'FlightSans', sans-serif;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.lang-toggle:hover {
+    border-color: #FF5000;
+    color: #FF5000;
+}
+
+.mypage-btn {
+    background: none;
+    border: none;
+    color: #f2f2f2;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.mypage-btn:hover {
+    color: #FF5000;
+}
+
+/* ==================== 메인 컨텐츠 ==================== */

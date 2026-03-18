@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "types": ["vite/client", "react", "react-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@runtime/*": ["src/runtime/*"],
+      "@front-fab/*": ["../../components/react/ui/FAB/*"],
+      "@front-components/*": ["../../components/react/*"],
+      "@front-core-auth/*": ["../../core/auth/*"],
+      "@front-core-utils/*": ["../../core/utils/*"]
+    }
+  },
+  "include": [
+    "src",
+    "../../components/react/**/*.ts",
+    "../../components/react/**/*.tsx",
+    "../../components/react/**/*.d.ts"
+  ]
+}

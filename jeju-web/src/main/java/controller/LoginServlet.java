@@ -23,30 +23,32 @@ public class LoginServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         try {
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
+            String id = request.getParameter("id");
+            String pw = request.getParameter("pw");
 
             // 디버깅용
-            System.out.println("Login Attempt - Email: " + email);
+            System.out.println("Login Attempt - ID: " + id);
 
-            if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
-                sendJsonResponse(out, response, HttpServletResponse.SC_BAD_REQUEST, false, "이메일과 비밀번호를 입력해주세요.");
+            if (id == null || pw == null || id.isEmpty() || pw.isEmpty()) {
+                sendJsonResponse(out, response, HttpServletResponse.SC_BAD_REQUEST, false, "아이디와 비밀번호를 입력해주세요.");
                 return;
             }
 
             UserDAO dao = new UserDAO();
-            UserDTO user = dao.loginUser(email, password);
+            UserDTO user = dao.loginUser(id, pw);
 
             if (user != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
+                // 로그인 유지 UX 강화를 위해 세션 유휴 만료 시간을 7일로 확장
+                session.setMaxInactiveInterval(60 * 60 * 24 * 7);
 
                 StringBuilder json = new StringBuilder();
                 json.append("{");
                 json.append("\"success\":true,");
                 json.append("\"message\":\"로그인 성공\",");
                 json.append("\"user\": {");
-                json.append("\"loginId\":\"").append(user.getLoginId()).append("\",");
+                json.append("\"id\":\"").append(user.getId()).append("\",");
                 json.append("\"name\":\"").append(user.getName()).append("\",");
                 json.append("\"role\":\"").append(user.getRole()).append("\"");
                 json.append("}");
@@ -55,7 +57,7 @@ public class LoginServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
                 out.print(json.toString());
             } else {
-                sendJsonResponse(out, response, HttpServletResponse.SC_UNAUTHORIZED, false, "이메일 또는 비밀번호가 일치하지 않습니다.");
+                sendJsonResponse(out, response, HttpServletResponse.SC_UNAUTHORIZED, false, "아이디 또는 비밀번호가 일치하지 않습니다.");
             }
 
         } catch (Throwable t) {

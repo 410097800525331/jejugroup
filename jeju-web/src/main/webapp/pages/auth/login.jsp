@@ -1,0 +1,75 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>로그인 | 제주그룹</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 메인과 동일 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../styles/globals.css">
+  <link rel="stylesheet" href="../../components/react/layout/header.css">
+  <link rel="stylesheet" href="../../components/react/layout/mega-menu.css">
+  <link rel="stylesheet" href="../../components/react/layout/footer.css">
+  <link rel="stylesheet" href="./login.css">
+</head>
+
+<body class="login-page">
+  <div id="jeju-page-shell-header"></div>
+
+  <section class="user_wrap">
+    <div id="jeju-login-app">
+      <div class="user_box inner2 login-card">
+        <div class="login-header">
+          <h1 class="login-title" data-lang="loginTitle">로그인</h1>
+          <p class="login-desc" data-lang="loginDesc">포인트 적립에서 운임 할인까지 회원 전용 혜택을 받아보세요.</p>
+        </div>
+
+        <form id="user_form" class="login-form">
+          <div class="input_group">
+            <label data-lang="emailLabel">이메일/아이디</label>
+            <input type="text" id="id" placeholder="아이디 또는 이메일 입력" required>
+          </div>
+
+          <div class="input_group">
+            <label data-lang="passwordLabel">비밀번호</label>
+            <input type="password" id="pw" placeholder="비밀번호 입력" required>
+          </div>
+
+          <div id="login-error-wrapper" class="error-wrapper" style="display: none;">
+            <p class="error-msg" data-lang="loginError">등록되지 않은 아이디이거나 아이디와 비밀번호가 일치하지 않습니다.</p>
+          </div>
+
+          <div class="login_options">
+            <label class="remember-me">
+              <input type="checkbox" id="saveId">
+              <span data-lang="saveId">아이디 저장</span>
+            </label>
+            <div class="nav-links">
+              <a href="#" data-lang="findIdPw">아이디/비밀번호 찾기</a>
+              <span class="divider">|</span>
+              <a href="#" class="route-link" data-route="AUTH.SIGNUP" data-lang="signup">회원가입</a>
+            </div>
+          </div>
+
+          <button type="submit" class="login-btn btn" data-lang="loginButton">로그인</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="jeju-page-shell-footer"></div>
+
+  <button class="top-btn" id="topBtn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+  <script type="module" src="../../components/runtime/bootstrap.js"></script>
+</body>
+
+</html>
+

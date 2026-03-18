@@ -1,0 +1,50 @@
+name: Guardrails
+
+on:
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  text-and-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install Dependencies
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Full Text Integrity Scan
+        run: node scripts/guards/check-text-integrity.js --all
+
+      - name: Collect Changed Files
+        run: git diff --name-only --diff-filter=ACMR "${{ github.event.pull_request.base.sha }}"...HEAD > .changed-files.txt
+
+      - name: Enforce Front Source Of Truth
+        run: node scripts/guards/check-webapp-mirror.js --files-from .changed-files.txt
+
+      - name: Type Check CS App
+        run: corepack pnpm --dir front/apps/cs check
+
+      - name: Build CS App
+        run: corepack pnpm --dir front/apps/cs build
+
+      - name: Install Playwright Chromium
+        run: corepack pnpm dlx playwright install --with-deps chromium
+
+      - name: Run Representative Smoke Tests
+        run: corepack pnpm dlx @playwright/test test scripts/smoke/cs-customer-center.smoke.spec.cjs scripts/smoke/front-entrypoints.smoke.spec.cjs --reporter=dot
+

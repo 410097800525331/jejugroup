@@ -1,0 +1,51 @@
+@charset "utf-8";
+
+.pledge_cards {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 60px;
+}
+.pledge_card {
+  flex: 1;
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 40px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+.pledge_card p {
+  margin: 8px 0;
+}
+.download_wrap {
+  padding: 40px;
+  border-radius: 12px;
+  margin-bottom: 50px;
+}
+.download_list {
+  margin-top: 30px;
+}
+.download_list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #ccc;
+}
+.pdf_btn {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid #ff5a00;
+  background: #fff;
+  color: #ff5a00;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .pledge_cards {
+    flex-direction: column;
+  }
+  .download_list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

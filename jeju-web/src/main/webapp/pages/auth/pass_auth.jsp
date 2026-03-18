@@ -1,0 +1,20 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PASS 인증 | 제주그룹</title>
+  <link rel="stylesheet" href="../../styles/globals.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./pass_auth.css">
+  <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+</head>
+
+<body class="pass-auth-page">
+  <main id="jeju-pass-auth-app" aria-live="polite"></main>
+  <script type="module" src="../../components/runtime/bootstrap.js"></script>
+</body>
+
+</html>
