@@ -7,7 +7,11 @@ declare module "../../../core/utils/path_resolver.js" {
 }
 
 declare module "../../../core/auth/local_admin.js" {
+  export const canUseAdminSurface: () => boolean;
+  export const getStoredAdminSession: () => Record<string, unknown> | null;
+  export const hasAdminAccess: (sessionData: Record<string, unknown> | null | undefined) => boolean;
   export const isLocalFrontEnvironment: () => boolean;
+  export const resolveAdminSession: () => Record<string, unknown> | null;
 }
 
 declare module "../../../core/utils/sanitizer.js" {
@@ -32,7 +36,11 @@ declare module "../../../../core/utils/path_resolver.js" {
 }
 
 declare module "../../../../core/auth/local_admin.js" {
+  export const canUseAdminSurface: () => boolean;
+  export const getStoredAdminSession: () => Record<string, unknown> | null;
+  export const hasAdminAccess: (sessionData: Record<string, unknown> | null | undefined) => boolean;
   export const isLocalFrontEnvironment: () => boolean;
+  export const resolveAdminSession: () => Record<string, unknown> | null;
 }
 
 declare module "../../../../core/utils/sanitizer.js" {

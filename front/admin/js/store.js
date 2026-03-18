@@ -4,8 +4,10 @@
  * Enforces Immutability Doctrine: State is never mutated directly.
  */
 
- const AdminStore = (() => {
+const AdminStore = (() => {
     'use strict';
+
+    const sidebarUi = window.AdminSidebarUI;
 
     // Initial State (Deep Freeze to prevent accidental mutation)
     const initialState = Object.freeze({
@@ -21,7 +23,7 @@
             { id: 3, type: 'INQUIRY', desc: '결제 오류 문의 (VIP)', time: '1시간 전' }
         ]),
         ui: Object.freeze({
-            sidebarOpen: true,
+            sidebarOpen: sidebarUi?.getInitialSidebarOpen?.() ?? (window.innerWidth > 1024),
             activeMenu: 'dashboard',
             theme: localStorage.getItem('adminTheme') || 'system',
             domain: 'all' // 'all', 'flight', 'hotel', 'rentcar'
@@ -95,6 +97,9 @@
         }
 
         if (nextState !== state) {
+            if (nextState.ui?.sidebarOpen !== state.ui?.sidebarOpen) {
+                sidebarUi?.persistSidebarOpen?.(nextState.ui.sidebarOpen);
+            }
             state = nextState;
             notifyListeners();
         }

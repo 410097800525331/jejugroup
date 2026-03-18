@@ -1,6 +1,6 @@
 import { initMegaMenu } from "@runtime/layout/megaMenu";
 import { initStaggerNav } from "@runtime/layout/stagger";
-import { isLocalFrontEnvironment } from "@front-core-auth/local_admin.js";
+import { canUseAdminSurface } from "@front-core-auth/local_admin.js";
 import { logoutSession, resolveSession } from "@front-core-auth/session_manager.js";
 
 const SESSION_STORAGE_KEY = "userSession";
@@ -177,7 +177,7 @@ const resolveSessionData = async () => {
 
 const canOpenAdmin = async () => {
   try {
-    return isLocalFrontEnvironment();
+    return canUseAdminSurface();
   } catch (_error) {
     return false;
   }

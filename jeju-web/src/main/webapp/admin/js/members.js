@@ -3,7 +3,7 @@
  * @description Member / CS Management View logic. Domains are synced with Store.
  */
 
- document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', async () => {
     'use strict';
 
     const routeResolverPromise = import('../../core/utils/path_resolver.js');
@@ -28,7 +28,7 @@
             });
     };
 
-    const session = window.AdminSession;
+    const session = await window.AdminAuth?.waitForAdminSession?.();
     if (!session || !session.role) return;
 
     // DOM
@@ -44,6 +44,7 @@
     const profileTrigger = document.getElementById('admin-profile-trigger');
     const profileContainer = document.getElementById('admin-profile-container');
     const logoutBtn = document.getElementById('admin-logout-btn');
+    const syncSidebarUI = (isOpen) => window.AdminSidebarUI?.applySidebarUI({ layout, sidebar, isOpen });
 
     // MOCK DATA FACTORY
     const MOCK_CS_RECORDS = Object.freeze([
@@ -176,22 +177,15 @@
     };
 
     AdminStore.subscribe((newState) => {
-        if (sidebar && layout) {
-            if (window.innerWidth > 1024) {
-                if (newState.ui.sidebarOpen) layout.classList.remove('sidebar-collapsed');
-                else layout.classList.add('sidebar-collapsed');
-            } else {
-                if (newState.ui.sidebarOpen) sidebar.classList.add('open');
-                else sidebar.classList.remove('open');
-            }
-        }
-        
+        syncSidebarUI(newState.ui.sidebarOpen);
         updateThemeDOM(newState.ui.theme);
 
         if (tableBody) tableBody.innerHTML = renderTable(newState.ui.domain);
     });
 
     const initialState = AdminStore.getState();
+    syncSidebarUI(initialState.ui.sidebarOpen);
     updateThemeDOM(initialState.ui.theme);
     if (tableBody) tableBody.innerHTML = renderTable(initialState.ui.domain);
+    window.addEventListener('resize', () => syncSidebarUI(AdminStore.getState().ui.sidebarOpen));
 });

@@ -231,7 +231,7 @@
             isAuthSyncInitialized = true;
 
             const rawSession = localStorage.getItem('userSession');
-            const { isLocalFrontEnvironment } = await import('./core/auth/local_admin.js');
+            const { canUseAdminSurface } = await import('./core/auth/local_admin.js');
 
             try {
                 const sessionData = rawSession ? JSON.parse(rawSession) : null;
@@ -250,7 +250,7 @@
                 }
 
                 // 2. Inject Admin Link if applicable
-                if (isLocalFrontEnvironment()) {
+                if (canUseAdminSurface()) {
                     const adminLink = document.createElement('a');
                     adminLink.href = '#';
                     adminLink.setAttribute('data-route', 'ADMIN.DASHBOARD');
@@ -279,4 +279,3 @@
 </body>
 
 </html>
-

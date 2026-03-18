@@ -4,7 +4,7 @@
  * Uses pure functions for component generation
  */
 
- document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', async () => {
     'use strict';
 
     const routeResolverPromise = import('../../core/utils/path_resolver.js');
@@ -31,7 +31,7 @@
 
     // 1. Initial State Load
     const state = AdminStore.getState();
-    const session = window.AdminSession;
+    const session = await window.AdminAuth?.waitForAdminSession?.();
 
     // Security: Guard fallback just in case
     if (!session || !session.role) {
@@ -53,6 +53,7 @@
     const chartCtx = document.getElementById('admin-main-chart');
     const chartFilters = document.querySelectorAll('.chart-filter-btn');
     const domainFilters = document.querySelectorAll('.segment-btn');
+    const syncSidebarUI = (isOpen) => window.AdminSidebarUI?.applySidebarUI({ layout, sidebar, isOpen });
     
     // Store Chart Instance Globally 
     let mainChartInstance = null;
@@ -188,23 +189,7 @@
     // 5. Store Subscription for UI Updates
     AdminStore.subscribe((newState) => {
         // Handle Sidebar Toggle Reactively
-        if (sidebar && layout) {
-            if (window.innerWidth > 1024) {
-                // PC: layout class toggle
-                if (newState.ui.sidebarOpen) {
-                    layout.classList.remove('sidebar-collapsed');
-                } else {
-                    layout.classList.add('sidebar-collapsed');
-                }
-            } else {
-                // Mobile: sidebar transform class toggle
-                if (newState.ui.sidebarOpen) {
-                    sidebar.classList.add('open');
-                } else {
-                    sidebar.classList.remove('open');
-                }
-            }
-        }
+        syncSidebarUI(newState.ui.sidebarOpen);
 
         // Handle Domain Reactive Update (Re-render KPIs and Chart)
         if (kpiGrid) {
@@ -433,7 +418,9 @@
     });
 
     // Initial Visual Sync (Trigger First Render manually)
+    syncSidebarUI(state.ui.sidebarOpen);
     updateThemeDOM(state.ui.theme);
     if (kpiGrid) kpiGrid.innerHTML = renderKPICards(state.kpi, state.ui.domain);
     initOrUpdateChart('day', state.ui.theme, state.ui.domain);
+    window.addEventListener('resize', () => syncSidebarUI(AdminStore.getState().ui.sidebarOpen));
 });

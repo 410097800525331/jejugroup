@@ -54,7 +54,7 @@ export const navigateAfterLogin = async (sessionData: Record<string, unknown>) =
   // @ts-expect-error 레거시 JS 모듈 로딩 목적
   const localAdminModule = import("../../../../core/modules/auth/local_admin.module.js");
 
-  const [{ ROUTES }, { resolveRoute }, { isLocalFrontEnvironment }] = await Promise.all([
+  const [{ ROUTES }, { resolveRoute }, { hasAdminAccess }] = await Promise.all([
     routesModule,
     pathResolverModule,
     localAdminModule,
@@ -68,12 +68,7 @@ export const navigateAfterLogin = async (sessionData: Record<string, unknown>) =
     return;
   }
 
-  const routeKey =
-    isLocalFrontEnvironment() &&
-    typeof sessionData.role === "string" &&
-    sessionData.role.includes("ADMIN")
-      ? "ADMIN.DASHBOARD"
-      : "HOME";
+  const routeKey = hasAdminAccess(sessionData) ? "ADMIN.DASHBOARD" : "HOME";
 
   try {
     const targetUrl = resolveRoute(routeKey);

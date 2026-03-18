@@ -8,6 +8,21 @@
 
     const routeResolverPromise = import('../../core/utils/path_resolver.js');
     const localAdminPromise = import('../../core/auth/local_admin.js');
+    const waitForAdminSession = async () => {
+        const pendingSession = window.__ADMIN_SESSION_PROMISE__;
+        if (pendingSession && typeof pendingSession.then === 'function') {
+            try {
+                await pendingSession;
+            } catch (_error) {
+                // 가드 내부에서 리다이렉트까지 처리하므로 여기서는 삼킨다
+            }
+        }
+        return window.AdminSession || null;
+    };
+
+    window.AdminAuth = Object.freeze({
+        waitForAdminSession
+    });
 
     const redirectByRoute = (routeKey, options = {}) => {
         const { mode = 'replace', params = {} } = options;
@@ -47,22 +62,24 @@
         document.documentElement.style.display = 'none';
 
         try {
-            const { isLocalFrontEnvironment, buildLocalFrontAdminSession } = await localAdminPromise;
+            const { resolveAdminSession } = await localAdminPromise;
+            const sessionData = resolveAdminSession();
 
-            if (!isLocalFrontEnvironment()) {
+            if (!sessionData) {
                 redirectByRoute('HOME');
                 return;
             }
 
-            const sessionData = buildLocalFrontAdminSession();
             window.AdminSession = Object.freeze({ ...sessionData });
             logAdminAccess(sessionData);
             document.documentElement.style.display = '';
+            return window.AdminSession;
         } catch (error) {
             console.error('[AdminGuard] Session verification failed:', error);
             redirectByRoute('HOME');
+            return null;
         }
     };
 
-    runGuard();
+    window.__ADMIN_SESSION_PROMISE__ = runGuard();
 })();
