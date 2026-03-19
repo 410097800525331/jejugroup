@@ -1,25 +1,68 @@
-import { Link } from "wouter";
 import { ChevronLeft } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { startTransition, useEffect, useMemo, useState } from "react";
+import { Link } from "wouter";
 
 import InquiryForm from "@/components/serviceCenter/InquiryForm";
 import InquiryList from "@/components/serviceCenter/InquiryList";
 import SearchBar from "@/components/serviceCenter/SearchBar";
 import ServiceCenterFooter from "@/components/serviceCenter/ServiceCenterFooter";
-import { MOCK_INQUIRIES } from "@/data/mockInquiries";
+import { createInquiry, fetchInquiries } from "@/lib/inquiryApi";
 import type { InquiryRecord, InquirySubmission } from "@/types/service-center";
 import "@/styles/bbs.css";
 
+const PAGE_SIZE = 4;
+
+const getErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof Error && error.message.trim() ? error.message : fallback;
+
 export default function Inquiries() {
-  const [inquiries, setInquiries] = useState<InquiryRecord[]>(MOCK_INQUIRIES);
+  const [inquiries, setInquiries] = useState<InquiryRecord[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState<"list" | "write">("list");
-  const pageSize = 4;
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const handleChatbotClick = () => {
-    alert("제주 그룹 스마트 챗봇이 준비 중입니다. 잠시만 기다려 주세요!");
+    alert("제주 그룹 스마트 챗봇이 준비 중입니다. 잠시만 기다려 주세요.");
   };
+
+  const loadInquiries = async (signal?: AbortSignal) => {
+    if (!signal?.aborted) {
+      setIsLoading(true);
+      setLoadError("");
+    }
+
+    try {
+      const nextInquiries = await fetchInquiries(signal);
+      if (signal?.aborted) {
+        return;
+      }
+
+      startTransition(() => {
+        setInquiries(nextInquiries);
+      });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+
+      if (!signal?.aborted) {
+        setLoadError(getErrorMessage(error, "문의 목록을 불러오지 못했습니다."));
+      }
+    } finally {
+      if (!signal?.aborted) {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void loadInquiries(controller.signal);
+
+    return () => controller.abort();
+  }, []);
 
   const filteredInquiries = useMemo(() => {
     if (!searchQuery) {
@@ -36,10 +79,10 @@ export default function Inquiries() {
     );
   }, [inquiries, searchQuery]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredInquiries.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(filteredInquiries.length / PAGE_SIZE));
   const pagedInquiries = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return filteredInquiries.slice(startIndex, startIndex + pageSize);
+    const startIndex = (currentPage - 1) * PAGE_SIZE;
+    return filteredInquiries.slice(startIndex, startIndex + PAGE_SIZE);
   }, [currentPage, filteredInquiries]);
 
   useEffect(() => {
@@ -52,25 +95,54 @@ export default function Inquiries() {
     }
   }, [currentPage, totalPages]);
 
-  const handleInquirySubmitted = (inquiry: InquirySubmission) => {
-    const nextInquiry: InquiryRecord = {
-      ...inquiry,
-      id: Date.now(),
-      date: new Intl.DateTimeFormat("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-        .format(new Date())
-        .replace(/\.\s/g, ".")
-        .replace(/\.$/, ""),
-      status: "pending",
-    };
-
-    setInquiries((previous) => [nextInquiry, ...previous]);
+  const handleInquirySubmitted = async (inquiry: InquirySubmission) => {
+    await createInquiry(inquiry);
     setSearchQuery("");
     setCurrentPage(1);
     setView("list");
+    await loadInquiries();
+  };
+
+  const renderListContent = () => {
+    if (isLoading) {
+      return (
+        <div className="bbs-container">
+          <p style={{ color: "#64748b", fontWeight: 600 }}>문의 목록을 불러오는 중입니다...</p>
+        </div>
+      );
+    }
+
+    if (loadError && inquiries.length === 0) {
+      return (
+        <div className="bbs-container">
+          <p style={{ color: "#dc2626", fontWeight: 700, marginBottom: "12px" }}>{loadError}</p>
+          <button
+            type="button"
+            className="bbs-write-btn"
+            onClick={() => {
+              void loadInquiries();
+            }}
+          >
+            다시 불러오기
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        {loadError ? (
+          <p style={{ color: "#dc2626", fontWeight: 700, marginBottom: "16px" }}>{loadError}</p>
+        ) : null}
+        <InquiryList
+          currentPage={currentPage}
+          inquiries={pagedInquiries}
+          onPageChange={setCurrentPage}
+          onWriteClick={() => setView("write")}
+          totalPages={totalPages}
+        />
+      </>
+    );
   };
 
   return (
@@ -100,15 +172,7 @@ export default function Inquiries() {
             ) : null}
           </div>
 
-          {view === "list" ? (
-            <InquiryList
-              currentPage={currentPage}
-              inquiries={pagedInquiries}
-              onPageChange={setCurrentPage}
-              onWriteClick={() => setView("write")}
-              totalPages={totalPages}
-            />
-          ) : (
+          {view === "list" ? renderListContent() : (
             <div className="bbs-container">
               <InquiryForm onSubmitted={handleInquirySubmitted} />
             </div>

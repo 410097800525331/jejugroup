@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { SERVICE_OPTIONS, INQUIRY_TYPES } from "@/data/inquiryOptions";
 import { useAuth } from "@/contexts/AuthContext";
+import { INQUIRY_TYPES, SERVICE_OPTIONS } from "@/data/inquiryOptions";
 import type { InquirySubmission } from "@/types/service-center";
 import "@/styles/inquiry-form.css";
 
@@ -13,22 +13,33 @@ const sanitizeInput = (value: string) => value.replace(/[<>]/g, "");
 const inquirySchema = z.object({
   service: z.enum(["jeju-air", "jeju-stay", "jeju-rental", "common"]),
   inquiryType: z.string().min(1, "문의 유형을 선택해 주세요."),
-  name: z.string().min(2, "이름은 최소 2글자 이상이어야 합니다.").max(20, "이름은 20자 이내여야 합니다."),
+  name: z.string().min(2, "이름은 최소 2자 이상이어야 합니다.").max(20, "이름은 20자 이하여야 합니다."),
   email: z.string().email("유효한 이메일 주소를 입력해 주세요."),
   phone: z.string().min(10, "연락처를 정확히 입력해 주세요."),
-  title: z.string().min(5, "제목은 최소 5자 이상이어야 합니다.").max(100, "제목은 100자 이내여야 합니다."),
-  content: z.string().min(10, "상세 내용은 최소 10자 이상 작성해 주세요.").max(5000, "상세 내용은 5,000자 이내여야 합니다."),
-  agreement: z.boolean().refine((value) => value === true, "개인정보 수집 및 이용에 동의해야 합니다."),
+  title: z.string().min(5, "제목은 최소 5자 이상이어야 합니다.").max(100, "제목은 100자 이하여야 합니다."),
+  content: z.string().min(10, "상세 내용을 최소 10자 이상 작성해 주세요.").max(5000, "상세 내용은 5,000자 이하여야 합니다."),
+  agreement: z.boolean().refine((value) => value === true, "개인정보 수집 및 이용에 동의해 주세요."),
 });
 
 type InquiryFormValues = z.infer<typeof inquirySchema>;
 
 interface InquiryFormProps {
-  onSubmitted?: (inquiry: InquirySubmission) => void;
+  onSubmitted?: (inquiry: InquirySubmission) => Promise<void> | void;
 }
 
 export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
   const { user, isAuthenticated } = useAuth();
+
+  const getResetValues = (): InquiryFormValues => ({
+    service: "common",
+    inquiryType: "",
+    agreement: !!user,
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    title: "",
+    content: "",
+  });
 
   const {
     register,
@@ -39,16 +50,7 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
     formState: { errors, isValid, isSubmitting },
   } = useForm<InquiryFormValues>({
     resolver: zodResolver(inquirySchema),
-    defaultValues: {
-      service: "common",
-      inquiryType: "",
-      agreement: false,
-      name: user?.name || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      title: "",
-      content: "",
-    },
+    defaultValues: getResetValues(),
     mode: "onChange",
   });
 
@@ -56,17 +58,17 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
   const currentInquiryTypes = INQUIRY_TYPES[selectedService];
 
   useEffect(() => {
-    if (user) {
-      setValue("name", user.name, { shouldValidate: true });
-      setValue("email", user.email, { shouldValidate: true });
-      setValue("phone", user.phone, { shouldValidate: true });
-      setValue("agreement", true, { shouldValidate: true });
+    if (!user) {
+      return;
     }
-  }, [user, setValue, isAuthenticated]);
+
+    setValue("name", user.name, { shouldValidate: true });
+    setValue("email", user.email, { shouldValidate: true });
+    setValue("phone", user.phone, { shouldValidate: true });
+    setValue("agreement", true, { shouldValidate: true });
+  }, [user, setValue]);
 
   const onSubmit = async (data: InquiryFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
     const cleanData: InquirySubmission = {
       ...data,
       title: sanitizeInput(data.title),
@@ -74,29 +76,24 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
       name: sanitizeInput(data.name),
     };
 
-    console.log("Submitting inquiry (Refactored):", cleanData);
-    alert("문의사항이 성공적으로 접수되었습니다.");
-    onSubmitted?.(cleanData);
-    reset({
-      service: "common",
-      inquiryType: "",
-      name: user?.name || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      title: "",
-      content: "",
-      agreement: !!user,
-    });
+    try {
+      await onSubmitted?.(cleanData);
+      alert("문의가 정상적으로 접수되었습니다.");
+      reset(getResetValues());
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "문의 접수에 실패했습니다.";
+      alert(message);
+    }
   };
 
   return (
     <div className="inquiry-form-container">
       <header className="inquiry-form-header">
         <h2>1:1 문의하기</h2>
-        <p>궁금하신 점을 남겨주시면 정성을 다해 답변해 드리겠습니다.</p>
+        <p>궁금하신 점을 남겨주시면 확인 후 빠르게 답변드리겠습니다.</p>
         {isAuthenticated && user ? (
           <div style={{ marginTop: "10px", fontSize: "0.9rem", color: "#ff6000", fontWeight: 700 }}>
-            • {user.name}님 계정으로 작성 중입니다.
+            {user.name} 계정으로 문의를 작성 중입니다.
           </div>
         ) : null}
       </header>

@@ -56,8 +56,8 @@ $(document).ready(function () {
     <!-- top bar -->
     <div class="top_bar_container">
       <div class="top_bar_left">
-        <a href="#" class="route-link" data-route="SERVICES.AIR.CS.CUSTOMER_SERVICE">고객센터</a>
-        <a href="#" class="route-link" data-route="SERVICES.AIR.CS.NOTICE">공지사항</a>
+        <a href="#" class="route-link" data-route="CS.CUSTOMER_CENTER">고객센터</a>
+        <a href="#" class="route-link" data-route="CS.INQUIRY">문의하기</a>
       </div>
       <div class="top_bar_right">
         <a href="#" class="route-link" data-route="SERVICES.AIR.AUTH.LOGIN">로그인</a>
@@ -139,7 +139,7 @@ $(document).ready(function () {
                   <ul class="sub_menu">
                     <li><a href="#" class="route-link" data-route="SERVICES.AIR.EVENT">이벤트</a></li>
                     <li><a href="https://jejurentcar.netlify.app/" target="_blank">렌터카</a></li>
-                    <li><a href="https://jejuteam.netlify.app/jejustay/pages/hotel/jejuhotel.html" target="_blank">호텔/숙소</a></li>
+                    <li><a href="#" class="route-link" data-route="SERVICES.STAY.MAIN">제주 스테이</a></li>
                   </ul>
                 </div>
             </div>
@@ -227,13 +227,13 @@ $(document).ready(function () {
         <ul class="mobile_sub_menu">
           <li><a href="#" class="route-link" data-route="SERVICES.AIR.EVENT">이벤트</a></li>
           <li><a href="https://jejurentcar.netlify.app/" target="_blank">렌터카</a></li>
-          <li><a href="https://jejuteam.netlify.app/jejustay/pages/hotel/jejuhotel.html" target="_blank">호텔/숙소</a></li>
+          <li><a href="#" class="route-link" data-route="SERVICES.STAY.MAIN">제주 스테이</a></li>
         </ul>
       </li>
     </ul>
     <div class="mobile_bottom_menu">
-      <a href="#" class="route-link" data-route="SERVICES.AIR.CS.CUSTOMER_SERVICE">고객센터</a>
-      <a href="#" class="route-link" data-route="SERVICES.AIR.CS.NOTICE">공지사항</a>
+      <a href="#" class="route-link" data-route="CS.CUSTOMER_CENTER">고객센터</a>
+      <a href="#" class="route-link" data-route="CS.INQUIRY">문의하기</a>
       <a href="#">한국어</a>
     </div>
   </div>

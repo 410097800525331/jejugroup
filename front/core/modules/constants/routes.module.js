@@ -58,7 +58,7 @@ export const ROUTE_METADATA = deepFreeze({
   CS: {
     CUSTOMER_CENTER: pageRoute("/pages/cs/customer_center.html"),
     FAQ: hashPageRoute("/pages/cs/customer_center.html", "#/faqs"),
-    INQUIRY: pageRoute("/pages/cs/customer_center.html"),
+    INQUIRY: hashPageRoute("/pages/cs/customer_center.html", "#/inquiries/write"),
   },
 
   MYPAGE: {

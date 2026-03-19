@@ -23,7 +23,7 @@ const FOOTER_SECTIONS: AirFooterSection[] = [
       { label: "회사소개", routeKey: "SERVICES.AIR.ABOUT.COMPANY" },
       { label: "채용안내", routeKey: "SERVICES.AIR.ABOUT.CAREER" },
       { label: "소비자중심경영", routeKey: "SERVICES.AIR.ABOUT.CCM" },
-      { label: "공지사항", routeKey: "SERVICES.AIR.CS.NOTICE" },
+      { label: "문의하기", routeKey: "CS.INQUIRY" },
     ],
   },
   {
@@ -51,11 +51,7 @@ const FOOTER_SECTIONS: AirFooterSection[] = [
     links: [
       { label: "이벤트", routeKey: "SERVICES.AIR.EVENT" },
       { href: "https://jejurentcar.netlify.app/", label: "렌터카", target: "_blank" },
-      {
-        href: "https://jejuteam.netlify.app/jejustay/pages/hotel/jejuhotel.html",
-        label: "호텔/숙소",
-        target: "_blank",
-      },
+      { label: "제주 스테이", routeKey: "SERVICES.STAY.MAIN" },
     ],
   },
 ];

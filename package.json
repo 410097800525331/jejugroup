@@ -14,6 +14,7 @@
     "test": "pnpm run lint && pnpm run test:build",
     "dev:front": "vite --config vite.front.config.mjs",
     "dev:cs": "pnpm -C front/apps/cs dev",
+    "dev:cs:api": "pnpm -C front/apps/cs dev:api",
     "check:cs": "pnpm -C front/apps/cs check",
     "build:cs": "pnpm -C front/apps/cs build",
     "check:shell": "pnpm -C front/apps/shell check",

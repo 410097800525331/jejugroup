@@ -44,6 +44,12 @@ export default defineConfig({
     port: 3000,
     strictPort: false,
     host: true,
+    proxy: {
+      "/inquiry": {
+        target: "http://127.0.0.1:3001",
+        changeOrigin: true,
+      },
+    },
     allowedHosts: ["localhost", "127.0.0.1"],
     fs: {
       strict: true,

@@ -228,15 +228,23 @@
   text-align: center;
 }
 .search_btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: 10px;
+  min-height: 48px;
+  padding: 10px 16px;
   border-radius: 8px;
   color: #fff;
   font-size: 1.5rem;
+  font-family: inherit;
+  font-weight: 700;
   border: 1px solid var(--main-color);
   background: var(--main-color);
   box-shadow: 0 4px 14px rgba(255, 90, 0, 0.3);
   transition: 0.2s;
+  cursor: pointer;
+  appearance: none;
 }
 .search_btn:hover {
   filter: brightness(1.05);

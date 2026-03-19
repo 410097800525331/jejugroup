@@ -310,13 +310,19 @@ td.end {
 }
 .search_btn {
   margin-top: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 56px;
   border-radius: 10px;
   border: none;
   background: var(--main-color);
   color: #fff;
+  font-family: inherit;
   font-weight: 700;
+  cursor: pointer;
+  appearance: none;
 }
 /* 안내 문구 */
 .info_list {

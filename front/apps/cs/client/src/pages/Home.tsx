@@ -239,7 +239,7 @@ export default function Home() {
           </div>
 
           <div className="mt-20 text-center">
-            <Link href="/inquiries">
+            <Link href="/inquiries/write">
               <a className="inline-flex items-center gap-4 bg-white hover:bg-orange-50 text-orange-600 border-2 border-orange-100 hover:border-orange-500 px-12 py-5 rounded-3xl font-black text-xl transition-all shadow-xl hover:shadow-orange-500/20 group">
                 상담원과 1:1 문의하기
                 <ChevronRight className="group-hover:translate-x-2 transition-transform" />

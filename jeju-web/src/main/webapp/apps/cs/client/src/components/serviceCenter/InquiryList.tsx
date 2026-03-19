@@ -1,4 +1,4 @@
-import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Plus } from "lucide-react";
 
 import { useAuth } from "@/contexts/AuthContext";
 import type { InquiryRecord } from "@/types/service-center";
@@ -41,7 +41,7 @@ export default function InquiryList({
       <header className="bbs-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
         <div>
           <h1>나의 문의 내역</h1>
-          <p>회원님께서 남겨주신 1:1 문의 내역입니다</p>
+          <p>회원님께서 남겨주신 1:1 문의 내역입니다.</p>
         </div>
         <button className="bbs-write-btn" onClick={handleWriteClick} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Plus size={20} />
@@ -51,31 +51,17 @@ export default function InquiryList({
 
       <div className="bbs-list">
         {inquiries.length > 0 ? (
-          inquiries.map((inquiry) => (
-            <InquiryListItem key={inquiry.id} {...inquiry} />
-          ))
+          inquiries.map((inquiry) => <InquiryListItem key={inquiry.id} {...inquiry} />)
         ) : (
-          <div className="py-20 text-center text-gray-400">
-            등록된 문의 내역이 없습니다.
-          </div>
+          <div className="py-20 text-center text-gray-400">등록된 문의 내역이 없습니다.</div>
         )}
       </div>
 
       <div className="bbs-pagination">
-        <button
-          className="bbs-page-btn"
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(1)}
-          type="button"
-        >
+        <button className="bbs-page-btn" disabled={currentPage === 1} onClick={() => onPageChange(1)} type="button">
           <ChevronsLeft size={18} className="bbs-page-arrow" />
         </button>
-        <button
-          className="bbs-page-btn"
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-          type="button"
-        >
+        <button className="bbs-page-btn" disabled={currentPage === 1} onClick={() => onPageChange(currentPage - 1)} type="button">
           <ChevronLeft size={18} className="bbs-page-arrow" />
         </button>
 
@@ -98,12 +84,7 @@ export default function InquiryList({
         >
           <ChevronRight size={18} className="bbs-page-arrow" />
         </button>
-        <button
-          className="bbs-page-btn"
-          disabled={currentPage === totalPages}
-          onClick={() => onPageChange(totalPages)}
-          type="button"
-        >
+        <button className="bbs-page-btn" disabled={currentPage === totalPages} onClick={() => onPageChange(totalPages)} type="button">
           <ChevronsRight size={18} className="bbs-page-arrow" />
         </button>
       </div>

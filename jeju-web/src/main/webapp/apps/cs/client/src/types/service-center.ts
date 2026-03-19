@@ -43,8 +43,15 @@ export interface InquirySubmission {
   agreement: boolean;
 }
 
-export interface InquiryRecord extends Omit<InquirySubmission, "agreement"> {
+export interface InquiryRecord {
   id: number;
+  service: ServiceType;
+  title: string;
+  content: string;
   date: string;
   status: InquiryStatus;
+  inquiryType?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
 }

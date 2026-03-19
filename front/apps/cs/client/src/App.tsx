@@ -18,7 +18,12 @@ function AppRoutes() {
       <Route path={"/"} component={Home} />
       <Route path={"/notices"} component={Notices} />
       <Route path={"/faqs"} component={FAQs} />
-      <Route path={"/inquiries"} component={Inquiries} />
+      <Route path={"/inquiries/write"}>
+        <Inquiries mode="write" />
+      </Route>
+      <Route path={"/inquiries"}>
+        <Inquiries mode="list" />
+      </Route>
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

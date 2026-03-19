@@ -1,6 +1,5 @@
 package util;
 
-import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -9,13 +8,18 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-// web.xml에 수동 등록했으므로 @WebFilter 어노테이션 제거 (중복 스캔 방지)
 public class CorsFilter implements Filter {
+    private static final String[] LOCAL_DEV_ORIGINS = {
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+    };
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // 초기화 로직 (필요 시)
     }
 
     @Override
@@ -24,13 +28,13 @@ public class CorsFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         String origin = req.getHeader("Origin");
-        
-        if (origin != null && (origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1") || origin.contains(".netlify.app"))) {
+        if (isAllowedOrigin(origin)) {
             res.setHeader("Access-Control-Allow-Origin", origin);
         }
 
+        res.setHeader("Vary", "Origin");
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin");
         res.setHeader("Access-Control-Max-Age", "3600");
         res.setHeader("Access-Control-Allow-Credentials", "true");
 
@@ -44,6 +48,21 @@ public class CorsFilter implements Filter {
 
     @Override
     public void destroy() {
-        // 소멸 로직
+    }
+
+    private boolean isAllowedOrigin(String origin) {
+        if (origin == null || origin.isBlank()) {
+            return false;
+        }
+
+        for (String devOrigin : LOCAL_DEV_ORIGINS) {
+            if (origin.equals(devOrigin)) {
+                return true;
+            }
+        }
+
+        return origin.startsWith("http://localhost")
+            || origin.startsWith("http://127.0.0.1")
+            || origin.contains(".netlify.app");
     }
 }

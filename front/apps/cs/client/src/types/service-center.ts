@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react";
 
-export type ServiceType = "jeju-air" | "jeju-stay" | "jeju-rental" | "common";
+export type ServiceType = "jeju-air" | "jeju-stay" | "jeju-rental";
 export type InquiryStatus = "pending" | "completed";
 
 export interface Notice {
@@ -34,17 +34,15 @@ export interface Contact {
 
 export interface InquirySubmission {
   service: ServiceType;
-  inquiryType: string;
-  name: string;
-  email: string;
-  phone: string;
   title: string;
   content: string;
-  agreement: boolean;
 }
 
-export interface InquiryRecord extends Omit<InquirySubmission, "agreement"> {
+export interface InquiryRecord {
   id: number;
+  service: ServiceType;
+  title: string;
+  content: string;
   date: string;
   status: InquiryStatus;
 }

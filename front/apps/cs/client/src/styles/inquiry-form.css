@@ -116,7 +116,6 @@
 }
 
 .inquiry-submit-btn {
-  margin-top: 40px;
   width: 100%;
   padding: 18px;
   background: #ff6000;
@@ -143,11 +142,41 @@
   transform: none;
 }
 
+.inquiry-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.inquiry-cancel-btn {
+  width: 180px;
+  padding: 18px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  border-radius: 1.25rem;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inquiry-cancel-btn:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
 @media (max-width: 640px) {
   .inquiry-form-grid {
     grid-template-columns: 1fr;
   }
   .inquiry-form-group.full-width {
     grid-column: span 1;
+  }
+  .inquiry-form-actions {
+    flex-direction: column;
+  }
+  .inquiry-cancel-btn {
+    width: 100%;
   }
 }

@@ -125,17 +125,32 @@ input[type="radio"] {
   border: 1px solid var(--main-color);
 }
 .basic_btn {
-  display: block;
-  padding: 6px 90px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+  min-height: 48px;
+  padding: 0 28px;
   background: var(--text-sub);
   color: #fff;
   text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+  line-height: 1.2;
+  border: 1px solid transparent;
   border-radius: 12px;
-  margin: 24px auto;
-  transition: .3s;
+  margin: 24px auto 0;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+  transition: background-color .3s, transform .3s, box-shadow .3s;
 }
 .basic_btn:hover {
   background: var(--main-color);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(255, 80, 0, 0.18);
+}
+.basic_btn:focus-visible {
+  outline: 3px solid rgba(255, 80, 0, 0.22);
+  outline-offset: 3px;
 }
 @media (max-width:1024px){
   .inner {

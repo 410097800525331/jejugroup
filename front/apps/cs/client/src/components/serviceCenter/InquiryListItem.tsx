@@ -1,37 +1,22 @@
 import { ChevronRight } from "lucide-react";
 
 import { getServiceLabel } from "@/data/serviceCenterData";
-import type { InquiryStatus, ServiceType } from "@/types/service-center";
+import type { InquiryRecord } from "@/types/service-center";
 import "@/styles/bbs.css";
 
-interface InquiryListItemProps {
-  id: number;
-  title: string;
-  date: string;
-  status: InquiryStatus;
-  service: ServiceType;
+interface InquiryListItemProps extends InquiryRecord {
+  onClick: () => void;
 }
 
-export default function InquiryListItem({ title, date, status, service }: InquiryListItemProps) {
+export default function InquiryListItem({ date, onClick, service, status, title }: InquiryListItemProps) {
   return (
-    <div className="bbs-item">
+    <button type="button" className="bbs-item" onClick={onClick}>
       <div className="bbs-item-content">
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-          <span
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 800,
-              color: "#ff6000",
-              padding: "2px 8px",
-              background: "#fff3eb",
-              borderRadius: "4px",
-            }}
-          >
-            {getServiceLabel(service)}
-          </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
+          <span className="bbs-service-chip">{getServiceLabel(service)}</span>
           <span className="bbs-item-title">{title}</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
           <span className="bbs-item-date">{date}</span>
           <span
             style={{
@@ -40,11 +25,11 @@ export default function InquiryListItem({ title, date, status, service }: Inquir
               color: status === "completed" ? "#10b981" : "#94a3b8",
             }}
           >
-            • {status === "completed" ? "답변완료" : "답변대기"}
+            {status === "completed" ? "답변완료" : "답변대기"}
           </span>
         </div>
       </div>
       <ChevronRight size={20} className="bbs-item-chevron" />
-    </div>
+    </button>
   );
 }

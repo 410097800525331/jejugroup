@@ -12,7 +12,7 @@ const webInfLibDir = path.join(webappDir, 'WEB-INF', 'lib');
 const legacyBinDir = path.join(jejuWebDir, 'bin');
 const servletApiJarPath = path.join(rootDir, 'scripts', 'lib', 'servlet-api.jar');
 const bcryptJarPath = path.join(rootDir, 'scripts', 'lib', 'jbcrypt-0.4.jar');
-const warPath = path.join(jejuWebDir, 'ROOT.war');
+const warPath = path.resolve(jejuWebDir, 'ROOT.war');
 
 const ensureDependency = async (filePath, message) => {
     if (!(await fs.pathExists(filePath))) {
@@ -85,6 +85,7 @@ const compileJavaSources = async () => {
 
 async function buildWar() {
     console.log('[BUILD] ROOT.war 빌드 시작');
+    console.log(`[BUILD] WAR 생성 경로: ${warPath}`);
 
     try {
         // 과거 IDE 산출물(bin)이 남아 있으면 빌드 혼선 유발 가능성이 있어 선제 정리
@@ -118,7 +119,7 @@ async function buildWar() {
         });
 
         console.log('[BUILD] ROOT.war 생성 완료');
-        console.log(`[BUILD] 산출물: ${warPath}`);
+        console.log(`[BUILD] 산출물(절대 경로): ${warPath}`);
     } catch (error) {
         console.error('[ERROR] WAR 빌드 실패:', error);
         process.exit(1);

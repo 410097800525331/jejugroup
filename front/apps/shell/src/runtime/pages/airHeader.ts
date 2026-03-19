@@ -11,8 +11,8 @@ interface AirHeaderMenuGroup {
 }
 
 const TOP_BAR_LINKS: AirHeaderMenuLink[] = [
-  { label: "고객센터", routeKey: "SERVICES.AIR.CS.CUSTOMER_SERVICE" },
-  { label: "공지사항", routeKey: "SERVICES.AIR.CS.NOTICE" },
+  { label: "고객센터", routeKey: "CS.CUSTOMER_CENTER" },
+  { label: "문의하기", routeKey: "CS.INQUIRY" },
 ];
 
 const USER_LINKS: AirHeaderMenuLink[] = [
@@ -79,11 +79,7 @@ const MENU_GROUPS: AirHeaderMenuGroup[] = [
     links: [
       { label: "이벤트", routeKey: "SERVICES.AIR.EVENT" },
       { href: "https://jejurentcar.netlify.app/", label: "렌터카", target: "_blank" },
-      {
-        href: "https://jejuteam.netlify.app/jejustay/pages/hotel/jejuhotel.html",
-        label: "호텔/숙소",
-        target: "_blank",
-      },
+      { label: "제주 스테이", routeKey: "SERVICES.STAY.MAIN" },
     ],
   },
 ];

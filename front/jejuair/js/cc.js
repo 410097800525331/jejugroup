@@ -55,8 +55,8 @@ $(document).ready(function () {
       </ul>
 
       <div class="mobile_bottom_menu">
-        <a href="#" class="route-link" data-route="SERVICES.AIR.CS.CUSTOMER_SERVICE">고객센터</a>
-        <a href="#" class="route-link" data-route="SERVICES.AIR.CS.NOTICE">공지사항</a>
+        <a href="#" class="route-link" data-route="CS.CUSTOMER_CENTER">고객센터</a>
+        <a href="#" class="route-link" data-route="CS.INQUIRY">문의하기</a>
         <a href="#">언어</a>
       </div>
     </div>

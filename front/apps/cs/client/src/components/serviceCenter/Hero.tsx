@@ -51,7 +51,7 @@ export default function Hero() {
                 자주 묻는 질문
               </Button>
             </Link>
-            <Link href="/inquiries">
+            <Link href="/inquiries/write">
               <Button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-6 text-lg rounded-2xl transition-all shadow-xl shadow-orange-500/30 border-none cursor-pointer">
                 1:1 문의하기
               </Button>
