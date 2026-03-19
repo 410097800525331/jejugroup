@@ -16,7 +16,8 @@ public class DBConn {
         
         // 폴백 로직 (로컬 기본값) - 설정이 아예 없을 경우에만 작동
         if (url == null) url = "jdbc:mysql://127.0.0.1:3306/jejudb?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
-        if (id == null) id = "root";
+        if (id == null) id = "jeju";
+        if (pw == null) pw = "1236";
 
         if (pw == null || pw.isEmpty()) {
             throw new SQLException("CRITICAL: DB_PASSWORD (env) is not set.");

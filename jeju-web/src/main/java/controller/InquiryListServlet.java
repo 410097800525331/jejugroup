@@ -1,16 +1,19 @@
 package controller;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import dao.InquiryDAO;
 import dto.InquiryDTO;
 import util.JsonUtil;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
+@WebServlet("/inquiry/list")
 public class InquiryListServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
