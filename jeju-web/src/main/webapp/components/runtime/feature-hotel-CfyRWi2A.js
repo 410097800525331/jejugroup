@@ -1291,8 +1291,11 @@ const oe = {
     ] })
   ] });
 }, M = 50, We = 2, B = 2, qe = 120, ze = ({ hotels: e }) => {
-  const [t, n] = r.useState(B), [s, l] = r.useState(1), c = r.useRef(null), i = r.useRef(!1);
-  r.useEffect(() => {
+  const [t, n] = r.useState(B), [s, l] = r.useState(1), c = r.useRef(null), i = r.useRef(!1), h = r.useMemo(() => Math.max(1, Math.ceil(e.length / M)), [e.length]), p = r.useMemo(() => {
+    const o = (s - 1) * M;
+    return e.slice(o, o + M);
+  }, [s, e]), g = r.useMemo(() => p.slice(0, t), [p, t]);
+  return r.useEffect(() => {
     n(Math.min(B, e.length)), l(1);
   }, [e]), r.useEffect(() => {
     const o = () => {
@@ -1330,12 +1333,7 @@ const oe = {
     return window.addEventListener("scroll", m), () => {
       window.cancelAnimationFrame(k), window.removeEventListener("scroll", m);
     };
-  }, [s, e, t]);
-  const h = r.useMemo(() => Math.max(1, Math.ceil(e.length / M)), [e.length]), p = r.useMemo(() => {
-    const o = (s - 1) * M;
-    return e.slice(o, o + M);
-  }, [s, e]), g = r.useMemo(() => p.slice(0, t), [p, t]);
-  return r.useEffect(() => {
+  }, [s, e, t]), r.useEffect(() => {
     var o;
     if (n(Math.min(B, p.length)), !i.current) {
       i.current = !0;
