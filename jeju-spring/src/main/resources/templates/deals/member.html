@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/common :: pageHead('회원 전용 혜택 | JEJU STAY')}"></th:block>
+    <link rel="stylesheet" th:href="@{/assets/css/deals/deals.css}" href="/assets/css/deals/deals.css">
+</head>
+<body class="deals-member-page" th:attr="data-shell=${page.shell}">
+<main class="deals-shell member-shell">
+    <section class="member-hero">
+        <div class="container">
+            <h1>JEJU UNIVERSE</h1>
+            <p th:text="${page.description}">desc</p>
+        </div>
+    </section>
+
+    <section class="section container tier-section">
+        <div class="section-header">
+            <h2 class="section-title">회원 등급별 특별 혜택</h2>
+            <p class="section-subtitle">여행을 즐길수록 커지는 무한한 혜택을 확인하세요.</p>
+        </div>
+        <div class="deal-grid">
+            <article class="deal-card member-card" th:each="card : ${page.cards}">
+                <img alt="member benefit" th:src="${card.imageUrl}" src="">
+                <div class="deal-body">
+                    <span class="deal-badge" th:text="${card.badge}">badge</span>
+                    <h3 th:text="${card.title}">title</h3>
+                    <p th:text="${card.subtitle}">subtitle</p>
+                    <strong class="current-price" th:text="${card.currentPrice}">value</strong>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+</body>
+</html>

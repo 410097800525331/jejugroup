@@ -16,6 +16,8 @@ import {
   shiftVisibleMonth
 } from "@front-components/search/rangeDatePicker";
 import type { SearchCalendarTab } from "@front-components/search/types";
+import { resolveRoute } from "@front-core-utils/path_resolver.js";
+import { buildHotelListRouteParams, type HotelSearchInitialState } from "./hotelSearchQuery";
 
 type SearchTab = "hotel" | "pension" | "activity";
 type GuestKey = "rooms" | "adults" | "children";
@@ -71,23 +73,37 @@ interface SearchWidgetContextValue {
   clearCalendarHoverDate: () => void;
   clearCalendar: () => void;
   confirmCalendar: () => void;
+  submitSearch: () => void;
   stopPropagation: (event: MouseEvent<HTMLElement>) => void;
 }
 
-const initialState: SearchWidgetState = {
-  activeTab: "hotel",
-  destinationValue: "",
-  isDestinationOpen: false,
-  isGuestOpen: false,
-  guest: {
-    rooms: 1,
-    adults: 1,
-    children: 0
-  },
-  calendar: createRangeDatePickerState()
-};
-
 const SearchWidgetContext = createContext<SearchWidgetContextValue | null>(null);
+
+const createInitialSearchWidgetState = (providedState?: HotelSearchInitialState): SearchWidgetState => {
+  const calendarState = createRangeDatePickerState();
+  const checkIn = providedState?.calendar?.checkIn ?? null;
+  const checkOut = providedState?.calendar?.checkOut ?? null;
+
+  return {
+    activeTab: "hotel",
+    destinationValue: providedState?.destinationValue ?? "",
+    isDestinationOpen: false,
+    isGuestOpen: false,
+    guest: {
+      rooms: Math.max(1, providedState?.guest?.rooms ?? 1),
+      adults: Math.max(1, providedState?.guest?.adults ?? 1),
+      children: Math.max(0, providedState?.guest?.children ?? 0)
+    },
+    calendar: {
+      ...calendarState,
+      checkIn,
+      checkOut,
+      tempCheckIn: checkIn,
+      tempCheckOut: checkOut,
+      visibleMonth: checkIn ? getMonthStartTimestamp(checkIn) : calendarState.visibleMonth
+    }
+  };
+};
 
 const dateLabel = (value: number | null, fallbackLabel: "체크인" | "체크아웃") => {
   if (!value) {
@@ -299,8 +315,12 @@ const closeOtherPopups = (dispatch: Dispatch<SearchWidgetAction>, exceptId: Popu
   }
 };
 
-export const HotelSearchWidgetProvider = ({ children }: PropsWithChildren) => {
-  const [state, dispatch] = useReducer(searchWidgetReducer, initialState);
+type HotelSearchWidgetProviderProps = PropsWithChildren<{
+  initialState?: HotelSearchInitialState;
+}>;
+
+export const HotelSearchWidgetProvider = ({ children, initialState }: HotelSearchWidgetProviderProps) => {
+  const [state, dispatch] = useReducer(searchWidgetReducer, initialState, createInitialSearchWidgetState);
 
   useEffect(() => {
     const handleDocumentClick = () => {
@@ -412,6 +432,32 @@ export const HotelSearchWidgetProvider = ({ children }: PropsWithChildren) => {
     dispatch({ type: "CONFIRM_CALENDAR" });
   }, []);
 
+  const submitSearch = useCallback(() => {
+    closeOtherPopups(dispatch);
+
+    const targetUrl = resolveRoute(
+      "SERVICES.STAY.HOTEL_LIST",
+      buildHotelListRouteParams(
+        {
+          destinationValue: state.destinationValue,
+          guest: state.guest,
+          calendar: {
+            checkIn: state.calendar.checkIn,
+            checkOut: state.calendar.checkOut
+          }
+        },
+        window.location.search
+      )
+    );
+
+    window.location.assign(targetUrl);
+  }, [
+    state.calendar.checkIn,
+    state.calendar.checkOut,
+    state.destinationValue,
+    state.guest
+  ]);
+
   const isHotelMode = state.activeTab !== "activity";
 
   const guestSummary = useMemo(() => {
@@ -456,6 +502,7 @@ export const HotelSearchWidgetProvider = ({ children }: PropsWithChildren) => {
       clearCalendarHoverDate,
       clearCalendar,
       confirmCalendar,
+      submitSearch,
       stopPropagation
     };
   }, [
@@ -481,6 +528,7 @@ export const HotelSearchWidgetProvider = ({ children }: PropsWithChildren) => {
     clearCalendarHoverDate,
     clearCalendar,
     confirmCalendar,
+    submitSearch,
     stopPropagation
   ]);
 

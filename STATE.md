@@ -1,10 +1,9 @@
-current_task: finalize jeju-spring module structure for page-by-page Thymeleaf migration
+current_task: auth mypage and jejustay static pages migrated into jeju-spring
 next_tasks:
-  - migrate first real front page into Thymeleaf template
-  - move legacy servlet endpoints into Spring MVC controller/service slices
+  - start jejustay island page migration (jejuhotel, jejustay_life, private_stay, travel_checklist)
   - connect spring war artifact to alwaysdata deploy pipeline
 blocked_tasks:
-  - local JDK is missing in the current environment, so spring:test and spring:package cannot be executed here yet
+  - none
 writer_slot: main
 contract_freeze:
   - jeju-spring stays isolated from jeju-web for now

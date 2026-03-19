@@ -1,4 +1,5 @@
 import { FormEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import "./chatbot-style.css";
 
 export type ChatbotLanguage = "ko" | "en";
 
@@ -16,15 +17,82 @@ interface ChatbotPanelProps {
   onLanguageChange: (language: ChatbotLanguage) => void;
 }
 
+type ChatApiResponse = {
+  choices?: Array<{
+    message?: {
+      content?: unknown;
+    };
+  }>;
+  candidates?: Array<{
+    content?: {
+      parts?: Array<{
+        text?: unknown;
+      }>;
+    };
+  }>;
+};
+
 const createWelcomeText = (language: ChatbotLanguage) => {
-  return language === "en" ? "Hello, I am your Jeju Group assistant" : "안녕 나는 제주그룹 안내 도우미";
+  return language === "en" 
+    ? "Welcome to Jeju Group. How can I assist you today?" 
+    : "안녕하세요. 제주그룹 도우미입니다.\n여행의 모든 고민을 무엇이든 말씀해 주세요. 😊";
+};
+
+const extractChatbotReply = (data: ChatApiResponse) => {
+  const openAiMessage = data.choices?.[0]?.message?.content;
+  if (typeof openAiMessage === "string" && openAiMessage.trim()) {
+    return openAiMessage.trim();
+  }
+
+  const geminiParts = data.candidates?.[0]?.content?.parts ?? [];
+  const geminiMessage = geminiParts
+    .map((part) => (typeof part?.text === "string" ? part.text : ""))
+    .filter((text): text is string => Boolean(text))
+    .join("\n")
+    .trim();
+
+  return geminiMessage || null;
 };
 
 export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: ChatbotPanelProps) => {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"online" | "offline" | "error" | "checking">("checking");
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const checkStatus = useCallback(async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+      const response = await fetch("https://jejugroup.alwaysdata.net/api/chat", {
+        method: "GET",
+        cache: "no-cache",
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (response.ok) { 
+        setStatus("online");
+      } else {
+        // Server is reached but returns something like 404 or 500
+        setStatus("error");
+      }
+    } catch (_error) {
+      // Network is totally down or unreachable
+      setStatus("offline");
+    }
+  }, []);
+
+  useEffect(() => {
+    checkStatus().catch(() => {});
+    const intervalId = setInterval(() => {
+      checkStatus().catch(() => {});
+    }, 60000); // 1 minute interval
+
+    return () => clearInterval(intervalId);
+  }, [checkStatus]);
 
   useEffect(() => {
     const initialMessage: MessageItem = {
@@ -95,7 +163,7 @@ export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: Ch
           messages: [
             {
               role: "system",
-              content: language === "en" ? "You are Jeju Group assistant" : "너는 제주그룹 안내 도우미"
+              content: language === "en" ? "You are Jeju Group Assistant" : "너는 제주그룹 안내 도우미다."
             },
             ...historyPayload,
             {
@@ -110,8 +178,8 @@ export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: Ch
         throw new Error(`Chat API failed: ${response.status}`);
       }
 
-      const data = await response.json();
-      const botMessage = data?.choices?.[0]?.message?.content ?? "응답 처리 실패";
+      const data = (await response.json()) as ChatApiResponse;
+      const botMessage = extractChatbotReply(data) ?? "응답 처리 실패";
       addMessage("bot", String(botMessage));
     } catch (error) {
       addMessage("bot", `오류 상태: ${(error as Error).message}`);
@@ -135,42 +203,58 @@ export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: Ch
   return (
     <div className={`chatbot-container ${isOpen ? "active" : ""}`}>
       <div className="chatbot-header">
-        <h3>{language === "en" ? "Jeju Chatbot" : "제주 챗봇"}</h3>
-        <button className="chatbot-close-btn" onClick={onClose}>
-          닫기
+        <div className="chatbot-header-info">
+          <div className={`chatbot-status-dot ${status}`} title={`API Server: ${status}`} />
+          <h3 className="chatbot-header-title">{language === "en" ? "Jeju Group Assistant" : "제주그룹 도우미"}</h3>
+        </div>
+        <button className="chatbot-close-btn" onClick={onClose} aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
 
       <div className="chatbot-messages" ref={containerRef}>
         {messages.map((message) => (
           <div key={message.id} className={`message ${message.type}`}>
-            <div className="message-bubble">{message.content}</div>
-            <div className="message-time">
-              {message.timestamp.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+            <div className="message-content">
+              <div className="message-bubble">{message.content}</div>
+              <div className="message-time">
+                {message.timestamp.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+              </div>
             </div>
           </div>
         ))}
         {loading ? (
           <div className="message bot">
-            <div className="typing-indicator">
-              <div className="typing-dot" />
-              <div className="typing-dot" />
-              <div className="typing-dot" />
+            <div className="message-content">
+              <div className="typing-indicator">
+                <span />
+                <span />
+                <span />
+              </div>
             </div>
           </div>
         ) : null}
       </div>
 
       <form className="chatbot-input-area" onSubmit={onSubmit}>
-        <input
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder={language === "en" ? "Type a message" : "메시지 입력"}
-        />
-        <button type="submit" disabled={loading}>
-          {language === "en" ? "Send" : "전송"}
-        </button>
+        <div className="chatbot-input-wrapper">
+          <input
+            className="chatbot-input"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder={language === "en" ? "Type your message..." : "무엇이든 물어보세요"}
+          />
+          <button className="chatbot-send-btn" type="submit" disabled={loading || !input.trim()}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
       </form>
     </div>
   );

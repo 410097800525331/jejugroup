@@ -1,4 +1,6 @@
 import { formatPhoneNumber } from "@front-components/auth/utils/format";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { API_BASE_URL } from "../../../../core/modules/config/api_config.module.js";
 
 interface SocialConfig {
   KAKAO_JS_KEY: string;
@@ -39,8 +41,6 @@ const fetchSocialConfig = async () => {
   }
 
   try {
-    // @ts-expect-error 레거시 JS 모듈 로딩 목적
-    const { API_BASE_URL } = await import("../../../../core/modules/config/api_config.module.js");
     const response = await fetch(`${API_BASE_URL}/api/public/config`, {
       credentials: "same-origin",
       method: "GET",

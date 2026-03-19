@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/common :: pageHead('마이페이지 | 제주그룹 통합 대시보드')}"></th:block>
+    <link rel="stylesheet" th:href="@{/assets/css/mypage/dashboard.css}" href="/assets/css/mypage/dashboard.css">
+</head>
+<body class="mypage-dashboard-page" th:attr="data-shell=${dashboard.shell}">
+<main class="mypage-shell">
+    <section class="hero-grid">
+        <article class="hero-card">
+            <div class="profile-avatar" th:text="${#strings.substring(dashboard.userName,0,1)}">홍</div>
+            <div class="profile-copy">
+                <p class="eyebrow">Unified My Page</p>
+                <h1><strong th:text="${dashboard.userName}">홍민지</strong> 님</h1>
+                <p class="profile-email" th:text="${dashboard.email}">minji.hong@jejugroup.example</p>
+                <div class="membership-list">
+                    <span class="membership-chip" th:each="membership : ${dashboard.memberships}" th:text="${membership}">membership</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="wallet-card">
+            <p class="eyebrow">My Wallet</p>
+            <h2>보유 자산</h2>
+            <div class="wallet-main">
+                <span class="wallet-value" th:text="${dashboard.stats[0].value}">26,600P</span>
+                <p class="wallet-expiring">이달 말 소멸 예정 1,200P</p>
+            </div>
+            <div class="wallet-grid">
+                <div class="wallet-item" th:each="stat : ${dashboard.stats}">
+                    <span th:text="${stat.label}">label</span>
+                    <strong th:text="${stat.value}">value</strong>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="section-card">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">Bookings</p>
+                <h2>통합 예약 관리</h2>
+                <p class="section-copy">항공, 숙박, 렌터카 일정을 한 번에 정리하는 뷰</p>
+            </div>
+            <a class="ghost-link" th:href="${dashboard.redirectLoginPath}">세션 다시 확인</a>
+        </div>
+
+        <div class="filter-row">
+            <a class="filter-chip"
+               th:each="filter : ${dashboard.filters}"
+               th:classappend="${dashboard.selectedFilter == filter} ? ' active' : ''"
+               th:text="${filter == 'all' ? '전체' : (filter == 'air' ? '항공' : (filter == 'stay' ? '숙박' : '렌터카'))}"
+               th:href="@{/pages/mypage/dashboard.html(shell=${dashboard.shell}, filter=${filter})}"
+               href="/pages/mypage/dashboard.html?filter=all">전체</a>
+        </div>
+
+        <ul class="booking-list">
+            <li class="booking-card" th:each="booking : ${dashboard.bookings}" th:attr="data-type=${booking.type}">
+                <div class="booking-head">
+                    <span class="status-pill" th:attr="data-tone=${booking.type}" th:text="${booking.status}">출발 예정</span>
+                    <div class="tag-list">
+                        <span class="tag-chip" th:each="tag : ${booking.tags}" th:text="${tag}">tag</span>
+                    </div>
+                </div>
+                <h3 th:text="${booking.title}">제목</h3>
+                <div class="booking-meta">
+                    <span th:text="${booking.date}">date</span>
+                    <strong th:text="${booking.amount}">amount</strong>
+                </div>
+                <div class="action-row">
+                    <button class="outline-button" type="button">상세 보기</button>
+                    <button class="outline-button" type="button">일정 변경</button>
+                    <button class="danger-button" type="button">취소 요청</button>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <section class="lower-grid">
+        <article class="section-card compact-card">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">Quick Stats</p>
+                    <h2>자주 쓰는 바로가기</h2>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card" th:each="stat : ${dashboard.stats}">
+                    <span th:text="${stat.label}">label</span>
+                    <strong th:text="${stat.value}">value</strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="section-card compact-card">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">Support</p>
+                    <h2>고객 지원</h2>
+                </div>
+            </div>
+            <div class="support-grid">
+                <a class="support-card" th:each="item : ${dashboard.supportItems}" th:href="${item.href}" href="#">
+                    <strong th:text="${item.label}">label</strong>
+                    <span th:if="${item.count != null}" th:text="${item.count}">1</span>
+                </a>
+            </div>
+        </article>
+    </section>
+</main>
+</body>
+</html>

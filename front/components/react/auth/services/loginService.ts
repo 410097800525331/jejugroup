@@ -1,17 +1,17 @@
-const loadLoginModules = async () => {
-  // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const sanitizerModule = import("../../../../core/modules/utils/sanitizer.module.js");
-  // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const sessionModule = import("../../../../core/modules/auth/session_manager.module.js");
-  // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const configModule = import("../../../../core/modules/config/api_config.module.js");
-
-  return Promise.all([sanitizerModule, sessionModule, configModule]);
-};
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { hasAdminAccess } from "../../../../core/modules/auth/local_admin.module.js";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { saveSession } from "../../../../core/modules/auth/session_manager.module.js";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { API_BASE_URL } from "../../../../core/modules/config/api_config.module.js";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { ROUTES } from "../../../../core/modules/constants/routes.module.js";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { resolveRoute } from "../../../../core/modules/utils/path_resolver.module.js";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { sanitizeHTML, validateParam } from "../../../../core/modules/utils/sanitizer.module.js";
 
 export const loginWithCredentials = async (loginId: string, password: string) => {
-  const [{ sanitizeHTML, validateParam }, { saveSession }, { API_BASE_URL }] = await loadLoginModules();
-
   if (!validateParam(loginId) || !validateParam(password)) {
     throw new Error("잘못된 입력 형식이 포함된 상태");
   }
@@ -47,19 +47,6 @@ export const loginWithCredentials = async (loginId: string, password: string) =>
 };
 
 export const navigateAfterLogin = async (sessionData: Record<string, unknown>) => {
-  // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const routesModule = import("../../../../core/modules/constants/routes.module.js");
-  // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const pathResolverModule = import("../../../../core/modules/utils/path_resolver.module.js");
-  // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const localAdminModule = import("../../../../core/modules/auth/local_admin.module.js");
-
-  const [{ ROUTES }, { resolveRoute }, { hasAdminAccess }] = await Promise.all([
-    routesModule,
-    pathResolverModule,
-    localAdminModule,
-  ]);
-
   const urlParams = new URLSearchParams(window.location.search);
   const redirectUrl = urlParams.get("redirect");
 

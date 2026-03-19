@@ -14,7 +14,8 @@ export const HotelSearchFormHotel = () => {
     openDestinationInput,
     toggleDestination,
     toggleGuest,
-    toggleCalendar
+    toggleCalendar,
+    submitSearch
   } = useHotelSearchWidget();
 
   return (
@@ -83,7 +84,7 @@ export const HotelSearchFormHotel = () => {
           </div>
 
           <div className="search-btn-wrapper">
-            <button className="search-btn-pill" id="searchBtn">
+            <button className="search-btn-pill" id="searchBtn" onClick={submitSearch} type="button">
               <HotelShellIcon className="search-btn-icon" name="search" />
               <span className="search-btn-text" data-lang="searchBtn">
                 검색

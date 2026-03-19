@@ -1,3 +1,8 @@
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { API_BASE_URL } from "../../../../core/modules/config/api_config.module.js";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { sanitizeHTML } from "../../../../core/modules/utils/sanitizer.module.js";
+
 interface SignupRequestPayload {
   birthDate: string;
   email: string;
@@ -15,17 +20,7 @@ interface AvailabilityResult {
   message: string;
 }
 
-const loadSignupModules = async () => {
-  // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const sanitizerModule = import("../../../../core/modules/utils/sanitizer.module.js");
-  // @ts-expect-error 레거시 JS 모듈 로딩 목적
-  const configModule = import("../../../../core/modules/config/api_config.module.js");
-
-  return Promise.all([sanitizerModule, configModule]);
-};
-
 export const checkSignupIdAvailability = async (userId: string): Promise<AvailabilityResult> => {
-  const [{ sanitizeHTML }, { API_BASE_URL }] = await loadSignupModules();
   const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
     body: new URLSearchParams({
       action: "checkId",
@@ -53,7 +48,6 @@ export const checkSignupIdAvailability = async (userId: string): Promise<Availab
 };
 
 export const submitSignupRequest = async (payload: SignupRequestPayload) => {
-  const [{ sanitizeHTML }, { API_BASE_URL }] = await loadSignupModules();
   const params = new URLSearchParams();
 
   Object.entries(payload).forEach(([key, value]) => {

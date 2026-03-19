@@ -103,6 +103,12 @@ body.login-page {
   text-shadow: none;
 }
 
+.login-page .header .gnb-link:hover,
+.login-page .header .util-link:hover,
+.login-page .header .lang-toggle:hover {
+  color: #FF5000;
+}
+
 .login-page .header .logo-img {
   filter: none; /* Original Orange Color */
 }
@@ -385,6 +391,31 @@ body[data-mypage-shell="stay"] {
 body[data-mypage-shell="stay"] {
   background: #ffffff;
   overflow: auto;
+}
+
+body.login-page[data-mypage-shell="stay"] .hotel-shell-header {
+  background: #ffffff;
+  border-bottom: 1px solid #eeeeee;
+  box-shadow: none;
+  position: relative;
+}
+
+body.login-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-logo-img {
+  filter: none;
+}
+
+body.login-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-nav-link,
+body.login-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-util-link,
+body.login-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-mobile-menu-btn {
+  color: #1f2937;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+}
+
+body.login-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-nav-link:hover,
+body.login-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-util-link:hover,
+body.login-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-mobile-menu-btn:hover {
+  color: #FF5000;
 }
 
 /* Fix Stay's global input/tag resets */

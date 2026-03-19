@@ -359,7 +359,7 @@
                         <a href="#" class="cta-btn">포인트 확인하기</a>
                     </div>
                     <div class="benefit-image">
-                        <img src="https://images.unsplash.com/photo-1601597111158-2fcee29e42d6?w=800&q=80"
+                        <img src="../../images/point.png"
                             alt="Point Benefit">
                     </div>
                 </div>

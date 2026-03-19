@@ -11,6 +11,8 @@ import { mountPageShellRuntime } from "@runtime/pages/pageShell";
 import { mountSignupRuntime } from "@runtime/pages/signup";
 import { mountTravelChecklistRuntime } from "@runtime/pages/travelChecklist";
 import { mountHotelSearchWidgetRuntime } from "@runtime/pages/hotelSearchWidget";
+import { mountHotelListSearchWidgetRuntime } from "@runtime/pages/hotelListSearchWidget";
+import { mountHotelListPageRuntime } from "@runtime/pages/hotelListPage";
 import { mountLifeSearchWidgetRuntime } from "@runtime/pages/lifeSearchWidget";
 import { reservationDrawer } from "@runtime/ui/drawer";
 import { setupLegacyFab } from "@runtime/ui/fab";
@@ -102,6 +104,14 @@ export const mountTravelChecklistPageRuntime = async () => {
 
 export const mountHotelSearchWidgetPageRuntime = async () => {
   await mountHotelSearchWidgetRuntime();
+};
+
+export const mountHotelListSearchWidgetPageRuntime = async () => {
+  await mountHotelListSearchWidgetRuntime();
+};
+
+export const mountHotelListPageIslandRuntime = async () => {
+  await mountHotelListPageRuntime();
 };
 
 export const mountLifeSearchWidgetPageRuntime = async () => {

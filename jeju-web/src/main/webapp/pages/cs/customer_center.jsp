@@ -14,6 +14,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     THIS IS THE END OF A COMMENT BLOCK, BLOCK TO BE DELETED -->
     <script type="module" crossorigin src="./assets/customer_center.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/vendor-CeqCwcKb.js">
+    <link rel="modulepreload" crossorigin href="./assets/app-context-D5ZSqxdX.js">
+    <link rel="modulepreload" crossorigin href="./assets/app-components-7LZvwYVp.js">
+    <link rel="modulepreload" crossorigin href="./assets/app-pages-Cxvf11XD.js">
+    <link rel="stylesheet" crossorigin href="./assets/app-components.css">
     <link rel="stylesheet" crossorigin href="./assets/customer_center.css">
   </head>
 

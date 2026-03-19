@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/common :: pageHead(${signupPage.title})}"></th:block>
+    <link rel="stylesheet" th:href="@{/assets/css/auth/signup.css}" href="/assets/css/auth/signup.css">
+</head>
+<body class="auth-signup-page" th:attr="data-shell=${signupPage.shell}">
+<main class="page-shell signup-shell">
+    <section class="signup-hero">
+        <p class="eyebrow">Second Manual Migration Slice</p>
+        <h1>회원가입 페이지도 Thymeleaf로 옮긴다</h1>
+        <p class="hero-copy">
+            이번 단계에서는 일반 가입 흐름만 우선 이행한다.
+            아이디 중복확인과 실제 가입은 기존 `/api/auth/verify`, `/api/auth/signup`을 그대로 사용한다.
+        </p>
+        <div class="hero-chips">
+            <span class="hero-chip" th:text="'shell=' + ${signupPage.shell}">shell=main</span>
+            <span class="hero-chip">legacy verify api</span>
+            <span class="hero-chip">legacy signup api</span>
+        </div>
+    </section>
+
+    <section class="signup-layout" id="auth-signup-page"
+             th:attr="
+                data-verify-path=${signupPage.verifyPath},
+                data-signup-path=${signupPage.signupPath},
+                data-login-path=${signupPage.loginPath},
+                data-pass-auth-path=${signupPage.passAuthPath},
+                data-migration-path=${signupPage.migrationPath},
+                data-provider=${signupPage.defaultProvider}">
+        <article class="signup-card">
+            <div class="panel-head signup-card-head">
+                <p class="eyebrow">Create Account</p>
+                <h2>일반 회원가입</h2>
+                <p class="signup-copy">
+                    소셜 연동과 리캡챠는 아직 옛 구현을 유지한다.
+                    먼저 운영 핵심 필드와 API 계약부터 스프링 화면 위에 고정한다.
+                </p>
+                <button class="pass-bridge-button" id="auth-open-pass-popup" type="button">PASS 인증으로 정보 채우기</button>
+            </div>
+
+            <form class="signup-form" id="auth-signup-form" novalidate>
+                <div class="field-row">
+                    <label class="field-group" for="signup-name">
+                        <span>이름</span>
+                        <input id="signup-name" name="name" type="text" autocomplete="name" placeholder="이름 입력" required>
+                    </label>
+
+                    <label class="field-group" for="signup-phone">
+                        <span>휴대폰 번호</span>
+                        <input id="signup-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="01012345678" required>
+                    </label>
+                </div>
+
+                <div class="field-row">
+                    <div class="field-group id-check-group">
+                        <label for="signup-id">
+                            <span>아이디</span>
+                        </label>
+                        <div class="inline-input">
+                            <input id="signup-id" name="id" type="text" autocomplete="username" placeholder="영문/숫자 조합" required>
+                            <button class="ghost-button" id="signup-id-check" type="button">중복확인</button>
+                        </div>
+                        <p class="field-hint" id="signup-id-feedback">가입 전에 아이디 중복 확인이 필요하다.</p>
+                    </div>
+
+                    <label class="field-group" for="signup-email">
+                        <span>이메일</span>
+                        <input id="signup-email" name="email" type="email" autocomplete="email" placeholder="name@example.com" required>
+                    </label>
+                </div>
+
+                <div class="field-row">
+                    <label class="field-group" for="signup-birth-date">
+                        <span>생년월일</span>
+                        <input id="signup-birth-date" name="birthDate" type="text" inputmode="numeric" placeholder="YY-MM-DD" required>
+                    </label>
+
+                    <label class="field-group" for="signup-rrn-digit">
+                        <span>주민번호 뒤 첫 자리</span>
+                        <input id="signup-rrn-digit" name="rrnBackFirstDigit" type="text" inputmode="numeric" maxlength="1" placeholder="1-8" required>
+                    </label>
+                </div>
+
+                <div class="field-row">
+                    <label class="field-group" for="signup-password">
+                        <span>비밀번호</span>
+                        <input id="signup-password" name="pw" type="password" autocomplete="new-password" placeholder="8자 이상 권장" required>
+                    </label>
+
+                    <label class="field-group" for="signup-password-confirm">
+                        <span>비밀번호 확인</span>
+                        <input id="signup-password-confirm" type="password" autocomplete="new-password" placeholder="비밀번호 재입력" required>
+                    </label>
+                </div>
+
+                <div class="agreement-box">
+                    <label class="agreement-row" for="signup-agree-terms">
+                        <input id="signup-agree-terms" type="checkbox" required>
+                        <span>이용약관 및 개인정보 처리에 동의한다.</span>
+                    </label>
+                    <label class="agreement-row" for="signup-agree-marketing">
+                        <input id="signup-agree-marketing" type="checkbox">
+                        <span>마케팅 정보 수신은 선택 동의다.</span>
+                    </label>
+                </div>
+
+                <div class="status-banner" id="auth-signup-status" aria-live="polite" hidden></div>
+
+                <div class="form-actions">
+                    <button class="submit-button" id="auth-signup-submit" type="submit">회원가입 완료</button>
+                    <div class="link-row">
+                        <a th:href="${signupPage.loginPath}" href="/pages/auth/login.html">로그인으로</a>
+                        <span>/</span>
+                        <a id="auth-pass-auth-link" th:href="${signupPage.passAuthPath}" href="/pages/auth/pass_auth.html">PASS 인증 페이지</a>
+                    </div>
+                </div>
+            </form>
+        </article>
+
+        <aside class="signup-side-panel">
+            <div class="panel-head">
+                <p class="eyebrow">Current Scope</p>
+                <h2>이번 슬라이스 범위</h2>
+            </div>
+            <ul class="side-list">
+                <li>가입 필드는 기존 `SignupServlet` 필수 파라미터와 1:1로 맞췄다.</li>
+                <li>아이디 중복확인은 `VerifyController?action=checkId`를 그대로 호출한다.</li>
+                <li>전화번호/이메일 중복은 최종 가입 시 서버 응답으로 처리한다.</li>
+                <li>소셜 가입, 리캡챠, PASS 자동화는 다음 단계에서 별도 이관한다.</li>
+            </ul>
+            <a class="migration-link" th:href="${signupPage.migrationPath}" href="/migration">migration hub 열기</a>
+        </aside>
+    </section>
+</main>
+
+<script type="module" th:src="@{/assets/js/auth/signup-page.js}" src="/assets/js/auth/signup-page.js"></script>
+</body>
+</html>

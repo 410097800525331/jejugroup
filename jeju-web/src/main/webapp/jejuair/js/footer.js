@@ -1,3 +1,33 @@
+const RADIAL_ICONS = {
+  home: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 10.5 12 3l9 7.5"></path>
+      <path d="M5 9.5V21h14V9.5"></path>
+      <path d="M10 21v-4.5h4V21"></path>
+    </svg>
+  `.trim(),
+  stay: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 22V4c0-.55.45-1 1-1h10c.55 0 1 .45 1 1v18"></path>
+      <rect x="8" y="7" width="2.5" height="2.5" rx=".3"></rect>
+      <rect x="13.5" y="7" width="2.5" height="2.5" rx=".3"></rect>
+      <rect x="8" y="12" width="2.5" height="2.5" rx=".3"></rect>
+      <rect x="13.5" y="12" width="2.5" height="2.5" rx=".3"></rect>
+      <path d="M10 22v-4.5h4V22"></path>
+    </svg>
+  `.trim(),
+  rentcar: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 16.5h14"></path>
+      <path d="M7.2 16.5 8.4 12.4a1 1 0 0 1 .96-.72h5.28a1 1 0 0 1 .96.72l1.2 4.1"></path>
+      <path d="M6 16.5v2"></path>
+      <path d="M18 16.5v2"></path>
+      <circle cx="8" cy="18" r="1.4"></circle>
+      <circle cx="16" cy="18" r="1.4"></circle>
+    </svg>
+  `.trim(),
+};
+
 $(document).ready(function () {
   const footer = `
   <div class="inner">
@@ -58,21 +88,24 @@ $(document).ready(function () {
         <!-- link container -->
         <div class="link_container">
           <!-- Radial Menu for Family Site -->
-          <div class="radial-menu-container" id="radialFamilyMenu">
-            <button class="radial-btn" title="Family Sites">
-              <span style="font-size: 1.5rem;">+</span>
-            </button>
-            <div class="radial-items">
-              <a href="../../index.html" class="radial-item item-1" title="제주그룹 메인">
-                <span style="font-size: 1.2rem;">🏠</span>
-              </a>
-              <a href="../../jejustay/pages/hotel/jejuhotel.html" class="radial-item item-2" title="제주스테이">
-                <span style="font-size: 1.2rem;">🏨</span>
-              </a>
-              <a href="https://jejurentcar.netlify.app/" class="radial-item item-3" title="제주렌트카">
-                <span style="font-size: 1.2rem;">🚗</span>
-              </a>
+          <div class="family-radial-shell">
+            <div class="family-radial-menu" id="radialFamilyMenu">
+              <button class="family-radial-btn" title="Family Sites" aria-label="Family Sites" type="button">
+                <span class="family-radial-btn__glyph" aria-hidden="true"></span>
+              </button>
+              <div class="family-radial-items">
+                <a href="../../index.html" class="family-radial-item item-1" title="제주그룹 메인">
+                  <span class="family-radial-item__icon" aria-hidden="true">${RADIAL_ICONS.home}</span>
+                </a>
+                <a href="../../jejustay/pages/hotel/jejuhotel.html" class="family-radial-item item-2" title="제주스테이">
+                  <span class="family-radial-item__icon" aria-hidden="true">${RADIAL_ICONS.stay}</span>
+                </a>
+                <a href="https://jejurentcar.netlify.app/" class="family-radial-item item-3" title="제주렌트카">
+                  <span class="family-radial-item__icon" aria-hidden="true">${RADIAL_ICONS.rentcar}</span>
+                </a>
+              </div>
             </div>
+            <p class="family-radial-label">Family Sites</p>
           </div>
           <div class="sns_link">
             <a href="https://www.youtube.com/@jejuair_official"><img src="assets/img/20250804165831645.png" alt="유튜브"></a>
@@ -98,7 +131,7 @@ $(document).on('click', '.footer_link h4', function () {
 });
 
 // Family Site Radial Menu Toggle
-$(document).on('click', '#radialFamilyMenu .radial-btn', function (e) {
+$(document).on('click', '#radialFamilyMenu .family-radial-btn', function (e) {
   e.stopPropagation();
   const container = $(this).parent();
   
@@ -111,6 +144,6 @@ $(document).on('click', function() {
   const container = $('#radialFamilyMenu');
   if (container.hasClass('active')) {
     container.removeClass('active');
-    container.find('.radial-btn').removeClass('active');
+    container.find('.family-radial-btn').removeClass('active');
   }
 });

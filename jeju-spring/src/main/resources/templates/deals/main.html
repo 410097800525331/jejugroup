@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/common :: pageHead('JEJU STAY - Special Offers | 특가 센터')}"></th:block>
+    <link rel="stylesheet" th:href="@{/assets/css/deals/deals.css}" href="/assets/css/deals/deals.css">
+</head>
+<body class="deals-page" th:attr="data-shell=${page.shell}">
+<main class="deals-shell">
+    <section class="hero-glass">
+        <div class="hero-content-glass">
+            <span class="hero-badge">ONLY JEJU GROUP</span>
+            <h1 class="hero-title" th:text="${page.title}">title</h1>
+            <p class="hero-desc" th:text="${page.description}">desc</p>
+        </div>
+    </section>
+
+    <section class="section container coupon-section">
+        <div class="section-header">
+            <h2 class="section-title">지금 바로 사용 가능한 쿠폰</h2>
+            <p class="section-subtitle">로그인 후 다운로드하거나 코드를 복사해서 사용하세요.</p>
+        </div>
+        <div class="coupon-grid">
+            <article class="coupon-card" th:each="coupon : ${page.coupons}">
+                <div class="coupon-left"><strong th:text="${coupon.amount}">CODE</strong></div>
+                <div class="coupon-right">
+                    <h3 th:text="${coupon.title}">title</h3>
+                    <p th:text="${coupon.description}">desc</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="section container deal-section">
+        <div class="section-header">
+            <h2 class="section-title">마감 임박 타임 세일</h2>
+            <a class="ghost-link" th:href="${page.migrationPath}" href="/migration">migration hub</a>
+        </div>
+        <div class="deal-grid">
+            <article class="deal-card" th:each="card : ${page.cards}">
+                <img alt="deal image" th:src="${card.imageUrl}" src="">
+                <div class="deal-body">
+                    <span class="deal-badge" th:text="${card.badge}">badge</span>
+                    <h3 th:text="${card.title}">title</h3>
+                    <p th:text="${card.subtitle}">subtitle</p>
+                    <div class="price-row">
+                        <span class="original-price" th:text="${card.originalPrice}">₩420,000</span>
+                        <strong class="current-price" th:text="${card.currentPrice}">₩289,000</strong>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+</body>
+</html>

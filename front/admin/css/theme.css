@@ -3,6 +3,20 @@
  * Zero Monolith: Only variables and base resets for admin domain
  */
 
+@font-face {
+    font-family: "FlightSans";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "FlightSans";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+}
+
  :root {
     /* HSL Color Palette - Dark Premium */
     --admin-bg: hsl(220, 10%, 12%); /* Deep charocoal */
@@ -21,7 +35,7 @@
     --admin-danger: hsl(0, 70%, 55%);
 
     /* Typography */
-    --admin-font-inter: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --admin-font-inter: "FlightSans", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     
     /* Spacing */
     --admin-space-xs: 0.25rem;

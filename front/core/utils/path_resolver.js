@@ -72,7 +72,7 @@ const resolveAppBaseUrl = () => {
     }
   }
 
-  return new URL('../../', import.meta.url);
+  return new URL(/* @vite-ignore */ '../../', import.meta.url);
 };
 
 const toAbsolutePath = (pathLike) => {

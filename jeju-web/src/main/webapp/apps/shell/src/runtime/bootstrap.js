@@ -8,6 +8,8 @@ import {
   mountMainShellRuntime,
   mountMyPageRuntime,
   mountHotelSearchWidgetPageRuntime,
+  mountHotelListSearchWidgetPageRuntime,
+  mountHotelListPageIslandRuntime,
   mountLifeSearchWidgetPageRuntime,
   mountTravelChecklistPageRuntime,
   setupLegacyChatbotRuntime,
@@ -25,7 +27,7 @@ const resolveAppRoot = () => {
     return new URL("../../", currentScript.src).href;
   }
 
-  return new URL("../../", import.meta.url).href;
+  return new URL(/* @vite-ignore */ "../../", import.meta.url).href;
 };
 
 const APP_ROOT = resolveAppRoot();
@@ -149,6 +151,10 @@ const hasTravelChecklistIsland = () => Boolean(document.getElementById("jeju-tra
 
 const hasHotelSearchWidgetIsland = () => Boolean(document.getElementById("hotel-search-widget-root"));
 
+const hasHotelListSearchWidgetIsland = () => Boolean(document.getElementById("hotel-list-search-widget-root"));
+
+const hasHotelListPageIsland = () => Boolean(document.getElementById("hotel-list-page-root"));
+
 const hasLifeSearchWidgetIsland = () => Boolean(document.getElementById("life-search-widget-root"));
 
 const hasPageShellHosts = () =>
@@ -202,6 +208,14 @@ const bootRuntime = async () => {
     await mountHotelSearchWidgetPageRuntime();
   }
 
+  if (hasHotelListSearchWidgetIsland()) {
+    await mountHotelListSearchWidgetPageRuntime();
+  }
+
+  if (hasHotelListPageIsland()) {
+    await mountHotelListPageIslandRuntime();
+  }
+
   if (hasLifeSearchWidgetIsland()) {
     await mountLifeSearchWidgetPageRuntime();
   }
@@ -227,6 +241,8 @@ const start = () => {
       !hasPassAuthIsland() &&
       !hasMyPageIsland() &&
       !hasHotelSearchWidgetIsland() &&
+      !hasHotelListSearchWidgetIsland() &&
+      !hasHotelListPageIsland() &&
       !hasLifeSearchWidgetIsland() &&
       !hasTravelChecklistIsland() &&
       !hasPageShellHosts()

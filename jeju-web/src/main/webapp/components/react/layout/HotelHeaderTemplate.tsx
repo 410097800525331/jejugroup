@@ -43,7 +43,7 @@ export const HotelHeaderTemplate = ({ basePath }: HotelHeaderTemplateProps) => {
             href="#"
             className="hotel-shell-util-link route-link"
             data-route="AUTH.LOGIN"
-            data-route-params='{"shell":"main"}'
+            data-route-params='{"shell":"stay"}'
             id="headerLoginBtn"
           >
             <HotelShellIcon name="user" className="hotel-shell-util-icon" />

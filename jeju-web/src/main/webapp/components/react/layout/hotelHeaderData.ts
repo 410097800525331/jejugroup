@@ -147,5 +147,5 @@ export const HOTEL_MOBILE_NAV_ITEMS: ReadonlyArray<HotelMobileNavItem> = [
   { route: "SERVICES.TRAVEL.GUIDE", dataLang: "mobileNavGuide", label: "여행 가이드" },
   { route: "SERVICES.TRAVEL.TIPS", dataLang: "mobileNavTips", label: "여행 일정 팁" },
   { action: "OPEN_RESERVATION_DRAWER", dataLang: "navResCheck", label: "예약 확인" },
-  { route: "AUTH.LOGIN", routeParams: "{\"shell\":\"main\"}", dataLang: "navLogin", label: "로그인" }
+  { route: "AUTH.LOGIN", routeParams: "{\"shell\":\"stay\"}", dataLang: "navLogin", label: "로그인" }
 ];

@@ -1,5 +1,5 @@
 export const getAppRoot = (): string => {
-  const runtimeRoot = new URL("../../", import.meta.url).href;
+  const runtimeRoot = new URL(/* @vite-ignore */ "../../", import.meta.url).href;
 
   if (window.__JEJU_ROUTE_NAVIGATOR__?.appRoot) {
     return new URL(window.__JEJU_ROUTE_NAVIGATOR__.appRoot, window.location.href).href;

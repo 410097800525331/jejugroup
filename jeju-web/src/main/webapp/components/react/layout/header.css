@@ -295,7 +295,14 @@
     align-items: center;
 }
 
-.main-header .logo-link img,
+.main-header .logo-link img {
+    width: auto;
+    height: 45px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
 .hotel-shell-header .hotel-shell-logo-img {
     width: 160px;
     height: 32px;
@@ -320,10 +327,18 @@
     gap: 6px;
     font-size: 1.125rem;
     font-weight: 500;
+    font-family: 'FlightSans', 'Noto Sans KR', sans-serif;
+    line-height: 1;
     color: #ffffff;
     text-decoration: none;
     white-space: nowrap;
     transition: color 0.3s ease;
+}
+
+.hotel-shell-header .hotel-shell-nav-link > span:last-child {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
 }
 
 .hotel-shell-header .hotel-shell-nav-link::after {

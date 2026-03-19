@@ -30,11 +30,11 @@ app:
     notes:
       - front stays as the editable source until each page is migrated to Thymeleaf
       - jeju-web deploy credentials remain the shared source for alwaysdata and ssh
-      - JDBC dependency is ready, but datasource auto-configuration stays disabled until DB migration starts
+      - auth APIs now run on Spring MVC, but DB access still follows the legacy users table contract
   alwaysdata:
-    db-url: ${ALWAYSDATA_DB_URL:}
-    db-user: ${ALWAYSDATA_DB_USER:}
-    db-password: ${ALWAYSDATA_DB_PASSWORD:}
+    db-url: ${DB_URL:${ALWAYSDATA_DB_URL:}}
+    db-user: ${DB_USER:${ALWAYSDATA_DB_USER:}}
+    db-password: ${DB_PASSWORD:${ALWAYSDATA_DB_PASSWORD:}}
     ssh-host: ${ALWAYSDATA_SSH_HOST:${SSH_HOST:}}
     ssh-user: ${ALWAYSDATA_SSH_USER:${SSH_USER:}}
     ssh-password: ${ALWAYSDATA_SSH_PASSWORD:${SSH_PASSWORD:}}

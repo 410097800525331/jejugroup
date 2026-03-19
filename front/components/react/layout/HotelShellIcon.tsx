@@ -10,6 +10,7 @@ import {
   CreditCard,
   Gift,
   Headphones,
+  Heart,
   HelpCircle,
   Home,
   Hotel,
@@ -41,6 +42,7 @@ type HotelShellIconName =
   | "credit-card"
   | "gift"
   | "headphones"
+  | "heart"
   | "home"
   | "hotel"
   | "lightbulb"
@@ -74,6 +76,7 @@ const ICON_MAP: Record<HotelShellIconName, LucideIcon> = {
   "credit-card": CreditCard,
   gift: Gift,
   headphones: Headphones,
+  heart: Heart,
   home: Home,
   hotel: Hotel,
   lightbulb: Lightbulb,

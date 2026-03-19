@@ -256,7 +256,7 @@
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
                         <button class="wishlist-btn"><i data-lucide="heart"></i></button>
-                        <img src="https://images.unsplash.com/photo-1499856871940-a09627c6dcf6?w=600&q=80" alt="Paris"
+                        <img src="../../images/ruburu.jpg" alt="Paris"
                             class="card-img" loading="lazy">
                     </div>
                     <div class="card-info">
@@ -280,7 +280,7 @@
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
                         <button class="wishlist-btn"><i data-lucide="heart"></i></button>
-                        <img src="https://images.unsplash.com/photo-1559592413-7cec4d0ea49b?w=600&q=80" alt="Danang"
+                        <img src="../../images/banihill.png" alt="Danang"
                             class="card-img" loading="lazy">
                     </div>
                     <div class="card-info">
@@ -422,7 +422,7 @@
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
                         <button class="wishlist-btn"><i data-lucide="heart"></i></button>
-                        <img src="https://images.unsplash.com/photo-1582967788606-a171f1080cae?w=600&q=80" alt="Guam"
+                        <img src="../../images/dolpine.png" alt="Guam"
                             class="card-img" loading="lazy">
                     </div>
                     <div class="card-info">
@@ -446,7 +446,7 @@
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
                         <button class="wishlist-btn"><i data-lucide="heart"></i></button>
-                        <img src="https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?w=600&q=80"
+                        <img src="../../images/newyork.webp"
                             alt="New York" class="card-img" loading="lazy">
                     </div>
                     <div class="card-info">

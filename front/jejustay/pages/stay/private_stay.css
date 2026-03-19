@@ -18,7 +18,7 @@
 
 /* Base Typography & Layout */
 body.private-stay-page {
-    font-family: 'Pretendard', 'Noto Sans KR', sans-serif; /* Clean Sans */
+    font-family: 'FlightSans', 'Noto Sans KR', sans-serif;
     color: var(--private-text);
     background: var(--private-bg);
     overflow-x: hidden;
@@ -26,7 +26,7 @@ body.private-stay-page {
 
 /* Typography Overrides */
 h1, h2, h3, .serif-font {
-    font-family: 'Noto Serif KR', serif; /* Keep Serif for Titles only */
+    font-family: 'FlightSans', 'Noto Sans KR', sans-serif;
     letter-spacing: -0.02em;
 }
 
@@ -41,7 +41,7 @@ h1, h2, h3, .serif-font {
 }
 
 .private-stay-page .hero-subtitle-top {
-    font-family: 'Noto Serif KR', serif;
+    font-family: 'FlightSans', 'Noto Sans KR', sans-serif;
     font-weight: 400;
     font-size: 1.8rem;
     color: #fff;
@@ -60,7 +60,7 @@ h1, h2, h3, .serif-font {
 .section-subtitle {
     font-size: 1.1rem;
     color: var(--private-text-sub);
-    font-family: 'Noto Serif KR', serif;
+    font-family: 'FlightSans', 'Noto Sans KR', sans-serif;
 }
 
 /* Promo Cards (Bright) */

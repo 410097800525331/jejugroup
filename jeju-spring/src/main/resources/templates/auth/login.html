@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/common :: pageHead(${loginPage.title})}"></th:block>
+    <link rel="stylesheet" th:href="@{/assets/css/auth/login.css}" href="/assets/css/auth/login.css">
+</head>
+<body class="auth-login-page" th:attr="data-shell=${loginPage.shell}">
+<main class="page-shell auth-shell">
+    <section class="auth-hero">
+        <p class="eyebrow">First Manual Migration Slice</p>
+        <h1>로그인 페이지를 Thymeleaf로 옮겼다</h1>
+        <p class="hero-copy">
+            화면은 `jeju-spring`에서 렌더링하고, 인증 처리는 아직 기존 `/api/auth/*` 엔드포인트를 그대로 호출한다.
+            이 페이지가 이후 `signup`, `pass_auth`, `mypage` 이행의 기준점이다.
+        </p>
+        <div class="hero-chips">
+            <span class="hero-chip" th:text="'shell=' + ${loginPage.shell}">shell=main</span>
+            <span class="hero-chip">thymeleaf view</span>
+            <span class="hero-chip">legacy auth api bridge</span>
+        </div>
+    </section>
+
+    <section class="auth-layout">
+        <article class="auth-card" id="auth-login-page"
+                 th:attr="
+                    data-login-path=${loginPage.loginPath},
+                    data-session-path=${loginPage.sessionPath},
+                    data-home-path=${loginPage.homePath},
+                    data-admin-path=${loginPage.adminDashboardPath},
+                    data-migration-path=${loginPage.migrationPath}">
+            <div class="panel-head auth-card-head">
+                <p class="eyebrow">Sign In</p>
+                <h2>JejuGroup account</h2>
+                <p class="auth-copy">
+                    기존 회원 세션을 그대로 사용한다. 현재 단계에서는 화면만 Spring 쪽으로 이관한 상태다.
+                </p>
+            </div>
+
+            <form class="login-form" id="auth-login-form" novalidate>
+                <label class="field-group" for="login-id">
+                    <span>이메일/아이디</span>
+                    <input id="login-id" name="id" type="text" autocomplete="username" placeholder="아이디 또는 이메일 입력" required>
+                </label>
+
+                <label class="field-group" for="login-password">
+                    <span>비밀번호</span>
+                    <input id="login-password" name="pw" type="password" autocomplete="current-password" placeholder="비밀번호 입력" required>
+                </label>
+
+                <div class="status-banner" id="auth-login-status" aria-live="polite" hidden></div>
+
+                <div class="login-options">
+                    <label class="remember-toggle" for="login-save-id">
+                        <input id="login-save-id" type="checkbox">
+                        <span>아이디 저장</span>
+                    </label>
+
+                    <div class="link-row">
+                        <a th:href="${loginPage.passAuthPath}" href="/pages/auth/pass_auth.html">아이디/비밀번호 찾기</a>
+                        <span>/</span>
+                        <a th:href="${loginPage.signupPath}" href="/pages/auth/signup.html">회원가입</a>
+                    </div>
+                </div>
+
+                <button class="login-submit" id="auth-login-submit" type="submit">로그인</button>
+            </form>
+        </article>
+
+        <aside class="auth-side-panel">
+            <div class="panel-head">
+                <p class="eyebrow">Migration Notes</p>
+                <h2>현재 연결 상태</h2>
+            </div>
+            <ul class="side-list">
+                <li>뷰 경로는 `/auth/login`, `/pages/auth/login.html` 둘 다 지원한다.</li>
+                <li>성공 시 일반 사용자는 `/index.html`, 관리자는 `/admin/pages/dashboard.html`로 이동한다.</li>
+                <li>실패 메시지는 기존 auth API 응답을 그대로 노출한다.</li>
+                <li>다음 슬라이스는 `signup` 또는 `session/logout` Spring MVC 전환이다.</li>
+            </ul>
+            <a class="migration-link" th:href="${loginPage.migrationPath}" href="/migration">migration hub 열기</a>
+        </aside>
+    </section>
+</main>
+
+<script type="module" th:src="@{/assets/js/auth/login-page.js}" src="/assets/js/auth/login-page.js"></script>
+</body>
+</html>

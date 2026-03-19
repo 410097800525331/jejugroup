@@ -17,6 +17,16 @@ export const DESTINATION_COLUMNS: SearchDestinationColumn[] = [
     titleLang: "destKr",
     items: [
       {
+        value: "제주",
+        image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=100&h=100&fit=crop",
+        alt: "제주",
+        name: "제주",
+        nameLang: "destNameJeju",
+        count: "(3,240)",
+        desc: "오션뷰, 리조트",
+        descLang: "descBeachDining"
+      },
+      {
         value: "서울",
         image: "https://images.unsplash.com/photo-1538485399081-7191377e8241?w=100&h=100&fit=crop",
         alt: "서울",
@@ -101,6 +111,26 @@ export const DESTINATION_COLUMNS: SearchDestinationColumn[] = [
         count: "(8,450)",
         desc: "쇼핑, 관광",
         descLang: "descShoppingSightseeing"
+      },
+      {
+        value: "다낭",
+        image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=100&h=100&fit=crop",
+        alt: "다낭",
+        name: "다낭",
+        nameLang: "destNameDanang",
+        count: "(2,890)",
+        desc: "해변, 휴양",
+        descLang: "descBeachDining"
+      },
+      {
+        value: "싱가포르",
+        image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=100&h=100&fit=crop",
+        alt: "싱가포르",
+        name: "싱가포르",
+        nameLang: "destNameSingapore",
+        count: "(1,890)",
+        desc: "시티뷰, 미식",
+        descLang: "descShoppingDining"
       }
     ]
   }

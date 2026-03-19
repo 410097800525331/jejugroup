@@ -2,6 +2,7 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { syncFrontAssetsToSpring } = require('./sync-front-assets-to-spring.cjs');
 
 const goals = process.argv.slice(2);
 
@@ -94,16 +95,27 @@ if (javaHome) {
   process.exit(1);
 }
 
-const result = spawnSync(command, goals, {
-  cwd,
-  env,
-  stdio: 'inherit',
-  shell: process.platform === 'win32'
-});
+const run = async () => {
+  try {
+    await syncFrontAssetsToSpring();
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
 
-if (result.error) {
-  console.error(result.error.message);
-  process.exit(1);
-}
+  const result = spawnSync(command, goals, {
+    cwd,
+    env,
+    stdio: 'inherit',
+    shell: process.platform === 'win32'
+  });
 
-process.exit(result.status ?? 1);
+  if (result.error) {
+    console.error(result.error.message);
+    process.exit(1);
+  }
+
+  process.exit(result.status ?? 1);
+};
+
+void run();
