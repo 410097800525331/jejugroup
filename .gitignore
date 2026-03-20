@@ -26,6 +26,8 @@ front/.generated/
 # ===== Java / Eclipse / IntelliJ =====
 *.class
 *.jar
+# WEB-INF/lib의 JAR은 프로젝트 의존성이므로 추적
+!**/WEB-INF/lib/*.jar
 *.war
 *.ear
 target/
