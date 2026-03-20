@@ -55,8 +55,8 @@ declare global {
       wishlist: Array<Record<string, unknown>>;
       setCurrencyAndLang: (currency: "KRW" | "USD", language: "ko" | "en") => void;
       addToWishlist: (item: Record<string, unknown>) => void;
-      removeFromWishlist: (id: number) => void;
-      isInWishlist: (id: number) => boolean;
+      removeFromWishlist: (id: string | number) => void;
+      isInWishlist: (id: string | number) => boolean;
     };
   }
 }

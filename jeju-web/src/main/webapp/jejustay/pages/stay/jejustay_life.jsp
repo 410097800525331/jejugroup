@@ -319,6 +319,7 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="../../../core/constants/lang_data.js"></script>
+    <script src="../../shared/wishlist-button.js"></script>
     <script src="./jejustay_life.js"></script>
     <script type="module" src="../../../components/runtime/bootstrap.js"></script>
 </body>

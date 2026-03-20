@@ -735,40 +735,6 @@ body.long-stay-page {
     object-fit: cover;
 }
 
-/* 위시리스트 버튼 */
-.card-image-wrap .wishlist-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
-    background: white;
-    border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    color: #ccc;
-    transition: all 0.2s;
-}
-
-.card-image-wrap .wishlist-btn:hover {
-    transform: scale(1.1);
-    color: #ff5000;
-}
-
-.card-image-wrap .wishlist-btn.active {
-    color: #ff5000;
-    fill: #ff5000;
-}
-
-.card-image-wrap .wishlist-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
 /* 2. 콘텐츠 섹션 (정보 + 가격) */
 .card-content {
     flex: 1;

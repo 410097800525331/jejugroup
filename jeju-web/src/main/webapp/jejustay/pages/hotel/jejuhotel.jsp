@@ -183,9 +183,7 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80"
                                 alt="그랜드 하얏트 제주" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가">
-                                <i data-lucide="heart"></i>
-                            </button>
+                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
@@ -233,9 +231,7 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&q=80"
                                 alt="오사카 리츠칼튼" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가">
-                                <i data-lucide="heart"></i>
-                            </button>
+                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
@@ -283,9 +279,7 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=400&q=80"
                                 alt="다낭 인터컨티넨탈" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가">
-                                <i data-lucide="heart"></i>
-                            </button>
+                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
@@ -333,9 +327,7 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80"
                                 alt="방콕 만다린 오리엔탈" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가">
-                                <i data-lucide="heart"></i>
-                            </button>
+                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
@@ -396,6 +388,7 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="../../../core/constants/lang_data.js"></script>
+    <script src="../../shared/wishlist-button.js"></script>
     <script src="./hotel.js"></script>
     <script type="module" src="../../../components/runtime/bootstrap.js"></script>
 </body>

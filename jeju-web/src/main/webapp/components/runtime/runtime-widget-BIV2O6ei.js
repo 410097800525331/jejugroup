@@ -1,5 +1,5 @@
 import { c as _, j as H } from "./react-vendor-BoSfm_Te.js";
-import { C as M } from "./feature-ui-Cu6m9QvO.js";
+import { C as M } from "./feature-ui-DQIlUdQs.js";
 let y = null, d = null, m = !1, b = localStorage.getItem("jeju_fab_lang") === "en" ? "en" : "ko";
 const u = () => {
   y && y.render(

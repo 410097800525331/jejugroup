@@ -37,13 +37,25 @@
                 <!-- Return to Portals (Micro-Navigation) -->
                 <nav class="admin-portal-nav" aria-label="Portal Navigation">
                     <a href="#" class="portal-btn route-link" data-route="HOME" title="메인 랜딩으로">
-                        <i data-lucide="home" style="width:16px; height:16px;"></i> 메인
+                        <i data-lucide="home" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">메인</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
                     </a>
                     <a href="#" class="portal-btn route-link" data-route="SERVICES.AIR.MAIN" title="제주에어로">
-                        <i data-lucide="plane" style="width:16px; height:16px;"></i> 에어
+                        <i data-lucide="plane" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">에어</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
                     </a>
                     <a href="#" class="portal-btn route-link" data-route="SERVICES.STAY.MAIN" title="제주스테이로">
-                        <i data-lucide="building" style="width:16px; height:16px;"></i> 스테이
+                        <i data-lucide="building" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">스테이</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
                     </a>
                 </nav>
                 <div class="admin-profile-container" id="admin-profile-container">
@@ -166,6 +178,88 @@
                 <button class="admin-btn admin-btn-primary">1</button>
                 <button class="admin-btn admin-btn-outline">&gt;</button>
             </div>
+
+            <section class="admin-card hotel-offer-admin-section">
+                <div class="admin-card-header hotel-offer-section-header">
+                    <div>
+                        <h2 class="hotel-offer-section-title">호텔 리스트 혜택/가격 노출 관리</h2>
+                        <p class="hotel-offer-section-copy">
+                            호텔 카드 이미지 위 혜택 문구와 카드 가격을 여기서 수정한다.
+                            저장값은 현재 관리자 브라우저에 보관되고 호텔 리스트에서 바로 반영된다.
+                        </p>
+                    </div>
+                    <span class="admin-badge neutral">호텔 리스트 연동</span>
+                </div>
+
+                <div class="hotel-offer-toolbar">
+                    <input class="hotel-offer-search-input" id="hotel-offer-search-input" type="search"
+                        placeholder="호텔명 또는 호텔 ID 검색">
+                    <button class="admin-btn admin-btn-outline" id="hotel-offer-reset-all-btn" type="button">전체 초기화</button>
+                </div>
+
+                <div class="hotel-offer-admin-grid">
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>호텔 ID</th>
+                                    <th>호텔명</th>
+                                    <th>혜택 문구</th>
+                                    <th>정상가</th>
+                                    <th>판매가</th>
+                                    <th>상태</th>
+                                    <th>관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hotel-offer-table-body">
+                                <tr>
+                                    <td colspan="7" style="text-align:center; padding: 40px;">호텔 리스트 오퍼 데이터를 불러오는 중...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <aside class="hotel-offer-editor-card">
+                        <div class="hotel-offer-editor-head">
+                            <h3 class="hotel-offer-editor-title">선택한 호텔 수정</h3>
+                            <p class="hotel-offer-editor-copy" id="hotel-offer-editor-copy">왼쪽 목록에서 수정할 호텔을 골라라.</p>
+                        </div>
+
+                        <form class="hotel-offer-form" id="hotel-offer-form">
+                            <label class="hotel-offer-field">
+                                <span>호텔명</span>
+                                <input id="hotel-offer-title" readonly type="text">
+                            </label>
+
+                            <label class="hotel-offer-field">
+                                <span>혜택 문구</span>
+                                <input id="hotel-offer-badge" maxlength="40" placeholder="예: 무료 업그레이드" type="text">
+                            </label>
+
+                            <label class="hotel-offer-field">
+                                <span>정상가</span>
+                                <input id="hotel-offer-original-price" inputmode="numeric" min="0" placeholder="250000" step="1000"
+                                    type="number">
+                            </label>
+
+                            <label class="hotel-offer-field">
+                                <span>판매가</span>
+                                <input id="hotel-offer-current-price" inputmode="numeric" min="0" placeholder="189000" step="1000"
+                                    type="number">
+                            </label>
+
+                            <div class="hotel-offer-preview" id="hotel-offer-preview">
+                                아직 선택된 호텔이 없다.
+                            </div>
+
+                            <div class="hotel-offer-form-actions">
+                                <button class="admin-btn admin-btn-primary" type="submit">저장</button>
+                                <button class="admin-btn admin-btn-outline" id="hotel-offer-reset-btn" type="button">선택 초기화</button>
+                            </div>
+                        </form>
+                    </aside>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -173,6 +267,7 @@
     <script src="../js/rbac_config.js"></script>
     <script src="../js/sidebar_ui.js"></script>
     <script src="../js/store.js"></script>
+    <script src="../js/portal_nav.js"></script>
     <script src="../js/lodging.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

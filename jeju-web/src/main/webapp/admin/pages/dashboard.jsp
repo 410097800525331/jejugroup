@@ -46,13 +46,25 @@
                 <!-- Return to Portals (Micro-Navigation) -->
                 <nav class="admin-portal-nav" aria-label="Portal Navigation">
                     <a href="#" class="portal-btn route-link" data-route="HOME" title="메인 랜딩으로">
-                        <i data-lucide="home" style="width:16px; height:16px;"></i> 메인
+                        <i data-lucide="home" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">메인</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
                     </a>
                     <a href="#" class="portal-btn route-link" data-route="SERVICES.AIR.MAIN" title="제주에어로">
-                        <i data-lucide="plane" style="width:16px; height:16px;"></i> 에어
+                        <i data-lucide="plane" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">에어</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
                     </a>
-    <a href="#" class="portal-btn route-link" data-route="SERVICES.STAY.MAIN" title="제주스테이로">
-                        <i data-lucide="building" style="width:16px; height:16px;"></i> 스테이
+                    <a href="#" class="portal-btn route-link" data-route="SERVICES.STAY.MAIN" title="제주스테이로">
+                        <i data-lucide="building" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">스테이</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
                     </a>
                 </nav>
                 <!-- User Profile & Dropdown Container -->
@@ -213,6 +225,7 @@
     <script src="../js/rbac_config.js"></script>
     <script src="../js/sidebar_ui.js"></script>
     <script src="../js/store.js"></script>
+    <script src="../js/portal_nav.js"></script>
     <script src="../js/dashboard.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

@@ -10,9 +10,13 @@ interface FabStateBridge {
   wishlist: Array<Record<string, unknown>>;
   setCurrencyAndLang: (currency: "KRW" | "USD", language: "ko" | "en") => void;
   addToWishlist: (item: Record<string, unknown>) => void;
-  removeFromWishlist: (id: number) => void;
-  isInWishlist: (id: number) => boolean;
+  removeFromWishlist: (id: string | number) => void;
+  isInWishlist: (id: string | number) => boolean;
 }
+
+const normalizeWishlistId = (value: unknown) => {
+  return String(value ?? "").trim();
+};
 
 const getCurrency = (): "KRW" | "USD" => {
   return localStorage.getItem("jeju_fab_currency") === "USD" ? "USD" : "KRW";
@@ -56,8 +60,12 @@ const installFabStateBridge = () => {
     },
     addToWishlist: (item) => {
       const wishlist = [...fabState.wishlist];
-      const currentId = Number(item.id);
-      const index = wishlist.findIndex((entry) => Number(entry.id) === currentId);
+      const currentId = normalizeWishlistId(item.id);
+      if (!currentId) {
+        return;
+      }
+
+      const index = wishlist.findIndex((entry) => normalizeWishlistId(entry.id) === currentId);
       if (index === -1) {
         wishlist.push(item);
       } else {
@@ -69,13 +77,15 @@ const installFabStateBridge = () => {
       emitFabEvents(fabState.currency, fabState.language, wishlist);
     },
     removeFromWishlist: (id) => {
-      const wishlist = fabState.wishlist.filter((entry) => Number(entry.id) !== id);
+      const normalizedId = normalizeWishlistId(id);
+      const wishlist = fabState.wishlist.filter((entry) => normalizeWishlistId(entry.id) !== normalizedId);
       fabState.wishlist = wishlist;
       localStorage.setItem("jeju_wishlist", JSON.stringify(wishlist));
       emitFabEvents(fabState.currency, fabState.language, wishlist);
     },
     isInWishlist: (id) => {
-      return fabState.wishlist.some((entry) => Number(entry.id) === id);
+      const normalizedId = normalizeWishlistId(id);
+      return fabState.wishlist.some((entry) => normalizeWishlistId(entry.id) === normalizedId);
     }
   };
 
@@ -95,6 +105,8 @@ const installFabStateBridge = () => {
     const customEvent = event as CustomEvent<Array<Record<string, unknown>>>;
     fabState.wishlist = Array.isArray(customEvent.detail) ? [...customEvent.detail] : [];
   });
+
+  emitFabEvents(fabState.currency, fabState.language, fabState.wishlist);
 };
 
 export const setupLegacyFab = () => {

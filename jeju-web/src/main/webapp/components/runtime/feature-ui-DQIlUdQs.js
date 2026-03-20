@@ -1,6 +1,6 @@
-import { j as e, a, u as S } from "./react-vendor-BoSfm_Te.js";
+import { j as e, a as r, u as T } from "./react-vendor-BoSfm_Te.js";
 import { g as y } from "./gsap-vendor-CK8bqKiF.js";
-import { u as M, T as F, i as T, A as W, v as L, j as I, w as A } from "./icon-vendor-Dpra3II6.js";
+import { u as W, T as L, i as R, A as F, v as I, j as z, w as A } from "./icon-vendor-Dpra3II6.js";
 const K = () => /* @__PURE__ */ e.jsxs(e.Fragment, { children: [
   /* @__PURE__ */ e.jsx("div", { className: "res-drawer-backdrop", id: "resDrawerBackdrop" }),
   /* @__PURE__ */ e.jsxs("div", { className: "res-drawer-panel", id: "resDrawerPanel", children: [
@@ -45,41 +45,106 @@ const K = () => /* @__PURE__ */ e.jsxs(e.Fragment, { children: [
       ] })
     ] })
   ] })
-] }), N = a.forwardRef(
-  ({ id: r, className: o, label: n, icon: h, badgeCount: s, onClick: f, onMouseEnter: u, onMouseLeave: b }, d) => /* @__PURE__ */ e.jsxs(
+] }), S = (t) => {
+  t.dataset.wishlistResetTimer && (window.clearTimeout(Number(t.dataset.wishlistResetTimer)), delete t.dataset.wishlistResetTimer), t.classList.remove("is-pressing", "is-releasing");
+}, P = (t, i) => {
+  S(t), t.classList.add("is-pressing");
+  const n = t.querySelector(".wishlist-btn__surface");
+  n && typeof n.animate == "function" && n.animate(
+    i ? [
+      { transform: "scale(1)" },
+      { transform: "scale(0.88)", offset: 0.2 },
+      { transform: "scale(1.04)", offset: 0.68 },
+      { transform: "scale(1)" }
+    ] : [
+      { transform: "scale(1)" },
+      { transform: "scale(0.9)", offset: 0.28 },
+      { transform: "scale(1)" }
+    ],
+    {
+      duration: i ? 500 : 320,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)"
+    }
+  );
+  const c = t.querySelector(".wishlist-btn__icon");
+  c && typeof c.animate == "function" && c.animate(
+    i ? [
+      { transform: "scale(1)" },
+      { transform: "scale(0.78)", offset: 0.2 },
+      { transform: "scale(1.06)", offset: 0.64 },
+      { transform: "scale(1)" }
+    ] : [
+      { transform: "scale(1)" },
+      { transform: "scale(0.88)", offset: 0.3 },
+      { transform: "scale(1)" }
+    ],
+    {
+      duration: i ? 480 : 300,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)"
+    }
+  ), t.dataset.wishlistResetTimer = String(
+    window.setTimeout(() => {
+      t.classList.remove("is-pressing"), t.classList.add("is-releasing"), window.setTimeout(() => {
+        S(t);
+      }, 180);
+    }, i ? 240 : 160)
+  );
+}, J = ({ active: t, ariaLabel: i, className: n = "", onToggle: c }) => {
+  const a = r.useRef(null), h = n.trim() ? `wishlist-btn ${n}` : "wishlist-btn";
+  return /* @__PURE__ */ e.jsxs(
+    "button",
+    {
+      "aria-label": i,
+      "aria-pressed": t,
+      className: `${h}${t ? " active" : ""}`,
+      onClick: (l) => {
+        l.preventDefault(), l.stopPropagation();
+        const u = !t;
+        a.current && P(a.current, u), c(u);
+      },
+      ref: a,
+      type: "button",
+      children: [
+        /* @__PURE__ */ e.jsx("span", { className: "wishlist-btn__surface" }),
+        /* @__PURE__ */ e.jsx("span", { "aria-hidden": "true", className: "wishlist-btn__icon", children: /* @__PURE__ */ e.jsx("svg", { fill: "none", role: "presentation", viewBox: "0 0 24 24", children: /* @__PURE__ */ e.jsx("path", { d: "M12 21s-6.716-4.351-9.193-8.223C.828 9.74 1.3 5.524 4.56 3.66c2.168-1.24 4.964-.906 6.94.818 1.976-1.724 4.772-2.058 6.94-.818 3.26 1.864 3.733 6.08 1.753 9.117C18.716 16.649 12 21 12 21Z" }) }) })
+      ]
+    }
+  );
+}, N = r.forwardRef(
+  ({ id: t, className: i, label: n, icon: c, badgeCount: a, onClick: h, onMouseEnter: l, onMouseLeave: u }, x) => /* @__PURE__ */ e.jsxs(
     "div",
     {
-      id: r,
-      ref: d,
-      className: `fab-card ${o}`,
-      onClick: f,
-      onMouseEnter: u,
-      onMouseLeave: b,
+      id: t,
+      ref: x,
+      className: `fab-card ${i}`,
+      onClick: h,
+      onMouseEnter: l,
+      onMouseLeave: u,
       children: [
-        /* @__PURE__ */ e.jsx(h, { className: "card-icon" }),
+        /* @__PURE__ */ e.jsx(c, { className: "card-icon" }),
         /* @__PURE__ */ e.jsx("span", { className: "card-label", children: n }),
-        s !== void 0 && s > 0 && /* @__PURE__ */ e.jsx("span", { className: "fab-badge", children: s })
+        a !== void 0 && a > 0 && /* @__PURE__ */ e.jsx("span", { className: "fab-badge", children: a })
       ]
     }
   )
 );
 N.displayName = "ActionCard";
-function R({ isOpen: r, wishlist: o, onClose: n, onRemove: h }) {
+function D({ isOpen: t, wishlist: i, onClose: n, onRemove: c }) {
   return /* @__PURE__ */ e.jsxs(e.Fragment, { children: [
     /* @__PURE__ */ e.jsx(
       "div",
       {
-        className: `modal-overlay ${r ? "active" : ""}`,
+        className: `modal-overlay ${t ? "active" : ""}`,
         onClick: n
       }
     ),
-    /* @__PURE__ */ e.jsxs("div", { className: `wishlist-window ${r ? "is-active" : ""}`, children: [
+    /* @__PURE__ */ e.jsxs("div", { className: `wishlist-window ${t ? "is-active" : ""}`, children: [
       /* @__PURE__ */ e.jsxs("div", { className: "wishlist-header", children: [
         /* @__PURE__ */ e.jsx("h3", { children: "MY STAY PICK" }),
         /* @__PURE__ */ e.jsx("button", { className: "close-wishlist", onClick: n, children: "×" })
       ] }),
-      /* @__PURE__ */ e.jsx("div", { className: "wishlist-content", children: o.length === 0 ? /* @__PURE__ */ e.jsxs("div", { className: "wishlist-empty", children: [
-        /* @__PURE__ */ e.jsx(M, { size: 48, className: "text-slate-300 mb-4" }),
+      /* @__PURE__ */ e.jsx("div", { className: "wishlist-content", children: i.length === 0 ? /* @__PURE__ */ e.jsxs("div", { className: "wishlist-empty", children: [
+        /* @__PURE__ */ e.jsx(W, { size: 48, className: "text-slate-300 mb-4" }),
         /* @__PURE__ */ e.jsx("p", { children: "저장된 숙소가 없습니다." }),
         /* @__PURE__ */ e.jsx(
           "button",
@@ -89,83 +154,84 @@ function R({ isOpen: r, wishlist: o, onClose: n, onRemove: h }) {
             children: "숙소 둘러보기"
           }
         )
-      ] }) : o.map((s) => /* @__PURE__ */ e.jsxs("div", { className: "wishlist-item-card", children: [
-        /* @__PURE__ */ e.jsx("img", { src: s.image, alt: s.name, className: "wishlist-thumb" }),
+      ] }) : i.map((a) => /* @__PURE__ */ e.jsxs("div", { className: "wishlist-item-card", children: [
+        /* @__PURE__ */ e.jsx("img", { src: a.image, alt: a.name, className: "wishlist-thumb" }),
         /* @__PURE__ */ e.jsxs("div", { className: "wishlist-info", children: [
           /* @__PURE__ */ e.jsxs("div", { className: "wishlist-top", children: [
-            /* @__PURE__ */ e.jsx("span", { className: "wishlist-location", children: s.location }),
+            /* @__PURE__ */ e.jsx("span", { className: "wishlist-location", children: a.location }),
             /* @__PURE__ */ e.jsx(
               "button",
               {
                 className: "wishlist-remove",
-                onClick: () => h(s.id),
-                children: /* @__PURE__ */ e.jsx(F, { size: 14 })
+                onClick: () => c(a.id),
+                children: /* @__PURE__ */ e.jsx(L, { size: 14 })
               }
             )
           ] }),
-          /* @__PURE__ */ e.jsx("h4", { className: "wishlist-title", children: s.name }),
-          /* @__PURE__ */ e.jsx("div", { className: "wishlist-price", children: s.price })
+          /* @__PURE__ */ e.jsx("h4", { className: "wishlist-title", children: a.name }),
+          /* @__PURE__ */ e.jsx("div", { className: "wishlist-price", children: a.price })
         ] })
-      ] }, s.id)) })
+      ] }, a.id)) })
     ] })
   ] });
 }
-function z({ onClick: r, isOpen: o }) {
-  return /* @__PURE__ */ e.jsxs("div", { className: "card-holder", onClick: r, children: [
+function O({ onClick: t, isOpen: i }) {
+  return /* @__PURE__ */ e.jsxs("div", { className: "card-holder", onClick: t, children: [
     /* @__PURE__ */ e.jsx("div", { className: "fab-peek" }),
     /* @__PURE__ */ e.jsx("div", { className: "fab-body" })
   ] });
 }
-function $() {
-  const r = a.useRef(null), [o, n] = a.useState(!1), [h, s] = a.useState(() => {
+const E = (t) => String(t);
+function U() {
+  const t = r.useRef(null), [i, n] = r.useState(!1), [c, a] = r.useState(() => {
     try {
       return JSON.parse(localStorage.getItem("jeju_wishlist") || "[]");
     } catch {
       return [];
     }
-  }), [f, u] = a.useState(() => localStorage.getItem("jeju_fab_currency") || "KRW"), [b, d] = a.useState(!1), [g, p] = a.useState(!1);
-  a.useEffect(() => {
-    const i = (l) => s(l.detail);
-    return document.addEventListener("fabWishlistUpdated", i), () => document.removeEventListener("fabWishlistUpdated", i);
+  }), [h, l] = r.useState(() => localStorage.getItem("jeju_fab_currency") || "KRW"), [u, x] = r.useState(!1), [g, f] = r.useState(!1);
+  r.useEffect(() => {
+    const o = (m) => a(m.detail);
+    return document.addEventListener("fabWishlistUpdated", o), () => document.removeEventListener("fabWishlistUpdated", o);
   }, []);
-  const { contextSafe: j } = S({ scope: r }), w = j(() => {
+  const { contextSafe: j } = T({ scope: t }), w = j(() => {
     if (g) return;
-    p(!0), setTimeout(() => p(!1), 1600);
-    const i = y.timeline(), l = ".fab-card", t = ".card-holder";
-    o ? (y.set(l, { pointerEvents: "none" }), i.to(".card-0", { x: -225, duration: 0.15, ease: "power2.in" }).to([".card-0", ".card-1"], { x: -150, duration: 0.15, ease: "power2.in" }).to([".card-0", ".card-1", ".card-2"], { x: -75, duration: 0.15, ease: "power2.in" }).to([".card-0", ".card-1", ".card-2", ".card-3"], { x: 0, duration: 0.15, ease: "power2.in" }).to(l, { y: 20, opacity: 0, duration: 0.3, ease: "power3.in" }), y.to(t, { y: 0, opacity: 1, duration: 0.3 })) : (y.set(l, { opacity: 1, pointerEvents: "auto", display: "flex" }), i.fromTo(
-      l,
+    f(!0), setTimeout(() => f(!1), 1600);
+    const o = y.timeline(), m = ".fab-card", s = ".card-holder";
+    i ? (y.set(m, { pointerEvents: "none" }), o.to(".card-0", { x: -225, duration: 0.15, ease: "power2.in" }).to([".card-0", ".card-1"], { x: -150, duration: 0.15, ease: "power2.in" }).to([".card-0", ".card-1", ".card-2"], { x: -75, duration: 0.15, ease: "power2.in" }).to([".card-0", ".card-1", ".card-2", ".card-3"], { x: 0, duration: 0.15, ease: "power2.in" }).to(m, { y: 20, opacity: 0, duration: 0.3, ease: "power3.in" }), y.to(s, { y: 0, opacity: 1, duration: 0.3 })) : (y.set(m, { opacity: 1, pointerEvents: "auto", display: "flex" }), o.fromTo(
+      m,
       { y: 20, opacity: 0 },
       { y: -100, opacity: 1, duration: 0.6, ease: "power3.out" }
-    ).to(".card-0", { x: -300, duration: 1, ease: "elastic.out(1.2, 0.5)" }).to(".card-1", { x: -225, duration: 1, ease: "elastic.out(1.2, 0.5)" }, "-=0.85").to(".card-2", { x: -150, duration: 1, ease: "elastic.out(1.2, 0.5)" }, "-=0.9").to(".card-3", { x: -75, duration: 1, ease: "elastic.out(1.2, 0.5)" }, "-=0.9").to(".card-4", { x: 0, duration: 1, ease: "elastic.out(1.2, 0.5)" }, "-=0.9"), y.to(t, { y: 5, opacity: 0.9, duration: 0.3 })), n(!o);
-  }), c = j((i, l) => {
-    o && y.to(i, {
-      y: l ? -110 : -100,
+    ).to(".card-0", { x: -300, duration: 1, ease: "elastic.out(1.2, 0.5)" }).to(".card-1", { x: -225, duration: 1, ease: "elastic.out(1.2, 0.5)" }, "-=0.85").to(".card-2", { x: -150, duration: 1, ease: "elastic.out(1.2, 0.5)" }, "-=0.9").to(".card-3", { x: -75, duration: 1, ease: "elastic.out(1.2, 0.5)" }, "-=0.9").to(".card-4", { x: 0, duration: 1, ease: "elastic.out(1.2, 0.5)" }, "-=0.9"), y.to(s, { y: 5, opacity: 0.9, duration: 0.3 })), n(!i);
+  }), d = j((o, m) => {
+    i && y.to(o, {
+      y: m ? -110 : -100,
       duration: 0.3,
       ease: "power2.out",
       overwrite: "auto"
     });
   }), v = () => {
-    const i = f === "KRW" ? "USD" : "KRW";
-    u(i), localStorage.setItem("jeju_fab_currency", i), document.dispatchEvent(new CustomEvent("fabCurrencyChanged", { detail: i }));
-  }, k = () => {
-    var i;
-    (i = window.hotelChatbot) == null || i.openChatbot(), o && w();
-  }, C = (i) => {
-    const l = h.filter((t) => t.id !== i);
-    s(l), localStorage.setItem("jeju_wishlist", JSON.stringify(l)), document.dispatchEvent(new CustomEvent("fabWishlistUpdated", { detail: l }));
+    const o = h === "KRW" ? "USD" : "KRW";
+    l(o), localStorage.setItem("jeju_fab_currency", o), document.dispatchEvent(new CustomEvent("fabCurrencyChanged", { detail: o }));
+  }, C = () => {
+    var o;
+    (o = window.hotelChatbot) == null || o.openChatbot(), i && w();
+  }, k = (o) => {
+    const m = E(o), s = c.filter((p) => E(p.id) !== m);
+    a(s), localStorage.setItem("jeju_wishlist", JSON.stringify(s)), document.dispatchEvent(new CustomEvent("fabWishlistUpdated", { detail: s }));
   };
-  return /* @__PURE__ */ e.jsxs("div", { ref: r, className: "original-fab-system", children: [
+  return /* @__PURE__ */ e.jsxs("div", { ref: t, className: "original-fab-system", children: [
     /* @__PURE__ */ e.jsx(
-      R,
+      D,
       {
-        isOpen: b,
-        wishlist: h,
-        onClose: () => d(!1),
-        onRemove: C
+        isOpen: u,
+        wishlist: c,
+        onClose: () => x(!1),
+        onRemove: k
       }
     ),
     /* @__PURE__ */ e.jsxs("div", { className: "fab-wrapper", children: [
-      /* @__PURE__ */ e.jsx(z, { onClick: w, isOpen: o }),
+      /* @__PURE__ */ e.jsx(O, { onClick: w, isOpen: i }),
       /* @__PURE__ */ e.jsxs("div", { className: "fab-cards-container", children: [
         /* @__PURE__ */ e.jsx(
           N,
@@ -173,10 +239,10 @@ function $() {
             id: "fabHome",
             className: "card-0",
             label: "HOME",
-            icon: T,
+            icon: R,
             onClick: () => window.location.href = "/",
-            onMouseEnter: () => c(".card-0", !0),
-            onMouseLeave: () => c(".card-0", !1)
+            onMouseEnter: () => d(".card-0", !0),
+            onMouseLeave: () => d(".card-0", !1)
           }
         ),
         /* @__PURE__ */ e.jsx(
@@ -185,10 +251,10 @@ function $() {
             id: "fabTop",
             className: "card-1",
             label: "TOP",
-            icon: W,
+            icon: F,
             onClick: () => window.scrollTo({ top: 0, behavior: "smooth" }),
-            onMouseEnter: () => c(".card-1", !0),
-            onMouseLeave: () => c(".card-1", !1)
+            onMouseEnter: () => d(".card-1", !0),
+            onMouseLeave: () => d(".card-1", !1)
           }
         ),
         /* @__PURE__ */ e.jsx(
@@ -196,11 +262,11 @@ function $() {
           {
             id: "fabCurrency",
             className: "card-2",
-            label: f === "KRW" ? "KOR" : "ENG",
-            icon: L,
+            label: h === "KRW" ? "KOR" : "ENG",
+            icon: I,
             onClick: v,
-            onMouseEnter: () => c(".card-2", !0),
-            onMouseLeave: () => c(".card-2", !1)
+            onMouseEnter: () => d(".card-2", !0),
+            onMouseLeave: () => d(".card-2", !1)
           }
         ),
         /* @__PURE__ */ e.jsx(
@@ -209,11 +275,11 @@ function $() {
             id: "fabWishlist",
             className: "card-3",
             label: "PICK",
-            icon: I,
-            badgeCount: h.length,
-            onClick: () => d(!0),
-            onMouseEnter: () => c(".card-3", !0),
-            onMouseLeave: () => c(".card-3", !1)
+            icon: z,
+            badgeCount: c.length,
+            onClick: () => x(!0),
+            onMouseEnter: () => d(".card-3", !0),
+            onMouseLeave: () => d(".card-3", !1)
           }
         ),
         /* @__PURE__ */ e.jsx(
@@ -223,9 +289,9 @@ function $() {
             className: "card-4",
             label: "CHAT",
             icon: A,
-            onClick: k,
-            onMouseEnter: () => c(".card-4", !0),
-            onMouseLeave: () => c(".card-4", !1)
+            onClick: C,
+            onMouseEnter: () => d(".card-4", !0),
+            onMouseLeave: () => d(".card-4", !1)
           }
         )
       ] })
@@ -260,71 +326,71 @@ function $() {
       ` })
   ] });
 }
-const O = (r) => r === "en" ? "Welcome to Jeju Group. How can I assist you today?" : `안녕하세요. 제주그룹 도우미입니다.
-여행의 모든 고민을 무엇이든 말씀해 주세요. 😊`, P = (r) => {
-  var s, f, u, b, d, g;
-  const o = (u = (f = (s = r.choices) == null ? void 0 : s[0]) == null ? void 0 : f.message) == null ? void 0 : u.content;
-  return typeof o == "string" && o.trim() ? o.trim() : (((g = (d = (b = r.candidates) == null ? void 0 : b[0]) == null ? void 0 : d.content) == null ? void 0 : g.parts) ?? []).map((p) => typeof (p == null ? void 0 : p.text) == "string" ? p.text : "").filter((p) => !!p).join(`
+const _ = (t) => t === "en" ? "Welcome to Jeju Group. How can I assist you today?" : `안녕하세요. 제주그룹 도우미입니다.
+여행의 모든 고민을 무엇이든 말씀해 주세요. 😊`, $ = (t) => {
+  var a, h, l, u, x, g;
+  const i = (l = (h = (a = t.choices) == null ? void 0 : a[0]) == null ? void 0 : h.message) == null ? void 0 : l.content;
+  return typeof i == "string" && i.trim() ? i.trim() : (((g = (x = (u = t.candidates) == null ? void 0 : u[0]) == null ? void 0 : x.content) == null ? void 0 : g.parts) ?? []).map((f) => typeof (f == null ? void 0 : f.text) == "string" ? f.text : "").filter((f) => !!f).join(`
 `).trim() || null;
-}, J = ({ isOpen: r, onClose: o, language: n, onLanguageChange: h }) => {
-  const [s, f] = a.useState([]), [u, b] = a.useState(""), [d, g] = a.useState(!1), [p, j] = a.useState("checking"), w = a.useRef(null), c = a.useCallback(async () => {
+}, q = ({ isOpen: t, onClose: i, language: n, onLanguageChange: c }) => {
+  const [a, h] = r.useState([]), [l, u] = r.useState(""), [x, g] = r.useState(!1), [f, j] = r.useState("checking"), w = r.useRef(null), d = r.useCallback(async () => {
     try {
-      const t = new AbortController(), x = setTimeout(() => t.abort(), 6e3), m = await fetch("https://jejugroup.alwaysdata.net/api/chat", {
+      const s = new AbortController(), p = setTimeout(() => s.abort(), 6e3), b = await fetch("https://jejugroup.alwaysdata.net/api/chat", {
         method: "GET",
         cache: "no-cache",
-        signal: t.signal
+        signal: s.signal
       });
-      clearTimeout(x), m.ok ? j("online") : j("error");
+      clearTimeout(p), b.ok ? j("online") : j("error");
     } catch {
       j("offline");
     }
   }, []);
-  a.useEffect(() => {
-    c().catch(() => {
+  r.useEffect(() => {
+    d().catch(() => {
     });
-    const t = setInterval(() => {
-      c().catch(() => {
+    const s = setInterval(() => {
+      d().catch(() => {
       });
     }, 6e4);
-    return () => clearInterval(t);
-  }, [c]), a.useEffect(() => {
-    const t = {
+    return () => clearInterval(s);
+  }, [d]), r.useEffect(() => {
+    const s = {
       id: Date.now(),
       type: "bot",
-      content: O(n),
+      content: _(n),
       timestamp: /* @__PURE__ */ new Date()
     };
-    f([t]);
-  }, []), a.useEffect(() => {
-    const t = (x) => {
-      const m = x;
-      (m.detail === "ko" || m.detail === "en") && h(m.detail);
+    h([s]);
+  }, []), r.useEffect(() => {
+    const s = (p) => {
+      const b = p;
+      (b.detail === "ko" || b.detail === "en") && c(b.detail);
     };
-    return document.addEventListener("fabLanguageChanged", t), () => {
-      document.removeEventListener("fabLanguageChanged", t);
+    return document.addEventListener("fabLanguageChanged", s), () => {
+      document.removeEventListener("fabLanguageChanged", s);
     };
-  }, [h]), a.useEffect(() => {
+  }, [c]), r.useEffect(() => {
     w.current && (w.current.scrollTop = w.current.scrollHeight);
-  }, [s, r]);
-  const v = a.useCallback((t, x) => {
-    f((m) => [
-      ...m,
+  }, [a, t]);
+  const v = r.useCallback((s, p) => {
+    h((b) => [
+      ...b,
       {
-        id: Date.now() + m.length + 1,
-        type: t,
-        content: x,
+        id: Date.now() + b.length + 1,
+        type: s,
+        content: p,
         timestamp: /* @__PURE__ */ new Date()
       }
     ]);
-  }, []), k = a.useMemo(
-    () => s.map((t) => ({ role: t.type === "user" ? "user" : "assistant", content: t.content })),
-    [s]
-  ), C = a.useCallback(async () => {
-    const t = u.trim();
-    if (!(!t || d)) {
-      v("user", t), b(""), g(!0);
+  }, []), C = r.useMemo(
+    () => a.map((s) => ({ role: s.type === "user" ? "user" : "assistant", content: s.content })),
+    [a]
+  ), k = r.useCallback(async () => {
+    const s = l.trim();
+    if (!(!s || x)) {
+      v("user", s), u(""), g(!0);
       try {
-        const x = await fetch("https://jejugroup.alwaysdata.net/api/chat", {
+        const p = await fetch("https://jejugroup.alwaysdata.net/api/chat", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -335,65 +401,65 @@ const O = (r) => r === "en" ? "Welcome to Jeju Group. How can I assist you today
                 role: "system",
                 content: n === "en" ? "You are Jeju Group Assistant" : "너는 제주그룹 안내 도우미다."
               },
-              ...k,
+              ...C,
               {
                 role: "user",
-                content: t
+                content: s
               }
             ]
           })
         });
-        if (!x.ok)
-          throw new Error(`Chat API failed: ${x.status}`);
-        const m = await x.json(), E = P(m) ?? "응답 처리 실패";
-        v("bot", String(E));
-      } catch (x) {
-        v("bot", `오류 상태: ${x.message}`);
+        if (!p.ok)
+          throw new Error(`Chat API failed: ${p.status}`);
+        const b = await p.json(), M = $(b) ?? "응답 처리 실패";
+        v("bot", String(M));
+      } catch (p) {
+        v("bot", `오류 상태: ${p.message}`);
       } finally {
         g(!1);
       }
     }
-  }, [v, k, u, n, d]), i = (t) => {
-    t.preventDefault(), C().catch(() => {
+  }, [v, C, l, n, x]), o = (s) => {
+    s.preventDefault(), k().catch(() => {
     });
-  }, l = (t) => {
-    t.key === "Enter" && (t.preventDefault(), C().catch(() => {
+  }, m = (s) => {
+    s.key === "Enter" && (s.preventDefault(), k().catch(() => {
     }));
   };
-  return /* @__PURE__ */ e.jsxs("div", { className: `chatbot-container ${r ? "active" : ""}`, children: [
+  return /* @__PURE__ */ e.jsxs("div", { className: `chatbot-container ${t ? "active" : ""}`, children: [
     /* @__PURE__ */ e.jsxs("div", { className: "chatbot-header", children: [
       /* @__PURE__ */ e.jsxs("div", { className: "chatbot-header-info", children: [
-        /* @__PURE__ */ e.jsx("div", { className: `chatbot-status-dot ${p}`, title: `API Server: ${p}` }),
+        /* @__PURE__ */ e.jsx("div", { className: `chatbot-status-dot ${f}`, title: `API Server: ${f}` }),
         /* @__PURE__ */ e.jsx("h3", { className: "chatbot-header-title", children: n === "en" ? "Jeju Group Assistant" : "제주그룹 도우미" })
       ] }),
-      /* @__PURE__ */ e.jsx("button", { className: "chatbot-close-btn", onClick: o, "aria-label": "Close", children: /* @__PURE__ */ e.jsxs("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ e.jsx("button", { className: "chatbot-close-btn", onClick: i, "aria-label": "Close", children: /* @__PURE__ */ e.jsxs("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
         /* @__PURE__ */ e.jsx("line", { x1: "18", y1: "6", x2: "6", y2: "18" }),
         /* @__PURE__ */ e.jsx("line", { x1: "6", y1: "6", x2: "18", y2: "18" })
       ] }) })
     ] }),
     /* @__PURE__ */ e.jsxs("div", { className: "chatbot-messages", ref: w, children: [
-      s.map((t) => /* @__PURE__ */ e.jsx("div", { className: `message ${t.type}`, children: /* @__PURE__ */ e.jsxs("div", { className: "message-content", children: [
-        /* @__PURE__ */ e.jsx("div", { className: "message-bubble", children: t.content }),
-        /* @__PURE__ */ e.jsx("div", { className: "message-time", children: t.timestamp.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) })
-      ] }) }, t.id)),
-      d ? /* @__PURE__ */ e.jsx("div", { className: "message bot", children: /* @__PURE__ */ e.jsx("div", { className: "message-content", children: /* @__PURE__ */ e.jsxs("div", { className: "typing-indicator", children: [
+      a.map((s) => /* @__PURE__ */ e.jsx("div", { className: `message ${s.type}`, children: /* @__PURE__ */ e.jsxs("div", { className: "message-content", children: [
+        /* @__PURE__ */ e.jsx("div", { className: "message-bubble", children: s.content }),
+        /* @__PURE__ */ e.jsx("div", { className: "message-time", children: s.timestamp.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) })
+      ] }) }, s.id)),
+      x ? /* @__PURE__ */ e.jsx("div", { className: "message bot", children: /* @__PURE__ */ e.jsx("div", { className: "message-content", children: /* @__PURE__ */ e.jsxs("div", { className: "typing-indicator", children: [
         /* @__PURE__ */ e.jsx("span", {}),
         /* @__PURE__ */ e.jsx("span", {}),
         /* @__PURE__ */ e.jsx("span", {})
       ] }) }) }) : null
     ] }),
-    /* @__PURE__ */ e.jsx("form", { className: "chatbot-input-area", onSubmit: i, children: /* @__PURE__ */ e.jsxs("div", { className: "chatbot-input-wrapper", children: [
+    /* @__PURE__ */ e.jsx("form", { className: "chatbot-input-area", onSubmit: o, children: /* @__PURE__ */ e.jsxs("div", { className: "chatbot-input-wrapper", children: [
       /* @__PURE__ */ e.jsx(
         "input",
         {
           className: "chatbot-input",
-          value: u,
-          onChange: (t) => b(t.target.value),
-          onKeyDown: l,
+          value: l,
+          onChange: (s) => u(s.target.value),
+          onKeyDown: m,
           placeholder: n === "en" ? "Type your message..." : "무엇이든 물어보세요"
         }
       ),
-      /* @__PURE__ */ e.jsx("button", { className: "chatbot-send-btn", type: "submit", disabled: d || !u.trim(), children: /* @__PURE__ */ e.jsxs("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ e.jsx("button", { className: "chatbot-send-btn", type: "submit", disabled: x || !l.trim(), children: /* @__PURE__ */ e.jsxs("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
         /* @__PURE__ */ e.jsx("line", { x1: "22", y1: "2", x2: "11", y2: "13" }),
         /* @__PURE__ */ e.jsx("polygon", { points: "22 2 15 22 11 13 2 9 22 2" })
       ] }) })
@@ -401,7 +467,8 @@ const O = (r) => r === "en" ? "Welcome to Jeju Group. How can I assist you today
   ] });
 };
 export {
-  J as C,
-  $ as F,
-  K as R
+  q as C,
+  U as F,
+  K as R,
+  J as W
 };

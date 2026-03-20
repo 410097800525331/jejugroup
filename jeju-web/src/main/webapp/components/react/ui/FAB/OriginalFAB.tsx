@@ -16,7 +16,7 @@ import {
 gsap.registerPlugin(useGSAP);
 
 interface WishlistItem {
-  id: number;
+  id: string | number;
   name: string;
   image: string;
   location: string;

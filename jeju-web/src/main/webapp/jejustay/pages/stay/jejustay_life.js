@@ -76,33 +76,34 @@ function initStandardsAnimation() {
 
 /* ========== 공통 기능 (hotel.js와 동일) ========== */
 function initWishlistButtons() {
-    document.querySelectorAll('.wishlist-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            e.stopPropagation();
-            
-            const id = parseInt(btn.dataset.id);
-            const hotel = longStayHotels.find(h => h.id === id);
-            
-            if(hotel && window.FABState) {
-                // 표시용 가격 계산
-                const NIGHTS = 30;
-                const standardTotal = hotel.priceDaily * NIGHTS;
-                const finalTotal = Math.round(standardTotal * (1 - hotel.discountRate));
-                const priceStr = `₩${finalTotal.toLocaleString()}`; 
-                
-                // 아이템 객체 구성
-                const item = {
-                    id: hotel.id,
-                    name: hotel.name,
-                    location: hotel.location,
-                    image: hotel.image,
-                    price: priceStr
-                };
-                
-                FABState.addToWishlist(item);
+    window.JejuWishlistButton?.init({
+        selector: '#hotelList .wishlist-btn',
+        onToggle: ({ id, nextActive }) => {
+            const hotelId = Number.parseInt(id, 10);
+            const hotel = longStayHotels.find((item) => item.id === hotelId);
+
+            if (!hotel || !window.FABState) {
+                return nextActive;
             }
-        });
+
+            const nights = 30;
+            const standardTotal = hotel.priceDaily * nights;
+            const finalTotal = Math.round(standardTotal * (1 - hotel.discountRate));
+            const item = {
+                id: hotel.id,
+                name: hotel.name,
+                location: hotel.location,
+                image: hotel.image,
+                price: `₩${finalTotal.toLocaleString()}`
+            };
+
+            window.FABState.addToWishlist(item);
+            return window.FABState.isInWishlist(hotel.id);
+        },
+        isActive: ({ id }) => {
+            const hotelId = Number.parseInt(id, 10);
+            return window.FABState ? window.FABState.isInWishlist(hotelId) : false;
+        }
     });
 }
 
@@ -304,8 +305,6 @@ function renderLongStayHotels(hotelsData = longStayHotels) {
 
         // Check Wishlist State
         const isInWishlist = window.FABState ? FABState.isInWishlist(hotel.id) : false;
-        const activeClass = isInWishlist ? 'active' : '';
-
         // Review Logic Correction:
         // If English: "Reviews 2,341 reviews" (if included) or "Reviews 2,341"
         // If Korean: "리뷰 2,341개"
@@ -323,7 +322,15 @@ function renderLongStayHotels(hotelsData = longStayHotels) {
             <article class="hotel-card-horizontal" data-amenity="${hotel.amenities.join(',')}" onclick="updateInfraUI(${hotel.id})">
                 <div class="card-image-wrap">
                     <img src="${hotel.image}" alt="${name}">
-                    <button class="wishlist-btn ${activeClass}" data-id="${hotel.id}"><i data-lucide="heart"></i></button>
+                    ${window.JejuWishlistButton
+                        ? window.JejuWishlistButton.renderMarkup({
+                            active: isInWishlist,
+                            ariaLabel: `${name} 찜하기`,
+                            attributes: {
+                                'data-id': hotel.id
+                            }
+                        })
+                        : `<button class="wishlist-btn${isInWishlist ? ' active' : ''}" type="button" aria-label="${name} 찜하기" data-id="${hotel.id}"></button>`}
                     <!-- v2.0 Savings Badge -->
                     <span class="stay-discount-badge">${labelDailySave} <span data-price-krw="${savedAmount}">${symbol}${formatMoney(savedAmount)}</span></span>
                 </div>
@@ -406,13 +413,11 @@ function updateInfraUI(hotelId) {
 // Global Wishlist Sync Listener
 document.addEventListener('fabWishlistUpdated', (e) => {
     const wishlist = e.detail;
-    document.querySelectorAll('.wishlist-btn').forEach(btn => {
-        const id = parseInt(btn.dataset.id);
-        const isIn = wishlist.some(item => item.id === id);
-        if (isIn) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
+    window.JejuWishlistButton?.sync({
+        selector: '#hotelList .wishlist-btn',
+        isActive: ({ id }) => {
+            const hotelId = Number.parseInt(id, 10);
+            return wishlist.some((item) => item.id === hotelId);
         }
     });
 });

@@ -148,9 +148,7 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=400&q=80"
                                 alt="제주 서귀포, 스테이 무드" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가">
-                                <i data-lucide="heart"></i>
-                            </button>
+                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
@@ -188,9 +186,7 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=400&q=80"
                                 alt="가평, 포레스트 하우스" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가">
-                                <i data-lucide="heart"></i>
-                            </button>
+                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
@@ -228,9 +224,7 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80"
                                 alt="교토, 마치야 스테이" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가">
-                                <i data-lucide="heart"></i>
-                            </button>
+                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
@@ -281,6 +275,8 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="../../../core/constants/lang_data.js"></script>
+    <script src="../../shared/wishlist-button.js"></script>
+    <script src="./private_stay.js"></script>
     <script type="module" src="../../../components/runtime/bootstrap.js"></script>
 </body>
 

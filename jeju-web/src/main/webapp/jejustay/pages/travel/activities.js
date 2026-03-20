@@ -174,33 +174,6 @@ function animateCards() {
 
 /* --- Wishlist Button Logic --- */
 function initWishlistButtons() {
-    const buttons = document.querySelectorAll('.wishlist-btn');
-
-    buttons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation(); // Prevent card click event
-
-            const isActive = btn.classList.contains('active');
-            
-            // Toggle State
-            btn.classList.toggle('active');
-
-            // Animation
-            if (!isActive) { // activating
-                gsap.fromTo(btn, 
-                    { scale: 1 },
-                    { 
-                        scale: 1.4, 
-                        duration: 0.4, 
-                        ease: "elastic.out(1, 0.3)",
-                        onComplete: () => gsap.to(btn, { scale: 1, duration: 0.2 })
-                    }
-                );
-            } else { // deactivating
-                gsap.to(btn, { scale: 0.8, duration: 0.1, yoyo: true, repeat: 1 });
-            }
-        });
-    });
+    window.JejuWishlistButton?.init();
 }
 

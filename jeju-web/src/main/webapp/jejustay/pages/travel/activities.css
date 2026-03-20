@@ -299,6 +299,8 @@ body.activities-page {
     border-color: var(--border-light);
 }
 
+@import url("../../shared/wishlist-button.css");
+
 .card-image-wrapper {
     position: relative;
     aspect-ratio: 4/3;
@@ -326,41 +328,6 @@ body.activities-page {
     font-size: 0.75rem;
     border-radius: 4px;
     backdrop-filter: blur(4px);
-}
-
-.wishlist-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 32px;
-    height: 32px;
-    background: rgba(255,255,255,0.9);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    transition: all 0.2s;
-    z-index: 10;
-}
-
-.wishlist-btn svg {
-    transition: fill 0.2s, stroke 0.2s;
-    fill: transparent;
-}
-
-.wishlist-btn:hover {
-    color: var(--error);
-    transform: scale(1.1);
-}
-
-.wishlist-btn.active {
-    color: var(--error);
-    border-color: var(--error);
-}
-
-.wishlist-btn.active svg {
-    fill: var(--error);
 }
 
 .card-info {

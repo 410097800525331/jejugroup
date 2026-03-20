@@ -279,7 +279,7 @@ body.admin-mode[data-theme="light"] .admin-theme-toggle {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
+    padding: 7px 12px;
     color: var(--admin-text-secondary);
     font-size: 0.8rem;
     font-weight: 600;
@@ -289,10 +289,36 @@ body.admin-mode[data-theme="light"] .admin-theme-toggle {
     background: transparent;
 }
 
+.portal-btn-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.1;
+    gap: 2px;
+}
+
+.portal-btn-label {
+    color: inherit;
+}
+
+.portal-btn-hint {
+    font-size: 0.64rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--admin-text-secondary);
+    opacity: 0.72;
+    transition: color var(--admin-transition-fast), opacity var(--admin-transition-fast);
+}
+
 .portal-btn:hover {
     background: var(--admin-surface-hover);
     color: var(--admin-accent);
     transform: translateY(-1px);
+}
+
+.portal-btn:hover .portal-btn-hint {
+    color: var(--admin-accent);
+    opacity: 0.92;
 }
 
 /* Profile & Dropdown Container */

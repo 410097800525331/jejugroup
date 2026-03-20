@@ -51,6 +51,8 @@ export interface HotelListPageData {
 export interface HotelFilterState {
   guestRatingThreshold: number | null;
   locationIds: string[];
+  maxPrice: number | null;
+  minPrice: number | null;
   selectedOptionIds: string[];
   propertyTypeIds: string[];
 }
@@ -76,12 +78,14 @@ const REGION_PROFILES: Record<string, RegionProfile> = {
     countryLabel: "일본",
     mapButtonLabel: "지도에서 히로시마 호텔 보기",
     popularFilters: [
+      { id: "prepaid", label: "지금 바로 결제" },
+      { id: "pay-at-hotel", label: "숙소에서 요금 결제" },
+      { id: "rating-9", label: "투숙객 평점: 9+ 최고" },
       { id: "kitchen", label: "주방" },
-      { id: "pay-now", label: "지금 바로 결제" },
-      { id: "downtown", label: "다운타운" },
       { id: "internet", label: "인터넷" },
       { id: "frontdesk", label: "24시간 프런트 데스크" },
-      { id: "spa", label: "스파/사우나" }
+      { id: "downtown", label: "다운타운" },
+      { id: "other-popular", label: "기타" }
     ],
     propertyTypes: [
       { id: "hotel", label: "호텔", count: 302 },
@@ -109,13 +113,14 @@ const REGION_PROFILES: Record<string, RegionProfile> = {
       { id: "nishi-ward", label: "니시구", count: 3 },
       { id: "otake", label: "오타케", count: 3 },
       { id: "yokogawa", label: "요코가와", count: 3 },
-      { id: "kaita", label: "가이타", count: 2 },
+      { id: "minami-ward", label: "미나미 와드", count: 2 },
       { id: "hiroshima-station-area", label: "히로시마역", count: 1 }
     ],
     paymentOptions: [
-      { id: "free-cancel", label: "예약 무료 취소", count: 5 },
-      { id: "pay-at-hotel", label: "숙소에서 요금 결제", count: 34 },
-      { id: "prepaid", label: "지금 바로 결제", count: 157 }
+      { id: "free-cancel", label: "예약 무료 취소", count: 88 },
+      { id: "pay-at-hotel", label: "숙소에서 요금 결제", count: 22 },
+      { id: "book-now-pay-later", label: "선예약 후지불", count: 51 },
+      { id: "prepaid", label: "지금 바로 결제", count: 107 }
     ],
     guestRatings: [
       { id: "rating-9", label: "9+ 최고", count: 72 },
@@ -149,7 +154,7 @@ const REGION_PROFILES: Record<string, RegionProfile> = {
         currentPrice: "₩189,000",
         imageUrl: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80",
         badge: "특가 상품",
-        filterIds: ["internet", "spa", "pay-now", "restaurant"],
+        filterIds: ["internet", "spa", "prepaid", "restaurant"],
         tags: ["무료 Wi-Fi", "스파 & 마사지", "피트니스 센터"]
       },
       {
@@ -197,7 +202,7 @@ const REGION_PROFILES: Record<string, RegionProfile> = {
         currentPrice: "₩338,000",
         imageUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80",
         badge: "럭셔리 추천",
-        filterIds: ["spa", "pool", "pay-now"],
+        filterIds: ["spa", "pool", "prepaid"],
         tags: ["인피니티 풀", "사우나", "레이트 체크아웃"]
       },
       {
@@ -295,6 +300,214 @@ const REGION_PROFILES: Record<string, RegionProfile> = {
         badge: "럭셔리",
         filterIds: ["pool", "fitness", "restaurant"],
         tags: ["수영장", "클럽 라운지"]
+      },
+      {
+        id: "hotel-intergate",
+        title: "호텔 인터게이트 히로시마",
+        stars: "★★★★",
+        location: "히로시마 중심가 · 평화공원 도보 8분",
+        locationId: "hiroshima-center",
+        propertyTypeId: "hotel",
+        reviewScore: "8.9",
+        reviewLabel: "Excellent",
+        originalPrice: "₩210,000",
+        currentPrice: "₩167,000",
+        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80",
+        badge: "기간 한정 세일",
+        filterIds: ["restaurant", "prepaid", "non-smoking", "internet"],
+        tags: ["대욕장", "라운지", "조식 포함"]
+      },
+      {
+        id: "quintessa-kanayamacho",
+        title: "퀸테사 호텔 히로시마 카나야마쵸",
+        stars: "★★★★★",
+        location: "나카 워드 · 전철역 도보 4분",
+        locationId: "naka-ward",
+        propertyTypeId: "hotel",
+        reviewScore: "8.6",
+        reviewLabel: "Excellent",
+        originalPrice: "₩225,000",
+        currentPrice: "₩192,000",
+        imageUrl: "https://images.unsplash.com/photo-1455587734955-081b22074882?w=600&q=80",
+        badge: "도심 특가",
+        filterIds: ["internet", "book-now-pay-later", "restaurant", "business"],
+        tags: ["시티뷰", "비즈니스", "역세권"]
+      },
+      {
+        id: "hana-ryokan",
+        title: "히로시마 하나 료칸",
+        stars: "★★★★",
+        location: "미야지마 · 도리이 전망 포인트 인근",
+        locationId: "miyajima",
+        propertyTypeId: "ryokan",
+        reviewScore: "9.0",
+        reviewLabel: "Excellent",
+        originalPrice: "₩280,000",
+        currentPrice: "₩236,000",
+        imageUrl: "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=600&q=80",
+        badge: "전통 감성",
+        filterIds: ["spa", "pay-at-hotel", "restaurant", "other-popular"],
+        tags: ["가이세키", "노천탕", "다다미 객실"]
+      },
+      {
+        id: "peace-residence",
+        title: "평화공원 레지던스 스테이",
+        stars: "★★★",
+        location: "히로시마 중심가 · 장기투숙 친화",
+        locationId: "hiroshima-center",
+        propertyTypeId: "serviced-apartment",
+        reviewScore: "8.7",
+        reviewLabel: "Excellent",
+        originalPrice: "₩198,000",
+        currentPrice: "₩149,000",
+        imageUrl: "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?w=600&q=80",
+        badge: "장기숙박 특가",
+        filterIds: ["kitchen", "parking", "free-cancel", "family-friendly"],
+        tags: ["세탁기", "간이주방", "가족 추천"]
+      },
+      {
+        id: "naka-apartment-suite",
+        title: "나카 워드 아파트 스위트",
+        stars: "★★★",
+        location: "나카 워드 · 쇼핑가 접근 우수",
+        locationId: "naka-ward",
+        propertyTypeId: "apartment",
+        reviewScore: "8.5",
+        reviewLabel: "Excellent",
+        originalPrice: "₩176,000",
+        currentPrice: "₩136,000",
+        imageUrl: "https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?w=600&q=80",
+        badge: "레지던스 추천",
+        filterIds: ["kitchen", "internet", "downtown", "non-smoking"],
+        tags: ["풀사이즈 냉장고", "발코니", "셀프 체크인"]
+      },
+      {
+        id: "hiroshima-city-hostel",
+        title: "히로시마 시티 호스텔",
+        stars: "★★",
+        location: "요코가와 · 백패커 인기 구역",
+        locationId: "yokogawa",
+        propertyTypeId: "hostel",
+        reviewScore: "8.1",
+        reviewLabel: "Very Good",
+        originalPrice: "₩88,000",
+        currentPrice: "₩63,000",
+        imageUrl: "https://images.unsplash.com/photo-1521783988139-89397d761dce?w=600&q=80",
+        badge: "백패커 픽",
+        filterIds: ["internet", "frontdesk", "free-cancel", "other-popular"],
+        tags: ["도미토리", "공용 라운지", "가성비"]
+      },
+      {
+        id: "miyajima-guesthouse",
+        title: "미야지마 게스트하우스 츠츠미",
+        stars: "★★",
+        location: "미야지마 · 선착장 도보 6분",
+        locationId: "miyajima",
+        propertyTypeId: "guesthouse",
+        reviewScore: "8.7",
+        reviewLabel: "Excellent",
+        originalPrice: "₩120,000",
+        currentPrice: "₩91,000",
+        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80",
+        badge: "현지 감성",
+        filterIds: ["internet", "pay-at-hotel", "family-friendly", "other-popular"],
+        tags: ["공용 키친", "섬 산책", "친절한 호스트"]
+      },
+      {
+        id: "yokogawa-capsule",
+        title: "요코가와 캡슐 인",
+        stars: "★★",
+        location: "요코가와역 도보 2분",
+        locationId: "yokogawa",
+        propertyTypeId: "capsule",
+        reviewScore: "8.0",
+        reviewLabel: "Very Good",
+        originalPrice: "₩79,000",
+        currentPrice: "₩55,000",
+        imageUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80",
+        badge: "초특가",
+        filterIds: ["internet", "frontdesk", "prepaid", "non-smoking"],
+        tags: ["1인 여행", "사우나", "역세권"]
+      },
+      {
+        id: "hatsukaichi-private-house",
+        title: "하쓰카이치 프라이빗 하우스",
+        stars: "★★★★",
+        location: "하쓰카이치 · 가족 단위 인기",
+        locationId: "hatsukaichi",
+        propertyTypeId: "private-house-entire",
+        reviewScore: "9.1",
+        reviewLabel: "Excellent",
+        originalPrice: "₩340,000",
+        currentPrice: "₩286,000",
+        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80",
+        badge: "독채 추천",
+        filterIds: ["kitchen", "parking", "family-friendly", "pet-friendly"],
+        tags: ["마당", "BBQ", "주차 포함"]
+      },
+      {
+        id: "etajima-seaside-villa",
+        title: "에타지마 씨사이드 빌라",
+        stars: "★★★★★",
+        location: "에타지마 · 오션프런트 독채",
+        locationId: "etajima",
+        propertyTypeId: "villa",
+        reviewScore: "9.4",
+        reviewLabel: "Exceptional",
+        originalPrice: "₩460,000",
+        currentPrice: "₩389,000",
+        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80",
+        badge: "프라이빗 럭셔리",
+        filterIds: ["pool", "spa", "parking", "pet-friendly"],
+        tags: ["오션뷰", "프라이빗 풀", "테라스"]
+      },
+      {
+        id: "otake-romance-hotel",
+        title: "오타케 로맨스 호텔",
+        stars: "★★★",
+        location: "오타케 · 심야 체크인 가능",
+        locationId: "otake",
+        propertyTypeId: "love-hotel",
+        reviewScore: "7.8",
+        reviewLabel: "Good",
+        originalPrice: "₩118,000",
+        currentPrice: "₩84,000",
+        imageUrl: "https://images.unsplash.com/photo-1444201983204-c43cbd584d93?w=600&q=80",
+        badge: "커플 특가",
+        filterIds: ["frontdesk", "book-now-pay-later", "smoking-area", "other-popular"],
+        tags: ["늦은 체크인", "프라이빗", "합리적 가격"]
+      },
+      {
+        id: "miyajima-resort-villa",
+        title: "미야지마 리조트 빌라",
+        stars: "★★★★★",
+        location: "미야지마 · 럭셔리 오션 프런트",
+        locationId: "miyajima",
+        propertyTypeId: "resort-villa",
+        reviewScore: "9.5",
+        reviewLabel: "Exceptional",
+        originalPrice: "₩520,000",
+        currentPrice: "₩448,000",
+        imageUrl: "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?w=600&q=80",
+        badge: "럭셔리 빌라",
+        filterIds: ["pool", "spa", "prepaid", "airport-transfer"],
+        tags: ["오션프런트", "버틀러 서비스", "선셋"]
+      },
+      {
+        id: "minami-ward-inn",
+        title: "미나미 와드 인",
+        stars: "★★★",
+        location: "미나미 와드 · 공항버스 접근 편리",
+        locationId: "minami-ward",
+        propertyTypeId: "inn",
+        reviewScore: "8.3",
+        reviewLabel: "Very Good",
+        originalPrice: "₩112,000",
+        currentPrice: "₩86,000",
+        imageUrl: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&q=80",
+        badge: "실속 숙소",
+        filterIds: ["internet", "free-cancel", "frontdesk", "business"],
+        tags: ["공항버스", "가벼운 숙박", "조용함"]
       }
     ]
   },
@@ -530,87 +743,651 @@ const buildGuestLabel = (adults: number, children: number, rooms: number) => {
   return parts.join(", ");
 };
 
-const buildLegacyLongSections = (region: string): HotelListFilterSection[] => {
-  if (region !== "hiroshima") {
-    return [];
+const PROPERTY_TYPE_ALIAS_MAP: Record<string, string[]> = {
+  hotel: ["hotel"],
+  resort: ["resort", "resort-type"],
+  ryokan: ["ryokan"],
+  apartment: ["apartment"],
+  guesthouse: ["guesthouse"],
+  hostel: ["hostel"],
+  "serviced-apartment": ["serviced-apartment"],
+  inn: ["inn"],
+  "resort-villa": ["resort-villa"],
+  "private-house-entire": ["private-house-entire", "private-house"],
+  capsule: ["capsule"],
+  "love-hotel": ["love-hotel"],
+  villa: ["villa"],
+  poolvilla: ["poolvilla"]
+};
+
+const HIROSHIMA_LOCATION_FILTERS: Record<string, string[]> = {
+  "hiroshima-center": ["downtown", "ui-city-center", "ui-city-under-2", "ui-atomic-bomb-dome", "ui-peace-museum", "ui-sukkein", "ui-city-break"],
+  miyajima: ["ui-city-5-10", "ui-miyajima-shrine", "ui-waterfront", "ui-luxury-retreat"],
+  hatsukaichi: ["ui-city-5-10", "ui-miyajima-shrine", "ui-family-trip", "ui-waterfront"],
+  "naka-ward": ["downtown", "ui-city-under-2", "ui-okonomimura", "ui-city-break"],
+  others: ["other-popular", "ui-city-2-5", "ui-city-break"],
+  etajima: ["ui-city-5-10", "ui-waterfront", "ui-luxury-retreat"],
+  "downtown-location": ["downtown", "ui-city-center", "ui-city-break"],
+  "nishi-ward": ["ui-city-2-5", "ui-hiroshima-castle", "ui-business-trip"],
+  otake: ["ui-city-5-10", "ui-couple-trip", "other-popular"],
+  yokogawa: ["station", "ui-city-2-5", "ui-station-access", "ui-solo-trip"],
+  "minami-ward": ["station", "ui-city-2-5", "ui-business-trip"],
+  "hiroshima-station-area": ["station", "ui-city-under-2", "ui-hiroshima-station", "ui-station-access"]
+};
+
+interface HiroshimaHotelVariant {
+  badge?: string;
+  currentPriceDelta: number;
+  extraFilterIds: string[];
+  extraTags: string[];
+  id: string;
+  originalPriceDelta: number;
+  reviewDelta: number;
+  titleSuffix: string;
+}
+
+const HIROSHIMA_VARIANTS: HiroshimaHotelVariant[] = [
+  {
+    id: "prime",
+    titleSuffix: "프라임",
+    badge: "얼리버드 특가",
+    currentPriceDelta: 18000,
+    originalPriceDelta: 26000,
+    reviewDelta: 0.1,
+    extraFilterIds: ["prepaid", "ui-breakfast-included", "ui-early-checkin", "ui-location-8"],
+    extraTags: ["조식 포함", "도심 접근"]
+  },
+  {
+    id: "residence",
+    titleSuffix: "레지던스",
+    badge: "장기투숙 추천",
+    currentPriceDelta: -12000,
+    originalPriceDelta: -6000,
+    reviewDelta: 0,
+    extraFilterIds: ["kitchen", "parking", "book-now-pay-later", "ui-room-kitchen", "ui-washer", "ui-family-trip"],
+    extraTags: ["간이주방", "세탁기"]
+  },
+  {
+    id: "signature",
+    titleSuffix: "시그니처",
+    badge: "무료 업그레이드",
+    currentPriceDelta: 26000,
+    originalPriceDelta: 34000,
+    reviewDelta: 0.2,
+    extraFilterIds: ["spa", "pool", "ui-free-sauna", "ui-late-checkout", "ui-luxury-retreat", "ui-location-9"],
+    extraTags: ["사우나", "라운지"]
+  }
+];
+
+export const parseHotelPriceValue = (price: string) => {
+  const parsed = Number.parseInt(price.replace(/[^\d]/g, ""), 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
+
+const formatPriceValue = (price: number) => {
+  return `₩${Math.max(49000, price).toLocaleString("ko-KR")}`;
+};
+
+const deriveReviewLabel = (reviewScore: number) => {
+  if (reviewScore >= 9.2) {
+    return "Exceptional";
   }
 
-  return [
+  if (reviewScore >= 8.5) {
+    return "Excellent";
+  }
+
+  if (reviewScore >= 8.0) {
+    return "Great";
+  }
+
+  return "Very Good";
+};
+
+const deriveStarFilterId = (stars: string) => {
+  const starCount = stars.match(/★/g)?.length ?? 0;
+
+  if (starCount >= 5) {
+    return "ui-five-star";
+  }
+
+  if (starCount === 4) {
+    return "ui-four-star";
+  }
+
+  if (starCount === 3) {
+    return "ui-three-star";
+  }
+
+  if (starCount === 2) {
+    return "ui-two-star";
+  }
+
+  return "ui-one-star";
+};
+
+const deriveRatingFilters = (reviewScore: number) => {
+  if (reviewScore >= 9) {
+    return ["rating-9", "rating-8", "rating-7"];
+  }
+
+  if (reviewScore >= 8) {
+    return ["rating-8", "rating-7"];
+  }
+
+  return ["rating-7"];
+};
+
+const deriveBrandFilters = (hotel: HotelListPageHotel) => {
+  const title = hotel.title.toLowerCase();
+
+  if (title.includes("crowne") || title.includes("ana")) {
+    return ["brand-ihg"];
+  }
+
+  if (title.includes("칸데오")) {
+    return ["brand-candeo"];
+  }
+
+  if (title.includes("쉐라톤")) {
+    return ["brand-marriott"];
+  }
+
+  if (title.includes("스테이션")) {
+    return ["brand-apa"];
+  }
+
+  if (title.includes("리조트") || title.includes("그랜드")) {
+    return ["brand-prince"];
+  }
+
+  return ["brand-local"];
+};
+
+const derivePropertyTypeFilters = (hotel: HotelListPageHotel) => {
+  switch (hotel.propertyTypeId) {
+    case "resort":
+      return ["ui-king-bed", "ui-balcony", "ui-bathtub", "ui-late-checkout", "ui-two-bedroom", "ui-couple-trip"];
+    case "ryokan":
+      return ["ui-double-bed", "ui-dinner-included", "ui-bathtub", "ui-onsen-retreat", "ui-couple-trip"];
+    case "apartment":
+      return ["ui-queen-bed", "ui-room-kitchen", "ui-fridge", "ui-washer", "ui-studio"];
+    case "guesthouse":
+      return ["ui-single-bed", "ui-room-kitchen", "ui-room-internet", "ui-studio", "ui-solo-trip"];
+    case "hostel":
+      return ["ui-bunk-bed", "ui-single-bed", "ui-room-internet", "ui-solo-trip", "ui-studio"];
+    case "serviced-apartment":
+      return ["ui-room-kitchen", "ui-fridge", "ui-washer", "ui-two-bedroom", "ui-family-trip"];
+    case "inn":
+      return ["ui-double-bed", "ui-room-internet", "ui-business-trip", "ui-city-2-5"];
+    case "resort-villa":
+      return ["ui-king-bed", "ui-balcony", "ui-three-bedroom", "ui-luxury-retreat", "ui-waterfront"];
+    case "private-house-entire":
+      return ["ui-king-bed", "ui-room-kitchen", "ui-fridge", "ui-washer", "ui-three-bedroom", "ui-family-trip"];
+    case "capsule":
+      return ["ui-single-bed", "ui-room-internet", "ui-solo-trip"];
+    case "love-hotel":
+      return ["ui-king-bed", "ui-couple-trip", "ui-late-checkout"];
+    case "villa":
+      return ["ui-king-bed", "ui-balcony", "ui-three-bedroom", "ui-luxury-retreat"];
+    default:
+      return ["ui-double-bed", "ui-heating", "ui-tv", "ui-aircon", "ui-room-internet", "ui-one-bedroom"];
+  }
+};
+
+const deriveAmenityFilters = (hotel: HotelListPageHotel) => {
+  const normalizedTags = hotel.tags.join(" ").toLowerCase();
+  const derivedFilterIds: string[] = [];
+
+  if (normalizedTags.includes("조식")) {
+    derivedFilterIds.push("ui-breakfast-included");
+  }
+
+  if (normalizedTags.includes("사우나") || hotel.filterIds.includes("spa")) {
+    derivedFilterIds.push("ui-free-sauna");
+  }
+
+  if (normalizedTags.includes("레이트 체크아웃")) {
+    derivedFilterIds.push("ui-late-checkout");
+  }
+
+  if (hotel.filterIds.includes("airport-transfer")) {
+    derivedFilterIds.push("ui-shuttle");
+  }
+
+  if (hotel.filterIds.includes("family-friendly")) {
+    derivedFilterIds.push("ui-family-trip");
+  }
+
+  if (hotel.filterIds.includes("business")) {
+    derivedFilterIds.push("ui-business-trip");
+  }
+
+  return derivedFilterIds;
+};
+
+const deriveLocationScoreFilters = (reviewScore: number) => {
+  if (reviewScore >= 9.2) {
+    return ["ui-location-9"];
+  }
+
+  if (reviewScore >= 8.5) {
+    return ["ui-location-8"];
+  }
+
+  if (reviewScore >= 7.8) {
+    return ["ui-location-7"];
+  }
+
+  return ["ui-location-6"];
+};
+
+const enrichHiroshimaHotel = (
+  hotel: HotelListPageHotel,
+  variant: HiroshimaHotelVariant | null,
+  index: number
+): HotelListPageHotel => {
+  const reviewScoreValue = Math.max(
+    7.5,
+    Math.min(9.8, Number.parseFloat(hotel.reviewScore) + (variant?.reviewDelta ?? 0) + ((index % 3) - 1) * 0.05)
+  );
+
+  const currentPriceValue = parseHotelPriceValue(hotel.currentPrice) + (variant?.currentPriceDelta ?? 0) + (index % 5) * 3000;
+  const originalPriceValue = Math.max(
+    currentPriceValue + 14000,
+    parseHotelPriceValue(hotel.originalPrice) + (variant?.originalPriceDelta ?? 0) + (index % 4) * 4000
+  );
+
+  const derivedFilterIds = dedupeFilters([
+    ...hotel.filterIds,
+    ...(HIROSHIMA_LOCATION_FILTERS[hotel.locationId] ?? []),
+    ...deriveRatingFilters(reviewScoreValue),
+    deriveStarFilterId(hotel.stars),
+    ...derivePropertyTypeFilters(hotel),
+    ...deriveAmenityFilters(hotel),
+    ...deriveLocationScoreFilters(reviewScoreValue),
+    ...deriveBrandFilters(hotel),
+    ...(reviewScoreValue >= 9.3 && hotel.stars.includes("★★★★★") ? ["ui-agoda-luxe"] : []),
+    ...(variant?.extraFilterIds ?? [])
+  ]);
+
+  return {
+    ...hotel,
+    id: variant ? `${hotel.id}-${variant.id}` : hotel.id,
+    title: variant ? `${hotel.title} ${variant.titleSuffix}` : hotel.title,
+    badge: variant?.badge ?? hotel.badge,
+    reviewScore: reviewScoreValue.toFixed(1),
+    reviewLabel: deriveReviewLabel(reviewScoreValue),
+    originalPrice: formatPriceValue(originalPriceValue),
+    currentPrice: formatPriceValue(currentPriceValue),
+    filterIds: derivedFilterIds,
+    tags: Array.from(new Set([...hotel.tags, ...(variant?.extraTags ?? [])])).slice(0, 4)
+  };
+};
+
+const expandHiroshimaHotels = (hotels: HotelListPageHotel[]) => {
+  const expandedHotels = hotels.flatMap((hotel, index) => {
+    return [
+      enrichHiroshimaHotel(hotel, null, index),
+      ...HIROSHIMA_VARIANTS.map((variant) => enrichHiroshimaHotel(hotel, variant, index))
+    ];
+  });
+
+  return expandedHotels;
+};
+
+interface RegionLayoutPreset {
+  landmarkOptions: Array<Pick<HotelListFilterOption, "id" | "label">>;
+  locationFilters: Record<string, string[]>;
+}
+
+const DEFAULT_REGION_LAYOUT_PRESET = (regionLabel: string): RegionLayoutPreset => ({
+  landmarkOptions: [
+    { id: "ui-local-central", label: `${regionLabel} 중심가` },
+    { id: "ui-local-station", label: `${regionLabel} 중앙역` },
+    { id: "ui-local-waterfront", label: `${regionLabel} 워터프런트` },
+    { id: "ui-local-old-town", label: `${regionLabel} 올드타운` },
+    { id: "ui-local-landmark-1", label: `${regionLabel} 대표 명소` },
+    { id: "ui-local-landmark-2", label: `${regionLabel} 쇼핑 거리` }
+  ],
+  locationFilters: {}
+});
+
+const resolveRegionLayoutPreset = (region: string, regionLabel: string): RegionLayoutPreset => {
+  if (region === "hiroshima") {
+    return {
+      landmarkOptions: [
+        { id: "ui-okonomimura", label: "오코노미무라" },
+        { id: "ui-atomic-bomb-dome", label: "원폭 돔" },
+        { id: "ui-peace-museum", label: "히로시마 평화 기념관" },
+        { id: "ui-sukkein", label: "수케이엔 정원" },
+        { id: "ui-hiroshima-castle", label: "히로시마 성" },
+        { id: "ui-miyajima-shrine", label: "이쓰쿠시마 신사" },
+        { id: "ui-hiroshima-station", label: "히로시마역" }
+      ],
+      locationFilters: HIROSHIMA_LOCATION_FILTERS
+    };
+  }
+
+  if (region === "jeju") {
+    return {
+      landmarkOptions: [
+        { id: "ui-jeju-airport", label: "제주국제공항" },
+        { id: "ui-dongmun-market", label: "동문시장" },
+        { id: "ui-hallasan", label: "한라산" },
+        { id: "ui-seongsan", label: "성산일출봉" },
+        { id: "ui-jungmun-tourism", label: "중문관광단지" },
+        { id: "ui-aewol-coast", label: "애월 해안도로" },
+        { id: "ui-hyeopjae", label: "협재해변" }
+      ],
+      locationFilters: {
+        "jeju-city": ["ui-city-center", "ui-city-under-2", "ui-jeju-airport", "ui-dongmun-market", "ui-city-break"],
+        seogwipo: ["ui-city-5-10", "ui-seongsan", "ui-waterfront", "ui-luxury-retreat"],
+        jungmun: ["ui-city-5-10", "ui-jungmun-tourism", "ui-hyeopjae", "ui-waterfront", "ui-luxury-retreat"],
+        aewol: ["ui-city-2-5", "ui-aewol-coast", "ui-hallasan", "ui-waterfront", "ui-couple-trip"]
+      }
+    };
+  }
+
+  if (region === "osaka") {
+    return {
+      landmarkOptions: [
+        { id: "ui-dotonbori", label: "도톤보리" },
+        { id: "ui-osaka-castle", label: "오사카성" },
+        { id: "ui-umeda-sky", label: "우메다 스카이 빌딩" },
+        { id: "ui-usj", label: "유니버설 스튜디오 재팬" },
+        { id: "ui-kuromon", label: "구로몬 시장" },
+        { id: "ui-shinsaibashi-street", label: "신사이바시" },
+        { id: "ui-kaiyukan", label: "가이유칸" }
+      ],
+      locationFilters: {
+        namba: ["ui-city-center", "ui-city-under-2", "ui-dotonbori", "ui-kuromon", "ui-city-break", "ui-station-access"],
+        umeda: ["ui-city-center", "ui-city-under-2", "ui-umeda-sky", "ui-osaka-castle", "ui-city-break", "ui-business-trip"],
+        shinsaibashi: ["ui-city-center", "ui-city-under-2", "ui-shinsaibashi-street", "ui-dotonbori", "ui-city-break"],
+        universal: ["ui-city-5-10", "ui-usj", "ui-kaiyukan", "ui-family-trip", "ui-waterfront"]
+      }
+    };
+  }
+
+  return DEFAULT_REGION_LAYOUT_PRESET(regionLabel);
+};
+
+const resolveFallbackLocationFilters = (
+  profile: RegionProfile,
+  locationId: string,
+  landmarkIds: string[]
+) => {
+  const locationIndex = Math.max(0, profile.locations.findIndex((location) => location.id === locationId));
+
+  if (locationIndex === 0) {
+    return ["ui-city-center", "ui-city-under-2", "ui-city-break", ...landmarkIds.slice(0, 2)];
+  }
+
+  if (locationIndex === 1) {
+    return ["ui-city-2-5", "ui-waterfront", ...landmarkIds.slice(2, 4)];
+  }
+
+  if (locationIndex === 2) {
+    return ["ui-city-2-5", "ui-station-access", ...landmarkIds.slice(1, 3)];
+  }
+
+  return ["ui-city-5-10", ...landmarkIds.slice(-2)];
+};
+
+const deriveExperienceFilters = (hotel: HotelListPageHotel) => {
+  const reviewScoreValue = Number.parseFloat(hotel.reviewScore) || 0;
+  const normalizedLocation = hotel.location.toLowerCase();
+  const normalizedTags = hotel.tags.join(" ").toLowerCase();
+  const derivedFilterIds: string[] = [];
+
+  if (hotel.filterIds.includes("family-friendly") || hotel.filterIds.includes("family") || normalizedTags.includes("가족")) {
+    derivedFilterIds.push("ui-family-trip");
+  }
+
+  if (normalizedTags.includes("커플") || hotel.propertyTypeId === "resort" || hotel.propertyTypeId === "villa" || hotel.propertyTypeId === "poolvilla") {
+    derivedFilterIds.push("ui-couple-trip");
+  }
+
+  if (hotel.propertyTypeId === "capsule" || hotel.propertyTypeId === "hostel" || hotel.propertyTypeId === "guesthouse") {
+    derivedFilterIds.push("ui-solo-trip");
+  }
+
+  if (hotel.filterIds.includes("business") || normalizedTags.includes("비즈니스")) {
+    derivedFilterIds.push("ui-business-trip");
+  }
+
+  if (
+    hotel.filterIds.includes("station") ||
+    hotel.filterIds.includes("rental-friendly") ||
+    normalizedLocation.includes("역") ||
+    normalizedLocation.includes("공항")
+  ) {
+    derivedFilterIds.push("ui-station-access");
+  }
+
+  if (
+    normalizedLocation.includes("해변") ||
+    normalizedLocation.includes("오션") ||
+    normalizedTags.includes("오션") ||
+    normalizedTags.includes("해변") ||
+    hotel.filterIds.includes("ocean") ||
+    hotel.filterIds.includes("ocean-view")
+  ) {
+    derivedFilterIds.push("ui-waterfront");
+  }
+
+  if (
+    hotel.filterIds.includes("pool") ||
+    hotel.filterIds.includes("spa") ||
+    reviewScoreValue >= 9 ||
+    normalizedTags.includes("럭셔리")
+  ) {
+    derivedFilterIds.push("ui-luxury-retreat");
+  }
+
+  if (hotel.filterIds.includes("spa") || hotel.filterIds.includes("onsen") || normalizedTags.includes("온천") || normalizedTags.includes("사우나")) {
+    derivedFilterIds.push("ui-onsen-retreat");
+  }
+
+  if (
+    normalizedLocation.includes("시내") ||
+    normalizedLocation.includes("중심") ||
+    normalizedLocation.includes("downtown") ||
+    hotel.filterIds.includes("downtown") ||
+    hotel.filterIds.includes("shopping")
+  ) {
+    derivedFilterIds.push("ui-city-break");
+  }
+
+  return derivedFilterIds;
+};
+
+const enrichRegionalHotel = (
+  hotel: HotelListPageHotel,
+  region: string,
+  regionLabel: string,
+  profile: RegionProfile
+) => {
+  const reviewScoreValue = Number.parseFloat(hotel.reviewScore) || 0;
+  const preset = resolveRegionLayoutPreset(region, regionLabel);
+  const landmarkIds = preset.landmarkOptions.map((option) => option.id);
+  const locationFilters = preset.locationFilters[hotel.locationId] ?? resolveFallbackLocationFilters(profile, hotel.locationId, landmarkIds);
+
+  return {
+    ...hotel,
+    filterIds: dedupeFilters([
+      ...hotel.filterIds,
+      ...locationFilters,
+      ...deriveRatingFilters(reviewScoreValue),
+      deriveStarFilterId(hotel.stars),
+      ...derivePropertyTypeFilters(hotel),
+      ...deriveAmenityFilters(hotel),
+      ...deriveLocationScoreFilters(reviewScoreValue),
+      ...deriveBrandFilters(hotel),
+      ...deriveExperienceFilters(hotel),
+      ...(reviewScoreValue >= 9.3 && hotel.stars.includes("★★★★★") ? ["ui-agoda-luxe"] : [])
+    ])
+  };
+};
+
+const buildCanonicalHotels = (region: string, regionLabel: string, profile: RegionProfile, hotels: HotelListPageHotel[]) => {
+  if (region === "hiroshima") {
+    if (hotels.some((hotel) =>
+      hotel.title.endsWith(" 프라임") || hotel.title.endsWith(" 레지던스") || hotel.title.endsWith(" 시그니처")
+    )) {
+      return hotels;
+    }
+
+    return expandHiroshimaHotels(hotels);
+  }
+
+  return hotels.map((hotel) => enrichRegionalHotel(hotel, region, regionLabel, profile));
+};
+
+const countHotelsByFilterId = (hotels: HotelListPageHotel[], filterId: string) => {
+  return hotels.filter((hotel) => hotel.filterIds.includes(filterId)).length;
+};
+
+const buildLegacyLongSections = (
+  region: string,
+  regionLabel: string,
+  profile: RegionProfile,
+  hotels: HotelListPageHotel[]
+): HotelListFilterSection[] => {
+  const preset = resolveRegionLayoutPreset(region, regionLabel);
+
+  const templateSections: HotelListFilterSection[] = [
     {
       id: "star-rating",
       title: "숙소 성급",
       options: [
-        { id: "ui-five-star", label: "5-성급", count: 10 },
-        { id: "ui-four-star", label: "4-성급", count: 47 },
-        { id: "ui-three-star", label: "3-성급", count: 149 },
-        { id: "ui-two-star", label: "2-성급", count: 63 },
-        { id: "ui-one-star", label: "1-성급", count: 44 }
+        { id: "ui-agoda-luxe", label: "Agoda Luxe" },
+        { id: "ui-five-star", label: "5-성급" },
+        { id: "ui-four-star", label: "4-성급" },
+        { id: "ui-three-star", label: "3-성급" },
+        { id: "ui-two-star", label: "2-성급" },
+        { id: "ui-one-star", label: "1-성급" }
       ]
     },
     {
       id: "meal-options",
       title: "이용 가능 서비스 / 옵션",
       options: [
-        { id: "ui-breakfast-included", label: "조식 포함", count: 63 },
-        { id: "ui-dinner-included", label: "석식(저녁) 포함", count: 17 },
-        { id: "ui-free-sauna", label: "사우나 무료 이용", count: 3 },
-        { id: "ui-early-checkin", label: "얼리 체크인", count: 2 },
-        { id: "ui-late-checkout", label: "레이트 체크아웃", count: 2 },
-        { id: "ui-lunch-included", label: "중식(점심) 포함", count: 1 },
-        { id: "ui-shuttle", label: "무료 셔틀 서비스", count: 1 }
+        { id: "ui-breakfast-included", label: "조식 포함" },
+        { id: "ui-dinner-included", label: "석식(저녁) 포함" },
+        { id: "ui-free-sauna", label: "사우나 무료 이용" },
+        { id: "ui-early-checkin", label: "얼리 체크인" },
+        { id: "ui-late-checkout", label: "레이트 체크아웃" },
+        { id: "ui-lunch-included", label: "중식(점심) 포함" },
+        { id: "ui-shuttle", label: "무료 셔틀 서비스" }
       ]
     },
     {
       id: "room-amenities",
       title: "객실 편의 시설/서비스",
       options: [
-        { id: "ui-heating", label: "난방", count: 193 },
-        { id: "ui-fridge", label: "냉장고", count: 185 },
-        { id: "ui-tv", label: "TV", count: 177 },
-        { id: "ui-bathtub", label: "욕조", count: 155 },
-        { id: "ui-aircon", label: "에어컨", count: 111 },
-        { id: "ui-washer", label: "세탁기", count: 78 },
-        { id: "ui-room-internet", label: "인터넷", count: 70 },
-        { id: "ui-coffee-maker", label: "커피/티 메이커", count: 43 },
-        { id: "ui-balcony", label: "발코니/테라스", count: 39 },
-        { id: "ui-room-kitchen", label: "주방", count: 22 },
-        { id: "ui-ironing", label: "다림질 도구", count: 20 },
-        { id: "ui-room-pet", label: "반려동물 동반 가능", count: 5 }
+        { id: "ui-heating", label: "난방" },
+        { id: "ui-fridge", label: "냉장고" },
+        { id: "ui-tv", label: "TV" },
+        { id: "ui-bathtub", label: "욕조" },
+        { id: "ui-aircon", label: "에어컨" },
+        { id: "ui-washer", label: "세탁기" },
+        { id: "ui-room-internet", label: "인터넷" },
+        { id: "ui-coffee-maker", label: "커피/티 메이커" },
+        { id: "ui-balcony", label: "발코니/테라스" },
+        { id: "ui-room-kitchen", label: "주방" },
+        { id: "ui-ironing", label: "다림질 도구" },
+        { id: "ui-room-pet", label: "반려동물 동반 가능" }
       ]
     },
     {
       id: "distance",
       title: "도심까지의 거리",
       options: [
-        { id: "ui-city-center", label: "도심에 위치", count: 96 },
-        { id: "ui-city-under-2", label: "도심까지 2km 미만", count: 200 },
-        { id: "ui-city-2-5", label: "도심까지 2~5km", count: 16 },
-        { id: "ui-city-5-10", label: "도심까지 5~10km", count: 14 }
+        { id: "ui-city-center", label: "도심에 위치" },
+        { id: "ui-city-under-2", label: "도심까지 2km 미만" },
+        { id: "ui-city-2-5", label: "도심까지 2~5km" },
+        { id: "ui-city-5-10", label: "도심까지 5~10km" }
       ]
     },
     {
       id: "bed-types",
       title: "침대 종류",
       options: [
-        { id: "ui-double-bed", label: "더블베드", count: 251 },
-        { id: "ui-single-bed", label: "싱글/트윈베드", count: 151 },
-        { id: "ui-queen-bed", label: "퀸베드", count: 73 },
-        { id: "ui-bunk-bed", label: "벙크베드", count: 24 },
-        { id: "ui-king-bed", label: "킹베드", count: 17 }
+        { id: "ui-double-bed", label: "더블베드" },
+        { id: "ui-single-bed", label: "싱글/트윈베드" },
+        { id: "ui-queen-bed", label: "퀸베드" },
+        { id: "ui-bunk-bed", label: "벙크베드" },
+        { id: "ui-king-bed", label: "킹베드" }
       ]
     },
     {
       id: "landmarks",
       title: "주변 인기 명소",
+      options: preset.landmarkOptions
+    },
+    {
+      id: "family-favorites",
+      title: "가족 여행객에 인기",
       options: [
-        { id: "ui-okonomimura", label: "오코노미무라", count: 134 },
-        { id: "ui-atomic-bomb-dome", label: "원폭 돔", count: 128 },
-        { id: "ui-peace-museum", label: "히로시마 평화 기념관", count: 113 },
-        { id: "ui-sukkein", label: "수케이엔 정원", count: 87 },
-        { id: "ui-hiroshima-castle", label: "히로시마 성", count: 45 }
+        { id: "ui-family-trip", label: "가족 여행" },
+        { id: "ui-couple-trip", label: "커플 여행" },
+        { id: "ui-solo-trip", label: "1인 여행" },
+        { id: "ui-business-trip", label: "비즈니스 여행" }
+      ]
+    },
+    {
+      id: "location-score",
+      title: "숙소 위치 평가",
+      options: [
+        { id: "ui-location-9", label: "9+ 최고" },
+        { id: "ui-location-8", label: "8+ 우수" },
+        { id: "ui-location-7", label: "7+ 좋음" },
+        { id: "ui-location-6", label: "6+ 무난" }
+      ]
+    },
+    {
+      id: "travel-theme",
+      title: "여행 테마",
+      options: [
+        { id: "ui-city-break", label: "도심 여행" },
+        { id: "ui-onsen-retreat", label: "온천 휴양" },
+        { id: "ui-luxury-retreat", label: "럭셔리 숙박" },
+        { id: "ui-station-access", label: "역 접근성 우수" },
+        { id: "ui-waterfront", label: "워터프런트" }
+      ]
+    },
+    {
+      id: "bedroom-count",
+      title: "침실 수",
+      options: [
+        { id: "ui-studio", label: "스튜디오" },
+        { id: "ui-one-bedroom", label: "침실 1개" },
+        { id: "ui-two-bedroom", label: "침실 2개" },
+        { id: "ui-three-bedroom", label: "침실 3개 이상" }
+      ]
+    },
+    {
+      id: "hotel-brands",
+      title: "인기 호텔 브랜드",
+      options: [
+        { id: "brand-ihg", label: "IHG 계열" },
+        { id: "brand-candeo", label: "칸데오 호텔" },
+        { id: "brand-marriott", label: "메리어트 계열" },
+        { id: "brand-apa", label: "APA 계열" },
+        { id: "brand-prince", label: "Prince 계열" },
+        { id: "brand-local", label: "로컬/부티크" }
       ]
     }
   ];
+
+  return templateSections.map((section) => ({
+    ...section,
+    options: section.options.map((option) => ({
+      ...option,
+      count: countHotelsByFilterId(hotels, option.id)
+    }))
+  }));
 };
 
 const dedupeFilters = (filterIds: string[]) => {
@@ -776,40 +1553,79 @@ const resolveRegionProfile = (region: string | null, keyword: string | null) => 
   return { region: DEFAULT_REGION, profile: REGION_PROFILES[DEFAULT_REGION] };
 };
 
-const buildFilterSections = (region: string, regionLabel: string, profile: RegionProfile): HotelListFilterSection[] => {
+const buildFilterSections = (
+  region: string,
+  regionLabel: string,
+  profile: RegionProfile,
+  hotels: HotelListPageHotel[],
+  selectedFilterIds: string[] = []
+): HotelListFilterSection[] => {
   return [
     {
       id: "popular",
       title: `${regionLabel} 인기 검색 조건`,
-      options: profile.popularFilters
+      options: applyCheckedState(profile.popularFilters, selectedFilterIds)
     },
     {
       id: "property-types",
       title: "숙소 종류",
-      options: profile.propertyTypes
+      options: applyCheckedState(profile.propertyTypes, selectedFilterIds)
     },
     {
       id: "locations",
       title: "지역",
-      options: profile.locations
+      options: applyCheckedState(profile.locations, selectedFilterIds)
     },
     {
       id: "payment-options",
       title: "결제 관련 옵션",
-      options: profile.paymentOptions
+      options: applyCheckedState(profile.paymentOptions, selectedFilterIds)
     },
     {
       id: "guest-ratings",
       title: "투숙객 평가 점수",
-      options: profile.guestRatings
+      options: applyCheckedState(profile.guestRatings, selectedFilterIds)
     },
     {
       id: "amenities",
       title: "숙소 편의 시설 및 서비스",
-      options: profile.amenities
+      options: applyCheckedState(profile.amenities, selectedFilterIds)
     },
-    ...buildLegacyLongSections(region)
+    ...buildLegacyLongSections(region, regionLabel, profile, hotels).map((section) => ({
+      ...section,
+      options: applyCheckedState(section.options, selectedFilterIds)
+    }))
   ];
+};
+
+const extractSelectedFilterIdsFromPageData = (pageData: HotelListPageData) => {
+  return dedupeFilters(
+    pageData.filterSections.flatMap((section) =>
+      section.options.filter((option) => option.checked).map((option) => option.id)
+    )
+  );
+};
+
+const applyCheckedState = (options: HotelListFilterOption[], selectedFilterIds: string[]) => {
+  const selectedFilterIdSet = new Set(selectedFilterIds);
+
+  return options.map((option) => ({
+    ...option,
+    checked: selectedFilterIdSet.has(option.id)
+  }));
+};
+
+export const enhanceHotelListPageData = (pageData: HotelListPageData): HotelListPageData => {
+  const resolved = resolveRegionProfile(pageData.region, pageData.regionLabel);
+  const profile = resolved.profile;
+  const selectedFilterIds = extractSelectedFilterIdsFromPageData(pageData);
+  const canonicalHotels = buildCanonicalHotels(pageData.region, pageData.regionLabel, profile, pageData.hotels);
+
+  return {
+    ...pageData,
+    filterSections: buildFilterSections(pageData.region, pageData.regionLabel, profile, canonicalHotels, selectedFilterIds),
+    hotels: canonicalHotels
+  };
 };
 
 export const buildMockHotelListPageData = (search: string): HotelListPageData => {
@@ -825,6 +1641,7 @@ export const buildMockHotelListPageData = (search: string): HotelListPageData =>
   const checkOutLabel = formatShortDateLabel(initialSearchState.calendar?.checkOut ?? null);
   const dateLabel =
     checkInLabel && checkOutLabel ? `${checkInLabel} - ${checkOutLabel}` : "날짜를 선택하세요";
+  const hotels = buildCanonicalHotels(resolved.region, resolved.profile.label, resolved.profile, resolved.profile.hotels);
 
   return {
     shell: params.get("shell") ?? "stay",
@@ -841,8 +1658,8 @@ export const buildMockHotelListPageData = (search: string): HotelListPageData =>
         initialSearchState.guest?.rooms ?? 1
       )
     },
-    filterSections: buildFilterSections(resolved.region, resolved.profile.label, resolved.profile),
-    hotels: resolved.profile.hotels
+    filterSections: buildFilterSections(resolved.region, resolved.profile.label, resolved.profile, hotels),
+    hotels
   };
 };
 
@@ -869,11 +1686,64 @@ const parseGuestRating = (reviewScore: string) => {
   return Number.isNaN(parsed) ? 0 : parsed;
 };
 
+const matchesPropertyTypeFilter = (hotel: HotelListPageHotel, propertyTypeId: string) => {
+  const normalizedTitle = hotel.title.toLowerCase();
+  const aliases = PROPERTY_TYPE_ALIAS_MAP[propertyTypeId] ?? [propertyTypeId];
+
+  if (aliases.includes(hotel.propertyTypeId)) {
+    return true;
+  }
+
+  if (propertyTypeId === "hotel") {
+    return normalizedTitle.includes("호텔") || normalizedTitle.includes("hotel");
+  }
+
+  if (propertyTypeId === "resort") {
+    return normalizedTitle.includes("리조트") || normalizedTitle.includes("resort");
+  }
+
+  if (propertyTypeId === "ryokan") {
+    return normalizedTitle.includes("료칸") || normalizedTitle.includes("ryokan");
+  }
+
+  if (propertyTypeId === "apartment") {
+    return normalizedTitle.includes("아파트") || normalizedTitle.includes("apartment");
+  }
+
+  if (propertyTypeId === "capsule") {
+    return normalizedTitle.includes("캡슐");
+  }
+
+  if (propertyTypeId === "poolvilla") {
+    return normalizedTitle.includes("풀빌라");
+  }
+
+  if (propertyTypeId === "private-house-entire") {
+    return normalizedTitle.includes("프라이빗") || normalizedTitle.includes("독채");
+  }
+
+  if (propertyTypeId === "villa" || propertyTypeId === "resort-villa") {
+    return normalizedTitle.includes("빌라");
+  }
+
+  return false;
+};
+
 export const filterHotelsBySelection = (
   hotels: HotelListPageHotel[],
   filterState: HotelFilterState
 ) => {
   return hotels.filter((hotel) => {
+    const currentPriceValue = parseHotelPriceValue(hotel.currentPrice);
+
+    if (filterState.minPrice !== null && currentPriceValue < filterState.minPrice) {
+      return false;
+    }
+
+    if (filterState.maxPrice !== null && currentPriceValue > filterState.maxPrice) {
+      return false;
+    }
+
     if (filterState.guestRatingThreshold !== null && parseGuestRating(hotel.reviewScore) < filterState.guestRatingThreshold) {
       return false;
     }
@@ -886,7 +1756,6 @@ export const filterHotelsBySelection = (
       const normalizedSelectedFilters = filterState.selectedOptionIds.filter(
         (filterId) =>
           !filterId.startsWith("rating-") &&
-          !filterId.startsWith("ui-") &&
           !filterState.locationIds.includes(filterId)
       );
       if (normalizedSelectedFilters.length === 0) {
@@ -902,42 +1771,9 @@ export const filterHotelsBySelection = (
       });
     }
 
-    const normalizedTitle = hotel.title.toLowerCase();
-    const propertyTypeMatched = filterState.propertyTypeIds.some((propertyTypeId) => {
-      if (propertyTypeId === "hotel") {
-        return hotel.propertyTypeId === "hotel" || normalizedTitle.includes("호텔") || normalizedTitle.includes("hotel");
-      }
-
-      if (propertyTypeId === "resort" || propertyTypeId === "resort-type") {
-        return hotel.propertyTypeId === "resort" || normalizedTitle.includes("리조트") || normalizedTitle.includes("resort");
-      }
-
-      if (propertyTypeId === "ryokan") {
-        return hotel.propertyTypeId === "ryokan" || normalizedTitle.includes("료칸") || normalizedTitle.includes("ryokan");
-      }
-
-      if (propertyTypeId === "apartment") {
-        return hotel.propertyTypeId === "apartment" || normalizedTitle.includes("아파트") || normalizedTitle.includes("apartment");
-      }
-
-      if (propertyTypeId === "capsule") {
-        return hotel.propertyTypeId === "capsule" || normalizedTitle.includes("캡슐");
-      }
-
-      if (propertyTypeId === "poolvilla") {
-        return hotel.propertyTypeId === "poolvilla" || normalizedTitle.includes("풀빌라");
-      }
-
-      if (propertyTypeId === "private-house") {
-        return hotel.propertyTypeId === "private-house" || normalizedTitle.includes("독채");
-      }
-
-      if (propertyTypeId === "villa") {
-        return hotel.propertyTypeId === "villa" || normalizedTitle.includes("빌라");
-      }
-
-      return false;
-    });
+    const propertyTypeMatched = filterState.propertyTypeIds.some((propertyTypeId) =>
+      matchesPropertyTypeFilter(hotel, propertyTypeId)
+    );
 
     if (!propertyTypeMatched) {
       return false;
@@ -946,7 +1782,6 @@ export const filterHotelsBySelection = (
     const normalizedSelectedFilters = filterState.selectedOptionIds.filter(
       (filterId) =>
         !filterId.startsWith("rating-") &&
-        !filterId.startsWith("ui-") &&
         !filterState.propertyTypeIds.includes(filterId) &&
         !filterState.locationIds.includes(filterId)
     );
@@ -966,11 +1801,7 @@ export const filterHotelsBySelection = (
 };
 
 export const getSelectedFilterIds = (pageData: HotelListPageData) => {
-  return dedupeFilters(
-    pageData.filterSections.flatMap((section) =>
-      section.options.filter((option) => option.checked).map((option) => option.id)
-    )
-  );
+  return extractSelectedFilterIdsFromPageData(pageData);
 };
 
 export const buildHotelListSearchParams = (currentSearch: string, selectedFilterIds: string[]) => {
