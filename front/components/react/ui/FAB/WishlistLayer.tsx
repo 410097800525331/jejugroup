@@ -2,7 +2,7 @@ import React from "react";
 import { Trash2, HeartOff } from "lucide-react";
 
 interface WishlistItem {
-  id: number;
+  id: string | number;
   name: string;
   image: string;
   location: string;
@@ -13,7 +13,7 @@ interface WishlistLayerProps {
   isOpen: boolean;
   wishlist: WishlistItem[];
   onClose: () => void;
-  onRemove: (id: number) => void;
+  onRemove: (id: string | number) => void;
 }
 
 export default function WishlistLayer({ isOpen, wishlist, onClose, onRemove }: WishlistLayerProps) {

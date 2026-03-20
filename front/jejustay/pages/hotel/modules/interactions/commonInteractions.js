@@ -1,11 +1,5 @@
 export const initWishlistButtons = () => {
-  document.querySelectorAll(".wishlist-btn").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      button.classList.toggle("active");
-    });
-  });
+  window.JejuWishlistButton?.init();
 };
 
 export const initScrollAnimations = () => {

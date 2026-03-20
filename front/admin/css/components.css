@@ -196,6 +196,169 @@
     border-color: var(--admin-text-secondary);
 }
 
+.hotel-offer-admin-section {
+    margin-top: var(--admin-space-xl);
+}
+
+.hotel-offer-section-header {
+    align-items: flex-start;
+    gap: var(--admin-space-lg);
+}
+
+.hotel-offer-section-title {
+    margin: 0;
+    color: var(--admin-text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.hotel-offer-section-copy {
+    margin: var(--admin-space-xs) 0 0;
+    color: var(--admin-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 60ch;
+}
+
+.hotel-offer-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--admin-space-sm);
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--admin-space-lg);
+}
+
+.hotel-offer-search-input {
+    min-width: min(360px, 100%);
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--admin-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--admin-text-primary);
+    outline: none;
+}
+
+.hotel-offer-search-input:focus {
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.14);
+}
+
+.hotel-offer-admin-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(300px, 1fr);
+    gap: var(--admin-space-lg);
+    align-items: start;
+}
+
+.hotel-offer-editor-card {
+    border: 1px solid var(--admin-glass-border);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    padding: var(--admin-space-lg);
+    box-shadow: var(--admin-shadow-sm);
+    position: sticky;
+    top: calc(70px + var(--admin-space-lg));
+}
+
+.hotel-offer-editor-head {
+    margin-bottom: var(--admin-space-md);
+}
+
+.hotel-offer-editor-title {
+    margin: 0;
+    color: var(--admin-text-primary);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.hotel-offer-editor-copy {
+    margin: var(--admin-space-xs) 0 0;
+    color: var(--admin-text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.hotel-offer-form {
+    display: grid;
+    gap: var(--admin-space-md);
+}
+
+.hotel-offer-field {
+    display: grid;
+    gap: 6px;
+}
+
+.hotel-offer-field span {
+    color: var(--admin-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.hotel-offer-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--admin-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--admin-text-primary);
+    outline: none;
+}
+
+.hotel-offer-field input[readonly] {
+    color: var(--admin-text-secondary);
+    cursor: not-allowed;
+}
+
+.hotel-offer-field input:focus {
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.14);
+}
+
+.hotel-offer-preview {
+    border: 1px solid var(--admin-glass-border);
+    border-radius: 12px;
+    padding: var(--admin-space-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--admin-text-primary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.hotel-offer-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--admin-space-sm);
+}
+
+.hotel-offer-row-active {
+    background: rgba(230, 126, 34, 0.12);
+}
+
+.hotel-offer-status {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--admin-text-secondary);
+}
+
+.hotel-offer-status.hotel-offer-status--custom {
+    color: var(--admin-accent);
+}
+
+@media (max-width: 1180px) {
+    .hotel-offer-admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hotel-offer-editor-card {
+        position: static;
+    }
+}
+
 /* Chart Container Styles */
 .admin-chart-container {
     padding: var(--admin-space-lg);

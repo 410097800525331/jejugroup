@@ -18,12 +18,14 @@ if (typeof window !== "undefined") {
 }
 
 interface WishlistItem {
-  id: number;
+  id: string | number;
   name: string;
   image: string;
   location: string;
   price: string;
 }
+
+const normalizeWishlistId = (value: string | number) => String(value);
 
 /**
  * 최종 조립된 전역 FAB 컨테이너
@@ -110,8 +112,9 @@ export default function FABContainer() {
     }
   };
 
-  const removeWishlist = (id: number) => {
-    const newWishlist = wishlist.filter((i: WishlistItem) => i.id !== id);
+  const removeWishlist = (id: string | number) => {
+    const targetId = normalizeWishlistId(id);
+    const newWishlist = wishlist.filter((i: WishlistItem) => normalizeWishlistId(i.id) !== targetId);
     setWishlist(newWishlist);
     localStorage.setItem('jeju_wishlist', JSON.stringify(newWishlist));
     document.dispatchEvent(new CustomEvent('fabWishlistUpdated', { detail: newWishlist }));

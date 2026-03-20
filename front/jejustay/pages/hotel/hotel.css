@@ -8,6 +8,7 @@
 @import url("./styles/promo-section.css");
 @import url("./styles/destinations-section.css");
 @import url("./styles/deals-section.css");
+@import url("../../shared/wishlist-button.css");
 
 /* ========== FlightSans Font ========== */
 @font-face {

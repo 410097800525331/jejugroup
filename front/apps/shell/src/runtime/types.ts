@@ -2,7 +2,7 @@ export type Currency = "KRW" | "USD";
 export type Language = "ko" | "en";
 
 export interface WishlistItem {
-  id: number;
+  id: string | number;
   name: string;
   image: string;
   location: string;

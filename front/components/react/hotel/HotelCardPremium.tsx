@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HotelShellIcon } from "@front-components/layout/HotelShellIcon";
+import { WishlistButton } from "@front-components/ui/WishlistButton";
 import type { HotelListPageHotel } from "./hotelListPageData";
 
 interface HotelCardPremiumProps {
@@ -15,24 +16,57 @@ const REVIEW_LABEL_MAP: Record<string, string> = {
 };
 
 export const HotelCardPremium = ({ hotel }: HotelCardPremiumProps) => {
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const wishlistItem = useMemo(() => {
+    return {
+      id: hotel.id,
+      name: hotel.title,
+      image: hotel.imageUrl,
+      location: hotel.location,
+      price: hotel.currentPrice
+    };
+  }, [hotel.currentPrice, hotel.id, hotel.imageUrl, hotel.location, hotel.title]);
+  const [isWishlisted, setIsWishlisted] = useState(() => {
+    return window.FABState ? window.FABState.isInWishlist(wishlistItem.id) : false;
+  });
   const reviewLabel = REVIEW_LABEL_MAP[hotel.reviewLabel] ?? hotel.reviewLabel;
+  const hasBadge = hotel.badge.trim().length > 0;
+
+  useEffect(() => {
+    if (!window.FABState) {
+      return undefined;
+    }
+
+    const syncWishlistState = () => {
+      setIsWishlisted(window.FABState?.isInWishlist(wishlistItem.id) ?? false);
+    };
+
+    syncWishlistState();
+    document.addEventListener("fabWishlistUpdated", syncWishlistState);
+
+    return () => {
+      document.removeEventListener("fabWishlistUpdated", syncWishlistState);
+    };
+  }, [wishlistItem.id]);
 
   return (
     <article className="hotel-card-premium">
       <div className="hotel-card-image">
-        <img alt={hotel.title} src={hotel.imageUrl} />
-        <span className="badge-overlay">{hotel.badge}</span>
-        <button
-          aria-label={`${hotel.title} 찜하기`}
-          className={`wishlist-btn-premium${isWishlisted ? " active" : ""}`}
-          onClick={() => {
-            setIsWishlisted((current) => !current);
+        <img alt={hotel.title} decoding="async" loading="lazy" src={hotel.imageUrl} />
+        {hasBadge ? <span className="badge-overlay">{hotel.badge}</span> : null}
+        <WishlistButton
+          active={isWishlisted}
+          ariaLabel={`${hotel.title} 찜하기`}
+          className="wishlist-btn--premium"
+          onToggle={(nextActive) => {
+            if (!window.FABState) {
+              setIsWishlisted(nextActive);
+              return;
+            }
+
+            window.FABState.addToWishlist(wishlistItem);
+            setIsWishlisted(window.FABState.isInWishlist(wishlistItem.id));
           }}
-          type="button"
-        >
-          <HotelShellIcon className="wishlist-icon" name="heart" />
-        </button>
+        />
       </div>
       <div className="hotel-card-content">
         <div className="hotel-card-header">
