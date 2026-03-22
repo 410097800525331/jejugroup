@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ItineraryActivity, ItineraryCompanion, ItineraryItem } from "./types";
 import { ITINERARY as INITIAL_ITINERARY } from "./data";
 import { SectionCard } from "./SectionCard";
@@ -8,12 +8,35 @@ export const ItinerarySection = () => {
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(INITIAL_ITINERARY);
   const [isExpanded, setIsExpanded] = useState(false);
   const [manageModalDayId, setManageModalDayId] = useState<string | null>(null);
+  const dayBlockRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [dayBlockHeights, setDayBlockHeights] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
   }, [isExpanded, itinerary]);
+
+  useLayoutEffect(() => {
+    const nextHeights = itinerary.reduce<Record<string, number>>((acc, day) => {
+      acc[day.id] = dayBlockRefs.current[day.id]?.scrollHeight ?? 0;
+      return acc;
+    }, {});
+
+    setDayBlockHeights((prev) => {
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(nextHeights);
+
+      if (
+        prevKeys.length === nextKeys.length &&
+        nextKeys.every((key) => prev[key] === nextHeights[key])
+      ) {
+        return prev;
+      }
+
+      return nextHeights;
+    });
+  }, [itinerary, isExpanded]);
 
   const handleToggleActivity = (dayId: string, activityId: string) => {
     setItinerary(itinerary.map(item => {
@@ -39,8 +62,6 @@ export const ItinerarySection = () => {
     setManageModalDayId(null);
   };
 
-  const displayedItinerary = isExpanded ? itinerary : itinerary.slice(0, 2);
-
   return (
     <section className="meta-section layer-itinerary">
       <header className="section-header">
@@ -50,9 +71,35 @@ export const ItinerarySection = () => {
 
 
       <div className={`itinerary-timeline-wrap ${isExpanded ? 'is-expanded' : ''}`}>
-        {displayedItinerary.map((day: ItineraryItem) => (
+        {itinerary.map((day: ItineraryItem, index) => {
+          const shouldAlwaysShow = index < 2;
+          const isVisible = shouldAlwaysShow || isExpanded;
+          const measuredHeight = dayBlockHeights[day.id] ?? 720;
 
-          <div className="itinerary-day-block" key={day.id}>
+          return (
+
+          <div
+            className="itinerary-day-block"
+            key={day.id}
+            ref={(node) => {
+              dayBlockRefs.current[day.id] = node;
+            }}
+            aria-hidden={!isVisible}
+            style={
+              shouldAlwaysShow
+                ? undefined
+                : {
+                    overflow: "hidden",
+                    maxHeight: isVisible ? `${measuredHeight}px` : "0px",
+                    opacity: isVisible ? 1 : 0,
+                    transform: isVisible ? "translateY(0)" : "translateY(-18px)",
+                    marginBottom: isVisible ? "40px" : "0px",
+                    pointerEvents: isVisible ? "auto" : "none",
+                    transition:
+                      "max-height 460ms cubic-bezier(0.22, 1, 0.36, 1), opacity 280ms ease, transform 460ms cubic-bezier(0.22, 1, 0.36, 1), margin-bottom 460ms cubic-bezier(0.22, 1, 0.36, 1)",
+                  }
+            }
+          >
             <div className="day-side-info">
               <span className="day-date">{day.date}</span>
               <span className="day-time">{day.time}</span>
@@ -118,7 +165,8 @@ export const ItinerarySection = () => {
               </div>
             </SectionCard>
           </div>
-        ))}
+        );
+        })}
 
         {itinerary.length > 2 && (
           <div className={`timeline-gradient-overlay ${isExpanded ? 'active' : ''}`}>

@@ -29,20 +29,16 @@ export const CompanionManageModal = ({
   } = useCompanionManager({ initialCompanions });
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const isSearchResultLinked = searchResult ? companions.some((companion) => companion.id === searchResult.id) : false;
 
-  // 모달 열릴 때 포커스 및 초기화
   useEffect(() => {
     if (isOpen) {
       clearSearch();
-      // 약간의 지연 후 포커스 줘서 트랜지션 안 깨지게 함
-      setTimeout(() => inputRef.current?.focus(), 100);
-      if (window.lucide) {
-        window.lucide.createIcons();
-      }
+      const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 100);
+      return () => window.clearTimeout(focusTimer);
     }
   }, [isOpen, clearSearch]);
 
-  // ESC 키 닫기 (접근성)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -52,6 +48,12 @@ export const CompanionManageModal = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (isOpen && window.lucide) {
+      window.lucide.createIcons();
+    }
+  }, [isOpen, searchResult, companions, errorObj]);
 
   if (!isOpen) return null;
 
@@ -79,16 +81,16 @@ export const CompanionManageModal = ({
         </header>
 
         <div className="companion-modal-body">
-          {/* 검색 영역 */}
           <form className="companion-search-form id-search-wrap" onSubmit={handleSubmitSearch} style={{ gap: "16px", marginBottom: "32px" }}>
             <input
               ref={inputRef}
               className="id-input companion-search-input"
               type="text"
-              placeholder="제주그룹 ID (예: tester_id, jeju_lover)"
+              placeholder="제주그룹 회원 ID를 입력해라"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{ padding: "18px 24px", fontSize: "16px", borderRadius: "12px" }}
+              autoComplete="off"
             />
             <button 
               type="submit" 
@@ -100,7 +102,6 @@ export const CompanionManageModal = ({
             </button>
           </form>
 
-          {/* 에러 메시지 */}
           {errorObj && (
             <div className="error-message" style={{ color: "red", fontSize: "13px", marginBottom: "16px", fontWeight: 600 }}>
               <i data-lucide="alert-circle" style={{ marginRight: "4px", width: "14px", height: "14px", verticalAlign: "text-bottom" }} />
@@ -108,7 +109,6 @@ export const CompanionManageModal = ({
             </div>
           )}
 
-          {/* 검색 결과 */}
           {searchResult && (
             <div className="search-result-wrap list-item" style={{ padding: "20px 24px", marginBottom: "32px", borderRadius: "16px" }}>
               <div className="companion-result-item item-info">
@@ -119,27 +119,30 @@ export const CompanionManageModal = ({
                 <div className="user-info name-meta" style={{ gap: "4px" }}>
                   <strong style={{ fontSize: "16px" }}>{searchResult.name}</strong>
                   <span style={{ fontSize: "14px" }}>@{searchResult.id}</span>
+                  <span style={{ fontSize: "13px", color: "var(--meta-text-muted)" }}>
+                    {isSearchResultLinked ? "이미 연동된 제주그룹 회원" : "연동 가능한 제주그룹 회원"}
+                  </span>
                 </div>
               </div>
               <button 
                 className="add-btn companion-add-btn pill-shape" 
                 type="button" 
                 onClick={() => addCompanion(searchResult)}
+                disabled={isSearchResultLinked}
                 style={{ padding: "12px 28px", fontSize: "14px" }}
               >
-                추가
+                {isSearchResultLinked ? "연동됨" : "추가"}
               </button>
             </div>
           )}
 
-          {/* 등록된 동행자 리스트 */}
           <div className="linked-companions-section">
             <h4 style={{ fontSize: "16px", fontWeight: 800, marginBottom: "20px", color: "var(--meta-text-main)" }}>
               연동된 동행자 ({companions.length}명)
             </h4>
             {companions.length === 0 ? (
               <p className="empty-list" style={{ padding: "48px 20px", fontSize: "15px" }}>
-                아직 연동된 동행자가 없다. ID를 검색해서 추가해라.
+                아직 연동된 동행자가 없다. 제주그룹 회원 ID를 검색해서 추가해라.
               </p>
             ) : (
               <div className="companion-linked-list companion-list-scroll" style={{ gap: "16px", maxHeight: "280px" }}>
@@ -152,6 +155,7 @@ export const CompanionManageModal = ({
                       </div>
                       <div className="user-info name-meta">
                         <strong style={{ fontSize: "16px" }}>{comp.name}</strong>
+                        <span style={{ fontSize: "13px", color: "var(--meta-text-muted)" }}>@{comp.id}</span>
                       </div>
                     </div>
                     <button 

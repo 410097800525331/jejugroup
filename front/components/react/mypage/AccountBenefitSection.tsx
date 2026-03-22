@@ -34,6 +34,13 @@ const normalizeProfile = (profile: EditableProfile): EditableProfile => ({
 const isEditableProfileValid = (profile: EditableProfile) =>
   profile.name.trim().length > 0 && profile.email.trim().includes("@") && profile.phone.trim().length > 0;
 
+const getBenefitValueStyle = (tone: (typeof STATS)[number]["tone"]) =>
+  tone === "point"
+    ? {
+        color: "#1f2937",
+      }
+    : undefined;
+
 export const AccountBenefitSection = () => {
   const { dispatch, state } = useDashboardState() as {
     dispatch: DashboardDispatch;
@@ -41,6 +48,7 @@ export const AccountBenefitSection = () => {
   };
   const dashboardProfile = state.profile ?? PROFILE;
   const dashboardStats = state.stats?.length ? state.stats : STATS;
+  const passport = dashboardProfile.passport;
   const [profile, setProfile] = useState<EditableProfile>(() => createEditableProfile(dashboardProfile));
   const [draftProfile, setDraftProfile] = useState<EditableProfile>(() => createEditableProfile(dashboardProfile));
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -117,26 +125,28 @@ export const AccountBenefitSection = () => {
             </div>
           </SectionCard>
 
-          {dashboardProfile.passport ? (
-            <SectionCard className="passport-info-box meta-glass-theme">
-              <div className="box-head">
-                <h3>패스포트 정보</h3>
-              </div>
-              <div className="box-body">
-                <div className="passport-visual soft-radius">
-                  <i className="lucide-passport" />
-                  <div className="pass-meta">
-                    <span className="pass-num">{dashboardProfile.passport.number}</span>
-                    <span className="pass-country">{dashboardProfile.passport.issuingCountry}</span>
-                  </div>
-                </div>
-                <div className="info-row">
-                  <span className="label">여권 만료일</span>
-                  <strong className="value">{dashboardProfile.passport.expiryDate}</strong>
+          <SectionCard className="passport-info-box meta-glass-theme">
+            <div className="box-head">
+              <h3>패스포트 정보</h3>
+            </div>
+            <div className="box-body">
+              <div
+                className="passport-visual soft-radius"
+                style={passport ? undefined : { background: "linear-gradient(135deg, #ff7a00 0%, #ff9d47 100%)" }}
+              >
+                <div className="pass-meta">
+                  <span className="pass-num">{passport?.number ?? "미등록"}</span>
+                  <span className="pass-country">
+                    {passport?.issuingCountry ?? "해외 여행 전에 여권 정보를 등록해라"}
+                  </span>
                 </div>
               </div>
-            </SectionCard>
-          ) : null}
+              <div className="info-row">
+                <span className="label">{passport ? "여권 만료일" : "등록 상태"}</span>
+                <strong className="value">{passport?.expiryDate ?? "등록 필요"}</strong>
+              </div>
+            </div>
+          </SectionCard>
 
           <SectionCard className="benefit-history-box meta-glass-theme full-width-bento">
             <div className="box-head">
@@ -146,7 +156,9 @@ export const AccountBenefitSection = () => {
               {dashboardStats.slice(0, 2).map((stat) => (
                 <div className={`benefit-tile tone-${stat.tone} soft-radius`} key={stat.label}>
                   <span className="benefit-label">{stat.label}</span>
-                  <strong className="benefit-value">{stat.value}</strong>
+                  <strong className="benefit-value" style={getBenefitValueStyle(stat.tone)}>
+                    {stat.value}
+                  </strong>
                   <button className="history-link" type="button">
                     상세 내역 확인
                   </button>
@@ -159,17 +171,16 @@ export const AccountBenefitSection = () => {
 
       {isEditModalOpen ? (
         <div className="meta-modal-overlay" onClick={closeEditModal}>
-          <div className="meta-modal-content soft-radius meta-glass-theme" onClick={(event) => event.stopPropagation()}>
+          <div
+            className="meta-modal-content soft-radius meta-glass-theme"
+            onClick={(event) => event.stopPropagation()}
+            style={{ padding: "36px" }}
+          >
             <header className="modal-header">
               <div className="header-title-wrap">
                 <h3>개인정보 수정</h3>
               </div>
-              <button className="close-btn" type="button" aria-label="개인정보 수정 닫기" onClick={closeEditModal}>
-                ×
-              </button>
             </header>
-
-            <p className="modal-desc">마이페이지에 보이는 이름, 이메일, 휴대전화만 바로 수정할 수 있다.</p>
 
             <div className="profile-link-preview soft-radius">
               <div className="companion-avatar soft-radius is-linked" aria-hidden="true">
@@ -182,47 +193,56 @@ export const AccountBenefitSection = () => {
               </div>
             </div>
 
-            <div className="box-body">
-              <div className="info-row">
-                <span className="label">이름</span>
-                <div style={{ flex: "0 1 280px", width: "100%" }}>
+            <div className="box-body" style={{ display: "flex", flexDirection: "column", gap: "18px", padding: 0, width: "100%" }}>
+              <div className="info-row" style={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: "10px", padding: 0, borderBottom: "none" }}>
+                <span className="label" style={{ fontSize: "15px" }}>이름</span>
+                <div style={{ width: "100%" }}>
                   <input
                     className="id-input"
                     type="text"
                     value={draftProfile.name}
                     onChange={(event) => setDraftProfile((current) => ({ ...current, name: event.target.value }))}
+                    style={{ width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }}
                   />
                 </div>
               </div>
-              <div className="info-row">
-                <span className="label">이메일</span>
-                <div style={{ flex: "0 1 280px", width: "100%" }}>
+              <div className="info-row" style={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: "10px", padding: 0, borderBottom: "none" }}>
+                <span className="label" style={{ fontSize: "15px" }}>이메일</span>
+                <div style={{ width: "100%" }}>
                   <input
                     className="id-input"
                     type="email"
                     value={draftProfile.email}
                     onChange={(event) => setDraftProfile((current) => ({ ...current, email: event.target.value }))}
+                    style={{ width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }}
                   />
                 </div>
               </div>
-              <div className="info-row">
-                <span className="label">휴대전화</span>
-                <div style={{ flex: "0 1 280px", width: "100%" }}>
+              <div className="info-row" style={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: "10px", padding: 0, borderBottom: "none" }}>
+                <span className="label" style={{ fontSize: "15px" }}>휴대전화</span>
+                <div style={{ width: "100%" }}>
                   <input
                     className="id-input"
                     type="tel"
                     value={draftProfile.phone}
                     onChange={(event) => setDraftProfile((current) => ({ ...current, phone: event.target.value }))}
+                    style={{ width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }}
                   />
                 </div>
               </div>
             </div>
 
-            <footer className="modal-footer">
-              <button className="cancel-btn pill-shape" type="button" onClick={closeEditModal}>
+            <footer className="modal-footer" style={{ marginTop: "34px", gap: "14px" }}>
+              <button className="cancel-btn pill-shape" type="button" onClick={closeEditModal} style={{ padding: "18px 0", fontSize: "15px" }}>
                 취소
               </button>
-              <button className="save-btn pill-shape" type="button" onClick={handleSaveProfile} disabled={isSaveDisabled}>
+              <button
+                className="save-btn pill-shape"
+                type="button"
+                onClick={handleSaveProfile}
+                disabled={isSaveDisabled}
+                style={{ padding: "18px 0", fontSize: "15px" }}
+              >
                 저장
               </button>
             </footer>

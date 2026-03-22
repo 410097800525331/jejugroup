@@ -344,7 +344,7 @@ const normalizePassport = (passport: unknown): PassportInfo | undefined => {
 
 const normalizeStats = (source: unknown, fallback: StatItem[]): StatItem[] => {
   if (Array.isArray(source) && source.length > 0) {
-    return source.map((item, index) => normalizeStatItem(item, fallback[index % fallback.length] ?? fallback[0], true));
+    return fallback.map((stat, index) => normalizeStatItem(source[index], stat, true));
   }
 
   if (Array.isArray(source) && source.length === 0) {
@@ -412,18 +412,16 @@ const normalizeBookings = (bookings: unknown, fallback: BookingItem[]): BookingI
 };
 
 const buildSummaryStats = (source: Record<string, unknown>, fallback: StatItem[]): StatItem[] => {
-  return fallback.flatMap((stat) => {
+  return fallback.map((stat) => {
     const summaryValue = pickSummaryValue(source, summaryKeysByTone(stat.tone));
     if (summaryValue === undefined) {
-      return [];
+      return { ...stat };
     }
 
-    return [
-      {
-        ...stat,
-        value: formatSummaryValue(summaryValue, stat),
-      },
-    ];
+    return {
+      ...stat,
+      value: formatSummaryValue(summaryValue, stat),
+    };
   });
 };
 

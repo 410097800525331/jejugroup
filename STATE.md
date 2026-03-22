@@ -2,44 +2,40 @@
 
 ## Current Task
 
-- task: `Delete the unused companion-management popup implementation from the mypage dashboard`
+- task: `Refine the mypage benefit-point tone and add smooth expand/collapse animation to the itinerary CTA`
 - phase: `verify`
-- scope: `front/components/react/mypage/CompanionModal.tsx, front/pages/mypage/styles/_modal.css`
-- verification_target: `The mypage dashboard should keep the visible companion CTA shell while the unused companion popup component file and its dedicated comp-modal styles are fully removed without breaking the mypage build`
+- scope: `front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/ItinerarySection.tsx`
+- verification_target: `The point benefit tile should use a more refined dark value color and the itinerary expand CTA should open and close extra schedule blocks with a smooth animation while preserving existing content and controls`
 
 ## Route
 
-- route: `Route B`
-- reason: `Scope expanded beyond the active Route A slice into two directories with implementation-file deletion and style cleanup across front/components/react/mypage and front/pages/mypage/styles`
+- route: `Route A`
+- reason: `Two small presentation tweaks confined to component files within the same mypage island directory, with no shared CSS, runtime, mirror, or cross-directory ownership changes`
 
 ## Writer Slot
 
-- owner: `worker_mypage_companion_delete`
-- write_set: `front/components/react/mypage/CompanionModal.tsx, front/pages/mypage/styles/_modal.css`
-- write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_mypage_companion_delete`: `front/components/react/mypage/CompanionModal.tsx, front/pages/mypage/styles/_modal.css`
-  - `reviewer_mypage_companion_delete`: `review only`
-- note: `Single coupled cleanup slice across the unused popup component file and its dedicated comp-modal style block; splitting the deletion further would add overhead without reducing risk.`
+- owner: `main`
+- write_set: `front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/ItinerarySection.tsx`
+- note: `Keep the current layout system intact and limit the work to a point-value tone adjustment plus component-level expand/collapse animation.`
 
 ## Contract Freeze
 
-- contract_freeze: `Delete the unused front/components/react/mypage/CompanionModal.tsx file and remove only the dedicated .comp-modal* popup styles and companion-popup keyframes from front/pages/mypage/styles/_modal.css; keep the existing itinerary CTA button and the personal-info modal styles intact.`
+- contract_freeze: `Do not touch shared CSS files. Update only the mypage component files so the point benefit value uses a more premium dark tone and the itinerary extra items animate smoothly when the expand CTA toggles.`
 
 ## Seed
 
 - status: `n/a`
 - path: `n/a`
 - revision: `n/a`
-- note: `Tiny single-file popup removal hotfix; spec-first skipped per workspace rules.`
+- note: `Tight mypage island logic slice with no shared runtime or mirror impact; spec-first skipped per workspace rules.`
 
 ## Reviewer
 
-- reviewer: `reviewer_mypage_companion_delete`
-- reviewer_target: `Worker cleanup of the unused companion popup component and dedicated popup styles`
-- reviewer_focus: `No lingering import/reference to CompanionModal, no accidental removal of the personal-info modal styles, and no mypage build regression`
+- reviewer: `n/a`
+- reviewer_target: `n/a`
+- reviewer_focus: `n/a`
 
 ## Last Update
 
-- timestamp: `2026-03-22 23:00 +09:00`
-- note: `worker_mypage_companion_delete removed the unused CompanionModal component file and dedicated popup styles, reviewer_mypage_companion_delete reported no findings, and pnpm run build:front passed.`
+- timestamp: `2026-03-23 00:09 +09:00`
+- note: `Updated the point benefit value to a refined dark tone and added smooth component-level expand/collapse animation for extra itinerary blocks, and pnpm run build:front passed.`

@@ -39,6 +39,27 @@ const getMembershipTone = (membership?: string) => {
   return "neutral";
 };
 
+const getStatIconName = (tone: StatItem["tone"]) => {
+  switch (tone) {
+    case "point":
+      return "coins";
+    case "coupon":
+      return "ticket-percent";
+    case "air":
+      return "briefcase-business";
+    case "wallet":
+      return "wallet";
+    case "stay":
+      return "hotel";
+    case "rent":
+      return "car-front";
+    case "voucher":
+      return "ticket";
+    default:
+      return "circle";
+  }
+};
+
 export const SummarySection = () => {
   const { state } = useDashboardState() as { state: DashboardStateSlice };
   const profile = state.profile ?? PROFILE;
@@ -97,9 +118,7 @@ export const SummarySection = () => {
         {stats.map((stat) => (
           <SectionCard className={`stat-card meta-glass-theme tone-${stat.tone}`} key={stat.label}>
             <div className="stat-icon-box">
-              {stat.tone === "point" && <i data-lucide="coins" className="lucide-coins" />}
-              {stat.tone === "coupon" && <i data-lucide="ticket-percent" className="lucide-ticket-percent" />}
-              {stat.tone === "air" && <i data-lucide="briefcase-business" className="lucide-briefcase-business" />}
+              <i data-lucide={getStatIconName(stat.tone)} className={`lucide-${getStatIconName(stat.tone)}`} />
             </div>
 
 

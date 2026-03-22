@@ -3,16 +3,38 @@ import type { ItineraryCompanion } from "./types";
 
 interface UseCompanionManagerProps {
   initialCompanions?: ItineraryCompanion[];
+  lookupMemberById?: CompanionMemberLookup;
 }
 
-// 목업 데이터: 실제로는 API 페치 들어갈 자리
-const MOCK_DB: Record<string, Omit<ItineraryCompanion, "isMember">> = {
+type CompanionMemberLookup = (memberId: string) => Promise<ItineraryCompanion | null>;
+
+// 실제 DB/API 연동 시 이 디렉터리 조회 함수만 교체하면 되게 분리한다.
+const MOCK_MEMBER_DIRECTORY: Record<string, Omit<ItineraryCompanion, "isMember">> = {
   "tester_id": { id: "tester_id", name: "테스터" },
   "jeju_lover": { id: "jeju_lover", name: "제주사랑" },
   "dev_ray": { id: "dev_ray", name: "레이" },
 };
 
-export const useCompanionManager = ({ initialCompanions = [] }: UseCompanionManagerProps = {}) => {
+const normalizeMemberId = (value: string) => value.trim().toLowerCase();
+
+const defaultLookupMemberById: CompanionMemberLookup = async (memberId) => {
+  await new Promise((resolve) => setTimeout(resolve, 400));
+
+  const found = MOCK_MEMBER_DIRECTORY[memberId];
+  if (!found) {
+    return null;
+  }
+
+  return {
+    ...found,
+    isMember: true,
+  };
+};
+
+export const useCompanionManager = ({
+  initialCompanions = [],
+  lookupMemberById = defaultLookupMemberById,
+}: UseCompanionManagerProps = {}) => {
   const [companions, setCompanions] = useState<ItineraryCompanion[]>(initialCompanions);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState<ItineraryCompanion | null>(null);
@@ -20,33 +42,37 @@ export const useCompanionManager = ({ initialCompanions = [] }: UseCompanionMana
   const [errorObj, setErrorObj] = useState<{ message: string } | null>(null);
 
   const handleSearch = useCallback(async (query: string) => {
-    // 널 체크, 길이 체크 (방어적 프로그래밍)
-    if (!query || query.trim().length === 0) {
-      setErrorObj({ message: "검색할 ID를 입력해라" });
+    const normalizedQuery = normalizeMemberId(query);
+
+    if (!normalizedQuery) {
+      setErrorObj({ message: "검색할 제주그룹 회원 ID를 입력해라" });
       setSearchResult(null);
       return;
     }
-    
+
+    if (!/^[a-z0-9._-]{2,30}$/i.test(normalizedQuery)) {
+      setErrorObj({ message: "회원 ID는 영문, 숫자, 점, 밑줄, 하이픈만 쓸 수 있다" });
+      setSearchResult(null);
+      return;
+    }
+
     setIsSearching(true);
     setErrorObj(null);
     setSearchResult(null);
 
     try {
-      // API 레이턴시 시뮬레이션
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      
-      const found = MOCK_DB[query.trim()];
+      const found = await lookupMemberById(normalizedQuery);
       if (found) {
-        setSearchResult({ ...found, isMember: true });
+        setSearchResult(found);
       } else {
-        setErrorObj({ message: "존재하지 않는 사용자다" });
+        setErrorObj({ message: "일치하는 제주그룹 회원 ID를 찾지 못했다" });
       }
-    } catch (err) {
-      setErrorObj({ message: "검색 중 에러가 발생했다" });
+    } catch (_error) {
+      setErrorObj({ message: "회원 조회 중 오류가 발생했다. 잠시 후 다시 시도해라" });
     } finally {
       setIsSearching(false);
     }
-  }, []);
+  }, [lookupMemberById]);
 
   const clearSearch = useCallback(() => {
     setSearchQuery("");
@@ -56,7 +82,6 @@ export const useCompanionManager = ({ initialCompanions = [] }: UseCompanionMana
 
   const addCompanion = useCallback((companion: ItineraryCompanion) => {
     setCompanions((prev) => {
-      // 중복 체크 및 불변성 유지 (스프레드 문법 강제)
       if (prev.some((c) => c.id === companion.id)) {
         return prev;
       }
