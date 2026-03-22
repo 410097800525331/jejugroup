@@ -92,3 +92,19 @@
   - `worker_mypage_companion_delete` deleted the unused modal component and removed dedicated popup styles
   - `pnpm run build:front` passed
   - `reviewer_mypage_companion_delete` reported `발견 없음`
+
+- time: `2026-03-23 15:08 +09:00`
+- route: `Route B`
+- task: `Promote jeju-spring to JDK 21 and start the Spring + Thymeleaf landing mirror from front`
+- participants: `main`, `worker_spring_runtime (Laplace)`, `worker_landing_mirror (Descartes)`, `reviewer_spring_landing (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_runtime`: `jeju-spring/pom.xml, scripts/spring/run-jeju-spring-maven.cjs, package.json, jeju-spring/README.md`
+  - `worker_landing_mirror`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/**, jeju-spring/src/main/resources/templates/**, jeju-spring/src/main/resources/static/**`
+  - `reviewer_spring_landing`: `review only`
+- verification:
+  - `node --check scripts/spring/run-jeju-spring-maven.cjs` passed
+  - `node -e "const pkg=require('./package.json'); ..."` package script check passed
+  - Spring landing static mirror existence check passed
+  - reviewer final pass reported `발견 없음`
+  - Maven package verification stayed blocked because `java`/`JAVA_HOME` is not installed in this workspace and the open failure was logged to `ERROR_LOG.md`

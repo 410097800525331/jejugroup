@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>jeju-spring</name>
-	<description>JejuGroup Spring Boot and Thymeleaf migration bootstrap</description>
+		<description>JejuGroup Spring Boot WAR + Thymeleaf runtime for external Tomcat 10.1</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -28,7 +28,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

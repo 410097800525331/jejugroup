@@ -17,7 +17,7 @@ public class MigrationController {
         this.migrationDashboardFactory = migrationDashboardFactory;
     }
 
-    @GetMapping({ "/", "/migration" })
+    @GetMapping("/migration")
     public String dashboard(Model model) {
         MigrationDashboardView dashboard = migrationDashboardFactory.buildDashboard();
         model.addAttribute("dashboard", dashboard);

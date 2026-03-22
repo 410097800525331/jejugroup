@@ -1,6 +1,6 @@
 # jeju-spring
 
-`jeju-spring`은 기존 `jeju-web` 배포를 한 번에 걷어내지 않고, Spring Boot WAR + Thymeleaf 구조를 페이지 단위로 이행하기 위한 독립 모듈이다.
+`jeju-spring`은 외부 Tomcat 10.1에 배포하는 Spring Boot WAR + Thymeleaf 모듈이다. JDK 21 기준으로 패키징하고, 기존 `jeju-web` 배포를 한 번에 걷어내지 않고 페이지 단위로 이행한다.
 
 ## 현재 구조
 
@@ -113,6 +113,6 @@
 
 - 루트에서 `pnpm run spring:run`
 - 루트에서 `pnpm run spring:test`
-- 루트에서 `pnpm run spring:package`
+- 루트에서 `pnpm run spring:war-package`
 
-`scripts/spring/run-jeju-spring-maven.cjs`는 `JAVA_HOME`이 비어 있으면 PATH 또는 대표 설치 경로에서 JDK를 찾도록 보완되어 있다. 그래도 JDK 자체가 없으면 Maven wrapper는 실행되지 않는다.
+`scripts/spring/run-jeju-spring-maven.cjs`는 `JAVA_HOME`이 비어 있으면 PATH 또는 대표 설치 경로에서 JDK를 찾고, JDK 21 미만이면 바로 중단한다. 이 모듈은 embedded Tomcat이 아니라 외부 Tomcat 10.1 WAR 배포 경로를 전제로 한다.

@@ -17,17 +17,16 @@ const env = {
   ...process.env
 };
 
-const resolveJavaExecutable = () => {
-  const binaryName = process.platform === 'win32' ? 'java.exe' : 'java';
-  const pathCandidates = (process.env.PATH || '')
-    .split(path.delimiter)
-    .filter(Boolean)
-    .map((entry) => path.join(entry, binaryName));
+const getJavaBinaryName = () => (process.platform === 'win32' ? 'java.exe' : 'java');
 
-  for (const candidate of pathCandidates) {
-    if (fs.existsSync(candidate)) {
-      return candidate;
-    }
+const getJavaExecutableCandidates = () => {
+  const binaryName = getJavaBinaryName();
+  const candidates = [];
+
+  for (const entry of (process.env.PATH || '')
+    .split(path.delimiter)
+    .filter(Boolean)) {
+    candidates.push(path.join(entry, binaryName));
   }
 
   if (process.platform === 'win32') {
@@ -47,10 +46,7 @@ const resolveJavaExecutable = () => {
       }
 
       if (root.toLowerCase().endsWith('java') || root.toLowerCase().includes('jdk')) {
-        const directCandidate = path.join(root, 'bin', binaryName);
-        if (fs.existsSync(directCandidate)) {
-          return directCandidate;
-        }
+        candidates.push(path.join(root, 'bin', binaryName));
       }
 
       for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
@@ -58,10 +54,68 @@ const resolveJavaExecutable = () => {
           continue;
         }
 
-        const candidate = path.join(root, entry.name, 'bin', binaryName);
-        if (fs.existsSync(candidate)) {
-          return candidate;
-        }
+        candidates.push(path.join(root, entry.name, 'bin', binaryName));
+      }
+    }
+  }
+
+  return candidates;
+};
+
+const getJavaHomeFromExecutable = (javaExecutable) => {
+  const result = spawnSync(javaExecutable, ['-XshowSettings:properties', '-version'], {
+    encoding: 'utf8'
+  });
+
+  if (result.error || result.status !== 0 && result.status !== 1) {
+    return null;
+  }
+
+  const output = `${result.stdout ?? ''}\n${result.stderr ?? ''}`;
+  const homeMatch = output.match(/^\s*java\.home\s*=\s*(.+)\s*$/im);
+  const versionMatch = output.match(/version "(?:1\.)?(\d+)/i);
+
+  if (!homeMatch || !versionMatch) {
+    return null;
+  }
+
+  const javaHome = homeMatch[1].trim();
+  const javaMajorVersion = Number.parseInt(versionMatch[1], 10);
+
+  if (!Number.isInteger(javaMajorVersion)) {
+    return null;
+  }
+
+  const javaBinary = path.join(javaHome, 'bin', getJavaBinaryName());
+  if (!fs.existsSync(javaBinary)) {
+    return null;
+  }
+
+  return {
+    javaHome,
+    javaMajorVersion
+  };
+};
+
+const resolveJavaHome = () => {
+  const configuredHomes = [env.JAVA_HOME, env.JDK_HOME].filter(Boolean);
+  for (const configuredHome of configuredHomes) {
+    const configuredJava = path.join(configuredHome, 'bin', getJavaBinaryName());
+    if (!fs.existsSync(configuredJava)) {
+      continue;
+    }
+
+    const inspection = getJavaHomeFromExecutable(configuredJava);
+    if (inspection) {
+      return inspection;
+    }
+  }
+
+  for (const candidate of getJavaExecutableCandidates()) {
+    if (fs.existsSync(candidate)) {
+      const inspection = getJavaHomeFromExecutable(candidate);
+      if (inspection) {
+        return inspection;
       }
     }
   }
@@ -69,29 +123,24 @@ const resolveJavaExecutable = () => {
   return null;
 };
 
-const resolveJavaHome = () => {
-  const configuredHome = env.JAVA_HOME || env.JDK_HOME;
-  if (configuredHome) {
-    const configuredJava = path.join(configuredHome, 'bin', process.platform === 'win32' ? 'java.exe' : 'java');
-    if (fs.existsSync(configuredJava)) {
-      return configuredHome;
-    }
-  }
+const javaInspection = resolveJavaHome();
 
-  const javaExecutable = resolveJavaExecutable();
-  if (!javaExecutable) {
-    return null;
-  }
-
-  return path.dirname(path.dirname(javaExecutable));
-};
-
-const javaHome = resolveJavaHome();
-
-if (javaHome) {
-  env.JAVA_HOME = javaHome;
+if (javaInspection) {
+  env.JAVA_HOME = javaInspection.javaHome;
 } else {
-  console.error('[jeju-spring] JDK를 찾지 못했습니다. JDK 17+ 설치 후 JAVA_HOME 또는 PATH를 확인하세요.');
+  console.error('[jeju-spring] JDK를 찾지 못했습니다. JDK 21+ 설치 후 JAVA_HOME 또는 PATH를 확인하세요.');
+  process.exit(1);
+}
+
+const javaMajorVersion = javaInspection.javaMajorVersion;
+
+if (javaMajorVersion == null) {
+  console.error('[jeju-spring] Java 버전을 확인하지 못했습니다. JDK 21+ 환경인지 다시 확인하세요.');
+  process.exit(1);
+}
+
+if (javaMajorVersion < 21) {
+  console.error(`[jeju-spring] 현재 JDK ${javaMajorVersion}은(는) 지원하지 않습니다. jeju-spring은 JDK 21+ 기준으로 패키징합니다.`);
   process.exit(1);
 }
 

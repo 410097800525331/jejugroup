@@ -31,3 +31,15 @@ Do not rewrite existing entries; append only.
 - details: `PROFILE/STATS/BOOKINGS 초기화가 cloneProfile/cloneStats/cloneBookings const 함수식보다 먼저 실행되면서 Cannot access before initialization 예외가 발생했고, 그 결과 bootstrap 모듈 import 가 중단되어 랜딩 헤더와 route-link 동작이 전부 비활성화됐다. clone helper 를 함수 선언으로 바꿔 해결했고 guard:text, build:front, headless DOM 검증으로 복구를 확인했다.`
 - status: `resolved`
 
+- time: `2026-03-23 14:24 +09:00`
+- location: `jeju-spring/mvnw package verification`
+- summary: `패키징 검증이 현재 환경의 JDK 미설치로 차단됨`
+- details: `./mvnw -q -DskipTests package 는 JAVA_HOME 이 올바르지 않다는 오류로 중단됐고, node scripts/spring/run-jeju-spring-maven.cjs -q -DskipTests package 는 PATH/JAVA_HOME 에서 java 를 찾지 못해 JDK 21+ 설치 요구 메시지로 종료됐다. 코드 변경은 JDK 21 기준으로 맞췄지만, 실제 패키징은 이 환경에서 수행할 수 없었다.`
+- status: `open`
+
+- time: `2026-03-23 15:46 +09:00`
+- location: `jeju-spring/mvnw package verification`
+- summary: `JDK 21 설치 후 패키징 차단 해소`
+- details: `Temurin JDK 21 과 Tomcat 10.1.52 를 로컬에 설치한 뒤 pnpm run spring:war-package 를 다시 실행했고, 라우트 변경으로 깨진 JejuSpringApplicationTests 1건을 현재 계약에 맞게 수정한 후 BUILD SUCCESS 를 확인했다. 산출물 jeju-spring-0.0.1-SNAPSHOT.war 와 ROOT.war 를 확보했고, 로컬 Tomcat webapps/ROOT.war 배치 후 http://127.0.0.1:8080/ 응답도 확인했다.`
+- status: `resolved`
+

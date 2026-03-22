@@ -1,33 +1,33 @@
-﻿# STATE
+# STATE
 
 ## Current Task
 
-- task: `Refine the mypage benefit-point tone and add smooth expand/collapse animation to the itinerary CTA`
-- phase: `verify`
-- scope: `front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/ItinerarySection.tsx`
-- verification_target: `The point benefit tile should use a more refined dark value color and the itinerary expand CTA should open and close extra schedule blocks with a smooth animation while preserving existing content and controls`
+- task: `Remove the obsolete jeju-web mirror pre-commit block now that front work no longer syncs into jeju-web`
+- phase: `implementation`
+- scope: `.githooks/pre-commit, scripts/guards/**, package.json, docs/text-integrity-guardrails.md`
+- verification_target: `Commits should no longer be blocked by jeju-web mirror mismatch checks while the remaining text-integrity guard still runs and the docs/scripts reflect the new workflow`
 
 ## Route
 
 - route: `Route A`
-- reason: `Two small presentation tweaks confined to component files within the same mypage island directory, with no shared CSS, runtime, mirror, or cross-directory ownership changes`
+- reason: `Small bounded workflow adjustment across hook/guard/docs files with no shared runtime or mirror implementation changes`
 
 ## Writer Slot
 
 - owner: `main`
-- write_set: `front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/ItinerarySection.tsx`
-- note: `Keep the current layout system intact and limit the work to a point-value tone adjustment plus component-level expand/collapse animation.`
+- write_set: `.githooks/pre-commit, scripts/guards/**, package.json, docs/text-integrity-guardrails.md`
+- note: `Keep the change limited to disabling the obsolete jeju-web mirror guard and aligning the developer-facing workflow text.`
 
 ## Contract Freeze
 
-- contract_freeze: `Do not touch shared CSS files. Update only the mypage component files so the point benefit value uses a more premium dark tone and the itinerary extra items animate smoothly when the expand CTA toggles.`
+- contract_freeze: `Do not edit application source files. Remove the pre-commit requirement that front changes must already be mirrored into jeju-web, and update the related guard/doc/package messaging so the current front -> jeju-spring workflow is what developers see.`
 
 ## Seed
 
 - status: `n/a`
 - path: `n/a`
 - revision: `n/a`
-- note: `Tight mypage island logic slice with no shared runtime or mirror impact; spec-first skipped per workspace rules.`
+- note: `Spec-first skipped because this is a small developer-workflow adjustment.`
 
 ## Reviewer
 
@@ -37,5 +37,5 @@
 
 ## Last Update
 
-- timestamp: `2026-03-23 00:09 +09:00`
-- note: `Updated the point benefit value to a refined dark tone and added smooth component-level expand/collapse animation for extra itinerary blocks, and pnpm run build:front passed.`
+- timestamp: `2026-03-23 16:12 +09:00`
+- note: `Reclassified the active task to remove the obsolete jeju-web mirror commit block and align local hook/guard/docs with the current jeju-spring-centered workflow.`
