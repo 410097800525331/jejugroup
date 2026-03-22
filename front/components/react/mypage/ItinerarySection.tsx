@@ -1,11 +1,12 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ItineraryActivity, ItineraryCompanion, ItineraryItem } from "./types";
-import { ITINERARY as INITIAL_ITINERARY } from "./data";
 import { SectionCard } from "./SectionCard";
 import { CompanionManageModal } from "./CompanionManageModal";
+import { useDashboardState } from "./state";
 
 export const ItinerarySection = () => {
-  const [itinerary, setItinerary] = useState<ItineraryItem[]>(INITIAL_ITINERARY);
+  const { dispatch, state } = useDashboardState();
+  const itinerary = state.itinerary ?? [];
   const [isExpanded, setIsExpanded] = useState(false);
   const [manageModalDayId, setManageModalDayId] = useState<string | null>(null);
   const dayBlockRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -39,26 +40,34 @@ export const ItinerarySection = () => {
   }, [itinerary, isExpanded]);
 
   const handleToggleActivity = (dayId: string, activityId: string) => {
-    setItinerary(itinerary.map(item => {
-      if (item.id === dayId) {
-        return {
-          ...item,
-          activities: item.activities.map(act => 
-            act.id === activityId ? { ...act, checked: !act.checked } : act
-          )
-        };
-      }
-      return item;
-    }));
+    dispatch({
+      type: "SET_ITINERARY",
+      payload: itinerary.map((item) => {
+        if (item.id === dayId) {
+          return {
+            ...item,
+            activities: item.activities.map((act) =>
+              act.id === activityId ? { ...act, checked: !act.checked } : act,
+            ),
+          };
+        }
+
+        return item;
+      }),
+    });
   };
 
   const handleSaveCompanions = (dayId: string, newCompanions: ItineraryCompanion[]) => {
-    setItinerary(itinerary.map(item => {
-      if (item.id === dayId) {
-        return { ...item, companions: newCompanions };
-      }
-      return item;
-    }));
+    dispatch({
+      type: "SET_ITINERARY",
+      payload: itinerary.map((item) => {
+        if (item.id === dayId) {
+          return { ...item, companions: newCompanions };
+        }
+
+        return item;
+      }),
+    });
     setManageModalDayId(null);
   };
 

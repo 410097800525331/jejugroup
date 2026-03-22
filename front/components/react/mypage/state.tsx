@@ -1,19 +1,22 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, type Dispatch, type ReactNode } from "react";
 import { applyDashboardSnapshot, createDashboardFallbackSnapshot, normalizeDashboardSnapshot } from "@front-components/mypage/data";
-import type { BookingItem, BookingType, DashboardSnapshot, StatItem, UserProfile } from "./types";
+import type { BookingItem, BookingType, DashboardSnapshot, ItineraryItem, StatItem, SupportItem, UserProfile } from "./types";
 
 type BookingFilter = "all" | BookingType;
 
 export interface DashboardState {
   bookings: BookingItem[];
   filter: BookingFilter;
+  itinerary: ItineraryItem[];
   profile: UserProfile;
   stats: StatItem[];
+  supportItems: SupportItem[];
 }
 
 type DashboardAction =
   | { type: "HYDRATE_DASHBOARD"; payload: DashboardSnapshot }
   | { type: "PATCH_PROFILE"; payload: Partial<UserProfile> }
+  | { type: "SET_ITINERARY"; payload: ItineraryItem[] }
   | { type: "SET_FILTER"; payload: BookingFilter };
 
 const SESSION_STORAGE_KEY = "userSession";
@@ -26,8 +29,10 @@ const initialState = (): DashboardState => {
   return {
     bookings: snapshot.bookings,
     filter: "all",
+    itinerary: snapshot.itinerary,
     profile: snapshot.profile,
     stats: snapshot.stats,
+    supportItems: snapshot.supportItems,
   };
 };
 
@@ -40,12 +45,18 @@ const reducer = (state: DashboardState, action: DashboardAction): DashboardState
           ...booking,
           tags: [...booking.tags],
         })),
+        itinerary: action.payload.itinerary.map((item) => ({
+          ...item,
+          activities: item.activities.map((activity) => ({ ...activity })),
+          companions: item.companions.map((companion) => ({ ...companion })),
+        })),
         profile: {
           ...action.payload.profile,
           memberships: [...action.payload.profile.memberships],
           passport: action.payload.profile.passport ? { ...action.payload.profile.passport } : undefined,
         },
         stats: action.payload.stats.map((stat) => ({ ...stat })),
+        supportItems: action.payload.supportItems.map((item) => ({ ...item })),
       };
     case "PATCH_PROFILE":
       return {
@@ -63,6 +74,15 @@ const reducer = (state: DashboardState, action: DashboardAction): DashboardState
                 ? { ...action.payload.passport }
                 : undefined,
         },
+      };
+    case "SET_ITINERARY":
+      return {
+        ...state,
+        itinerary: action.payload.map((item) => ({
+          ...item,
+          activities: item.activities.map((activity) => ({ ...activity })),
+          companions: item.companions.map((companion) => ({ ...companion })),
+        })),
       };
     case "SET_FILTER":
       return { ...state, filter: action.payload };
@@ -130,8 +150,10 @@ const resolveSession = async (): Promise<unknown | null> => {
 
 const snapshotFromState = (state: DashboardState): DashboardSnapshot => ({
   bookings: state.bookings,
+  itinerary: state.itinerary,
   profile: state.profile,
   stats: state.stats,
+  supportItems: state.supportItems,
 });
 
 const mergeProfilePatch = (profile: UserProfile, patch: Partial<UserProfile>): UserProfile => ({
@@ -156,8 +178,10 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     } else if (action.type === "PATCH_PROFILE") {
       applyDashboardSnapshot({
         bookings: state.bookings,
+        itinerary: state.itinerary,
         profile: mergeProfilePatch(state.profile, action.payload),
         stats: state.stats,
+        supportItems: state.supportItems,
       });
     }
 
@@ -166,7 +190,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     applyDashboardSnapshot(snapshotFromState(state));
-  }, [state.bookings, state.profile, state.stats]);
+  }, [state.bookings, state.itinerary, state.profile, state.stats, state.supportItems]);
 
   useEffect(() => {
     let active = true;

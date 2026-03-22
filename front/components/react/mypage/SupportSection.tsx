@@ -1,7 +1,10 @@
-import { SUPPORT_ITEMS } from "./data";
 import { SectionCard } from "./SectionCard";
+import { useDashboardState } from "./state";
 
 export const SupportSection = () => {
+  const { state } = useDashboardState();
+  const supportItems = state.supportItems ?? [];
+
   return (
     <section className="meta-section layer-support">
       <header className="section-header">
@@ -10,7 +13,7 @@ export const SupportSection = () => {
       </header>
 
       <div className="support-bento-grid bento-grid">
-        {SUPPORT_ITEMS.map((item) => (
+        {supportItems.map((item) => (
           <a className={`support-item-card bento-item meta-glass-theme soft-radius ${item.id}`} href={item.href} key={item.id}>
             <div className="sp-icon">
               <img

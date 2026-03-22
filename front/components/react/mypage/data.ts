@@ -179,8 +179,10 @@ export const SUPPORT_ITEMS: SupportItem[] = [
 
 export const createDashboardFallbackSnapshot = (): DashboardSnapshot => ({
   bookings: cloneBookings(FALLBACK_BOOKINGS),
+  itinerary: cloneItinerary(ITINERARY),
   profile: cloneProfile(FALLBACK_PROFILE),
   stats: cloneStats(FALLBACK_STATS),
+  supportItems: cloneSupportItems(SUPPORT_ITEMS),
 });
 
 export const normalizeDashboardSnapshot = (session: unknown): DashboardSnapshot => {
@@ -194,8 +196,10 @@ export const normalizeDashboardSnapshot = (session: unknown): DashboardSnapshot 
 
   return {
     bookings: normalizeBookings(source.bookings, fallback.bookings),
+    itinerary: normalizeItinerary(source.itinerary, fallback.itinerary),
     profile: normalizeProfile(source, fallback.profile),
     stats: normalizeStats(source.stats ?? source, fallback.stats),
+    supportItems: normalizeSupportItems(source.supportItems ?? source.support ?? source.inquiries, fallback.supportItems),
   };
 };
 
@@ -203,6 +207,8 @@ export const applyDashboardSnapshot = (snapshot: DashboardSnapshot) => {
   syncProfile(PROFILE, snapshot.profile);
   syncStats(STATS, snapshot.stats);
   syncBookings(BOOKINGS, snapshot.bookings);
+  syncItinerary(ITINERARY, snapshot.itinerary);
+  syncSupportItems(SUPPORT_ITEMS, snapshot.supportItems);
 };
 
 function cloneProfile(profile: UserProfile): UserProfile {
@@ -222,6 +228,18 @@ function cloneBookings(bookings: BookingItem[]): BookingItem[] {
     ...booking,
     tags: [...booking.tags],
   }));
+}
+
+function cloneItinerary(itinerary: ItineraryItem[]): ItineraryItem[] {
+  return itinerary.map((item) => ({
+    ...item,
+    activities: item.activities.map((activity) => ({ ...activity })),
+    companions: item.companions.map((companion) => ({ ...companion })),
+  }));
+}
+
+function cloneSupportItems(items: SupportItem[]): SupportItem[] {
+  return items.map((item) => ({ ...item }));
 }
 
 const syncProfile = (target: UserProfile, source: UserProfile) => {
@@ -254,6 +272,22 @@ const syncBookings = (target: BookingItem[], source: BookingItem[]) => {
       tags: [...booking.tags],
     })),
   );
+};
+
+const syncItinerary = (target: ItineraryItem[], source: ItineraryItem[]) => {
+  target.splice(
+    0,
+    target.length,
+    ...source.map((item) => ({
+      ...item,
+      activities: item.activities.map((activity) => ({ ...activity })),
+      companions: item.companions.map((companion) => ({ ...companion })),
+    })),
+  );
+};
+
+const syncSupportItems = (target: SupportItem[], source: SupportItem[]) => {
+  target.splice(0, target.length, ...source.map((item) => ({ ...item })));
 };
 
 const flattenSessionSource = (session: unknown): Record<string, unknown> => {
@@ -411,6 +445,22 @@ const normalizeBookings = (bookings: unknown, fallback: BookingItem[]): BookingI
   return bookings.map((item, index) => normalizeBookingItem(item, fallback[index % fallback.length] ?? fallback[0], true));
 };
 
+const normalizeItinerary = (itinerary: unknown, fallback: ItineraryItem[]): ItineraryItem[] => {
+  if (!Array.isArray(itinerary) || itinerary.length === 0) {
+    return cloneItinerary(fallback);
+  }
+
+  return itinerary.map((item, index) => normalizeItineraryItem(item, fallback[index % fallback.length] ?? fallback[0]));
+};
+
+const normalizeSupportItems = (items: unknown, fallback: SupportItem[]): SupportItem[] => {
+  if (!Array.isArray(items) || items.length === 0) {
+    return cloneSupportItems(fallback);
+  }
+
+  return items.map((item, index) => normalizeSupportItem(item, fallback[index % fallback.length] ?? fallback[0]));
+};
+
 const buildSummaryStats = (source: Record<string, unknown>, fallback: StatItem[]): StatItem[] => {
   return fallback.map((stat) => {
     const summaryValue = pickSummaryValue(source, summaryKeysByTone(stat.tone));
@@ -491,6 +541,79 @@ const normalizeBookingItem = (item: unknown, fallback: BookingItem, hasSession =
     type,
     voucherUrl: toText(record.voucherUrl) ?? (hasSession ? undefined : fallback.voucherUrl),
   };
+};
+
+const normalizeItineraryItem = (item: unknown, fallback: ItineraryItem): ItineraryItem => {
+  const record = isRecord(item) ? item : {};
+  const activities = Array.isArray(record.activities)
+    ? record.activities.map((activity, index) =>
+        normalizeItineraryActivity(activity, fallback.activities[index % fallback.activities.length] ?? fallback.activities[0]),
+      )
+    : fallback.activities.map((activity) => ({ ...activity }));
+  const companions = Array.isArray(record.companions)
+    ? record.companions.map((companion, index) =>
+        normalizeItineraryCompanion(companion, fallback.companions[index % fallback.companions.length] ?? fallback.companions[0]),
+      )
+    : fallback.companions.map((companion) => ({ ...companion }));
+
+  return {
+    activities,
+    companions,
+    date: toText(record.date) ?? fallback.date,
+    googleMapUrl: toText(record.googleMapUrl) ?? fallback.googleMapUrl,
+    id: toText(record.id) ?? fallback.id,
+    time: toText(record.time) ?? fallback.time,
+    title: toText(record.title) ?? fallback.title,
+  };
+};
+
+const normalizeItineraryActivity = (activity: unknown, fallback: ItineraryItem["activities"][number]) => {
+  const record = isRecord(activity) ? activity : {};
+
+  return {
+    checked: typeof record.checked === "boolean" ? record.checked : fallback.checked,
+    id: toText(record.id) ?? fallback.id,
+    label: toText(record.label) ?? fallback.label,
+  };
+};
+
+const normalizeItineraryCompanion = (companion: unknown, fallback: ItineraryItem["companions"][number]) => {
+  const record = isRecord(companion) ? companion : {};
+
+  return {
+    id: toText(record.id) ?? fallback.id,
+    isMember: typeof record.isMember === "boolean" ? record.isMember : fallback.isMember,
+    name: toText(record.name) ?? fallback.name,
+  };
+};
+
+const normalizeSupportItem = (item: unknown, fallback: SupportItem): SupportItem => {
+  const record = isRecord(item) ? item : {};
+
+  return {
+    count: normalizeSupportCount(record.count, fallback.count),
+    href: toText(record.href) ?? fallback.href,
+    id: toText(record.id) ?? fallback.id,
+    label: toText(record.label) ?? fallback.label,
+  };
+};
+
+const normalizeSupportCount = (value: unknown, fallback: SupportItem["count"]) => {
+  if (value === null) {
+    return null;
+  }
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  const text = toText(value);
+  if (!text) {
+    return fallback;
+  }
+
+  const numeric = Number(text);
+  return Number.isFinite(numeric) ? numeric : fallback;
 };
 
 const summaryKeysByTone = (tone: StatItem["tone"]): string[] => {

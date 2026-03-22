@@ -49,6 +49,35 @@ export interface SupportItem {
   label: string;
 }
 
+export interface DashboardItineraryActivityInput {
+  checked?: boolean;
+  id?: string;
+  label?: string;
+}
+
+export interface DashboardItineraryCompanionInput {
+  id?: string;
+  isMember?: boolean;
+  name?: string;
+}
+
+export interface DashboardItineraryInput {
+  activities?: DashboardItineraryActivityInput[] | null;
+  companions?: DashboardItineraryCompanionInput[] | null;
+  date?: string;
+  googleMapUrl?: string;
+  id?: string;
+  time?: string;
+  title?: string;
+}
+
+export interface DashboardSupportInput {
+  count?: number | string | null;
+  href?: string;
+  id?: string;
+  label?: string;
+}
+
 export interface PassportInfo {
   expiryDate: string;
   issuingCountry: string;
@@ -103,6 +132,8 @@ export interface DashboardSessionInput {
   data?: unknown;
   email?: string;
   id?: string;
+  inquiries?: DashboardSupportInput[] | null;
+  itinerary?: DashboardItineraryInput[] | null;
   member?: unknown;
   memberships?: Array<string | null | undefined>;
   name?: string;
@@ -112,13 +143,16 @@ export interface DashboardSessionInput {
   role?: string;
   session?: unknown;
   stats?: StatItem[] | DashboardStatSummary | null;
+  support?: DashboardSupportInput[] | null;
+  supportItems?: DashboardSupportInput[] | null;
   tier?: string;
   user?: unknown;
 }
 
 export interface DashboardSnapshot {
   bookings: BookingItem[];
+  itinerary: ItineraryItem[];
   profile: UserProfile;
   stats: StatItem[];
+  supportItems: SupportItem[];
 }
-
