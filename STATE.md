@@ -2,32 +2,32 @@
 
 ## Current Task
 
-- task: `Stage 3 - Convert mypage itinerary to account-scoped status-driven travel events with global linked companions`
+- task: `Document the durable mypage handoff rules and current implementation checkpoints for future work on any machine`
 - phase: `verify`
-- scope: `front/components/react/mypage/types.ts, front/components/react/mypage/data.ts, front/components/react/mypage/state.tsx, front/components/react/mypage/mockAccountDashboardStore.ts, front/components/react/mypage/ItinerarySection.tsx, front/components/react/mypage/CompanionManageModal.tsx, front/components/react/mypage/useCompanionManager.ts, SEED.mypage-step3.yaml`
-- verification_target: `The mypage dashboard should keep its current design while itinerary items become read-only status-driven travel events aggregated from the current account plus globally linked companions`
+- scope: `docs/mypage-handoff.md, STATE.md`
+- verification_target: `The repository should contain a durable mypage handoff document that captures the current architecture, hard rules, completed checkpoints, and future-work cautions for later use on another machine`
 
 ## Route
 
 - route: `Route A`
-- reason: `Single bounded mypage-domain slice confined to one directory plus one seed file, with one writer and one mechanical verification step`
+- reason: `Small docs-only handoff slice with one writer, no application behavior changes, and straightforward text verification`
 
 ## Writer Slot
 
 - owner: `main`
-- write_set: `front/components/react/mypage/types.ts, front/components/react/mypage/data.ts, front/components/react/mypage/state.tsx, front/components/react/mypage/mockAccountDashboardStore.ts, front/components/react/mypage/ItinerarySection.tsx, front/components/react/mypage/CompanionManageModal.tsx, front/components/react/mypage/useCompanionManager.ts, SEED.mypage-step3.yaml`
-- note: `Keep this commit limited to the mypage-side status model, linked-companion aggregation, and read-only itinerary rendering without touching styles or purchase-flow pages.`
+- write_set: `docs/mypage-handoff.md, STATE.md`
+- note: `Keep this commit limited to durable documentation of the already-finished mypage foundation and the rules for future work.`
 
 ## Contract Freeze
 
-- contract_freeze: `Do not change any CSS or visual layout. Replace the current manual itinerary checklist data flow with account-scoped travel-event status data, aggregate linked companion events through the mock storage seam, keep the companion modal visual design, and leave actual purchase-flow writers for a later stage.`
+- contract_freeze: `Do not change application code. Capture the current mypage architecture, hard rules, completed checkpoint commits, seed files, and future implementation cautions in a durable docs handoff file only.`
 
 ## Seed
 
-- status: `frozen`
-- path: `SEED.mypage-step3.yaml`
-- revision: `2026-03-23-stage3`
-- note: `Stage 3 seed freezes the status-driven itinerary and global linked-companion model before purchase-flow writers are added.`
+- status: `n/a`
+- path: `n/a`
+- revision: `n/a`
+- note: `Spec-first skipped because this is a small docs-only handoff task.`
 
 ## Reviewer
 
@@ -37,5 +37,5 @@
 
 ## Last Update
 
-- timestamp: `2026-03-23 17:07 +09:00`
-- note: `Stage 3 status-driven itinerary and global linked-companion refactor is implemented under SEED.mypage-step3.yaml, user-driven itinerary toggles are removed, and pnpm run build:front passed.`
+- timestamp: `2026-03-23 17:24 +09:00`
+- note: `Added docs/mypage-handoff.md as the durable long-term handoff document for future machines and pnpm run guard:text passed.`
