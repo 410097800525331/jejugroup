@@ -1,6 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, type Dispatch, type ReactNode } from "react";
 import { applyDashboardSnapshot, createDashboardFallbackSnapshot, normalizeDashboardSnapshot } from "@front-components/mypage/data";
 import type { BookingItem, BookingType, DashboardSnapshot, ItineraryItem, StatItem, SupportItem, UserProfile } from "./types";
+import {
+  MYPAGE_DASHBOARD_MOCK_EVENT_NAME,
+  MYPAGE_DASHBOARD_MOCK_STORAGE_PREFIX,
+  mergeDashboardSources,
+  readAccountDashboardMock,
+} from "./mockAccountDashboardStore";
 
 type BookingFilter = "all" | BookingType;
 
@@ -197,7 +203,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
     const hydrate = async (source?: unknown | null) => {
       const resolvedSession = source === undefined ? await resolveSession() : source;
-      const snapshot = normalizeDashboardSnapshot(resolvedSession);
+      const snapshot = normalizeDashboardSnapshot(mergeDashboardSources(resolvedSession, readAccountDashboardMock(resolvedSession)));
 
       if (!active) {
         return;
@@ -210,11 +216,16 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     void hydrate();
 
     const handleStorage = (event: StorageEvent) => {
-      if (event.key !== SESSION_STORAGE_KEY) {
+      if (event.key === SESSION_STORAGE_KEY) {
+        void hydrate(parseSessionPayload(event.newValue));
         return;
       }
 
-      void hydrate(parseSessionPayload(event.newValue));
+      if (!event.key?.startsWith(MYPAGE_DASHBOARD_MOCK_STORAGE_PREFIX)) {
+        return;
+      }
+
+      void hydrate();
     };
 
     const handleSessionUpdate = (event: Event) => {
@@ -222,13 +233,19 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
       void hydrate(detail?.session ?? null);
     };
 
+    const handleMockDashboardUpdate = () => {
+      void hydrate();
+    };
+
     window.addEventListener("storage", handleStorage);
     window.addEventListener(SESSION_EVENT_NAME, handleSessionUpdate as EventListener);
+    window.addEventListener(MYPAGE_DASHBOARD_MOCK_EVENT_NAME, handleMockDashboardUpdate as EventListener);
 
     return () => {
       active = false;
       window.removeEventListener("storage", handleStorage);
       window.removeEventListener(SESSION_EVENT_NAME, handleSessionUpdate as EventListener);
+      window.removeEventListener(MYPAGE_DASHBOARD_MOCK_EVENT_NAME, handleMockDashboardUpdate as EventListener);
     };
   }, [dispatch]);
 
