@@ -17,6 +17,10 @@ export interface ItineraryActivity {
   checked: boolean;
   id: string;
   label: string;
+  ownerId?: string;
+  ownerName?: string;
+  status?: TravelEventStatus;
+  type?: BookingType;
 }
 
 export interface ItineraryCompanion {
@@ -61,6 +65,22 @@ export interface DashboardItineraryCompanionInput {
   name?: string;
 }
 
+export type TravelEventStatus = "reserved" | "used" | "cancelled" | "missed";
+
+export interface TravelEvent {
+  activityLabel: string;
+  date: string;
+  dayId: string;
+  googleMapUrl: string;
+  id: string;
+  ownerId: string;
+  ownerName: string;
+  status: TravelEventStatus;
+  time: string;
+  title: string;
+  type: BookingType;
+}
+
 export interface DashboardItineraryInput {
   activities?: DashboardItineraryActivityInput[] | null;
   companions?: DashboardItineraryCompanionInput[] | null;
@@ -76,6 +96,20 @@ export interface DashboardSupportInput {
   href?: string;
   id?: string;
   label?: string;
+}
+
+export interface DashboardTravelEventInput {
+  activityLabel?: string;
+  date?: string;
+  dayId?: string;
+  googleMapUrl?: string;
+  id?: string;
+  ownerId?: string;
+  ownerName?: string;
+  status?: TravelEventStatus;
+  time?: string;
+  title?: string;
+  type?: BookingType;
 }
 
 export interface PassportInfo {
@@ -134,6 +168,7 @@ export interface DashboardSessionInput {
   id?: string;
   inquiries?: DashboardSupportInput[] | null;
   itinerary?: DashboardItineraryInput[] | null;
+  linkedCompanions?: DashboardItineraryCompanionInput[] | null;
   member?: unknown;
   memberships?: Array<string | null | undefined>;
   name?: string;
@@ -146,13 +181,16 @@ export interface DashboardSessionInput {
   support?: DashboardSupportInput[] | null;
   supportItems?: DashboardSupportInput[] | null;
   tier?: string;
+  travelEvents?: DashboardTravelEventInput[] | null;
   user?: unknown;
 }
 
 export interface DashboardSnapshot {
   bookings: BookingItem[];
   itinerary: ItineraryItem[];
+  linkedCompanions: ItineraryCompanion[];
   profile: UserProfile;
   stats: StatItem[];
   supportItems: SupportItem[];
+  travelEvents: TravelEvent[];
 }

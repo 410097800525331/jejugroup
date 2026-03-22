@@ -1,12 +1,14 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, type Dispatch, type ReactNode } from "react";
 import { applyDashboardSnapshot, createDashboardFallbackSnapshot, normalizeDashboardSnapshot } from "@front-components/mypage/data";
-import type { BookingItem, BookingType, DashboardSnapshot, ItineraryItem, StatItem, SupportItem, UserProfile } from "./types";
+import type { BookingItem, BookingType, DashboardSnapshot, ItineraryCompanion, ItineraryItem, StatItem, SupportItem, TravelEvent, UserProfile } from "./types";
 import {
   MYPAGE_DASHBOARD_MOCK_EVENT_NAME,
   MYPAGE_DASHBOARD_MOCK_STORAGE_PREFIX,
   mergeDashboardSources,
   readAccountDashboardMock,
+  readAccountDashboardMockByAccountKey,
 } from "./mockAccountDashboardStore";
+import { normalizeTravelEventsInput } from "./data";
 
 type BookingFilter = "all" | BookingType;
 
@@ -14,15 +16,17 @@ export interface DashboardState {
   bookings: BookingItem[];
   filter: BookingFilter;
   itinerary: ItineraryItem[];
+  linkedCompanions: ItineraryCompanion[];
   profile: UserProfile;
   stats: StatItem[];
   supportItems: SupportItem[];
+  travelEvents: TravelEvent[];
 }
 
 type DashboardAction =
   | { type: "HYDRATE_DASHBOARD"; payload: DashboardSnapshot }
   | { type: "PATCH_PROFILE"; payload: Partial<UserProfile> }
-  | { type: "SET_ITINERARY"; payload: ItineraryItem[] }
+  | { type: "SET_LINKED_COMPANIONS"; payload: ItineraryCompanion[] }
   | { type: "SET_FILTER"; payload: BookingFilter };
 
 const SESSION_STORAGE_KEY = "userSession";
@@ -36,9 +40,11 @@ const initialState = (): DashboardState => {
     bookings: snapshot.bookings,
     filter: "all",
     itinerary: snapshot.itinerary,
+    linkedCompanions: snapshot.linkedCompanions,
     profile: snapshot.profile,
     stats: snapshot.stats,
     supportItems: snapshot.supportItems,
+    travelEvents: snapshot.travelEvents,
   };
 };
 
@@ -56,6 +62,7 @@ const reducer = (state: DashboardState, action: DashboardAction): DashboardState
           activities: item.activities.map((activity) => ({ ...activity })),
           companions: item.companions.map((companion) => ({ ...companion })),
         })),
+        linkedCompanions: action.payload.linkedCompanions.map((companion) => ({ ...companion })),
         profile: {
           ...action.payload.profile,
           memberships: [...action.payload.profile.memberships],
@@ -63,6 +70,7 @@ const reducer = (state: DashboardState, action: DashboardAction): DashboardState
         },
         stats: action.payload.stats.map((stat) => ({ ...stat })),
         supportItems: action.payload.supportItems.map((item) => ({ ...item })),
+        travelEvents: action.payload.travelEvents.map((event) => ({ ...event })),
       };
     case "PATCH_PROFILE":
       return {
@@ -81,14 +89,10 @@ const reducer = (state: DashboardState, action: DashboardAction): DashboardState
                 : undefined,
         },
       };
-    case "SET_ITINERARY":
+    case "SET_LINKED_COMPANIONS":
       return {
         ...state,
-        itinerary: action.payload.map((item) => ({
-          ...item,
-          activities: item.activities.map((activity) => ({ ...activity })),
-          companions: item.companions.map((companion) => ({ ...companion })),
-        })),
+        linkedCompanions: action.payload.map((companion) => ({ ...companion })),
       };
     case "SET_FILTER":
       return { ...state, filter: action.payload };
@@ -157,9 +161,11 @@ const resolveSession = async (): Promise<unknown | null> => {
 const snapshotFromState = (state: DashboardState): DashboardSnapshot => ({
   bookings: state.bookings,
   itinerary: state.itinerary,
+  linkedCompanions: state.linkedCompanions,
   profile: state.profile,
   stats: state.stats,
   supportItems: state.supportItems,
+  travelEvents: state.travelEvents,
 });
 
 const mergeProfilePatch = (profile: UserProfile, patch: Partial<UserProfile>): UserProfile => ({
@@ -176,6 +182,40 @@ const mergeProfilePatch = (profile: UserProfile, patch: Partial<UserProfile>): U
         : undefined,
 });
 
+const mergeTravelEventSources = (session: unknown) => {
+  const fallbackAccountSession = { id: createDashboardFallbackSnapshot().profile.id };
+  const accountScopedSession = session ?? fallbackAccountSession;
+  const baseSource = mergeDashboardSources(session, readAccountDashboardMock(accountScopedSession));
+  const baseSnapshot = normalizeDashboardSnapshot(baseSource);
+
+  if (baseSnapshot.linkedCompanions.length === 0) {
+    return normalizeDashboardSnapshot(baseSource);
+  }
+
+  const aggregatedTravelEvents = [
+    ...baseSnapshot.travelEvents,
+    ...baseSnapshot.linkedCompanions.flatMap((companion) => {
+      const companionMock = readAccountDashboardMockByAccountKey(companion.id);
+      if (!companionMock || !("travelEvents" in companionMock)) {
+        return [];
+      }
+
+      return normalizeTravelEventsInput(companionMock.travelEvents).map((event) => ({
+        ...event,
+        ownerId: event.ownerId || companion.id,
+        ownerName: event.ownerName || companion.name,
+      }));
+    }),
+  ];
+
+  return normalizeDashboardSnapshot(
+    mergeDashboardSources(baseSource, {
+      linkedCompanions: baseSnapshot.linkedCompanions,
+      travelEvents: aggregatedTravelEvents,
+    }),
+  );
+};
+
 export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
   const handleDispatch = (action: DashboardAction) => {
@@ -185,9 +225,11 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
       applyDashboardSnapshot({
         bookings: state.bookings,
         itinerary: state.itinerary,
+        linkedCompanions: state.linkedCompanions,
         profile: mergeProfilePatch(state.profile, action.payload),
         stats: state.stats,
         supportItems: state.supportItems,
+        travelEvents: state.travelEvents,
       });
     }
 
@@ -196,14 +238,14 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     applyDashboardSnapshot(snapshotFromState(state));
-  }, [state.bookings, state.itinerary, state.profile, state.stats, state.supportItems]);
+  }, [state.bookings, state.itinerary, state.linkedCompanions, state.profile, state.stats, state.supportItems, state.travelEvents]);
 
   useEffect(() => {
     let active = true;
 
     const hydrate = async (source?: unknown | null) => {
       const resolvedSession = source === undefined ? await resolveSession() : source;
-      const snapshot = normalizeDashboardSnapshot(mergeDashboardSources(resolvedSession, readAccountDashboardMock(resolvedSession)));
+      const snapshot = mergeTravelEventSources(resolvedSession);
 
       if (!active) {
         return;

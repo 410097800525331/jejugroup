@@ -6,11 +6,13 @@ import type {
   PassportInfo,
   StatItem,
   SupportItem,
+  TravelEvent,
   UserProfile,
 } from "./types";
 
 const FALLBACK_PROFILE: UserProfile = {
   email: "minji.hong@jejugroup.example",
+  id: "hong_minji",
   memberships: ["GOLD"],
   name: "홍민지",
   passport: {
@@ -88,88 +90,141 @@ const FALLBACK_BOOKINGS: BookingItem[] = [
   },
 ];
 
+const FALLBACK_LINKED_COMPANIONS = [
+  { id: "park_jy", isMember: true, name: "박준영" },
+  { id: "lee_je", isMember: true, name: "이지은" },
+];
+
+const FALLBACK_TRAVEL_EVENTS: TravelEvent[] = [
+  {
+    activityLabel: "제주항공 7C101 탑승 완료",
+    date: "2026.10.15",
+    dayId: "iti-0",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-air-used",
+    ownerId: "hong_minji",
+    ownerName: "홍민지",
+    status: "used",
+    time: "07:30",
+    title: "제주행 비행기 탑승 및 출발",
+    type: "air",
+  },
+  {
+    activityLabel: "공항 유심 수령 예정",
+    date: "2026.10.15",
+    dayId: "iti-0",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-usim-reserved",
+    ownerId: "hong_minji",
+    ownerName: "홍민지",
+    status: "reserved",
+    time: "07:30",
+    title: "제주행 비행기 탑승 및 출발",
+    type: "voucher",
+  },
+  {
+    activityLabel: "렌터카 픽업 완료",
+    date: "2026.10.15",
+    dayId: "iti-1",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-rent-used",
+    ownerId: "hong_minji",
+    ownerName: "홍민지",
+    status: "used",
+    time: "14:00",
+    title: "제주도 첫날 도착 및 로컬 투어",
+    type: "rent",
+  },
+  {
+    activityLabel: "함덕 액티비티 바우처 사용 완료",
+    date: "2026.10.15",
+    dayId: "iti-1",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-activity-linked-used",
+    ownerId: "park_jy",
+    ownerName: "박준영",
+    status: "used",
+    time: "14:00",
+    title: "제주도 첫날 도착 및 로컬 투어",
+    type: "voucher",
+  },
+  {
+    activityLabel: "우도 잠수함 체험 이용 예정",
+    date: "2026.10.16",
+    dayId: "iti-2",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-submarine-reserved",
+    ownerId: "park_jy",
+    ownerName: "박준영",
+    status: "reserved",
+    time: "10:30",
+    title: "동부 해안 투어 및 성산 액티비티",
+    type: "voucher",
+  },
+  {
+    activityLabel: "성산 액티비티 바우처 미사용",
+    date: "2026.10.16",
+    dayId: "iti-2",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-activity-missed",
+    ownerId: "lee_je",
+    ownerName: "이지은",
+    status: "missed",
+    time: "10:30",
+    title: "동부 해안 투어 및 성산 액티비티",
+    type: "voucher",
+  },
+  {
+    activityLabel: "서귀포 숙소 체크인 완료",
+    date: "2026.10.17",
+    dayId: "iti-3",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-stay-used",
+    ownerId: "hong_minji",
+    ownerName: "홍민지",
+    status: "used",
+    time: "18:00",
+    title: "서귀포 밤 정취 느끼기",
+    type: "stay",
+  },
+  {
+    activityLabel: "야간 투어 바우처 취소됨",
+    date: "2026.10.17",
+    dayId: "iti-3",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-nighttour-cancelled",
+    ownerId: "lee_je",
+    ownerName: "이지은",
+    status: "cancelled",
+    time: "18:00",
+    title: "서귀포 밤 정취 느끼기",
+    type: "voucher",
+  },
+  {
+    activityLabel: "제주항공 7C102 탑승 예정",
+    date: "2026.10.18",
+    dayId: "iti-4",
+    googleMapUrl: "https://maps.google.com",
+    id: "travel-return-reserved",
+    ownerId: "hong_minji",
+    ownerName: "홍민지",
+    status: "reserved",
+    time: "19:30",
+    title: "서울/김포행 귀국 비행기 탑승",
+    type: "air",
+  },
+];
+
 export const PROFILE: UserProfile = cloneProfile(FALLBACK_PROFILE);
 export const STATS: StatItem[] = cloneStats(FALLBACK_STATS);
 export const BOOKINGS: BookingItem[] = cloneBookings(FALLBACK_BOOKINGS);
-
-export const ITINERARY: ItineraryItem[] = [
-  {
-    activities: [
-      { checked: true, id: "act-01", label: "인천공항 제1여객터미널 도착" },
-      { checked: true, id: "act-02", label: "제주항공 7C101 셀프 체크인" },
-      { checked: false, id: "act-03", label: "모바일 탑승권 확인 및 보안검색" },
-    ],
-    companions: [
-      { id: "comp-1", isMember: true, name: "박준영" },
-      { id: "comp-2", isMember: true, name: "이지은" },
-    ],
-    date: "2026.10.15",
-    googleMapUrl: "https://maps.google.com",
-    id: "iti-0",
-    time: "07:30",
-    title: "제주행 비행기 탑승 및 출발",
-  },
-  {
-    activities: [
-      { checked: true, id: "act-1", label: "제주 공항 도착 및 렌터카 픽업" },
-      { checked: false, id: "act-2", label: "고기국수 맛집 방문 (자매국수)" },
-      { checked: false, id: "act-3", label: "함덕 해수욕장 산책 및 카페" },
-    ],
-    companions: [
-      { id: "comp-1", isMember: true, name: "박준영" },
-      { id: "comp-2", isMember: true, name: "이지은" },
-    ],
-    date: "2026.10.15",
-    googleMapUrl: "https://maps.google.com",
-    id: "iti-1",
-    time: "14:00",
-    title: "제주도 첫날 도착 및 로컬 투어",
-  },
-  {
-    activities: [
-      { checked: false, id: "act-4", label: "우도 잠수함 체험 및 우도 산책" },
-      { checked: false, id: "act-5", label: "성산일출봉 등반 (일몰 감상)" },
-    ],
-    companions: [{ id: "comp-1", isMember: true, name: "박준영" }],
-    date: "2026.10.16",
-    googleMapUrl: "https://maps.google.com",
-    id: "iti-2",
-    time: "10:30",
-    title: "동부 해안 투어 및 성산 액티비티",
-  },
-  {
-    activities: [
-      { checked: false, id: "act-6", label: "서귀포 올레시장 먹거리 탐방" },
-      { checked: false, id: "act-7", label: "천지연 폭포 야간 산책" },
-    ],
-    companions: [
-      { id: "comp-1", isMember: true, name: "박준영" },
-      { id: "comp-2", isMember: true, name: "이지은" },
-      { id: "comp-3", isMember: true, name: "최수진" },
-    ],
-    date: "2026.10.17",
-    googleMapUrl: "https://maps.google.com",
-    id: "iti-3",
-    time: "18:00",
-    title: "서귀포 밤 정취 느끼기",
-  },
-  {
-    activities: [
-      { checked: false, id: "act-08", label: "면세점 쇼핑 및 기념품 구매" },
-      { checked: false, id: "act-09", label: "제주 공항 바이오 등록 승인" },
-      { checked: false, id: "act-10", label: "제주항공 7C102 탑승 대기" },
-    ],
-    companions: [
-      { id: "comp-1", isMember: true, name: "박준영" },
-      { id: "comp-2", isMember: true, name: "이지은" },
-    ],
-    date: "2026.10.18",
-    googleMapUrl: "https://maps.google.com",
-    id: "iti-4",
-    time: "19:30",
-    title: "서울/김포행 귀국 비행기 탑승",
-  },
-];
+export const LINKED_COMPANIONS = cloneCompanions(FALLBACK_LINKED_COMPANIONS);
+export const TRAVEL_EVENTS = cloneTravelEvents(FALLBACK_TRAVEL_EVENTS);
+export const ITINERARY: ItineraryItem[] = buildItineraryFromTravelEvents({
+  currentAccountId: FALLBACK_PROFILE.id ?? "",
+  linkedCompanions: LINKED_COMPANIONS,
+  travelEvents: TRAVEL_EVENTS,
+});
 
 export const SUPPORT_ITEMS: SupportItem[] = [
   { count: 1, href: "#", id: "qna", label: "1:1 문의 내역" },
@@ -180,9 +235,11 @@ export const SUPPORT_ITEMS: SupportItem[] = [
 export const createDashboardFallbackSnapshot = (): DashboardSnapshot => ({
   bookings: cloneBookings(FALLBACK_BOOKINGS),
   itinerary: cloneItinerary(ITINERARY),
+  linkedCompanions: cloneCompanions(LINKED_COMPANIONS),
   profile: cloneProfile(FALLBACK_PROFILE),
   stats: cloneStats(FALLBACK_STATS),
   supportItems: cloneSupportItems(SUPPORT_ITEMS),
+  travelEvents: cloneTravelEvents(TRAVEL_EVENTS),
 });
 
 export const normalizeDashboardSnapshot = (session: unknown): DashboardSnapshot => {
@@ -194,12 +251,26 @@ export const normalizeDashboardSnapshot = (session: unknown): DashboardSnapshot 
     return fallback;
   }
 
+  const profile = normalizeProfile(source, fallback.profile);
+  const linkedCompanions = normalizeLinkedCompanions(source.linkedCompanions, fallback.linkedCompanions);
+  const travelEvents = normalizeTravelEvents(source.travelEvents, fallback.travelEvents);
+  const itinerary =
+    source.travelEvents !== undefined
+      ? buildItineraryFromTravelEvents({
+          currentAccountId: profile.id ?? fallback.profile.id ?? "",
+          linkedCompanions,
+          travelEvents,
+        })
+      : normalizeItinerary(source.itinerary, fallback.itinerary);
+
   return {
     bookings: normalizeBookings(source.bookings, fallback.bookings),
-    itinerary: normalizeItinerary(source.itinerary, fallback.itinerary),
-    profile: normalizeProfile(source, fallback.profile),
+    itinerary,
+    linkedCompanions,
+    profile,
     stats: normalizeStats(source.stats ?? source, fallback.stats),
     supportItems: normalizeSupportItems(source.supportItems ?? source.support ?? source.inquiries, fallback.supportItems),
+    travelEvents,
   };
 };
 
@@ -208,7 +279,9 @@ export const applyDashboardSnapshot = (snapshot: DashboardSnapshot) => {
   syncStats(STATS, snapshot.stats);
   syncBookings(BOOKINGS, snapshot.bookings);
   syncItinerary(ITINERARY, snapshot.itinerary);
+  syncCompanions(LINKED_COMPANIONS, snapshot.linkedCompanions);
   syncSupportItems(SUPPORT_ITEMS, snapshot.supportItems);
+  syncTravelEvents(TRAVEL_EVENTS, snapshot.travelEvents);
 };
 
 function cloneProfile(profile: UserProfile): UserProfile {
@@ -230,6 +303,10 @@ function cloneBookings(bookings: BookingItem[]): BookingItem[] {
   }));
 }
 
+function cloneCompanions(companions: Array<{ id: string; isMember: boolean; name: string }>) {
+  return companions.map((companion) => ({ ...companion }));
+}
+
 function cloneItinerary(itinerary: ItineraryItem[]): ItineraryItem[] {
   return itinerary.map((item) => ({
     ...item,
@@ -240,6 +317,10 @@ function cloneItinerary(itinerary: ItineraryItem[]): ItineraryItem[] {
 
 function cloneSupportItems(items: SupportItem[]): SupportItem[] {
   return items.map((item) => ({ ...item }));
+}
+
+function cloneTravelEvents(events: TravelEvent[]): TravelEvent[] {
+  return events.map((event) => ({ ...event }));
 }
 
 const syncProfile = (target: UserProfile, source: UserProfile) => {
@@ -286,8 +367,16 @@ const syncItinerary = (target: ItineraryItem[], source: ItineraryItem[]) => {
   );
 };
 
+const syncCompanions = (target: typeof LINKED_COMPANIONS, source: typeof LINKED_COMPANIONS) => {
+  target.splice(0, target.length, ...source.map((companion) => ({ ...companion })));
+};
+
 const syncSupportItems = (target: SupportItem[], source: SupportItem[]) => {
   target.splice(0, target.length, ...source.map((item) => ({ ...item })));
+};
+
+const syncTravelEvents = (target: TravelEvent[], source: TravelEvent[]) => {
+  target.splice(0, target.length, ...source.map((event) => ({ ...event })));
 };
 
 const flattenSessionSource = (session: unknown): Record<string, unknown> => {
@@ -461,6 +550,29 @@ const normalizeSupportItems = (items: unknown, fallback: SupportItem[]): Support
   return items.map((item, index) => normalizeSupportItem(item, fallback[index % fallback.length] ?? fallback[0]));
 };
 
+const normalizeLinkedCompanions = (companions: unknown, fallback: typeof LINKED_COMPANIONS) => {
+  if (!Array.isArray(companions) || companions.length === 0) {
+    return cloneCompanions(fallback);
+  }
+
+  return companions.map((companion, index) => normalizeLinkedCompanion(companion, fallback[index % fallback.length] ?? fallback[0]));
+};
+
+export const normalizeTravelEventsInput = (events: unknown): TravelEvent[] => {
+  if (!Array.isArray(events) || events.length === 0) {
+    return [];
+  }
+
+  return events
+    .map((event) => normalizeTravelEvent(event))
+    .filter((event): event is TravelEvent => event !== null);
+};
+
+const normalizeTravelEvents = (events: unknown, fallback: TravelEvent[]) => {
+  const normalized = normalizeTravelEventsInput(events);
+  return normalized.length > 0 ? normalized : cloneTravelEvents(fallback);
+};
+
 const buildSummaryStats = (source: Record<string, unknown>, fallback: StatItem[]): StatItem[] => {
   return fallback.map((stat) => {
     const summaryValue = pickSummaryValue(source, summaryKeysByTone(stat.tone));
@@ -571,9 +683,18 @@ const normalizeItineraryActivity = (activity: unknown, fallback: ItineraryItem["
   const record = isRecord(activity) ? activity : {};
 
   return {
-    checked: typeof record.checked === "boolean" ? record.checked : fallback.checked,
+    checked:
+      typeof record.checked === "boolean"
+        ? record.checked
+        : isTravelEventStatus(record.status)
+          ? record.status === "used"
+          : fallback.checked,
     id: toText(record.id) ?? fallback.id,
     label: toText(record.label) ?? fallback.label,
+    ownerId: toText(record.ownerId) ?? fallback.ownerId,
+    ownerName: toText(record.ownerName) ?? fallback.ownerName,
+    status: isTravelEventStatus(record.status) ? record.status : fallback.status,
+    type: isBookingType(record.type) ? record.type : fallback.type,
   };
 };
 
@@ -614,6 +735,129 @@ const normalizeSupportCount = (value: unknown, fallback: SupportItem["count"]) =
 
   const numeric = Number(text);
   return Number.isFinite(numeric) ? numeric : fallback;
+};
+
+const normalizeLinkedCompanion = (
+  companion: unknown,
+  fallback: (typeof LINKED_COMPANIONS)[number],
+) => {
+  const record = isRecord(companion) ? companion : {};
+
+  return {
+    id: toText(record.id) ?? fallback.id,
+    isMember: typeof record.isMember === "boolean" ? record.isMember : fallback.isMember,
+    name: toText(record.name) ?? fallback.name,
+  };
+};
+
+const normalizeTravelEvent = (event: unknown): TravelEvent | null => {
+  const record = isRecord(event) ? event : null;
+  if (!record) {
+    return null;
+  }
+
+  const id = toText(record.id);
+  const dayId = toText(record.dayId);
+  const title = toText(record.title);
+  const date = toText(record.date);
+  const time = toText(record.time);
+  const activityLabel = toText(record.activityLabel);
+  const ownerId = toText(record.ownerId);
+  const ownerName = toText(record.ownerName);
+  const googleMapUrl = toText(record.googleMapUrl);
+
+  if (!id || !dayId || !title || !date || !time || !activityLabel || !ownerId || !ownerName || !googleMapUrl) {
+    return null;
+  }
+
+  return {
+    activityLabel,
+    date,
+    dayId,
+    googleMapUrl,
+    id,
+    ownerId,
+    ownerName,
+    status: isTravelEventStatus(record.status) ? record.status : "reserved",
+    time,
+    title,
+    type: isBookingType(record.type) ? record.type : "voucher",
+  };
+};
+
+const buildItineraryFromTravelEvents = ({
+  currentAccountId,
+  linkedCompanions,
+  travelEvents,
+}: {
+  currentAccountId: string;
+  linkedCompanions: typeof LINKED_COMPANIONS;
+  travelEvents: TravelEvent[];
+}): ItineraryItem[] => {
+  const linkedCompanionMap = new Map(linkedCompanions.map((companion) => [companion.id, companion]));
+  const allowedOwnerIds = new Set([
+    ...(currentAccountId ? [currentAccountId] : []),
+    ...linkedCompanions.map((companion) => companion.id),
+  ]);
+  const grouped = new Map<
+    string,
+    {
+      activities: ItineraryItem["activities"];
+      companions: typeof LINKED_COMPANIONS;
+      date: string;
+      googleMapUrl: string;
+      id: string;
+      sortKey: string;
+      time: string;
+      title: string;
+    }
+  >();
+
+  for (const event of travelEvents) {
+    if (allowedOwnerIds.size > 0 && !allowedOwnerIds.has(event.ownerId)) {
+      continue;
+    }
+
+    const existing = grouped.get(event.dayId);
+    const nextActivity = {
+      checked: event.status === "used",
+      id: event.id,
+      label: event.activityLabel,
+      ownerId: event.ownerId,
+      ownerName: event.ownerName,
+      status: event.status,
+      type: event.type,
+    };
+
+    if (existing) {
+      existing.activities.push(nextActivity);
+      if (event.ownerId !== currentAccountId && linkedCompanionMap.has(event.ownerId)) {
+        const companion = linkedCompanionMap.get(event.ownerId);
+        if (companion && !existing.companions.some((item) => item.id === companion.id)) {
+          existing.companions.push({ ...companion });
+        }
+      }
+      continue;
+    }
+
+    grouped.set(event.dayId, {
+      activities: [nextActivity],
+      companions:
+        event.ownerId !== currentAccountId && linkedCompanionMap.has(event.ownerId)
+          ? [{ ...(linkedCompanionMap.get(event.ownerId) as (typeof LINKED_COMPANIONS)[number]) }]
+          : [],
+      date: event.date,
+      googleMapUrl: event.googleMapUrl,
+      id: event.dayId,
+      sortKey: `${event.date} ${event.time}`,
+      time: event.time,
+      title: event.title,
+    });
+  }
+
+  return Array.from(grouped.values())
+    .sort((left, right) => left.sortKey.localeCompare(right.sortKey))
+    .map(({ sortKey: _sortKey, ...item }) => item);
 };
 
 const summaryKeysByTone = (tone: StatItem["tone"]): string[] => {
@@ -664,6 +908,9 @@ const toText = (value: unknown): string | undefined => {
 
 const isBookingType = (value: unknown): value is BookingType =>
   value === "air" || value === "rent" || value === "stay" || value === "voucher";
+
+const isTravelEventStatus = (value: unknown): value is TravelEvent["status"] =>
+  value === "reserved" || value === "used" || value === "cancelled" || value === "missed";
 
 const isStatTone = (value: unknown): value is StatItem["tone"] =>
   value === "air" || value === "coupon" || value === "point" || value === "rent" || value === "stay" || value === "voucher" || value === "wallet";

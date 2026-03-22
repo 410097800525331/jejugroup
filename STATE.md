@@ -2,32 +2,32 @@
 
 ## Current Task
 
-- task: `Stage 2 - Add an account-scoped mock dashboard storage seam for mypage without changing the current design`
+- task: `Stage 3 - Convert mypage itinerary to account-scoped status-driven travel events with global linked companions`
 - phase: `verify`
-- scope: `front/components/react/mypage/mockAccountDashboardStore.ts, front/components/react/mypage/state.tsx, SEED.mypage-step2.yaml`
-- verification_target: `The mypage dashboard should keep its current visuals while gaining an account-scoped local mock-storage seam that later purchase flows can write into`
+- scope: `front/components/react/mypage/types.ts, front/components/react/mypage/data.ts, front/components/react/mypage/state.tsx, front/components/react/mypage/mockAccountDashboardStore.ts, front/components/react/mypage/ItinerarySection.tsx, front/components/react/mypage/CompanionManageModal.tsx, front/components/react/mypage/useCompanionManager.ts, SEED.mypage-step3.yaml`
+- verification_target: `The mypage dashboard should keep its current design while itinerary items become read-only status-driven travel events aggregated from the current account plus globally linked companions`
 
 ## Route
 
 - route: `Route A`
-- reason: `Single bounded mypage mock-storage slice confined to one directory plus one seed file, with one writer and one mechanical verification step`
+- reason: `Single bounded mypage-domain slice confined to one directory plus one seed file, with one writer and one mechanical verification step`
 
 ## Writer Slot
 
 - owner: `main`
-- write_set: `front/components/react/mypage/mockAccountDashboardStore.ts, front/components/react/mypage/state.tsx, SEED.mypage-step2.yaml`
-- note: `Keep this commit limited to the account-scoped local mock-storage seam that future purchase flows can write into, without touching styles or purchase-flow pages.`
+- write_set: `front/components/react/mypage/types.ts, front/components/react/mypage/data.ts, front/components/react/mypage/state.tsx, front/components/react/mypage/mockAccountDashboardStore.ts, front/components/react/mypage/ItinerarySection.tsx, front/components/react/mypage/CompanionManageModal.tsx, front/components/react/mypage/useCompanionManager.ts, SEED.mypage-step3.yaml`
+- note: `Keep this commit limited to the mypage-side status model, linked-companion aggregation, and read-only itinerary rendering without touching styles or purchase-flow pages.`
 
 ## Contract Freeze
 
-- contract_freeze: `Do not change any CSS or visual layout. Add only an account-scoped local mock-storage seam that can merge later purchase-flow data into the mypage dashboard hydration path, while preserving current fallback content and current interactions.`
+- contract_freeze: `Do not change any CSS or visual layout. Replace the current manual itinerary checklist data flow with account-scoped travel-event status data, aggregate linked companion events through the mock storage seam, keep the companion modal visual design, and leave actual purchase-flow writers for a later stage.`
 
 ## Seed
 
 - status: `frozen`
-- path: `SEED.mypage-step2.yaml`
-- revision: `2026-03-23-stage2`
-- note: `Stage 2 seed freezes the account-scoped local storage seam before later purchase-flow writers are added.`
+- path: `SEED.mypage-step3.yaml`
+- revision: `2026-03-23-stage3`
+- note: `Stage 3 seed freezes the status-driven itinerary and global linked-companion model before purchase-flow writers are added.`
 
 ## Reviewer
 
@@ -37,5 +37,5 @@
 
 ## Last Update
 
-- timestamp: `2026-03-23 16:44 +09:00`
-- note: `Stage 2 account-scoped mock storage seam landed under SEED.mypage-step2.yaml, hydration now merges per-account local mock data when present, and pnpm run build:front passed.`
+- timestamp: `2026-03-23 17:07 +09:00`
+- note: `Stage 3 status-driven itinerary and global linked-companion refactor is implemented under SEED.mypage-step3.yaml, user-driven itinerary toggles are removed, and pnpm run build:front passed.`

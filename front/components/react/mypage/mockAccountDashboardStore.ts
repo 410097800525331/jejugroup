@@ -97,6 +97,10 @@ export const readAccountDashboardMock = (session: unknown): Record<string, unkno
     return null;
   }
 
+  return readAccountDashboardMockByAccountKey(accountKey);
+};
+
+export const readAccountDashboardMockByAccountKey = (accountKey: string): Record<string, unknown> | null => {
   try {
     return parseStoredMock(localStorage.getItem(buildDashboardMockStorageKey(accountKey)));
   } catch {

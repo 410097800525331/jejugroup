@@ -10,9 +10,9 @@ type CompanionMemberLookup = (memberId: string) => Promise<ItineraryCompanion | 
 
 // 실제 DB/API 연동 시 이 디렉터리 조회 함수만 교체하면 되게 분리한다.
 const MOCK_MEMBER_DIRECTORY: Record<string, Omit<ItineraryCompanion, "isMember">> = {
-  "tester_id": { id: "tester_id", name: "테스터" },
-  "jeju_lover": { id: "jeju_lover", name: "제주사랑" },
-  "dev_ray": { id: "dev_ray", name: "레이" },
+  "park_jy": { id: "park_jy", name: "박준영" },
+  "lee_je": { id: "lee_je", name: "이지은" },
+  "choi_sj": { id: "choi_sj", name: "최수진" },
 };
 
 const normalizeMemberId = (value: string) => value.trim().toLowerCase();

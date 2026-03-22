@@ -1,0 +1,25 @@
+goal: >
+  Replace the mypage itinerary's manual checklist ownership with an
+  account-scoped status-driven travel-event model so the dashboard can show
+  reserved, used, and failed usage states for the current account plus linked
+  companions without changing the current design language.
+constraints:
+  - Only edit front source-of-truth files under front/components/react/mypage and this seed file.
+  - Do not change CSS files, visual layout structure, or the overall modal design.
+  - Keep actual purchase-flow hardcoding for 제주에어, 스테이, 렌터카, 액티비티, 유심/바우처 pages out of this stage.
+  - Keep the current dashboard sections and their visible layout intact while changing only the underlying data flow and state rendering logic.
+  - Preserve the ability to roll back cleanly via a dedicated commit after verification.
+acceptance_criteria:
+  - The itinerary no longer treats checklist items as user-toggled source data and instead renders read-only status-driven travel events.
+  - Travel events support at least reserved, used, cancelled, and missed/unused style states in the data model.
+  - The itinerary is aggregated from account-scoped travel-event data for the current account plus globally linked companions.
+  - CompanionManageModal edits one global linked-companion list for the account rather than per-day hardcoded companion lists.
+  - The current mypage design and section layout remain visually intact after the refactor.
+verification:
+  - Run pnpm run build:front.
+  - Review the itinerary component flow to confirm there is no user-driven checkbox state mutation path left.
+  - Review the linked-companion flow to confirm the modal updates the account-scoped linked-companion data instead of a per-day local constant.
+out_of_scope:
+  - Service purchase-flow writers in 제주에어, 스테이, 렌터카, 액티비티, or voucher pages.
+  - Real DB or API persistence.
+  - Global visual redesign or CSS-level restyling.
