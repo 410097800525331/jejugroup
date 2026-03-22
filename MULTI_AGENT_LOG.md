@@ -108,3 +108,20 @@
   - Spring landing static mirror existence check passed
   - reviewer final pass reported `발견 없음`
   - Maven package verification stayed blocked because `java`/`JAVA_HOME` is not installed in this workspace and the open failure was logged to `ERROR_LOG.md`
+
+- time: `2026-03-23 18:18 +09:00`
+- route: `Route B`
+- task: `Fix front component and test errors across hotel sidebar, mypage dashboard data, and front/apps/cs test tooling`
+- participants: `main`, `worker_hotel_fix (Goodall)`, `worker_mypage_fix (Pasteur)`, `worker_cs_tests (Lagrange)`, `reviewer_front_component_test_fix (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_hotel_fix`: `front/components/react/hotel/HotelFilterSidebar.tsx`
+  - `worker_mypage_fix`: `front/components/react/mypage/data.ts`
+  - `worker_cs_tests`: `front/apps/cs/pnpm-lock.yaml`
+  - `reviewer_front_component_test_fix`: `review only`
+- verification:
+  - `pnpm -C front/apps/shell check` passed
+  - `pnpm -C front/apps/cs check` passed
+  - `pnpm -C front/apps/cs test` passed
+  - `git diff --check -- front/components/react/hotel/HotelFilterSidebar.tsx front/components/react/mypage/data.ts front/apps/cs/pnpm-lock.yaml` passed
+  - `reviewer_front_component_test_fix` reported `발견 없음`

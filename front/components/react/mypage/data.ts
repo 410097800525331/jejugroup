@@ -215,6 +215,81 @@ const FALLBACK_TRAVEL_EVENTS: TravelEvent[] = [
   },
 ];
 
+function buildItineraryFromTravelEvents({
+  currentAccountId,
+  linkedCompanions,
+  travelEvents,
+}: {
+  currentAccountId: string;
+  linkedCompanions: typeof LINKED_COMPANIONS;
+  travelEvents: TravelEvent[];
+}): ItineraryItem[] {
+  const linkedCompanionMap = new Map(linkedCompanions.map((companion) => [companion.id, companion]));
+  const allowedOwnerIds = new Set([
+    ...(currentAccountId ? [currentAccountId] : []),
+    ...linkedCompanions.map((companion) => companion.id),
+  ]);
+  const grouped = new Map<
+    string,
+    {
+      activities: ItineraryItem["activities"];
+      companions: typeof LINKED_COMPANIONS;
+      date: string;
+      googleMapUrl: string;
+      id: string;
+      sortKey: string;
+      time: string;
+      title: string;
+    }
+  >();
+
+  for (const event of travelEvents) {
+    if (allowedOwnerIds.size > 0 && !allowedOwnerIds.has(event.ownerId)) {
+      continue;
+    }
+
+    const existing = grouped.get(event.dayId);
+    const nextActivity = {
+      checked: event.status === "used",
+      id: event.id,
+      label: event.activityLabel,
+      ownerId: event.ownerId,
+      ownerName: event.ownerName,
+      status: event.status,
+      type: event.type,
+    };
+
+    if (existing) {
+      existing.activities.push(nextActivity);
+      if (event.ownerId !== currentAccountId && linkedCompanionMap.has(event.ownerId)) {
+        const companion = linkedCompanionMap.get(event.ownerId);
+        if (companion && !existing.companions.some((item) => item.id === companion.id)) {
+          existing.companions.push({ ...companion });
+        }
+      }
+      continue;
+    }
+
+    grouped.set(event.dayId, {
+      activities: [nextActivity],
+      companions:
+        event.ownerId !== currentAccountId && linkedCompanionMap.has(event.ownerId)
+          ? [{ ...(linkedCompanionMap.get(event.ownerId) as (typeof LINKED_COMPANIONS)[number]) }]
+          : [],
+      date: event.date,
+      googleMapUrl: event.googleMapUrl,
+      id: event.dayId,
+      sortKey: `${event.date} ${event.time}`,
+      time: event.time,
+      title: event.title,
+    });
+  }
+
+  return Array.from(grouped.values())
+    .sort((left, right) => left.sortKey.localeCompare(right.sortKey))
+    .map(({ sortKey: _sortKey, ...item }) => item);
+}
+
 export const PROFILE: UserProfile = cloneProfile(FALLBACK_PROFILE);
 export const STATS: StatItem[] = cloneStats(FALLBACK_STATS);
 export const BOOKINGS: BookingItem[] = cloneBookings(FALLBACK_BOOKINGS);
@@ -783,81 +858,6 @@ const normalizeTravelEvent = (event: unknown): TravelEvent | null => {
     title,
     type: isBookingType(record.type) ? record.type : "voucher",
   };
-};
-
-const buildItineraryFromTravelEvents = ({
-  currentAccountId,
-  linkedCompanions,
-  travelEvents,
-}: {
-  currentAccountId: string;
-  linkedCompanions: typeof LINKED_COMPANIONS;
-  travelEvents: TravelEvent[];
-}): ItineraryItem[] => {
-  const linkedCompanionMap = new Map(linkedCompanions.map((companion) => [companion.id, companion]));
-  const allowedOwnerIds = new Set([
-    ...(currentAccountId ? [currentAccountId] : []),
-    ...linkedCompanions.map((companion) => companion.id),
-  ]);
-  const grouped = new Map<
-    string,
-    {
-      activities: ItineraryItem["activities"];
-      companions: typeof LINKED_COMPANIONS;
-      date: string;
-      googleMapUrl: string;
-      id: string;
-      sortKey: string;
-      time: string;
-      title: string;
-    }
-  >();
-
-  for (const event of travelEvents) {
-    if (allowedOwnerIds.size > 0 && !allowedOwnerIds.has(event.ownerId)) {
-      continue;
-    }
-
-    const existing = grouped.get(event.dayId);
-    const nextActivity = {
-      checked: event.status === "used",
-      id: event.id,
-      label: event.activityLabel,
-      ownerId: event.ownerId,
-      ownerName: event.ownerName,
-      status: event.status,
-      type: event.type,
-    };
-
-    if (existing) {
-      existing.activities.push(nextActivity);
-      if (event.ownerId !== currentAccountId && linkedCompanionMap.has(event.ownerId)) {
-        const companion = linkedCompanionMap.get(event.ownerId);
-        if (companion && !existing.companions.some((item) => item.id === companion.id)) {
-          existing.companions.push({ ...companion });
-        }
-      }
-      continue;
-    }
-
-    grouped.set(event.dayId, {
-      activities: [nextActivity],
-      companions:
-        event.ownerId !== currentAccountId && linkedCompanionMap.has(event.ownerId)
-          ? [{ ...(linkedCompanionMap.get(event.ownerId) as (typeof LINKED_COMPANIONS)[number]) }]
-          : [],
-      date: event.date,
-      googleMapUrl: event.googleMapUrl,
-      id: event.dayId,
-      sortKey: `${event.date} ${event.time}`,
-      time: event.time,
-      title: event.title,
-    });
-  }
-
-  return Array.from(grouped.values())
-    .sort((left, right) => left.sortKey.localeCompare(right.sortKey))
-    .map(({ sortKey: _sortKey, ...item }) => item);
 };
 
 const summaryKeysByTone = (tone: StatItem["tone"]): string[] => {

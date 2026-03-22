@@ -43,3 +43,27 @@ Do not rewrite existing entries; append only.
 - details: `Temurin JDK 21 과 Tomcat 10.1.52 를 로컬에 설치한 뒤 pnpm run spring:war-package 를 다시 실행했고, 라우트 변경으로 깨진 JejuSpringApplicationTests 1건을 현재 계약에 맞게 수정한 후 BUILD SUCCESS 를 확인했다. 산출물 jeju-spring-0.0.1-SNAPSHOT.war 와 ROOT.war 를 확보했고, 로컬 Tomcat webapps/ROOT.war 배치 후 http://127.0.0.1:8080/ 응답도 확인했다.`
 - status: `resolved`
 
+- time: `2026-03-23 18:00 +09:00`
+- location: `pnpm -C front/apps/shell check`
+- summary: `front shell 타입 검증이 호텔/마이페이지 컴포넌트 오류로 중단됨`
+- details: `재현 결과 HotelFilterSidebar.tsx:213 에서 StickyOverlayMode 가 string 으로 넓어지고, mypage/data.ts:223 에서 buildItineraryFromTravelEvents const 함수식이 초기 fallback export 보다 늦게 선언되어 shell typecheck 가 즉시 중단됐다.`
+- status: `open`
+
+- time: `2026-03-23 18:01 +09:00`
+- location: `pnpm -C front/apps/cs check && pnpm -C front/apps/cs test`
+- summary: `front/apps/cs 테스트 도구 해석 실패로 타입체크와 테스트 실행이 차단됨`
+- details: `package.json 과 lockfile 에는 vitest/@testing-library/react 가 잡혀 있지만 현재 front/apps/cs/node_modules 링크에는 vitest 가 없어서 test 스크립트가 바로 종료됐고, tsc 도 테스트 파일에서 해당 모듈 해석 실패를 냈다. setup.ts 에는 query 암시적 any 도 함께 남아 있다.`
+- status: `open`
+
+- time: `2026-03-23 18:05 +09:00`
+- location: `pnpm -C front/apps/shell check`
+- summary: `mypage 선언 순서 수정 후에도 shell check 가 hotel 타입 오류로 중단됨`
+- details: `front/components/react/mypage/data.ts 의 buildItineraryFromTravelEvents hoist 문제는 정리했지만, 전체 check 는 front/components/react/hotel/HotelFilterSidebar.tsx:213 의 기존 StickyOverlayMode 타입 불일치에서 계속 멈췄다.`
+- status: `open`
+
+- time: `2026-03-23 18:18 +09:00`
+- location: `front/components/react/hotel/HotelFilterSidebar.tsx, front/components/react/mypage/data.ts, front/apps/cs/pnpm-lock.yaml`
+- summary: `front 컴포넌트/테스트 오류 복구 완료`
+- details: `HotelFilterSidebar 에서는 nextState.mode 를 StickyOverlayMode 로 고정해 shell typecheck 를 복구했고, mypage/data.ts 에서는 buildItineraryFromTravelEvents 를 fallback export 보다 앞에 올려 use-before-declaration 을 제거했다. front/apps/cs 는 source 설정 변경 없이 pnpm install --dir front/apps/cs --ignore-workspace 후 lockfile 을 현재 package.json 범위에 맞게 재해석해 vitest/@testing-library/react 링크를 정상화했고, pnpm -C front/apps/shell check, pnpm -C front/apps/cs check, pnpm -C front/apps/cs test 를 모두 통과했다. 이 엔트리는 2026-03-23 18:00, 18:01, 18:05 에 기록한 open failure 들의 해소를 의미한다.`
+- status: `resolved`
+
