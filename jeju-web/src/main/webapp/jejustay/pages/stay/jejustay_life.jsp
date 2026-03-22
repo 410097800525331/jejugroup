@@ -44,7 +44,7 @@
             </div>
 
             <div class="hero-content">
-                <p class="hero-subtitle-top" style="font-size: 1.5rem; font-weight: 300;" data-lang="lifeHeroSubtitle">
+                <p class="hero-subtitle-top life-hero-subtitle" data-lang="lifeHeroSubtitle">
                     제주항공으로 떠나는 전 세계 한 달 살기,
                     <br><strong>숙소부터 렌터카까지 가장 완벽한 생태계</strong>
                 </p>
@@ -55,8 +55,7 @@
         </section>
 
         <!-- 시너지 배너 (외부로 이동됨) -->
-        <div class="air-synergy-banner"
-            style="margin-top: 60px; max-width: 1200px; margin-left: auto; margin-right: auto;">
+        <div class="air-synergy-banner air-synergy-banner-shell">
             <div class="synergy-icon">
                 <i data-lucide="plane"></i>
             </div>
@@ -64,12 +63,12 @@
                 <strong data-lang="lifeSynergyTitle">전 세계 어디든 제주항공 X 모빌리티 혜택</strong>
                 <span data-lang="lifeSynergyDesc">항공권 결합 시 리프레시 포인트 2배 적립 + 해외 렌터카 50% 할인!</span>
             </div>
-            <a href="#" class="synergy-link"><span data-lang="lifeSynergyLink">제주 유니버스 혜택 보기</span> <i
+            <a href="#" class="synergy-link cta-link cta-bounce-target"><span data-lang="lifeSynergyLink">제주 유니버스 혜택 보기</span> <i
                     data-lucide="chevron-right"></i></a>
         </div>
 
         <!-- ========== 큐레이션 테마 ========== -->
-        <section class="section container" style="margin-top: var(--space-3xl);">
+        <section class="section container curation-section">
             <div class="section-header">
                 <h2 class="section-title" data-lang="lifeCurationTitle">당신의 라이프스타일에 맞는 집</h2>
                 <p class="section-subtitle" data-lang="lifeCurationDesc">한 달 살기, 목적에 따라 큐레이션된 숙소를 만나보세요</p>
@@ -120,8 +119,8 @@
                             단골 카페에서 시작하는 업무와 야시장에서 즐기는 저녁까지,<br>
                             진정한 노마드의 삶을 경험해보세요.
                         </p>
-                        <a href="#" class="btn-text"><span data-lang="lifeMagLink">매거진 더 보기</span> <i
-                                data-lucide="arrow-right" style="width: 1em; vertical-align: middle;"></i></a>
+                        <a href="#" class="btn-text cta-link cta-bounce-target"><span data-lang="lifeMagLink">매거진 더 보기</span> <i
+                                data-lucide="arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -203,7 +202,7 @@
 
                 <!-- 호텔 더보기 버튼 -->
                 <div class="more-hotels-container">
-                    <a href="#" class="btn-more-hotels">
+                    <a href="#" class="btn-more-hotels cta-pill cta-bounce-target">
                         <span data-lang="btnMoreHotels">더 많은 특가 호텔 보기</span>
                         <i data-lucide="chevron-right"></i>
                     </a>
@@ -220,7 +219,7 @@
             <div class="review-grid">
                 <div class="review-card">
                     <div class="review-user">
-                        <div class="user-avatar" style="background:#8b5cf6;">JM</div>
+                        <div class="user-avatar avatar-plum">JM</div>
                         <div class="user-info">
                             <strong>지민님</strong> <span><span class="flag-icon">🇹🇭</span> Chiang Mai</span>
                         </div>
@@ -234,7 +233,7 @@
                 </div>
                 <div class="review-card">
                     <div class="review-user">
-                        <div class="user-avatar" style="background:var(--secondary);">YK</div>
+                        <div class="user-avatar avatar-sea">YK</div>
                         <div class="user-info">
                             <strong>영국님</strong> <span><span class="flag-icon">🇮🇩</span> Bali</span>
                         </div>
@@ -246,7 +245,7 @@
                 </div>
                 <div class="review-card">
                     <div class="review-user">
-                        <div class="user-avatar" style="background:#10b981;">SR</div>
+                        <div class="user-avatar avatar-mint">SR</div>
                         <div class="user-info">
                             <strong>Sarah</strong> <span><span class="flag-icon">🇫🇷</span> Paris</span>
                         </div>
@@ -258,7 +257,7 @@
                 </div>
                 <div class="review-card">
                     <div class="review-user">
-                        <div class="user-avatar" style="background:#ef4444;">KN</div>
+                        <div class="user-avatar avatar-coral">KN</div>
                         <div class="user-info">
                             <strong>Ken</strong> <span><span class="flag-icon">🇯🇵</span> Tokyo</span>
                         </div>
@@ -278,8 +277,8 @@
                     <h2 class="section-title" data-lang="lifeMemTitle">Long Stay 멤버십 혜택</h2>
                 </div>
                 <div class="promo-grid">
-                    <div class="promo-card promo-sub" style="background: #fff;">
-                        <div class="promo-icon" style="background: var(--primary-light); color: var(--primary);">
+                    <div class="promo-card promo-sub promo-card-surface">
+                        <div class="promo-icon promo-icon-luggage">
                             <i data-lucide="luggage"></i>
                         </div>
                         <div class="promo-content">
@@ -289,8 +288,8 @@
                             </p>
                         </div>
                     </div>
-                    <div class="promo-card promo-sub" style="background: #fff;">
-                        <div class="promo-icon" style="background: var(--secondary-light); color: var(--secondary);">
+                    <div class="promo-card promo-sub promo-card-surface">
+                        <div class="promo-icon promo-icon-map">
                             <i data-lucide="map"></i>
                         </div>
                         <div class="promo-content">
@@ -298,8 +297,8 @@
                             <p class="promo-desc" data-lang="promoCardDesc">현지인 맛집, 카페, 렌터카까지<br>최대 20% 제휴 할인</p>
                         </div>
                     </div>
-                    <div class="promo-card promo-sub" style="background: #fff;">
-                        <div class="promo-icon" style="background: #E8F5E9; color: #2E7D32;">
+                    <div class="promo-card promo-sub promo-card-surface">
+                        <div class="promo-icon promo-icon-guide">
                             <i data-lucide="flower-2"></i>
                         </div>
                         <div class="promo-content">

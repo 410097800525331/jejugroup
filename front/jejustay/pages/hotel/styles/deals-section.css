@@ -11,24 +11,50 @@
 
 .hotel-card {
     display: flex;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: #FFFFFF;
+    border: none;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.15));
+    position: relative;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    /* 3단 다중 레이어 그림자로 공중에 떠 있는 듯한 고급스러운 깊이감 표현 */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.02))
+            drop-shadow(0 10px 15px rgba(0, 0, 0, 0.05))
+            drop-shadow(0 25px 40px rgba(0, 0, 0, 0.08));
     width: 1232px;
     height: 240px;
     -webkit-mask-image: radial-gradient(circle 10px at 980px 0, transparent 10px, black 10.5px), radial-gradient(circle 10px at 980px 100%, transparent 10px, black 10.5px);
     -webkit-mask-composite: destination-in;
     mask-image: radial-gradient(circle 10px at 980px 0, transparent 10px, black 10.5px), radial-gradient(circle 10px at 980px 100%, transparent 10px, black 10.5px);
     mask-composite: intersect;
+    
+    /* 초기 상태: 하단에서 슬라이드 업 + 투명도 + 미세 스케일 */
+    opacity: 0;
+    transform: translateY(40px) scale(0.985);
+    will-change: transform, opacity, filter;
+}
+
+.hotel-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1232 240' fill='none'%3E%3Cpath d='M13 1H970C970 6.523 974.477 11 980 11C985.523 11 990 6.523 990 1H1219A12 12 0 0 1 1231 13V227A12 12 0 0 1 1219 239H990C990 233.477 985.523 229 980 229C974.477 229 970 233.477 970 239H13A12 12 0 0 1 1 227V13A12 12 0 0 1 13 1Z' stroke='%23000000' stroke-opacity='0.14' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* 등장 애니메이션: 스크롤 시 Intersection Observer에 의해 클래스 부여됨 */
+.hotel-card.animate-in {
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 .hotel-card:hover {
-    filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.2));
-    transform: translateY(-8px);
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.08)) 
+            drop-shadow(0 35px 65px rgba(0, 0, 0, 0.12));
+    transform: translateY(-10px) scale(1.005);
 }
 
 .hotel-image-wrap {
@@ -165,11 +191,12 @@
     align-items: flex-end;
     justify-content: center;
     padding: var(--space-lg) var(--space-xl);
-    background: var(--background);
-    width: 250px;
+    background: #FFFFFF;
+    width: 252px;
     height: 238px;
     flex: none;
-    border-left: 2px dashed rgba(0, 0, 0, 0.2);
+    border-left: 2px dashed rgba(0, 0, 0, 0.12);
+    position: relative;
 }
 
 .price-info {
@@ -246,6 +273,14 @@
         height: auto;
         -webkit-mask-image: none;
         mask-image: none;
+    }
+
+    .hotel-card {
+        border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .hotel-card::before {
+        content: none;
     }
 
     .hotel-image-wrap {

@@ -113,7 +113,10 @@ body {
     font-family: var(--font-family);
     font-weight: var(--font-weight-regular);
     color: var(--text-title);
-    background: linear-gradient(to bottom, #E6D8FF, #FFFFFF, #FFD9CC);
+    background:
+        radial-gradient(circle at top left, rgba(0, 117, 143, 0.08), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(255, 80, 0, 0.14), transparent 30%),
+        linear-gradient(180deg, #FFF8F3 0%, #FFFFFF 48%, #FFF4EC 100%);
     background-attachment: fixed;
     line-height: 1.6;
     overflow-x: hidden;
@@ -187,6 +190,122 @@ input {
 .section-subtitle {
     font-size: 1rem;
     color: var(--text-body);
+}
+
+/* ========== Shared CTA System ========== */
+.cta-link,
+.cta-pill,
+.cta-bounce-target,
+.search-btn-pill,
+.search-btn-v2 {
+    --cta-hover-lift: 0px;
+    --cta-bounce-offset: 0px;
+    transform: translate3d(0, calc(var(--cta-hover-lift) + var(--cta-bounce-offset)), 0);
+    transform-origin: center;
+    will-change: transform;
+}
+
+.cta-link,
+.promo-link,
+.btn-text,
+.synergy-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.01em;
+    transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.cta-pill,
+.more-btn,
+.btn-more-hotels {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 52px;
+    padding: 0 28px;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 80, 0, 0.18);
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--primary);
+    font-size: 0.95rem;
+    font-weight: var(--font-weight-bold);
+    box-shadow: 0 10px 24px rgba(255, 80, 0, 0.12);
+    backdrop-filter: blur(12px);
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.cta-bounce-target:hover,
+.cta-bounce-target:focus-visible,
+.search-btn-pill:hover,
+.search-btn-pill:focus-visible,
+.search-btn-v2:hover,
+.search-btn-v2:focus-visible {
+    --cta-hover-lift: -2px;
+}
+
+.search-btn-pill,
+.search-btn-pill:hover,
+.search-btn-pill:focus-visible,
+.search-btn-pill:active,
+.search-btn-v2,
+.search-btn-v2:hover,
+.search-btn-v2:focus-visible,
+.search-btn-v2:active {
+    transform: translate3d(0, calc(var(--cta-hover-lift) + var(--cta-bounce-offset)), 0);
+}
+
+.cta-link svg,
+.cta-link i,
+.cta-pill svg,
+.cta-pill i,
+.search-btn-pill svg,
+.search-btn-v2 svg,
+.search-btn-pill i,
+.search-btn-v2 i {
+    transition: transform var(--transition-fast);
+}
+
+.cta-link:hover svg,
+.cta-link:hover i,
+.cta-link:focus-visible svg,
+.cta-link:focus-visible i,
+.cta-pill:hover svg,
+.cta-pill:hover i,
+.cta-pill:focus-visible svg,
+.cta-pill:focus-visible i,
+.search-btn-pill:hover svg,
+.search-btn-pill:hover i,
+.search-btn-pill:focus-visible svg,
+.search-btn-pill:focus-visible i,
+.search-btn-v2:hover svg,
+.search-btn-v2:hover i,
+.search-btn-v2:focus-visible svg,
+.search-btn-v2:focus-visible i {
+    transform: translateX(4px);
+}
+
+.cta-pill:hover,
+.cta-pill:focus-visible,
+.more-btn:hover,
+.more-btn:focus-visible,
+.btn-more-hotels:hover,
+.btn-more-hotels:focus-visible {
+    background: linear-gradient(135deg, rgba(255, 80, 0, 0.12), rgba(255, 122, 51, 0.2));
+    border-color: rgba(255, 80, 0, 0.28);
+    box-shadow: 0 14px 32px rgba(255, 80, 0, 0.18);
+    color: var(--primary);
+}
+
+.promo-main .cta-link,
+.promo-main .promo-link {
+    color: var(--surface);
 }
 
 /* ========== Responsive Design ========== */
