@@ -2,31 +2,18 @@ import React, { useState, useEffect } from "react";
 import type { ItineraryActivity, ItineraryCompanion, ItineraryItem } from "./types";
 import { ITINERARY as INITIAL_ITINERARY } from "./data";
 import { SectionCard } from "./SectionCard";
-import { CompanionModal } from "./CompanionModal";
+import { CompanionManageModal } from "./CompanionManageModal";
 
 export const ItinerarySection = () => {
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(INITIAL_ITINERARY);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeDayId, setActiveDayId] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [manageModalDayId, setManageModalDayId] = useState<string | null>(null);
 
   useEffect(() => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
-  }, [isExpanded, itinerary, activeDayId]);
-
-  const handleOpenModal = (dayId: string) => {
-    setActiveDayId(dayId);
-    setIsModalOpen(true);
-  };
-
-  const handleSaveCompanions = (newCompanions: ItineraryCompanion[]) => {
-    if (!activeDayId) return;
-    setItinerary(itinerary.map(item => 
-      item.id === activeDayId ? { ...item, companions: newCompanions } : item
-    ));
-  };
+  }, [isExpanded, itinerary]);
 
   const handleToggleActivity = (dayId: string, activityId: string) => {
     setItinerary(itinerary.map(item => {
@@ -42,9 +29,17 @@ export const ItinerarySection = () => {
     }));
   };
 
-  const displayedItinerary = isExpanded ? itinerary : itinerary.slice(0, 2);
-  const currentDay = itinerary.find(i => i.id === activeDayId);
+  const handleSaveCompanions = (dayId: string, newCompanions: ItineraryCompanion[]) => {
+    setItinerary(itinerary.map(item => {
+      if (item.id === dayId) {
+        return { ...item, companions: newCompanions };
+      }
+      return item;
+    }));
+    setManageModalDayId(null);
+  };
 
+  const displayedItinerary = isExpanded ? itinerary : itinerary.slice(0, 2);
 
   return (
     <section className="meta-section layer-itinerary">
@@ -79,10 +74,10 @@ export const ItinerarySection = () => {
                   ))}
                   <span className="comp-count-label">총 {day.companions.length}명</span>
                 </div>
-                <button 
-                  className="link-action-btn pill-shape" 
+                <button
+                  className="link-action-btn pill-shape"
                   type="button"
-                  onClick={() => handleOpenModal(day.id)}
+                  onClick={() => setManageModalDayId(day.id)}
                 >
                   <i data-lucide="user-plus" className="lucide-user-plus" />
                   동행자 연동/관리
@@ -138,14 +133,14 @@ export const ItinerarySection = () => {
         )}
       </div>
 
-      {isModalOpen && currentDay && (
-        <CompanionModal
-          initialCompanions={currentDay.companions}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSaveCompanions}
+      {manageModalDayId && (
+        <CompanionManageModal
+          isOpen={!!manageModalDayId}
+          onClose={() => setManageModalDayId(null)}
+          initialCompanions={itinerary.find(d => d.id === manageModalDayId)?.companions || []}
+          onSave={(newCompanions) => handleSaveCompanions(manageModalDayId, newCompanions)}
         />
       )}
     </section>
   );
 };
-
