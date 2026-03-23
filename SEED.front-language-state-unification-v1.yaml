@@ -1,0 +1,24 @@
+goal: "landing runtime와 shell runtime/widget consumers가 공유 front-i18n bridge를 통해 하나의 지속 언어 상태를 쓰도록 정리한다."
+constraints:
+  - "source of truth는 `front/**`다."
+  - "언어는 ko/en만 유지하고 새 locale 정책은 추가하지 않는다."
+  - "landing toggle, shell FAB, chatbot은 같은 persisted bridge state를 따라 함께 움직여야 한다."
+  - "shell fallback은 bridge가 없는 비-landing 페이지에서도 안전하게 동작해야 한다."
+  - "기존 custom events 호환성은 가능한 범위에서 유지한다."
+  - "미러 경로와 forbidden paths는 건드리지 않는다."
+acceptance_criteria:
+  - "`front/core/pages/landing/main.js`는 `langData`와 `localStorage('jeju_lang')`를 직접 소유하지 않고 `front/core/constants/front-i18n.js`를 언어 authority로 사용한다."
+  - "`front/apps/shell/src/runtime/context/ShellStateContext.tsx`, `front/apps/shell/src/runtime/ui/fab.tsx`, `front/apps/shell/src/runtime/widget/chatbot.tsx`의 shell-side language state는 같은 bridge로 통합된다."
+  - "`front/index.html`는 landing script보다 먼저 `front-i18n.js`를 로드한다."
+  - "landing toggle, FAB, chatbot의 language state와 persisted value가 서로 동기화되고, bridge unavailable 상황에서도 shell fallback이 깨지지 않는다."
+verification:
+  - "`pnpm run check:shell`"
+  - "`node --check front/core/constants/front-i18n.js`"
+  - "`node --check front/core/pages/landing/main.js`"
+  - "`pnpm run guard:text`"
+out_of_scope:
+  - "새 locale 추가"
+  - "mirrors 수정"
+  - "jeju-web/src/main/webapp/** 직접 수정"
+  - "jeju-spring/** 직접 수정"
+  - "브리지 정책을 landing/shell 외 다른 페이지로 확장하는 작업"

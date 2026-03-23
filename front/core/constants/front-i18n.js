@@ -155,10 +155,10 @@
       }
     }
 
-    if (doc.body && doc.body.dataset && doc.body.dataset.lang) {
-      var bodyLang = normalizeLang(doc.body.dataset.lang);
-      if (bodyLang) {
-        return bodyLang;
+    if (doc.body && doc.body.dataset) {
+      var currentBodyLang = normalizeLang(doc.body.dataset.currentLang || doc.body.getAttribute("data-current-lang"));
+      if (currentBodyLang) {
+        return currentBodyLang;
       }
     }
 
@@ -271,6 +271,10 @@
       return false;
     }
 
+    if (isCurrentLangCarrier(node)) {
+      return false;
+    }
+
     var token = node.getAttribute("data-lang");
     if (!token && node.dataset && node.dataset.lang) {
       token = node.dataset.lang;
@@ -332,6 +336,15 @@
     return true;
   }
 
+  function isCurrentLangCarrier(node) {
+    if (!node || !root || !root.document) {
+      return false;
+    }
+
+    var doc = root.document;
+    return node === doc.body || node === doc.documentElement || (node.tagName && /^(HTML|BODY)$/i.test(node.tagName));
+  }
+
   function applyLanguageToRoot(rootNode, options) {
     var config = options && typeof options === "object" ? options : {};
     var scope = rootNode || (root && root.document ? root.document : null);
@@ -344,10 +357,17 @@
 
     var elements = scope.querySelectorAll("[data-lang]");
     var placeholders = scope.querySelectorAll("[data-lang-placeholder]");
+    var translatedElements = [];
     var i;
 
     for (i = 0; i < elements.length; i += 1) {
-      if (applyNodeTranslation(elements[i], lang, config)) {
+      if (!isCurrentLangCarrier(elements[i])) {
+        translatedElements.push(elements[i]);
+      }
+    }
+
+    for (i = 0; i < translatedElements.length; i += 1) {
+      if (applyNodeTranslation(translatedElements[i], lang, config)) {
         translatedCount += 1;
       }
     }
@@ -495,8 +515,26 @@
       html.lang = lang;
     }
 
-    if (doc.body && doc.body.dataset) {
-      doc.body.dataset.lang = lang;
+    if (doc.body) {
+      doc.body.setAttribute("data-current-lang", lang);
+
+      if (typeof doc.body.removeAttribute === "function") {
+        doc.body.removeAttribute("data-lang");
+      }
+
+      if (doc.body.dataset) {
+        if (Object.prototype.hasOwnProperty.call(doc.body.dataset, "lang")) {
+          try {
+            delete doc.body.dataset.lang;
+          } catch (error) {
+            doc.body.dataset.lang = "";
+          }
+        }
+
+        doc.body.dataset.currentLang = lang;
+      } else if (typeof doc.body.setAttribute === "function") {
+        doc.body.setAttribute("data-current-lang", lang);
+      }
     }
   }
 

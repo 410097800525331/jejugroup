@@ -259,6 +259,17 @@
   - `pnpm run spring:test` passed
   - `pnpm run spring:war-package` passed
 
+- time: `2026-03-23 20:36 +09:00`
+- route: `Route B`
+- task: `Shift landing language handling to the shared front-i18n bridge authority`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `node --check front/core/pages/landing/main.js` passed
+  - landing script now loads `front/core/constants/front-i18n.js` before `front/core/pages/landing/main.js`
+  - `membershipNotice2` keeps inline HTML rendering via `data-lang-html="true"`
+
 - time: `2026-03-23 21:45 +09:00`
 - route: `Route B`
 - task: `Finish customer-center productization with admin notice/faq write flow, support comment/attachment UI, and support enum hardening`
@@ -359,3 +370,40 @@
 - verification:
   - `pnpm run spring:test` passed
   - `pnpm run spring:war-package` passed
+
+- time: `2026-03-23 20:46 +09:00`
+- route: `Route B`
+- task: `Unify landing and shell language state through the shared front-i18n bridge`
+- participants: `main`, `worker_seed (Banach)`, `worker_shared_i18n (Wegener)`, `worker_feature_landing (Dalton)`, `worker_shell_runtime (Ohm)`, `reviewer_front_language_state (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.front-language-state-unification-v1.yaml`
+  - `worker_shared_i18n`: `front/core/constants/front-i18n.js (audit only; no code change needed)`
+  - `worker_feature_landing`: `front/index.html, front/core/pages/landing/main.js`
+  - `worker_shell_runtime`: `front/apps/shell/src/runtime/context/ShellStateContext.tsx, front/apps/shell/src/runtime/ui/fab.tsx, front/apps/shell/src/runtime/widget/chatbot.tsx`
+  - `reviewer_front_language_state`: `review only`
+- verification:
+  - `node --check front/core/constants/front-i18n.js` passed
+  - `node --check front/core/pages/landing/main.js` passed
+  - `pnpm run check:shell` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/index.html front/core/pages/landing/main.js front/apps/shell/src/runtime/context/ShellStateContext.tsx front/apps/shell/src/runtime/ui/fab.tsx front/apps/shell/src/runtime/widget/chatbot.tsx SEED.front-language-state-unification-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed
+  - `reviewer_front_language_state` first reported two landing fallback/init regressions, those follow-up fixes landed, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-23 21:15 +09:00`
+- route: `Route B`
+- task: `Fix the landing language-toggle DOM collapse from body data-lang being retranslated`
+- participants: `main`, `worker_shared_i18n (Hegel)`, `worker_feature_landing (Raman)`, `reviewer_front_language_state (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shared_i18n`: `front/core/constants/front-i18n.js`
+  - `worker_feature_landing`: `front/core/pages/landing/main.js`
+  - `reviewer_front_language_state`: `review only`
+- verification:
+  - `node --check front/core/constants/front-i18n.js` passed
+  - `node --check front/core/pages/landing/main.js` passed
+  - `pnpm run check:shell` passed
+  - `pnpm run guard:text` passed
+  - custom Playwright landing language smoke passed after confirming the landing DOM stays mounted, persisted language stays `en`, and hotel FAB/chatbot pick up English state
+  - official `main landing smoke` Playwright check passed again after the bugfix
+  - `reviewer_front_language_state` first reported one stale residue risk, the follow-up guard landed, and the final reviewer pass reported `발견 없음`

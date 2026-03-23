@@ -312,67 +312,435 @@ document.addEventListener('DOMContentLoaded', () => {
     whenStageReady('main-shell', initMainScroll);
 });
 
-// ==================== ???紐꽷??田? 疫꿸퀡혡?(??? ?혱?혮 ?혙?력? ??=================
-// =======================================================================
+// ==================== Landing Language Bridge ====================
 
-const changeLanguage = (lang) => {
-    // ?혥????꽷?혨筌??혚???꽷?
-    document.querySelectorAll('[data-lang]').forEach(el => {
-        const key = el.dataset.lang;
-        if (langData[lang] && langData[lang][key] !== undefined) {
-             // HTML ?혵域???혮???????怨빧?筌Ｂ섊뵳?
-             if (el.innerHTML.includes('<') && el.innerHTML.includes('>')) {
-                // 疫꿸퀣??HTML ?닌듼??田??혱筌???혥??紐? 獄쎛? ???혛??곤）?嚥? 
-                // data-lang????혳?혱?혬 ?혬?혣???혥??紐? ?혞?혬 野꺜?혙 亦끒??혱椰?? 
-                // ?諭田┑??혵域?strong ??揶쎛 ??혮??html ?얜챷혷혨??겶씲?langData???혮?혱??겶???
-                el.innerHTML = langData[lang][key];
-             } else {
-                el.textContent = langData[lang][key];
-             }
+const LANDING_LANGUAGE_STORAGE_KEYS = ['jeju_lang', 'front.lang', 'jeju_fab_lang'];
+const LANDING_LANGUAGE_EVENTS = ['languageChanged', 'fabLanguageChanged', 'front:i18n-change'];
+
+const landingI18n = (() => {
+    const bridge = window.frontI18n;
+    if (bridge) {
+        return bridge;
+    }
+
+    const listeners = new Set();
+    let nativeEventsBound = false;
+    let suppressNativeEventNotify = 0;
+
+    const normalizeLang = (value) => {
+        if (typeof value !== 'string') {
+            return null;
         }
-    });
 
-    // Placeholder ?혚???꽷?
-    document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
-        const key = el.dataset.langPlaceholder;
-        if (langData[lang] && langData[lang][key] !== undefined) {
-            el.placeholder = langData[lang][key];
+        const trimmed = value.trim().toLowerCase();
+        if (trimmed.indexOf('en') === 0) {
+            return 'en';
         }
-    });
 
-    document.documentElement.lang = lang;
-};
+        if (trimmed.indexOf('ko') === 0) {
+            return 'ko';
+        }
+
+        return null;
+    };
+
+    const readPersistedLang = () => {
+        try {
+            for (const storageKey of LANDING_LANGUAGE_STORAGE_KEYS) {
+                const storedLang = normalizeLang(window.localStorage.getItem(storageKey));
+                if (storedLang) {
+                    return storedLang;
+                }
+            }
+        } catch (_error) {
+            return null;
+        }
+
+        return null;
+    };
+
+    const readDocumentLang = () => {
+        const documentLang = normalizeLang(document.documentElement && document.documentElement.lang);
+        if (documentLang) {
+            return documentLang;
+        }
+
+        if (document.body && document.body.dataset) {
+            const bodyLang = normalizeLang(document.body.dataset.currentLang || document.body.getAttribute('data-current-lang'));
+            if (bodyLang) {
+                return bodyLang;
+            }
+        }
+
+        return null;
+    };
+
+    const updateDocumentLang = (lang) => {
+        if (document.documentElement) {
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.lang = lang;
+        }
+
+        if (document.body) {
+            if (typeof document.body.removeAttribute === 'function') {
+                document.body.removeAttribute('data-lang');
+            }
+
+            if (document.body.dataset) {
+                if (Object.prototype.hasOwnProperty.call(document.body.dataset, 'lang')) {
+                    try {
+                        delete document.body.dataset.lang;
+                    } catch (_error) {
+                        document.body.dataset.lang = '';
+                    }
+                }
+
+                document.body.dataset.currentLang = lang;
+            } else if (typeof document.body.setAttribute === 'function') {
+                document.body.setAttribute('data-current-lang', lang);
+            }
+        }
+    };
+
+    const isCurrentLangCarrierNode = (node) => {
+        return node === document.documentElement || node === document.body;
+    };
+
+    const persistLang = (lang) => {
+        try {
+            for (const storageKey of LANDING_LANGUAGE_STORAGE_KEYS) {
+                window.localStorage.setItem(storageKey, lang);
+            }
+        } catch (_error) {
+            // 저장 실패는 조용히 무시한다.
+        }
+    };
+
+    const resolveCurrentLang = (preferredLang) => {
+        const explicit = normalizeLang(preferredLang);
+        if (explicit) {
+            return explicit;
+        }
+
+        const persisted = readPersistedLang();
+        if (persisted) {
+            return persisted;
+        }
+
+        const documentLang = readDocumentLang();
+        if (documentLang) {
+            return documentLang;
+        }
+
+        const navigatorLang = normalizeLang(window.navigator && window.navigator.language);
+        if (navigatorLang) {
+            return navigatorLang;
+        }
+
+        return 'ko';
+    };
+
+    const translate = (key, options) => {
+        const config = options && typeof options === 'object' ? options : {};
+        const lang = resolveCurrentLang(config.lang);
+        const fallback = Object.prototype.hasOwnProperty.call(config, 'fallback') ? config.fallback : key;
+        const pack = window.langData && window.langData[lang];
+
+        if (pack && Object.prototype.hasOwnProperty.call(pack, key)) {
+            const translated = pack[key];
+            return typeof translated === 'string' ? translated : translated == null ? '' : String(translated);
+        }
+
+        return fallback == null ? '' : fallback;
+    };
+
+    const applyLanguageToRoot = (rootNode, options) => {
+        const config = options && typeof options === 'object' ? options : {};
+        const scope = rootNode || document;
+        const lang = resolveCurrentLang(config.lang);
+        let translatedCount = 0;
+
+        if (!scope || typeof scope.querySelectorAll !== 'function') {
+            return translatedCount;
+        }
+
+        scope.querySelectorAll('[data-lang]').forEach((node) => {
+            if (isCurrentLangCarrierNode(node)) {
+                return;
+            }
+
+            const token = node.getAttribute('data-lang') || (node.dataset && node.dataset.lang);
+            if (!token) {
+                return;
+            }
+
+            const translated = translate(token, { lang, fallback: token });
+            const renderHtml = (config && config.renderHtml) || node.dataset.langHtml === 'true' || node.getAttribute('data-lang-html') === 'true';
+
+            if (renderHtml) {
+                node.innerHTML = translated;
+            } else {
+                node.textContent = translated;
+            }
+
+            if (node.tagName && /^(INPUT|TEXTAREA)$/i.test(node.tagName) && 'value' in node) {
+                node.value = translated;
+            }
+
+            translatedCount += 1;
+        });
+
+        scope.querySelectorAll('[data-lang-placeholder]').forEach((node) => {
+            const token = node.getAttribute('data-lang-placeholder') || (node.dataset && node.dataset.langPlaceholder);
+            if (!token) {
+                return;
+            }
+
+            node.setAttribute('placeholder', translate(token, { lang, fallback: token }));
+            translatedCount += 1;
+        });
+
+        updateDocumentLang(lang);
+        return translatedCount;
+    };
+
+    const extractEventLang = (event) => {
+        if (!event) {
+            return null;
+        }
+
+        if (typeof event.detail === 'string') {
+            return normalizeLang(event.detail);
+        }
+
+        if (event.detail && typeof event.detail === 'object') {
+            return normalizeLang(event.detail.lang || event.detail.currentLang || event.detail.value);
+        }
+
+        return null;
+    };
+
+    const notifySubscribers = (detail) => {
+        listeners.forEach((listener) => {
+            try {
+                listener(detail);
+            } catch (_error) {
+                // 구독자 예외는 다른 구독자를 막지 않게 삼킨다.
+            }
+        });
+    };
+
+    const syncFromExternalEvent = (event) => {
+        if (!event || suppressNativeEventNotify > 0) {
+            return;
+        }
+
+        const lang = extractEventLang(event);
+        if (!lang) {
+            return;
+        }
+
+        const previousLang = resolveCurrentLang();
+        persistLang(lang);
+        updateDocumentLang(lang);
+        notifySubscribers({
+            lang,
+            previousLang,
+            source: event.type || 'external',
+            external: true,
+            eventDetail: event.detail,
+        });
+    };
+
+    const bindNativeLanguageListeners = () => {
+        if (nativeEventsBound) {
+            return;
+        }
+
+        const handler = (event) => {
+            syncFromExternalEvent(event);
+        };
+
+        LANDING_LANGUAGE_EVENTS.forEach((eventName) => {
+            document.addEventListener(eventName, handler);
+            window.addEventListener(eventName, handler);
+        });
+
+        nativeEventsBound = true;
+    };
+
+    const dispatchLanguageChange = (detail) => {
+        if (typeof window.CustomEvent !== 'function') {
+            return false;
+        }
+
+        const eventDetail = detail && typeof detail === 'object' && !Array.isArray(detail)
+            ? detail
+            : { lang: resolveCurrentLang(detail) };
+
+        suppressNativeEventNotify += 1;
+        try {
+            document.dispatchEvent(new CustomEvent('languageChanged', { detail: eventDetail.lang }));
+            document.dispatchEvent(new CustomEvent('fabLanguageChanged', { detail: eventDetail.lang }));
+            document.dispatchEvent(new CustomEvent('front:i18n-change', { detail: eventDetail }));
+        } finally {
+            suppressNativeEventNotify = Math.max(0, suppressNativeEventNotify - 1);
+        }
+
+        return true;
+    };
+
+    bindNativeLanguageListeners();
+
+    return {
+        DEFAULT_LANG: 'ko',
+        LANGUAGE_CHANGED_EVENT: 'languageChanged',
+        FAB_LANGUAGE_CHANGED_EVENT: 'fabLanguageChanged',
+        LANGUAGE_CHANGE_EVENT: 'front:i18n-change',
+        resolveCurrentLang,
+        getCurrentLang() {
+            return resolveCurrentLang();
+        },
+        translate,
+        applyLanguageToRoot,
+        setCurrentLang(nextLang, options) {
+            const config = options && typeof options === 'object' ? options : {};
+            const resolved = resolveCurrentLang(nextLang);
+            const previousLang = resolveCurrentLang();
+            const payload = {
+                lang: resolved,
+                previousLang,
+                source: config.source || 'landing-fallback',
+            };
+
+            if (config.persist !== false) {
+                persistLang(resolved);
+            }
+
+            updateDocumentLang(resolved);
+            notifySubscribers(payload);
+            dispatchLanguageChange(payload);
+            return resolved;
+        },
+        subscribeLanguageChange(listener) {
+            if (typeof listener !== 'function') {
+                return function unsubscribe() {};
+            }
+
+            listeners.add(listener);
+            return function unsubscribe() {
+                listeners.delete(listener);
+            };
+        },
+        unsubscribeLanguageChange(listener) {
+            return listeners.delete(listener);
+        },
+        dispatchLanguageChange,
+    };
+})();
 
 let isLangToggleInitialized = false;
-// 疫꿸퀡???紐꽷???쇽＆혮 (localStorage ?혨?혬 疫꿸퀡??첎?
-let currentLang = localStorage.getItem('jeju_lang') || 'ko';
+let isLandingLanguageInitialized = false;
+let langToggleButton = null;
+let landingLanguageUnsubscribe = null;
 
-// Run initial translation immediately for static text
-changeLanguage(currentLang);
+const resolveLandingLang = (payload) => {
+    if (payload && typeof payload === 'object' && Object.prototype.hasOwnProperty.call(payload, 'detail')) {
+        return resolveLandingLang(payload.detail);
+    }
+
+    if (typeof payload === 'string') {
+        const normalized = payload.trim().toLowerCase();
+        if (normalized.indexOf('en') === 0) {
+            return 'en';
+        }
+        if (normalized.indexOf('ko') === 0) {
+            return 'ko';
+        }
+    }
+
+    if (payload && typeof payload === 'object') {
+        return resolveLandingLang(payload.lang || payload.currentLang || payload.value || payload.previousLang);
+    }
+
+    if (typeof landingI18n.resolveCurrentLang === 'function') {
+        return landingI18n.resolveCurrentLang();
+    }
+
+    return 'ko';
+};
+
+const syncLangToggleLabel = (lang) => {
+    if (!langToggleButton) {
+        return;
+    }
+
+    langToggleButton.textContent = lang === 'ko' ? 'English' : '한국어';
+};
+
+    const applyLandingLanguage = (payload) => {
+        const lang = resolveLandingLang(payload);
+
+        if (typeof landingI18n.applyLanguageToRoot === 'function') {
+            if (document.body) {
+                if (typeof document.body.removeAttribute === 'function') {
+                    document.body.removeAttribute('data-lang');
+                }
+
+                if (document.body.dataset && Object.prototype.hasOwnProperty.call(document.body.dataset, 'lang')) {
+                    try {
+                        delete document.body.dataset.lang;
+                    } catch (_error) {
+                        document.body.dataset.lang = '';
+                    }
+                }
+            }
+
+            landingI18n.applyLanguageToRoot(document, { lang });
+        }
+
+    syncLangToggleLabel(lang);
+    return lang;
+};
+
+const bindLandingLanguageSync = () => {
+    if (landingLanguageUnsubscribe || typeof landingI18n.subscribeLanguageChange !== 'function') {
+        return;
+    }
+
+    landingLanguageUnsubscribe = landingI18n.subscribeLanguageChange((detail) => {
+        applyLandingLanguage(detail);
+    });
+};
+
+const initLandingLanguage = () => {
+    if (isLandingLanguageInitialized) {
+        return;
+    }
+
+    isLandingLanguageInitialized = true;
+    bindLandingLanguageSync();
+    applyLandingLanguage(resolveLandingLang());
+};
 
 function initLangToggle() {
     if (isLangToggleInitialized) return;
-    const langToggleButton = document.querySelector('.lang-toggle');
+    langToggleButton = document.querySelector('.lang-toggle');
     if (!langToggleButton) return;
     isLangToggleInitialized = true;
 
+    syncLangToggleLabel(resolveLandingLang());
+
     langToggleButton.addEventListener('click', () => {
-        currentLang = (currentLang === 'ko') ? 'en' : 'ko';
-        // 甕걔???혥????혚???꽷?
-        langToggleButton.textContent = (currentLang === 'ko') ? 'English' : '\uD55C\uAD6D\uC5B4';
-        localStorage.setItem('jeju_lang', currentLang);
-        changeLanguage(currentLang);
-        
-        // FAB ????삘뀲 ?뚮똾혧?혣??혨?혙 ?혣??
-        document.dispatchEvent(new CustomEvent('languageChanged', { detail: currentLang }));
-        document.dispatchEvent(new CustomEvent('fabLanguageChanged', { detail: currentLang }));
+        const nextLang = resolveLandingLang() === 'ko' ? 'en' : 'ko';
+        landingI18n.setCurrentLang(nextLang, { source: 'landing-toggle' });
     });
-
-    langToggleButton.textContent = (currentLang === 'ko') ? 'English' : '\uD55C\uAD6D\uC5B4';
-
 }
 
+initLandingLanguage();
+
 document.addEventListener('DOMContentLoaded', () => {
+    initLandingLanguage();
     whenStageReady('main-header', initLangToggle);
 });
 
