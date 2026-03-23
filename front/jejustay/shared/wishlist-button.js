@@ -3,8 +3,15 @@
 
     const BOUND_BUTTONS = new WeakSet();
     const CARD_SELECTOR = '.hotel-card-horizontal, .hotel-card-premium, .hotel-card, .activity-card';
+    const PLACEHOLDER_SELECTOR = '[data-jeju-wishlist-button]';
     const RESET_CLASS_DELAY = 460;
     const BUTTON_TEMPLATE = [
+        '<span class="wishlist-btn__burst-layer" aria-hidden="true">',
+        '<span class="wishlist-btn__burst wishlist-btn__burst--1"></span>',
+        '<span class="wishlist-btn__burst wishlist-btn__burst--2"></span>',
+        '<span class="wishlist-btn__burst wishlist-btn__burst--3"></span>',
+        '<span class="wishlist-btn__burst wishlist-btn__burst--4"></span>',
+        '</span>',
         '<span class="wishlist-btn__surface"></span>',
         '<span class="wishlist-btn__icon" aria-hidden="true">',
         '<svg viewBox="0 0 24 24" fill="none" role="presentation">',
@@ -140,6 +147,44 @@
         return button;
     };
 
+    const collectPlaceholderAttributes = (placeholder) => {
+        return Array.from(placeholder.attributes).reduce((attributes, attribute) => {
+            if (
+                attribute.name === 'data-jeju-wishlist-button'
+                || attribute.name === 'data-aria-label'
+                || attribute.name === 'data-active'
+                || attribute.name === 'aria-label'
+                || attribute.name === 'class'
+                || attribute.name === 'type'
+            ) {
+                return attributes;
+            }
+
+            attributes[attribute.name] = attribute.value;
+            return attributes;
+        }, {});
+    };
+
+    const hydratePlaceholders = (root = document) => {
+        const placeholders = Array.from(root.querySelectorAll(PLACEHOLDER_SELECTOR));
+
+        placeholders.forEach((placeholder) => {
+            const template = document.createElement('template');
+            template.innerHTML = renderMarkup({
+                active: placeholder.dataset.active === 'true',
+                ariaLabel: collapseText(placeholder.dataset.ariaLabel) || '위시리스트 추가',
+                attributes: collectPlaceholderAttributes(placeholder)
+            });
+
+            const button = template.content.firstElementChild;
+            if (!button) {
+                return;
+            }
+
+            placeholder.replaceWith(button);
+        });
+    };
+
     const clearMotionClasses = (button) => {
         if (button.dataset.wishlistResetTimer) {
             global.clearTimeout(Number(button.dataset.wishlistResetTimer));
@@ -149,9 +194,39 @@
         button.classList.remove('is-pressing', 'is-releasing');
     };
 
+    const prefersReducedMotion = () => {
+        return global.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true;
+    };
+
     const animateButton = (button, activating) => {
         clearMotionClasses(button);
+        if (prefersReducedMotion()) {
+            return;
+        }
+
         button.classList.add('is-pressing');
+
+        if (typeof button.animate === 'function') {
+            button.animate(
+                activating
+                    ? [
+                        { transform: 'translateY(0) scale(1)' },
+                        { transform: 'translateY(0) scale(0.94)', offset: 0.2 },
+                        { transform: 'translateY(-2px) scale(1.08)', offset: 0.56 },
+                        { transform: 'translateY(0) scale(1)' }
+                    ]
+                    : [
+                        { transform: 'translateY(0) scale(1)' },
+                        { transform: 'translateY(0) scale(0.92)', offset: 0.26 },
+                        { transform: 'translateY(0) scale(1.02)', offset: 0.58 },
+                        { transform: 'translateY(0) scale(1)' }
+                    ],
+                {
+                    duration: activating ? 620 : 360,
+                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+                }
+            );
+        }
 
         const surface = button.querySelector('.wishlist-btn__surface');
         if (surface && typeof surface.animate === 'function') {
@@ -173,6 +248,29 @@
                     easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
                 }
             );
+        }
+
+        const burstElements = button.querySelectorAll('.wishlist-btn__burst');
+        if (activating && burstElements.length > 0) {
+            burstElements.forEach((burst, index) => {
+                if (typeof burst.animate !== 'function') {
+                    return;
+                }
+
+                burst.animate(
+                    [
+                        { opacity: 0, transform: 'translate(-50%, -50%) scale(0.2)' },
+                        { opacity: 0.95, transform: 'translate(calc(-50% + (var(--burst-x) * 0.52)), calc(-50% + (var(--burst-y) * 0.52))) scale(1)', offset: 0.24 },
+                        { opacity: 0, transform: 'translate(calc(-50% + var(--burst-x)), calc(-50% + var(--burst-y))) scale(0.72)' }
+                    ],
+                    {
+                        delay: index * 18,
+                        duration: 420,
+                        easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                        fill: 'both'
+                    }
+                );
+            });
         }
 
         const icon = button.querySelector('.wishlist-btn__icon');
@@ -248,6 +346,7 @@
         onToggle,
         isActive
     } = {}) => {
+        hydratePlaceholders(root);
         const buttons = Array.from(root.querySelectorAll(selector));
 
         buttons.forEach((button) => {
@@ -270,25 +369,26 @@
                 event.preventDefault();
                 event.stopPropagation();
 
-                const currentActive = button.classList.contains('active');
+                const buttonId = resolveButtonId(button);
+                const currentActive = inferActiveState({ button, id: buttonId });
                 const nextActive = !currentActive;
 
                 if (typeof onToggle === 'function') {
                     const result = onToggle({
                         button,
                         event,
-                        id: resolveButtonId(button),
+                        id: buttonId,
                         isActive: currentActive,
                         nextActive
                     });
 
                     if (typeof result === 'boolean') {
-                        setActiveState(button, result);
+                        setActiveState(button, result, { force: true });
                         return;
                     }
 
                     if (result && typeof result === 'object' && typeof result.active === 'boolean') {
-                        setActiveState(button, result.active);
+                        setActiveState(button, result.active, { force: true });
                         return;
                     }
                 }
@@ -296,8 +396,8 @@
                 if (global.FABState?.addToWishlist) {
                     const item = extractWishlistItemFromButton(button);
                     if (item) {
+                        setActiveState(button, nextActive);
                         global.FABState.addToWishlist(item);
-                        setActiveState(button, global.FABState.isInWishlist(item.id));
                         return;
                     }
                 }
@@ -342,6 +442,9 @@
     global.JejuWishlistButton = Object.freeze({
         extractWishlistItem(button) {
             return extractWishlistItemFromButton(button);
+        },
+        hydrate(root = document) {
+            hydratePlaceholders(root);
         },
         init,
         renderMarkup,

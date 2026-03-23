@@ -9,7 +9,8 @@
 ## 현재 구조
 
 - Spring Boot `3.5.11`
-- Java `17`
+- Java `21`
+- Build tool `Gradle wrapper`
 - Packaging `war`
 - Thymeleaf 기본 엔트리: `/`, `/migration`
 - 첫 서비스 페이지 엔트리: `/auth/login`, `/pages/auth/login.html`
@@ -34,17 +35,16 @@
 
 ## 환경 변수 규칙
 
-- 배포용 `.env`는 새로 만들지 않는다.
-- 기본적으로 `jeju-spring`은 `../jeju-web/.env`를 `spring.config.import`로 읽는다.
+- 배포용 `.env` 소스는 현재 app config가 가리키는 경로를 따른다.
 - 서버 경로가 다르면 `JEJU_SHARED_ENV_PATH`로 override 한다.
-- Alwaysdata / SSH / 외부 API 키는 `jeju-web/.env`를 공용 소스로 유지한다.
+- build tool 전환과 env 소스 전환은 분리해서 다룬다.
 
 ## 루트 기준 실행 커맨드
 
 - `pnpm run spring:run`
 - `pnpm run spring:test`
 - `pnpm run spring:package`
-- 루트 스크립트는 `JAVA_HOME`이 비어 있으면 PATH 또는 대표 설치 경로에서 JDK를 먼저 찾는다.
+- 루트 스크립트는 `JAVA_HOME`이 비어 있으면 PATH 또는 대표 설치 경로에서 JDK를 먼저 찾고, `gradlew`를 실행한다.
 
 ## 첫 이행 원칙
 
@@ -58,7 +58,7 @@
 - `jejustay travel/esim`, `travel_guide`, `travel_tips`도 Spring 템플릿으로 옮겼고, 검색/아코디언/도시 탭 같은 기본 인터랙션은 페이지별 JS로 재구성했다.
 - `jejustay hotel-list`, `deals`, `deals_member`, `deals_partner`도 Spring 템플릿으로 옮겼다. 이로써 정적 호텔/프로모션 라인은 대부분 Spring 쪽에서 소화 가능해졌다.
 - JDBC 의존성은 넣어뒀지만, 실제 DB 마이그레이션 전까지는 datasource auto configuration을 끈 상태로 둔다.
-- 기존 `jeju-web` deploy script는 당장 건드리지 않는다. Spring WAR 배포 파이프라인은 템플릿 이관 후 별도로 연결한다.
+- 기존 `jeju-web` deploy script는 당장 건드리지 않는다. Spring WAR 배포 파이프라인은 Gradle `bootWar` 기준으로 별도로 연결한다.
 - 공용 스타일은 `assets/css/app.css`, 페이지별 스타일은 기능 폴더 아래로 분리한다.
 
 ## 다음 추천 순서

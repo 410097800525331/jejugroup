@@ -1,0 +1,27 @@
+goal: >
+  Polish the mypage dashboard by tightening companion-modal heading spacing,
+  enlarging support card icons, keeping the primary booking CTA on one line,
+  fixing the summary "정보 및 혜택" quick-nav target, adding a premium metallic
+  effect to the GOLD membership chip, and making the default mypage header
+  visually match the scrolled header state.
+constraints:
+  - Only edit front source-of-truth files under front/components/react/mypage and front/pages/mypage/styles.
+  - Do not edit jeju-web or jeju-spring mirror paths directly.
+  - Keep the existing hybrid shell + React island architecture intact.
+  - Preserve current modal behavior, booking actions, and local-only data flows.
+  - Scope the header visual change to the mypage dashboard instead of changing global shell behavior.
+acceptance_criteria:
+  - The companion-management modal h3/header spacing is reduced to a tighter, balanced rhythm without crowding the close button.
+  - The three support-card sp-icon images render visibly larger inside their icon frames.
+  - The primary inline booking CTA text stays on one line through font/icon/spacing adjustments rather than wrapping.
+  - Clicking the summary quick-nav button labeled "정보 및 혜택" scrolls to the actual account-benefit section.
+  - The GOLD membership chip has a richer metallic treatment while still reading clearly as GOLD.
+  - On the mypage dashboard, the header's initial visual state matches the current scrolled style.
+verification:
+  - Run pnpm run guard:text.
+  - Run pnpm run build:front.
+  - Review the changed selectors/components to confirm the information-and-benefits nav target points at the real section class.
+out_of_scope:
+  - Backend persistence or API changes.
+  - Direct edits to deployment mirrors under jeju-web or jeju-spring.
+  - Global header behavior changes for unrelated pages.

@@ -14,9 +14,9 @@
 ## 커밋 전 차단
 
 - 로컬 Git 훅은 `.githooks/pre-commit`
-- 훅은 아래 두 가지를 강제
-  - 모지바케/깨진 HTML 태그 검사
-  - `front -> jeju-web/src/main/webapp` 미러 일치 검사
+- 현재 훅은 모지바케/깨진 HTML 태그 검사만 강제
+- 기존 `front -> jeju-web/src/main/webapp` 미러 일치 검사는 기본 pre-commit 경로에서 제거했다
+- `jeju-web`은 레거시 배포 미러로만 남겨두고, 현재 작업 흐름은 `front -> jeju-spring` 기준으로 옮긴다
 - 훅 설치는 아래 명령으로 고정
 
 ```bash
@@ -37,9 +37,9 @@ corepack pnpm run setup:hooks
 ## 단일 원본 원칙
 
 - 사람이 직접 수정하는 원본은 `front`만 사용
-- `jeju-web/src/main/webapp`는 배포 미러로 취급
-- `jeju-web/src/main/webapp`를 직접 수정하면 pre-commit에서 차단
-- `front` 수정 후에는 반드시 `pnpm run sync` 또는 빌드 파이프라인으로 미러 반영
+- `jeju-web/src/main/webapp`는 레거시 배포 미러로 취급
+- `jeju-web/src/main/webapp`를 직접 원본처럼 수정하지 않는다
+- 현재 기본 반영 대상은 `jeju-spring`이며, `front` 수정 후에는 필요한 경우 spring 미러 스크립트나 spring 빌드 파이프라인으로 반영한다
 
 ## 수동 편집 금지 구역
 

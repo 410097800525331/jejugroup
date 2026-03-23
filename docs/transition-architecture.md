@@ -4,23 +4,25 @@
 
 - 파일명은 기존 참조 경로를 유지하기 위해 `transition-architecture.md` 를 그대로 사용
 - 하지만 현재 운영 기준은 `전면 React 전환 중` 이 아니라 `하이브리드 구조 확정` 이다
-- 이 문서는 `front` 와 `jeju-web` 을 어떻게 다뤄야 하는지, 어떤 영역이 React 앱이고 어떤 영역이 고정 정적인지 정리하는 운영 기준서다
+- 이 문서는 `front`, `jeju-web`, `jeju-spring` 을 어떻게 다뤄야 하는지, 어떤 영역이 React 앱이고 어떤 영역이 고정 정적인지 정리하는 운영 기준서다
 
 ## 구조 결론
 
 - `jejuair` 는 비전환 고정 영역이다
-- `front` 는 사람이 직접 수정하는 단일 원본이다
+- `front` 는 사람이 직접 수정하는 프런트엔드 원본이자 필요 시 되돌아볼 수 있는 원본 보관 성격의 작업 공간이다
 - `front/apps/cs` 는 독립 React 앱 원본이다
 - `front/apps/shell` 은 공용 하이브리드 런타임 원본이다
 - `front/components/react` 는 공용 React 컴포넌트 원본이다
 - `jejustay`, `auth`, `mypage`, 메인 랜딩은 정적 HTML + 셸 런타임 + React island 조합을 허용하는 하이브리드 영역이다
 - `jeju-web/src/main/webapp` 는 계속 배포 미러로 사용한다
+- `jeju-spring` 은 Spring Boot + Thymeleaf 기준의 배포 미러로 사용한다
 
 ## 디렉터리 역할
 
 ### `front`
 
 - 사람이 직접 수정하는 프런트엔드 원본
+- 프런트엔드 기준의 원본 보관 및 fallback reference 역할을 함께 가진다
 - 화면 마크업, 스타일, 공용 런타임, 앱 엔트리 수정은 여기서 시작
 
 ### `front/apps/cs`
@@ -61,6 +63,12 @@
 - `front` 원본에서 동기화된 결과를 유지하는 위치
 - 직접 수정 금지
 
+### `jeju-spring`
+
+- Spring Boot + Thymeleaf 기준 배포 미러
+- 프런트엔드 최종 반영 결과를 소비하는 런타임 측 작업 공간
+- 직접 프런트엔드 원본처럼 수정하지 않는다
+
 ## 렌더링 모드 기준
 
 ### 고정 정적
@@ -99,12 +107,14 @@
 1. `front` 원본 수정
 2. `pnpm run prepare:webapp` 또는 `pnpm run sync` 로 `jeju-web/src/main/webapp` 미러 반영
 3. sync 단계에서 webapp 내 HTML 엔트리를 대응 JSP 로 자동 미러 생성
-4. `pnpm run build` 또는 `pnpm run deploy` 로 WAR 생성 및 배포
+4. 필요 시 Spring Boot + Thymeleaf 배포 경로에서 `jeju-spring` 미러 결과를 사용
+5. `pnpm run build` 또는 `pnpm run deploy` 로 WAR 생성 및 배포
 
 ## 운영 규칙
 
 - 프런트엔드 수정은 항상 `front` 기준으로 판단
 - `jeju-web/src/main/webapp` 직접 수정 금지
+- `jeju-spring` 직접 수정 금지
 - 빌드 산출물 `front/components/runtime/*`, `front/.generated/**` 직접 수정 금지
 - `jejuair` 는 비전환 고정 정책을 유지
 - 새 페이지를 추가할 때는 `고정 정적`, `하이브리드`, `독립 앱` 중 하나를 먼저 선언하고 시작할 것

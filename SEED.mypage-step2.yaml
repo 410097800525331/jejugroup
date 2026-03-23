@@ -1,0 +1,23 @@
+goal: >
+  Add an account-scoped local mock dashboard storage seam so future purchase
+  flows can write mypage-bound data without changing the current dashboard
+  design or requiring a real DB/API.
+constraints:
+  - Only edit front source-of-truth files under front/components/react/mypage and this seed file.
+  - Do not change CSS, visible design, or current page layout.
+  - Keep the current fallback snapshot behavior when no account-scoped mock data exists.
+  - Do not hardcode purchase completion flows in this stage.
+  - Do not introduce server persistence, DB dependencies, or deployment-mirror changes.
+acceptance_criteria:
+  - A reusable account-scoped local mock-store utility exists for the mypage dashboard.
+  - The mock-store resolves an account key from the current session payload shape instead of using one global bucket.
+  - Dashboard hydration reads from the account-scoped mock-store and merges that data into the existing snapshot normalization path when present.
+  - Dashboard hydration reacts to both session updates and mock-store updates without changing the current UI design.
+  - When no mock-store data exists, the dashboard still renders the current fallback/state-driven content from Stage 1.
+verification:
+  - Run pnpm run build:front.
+  - Review the hydration path to confirm it still falls back cleanly when the account-scoped store is empty.
+out_of_scope:
+  - Purchase-flow write logic in 제주에어, 스테이, 렌터카, 액티비티, or voucher pages.
+  - Automatic itinerary used/cancelled status derivation.
+  - DB, API, or deployment-mirror changes.

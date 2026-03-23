@@ -1,0 +1,174 @@
+# MULTI AGENT LOG
+
+- time: `2026-03-22 07:14 +09:00`
+- route: `Route B`
+- task: `Toggle hotel header utils so guests see 비회원 예약확인 and signed-in users see 마이페이지`
+- participants: `main`, `worker_header_ui (Pauli)`, `reviewer_header_auth (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_header_ui`: `front/components/react/layout/HotelHeaderTemplate.tsx, front/apps/shell/src/runtime/layout/header.ts`
+  - `reviewer_header_auth`: `review only`
+- verification:
+  - `pnpm run build:front` passed after worker fixes
+  - `reviewer_header_auth` final pass reported `발견 없음`
+
+- time: `2026-03-22 08:40 +09:00`
+- route: `Route B`
+- task: `Refine the mypage personal-info modal contrast and reuse the linked companion avatar badge`
+- participants: `main`, `worker_modal_profile (Planck)`, `reviewer_modal_profile (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_modal_profile`: `front/components/react/mypage/AccountBenefitSection.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_modal_profile`: `review only`
+- verification:
+  - `pnpm run guard:text` passed
+  - `pnpm run build:front` passed
+  - `reviewer_modal_profile` reported one lucide effect dependency issue and it was fixed before close
+
+- time: `2026-03-22 09:14 +09:00`
+- route: `Route B`
+- task: `Polish the mypage modal, CTA, support icons, summary nav, gold chip, and default header state`
+- participants: `main`, `worker_mypage_components (Rawls)`, `worker_mypage_styles (Hume)`, `reviewer_mypage_polish (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.yaml`
+  - `worker_mypage_components`: `front/components/react/mypage/SummarySection.tsx`
+  - `worker_mypage_styles`: `front/pages/mypage/styles/_modal.css, front/pages/mypage/styles/_support.css, front/pages/mypage/styles/_trip-card.css, front/pages/mypage/styles/_summary.css, front/pages/mypage/styles/_layout.css`
+  - `reviewer_mypage_polish`: `review only`
+- verification:
+  - `pnpm run guard:text` passed
+  - `pnpm run build:front` passed
+  - `reviewer_mypage_polish` reported one header-override mismatch and passed after the fix with `발견 없음`
+
+- time: `2026-03-22 09:34 +09:00`
+- route: `Route B`
+- task: `Refine the mypage default header, profile avatar border, and support icon scale`
+- participants: `main`, `worker_mypage_followup_styles (Parfit)`, `reviewer_mypage_followup (Steward the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.mypage-polish-v2.yaml`
+  - `worker_mypage_followup_styles`: `front/pages/mypage/styles/_layout.css, front/pages/mypage/styles/_summary.css, front/pages/mypage/styles/_support.css`
+  - `reviewer_mypage_followup`: `review only`
+- verification:
+  - `pnpm run guard:text` passed
+  - `pnpm run build:front` passed
+  - `reviewer_mypage_followup` reported one reset-scope issue in `_layout.css` and passed after the fix with `발견 없음`
+
+- time: `2026-03-22 21:29 +09:00`
+- route: `Route B`
+- task: `Hydrate the mypage dashboard from the logged-in session instead of fixed mock member data`
+- participants: `main`, `worker_mypage_session_state (Fermat the 2nd)`, `worker_mypage_session_views (Leibniz the 2nd)`, `worker_mypage_session_styles (Aristotle the 2nd)`, `reviewer_mypage_session (Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.mypage-session-hydration.yaml`
+  - `worker_mypage_session_state`: `front/components/react/mypage/data.ts, front/components/react/mypage/state.tsx, front/components/react/mypage/types.ts`
+  - `worker_mypage_session_views`: `front/components/react/mypage/SummarySection.tsx, front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/BookingSection.tsx`
+  - `worker_mypage_session_styles`: `front/pages/mypage/styles/_summary.css`
+  - `reviewer_mypage_session`: `review only`
+- verification:
+  - `pnpm run guard:text` passed
+  - `pnpm run build:front` passed
+  - `reviewer_mypage_session` reported two session-hydration issues and passed after the follow-up fix with `발견 없음`
+
+- time: `2026-03-22 21:41 +09:00`
+- route: `Route B`
+- task: `Restore the broken companion-management modal design on mypage`
+- participants: `main`, `worker_mypage_companion_modal`, `reviewer_mypage_companion_modal`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_mypage_companion_modal`: `front/components/react/mypage/CompanionModal.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_mypage_companion_modal`: `review only`
+- verification:
+  - `pnpm run guard:text` passed
+  - `pnpm run build:front` passed
+  - reviewer pass completed with no blocking findings during final review
+
+- time: `2026-03-22 23:00 +09:00`
+- route: `Route B`
+- task: `Delete the unused companion-management popup implementation from the mypage dashboard`
+- participants: `main`, `worker_mypage_companion_delete (Popper)`, `reviewer_mypage_companion_delete (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_mypage_companion_delete`: `front/components/react/mypage/CompanionModal.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_mypage_companion_delete`: `review only`
+- verification:
+  - `worker_mypage_companion_delete` deleted the unused modal component and removed dedicated popup styles
+  - `pnpm run build:front` passed
+  - `reviewer_mypage_companion_delete` reported `발견 없음`
+
+- time: `2026-03-23 15:08 +09:00`
+- route: `Route B`
+- task: `Promote jeju-spring to JDK 21 and start the Spring + Thymeleaf landing mirror from front`
+- participants: `main`, `worker_spring_runtime (Laplace)`, `worker_landing_mirror (Descartes)`, `reviewer_spring_landing (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_runtime`: `jeju-spring/pom.xml, scripts/spring/run-jeju-spring-maven.cjs, package.json, jeju-spring/README.md`
+  - `worker_landing_mirror`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/**, jeju-spring/src/main/resources/templates/**, jeju-spring/src/main/resources/static/**`
+  - `reviewer_spring_landing`: `review only`
+- verification:
+  - `node --check scripts/spring/run-jeju-spring-maven.cjs` passed
+  - `node -e "const pkg=require('./package.json'); ..."` package script check passed
+  - Spring landing static mirror existence check passed
+  - reviewer final pass reported `발견 없음`
+  - Maven package verification stayed blocked because `java`/`JAVA_HOME` is not installed in this workspace and the open failure was logged to `ERROR_LOG.md`
+
+- time: `2026-03-23 18:18 +09:00`
+- route: `Route B`
+- task: `Fix front component and test errors across hotel sidebar, mypage dashboard data, and front/apps/cs test tooling`
+- participants: `main`, `worker_hotel_fix (Goodall)`, `worker_mypage_fix (Pasteur)`, `worker_cs_tests (Lagrange)`, `reviewer_front_component_test_fix (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_hotel_fix`: `front/components/react/hotel/HotelFilterSidebar.tsx`
+  - `worker_mypage_fix`: `front/components/react/mypage/data.ts`
+  - `worker_cs_tests`: `front/apps/cs/pnpm-lock.yaml`
+  - `reviewer_front_component_test_fix`: `review only`
+- verification:
+  - `pnpm -C front/apps/shell check` passed
+  - `pnpm -C front/apps/cs check` passed
+  - `pnpm -C front/apps/cs test` passed
+  - `git diff --check -- front/components/react/hotel/HotelFilterSidebar.tsx front/components/react/mypage/data.ts front/apps/cs/pnpm-lock.yaml` passed
+  - `reviewer_front_component_test_fix` reported `발견 없음`
+
+- time: `2026-03-23 09:49 +09:00`
+- route: `Route B`
+- task: `Migrate jeju-spring from Maven to Gradle while preserving the JDK 21 + external Tomcat 10.1 WAR workflow`
+- participants: `main`, `reviewer_gradle_migration (Confucius)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-gradle-migration.yaml`
+  - `worker_gradle_build`: `jeju-spring/build.gradle, jeju-spring/settings.gradle, jeju-spring/gradle/wrapper/**, jeju-spring/gradlew, jeju-spring/gradlew.bat, jeju-spring/pom.xml, jeju-spring/mvnw, jeju-spring/mvnw.cmd, jeju-spring/.mvn/**, jeju-spring/.gitattributes, jeju-spring/.gitignore`
+  - `worker_gradle_scripts_docs`: `scripts/spring/run-jeju-spring-gradle.cjs, package.json, jeju-spring/README.md, jeju-spring/HELP.md, docs/jeju-spring-bootstrap-2026-03-18.md`
+  - `reviewer_gradle_migration`: `review only`
+- verification:
+  - `node --check scripts/spring/run-jeju-spring-gradle.cjs` passed
+  - `git diff --check -- jeju-spring package.json scripts/spring/run-jeju-spring-gradle.cjs docs/jeju-spring-bootstrap-2026-03-18.md` passed
+  - `pnpm run spring:test` passed
+  - `pnpm run spring:war-package` passed
+  - `pnpm run guard:text` stayed blocked by the pre-existing mojibake line in `AGENTS.md`
+  - `reviewer_gradle_migration` reported no blocking findings
+
+- time: `2026-03-23 10:08 +09:00`
+- route: `Route B`
+- task: `Delete the remaining jeju-spring Maven source/script/doc leftovers after the Gradle migration`
+- participants: `main`, `worker_maven_cleanup (Popper)`, `worker_maven_docs (Hume)`, `reviewer_maven_cleanup (Pascal)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-maven-cleanup.yaml`
+  - `worker_maven_cleanup`: `scripts/spring/run-jeju-spring-maven.cjs, jeju-spring/target/**`
+  - `worker_maven_docs`: `docs/hotel-list-page-islandization-2026-03-19.md`
+  - `reviewer_maven_cleanup`: `review only`
+- verification:
+  - `Test-Path scripts/spring/run-jeju-spring-maven.cjs` returned `False`
+  - `Test-Path jeju-spring/target` returned `False`
+  - targeted repo search over `jeju-spring`, `scripts`, and `docs` found no remaining active `run-jeju-spring-maven|mvnw|maven-wrapper|pom.xml|Spring Maven|Apache Maven` references
+  - `pnpm run guard:text` passed
+  - `reviewer_maven_cleanup` reported no blocking findings
+
+- time: `2026-03-23 10:18 +09:00`
+- route: `Route B`
+- task: `Strip Maven metadata directories from the packaged jeju-spring WAR artifacts`
+- participants: `main`, `worker_war_sanitize (Poincare)`, `reviewer_war_sanitize (Banach)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-war-sanitize.yaml`
+  - `worker_war_sanitize`: `jeju-spring/build.gradle`
+  - `reviewer_war_sanitize`: `review only`
+- verification:
+  - `pnpm run spring:war-package` passed
+  - packaged `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war` returned `MAVEN_HITS=0` when scanned for `META-INF/maven/`
+  - packaged WAR still contains `WEB-INF/lib/**` and `WEB-INF/lib-provided/**`
+  - `reviewer_war_sanitize` reported no blocking findings

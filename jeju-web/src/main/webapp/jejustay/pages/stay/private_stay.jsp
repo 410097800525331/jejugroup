@@ -53,39 +53,38 @@
         <section class="promo-section">
             <div class="container">
                 <div class="promo-grid">
-                    <div class="promo-card promo-main"
-                        style="background: linear-gradient(135deg, #2c241b 0%, #4a3b2a 100%);">
-                        <div class="promo-icon">
-                            <i data-lucide="crown" style="color: #c7916b;"></i>
+                    <div class="promo-card promo-main promo-main-private">
+                        <div class="promo-icon promo-icon-private">
+                            <i data-lucide="crown"></i>
                         </div>
                         <div class="promo-content">
-                            <span class="promo-badge" style="background: #c7916b; color: #fff;">PREMIUM CHECK-IN</span>
-                            <h3 class="promo-title">프라이빗 스테이 예약 시<br><strong style="color: #c7916b;">얼리 체크인 & 웰컴
+                            <span class="promo-badge promo-badge-private">PREMIUM CHECK-IN</span>
+                            <h3 class="promo-title">프라이빗 스테이 예약 시<br><strong class="private-highlight">얼리 체크인 & 웰컴
                                     키트</strong> 제공</h3>
-                            <p class="promo-desc" style="color: rgba(255,255,255,0.7);">제주 유니버스 회원을 위한 특별한 시작</p>
-                            <a href="#" class="promo-link" style="color: #fff;"><span>혜택 확인하기</span> <i
+                            <p class="promo-desc promo-desc-soft">제주 유니버스 회원을 위한 특별한 시작</p>
+                            <a href="#" class="promo-link cta-link cta-bounce-target"><span>혜택 확인하기</span> <i
                                     data-lucide="arrow-right"></i></a>
                         </div>
                     </div>
-                    <div class="promo-card promo-sub" style="background: #fff; border: 1px solid #e5e5e5;">
-                        <div class="promo-icon">
-                            <i data-lucide="camera" style="color: #333;"></i>
+                    <div class="promo-card promo-sub promo-sub-neutral">
+                        <div class="promo-icon promo-icon-neutral">
+                            <i data-lucide="camera"></i>
                         </div>
                         <div class="promo-content">
-                            <span class="promo-badge" style="background: #eee; color: #333;">SNAP PHOTO</span>
-                            <h3 class="promo-title" style="color: #333;">인생샷 포인트<br>스냅 촬영 할인</h3>
-                            <a href="#" class="promo-link" style="color: #333;"><span>작가 보기</span> <i
+                            <span class="promo-badge promo-badge-neutral">SNAP PHOTO</span>
+                            <h3 class="promo-title promo-title-dark">인생샷 포인트<br>스냅 촬영 할인</h3>
+                            <a href="#" class="promo-link cta-link cta-bounce-target"><span>작가 보기</span> <i
                                     data-lucide="arrow-right"></i></a>
                         </div>
                     </div>
-                    <div class="promo-card promo-sub" style="background: #fff; border: 1px solid #e5e5e5;">
-                        <div class="promo-icon">
-                            <i data-lucide="wine" style="color: #333;"></i>
+                    <div class="promo-card promo-sub promo-sub-neutral">
+                        <div class="promo-icon promo-icon-neutral">
+                            <i data-lucide="wine"></i>
                         </div>
                         <div class="promo-content">
-                            <span class="promo-badge" style="background: #eee; color: #333;">DINING</span>
-                            <h3 class="promo-title" style="color: #333;">인룸 다이닝<br>와인 & 플래터</h3>
-                            <a href="#" class="promo-link" style="color: #333;"><span>메뉴 보기</span> <i
+                            <span class="promo-badge promo-badge-neutral">DINING</span>
+                            <h3 class="promo-title promo-title-dark">인룸 다이닝<br>와인 & 플래터</h3>
+                            <a href="#" class="promo-link cta-link cta-bounce-target"><span>메뉴 보기</span> <i
                                     data-lucide="arrow-right"></i></a>
                         </div>
                     </div>
@@ -148,13 +147,13 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=400&q=80"
                                 alt="제주 서귀포, 스테이 무드" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
+                            <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
                                 <span class="hotel-tag jj-pick">Premium</span>
                                 <div class="hotel-rating">
-                                    <span style="font-size: 0.8rem; color: #888;">독채</span>
+                                    <span class="hotel-rating-note">독채</span>
                                 </div>
                             </div>
                             <h3 class="hotel-name">제주 서귀포, 스테이 무드</h3>
@@ -186,13 +185,13 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=400&q=80"
                                 alt="가평, 포레스트 하우스" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
+                            <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
                                 <span class="hotel-tag jj-pick">Design Award</span>
                                 <div class="hotel-rating">
-                                    <span style="font-size: 0.8rem; color: #888;">풀빌라</span>
+                                    <span class="hotel-rating-note">풀빌라</span>
                                 </div>
                             </div>
                             <h3 class="hotel-name">가평, 포레스트 하우스</h3>
@@ -224,13 +223,13 @@
                         <div class="hotel-image-wrap">
                             <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80"
                                 alt="교토, 마치야 스테이" class="hotel-image">
-                            <button class="wishlist-btn" aria-label="위시리스트 추가" type="button"></button>
+                            <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         </div>
                         <div class="hotel-info">
                             <div class="hotel-header">
                                 <span class="hotel-tag jj-pick">Historic</span>
                                 <div class="hotel-rating">
-                                    <span style="font-size: 0.8rem; color: #888;">전통 가옥</span>
+                                    <span class="hotel-rating-note">전통 가옥</span>
                                 </div>
                             </div>
                             <h3 class="hotel-name">교토, 히노키 마치야</h3>
@@ -258,11 +257,10 @@
                     </article>
                 </div>
 
-                <div class="more-hotels-container" style="margin-top: 40px; text-align: center;">
-                    <a href="#" class="btn-more-hotels"
-                        style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 32px; border: 1px solid #e5e5e5; border-radius: 30px; color: #666; font-weight: 500; transition: all 0.3s ease;">
+                <div class="more-hotels-container">
+                    <a href="#" class="btn-more-hotels cta-pill cta-bounce-target">
                         <span>더 많은 감성 숙소 보기</span>
-                        <i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i>
+                        <i data-lucide="chevron-right"></i>
                     </a>
                 </div>
             </div>

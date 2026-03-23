@@ -1,6 +1,6 @@
 # jeju-spring
 
-`jeju-spring`은 기존 `jeju-web` 배포를 한 번에 걷어내지 않고, Spring Boot WAR + Thymeleaf 구조를 페이지 단위로 이행하기 위한 독립 모듈이다.
+`jeju-spring`은 외부 Tomcat 10.1에 배포하는 Spring Boot WAR + Thymeleaf 모듈이다. 빌드 기준은 Gradle wrapper이며, JDK 21을 요구한다.
 
 ## 현재 구조
 
@@ -45,11 +45,11 @@
 - `src/main/java/com/jejugroup/jejuspring/deals/view`
   - deals coupon/card/page 화면 모델 record
 - `src/main/resources/templates/fragments`
-  - 앞으로 이관할 페이지가 공통으로 쓸 Thymeleaf head 조각
+  - 공용 Thymeleaf head 조각
 - `src/main/resources/templates/auth`
-  - 첫 수동 이행 auth 페이지인 login/signup/pass 템플릿
+  - login/signup/pass 템플릿
 - `src/main/resources/templates/migration`
-  - 현재 migration status 대시보드
+  - migration status 대시보드
 - `src/main/resources/templates/mypage`
   - session 기반 dashboard 템플릿
 - `src/main/resources/templates/travel`
@@ -59,11 +59,9 @@
 - `src/main/resources/templates/deals`
   - deals/deals_member/deals_partner 템플릿
 - `src/main/resources/static/assets/css`
-  - `app.css`는 공용 스타일, `auth/*.css`, `migration/dashboard.css`, `mypage/dashboard.css`, `travel/*.css`, `stay/hotel-list.css`, `deals/deals.css`는 페이지 전용 스타일
+  - `app.css`는 공용 스타일, 나머지는 페이지 전용 스타일
 - `src/main/resources/static/assets/js`
-  - `auth/login-page.js`, `auth/signup-page.js`, `auth/pass-auth-page.js`는 기존 `/api/auth/*`를 호출하는 transitional auth 스크립트
-  - `auth/shared.js`는 PASS bridge, popup open, auth formatting helper
-  - `travel/*.js`는 jejustay 여행 페이지 필터/검색/아코디언/도시 탭을 처리하는 client helper
+  - auth/travel 페이지 helper 스크립트
 
 ## 엔드포인트
 
@@ -101,18 +99,29 @@
 - `/migration/readiness`
 - `/actuator/health`
 
+## 빌드 기준
+
+- 빌드 도구는 Gradle wrapper다.
+- `build.gradle`이 Spring Boot WAR 패키징과 front 자산 copy task를 관리한다.
+- 루트 helper `scripts/spring/run-jeju-spring-gradle.cjs`는 front shell 빌드를 먼저 맞춘 뒤 `gradlew`를 실행한다.
+- 외부 Tomcat 10.1 배포를 전제로 하므로 `providedRuntime`으로 Tomcat을 둔다.
+- JDK 21 미만이면 helper가 바로 중단한다.
+
 ## 환경 변수 원칙
 
-- 기본 `.env` 소스는 `../jeju-web/.env`
-- 필요하면 `JEJU_SHARED_ENV_PATH`로 override
-- datasource 자동 구성은 여전히 꺼둔 상태
-- auth 화면은 이제 `jeju-spring` 안의 Spring MVC `/api/auth/*`를 직접 호출한다
-- 다만 DB 계약은 여전히 legacy `users` 테이블과 기존 env 키(`DB_URL`, `DB_USER`, `DB_PASSWORD`)를 그대로 따른다
+- 현재 app config는 `spring.config.import`로 지정된 env 경로를 따른다.
+- 필요하면 `JEJU_SHARED_ENV_PATH`로 override 한다.
+- auth DB 계약은 기존 `users` 테이블과 env 키(`DB_URL`, `DB_USER`, `DB_PASSWORD`)를 그대로 따른다.
 
 ## 실행
 
 - 루트에서 `pnpm run spring:run`
 - 루트에서 `pnpm run spring:test`
-- 루트에서 `pnpm run spring:package`
+- 루트에서 `pnpm run spring:war-package`
+- 직접 실행할 때는 `jeju-spring/gradlew bootRun`, `jeju-spring/gradlew test`, `jeju-spring/gradlew bootWar`
 
-`scripts/spring/run-jeju-spring-maven.cjs`는 `JAVA_HOME`이 비어 있으면 PATH 또는 대표 설치 경로에서 JDK를 찾도록 보완되어 있다. 그래도 JDK 자체가 없으면 Maven wrapper는 실행되지 않는다.
+## 참고
+
+- `front`는 계속 사람이 수정하는 원본이다.
+- `sync-front-assets-to-spring.cjs`와 Gradle `processResources` task가 front 자산을 spring runtime으로 연결한다.
+- 이 모듈은 embedded Tomcat 런타임이 아니라 외부 Tomcat 10.1 WAR 배포 경로를 기준으로 유지한다.

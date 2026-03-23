@@ -27,11 +27,19 @@ class JejuSpringApplicationTests {
 	}
 
 	@Test
-	void migrationDashboardLoads() throws Exception {
+	void landingPageLoadsAtRoot() throws Exception {
 		mockMvc.perform(get("/"))
 			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("제주 그룹 - 모든 여행을 제주그룹 하나로")))
+			.andExpect(content().string(containsString("모든 여행의 시작과 끝, 제주그룹이 함께합니다.")));
+	}
+
+	@Test
+	void migrationDashboardLoads() throws Exception {
+		mockMvc.perform(get("/migration"))
+			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("jeju-spring migration hub")))
-			.andExpect(content().string(containsString("jeju-web .env reuse")));
+			.andExpect(content().string(containsString("jeju-spring .env reuse")));
 	}
 
 	@Test
@@ -40,7 +48,7 @@ class JejuSpringApplicationTests {
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(content().string(containsString("\"healthPath\":\"/actuator/health\"")))
-			.andExpect(content().string(containsString("\"sharedEnvPath\":\"../jeju-web/.env\"")));
+			.andExpect(content().string(containsString("\"sharedEnvPath\":\"jeju-spring/.env\"")));
 	}
 
 	@Test

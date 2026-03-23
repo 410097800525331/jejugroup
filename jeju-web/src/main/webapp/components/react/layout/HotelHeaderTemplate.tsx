@@ -34,9 +34,29 @@ export const HotelHeaderTemplate = ({ basePath }: HotelHeaderTemplateProps) => {
             <span>관리자 페이지</span>
           </a>
 
-          <a href="#" className="hotel-shell-util-link route-link" data-action="OPEN_RESERVATION_DRAWER">
-            <HotelShellIcon name="clipboard-list" className="hotel-shell-util-icon" />
-            <span data-lang="navResCheck">예약 확인</span>
+          <a
+            href="#"
+            className="hotel-shell-util-link route-link"
+            data-action="OPEN_RESERVATION_DRAWER"
+            id="headerAuthActionBtn"
+          >
+            <span className="hotel-shell-util-icon" aria-hidden="true">
+              <span data-auth-icon="guest">
+                <HotelShellIcon name="clipboard-list" className="hotel-shell-util-icon" />
+              </span>
+              <span data-auth-icon="member" hidden>
+                <HotelShellIcon name="user" className="hotel-shell-util-icon" />
+              </span>
+            </span>
+            <span
+              data-auth-label
+              data-auth-label-ko="비회원 예약확인"
+              data-auth-label-en="Guest Reservation Check"
+              data-auth-member-label-ko="마이페이지"
+              data-auth-member-label-en="My Page"
+            >
+              비회원 예약확인
+            </span>
           </a>
 
           <a

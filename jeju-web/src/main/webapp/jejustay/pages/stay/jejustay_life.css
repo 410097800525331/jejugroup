@@ -722,6 +722,17 @@ body.long-stay-page {
     filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.12));
 }
 
+@supports selector(.hotel-card-horizontal:has(.wishlist-btn:hover)) {
+    .hotel-card-horizontal:hover:has(.wishlist-btn:hover),
+    .hotel-card-horizontal:hover:has(.wishlist-btn:active),
+    .hotel-card-horizontal:hover:has(.wishlist-btn:focus-visible),
+    .hotel-card-horizontal:hover:has(.wishlist-btn.is-pressing),
+    .hotel-card-horizontal:hover:has(.wishlist-btn.is-releasing) {
+        transform: none;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+    }
+}
+
 /* 1. 이미지 섹션 */
 .card-image-wrap {
     width: 320px;
@@ -1618,4 +1629,96 @@ body.long-stay-page {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+}
+
+/* ========== Unified Stay Refresh ========== */
+body.long-stay-page {
+    background:
+        radial-gradient(circle at top left, rgba(0, 117, 143, 0.08), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(255, 80, 0, 0.14), transparent 28%),
+        linear-gradient(180deg, #fff9f4 0%, #ffffff 46%, #fff4ea 100%);
+}
+
+.life-hero-subtitle {
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    font-weight: 400;
+    line-height: 1.55;
+}
+
+.air-synergy-banner-shell {
+    margin-top: 60px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.curation-section {
+    margin-top: var(--space-3xl);
+}
+
+.btn-text.cta-link svg,
+.btn-text.cta-link i {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+}
+
+.avatar-plum {
+    background: #ff7a33;
+}
+
+.avatar-sea {
+    background: var(--secondary);
+}
+
+.avatar-mint {
+    background: #1f9d78;
+}
+
+.avatar-coral {
+    background: #f26b5b;
+}
+
+.promo-card-surface {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 80, 0, 0.1);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
+}
+
+.promo-icon-luggage {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.promo-icon-map {
+    background: var(--secondary-light);
+    color: var(--secondary);
+}
+
+.promo-icon-guide {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.promo-icon-luggage i,
+.promo-icon-luggage svg,
+.promo-icon-map i,
+.promo-icon-map svg,
+.promo-icon-guide i,
+.promo-icon-guide svg {
+    color: inherit;
+}
+
+.btn-more-hotels.cta-pill {
+    min-width: 240px;
+}
+
+.btn-more-hotels.cta-pill,
+.btn-more-hotels.cta-pill:hover,
+.btn-more-hotels.cta-pill:focus-visible,
+.search-btn-v2,
+.search-btn-v2:hover,
+.search-btn-v2:focus-visible,
+.search-btn-v2:active {
+    transform: translate3d(0, calc(var(--cta-hover-lift) + var(--cta-bounce-offset)), 0);
 }

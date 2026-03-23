@@ -12,7 +12,12 @@ public record AppProperties(
     Social social
 ) {
     public AppProperties {
-        migration = migration == null ? new Migration("../jeju-web/.env", List.of()) : migration;
+        migration = migration == null
+            ? new Migration(
+                "jeju-spring/.env",
+                List.of("Spring datasource auto-config now targets the local MySQL baseline while AuthService keeps the legacy users-table contract.")
+            )
+            : migration;
         alwaysdata = alwaysdata == null ? new Alwaysdata("", "", "", "", "", "", "", "", "") : alwaysdata;
         external = external == null ? new External("", "") : external;
         social = social == null ? new Social("", "", "") : social;

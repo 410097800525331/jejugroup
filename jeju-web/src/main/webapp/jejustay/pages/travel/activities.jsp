@@ -135,7 +135,7 @@
                 <div class="activity-card" data-category="water">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1516815231560-8f41ec531527?w=600&q=80"
                             alt="Activity" class="card-img" loading="lazy">
                     </div>
@@ -159,7 +159,7 @@
                 <div class="activity-card" data-category="spa">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80" alt="Activity"
                             class="card-img" loading="lazy">
                     </div>
@@ -183,7 +183,7 @@
                 <div class="activity-card" data-category="tour">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80"
                             alt="Activity" class="card-img" loading="lazy">
                     </div>
@@ -207,7 +207,7 @@
                 <div class="activity-card" data-category="water">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?w=600&q=80"
                             alt="Activity" class="card-img" loading="lazy">
                     </div>
@@ -231,7 +231,7 @@
                 <div class="activity-card" data-category="ticket">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1718965908210-a795ff8c9358?w=500&h=500&q=80&fit=crop&crop=focalpoint&fp-y=0.61"
                             alt="Osaka" class="card-img" loading="lazy">
                     </div>
@@ -255,7 +255,7 @@
                 <div class="activity-card" data-category="ticket">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="../../images/ruburu.jpg" alt="Paris"
                             class="card-img" loading="lazy">
                     </div>
@@ -279,7 +279,7 @@
                 <div class="activity-card" data-category="tour">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="../../images/banihill.png" alt="Danang"
                             class="card-img" loading="lazy">
                     </div>
@@ -302,7 +302,7 @@
                 <div class="activity-card" data-category="ticket">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1470004914212-05527e49370b?w=600&q=80" alt="Taipei"
                             class="card-img" loading="lazy">
                     </div>
@@ -326,7 +326,7 @@
                 <div class="activity-card" data-category="tour">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80" alt="Bali"
                             class="card-img" loading="lazy">
                     </div>
@@ -350,7 +350,7 @@
                 <div class="activity-card" data-category="food">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=600&q=80"
                             alt="Tokyo Food" class="card-img" loading="lazy">
                     </div>
@@ -374,7 +374,7 @@
                 <div class="activity-card" data-category="food">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80"
                             alt="Fukuoka Food" class="card-img" loading="lazy">
                     </div>
@@ -397,7 +397,7 @@
                 <div class="activity-card" data-category="spa">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&q=80"
                             alt="Sapporo Spa" class="card-img" loading="lazy">
                     </div>
@@ -421,7 +421,7 @@
                 <div class="activity-card" data-category="water">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="../../images/dolpine.png" alt="Guam"
                             class="card-img" loading="lazy">
                     </div>
@@ -445,7 +445,7 @@
                 <div class="activity-card" data-category="ticket">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="../../images/newyork.webp"
                             alt="New York" class="card-img" loading="lazy">
                     </div>
@@ -468,7 +468,7 @@
                 <div class="activity-card" data-category="tour">
                     <div class="card-image-wrapper">
                         <span class="badge-instant" data-lang="actInstant">즉시 확정</span>
-                        <button class="wishlist-btn" type="button" aria-label="위시리스트 추가"></button>
+                        <span data-jeju-wishlist-button data-aria-label="위시리스트 추가"></span>
                         <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80" alt="Rome"
                             class="card-img" loading="lazy">
                     </div>
@@ -503,4 +503,3 @@
 </body>
 
 </html>
-

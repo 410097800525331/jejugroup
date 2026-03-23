@@ -1,6 +1,5 @@
 import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Plus } from "lucide-react";
 
-import { useAuth } from "@/contexts/AuthContext";
 import type { InquiryRecord } from "@/types/service-center";
 import "@/styles/bbs.css";
 import InquiryListItem from "./InquiryListItem";
@@ -20,21 +19,7 @@ export default function InquiryList({
   onPageChange,
   onWriteClick,
 }: InquiryListProps) {
-  const { isAuthenticated, login } = useAuth();
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-
-  const handleWriteClick = () => {
-    if (!isAuthenticated) {
-      if (confirm("1:1 문의는 로그인 후 이용 가능합니다. 로그인하시겠습니까? (Mock Login)")) {
-        login({}).then(() => {
-          onWriteClick();
-        });
-      }
-      return;
-    }
-
-    onWriteClick();
-  };
 
   return (
     <div className="bbs-container">
@@ -43,7 +28,7 @@ export default function InquiryList({
           <h1>나의 문의 내역</h1>
           <p>회원님께서 남겨주신 1:1 문의 내역입니다</p>
         </div>
-        <button className="bbs-write-btn" onClick={handleWriteClick} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <button className="bbs-write-btn" onClick={onWriteClick} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Plus size={20} />
           문의하기
         </button>

@@ -1,0 +1,24 @@
+goal: >
+  Refine the mypage dashboard follow-up polish by making the default header
+  visually match the desired scrolled screenshot treatment, adding membership-
+  aware profile-avatar separation from the background, and slightly enlarging
+  the support-card icon images again.
+constraints:
+  - Only edit front source-of-truth files under front/pages/mypage/styles.
+  - Do not edit jeju-web or jeju-spring mirror paths directly.
+  - Keep the existing hybrid shell + React island architecture intact.
+  - Scope the header visual change to the mypage dashboard instead of changing global shell behavior.
+  - Preserve the current GOLD chip styling and booking/modal behavior unless required for the requested visual fixes.
+acceptance_criteria:
+  - On the mypage dashboard, the default header uses the same visual design the user expects from the scrolled screenshot: white surface, orange logo treatment, and dark utility/nav text.
+  - The profile photo is more clearly separated from the background with a membership-aware border treatment.
+  - The membership-aware avatar border supports the current GOLD state and leaves room for distinct colors for other membership tiers without changing data flow.
+  - The three support-card sp-icon images render slightly larger than the current 88% fit without clipping.
+verification:
+  - Run pnpm run guard:text.
+  - Run pnpm run build:front.
+  - Review the mypage-scoped header override to confirm it does not leak outside body.mypage-dashboard-page.
+out_of_scope:
+  - Backend persistence or API changes.
+  - Direct edits to deployment mirrors under jeju-web or jeju-spring.
+  - Global header behavior changes for unrelated pages.

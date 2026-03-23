@@ -6,6 +6,3 @@ cd "$ROOT_DIR"
 
 echo "[pre-commit] staged text integrity 검사 시작 상태"
 node scripts/guards/check-text-integrity.js --staged
-
-echo "[pre-commit] webapp mirror 검사 시작 상태"
-node scripts/guards/check-webapp-mirror.js --staged

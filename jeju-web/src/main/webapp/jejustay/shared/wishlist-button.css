@@ -9,6 +9,8 @@
     --wishlist-button-icon-size: 18px;
     --wishlist-button-idle: rgba(15, 23, 42, 0.58);
     --wishlist-button-active: #ff5b77;
+    --wishlist-button-bloom: rgba(255, 112, 146, 0.34);
+    --wishlist-button-ring: rgba(255, 255, 255, 0.6);
     position: absolute;
     top: var(--wishlist-button-top);
     right: var(--wishlist-button-right);
@@ -32,6 +34,32 @@
         filter 300ms ease;
 }
 
+.wishlist-btn::before,
+.wishlist-btn::after {
+    content: "";
+    position: absolute;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.wishlist-btn::before {
+    inset: -18%;
+    z-index: 0;
+    background: radial-gradient(circle, var(--wishlist-button-bloom) 0%, rgba(255, 112, 146, 0.14) 36%, rgba(255, 112, 146, 0) 74%);
+    opacity: 0;
+    transform: scale(0.72);
+}
+
+.wishlist-btn::after {
+    inset: 2px;
+    z-index: 0;
+    border: 1px solid rgba(255, 255, 255, 0.52);
+    opacity: 0;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 12px 22px rgba(255, 91, 119, 0.08);
+}
+
 .wishlist-btn:hover {
     color: rgba(255, 91, 119, 0.94);
     filter: drop-shadow(0 16px 32px rgba(15, 23, 42, 0.16));
@@ -49,8 +77,53 @@
 }
 
 .wishlist-btn__surface,
-.wishlist-btn__icon {
+.wishlist-btn__icon,
+.wishlist-btn__burst-layer,
+.wishlist-btn__burst {
     pointer-events: none;
+}
+
+.wishlist-btn__burst-layer {
+    position: absolute;
+    inset: -20%;
+    z-index: 0;
+}
+
+.wishlist-btn__burst {
+    --burst-x: 0px;
+    --burst-y: 0px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    opacity: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 163, 184, 0.92));
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.28),
+        0 6px 12px rgba(255, 91, 119, 0.2);
+    transform: translate(-50%, -50%) scale(0.2);
+}
+
+.wishlist-btn__burst--1 {
+    --burst-x: 0px;
+    --burst-y: -18px;
+}
+
+.wishlist-btn__burst--2 {
+    --burst-x: 15px;
+    --burst-y: -8px;
+}
+
+.wishlist-btn__burst--3 {
+    --burst-x: 13px;
+    --burst-y: 11px;
+}
+
+.wishlist-btn__burst--4 {
+    --burst-x: -14px;
+    --burst-y: 7px;
 }
 
 .wishlist-btn__surface {
@@ -72,6 +145,16 @@
         background 280ms ease,
         border-color 280ms ease;
     z-index: 1;
+}
+
+.wishlist-btn__surface::before {
+    content: "";
+    position: absolute;
+    inset: -28%;
+    border-radius: inherit;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0) 18%, rgba(255, 255, 255, 0.82) 48%, rgba(255, 255, 255, 0) 78%);
+    opacity: 0;
+    transform: translateX(-70%) rotate(12deg);
 }
 
 .wishlist-btn__surface::after {
@@ -121,6 +204,26 @@
     filter: drop-shadow(0 16px 32px rgba(255, 91, 119, 0.22));
 }
 
+.wishlist-btn.active::before {
+    opacity: 0.42;
+    transform: scale(1);
+    transition:
+        opacity 260ms ease,
+        transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wishlist-btn.active::after {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.66);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.16),
+        0 16px 28px rgba(255, 91, 119, 0.12);
+    transition:
+        opacity 260ms ease,
+        box-shadow 320ms ease,
+        border-color 320ms ease;
+}
+
 .wishlist-btn.active .wishlist-btn__surface {
     background:
         linear-gradient(180deg, rgba(255, 247, 249, 0.98), rgba(255, 237, 241, 0.9)),
@@ -143,14 +246,40 @@
         0 8px 18px rgba(15, 23, 42, 0.12);
 }
 
+.wishlist-btn.is-pressing::before {
+    animation: wishlist-button-bloom 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wishlist-btn.is-pressing::after {
+    animation: wishlist-button-ring 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .wishlist-btn.is-pressing .wishlist-btn__icon {
     transform: scale(0.84);
+}
+
+.wishlist-btn.is-pressing.active {
+    filter: drop-shadow(0 18px 32px rgba(255, 91, 119, 0.28));
+}
+
+.wishlist-btn.is-pressing .wishlist-btn__surface::before {
+    animation: wishlist-button-sheen 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wishlist-btn.is-pressing.active .wishlist-btn__icon svg {
+    filter:
+        drop-shadow(0 0 0 rgba(255, 255, 255, 0))
+        drop-shadow(0 10px 18px rgba(255, 91, 119, 0.3));
 }
 
 .wishlist-btn.is-releasing .wishlist-btn__surface {
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.9),
         0 12px 22px rgba(15, 23, 42, 0.12);
+}
+
+.wishlist-btn.is-releasing::before {
+    animation: wishlist-button-settle 260ms ease-out;
 }
 
 .wishlist-btn.is-releasing .wishlist-btn__icon {
@@ -161,6 +290,66 @@
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.94),
         0 14px 24px rgba(255, 91, 119, 0.16);
+}
+
+@keyframes wishlist-button-bloom {
+    0% {
+        opacity: 0;
+        transform: scale(0.76);
+    }
+
+    32% {
+        opacity: 0.68;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.28);
+    }
+}
+
+@keyframes wishlist-button-ring {
+    0% {
+        opacity: 0;
+        transform: scale(0.82);
+    }
+
+    24% {
+        opacity: 0.92;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.14);
+    }
+}
+
+@keyframes wishlist-button-sheen {
+    0% {
+        opacity: 0;
+        transform: translateX(-72%) rotate(12deg);
+    }
+
+    18% {
+        opacity: 0.88;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(72%) rotate(12deg);
+    }
+}
+
+@keyframes wishlist-button-settle {
+    0% {
+        opacity: 0.34;
+        transform: scale(1.04);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
 }
 
 .activities-page .wishlist-btn {

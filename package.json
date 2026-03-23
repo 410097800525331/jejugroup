@@ -29,9 +29,10 @@
     "build": "pnpm run prepare:webapp && node scripts/pipelines/build-war.js",
     "deploy": "pnpm run build && node scripts/pipelines/deploy.js",
     "publish": "pnpm run deploy",
-    "spring:run": "node scripts/spring/run-jeju-spring-maven.cjs spring-boot:run",
-    "spring:test": "node scripts/spring/run-jeju-spring-maven.cjs test",
-    "spring:package": "node scripts/spring/run-jeju-spring-maven.cjs package"
+    "spring:run": "node scripts/spring/run-jeju-spring-gradle.cjs bootRun",
+    "spring:test": "node scripts/spring/run-jeju-spring-gradle.cjs test",
+    "spring:war-package": "node scripts/spring/run-jeju-spring-gradle.cjs bootWar",
+    "spring:package": "pnpm run spring:war-package"
   },
   "dependencies": {
     "dotenv": "^17.3.1",

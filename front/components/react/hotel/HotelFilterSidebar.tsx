@@ -13,6 +13,8 @@ interface HotelFilterSidebarProps {
 }
 
 const RANGE_STEP = 1000;
+const STICKY_FILTER_BOTTOM_GAP = 24;
+type StickyOverlayMode = "absolute" | "fixed";
 
 const formatPrice = (price: number) => {
   return price.toLocaleString("ko-KR");
@@ -157,6 +159,7 @@ export const HotelFilterSidebar = ({
   const [stickyState, setStickyState] = useState({
     active: false,
     left: 0,
+    mode: "fixed" as StickyOverlayMode,
     top: 0,
     width: 0
   });
@@ -168,21 +171,42 @@ export const HotelFilterSidebar = ({
     const evaluateStickyState = () => {
       const sidebar = sidebarRef.current;
       const originalSidebarContent = originalSidebarContentRef.current;
+      const sourceStickySections = sourceStickySectionsRef.current;
 
-      if (!sidebar || !originalSidebarContent) {
+      if (!sidebar || !originalSidebarContent || !sourceStickySections) {
         return;
       }
 
       const header = document.querySelector<HTMLElement>(".header.hotel-shell-header");
       const stickySearch = document.getElementById("stickySearch");
+      const paginationBoundary =
+        document.querySelector<HTMLElement>(".load-more-container.pagination-container") ??
+        document.querySelector<HTMLElement>(".pagination-container") ??
+        document.querySelector<HTMLElement>(".load-more-container");
       const topOffset = (header?.offsetHeight ?? 72) + (stickySearch?.clientHeight ?? 72) + 24;
       const sidebarRect = sidebar.getBoundingClientRect();
       const originalSidebarContentRect = originalSidebarContent.getBoundingClientRect();
+      const stickySectionsHeight = sourceStickySections.offsetHeight;
+      const stickyShouldActivate = originalSidebarContentRect.bottom <= topOffset;
+      const sidebarDocumentTop = window.scrollY + sidebarRect.top;
+      const paginationBoundaryRect = paginationBoundary?.getBoundingClientRect();
+      const boundaryDocumentTop =
+        typeof paginationBoundaryRect?.top === "number" ? window.scrollY + paginationBoundaryRect.top : null;
+      const fixedOverlayDocumentBottom = window.scrollY + topOffset + stickySectionsHeight;
+      const shouldAnchorToBoundary =
+        stickyShouldActivate &&
+        typeof boundaryDocumentTop === "number" &&
+        fixedOverlayDocumentBottom + STICKY_FILTER_BOTTOM_GAP >= boundaryDocumentTop;
+      const anchoredTop =
+        typeof boundaryDocumentTop === "number"
+          ? Math.max(0, boundaryDocumentTop - sidebarDocumentTop - stickySectionsHeight - STICKY_FILTER_BOTTOM_GAP)
+          : topOffset;
 
       const nextState = {
-        active: originalSidebarContentRect.bottom <= topOffset,
-        left: sidebarRect.left,
-        top: topOffset,
+        active: stickyShouldActivate,
+        left: shouldAnchorToBoundary ? 0 : sidebarRect.left,
+        mode: (shouldAnchorToBoundary ? "absolute" : "fixed") as StickyOverlayMode,
+        top: shouldAnchorToBoundary ? anchoredTop : topOffset,
         width: sidebarRect.width
       };
 
@@ -190,6 +214,7 @@ export const HotelFilterSidebar = ({
         if (
           current.active === nextState.active &&
           current.left === nextState.left &&
+          current.mode === nextState.mode &&
           current.top === nextState.top &&
           current.width === nextState.width
         ) {
@@ -239,6 +264,7 @@ export const HotelFilterSidebar = ({
         className={`filter-sidebar-sticky-overlay${stickyState.active ? " is-visible" : ""}`}
         style={{
           left: `${stickyState.left}px`,
+          position: stickyState.mode,
           top: `${stickyState.top}px`,
           width: `${stickyState.width}px`
         }}

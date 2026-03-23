@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initWishlistButtons();
     initScrollAnimations();
     initSearchLogic();
+    void initSharedPremiumAnimations();
     
     // GSAP 애니메이션
     initStandardsAnimation();
@@ -74,6 +75,15 @@ function initStandardsAnimation() {
     }
 }
 
+async function initSharedPremiumAnimations() {
+    try {
+        const { initPremiumAnimations } = await import("../hotel/modules/interactions/premiumAnimations.js");
+        initPremiumAnimations();
+    } catch (error) {
+        console.error("[LongStayPage] premium animation init failed", error);
+    }
+}
+
 /* ========== 공통 기능 (hotel.js와 동일) ========== */
 function initWishlistButtons() {
     window.JejuWishlistButton?.init({
@@ -105,6 +115,29 @@ function initWishlistButtons() {
             return window.FABState ? window.FABState.isInWishlist(hotelId) : false;
         }
     });
+}
+
+function handleHotelCardClick(event, hotelId) {
+    const clickTarget = event?.target;
+    if (clickTarget instanceof Element && clickTarget.closest('.wishlist-btn')) {
+        return;
+    }
+
+    updateInfraUI(hotelId);
+}
+
+function renderWishlistButtonMarkup({ hotelId, hotelName, isActive }) {
+    if (window.JejuWishlistButton) {
+        return window.JejuWishlistButton.renderMarkup({
+            active: isActive,
+            ariaLabel: `${hotelName} 찜하기`,
+            attributes: {
+                'data-id': hotelId
+            }
+        });
+    }
+
+    return `<button class="wishlist-btn${isActive ? ' active' : ''}" type="button" aria-label="${hotelName} 찜하기" data-id="${hotelId}"></button>`;
 }
 
 function initScrollAnimations() {
@@ -319,18 +352,14 @@ function renderLongStayHotels(hotelsData = longStayHotels) {
         }
 
         return `
-            <article class="hotel-card-horizontal" data-amenity="${hotel.amenities.join(',')}" onclick="updateInfraUI(${hotel.id})">
+            <article class="hotel-card-horizontal" data-amenity="${hotel.amenities.join(',')}" onclick="handleHotelCardClick(event, ${hotel.id})">
                 <div class="card-image-wrap">
                     <img src="${hotel.image}" alt="${name}">
-                    ${window.JejuWishlistButton
-                        ? window.JejuWishlistButton.renderMarkup({
-                            active: isInWishlist,
-                            ariaLabel: `${name} 찜하기`,
-                            attributes: {
-                                'data-id': hotel.id
-                            }
-                        })
-                        : `<button class="wishlist-btn${isInWishlist ? ' active' : ''}" type="button" aria-label="${name} 찜하기" data-id="${hotel.id}"></button>`}
+                    ${renderWishlistButtonMarkup({
+                        hotelId: hotel.id,
+                        hotelName: name,
+                        isActive: isInWishlist
+                    })}
                     <!-- v2.0 Savings Badge -->
                     <span class="stay-discount-badge">${labelDailySave} <span data-price-krw="${savedAmount}">${symbol}${formatMoney(savedAmount)}</span></span>
                 </div>

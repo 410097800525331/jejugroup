@@ -2,6 +2,7 @@ import { initMegaMenu } from "@runtime/layout/megaMenu";
 import { initStaggerNav } from "@runtime/layout/stagger";
 import { canUseAdminSurface } from "@front-core-auth/local_admin.js";
 import { logoutSession, resolveSession } from "@front-core-auth/session_manager.js";
+import { resolveRoute } from "@front-core-utils/path_resolver.js";
 
 const SESSION_STORAGE_KEY = "userSession";
 const SESSION_UPDATE_EVENT = "jeju:session-updated";
@@ -91,6 +92,44 @@ const getLoginButton = () => {
   return document.getElementById("headerLoginBtn") || document.getElementById("indexLoginBtn");
 };
 
+const getHotelAuthUtilityButton = () => {
+  return document.getElementById("headerAuthActionBtn");
+};
+
+const getDocumentLanguage = () => {
+  return (
+    document.documentElement.getAttribute("lang") ||
+    document.documentElement.lang ||
+    "ko"
+  )
+    .trim()
+    .toLowerCase();
+};
+
+const getLocalizedHotelAuthLabel = (utilityButton: HTMLElement, isSignedIn: boolean) => {
+  const label = utilityButton.querySelector<HTMLElement>("[data-auth-label]");
+  if (!label) {
+    return null;
+  }
+
+  const lang = getDocumentLanguage();
+  const isKorean = lang.startsWith("ko");
+
+  if (isSignedIn) {
+    if (!isKorean) {
+      return label.dataset.authMemberLabelEn || label.dataset.authMemberLabelKo || "My Page";
+    }
+
+    return label.dataset.authMemberLabelKo || label.dataset.authMemberLabelEn || "마이페이지";
+  }
+
+  if (!isKorean) {
+    return label.dataset.authLabelEn || label.dataset.authLabelKo || "Guest Reservation Check";
+  }
+
+  return label.dataset.authLabelKo || label.dataset.authLabelEn || "비회원 예약확인";
+};
+
 const hydrateLucideIcons = (attempt = 0) => {
   const lucide = (window as { lucide?: { createIcons?: () => void } }).lucide;
   if (lucide?.createIcons) {
@@ -140,6 +179,74 @@ const updateLoginButtonAsLogout = async (loginButton: HTMLElement & { href?: str
   });
 };
 
+const updateLoginButtonAsLogin = (loginButton: HTMLElement & { href?: string }) => {
+  if (loginButton.dataset.logoutBound === "true") {
+    const replacement = loginButton.cloneNode(true) as HTMLElement & { href?: string };
+    replacement.removeAttribute("data-logout-bound");
+    loginButton.replaceWith(replacement);
+    loginButton = replacement;
+  }
+
+  const span = loginButton.querySelector("span");
+  if (span) {
+    span.textContent = "로그인";
+  } else {
+    loginButton.textContent = "로그인";
+  }
+
+  if ("href" in loginButton) {
+    loginButton.href = resolveRoute("AUTH.LOGIN", { shell: "stay" });
+  }
+
+  loginButton.setAttribute("data-route", "AUTH.LOGIN");
+  loginButton.setAttribute("data-route-params", '{"shell":"stay"}');
+  loginButton.removeAttribute("data-logout-bound");
+};
+
+const updateHotelAuthUtilityButton = (utilityButton: HTMLElement, isSignedIn: boolean) => {
+  const guestIcon = utilityButton.querySelector<HTMLElement>('[data-auth-icon="guest"]');
+  const memberIcon = utilityButton.querySelector<HTMLElement>('[data-auth-icon="member"]');
+  const label = utilityButton.querySelector<HTMLElement>("[data-auth-label]");
+  const localizedLabel = getLocalizedHotelAuthLabel(utilityButton, isSignedIn);
+
+  if (isSignedIn) {
+    utilityButton.removeAttribute("data-action");
+    utilityButton.setAttribute("data-route", "MYPAGE.DASHBOARD");
+    utilityButton.removeAttribute("data-route-params");
+    utilityButton.setAttribute("href", resolveRoute("MYPAGE.DASHBOARD"));
+
+    if (guestIcon) {
+      guestIcon.hidden = true;
+    }
+
+    if (memberIcon) {
+      memberIcon.hidden = false;
+    }
+
+    if (label) {
+      label.textContent = localizedLabel ?? "마이페이지";
+    }
+    return;
+  }
+
+  utilityButton.setAttribute("data-action", "OPEN_RESERVATION_DRAWER");
+  utilityButton.removeAttribute("data-route");
+  utilityButton.removeAttribute("data-route-params");
+  utilityButton.setAttribute("href", resolveRoute("SERVICES.AIR.BOOKING.GUEST_RESERVATION"));
+
+  if (guestIcon) {
+    guestIcon.hidden = false;
+  }
+
+  if (memberIcon) {
+    memberIcon.hidden = true;
+  }
+
+  if (label) {
+    label.textContent = localizedLabel ?? "비회원 예약확인";
+  }
+};
+
 const appendIndexAdminLink = (headerUtil: HTMLElement) => {
   if (headerUtil.querySelector('[data-route="ADMIN.DASHBOARD"]')) {
     return;
@@ -186,12 +293,22 @@ const canOpenAdmin = async () => {
 const syncHeaderAuthState = async () => {
   const adminButton = document.getElementById("headerAdminBtn");
   const loginButton = getLoginButton() as (HTMLElement & { href?: string }) | null;
+  const utilityButton = getHotelAuthUtilityButton();
   const indexHeaderUtil = document.getElementById("index-header-util");
 
   const [sessionData, localAdmin] = await Promise.all([resolveSessionData(), canOpenAdmin()]);
+  const isSignedIn = Boolean(sessionData);
 
-  if (sessionData && loginButton) {
-    await updateLoginButtonAsLogout(loginButton);
+  if (loginButton) {
+    if (isSignedIn) {
+      await updateLoginButtonAsLogout(loginButton);
+    } else {
+      updateLoginButtonAsLogin(loginButton);
+    }
+  }
+
+  if (utilityButton) {
+    updateHotelAuthUtilityButton(utilityButton, isSignedIn);
   }
 
   if (localAdmin && adminButton) {

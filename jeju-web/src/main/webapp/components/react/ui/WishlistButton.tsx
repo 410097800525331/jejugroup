@@ -20,6 +20,28 @@ const animateWishlistButton = (button: HTMLButtonElement, activating: boolean) =
   clearMotionClasses(button);
   button.classList.add("is-pressing");
 
+  if (typeof button.animate === "function") {
+    button.animate(
+      activating
+        ? [
+            { transform: "translateY(0) scale(1)" },
+            { transform: "translateY(0) scale(0.94)", offset: 0.2 },
+            { transform: "translateY(-2px) scale(1.08)", offset: 0.56 },
+            { transform: "translateY(0) scale(1)" }
+          ]
+        : [
+            { transform: "translateY(0) scale(1)" },
+            { transform: "translateY(0) scale(0.92)", offset: 0.26 },
+            { transform: "translateY(0) scale(1.02)", offset: 0.58 },
+            { transform: "translateY(0) scale(1)" }
+          ],
+      {
+        duration: activating ? 620 : 360,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)"
+      }
+    );
+  }
+
   const surface = button.querySelector<HTMLElement>(".wishlist-btn__surface");
   if (surface && typeof surface.animate === "function") {
     surface.animate(
@@ -40,6 +62,36 @@ const animateWishlistButton = (button: HTMLButtonElement, activating: boolean) =
         easing: "cubic-bezier(0.22, 1, 0.36, 1)"
       }
     );
+  }
+
+  const burstElements = button.querySelectorAll<HTMLElement>(".wishlist-btn__burst");
+  if (activating && burstElements.length > 0) {
+    burstElements.forEach((burst, index) => {
+      if (typeof burst.animate !== "function") {
+        return;
+      }
+
+      burst.animate(
+        [
+          { opacity: 0, transform: "translate(-50%, -50%) scale(0.2)" },
+          {
+            opacity: 0.95,
+            transform: "translate(calc(-50% + (var(--burst-x) * 0.52)), calc(-50% + (var(--burst-y) * 0.52))) scale(1)",
+            offset: 0.24
+          },
+          {
+            opacity: 0,
+            transform: "translate(calc(-50% + var(--burst-x)), calc(-50% + var(--burst-y))) scale(0.72)"
+          }
+        ],
+        {
+          delay: index * 18,
+          duration: 420,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          fill: "both"
+        }
+      );
+    });
   }
 
   const icon = button.querySelector<HTMLElement>(".wishlist-btn__icon");
@@ -99,6 +151,12 @@ export const WishlistButton = ({ active, ariaLabel, className = "", onToggle }: 
       ref={buttonRef}
       type="button"
     >
+      <span aria-hidden="true" className="wishlist-btn__burst-layer">
+        <span className="wishlist-btn__burst wishlist-btn__burst--1" />
+        <span className="wishlist-btn__burst wishlist-btn__burst--2" />
+        <span className="wishlist-btn__burst wishlist-btn__burst--3" />
+        <span className="wishlist-btn__burst wishlist-btn__burst--4" />
+      </span>
       <span className="wishlist-btn__surface" />
       <span aria-hidden="true" className="wishlist-btn__icon">
         <svg fill="none" role="presentation" viewBox="0 0 24 24">
