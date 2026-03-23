@@ -100,6 +100,15 @@ const getIndexReservationCheckButton = () => {
   return document.getElementById("indexReservationCheckBtn");
 };
 
+const getIndexReservationCheckDivider = () => {
+  const reservationButton = getIndexReservationCheckButton();
+  const divider = reservationButton?.previousElementSibling;
+
+  return divider instanceof HTMLElement && divider.classList.contains("util-divider")
+    ? divider
+    : null;
+};
+
 const getDocumentLanguage = () => {
   return (
     document.documentElement.getAttribute("lang") ||
@@ -318,6 +327,11 @@ const syncHeaderAuthState = async () => {
 
   if (indexReservationCheckButton) {
     indexReservationCheckButton.hidden = isSignedIn;
+  }
+
+  const indexReservationCheckDivider = getIndexReservationCheckDivider();
+  if (indexReservationCheckDivider) {
+    indexReservationCheckDivider.hidden = isSignedIn;
   }
 
   if (localAdmin && adminButton) {
