@@ -37,11 +37,11 @@
   - region / keyword / checkIn / checkOut / adults / children / rooms 쿼리를 받아 페이지 데이터 생성
   - `pageJson` 직렬화 추가
 - `scripts/spring/sync-front-assets-to-spring.cjs`
-  - Spring Maven 실행 전에 shell runtime 빌드를 먼저 보장
-- `scripts/spring/run-jeju-spring-maven.cjs`
-  - spring:test / spring:run / spring:package 전에 shell build 선행
-- `jeju-spring/pom.xml`
-  - Maven process-resources 단계에서 아래 자산을 `target/classes/static`으로 복사
+  - Gradle 기반 `spring:test` / `spring:run` / `spring:package` 전에 shell runtime 빌드를 먼저 보장
+- `scripts/spring/run-jeju-spring-gradle.cjs`
+  - `spring:test` / `spring:run` / `spring:package` 를 Gradle wrapper로 실행
+- `jeju-spring/build.gradle`
+  - Gradle `processResources` 단계에서 아래 자산을 `build/resources/main/static`으로 복사
   - `front/.generated/webapp-overlay/components/runtime/**`
   - `front/jejustay/**`
   - `front/components/react/layout/*.css`

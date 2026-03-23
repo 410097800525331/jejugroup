@@ -125,3 +125,50 @@
   - `pnpm -C front/apps/cs test` passed
   - `git diff --check -- front/components/react/hotel/HotelFilterSidebar.tsx front/components/react/mypage/data.ts front/apps/cs/pnpm-lock.yaml` passed
   - `reviewer_front_component_test_fix` reported `발견 없음`
+
+- time: `2026-03-23 09:49 +09:00`
+- route: `Route B`
+- task: `Migrate jeju-spring from Maven to Gradle while preserving the JDK 21 + external Tomcat 10.1 WAR workflow`
+- participants: `main`, `reviewer_gradle_migration (Confucius)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-gradle-migration.yaml`
+  - `worker_gradle_build`: `jeju-spring/build.gradle, jeju-spring/settings.gradle, jeju-spring/gradle/wrapper/**, jeju-spring/gradlew, jeju-spring/gradlew.bat, jeju-spring/pom.xml, jeju-spring/mvnw, jeju-spring/mvnw.cmd, jeju-spring/.mvn/**, jeju-spring/.gitattributes, jeju-spring/.gitignore`
+  - `worker_gradle_scripts_docs`: `scripts/spring/run-jeju-spring-gradle.cjs, package.json, jeju-spring/README.md, jeju-spring/HELP.md, docs/jeju-spring-bootstrap-2026-03-18.md`
+  - `reviewer_gradle_migration`: `review only`
+- verification:
+  - `node --check scripts/spring/run-jeju-spring-gradle.cjs` passed
+  - `git diff --check -- jeju-spring package.json scripts/spring/run-jeju-spring-gradle.cjs docs/jeju-spring-bootstrap-2026-03-18.md` passed
+  - `pnpm run spring:test` passed
+  - `pnpm run spring:war-package` passed
+  - `pnpm run guard:text` stayed blocked by the pre-existing mojibake line in `AGENTS.md`
+  - `reviewer_gradle_migration` reported no blocking findings
+
+- time: `2026-03-23 10:08 +09:00`
+- route: `Route B`
+- task: `Delete the remaining jeju-spring Maven source/script/doc leftovers after the Gradle migration`
+- participants: `main`, `worker_maven_cleanup (Popper)`, `worker_maven_docs (Hume)`, `reviewer_maven_cleanup (Pascal)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-maven-cleanup.yaml`
+  - `worker_maven_cleanup`: `scripts/spring/run-jeju-spring-maven.cjs, jeju-spring/target/**`
+  - `worker_maven_docs`: `docs/hotel-list-page-islandization-2026-03-19.md`
+  - `reviewer_maven_cleanup`: `review only`
+- verification:
+  - `Test-Path scripts/spring/run-jeju-spring-maven.cjs` returned `False`
+  - `Test-Path jeju-spring/target` returned `False`
+  - targeted repo search over `jeju-spring`, `scripts`, and `docs` found no remaining active `run-jeju-spring-maven|mvnw|maven-wrapper|pom.xml|Spring Maven|Apache Maven` references
+  - `pnpm run guard:text` passed
+  - `reviewer_maven_cleanup` reported no blocking findings
+
+- time: `2026-03-23 10:18 +09:00`
+- route: `Route B`
+- task: `Strip Maven metadata directories from the packaged jeju-spring WAR artifacts`
+- participants: `main`, `worker_war_sanitize (Poincare)`, `reviewer_war_sanitize (Banach)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-war-sanitize.yaml`
+  - `worker_war_sanitize`: `jeju-spring/build.gradle`
+  - `reviewer_war_sanitize`: `review only`
+- verification:
+  - `pnpm run spring:war-package` passed
+  - packaged `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war` returned `MAVEN_HITS=0` when scanned for `META-INF/maven/`
+  - packaged WAR still contains `WEB-INF/lib/**` and `WEB-INF/lib-provided/**`
+  - `reviewer_war_sanitize` reported no blocking findings

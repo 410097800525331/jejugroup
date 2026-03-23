@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode } from "react";
 
 /**
  * 모바일/웹 통합 고객센터를 위한 상위 레벨 권한 관리 Context
@@ -14,34 +14,16 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (credentials: any) => Promise<void>;
-  logout: () => void;
   isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // 실제 연동 전까지는 강제로 로그인된 상태인 척 할 수도 있음 (테스트용)
-  const [user, setUser] = useState<User | null>(null);
-
-  const login = async (credentials: any) => {
-    // Mock Login
-    console.log("Mock Login with:", credentials);
-    setUser({
-      id: "jeju-user-01",
-      name: "이지은",
-      email: "jieun@jejuair.com",
-      phone: "010-1234-5678",
-    });
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
+  const user: User | null = null;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

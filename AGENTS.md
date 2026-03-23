@@ -71,9 +71,7 @@ Global multi-agent defaults remain in effect unless this file narrows them.
 
 - alwaysdata 배포 스크립트 실행
 - ROOT.war 패키징 또는 업로드 방식 변경
-- jeju-web/.env 또는 jeju-spring 런타임 env 변경
 - Oracle Cloud 전환 관련 설정 변경
-- jeju-web/src/main/webapp/** 또는 jeju-spring/** 직접 수정
 
 ## Worker Mapping
 

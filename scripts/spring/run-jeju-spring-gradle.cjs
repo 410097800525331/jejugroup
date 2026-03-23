@@ -4,15 +4,15 @@ const os = require('node:os');
 const path = require('node:path');
 const { syncFrontAssetsToSpring } = require('./sync-front-assets-to-spring.cjs');
 
-const goals = process.argv.slice(2);
+const tasks = process.argv.slice(2);
 
-if (goals.length === 0) {
-  console.error('Usage: node scripts/spring/run-jeju-spring-maven.cjs <goal...>');
+if (tasks.length === 0) {
+  console.error('Usage: node scripts/spring/run-jeju-spring-gradle.cjs <task...>');
   process.exit(1);
 }
 
 const cwd = path.resolve(__dirname, '../../jeju-spring');
-const command = process.platform === 'win32' ? 'mvnw.cmd' : './mvnw';
+const command = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
 const env = {
   ...process.env
 };
@@ -23,9 +23,7 @@ const getJavaExecutableCandidates = () => {
   const binaryName = getJavaBinaryName();
   const candidates = [];
 
-  for (const entry of (process.env.PATH || '')
-    .split(path.delimiter)
-    .filter(Boolean)) {
+  for (const entry of (process.env.PATH || '').split(path.delimiter).filter(Boolean)) {
     candidates.push(path.join(entry, binaryName));
   }
 
@@ -67,7 +65,7 @@ const getJavaHomeFromExecutable = (javaExecutable) => {
     encoding: 'utf8'
   });
 
-  if (result.error || result.status !== 0 && result.status !== 1) {
+  if (result.error || (result.status !== 0 && result.status !== 1)) {
     return null;
   }
 
@@ -98,29 +96,38 @@ const getJavaHomeFromExecutable = (javaExecutable) => {
 };
 
 const resolveJavaHome = () => {
-  const configuredHomes = [env.JAVA_HOME, env.JDK_HOME].filter(Boolean);
-  for (const configuredHome of configuredHomes) {
-    const configuredJava = path.join(configuredHome, 'bin', getJavaBinaryName());
-    if (!fs.existsSync(configuredJava)) {
-      continue;
+  const inspections = [];
+  const seenHomes = new Set();
+
+  const collectInspection = (javaExecutable) => {
+    if (!fs.existsSync(javaExecutable)) {
+      return;
     }
 
-    const inspection = getJavaHomeFromExecutable(configuredJava);
-    if (inspection) {
-      return inspection;
+    const inspection = getJavaHomeFromExecutable(javaExecutable);
+    if (!inspection || seenHomes.has(inspection.javaHome)) {
+      return;
     }
+
+    seenHomes.add(inspection.javaHome);
+    inspections.push(inspection);
+  };
+
+  const configuredHomes = [env.JAVA_HOME, env.JDK_HOME].filter(Boolean);
+  for (const configuredHome of configuredHomes) {
+    collectInspection(path.join(configuredHome, 'bin', getJavaBinaryName()));
   }
 
   for (const candidate of getJavaExecutableCandidates()) {
-    if (fs.existsSync(candidate)) {
-      const inspection = getJavaHomeFromExecutable(candidate);
-      if (inspection) {
-        return inspection;
-      }
-    }
+    collectInspection(candidate);
   }
 
-  return null;
+  if (inspections.length === 0) {
+    return null;
+  }
+
+  inspections.sort((left, right) => right.javaMajorVersion - left.javaMajorVersion);
+  return inspections[0];
 };
 
 const javaInspection = resolveJavaHome();
@@ -152,7 +159,7 @@ const run = async () => {
     process.exit(1);
   }
 
-  const result = spawnSync(command, goals, {
+  const result = spawnSync(command, tasks, {
     cwd,
     env,
     stdio: 'inherit',

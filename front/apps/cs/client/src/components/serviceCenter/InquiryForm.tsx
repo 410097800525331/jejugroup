@@ -117,7 +117,7 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
         <div className="inquiry-form-group">
           <label htmlFor="inquiryType">문의 유형</label>
           <select id="inquiryType" {...register("inquiryType")}>
-            <option value="">유형 선택</option>
+            <option value="">문의 유형 선택</option>
             {currentInquiryTypes.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
