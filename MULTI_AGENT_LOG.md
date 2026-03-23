@@ -407,3 +407,62 @@
   - custom Playwright landing language smoke passed after confirming the landing DOM stays mounted, persisted language stays `en`, and hotel FAB/chatbot pick up English state
   - official `main landing smoke` Playwright check passed again after the bugfix
   - `reviewer_front_language_state` first reported one stale residue risk, the follow-up guard landed, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-23 23:15 +09:00`
+- route: `Route B`
+- task: `Apply the local DB batch seed across property, CMS, booking/voucher, and flight/rental inventory slices`
+- participants: `main`, `worker_seed (Huygens the 2nd)`, `worker_seed_batch (Feynman the 2nd)`, `reviewer_seed_batch (Steward the 3rd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.local-db-seed-batch-v1.yaml`
+  - `worker_seed_batch`: `jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql, jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql, jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql, jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql`
+  - `reviewer_seed_batch`: `review only`
+- verification:
+  - local DB direct apply completed for `V16` through `V19`
+  - batch seed contract revised to revision `2` so property/catalog scope no longer claims default `inventory_stocks` rows without trustworthy source data
+  - local DB counts after reconciliation:
+    - `properties=6`, `property_room_types=8`, `property_tags=8`, `property_benefits=8`, `property_display_overrides=8`, `price_policies=8`, `inventory_stocks=2`
+    - `cms_pages=5`, `cms_blocks=5`, `content_items=5`, `banner_slots=1`, `banners=1`, `exposure_rules=2`
+    - `users=1`, `user_profiles=1`, `bookings=5`, `booking_items=5`, `coupons=4`, `voucher_products=2`, `voucher_product_benefits=6`
+    - `flight_routes=3`, `flight_schedules=0`, `flight_fare_policies=0`, `flight_seat_inventories=0`, `rental_locations=1`, `rental_vehicle_classes=2`, `rental_vehicles=2`, `rental_rate_policies=2`, `rental_vehicle_inventories=2`
+  - reviewer first reported three source-fit/idempotency issues, follow-up fixes landed, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-23 22:50 +09:00`
+- route: `Route B`
+- task: `Add flight and rentcar inventory tables on top of the local schema`
+- participants: `main`, `worker_seed (Avicenna)`, `worker_inventory_schema (Wegener)`, `reviewer_customer_center_followup (Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.flight-rentcar-inventory-v1.yaml`
+  - `worker_inventory_schema`: `jeju-spring/src/main/resources/db/migration/V15__add_flight_and_rental_inventory_tables.sql`
+  - `reviewer_customer_center_followup`: `review only`
+- verification:
+  - local DB was updated directly from `V15__add_flight_and_rental_inventory_tables.sql`
+  - confirmed table creation for `flight_routes`, `flight_schedules`, `flight_fare_policies`, `flight_seat_inventories`, `rental_locations`, `rental_vehicle_classes`, `rental_vehicles`, `rental_rate_policies`, `rental_vehicle_inventories`
+  - reviewer first reported one flight fare policy route/schedule integrity gap, the migration was tightened with a composite FK and `ON DELETE RESTRICT`, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-23 22:30 +09:00`
+- route: `Route B`
+- task: `Seed phase1 customer-center master data into the existing local tables`
+- participants: `main`, `worker_seed (Socrates)`, `worker_customer_center_seed (Banach)`, `worker_customer_center_seed_tests (Anscombe)`, `reviewer_customer_center_followup (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.customer-center-existing-table-seed-phase1.yaml`
+  - `worker_customer_center_seed`: `jeju-spring/src/main/resources/db/migration/V14__seed_customer_center_master_data.sql`
+  - `worker_customer_center_seed_tests`: `jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java`
+  - `reviewer_customer_center_followup`: `review only`
+- verification:
+  - local DB was seeded manually from `V14__seed_customer_center_master_data.sql`
+  - local row counts confirmed `support_categories=24`, `notices=6`, `faqs=75`
+  - reviewer reported `발견 없음`
+  - `pnpm run spring:test` and `pnpm run spring:war-package` were both blocked by missing `jeju-spring/gradle/wrapper/gradle-wrapper.jar`, and that gap was appended to `ERROR_LOG.md`
+
+- time: `2026-03-23 23:03 +09:00`
+- route: `Route B`
+- task: `Seed the remaining local DB batch migrations sequentially under the frozen seed contract`
+- participants: `main`, `worker_seed_batch`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_batch`: `jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql, jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql, jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql, jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql`
+- verification:
+  - `git diff --check -- STATE.md jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql` passed

@@ -1,0 +1,24 @@
+goal: >
+  Seed customer-center master data from the front static source of truth into
+  the existing local jeju-spring schema without reshaping tables.
+constraints:
+  - Keep the existing schema intact; add only Flyway seed migration data, not table reshapes.
+  - Target local DB only, jeju-spring only, with JDK 21 and Tomcat 10.1 as the baseline.
+  - Scope this phase to customer-center master data only: support_categories, notices, and faqs.
+  - Treat front/apps/cs/client/src/data/inquiryOptions.ts and front/apps/cs/client/src/data/serviceCenterData.ts as the source of truth for seed content.
+  - Keep Hotel, CMS, and booking seeds out of scope for this slice.
+  - Preserve coexistence with existing customer-center CRUD/API behavior and integration tests.
+acceptance_criteria:
+  - front static inquiry options are seeded into support_categories.
+  - front static notices and faqs are seeded into notices and faqs.
+  - The data lands through Flyway migration without schema reshaping.
+  - Existing customer-center CRUD/API endpoints and integration tests continue to work with the seeded rows present.
+  - Tests do not fail because seed rows already exist.
+verification:
+  - pnpm run spring:test
+  - pnpm run spring:war-package
+  - Targeted customer-center seed coexistence checks
+out_of_scope:
+  - Any Hotel, CMS, or booking seed work.
+  - Any schema reshape or table redesign.
+  - Any frontend source changes.

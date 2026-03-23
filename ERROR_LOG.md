@@ -17,3 +17,21 @@
 - summary: `cs typecheck is blocked by existing errors outside the approved write set`
 - details: `tsc still fails in front/apps/cs/App.tsx, front/apps/cs/components/serviceCenter/NoticeList.tsx, front/apps/cs/pages/FAQs.tsx, and front/apps/cs/pages/Notices.tsx. The new serviceCenterApi/AuthContext changes passed targeted vitest runs.`
 - status: `open`
+
+- time: `2026-03-23 22:27:42 +09:00`
+- location: `jeju-spring/gradlew.bat compileTestJava`
+- summary: `test compilation verification blocked by missing Gradle wrapper jar`
+- details: `jeju-spring/gradle/wrapper/gradle-wrapper.jar is absent in the workspace, so the wrapper cannot launch. No installed gradle executable was available either, so compile-time verification for the modified customer-center integration test could not be completed here.`
+- status: `open`
+
+- time: `2026-03-23 22:30:53 +09:00`
+- location: `pnpm run spring:test / pnpm run spring:war-package`
+- summary: `customer-center seed slice mechanical Spring verification is blocked by the same missing Gradle wrapper jar`
+- details: `Both package scripts rebuilt front/apps/shell successfully and then failed before Spring execution because jeju-spring/gradle/wrapper/gradle-wrapper.jar is missing. The customer-center phase1 seed itself was still applied to the local DB manually from V14, and counts now read support_categories=24, notices=6, faqs=75.`
+- status: `open`
+
+- time: `2026-03-23 22:47:40 +09:00`
+- location: `PowerShell rg search on D:\git\jejugroup`
+- summary: `rg.exe access denied during schema review`
+- details: `Initial repo-wide rg searches failed with "Access is denied", so the review switched to Select-String and direct file reads for the SQL inspection.`
+- status: `resolved`

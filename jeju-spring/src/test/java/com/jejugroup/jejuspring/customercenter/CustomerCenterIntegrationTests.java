@@ -369,8 +369,10 @@ class CustomerCenterIntegrationTests {
         mockMvc.perform(get("/api/customer-center/notices").param("serviceType", NOTICE_SERVICE_TYPE))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.data.length()").value(1))
-            .andExpect(jsonPath("$.data[0].title").value(NOTICE_ACTIVE_TITLE));
+            .andExpect(jsonPath("$.data[?(@.title == '" + NOTICE_ACTIVE_TITLE + "')].length()")
+                .value(org.hamcrest.Matchers.greaterThanOrEqualTo(1)))
+            .andExpect(jsonPath("$.data[?(@.title == '" + NOTICE_INACTIVE_TITLE + "')].length()")
+                .value(0));
 
         mockMvc.perform(get("/api/customer-center/notices/{noticeId}", NOTICE_ACTIVE_ID).param("serviceType", NOTICE_SERVICE_TYPE))
             .andExpect(status().isOk())
@@ -464,8 +466,10 @@ class CustomerCenterIntegrationTests {
         mockMvc.perform(get("/api/customer-center/faqs").param("serviceType", FAQ_SERVICE_TYPE))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.data.length()").value(1))
-            .andExpect(jsonPath("$.data[0].question").value(FAQ_ACTIVE_QUESTION));
+            .andExpect(jsonPath("$.data[?(@.question == '" + FAQ_ACTIVE_QUESTION + "')].length()")
+                .value(org.hamcrest.Matchers.greaterThanOrEqualTo(1)))
+            .andExpect(jsonPath("$.data[?(@.question == '" + FAQ_INACTIVE_QUESTION + "')].length()")
+                .value(0));
 
         mockMvc.perform(get("/api/customer-center/faqs/{faqId}", FAQ_ACTIVE_ID).param("serviceType", FAQ_SERVICE_TYPE))
             .andExpect(status().isOk())
@@ -600,9 +604,9 @@ class CustomerCenterIntegrationTests {
             """,
             SUPPORT_CATEGORY_ID,
             SUPPORT_SERVICE_TYPE,
-            "booking",
-            "Booking",
-            "Booking support category",
+            "booking-test",
+            "Booking Test",
+            "Booking test support category",
             1,
             true
         );
