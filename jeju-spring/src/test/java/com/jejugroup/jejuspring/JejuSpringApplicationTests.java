@@ -39,7 +39,7 @@ class JejuSpringApplicationTests {
 		mockMvc.perform(get("/migration"))
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("jeju-spring migration hub")))
-			.andExpect(content().string(containsString("jeju-web .env reuse")));
+			.andExpect(content().string(containsString("jeju-spring .env reuse")));
 	}
 
 	@Test
@@ -48,7 +48,7 @@ class JejuSpringApplicationTests {
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(content().string(containsString("\"healthPath\":\"/actuator/health\"")))
-			.andExpect(content().string(containsString("\"sharedEnvPath\":\"../jeju-web/.env\"")));
+			.andExpect(content().string(containsString("\"sharedEnvPath\":\"jeju-spring/.env\"")));
 	}
 
 	@Test

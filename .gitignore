@@ -51,6 +51,7 @@ temp/
 
 # ===== DB / dumps (팀에서 공유하기로 한 게 아니면) =====
 *.sql
+!jeju-spring/src/main/resources/db/migration/*.sql
 *.dump
 *.bak
 *.sqlite
