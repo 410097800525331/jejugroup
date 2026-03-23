@@ -1,0 +1,26 @@
+goal: front/apps/cs React 앱을 기존 Spring customer-center API에 연동한다. 범위는 notices/faqs read, support ticket create/list/detail 기반 inquiry flow, 그리고 auth session hydration이다.
+constraints:
+  - front/apps/cs의 기존 UI 구조와 시각 톤을 유지하고, 불필요한 디자인 리뉴얼은 하지 않는다.
+  - serviceType 축은 jeju-air / jeju-stay / jeju-rental / common 을 유지한다.
+  - 가능한 한 기존 SearchBar/NoticeCard/FAQItem/InquiryForm/InquiryList 구조를 재사용한다.
+  - Home/Notices/FAQs는 더 이상 정적 NOTICES/ALL_FAQS 원본에 의존하지 않고 /api/customer-center/notices, /api/customer-center/faqs를 읽는다.
+  - Inquiries는 /api/auth/session으로 로그인 사용자 상태를 hydrate 하고, 로그인 상태면 /api/customer-center/support/tickets 및 ticket create를 사용한다.
+  - 비로그인 상태는 write/list 모두 인증 요구를 명확히 안내하되 앱이 깨지면 안 된다.
+  - support attachment/comment UI는 이번 범위 밖이다.
+acceptance_criteria:
+  - Home/Notices/FAQs가 /api/customer-center/notices, /api/customer-center/faqs 응답을 사용해 렌더링된다.
+  - Inquiries 진입 시 /api/auth/session을 통해 로그인 상태가 hydrate 되고, 로그인 상태에서는 support ticket create/list/detail 플로우가 동작한다.
+  - 비로그인 상태에서는 문의 작성/목록 기능이 인증 필요 상태로 안내되며, 앱은 오류 없이 유지된다.
+  - 기존 front/apps/cs의 화면 구조와 톤은 유지되고, 불필요한 시각적 개편은 없다.
+  - serviceType 축은 jeju-air / jeju-stay / jeju-rental / common 으로 유지된다.
+  - 가능한 범위에서 기존 SearchBar/NoticeCard/FAQItem/InquiryForm/InquiryList 컴포넌트 구조를 재사용한다.
+verification:
+  - pnpm -C front/apps/cs check
+  - pnpm -C front/apps/cs test
+  - pnpm -C front/apps/cs build
+  - targeted UI checks: public notice/faq read
+  - targeted UI checks: authenticated inquiry submit/list
+  - targeted UI checks: unauthenticated inquiry gating
+out_of_scope:
+  - support attachment/comment UI
+  - 불필요한 디자인 리뉴얼

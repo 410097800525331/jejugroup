@@ -2,7 +2,7 @@ spring:
   application:
     name: jeju-spring
   config:
-    import: "optional:file:${JEJU_SHARED_ENV_PATH:jeju-spring/.env}[.properties]"
+    import: "optional:file:${JEJU_SHARED_ENV_PATH:./.env}[.properties]"
   datasource:
     url: ${DB_URL:${ALWAYSDATA_DB_URL:jdbc:mysql://localhost:3306/jejugroup_db?characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true}}
     username: ${DB_USER:${ALWAYSDATA_DB_USER:jejugroup}}
@@ -30,11 +30,11 @@ management:
 info:
   app:
     name: ${spring.application.name}
-    shared-env-path: ${JEJU_SHARED_ENV_PATH:jeju-spring/.env}
+    shared-env-path: ${JEJU_SHARED_ENV_PATH:./.env}
 
 app:
   migration:
-    shared-env-path: ${JEJU_SHARED_ENV_PATH:jeju-spring/.env}
+    shared-env-path: ${JEJU_SHARED_ENV_PATH:./.env}
     notes:
       - front stays as the editable source until each page is migrated to Thymeleaf
       - jeju-web deploy credentials remain the shared source for alwaysdata and ssh

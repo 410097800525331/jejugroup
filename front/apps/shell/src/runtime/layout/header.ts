@@ -96,6 +96,10 @@ const getHotelAuthUtilityButton = () => {
   return document.getElementById("headerAuthActionBtn");
 };
 
+const getIndexReservationCheckButton = () => {
+  return document.getElementById("indexReservationCheckBtn");
+};
+
 const getDocumentLanguage = () => {
   return (
     document.documentElement.getAttribute("lang") ||
@@ -212,8 +216,8 @@ const updateHotelAuthUtilityButton = (utilityButton: HTMLElement, isSignedIn: bo
   if (isSignedIn) {
     utilityButton.removeAttribute("data-action");
     utilityButton.setAttribute("data-route", "MYPAGE.DASHBOARD");
-    utilityButton.removeAttribute("data-route-params");
-    utilityButton.setAttribute("href", resolveRoute("MYPAGE.DASHBOARD"));
+    utilityButton.setAttribute("data-route-params", '{"shell":"stay"}');
+    utilityButton.setAttribute("href", resolveRoute("MYPAGE.DASHBOARD", { shell: "stay" }));
 
     if (guestIcon) {
       guestIcon.hidden = true;
@@ -294,6 +298,7 @@ const syncHeaderAuthState = async () => {
   const adminButton = document.getElementById("headerAdminBtn");
   const loginButton = getLoginButton() as (HTMLElement & { href?: string }) | null;
   const utilityButton = getHotelAuthUtilityButton();
+  const indexReservationCheckButton = getIndexReservationCheckButton();
   const indexHeaderUtil = document.getElementById("index-header-util");
 
   const [sessionData, localAdmin] = await Promise.all([resolveSessionData(), canOpenAdmin()]);
@@ -309,6 +314,10 @@ const syncHeaderAuthState = async () => {
 
   if (utilityButton) {
     updateHotelAuthUtilityButton(utilityButton, isSignedIn);
+  }
+
+  if (indexReservationCheckButton) {
+    indexReservationCheckButton.hidden = isSignedIn;
   }
 
   if (localAdmin && adminButton) {

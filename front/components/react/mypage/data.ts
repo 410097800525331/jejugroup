@@ -2,6 +2,7 @@ import type {
   BookingItem,
   BookingType,
   DashboardSnapshot,
+  ItineraryCompanion,
   ItineraryItem,
   PassportInfo,
   StatItem,
@@ -25,9 +26,9 @@ const FALLBACK_PROFILE: UserProfile = {
 };
 
 const FALLBACK_STATS: StatItem[] = [
-  { label: "보유 포인트", tone: "point", value: "26,600P" },
-  { label: "사용 가능한 쿠폰", tone: "coupon", value: "12장" },
-  { label: "다가오는 여행", tone: "air", value: "3건" },
+  { label: "보유 포인트", tone: "point", value: "0P" },
+  { label: "사용 가능한 쿠폰", tone: "coupon", value: "0장" },
+  { label: "다가오는 여행", tone: "air", value: "0건" },
 ];
 
 const FALLBACK_BOOKINGS: BookingItem[] = [
@@ -90,130 +91,34 @@ const FALLBACK_BOOKINGS: BookingItem[] = [
   },
 ];
 
-const FALLBACK_LINKED_COMPANIONS = [
-  { id: "park_jy", isMember: true, name: "박준영" },
-  { id: "lee_je", isMember: true, name: "이지은" },
-];
+const EMPTY_COMPANION_FALLBACK: ItineraryCompanion = {
+  id: "",
+  isMember: false,
+  name: "",
+};
 
-const FALLBACK_TRAVEL_EVENTS: TravelEvent[] = [
-  {
-    activityLabel: "제주항공 7C101 탑승 완료",
-    date: "2026.10.15",
-    dayId: "iti-0",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-air-used",
-    ownerId: "hong_minji",
-    ownerName: "홍민지",
-    status: "used",
-    time: "07:30",
-    title: "제주행 비행기 탑승 및 출발",
-    type: "air",
-  },
-  {
-    activityLabel: "공항 유심 수령 예정",
-    date: "2026.10.15",
-    dayId: "iti-0",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-usim-reserved",
-    ownerId: "hong_minji",
-    ownerName: "홍민지",
-    status: "reserved",
-    time: "07:30",
-    title: "제주행 비행기 탑승 및 출발",
-    type: "voucher",
-  },
-  {
-    activityLabel: "렌터카 픽업 완료",
-    date: "2026.10.15",
-    dayId: "iti-1",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-rent-used",
-    ownerId: "hong_minji",
-    ownerName: "홍민지",
-    status: "used",
-    time: "14:00",
-    title: "제주도 첫날 도착 및 로컬 투어",
-    type: "rent",
-  },
-  {
-    activityLabel: "함덕 액티비티 바우처 사용 완료",
-    date: "2026.10.15",
-    dayId: "iti-1",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-activity-linked-used",
-    ownerId: "park_jy",
-    ownerName: "박준영",
-    status: "used",
-    time: "14:00",
-    title: "제주도 첫날 도착 및 로컬 투어",
-    type: "voucher",
-  },
-  {
-    activityLabel: "우도 잠수함 체험 이용 예정",
-    date: "2026.10.16",
-    dayId: "iti-2",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-submarine-reserved",
-    ownerId: "park_jy",
-    ownerName: "박준영",
-    status: "reserved",
-    time: "10:30",
-    title: "동부 해안 투어 및 성산 액티비티",
-    type: "voucher",
-  },
-  {
-    activityLabel: "성산 액티비티 바우처 미사용",
-    date: "2026.10.16",
-    dayId: "iti-2",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-activity-missed",
-    ownerId: "lee_je",
-    ownerName: "이지은",
-    status: "missed",
-    time: "10:30",
-    title: "동부 해안 투어 및 성산 액티비티",
-    type: "voucher",
-  },
-  {
-    activityLabel: "서귀포 숙소 체크인 완료",
-    date: "2026.10.17",
-    dayId: "iti-3",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-stay-used",
-    ownerId: "hong_minji",
-    ownerName: "홍민지",
-    status: "used",
-    time: "18:00",
-    title: "서귀포 밤 정취 느끼기",
-    type: "stay",
-  },
-  {
-    activityLabel: "야간 투어 바우처 취소됨",
-    date: "2026.10.17",
-    dayId: "iti-3",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-nighttour-cancelled",
-    ownerId: "lee_je",
-    ownerName: "이지은",
-    status: "cancelled",
-    time: "18:00",
-    title: "서귀포 밤 정취 느끼기",
-    type: "voucher",
-  },
-  {
-    activityLabel: "제주항공 7C102 탑승 예정",
-    date: "2026.10.18",
-    dayId: "iti-4",
-    googleMapUrl: "https://maps.google.com",
-    id: "travel-return-reserved",
-    ownerId: "hong_minji",
-    ownerName: "홍민지",
-    status: "reserved",
-    time: "19:30",
-    title: "서울/김포행 귀국 비행기 탑승",
-    type: "air",
-  },
-];
+const EMPTY_ACTIVITY_FALLBACK: ItineraryItem["activities"][number] = {
+  checked: false,
+  id: "",
+  label: "",
+  ownerId: "",
+  ownerName: "",
+  status: "reserved",
+  type: "voucher",
+};
+
+const EMPTY_ITINERARY_FALLBACK: ItineraryItem = {
+  activities: [],
+  companions: [],
+  date: "",
+  googleMapUrl: "",
+  id: "",
+  time: "",
+  title: "",
+};
+
+const FALLBACK_LINKED_COMPANIONS: ItineraryCompanion[] = [];
+const FALLBACK_TRAVEL_EVENTS: TravelEvent[] = [];
 
 function buildItineraryFromTravelEvents({
   currentAccountId,
@@ -302,7 +207,7 @@ export const ITINERARY: ItineraryItem[] = buildItineraryFromTravelEvents({
 });
 
 export const SUPPORT_ITEMS: SupportItem[] = [
-  { count: 1, href: "#", id: "qna", label: "1:1 문의 내역" },
+  { count: 0, href: "#", id: "qna", label: "1:1 문의 내역" },
   { count: 0, href: "#", id: "notice", label: "운항 및 예약 공지" },
   { count: null, href: "#", id: "faq", label: "자주 묻는 질문" },
 ];
@@ -546,14 +451,14 @@ const normalizeStats = (source: unknown, fallback: StatItem[]): StatItem[] => {
   }
 
   if (Array.isArray(source) && source.length === 0) {
-    return [];
+    return cloneStats(fallback);
   }
 
   if (isRecord(source)) {
     return buildSummaryStats(source, fallback);
   }
 
-  return [];
+  return cloneStats(fallback);
 };
 
 const normalizeStatItem = (item: unknown, fallback: StatItem, hasSession = false): StatItem => {
@@ -565,7 +470,7 @@ const normalizeStatItem = (item: unknown, fallback: StatItem, hasSession = false
   return {
     label,
     tone,
-    value: hasSession ? formatSummaryValue(valueSource, { ...fallback, value: "" }) : formatSummaryValue(valueSource, fallback),
+    value: hasSession ? formatSummaryValue(valueSource, fallback) : formatSummaryValue(valueSource, fallback),
   };
 };
 
@@ -614,7 +519,12 @@ const normalizeItinerary = (itinerary: unknown, fallback: ItineraryItem[]): Itin
     return cloneItinerary(fallback);
   }
 
-  return itinerary.map((item, index) => normalizeItineraryItem(item, fallback[index % fallback.length] ?? fallback[0]));
+  return itinerary.map((item, index) =>
+    normalizeItineraryItem(
+      item,
+      fallback.length > 0 ? fallback[index % fallback.length] ?? fallback[0] : EMPTY_ITINERARY_FALLBACK,
+    ),
+  );
 };
 
 const normalizeSupportItems = (items: unknown, fallback: SupportItem[]): SupportItem[] => {
@@ -630,7 +540,12 @@ const normalizeLinkedCompanions = (companions: unknown, fallback: typeof LINKED_
     return cloneCompanions(fallback);
   }
 
-  return companions.map((companion, index) => normalizeLinkedCompanion(companion, fallback[index % fallback.length] ?? fallback[0]));
+  return companions.map((companion, index) =>
+    normalizeLinkedCompanion(
+      companion,
+      fallback.length > 0 ? fallback[index % fallback.length] ?? fallback[0] : EMPTY_COMPANION_FALLBACK,
+    ),
+  );
 };
 
 export const normalizeTravelEventsInput = (events: unknown): TravelEvent[] => {
@@ -734,12 +649,22 @@ const normalizeItineraryItem = (item: unknown, fallback: ItineraryItem): Itinera
   const record = isRecord(item) ? item : {};
   const activities = Array.isArray(record.activities)
     ? record.activities.map((activity, index) =>
-        normalizeItineraryActivity(activity, fallback.activities[index % fallback.activities.length] ?? fallback.activities[0]),
+        normalizeItineraryActivity(
+          activity,
+          fallback.activities.length > 0
+            ? fallback.activities[index % fallback.activities.length] ?? fallback.activities[0]
+            : EMPTY_ACTIVITY_FALLBACK,
+        ),
       )
     : fallback.activities.map((activity) => ({ ...activity }));
   const companions = Array.isArray(record.companions)
     ? record.companions.map((companion, index) =>
-        normalizeItineraryCompanion(companion, fallback.companions[index % fallback.companions.length] ?? fallback.companions[0]),
+        normalizeItineraryCompanion(
+          companion,
+          fallback.companions.length > 0
+            ? fallback.companions[index % fallback.companions.length] ?? fallback.companions[0]
+            : EMPTY_COMPANION_FALLBACK,
+        ),
       )
     : fallback.companions.map((companion) => ({ ...companion }));
 
@@ -814,7 +739,7 @@ const normalizeSupportCount = (value: unknown, fallback: SupportItem["count"]) =
 
 const normalizeLinkedCompanion = (
   companion: unknown,
-  fallback: (typeof LINKED_COMPANIONS)[number],
+  fallback: ItineraryCompanion,
 ) => {
   const record = isRecord(companion) ? companion : {};
 

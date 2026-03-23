@@ -43,6 +43,20 @@ const getActivityStatusMeta = (status?: TravelEventStatus) => {
 export const ItinerarySection = () => {
   const { dispatch, state } = useDashboardState();
   const itinerary = state.itinerary ?? [];
+  const displayItinerary =
+    itinerary.length > 0
+      ? itinerary
+      : [
+          {
+            activities: [],
+            companions: [],
+            date: "일정 미정",
+            googleMapUrl: "",
+            id: "empty-itinerary",
+            time: "시간 미정",
+            title: "여행 일정 준비 중",
+          },
+        ];
   const linkedCompanions = state.linkedCompanions ?? [];
   const profile = state.profile;
   const [isExpanded, setIsExpanded] = useState(false);
@@ -57,7 +71,7 @@ export const ItinerarySection = () => {
   }, [isExpanded, itinerary, linkedCompanions]);
 
   useLayoutEffect(() => {
-    const nextHeights = itinerary.reduce<Record<string, number>>((acc, day) => {
+    const nextHeights = displayItinerary.reduce<Record<string, number>>((acc, day) => {
       acc[day.id] = dayBlockRefs.current[day.id]?.scrollHeight ?? 0;
       return acc;
     }, {});
@@ -72,7 +86,7 @@ export const ItinerarySection = () => {
 
       return nextHeights;
     });
-  }, [itinerary, isExpanded]);
+  }, [displayItinerary, isExpanded]);
 
   const handleSaveCompanions = (newCompanions: ItineraryCompanion[]) => {
     dispatch({ type: "SET_LINKED_COMPANIONS", payload: newCompanions });
@@ -100,10 +114,11 @@ export const ItinerarySection = () => {
       </header>
 
       <div className={`itinerary-timeline-wrap ${isExpanded ? "is-expanded" : ""}`}>
-        {itinerary.map((day: ItineraryItem, index) => {
+        {displayItinerary.map((day: ItineraryItem, index) => {
           const shouldAlwaysShow = index < 2;
           const isVisible = shouldAlwaysShow || isExpanded;
           const measuredHeight = dayBlockHeights[day.id] ?? 720;
+          const isEmptyDay = day.id === "empty-itinerary";
 
           return (
             <div
@@ -136,7 +151,7 @@ export const ItinerarySection = () => {
                     <i data-lucide="users" className="lucide-users" />
                     <span className="small-label">함께하는 동행자</span>
                   </div>
-                  <div className="avatar-stack">
+                  <div className={`avatar-stack ${day.companions.length === 0 ? "is-empty" : ""}`}>
                     {day.companions.map((comp: ItineraryCompanion) => (
                       <div
                         className={`companion-avatar soft-radius ${comp.isMember ? "is-linked" : ""}`}
@@ -159,15 +174,22 @@ export const ItinerarySection = () => {
               <SectionCard className="itinerary-content-card meta-glass-theme">
                 <div className="iti-header flex-header">
                   <h3 className="iti-title">{day.title}</h3>
-                  <a className="map-link-btn pill-shape" href={day.googleMapUrl} rel="noopener noreferrer" target="_blank">
-                    <i data-lucide="map-pin" className="lucide-map-pin" />
-                    구글 맵 보기
-                  </a>
+                  {day.googleMapUrl ? (
+                    <a className="map-link-btn pill-shape" href={day.googleMapUrl} rel="noopener noreferrer" target="_blank">
+                      <i data-lucide="map-pin" className="lucide-map-pin" />
+                      구글 맵 보기
+                    </a>
+                  ) : (
+                    <span className="map-link-btn pill-shape is-disabled" aria-disabled="true">
+                      <i data-lucide="map-pin" className="lucide-map-pin" />
+                      구글 맵 준비 중
+                    </span>
+                  )}
                 </div>
 
                 <div className="activity-checklist-wrap">
                   <p className="small-label">활동(Activity) 체크리스트</p>
-                  <ul className="checklist-list">
+                  <ul className={`checklist-list ${day.activities.length === 0 ? "is-empty" : ""}`}>
                     {day.activities.map((activity: ItineraryActivity) => {
                       const statusMeta = getActivityStatusMeta(activity.status);
                       const isUsed = activity.status === "used";
@@ -207,6 +229,7 @@ export const ItinerarySection = () => {
                       );
                     })}
                   </ul>
+                  {isEmptyDay ? <p className="checklist-empty-caption">등록된 활동이 아직 없다.</p> : null}
                 </div>
               </SectionCard>
             </div>

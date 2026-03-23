@@ -1645,6 +1645,10 @@ body.long-stay-page {
     line-height: 1.55;
 }
 
+#life-search-widget-root {
+    --hero-search-slot-height: 84px;
+}
+
 .air-synergy-banner-shell {
     margin-top: 60px;
     max-width: 1200px;

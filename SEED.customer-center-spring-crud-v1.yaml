@@ -1,0 +1,29 @@
+goal: >
+  Implement Spring customer-center CRUD/API on the local MySQL + Flyway
+  baseline for support_tickets, support_comments, support_attachments,
+  notices, and faqs, with deterministic authorization rules and a fixed
+  service_type axis for support tickets.
+constraints:
+  - Use the prepared local MySQL database and Flyway baseline as the only schema/runtime foundation for this slice.
+  - support_tickets write access must be limited to the logged-in user owning the ticket, and administrators may operate across other users' tickets.
+  - support_comments and support_attachments must inherit the parent support_ticket permission chain; if the caller cannot act on the ticket, they cannot act on its comments or attachments.
+  - notices and faqs are publicly readable, but every write operation for those entities is administrator-only.
+  - support_attachments are metadata-only CRUD/API records in the current table-based model; do not implement binary file upload, object storage, or streaming download behavior.
+  - support_tickets.service_type must be constrained to jeju-air, jeju-stay, jeju-rental, or common.
+  - Keep front/apps/cs UI structure as reference only; do not require any frontend source changes for this seed contract.
+  - Keep the contract scoped to customer-center CRUD/API behavior and the minimum schema and service changes needed to support it.
+acceptance_criteria:
+  - Spring customer-center endpoints exist for support_tickets, support_comments, support_attachments, notices, and faqs on top of the local MySQL + Flyway baseline.
+  - support_ticket read/update/delete and any nested comment/attachment operations enforce owner-or-admin authorization exactly as defined by the ticket ownership chain.
+  - Public GET access works for notices and faqs without authentication, while POST/PUT/PATCH/DELETE for notices and faqs are blocked unless the caller is an administrator.
+  - support_attachments endpoints operate only on metadata records already stored in the table model, with no binary upload path accepted.
+  - support_tickets reject any service_type value outside jeju-air, jeju-stay, jeju-rental, and common.
+  - The implementation remains compatible with the existing Spring build and packaged WAR workflow.
+verification:
+  - Run pnpm run spring:test.
+  - Run pnpm run spring:war-package.
+  - Run targeted MockMvc/API checks that cover ticket ownership enforcement, admin override access, public notice/faq reads, admin-only notice/faq writes, parent-ticket inheritance for comments/attachments, and metadata-only attachment CRUD/API behavior.
+out_of_scope:
+  - Any frontend update to front/apps/cs or other UI surfaces beyond using them as a reference for naming and page structure.
+  - Binary attachment upload, storage, preview, download, or file-serving features.
+  - Broader auth redesign, unrelated domain tables, or non-customer-center CRUD/API features.

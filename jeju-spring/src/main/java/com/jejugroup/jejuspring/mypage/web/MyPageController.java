@@ -2,14 +2,18 @@ package com.jejugroup.jejuspring.mypage.web;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import jakarta.servlet.http.HttpSession;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.jejugroup.jejuspring.auth.model.SessionUser;
 import com.jejugroup.jejuspring.mypage.application.MyPageDashboardFactory;
@@ -38,16 +42,25 @@ public class MyPageController {
             return "redirect:%s".formatted(buildLoginRedirect(resolvedShell, filter));
         }
 
-        model.addAttribute(
-            "dashboard",
-            myPageDashboardFactory.build(
-                user,
-                resolvedShell,
-                filter,
-                buildLoginRedirect(resolvedShell, filter)
-            )
-        );
-        return "mypage/dashboard";
+        try {
+            model.addAttribute(
+                "dashboard",
+                myPageDashboardFactory.build(
+                    user,
+                    resolvedShell,
+                    filter,
+                    buildLoginRedirect(resolvedShell, filter)
+                )
+            );
+            return "mypage/dashboard";
+        } catch (NoSuchElementException exception) {
+            return "redirect:%s".formatted(buildLoginRedirect(resolvedShell, filter));
+        } catch (SQLException exception) {
+            throw new ResponseStatusException(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                "마이페이지 데이터를 불러올 수 없습니다."
+            );
+        }
     }
 
     private String buildLoginRedirect(String shell, String filter) {

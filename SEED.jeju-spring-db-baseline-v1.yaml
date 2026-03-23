@@ -4,7 +4,7 @@ goal: >
   RBAC, companion links, notices, FAQ, support categories, and support tickets.
 constraints:
   - Use the prepared local MySQL environment as the target runtime for this slice.
-  - Limit schema scope to the v1 baseline: users/profile/auth, roles/permissions, companion links, notices, FAQ, support categories, support tickets, support comments, and support attachments.
+  - Limit schema scope to the v1 baseline: users/profile/auth, roles/permissions, companion links, notices, FAQ, support categories, support tickets, support comments, and ticket-scoped support attachments.
   - Do not implement booking/payment/product/CMS tables in this first DB baseline.
   - Keep the Gradle WAR workflow intact.
   - Prefer Flyway SQL migrations for schema creation.
@@ -12,8 +12,9 @@ constraints:
 acceptance_criteria:
   - jeju-spring runtime is configured so local MySQL can be used as the application datasource.
   - Flyway is added and executed as part of the jeju-spring runtime/build path.
-  - A v1 migration creates the baseline tables and key constraints for users, RBAC, companion links, notices, FAQ, support categories, support tickets, support comments, and support attachments.
+  - A v1 migration chain creates the baseline tables and key constraints for users, RBAC, companion links, notices, FAQ, support categories, support tickets, support comments, and ticket-scoped support attachments.
   - The current legacy auth/users contract remains compatible with the new baseline.
+  - The final local tables expose Korean table comments that describe each table's purpose.
   - The build/package path still works after the DB baseline wiring.
 verification:
   - Run pnpm run spring:war-package.

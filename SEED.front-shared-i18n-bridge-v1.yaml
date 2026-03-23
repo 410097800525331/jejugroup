@@ -1,0 +1,29 @@
+goal: >
+  front/core/constants/lang_data.js를 backward compatible하게 유지하면서,
+  legacy DOM pages와 React consumers가 함께 쓸 수 있는 shared i18n bridge를
+  front/core/constants/front-i18n.js로 고정한다.
+constraints:
+  - lang_data.js의 기존 export shape와 호출 방식은 깨지지 않아야 한다.
+  - 새 shared bridge는 legacy DOM pages와 React consumers 모두에서 사용할 수 있어야 한다.
+  - fallback resolution은 lang_data.js 우선, 그 다음 front-ko-en-copy-map.js 순서여야 한다.
+  - front/core/constants/front-ko-en-copy-map.js의 fallback 데이터는 bridge에서 실제로 활용되어야 한다.
+  - CommonJS export와 global exposure는 기존 런타임 소비자들이 바로 쓸 수 있는 안정적인 형태여야 한다.
+  - 작업 범위는 front/core/constants/lang_data.js, front/core/constants/front-ko-en-copy-map.js, front/core/constants/front-i18n.js로 한정한다.
+acceptance_criteria:
+  - lang_data.js를 직접 쓰는 기존 legacy DOM pages가 이전처럼 동작한다.
+  - React consumers가 front-i18n.js를 통해 동일한 번역 조회 결과를 얻는다.
+  - bridge가 lang_data.js에 없는 키를 front-ko-en-copy-map.js로 정상 fallback한다.
+  - bridge의 export와 global 접근 경로가 문법적으로 유효하고 소비자 입장에서 안정적이다.
+  - 기존 lang_data.js의 backward compatibility가 유지되고, 새 bridge 추가로 기존 호출부 수정이 강제되지 않는다.
+verification:
+  - node --check front/core/constants/lang_data.js
+  - node --check front/core/constants/front-ko-en-copy-map.js
+  - node --check front/core/constants/front-i18n.js
+  - pnpm run guard:text
+  - targeted diff check against front/core/constants/lang_data.js, front/core/constants/front-ko-en-copy-map.js, front/core/constants/front-i18n.js
+out_of_scope:
+  - jeju-web/src/main/webapp/** 직접 수정
+  - jeju-spring/** 직접 수정
+  - front/components/runtime/** 수정
+  - 언어 정책 확장이나 추가 로케일 도입
+  - copy map 이외의 신규 fallback 데이터 소스 추가

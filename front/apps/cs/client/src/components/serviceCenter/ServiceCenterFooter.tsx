@@ -1,34 +1,4 @@
-import { Building2, Car, Home, Plane } from "lucide-react";
-import FamilyRadialMenu from "@front-layout/FamilyRadialMenu";
-
-const RADIAL_LINKS = [
-  {
-    href: "/index.html",
-    icon: Home,
-    key: "main",
-    title: "제주그룹 메인",
-  },
-  {
-    href: "/jejuair/index.html",
-    icon: Plane,
-    key: "air",
-    title: "제주에어",
-  },
-  {
-    href: "/jejustay/pages/hotel/jejuhotel.html",
-    icon: Building2,
-    key: "stay",
-    title: "제주스테이",
-  },
-  {
-    href: "https://jejurentcar.netlify.app/",
-    icon: Car,
-    key: "rentcar",
-    rel: "noreferrer",
-    target: "_blank",
-    title: "제주렌터카",
-  },
-];
+import { JejuGroupFamilyRadialMenu } from "@front-layout/FamilyRadialMenu";
 
 export default function ServiceCenterFooter() {
   return (
@@ -46,7 +16,7 @@ export default function ServiceCenterFooter() {
         </div>
 
         <div className="customer-footer__menu">
-          <FamilyRadialMenu items={RADIAL_LINKS} originX="center" />
+          <JejuGroupFamilyRadialMenu />
         </div>
       </div>
     </footer>

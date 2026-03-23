@@ -1,32 +1,4 @@
-import { Building2, Car, Plane } from "lucide-react";
-import FamilyRadialMenu from "./FamilyRadialMenu";
-
-const STAY_FAMILY_RADIAL_ITEMS = [
-  {
-    href: "../../../jejuair/index.html",
-    icon: Plane,
-    key: "air",
-    rel: "noreferrer",
-    target: "_blank",
-    title: "제주에어",
-  },
-  {
-    href: "../../../jejustay/pages/hotel/jejuhotel.html",
-    icon: Building2,
-    key: "stay",
-    rel: "noreferrer",
-    target: "_blank",
-    title: "제주스테이",
-  },
-  {
-    href: "https://jejurentcar.netlify.app/",
-    icon: Car,
-    key: "rentcar",
-    rel: "noreferrer",
-    target: "_blank",
-    title: "제주렌터카",
-  },
-];
+import { JejuGroupFamilyRadialMenu } from "./FamilyRadialMenu";
 
 export const MainFooterTemplate = () => {
   return (
@@ -48,7 +20,7 @@ export const MainFooterTemplate = () => {
         </div>
 
         <div className="footer-right-group">
-          <FamilyRadialMenu items={STAY_FAMILY_RADIAL_ITEMS} radiusPx={72} />
+          <JejuGroupFamilyRadialMenu />
 
           <div className="footer-social">
             <a href="#" className="social-icon" aria-label="YouTube">

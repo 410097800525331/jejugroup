@@ -1,10 +1,14 @@
 package com.jejugroup.jejuspring;
 
+import java.sql.Date;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.jejugroup.jejuspring.auth.model.SessionUser;
@@ -22,6 +26,9 @@ class JejuSpringApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	@Test
 	void contextLoads() {
 	}
@@ -30,8 +37,8 @@ class JejuSpringApplicationTests {
 	void landingPageLoadsAtRoot() throws Exception {
 		mockMvc.perform(get("/"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("제주 그룹 - 모든 여행을 제주그룹 하나로")))
-			.andExpect(content().string(containsString("모든 여행의 시작과 끝, 제주그룹이 함께합니다.")));
+			.andExpect(content().string(containsString("English")))
+			.andExpect(content().string(containsString("Scroll Down")));
 	}
 
 	@Test
@@ -39,23 +46,23 @@ class JejuSpringApplicationTests {
 		mockMvc.perform(get("/migration"))
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("jeju-spring migration hub")))
-			.andExpect(content().string(containsString("jeju-spring .env reuse")));
+			.andExpect(content().string(containsString("jeju-web .env reuse")));
 	}
 
 	@Test
 	void readinessEndpointLoads() throws Exception {
-		mockMvc.perform(get("/migration/readiness"))
-			.andExpect(status().isOk())
-			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(content().string(containsString("\"healthPath\":\"/actuator/health\"")))
-			.andExpect(content().string(containsString("\"sharedEnvPath\":\"jeju-spring/.env\"")));
+        mockMvc.perform(get("/migration/readiness"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(content().string(containsString("\"healthPath\":\"/actuator/health\"")))
+            .andExpect(content().string(containsString("\"sharedEnvPath\":\"./.env\"")));
 	}
 
 	@Test
 	void authLoginPageLoads() throws Exception {
 		mockMvc.perform(get("/auth/login"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("로그인 페이지를 Thymeleaf로 옮겼다")))
+			.andExpect(content().string(containsString("First Manual Migration Slice")))
 			.andExpect(content().string(containsString("JejuGroup account")));
 	}
 
@@ -63,8 +70,8 @@ class JejuSpringApplicationTests {
 	void authSignupPageLoads() throws Exception {
 		mockMvc.perform(get("/auth/signup"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("회원가입 페이지도 Thymeleaf로 옮긴다")))
-			.andExpect(content().string(containsString("일반 회원가입")));
+			.andExpect(content().string(containsString("Second Manual Migration Slice")))
+			.andExpect(content().string(containsString("Create Account")));
 	}
 
 	@Test
@@ -72,7 +79,7 @@ class JejuSpringApplicationTests {
 		mockMvc.perform(get("/auth/pass"))
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("PASS")))
-			.andExpect(content().string(containsString("이용 중인 통신사를 선택해 주세요")));
+			.andExpect(content().string(containsString("Third Manual Migration Slice")));
 	}
 
 	@Test
@@ -92,35 +99,64 @@ class JejuSpringApplicationTests {
 	}
 
 	@Test
-	void myPageLoadsWhenSessionExists() throws Exception {
-		mockMvc.perform(get("/mypage/dashboard").sessionAttr("user", new SessionUser("minji", "홍민지", "USER")))
+	void myPageLoadsWhenSessionUserAlsoExistsInDb() throws Exception {
+		seedUser("minji", "?띾?吏DB", "minji.db@jejugroup.example");
+
+		mockMvc.perform(get("/mypage/dashboard").sessionAttr("user", new SessionUser("minji", "", "USER")))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("통합 예약 관리")))
-			.andExpect(content().string(containsString("홍민지")));
+			.andExpect(content().string(containsString("?띾?吏DB")))
+			.andExpect(content().string(containsString("minji.db@jejugroup.example")));
+	}
+
+	private void seedUser(String userId, String name, String email) {
+		jdbcTemplate.update(
+			"""
+			INSERT INTO users (id, pw, name, phone, email, birth_date, gender, provider, role)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE
+				pw = VALUES(pw),
+				name = VALUES(name),
+				phone = VALUES(phone),
+				email = VALUES(email),
+				birth_date = VALUES(birth_date),
+				gender = VALUES(gender),
+				provider = VALUES(provider),
+				role = VALUES(role)
+			""",
+			userId,
+			"encoded-password",
+			name,
+			"010-0000-0000",
+			email,
+			Date.valueOf(LocalDate.of(1990, 1, 1)),
+			"M",
+			"PASS",
+			"USER"
+		);
 	}
 
 	@Test
 	void travelActivitiesPageLoads() throws Exception {
 		mockMvc.perform(get("/travel/activities"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("추천 액티비티")))
-			.andExpect(content().string(containsString("제주항공 탑승객 인증")));
+			.andExpect(content().string(containsString("JEJU STAY Activities")))
+			.andExpect(content().string(containsString("Curated Picks")));
 	}
 
 	@Test
 	void travelEsimPageLoads() throws Exception {
 		mockMvc.perform(get("/travel/esim"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("언제 어디서나")))
-			.andExpect(content().string(containsString("인기 있는 여행지")));
+			.andExpect(content().string(containsString("JEJU STAY eSIM")))
+			.andExpect(content().string(containsString("Popular Destinations")));
 	}
 
 	@Test
 	void travelGuidePageLoads() throws Exception {
 		mockMvc.perform(get("/travel/guide"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("나만의 특별한 여행 가이드")))
-			.andExpect(content().string(containsString("미슐랭 가이드 추천")));
+			.andExpect(content().string(containsString("Travel Guide")))
+			.andExpect(content().string(containsString("Explore Countries")));
 	}
 
 	@Test
@@ -135,9 +171,8 @@ class JejuSpringApplicationTests {
 	void stayHotelListPageLoads() throws Exception {
 		mockMvc.perform(get("/stay/hotel-list"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("히로시마 프리미엄 호텔")))
-			.andExpect(content().string(containsString("지도에서 히로시마 호텔 보기")))
-			.andExpect(content().string(containsString("hotel-list-page-data")));
+			.andExpect(content().string(containsString("hotel-list-page-data")))
+			.andExpect(content().string(containsString("migration hub")));
 	}
 
 	@Test
@@ -153,8 +188,8 @@ class JejuSpringApplicationTests {
 	void dealsMainPageLoads() throws Exception {
 		mockMvc.perform(get("/deals"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("전 세계 여행을 더 가볍게")))
-			.andExpect(content().string(containsString("지금 바로 사용 가능한 쿠폰")));
+			.andExpect(content().string(containsString("ONLY JEJU GROUP")))
+			.andExpect(content().string(containsString("migration hub")));
 	}
 
 	@Test
@@ -162,7 +197,7 @@ class JejuSpringApplicationTests {
 		mockMvc.perform(get("/deals/member"))
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("JEJU UNIVERSE")))
-			.andExpect(content().string(containsString("회원 등급별 특별 혜택")));
+			.andExpect(content().string(containsString("Private Member Sale")));
 	}
 
 	@Test

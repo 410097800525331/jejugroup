@@ -1,0 +1,23 @@
+goal: >
+  Add the first read-only booking/payment/mypage APIs on top of the local DB
+  baseline, and wire the mypage dashboard to read from the new DB-backed source
+  tables instead of static in-memory fixtures.
+constraints:
+  - Keep this slice read-only: no booking/payment/support/product write APIs.
+  - Do not persist itinerary directly; derive mypage itinerary from travel_events.
+  - Limit implementation to booking/payment/mypage read paths in jeju-spring Java source plus minimal schema patches for user-scoped membership linkage and member-only companion-link enforcement if required.
+  - Keep the existing AuthService/users contract intact.
+acceptance_criteria:
+  - A booking/payment read API exists for the logged-in user or a scoped user identifier.
+  - The mypage dashboard read path uses DB-backed source tables for bookings, travel_events, coupons, points, memberships, and support summary instead of only static fixture lists.
+  - The read API returns data compatible with the current mypage/dashboard concepts: bookings, travel events, profile, stats, support summary.
+  - Companion links in this slice are member-only; itinerary/event scope must only include real linked user ids.
+  - No itinerary table is introduced or written to.
+verification:
+  - Run pnpm run spring:test.
+  - Run pnpm run spring:war-package.
+  - Perform targeted local API/controller checks for the new read endpoints and mypage page rendering.
+out_of_scope:
+  - Any write/create/update/delete API for bookings, payments, products, CMS, or support tickets.
+  - Frontend refactors beyond whatever existing tests/controllers need to read current server-rendered output.
+  - Any schema migrations beyond minimal user-membership linkage and member-only companion-link patches required to satisfy the read contract.

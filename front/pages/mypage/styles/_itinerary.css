@@ -63,9 +63,14 @@
   & .comp-head .small-label { margin: 0; font-weight: 700; font-size: 12px; color: var(--meta-text-muted); }
 
   & .avatar-stack { display: flex; align-items: center; margin-bottom: 4px; }
+  & .avatar-stack.is-empty {
+    min-height: 48px; padding: 12px 14px; border-radius: 16px;
+    background: rgba(148, 163, 184, 0.08); border: 1px dashed var(--meta-surface-border);
+  }
   & .companion-avatar { margin-left: -12px; }
   & .companion-avatar:first-child { margin-left: 0; }
   & .comp-count-label { font-size: 12px; font-weight: 700; color: var(--meta-text-muted); margin-left: 12px; }
+  & .avatar-stack.is-empty .comp-count-label { margin-left: 0; }
 
   & .link-action-btn {
     margin-top: 8px; width: 100%; padding: 10px; font-size: 12px; font-weight: 700;
@@ -91,15 +96,26 @@
     transition: all 0.3s;
   }
   & .map-link-btn:hover { background: var(--brand-stay); color: #fff; }
+  & .map-link-btn.is-disabled {
+    background: rgba(148, 163, 184, 0.12); color: var(--meta-text-muted);
+    pointer-events: none;
+  }
 
   & .activity-checklist-wrap .small-label { margin-bottom: 12px; }
   & .checklist-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  & .checklist-list.is-empty {
+    min-height: 132px; border: 1px dashed var(--meta-surface-border);
+    border-radius: var(--radius-md); background: rgba(148, 163, 184, 0.06);
+  }
   & .checklist-item {
     padding: 14px 20px; border-radius: var(--radius-md); background: var(--meta-bg-light);
     border: 1px solid transparent; transition: all 0.2s;
   }
   & .checklist-item.checked { background: rgba(0, 147, 138, 0.05); border-color: rgba(0, 147, 138, 0.1); }
   & .checklist-item:hover { transform: translateX(6px); background: #fff; border-color: var(--meta-surface-border); }
+  & .checklist-empty-caption {
+    margin: 12px 0 0; font-size: 13px; font-weight: 700; color: var(--meta-text-muted);
+  }
 
   & .checkbox-control { display: flex; align-items: center; gap: 12px; cursor: pointer; }
   & .check-text { font-size: 15px; font-weight: 600; color: var(--meta-text-main); transition: color 0.2s; }

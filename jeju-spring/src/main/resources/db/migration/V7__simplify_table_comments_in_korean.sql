@@ -1,0 +1,14 @@
+ALTER TABLE users COMMENT = '회원의 로그인 정보와 기본 연락처를 저장하는 테이블';
+ALTER TABLE user_profiles COMMENT = '회원 프로필과 표시 정보를 저장하는 테이블';
+ALTER TABLE user_auth_accounts COMMENT = '외부 로그인 계정과 회원 계정을 연결하는 테이블';
+ALTER TABLE roles COMMENT = '관리자나 회원 역할 종류를 저장하는 테이블';
+ALTER TABLE permissions COMMENT = '각 역할에 줄 수 있는 세부 권한을 저장하는 테이블';
+ALTER TABLE role_permissions COMMENT = '역할별 권한 연결 정보를 저장하는 테이블';
+ALTER TABLE user_roles COMMENT = '회원에게 어떤 역할이 부여됐는지 저장하는 테이블';
+ALTER TABLE companion_links COMMENT = '회원이 함께 이용할 동행자 정보를 저장하는 테이블';
+ALTER TABLE notices COMMENT = '서비스 공지사항을 저장하는 테이블';
+ALTER TABLE faqs COMMENT = '자주 묻는 질문과 답변을 저장하는 테이블';
+ALTER TABLE support_categories COMMENT = '고객센터 문의 분류를 저장하는 테이블';
+ALTER TABLE support_tickets COMMENT = '고객센터에 접수된 문의를 저장하는 테이블';
+ALTER TABLE support_comments COMMENT = '문의에 달린 답변과 내부 메모를 저장하는 테이블';
+ALTER TABLE support_attachments COMMENT = '문의에 첨부한 파일 정보를 저장하는 테이블';

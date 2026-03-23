@@ -5,6 +5,7 @@ import { markRuntimeReady } from "@runtime/lifecycle";
 import { getAppRoot } from "@runtime/utils/appRoot";
 
 const SHELL_QUERY_KEY = "shell";
+const SHELL_DEFAULT_ATTR = "shellDefault";
 const SHELL_STORAGE_KEY = "jeju:mypage-shell";
 const SHELLS = new Set(["main", "stay", "air"]);
 let mountedShell: string | null = null;
@@ -77,11 +78,25 @@ const resolveShellFromReferrer = () => {
   return null;
 };
 
+const resolveShellFromPageDefault = () => {
+  const shellDefault = document.body?.dataset[SHELL_DEFAULT_ATTR];
+  if (shellDefault && SHELLS.has(shellDefault)) {
+    return normalizeShellForPage(shellDefault);
+  }
+
+  return null;
+};
+
 const resolveShell = () => {
   const params = new URLSearchParams(window.location.search);
   const queryShell = params.get(SHELL_QUERY_KEY);
   if (queryShell && SHELLS.has(queryShell)) {
     return normalizeShellForPage(queryShell);
+  }
+
+  const pageDefaultShell = resolveShellFromPageDefault();
+  if (pageDefaultShell) {
+    return pageDefaultShell;
   }
 
   const referrerShell = resolveShellFromReferrer();
