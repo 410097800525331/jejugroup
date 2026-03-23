@@ -2,53 +2,53 @@
 
 ## Current Task
 
-- task: `Seed the remaining local DB batch migrations sequentially under the frozen seed contract`
-- phase: `complete`
-- scope: `V16 property/catalog, V17 cms/banner, V18 booking/membership/voucher, V19 flight/rental inventory`
-- verification_target: `repeat-safe seed migrations that fit the existing schema and stay source-bound`
+- task: `관리자페이지 프론트 마무리`
+- phase: `planning`
+- scope: `front/admin 전반의 남은 프론트 정리, 라벨/레이아웃 마감, 운영축 노출 누락 보완 포인트 정리`
+- verification_target: `다음 admin frontend 마감 패스에서 남은 화면/레이아웃/운영축 정리 범위를 확정하고, 기존 IA 변경분과 충돌 없이 이어갈 수 있어야 함`
 
 ## Route
 
 - route: `Route B`
-- reason: `The task now spans four disjoint migration files and multiple schema groups under a frozen batch contract, so it stays on Route B with separated write ownership and review.`
+- reason: `The next task is still a multi-page admin frontend finishing pass across shared admin surfaces, so Route B remains the required route for the upcoming implementation slice.`
 
 ## Writer Slot
 
-- owner: `worker_seed_batch`
-- write_set: `jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql, jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql, jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql, jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql`
+- owner: `main`
+- write_set: `STATE.md, MULTI_AGENT_LOG.md`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_batch`: `jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql, jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql, jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql, jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql`
-  - `reviewer_seed_batch`: `review-only across the four seed migrations`
-- note: `Tool thread limits collapsed the batch into one sequential worker lane, but the contract still stays frozen and source-bound with no schema reshape.`
+  - `worker_next_admin_front`: `to be assigned on the next implementation slice`
+  - `reviewer_next_admin_front`: `to be assigned on the next implementation slice`
+- note: `The reservations layout slice is complete. main remains planner-only on Route B and the next implementation pass should freeze the remaining admin frontend finish scope before more writes.`
 
 ## Contract Freeze
 
-- contract_freeze: `Frozen on 2026-03-23 22:54:26 +09:00 via SEED.local-db-seed-batch-v1.yaml revision 2`
+- contract_freeze: `The reservations toolbar refinement is complete. The next contract freeze should cover the remaining admin frontend finishing scope before additional implementation writes.`
 
 ## Seed
 
-- status: `frozen`
-- path: `SEED.local-db-seed-batch-v1.yaml`
-- revision: `2`
-- note: `The batch seed contract is frozen for the current local DB seed batch, covering only trustworthy front-derived slices and leaving untrusted tables out of scope. Revision 2 aligned the property/catalog scope with the implemented migrations by removing default inventory_stocks seed from the guaranteed set.`
+- status: `not-applicable`
+- path: `none`
+- revision: `0`
+- note: `This is an admin-frontend follow-up handled with an inline contract freeze instead of a separate seed file.`
 
 ## Reviewer
 
-- reviewer: `reviewer_seed_batch`
-- reviewer_target: `local DB batch seed safety, repeatability, and schema-fit across the four migrations`
-- reviewer_focus: `idempotency, source-to-table fit, no schema reshaping, no cross-file overlap, and no accidental jeju-web/alwaysdata coupling`
+- reviewer: `reviewer_next_admin_front`
+- reviewer_target: `next admin frontend finishing slice`
+- reviewer_focus: `to be frozen with the next implementation contract`
 
 ## Working Baseline
 
-- database_runtime: `local DB only`
-- deployment_runtime: `jeju-spring only`
-- excluded_runtime: `jeju-web/JSP path is out of active scope`
-- java_target: `JDK 21`
-- servlet_container_target: `Tomcat 10.1`
-- note: `The next customer-center backend/API seed must treat alwaysdata as out of scope for runtime work, ignore jeju-web mirror/JSP workflows, and target the jeju-spring + local DB + JDK 21 + Tomcat 10.1 plan only.`
+- database_runtime: `unchanged`
+- deployment_runtime: `front source only`
+- excluded_runtime: `jeju-web and jeju-spring mirrors remain out of scope`
+- java_target: `unchanged`
+- servlet_container_target: `unchanged`
+- note: `This task is limited to the reservations admin source files and does not touch deployment mirrors or backend runtime behavior.`
 
 ## Last Update
 
-- timestamp: `2026-03-23 23:15:00 +09:00`
-- note: `Local DB batch seed is complete. V16-V19 were applied directly to the local DB, stale rows were reconciled to match the frozen contract, and reviewer_seed_batch finished with 발견 없음 after the contract was revised to revision 2.`
+- timestamp: `2026-03-24 02:04:00 +09:00`
+- note: `The current admin frontend pass is recorded as complete through the reservations toolbar alignment tweaks. The next task is explicitly queued as 관리자페이지 프론트 마무리.`

@@ -1,16 +1,12 @@
 /**
  * @file lodging.js
- * @description Product/Inventory Management View logic. Domains are synced with Store.
+ * @description Product management view logic.
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
     'use strict';
 
     const routeResolverPromise = import('../../core/utils/path_resolver.js');
-    const HOTEL_LIST_OFFER_STORAGE_KEY = 'jejuHotelListOfferOverridesV1';
-    const HOTEL_LIST_OFFER_CATALOG_URL = '../data/hotel-list-offer-catalog.json';
-    const currencyFormatter = new Intl.NumberFormat('ko-KR');
-
     const redirectByRoute = (routeKey, mode = 'replace') => {
         routeResolverPromise
             .then(({ resolveRoute }) => {
@@ -41,148 +37,234 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sidebarToggle = document.getElementById('admin-sidebar-toggle');
     const sidebar = document.getElementById('admin-sidebar');
     const layout = document.querySelector('.admin-layout');
-    const domainFilters = document.querySelectorAll('.segment-btn');
-    const tableBody = document.getElementById('inventory-table-body');
+    const tabButtons = document.querySelectorAll('.segment-btn');
+    const tableBody = document.getElementById('lodging-table-body');
+    const tableHeadRow = document.querySelector('.admin-table thead tr');
+    const searchInput = document.querySelector('.admin-table-actions input[type="text"]');
+    const searchButton = document.querySelector('.admin-table-actions .admin-btn-outline');
+    const actionButtons = document.querySelectorAll('.admin-table-actions .admin-btn');
     const themeBtns = document.querySelectorAll('.theme-btn');
     const profileTrigger = document.getElementById('admin-profile-trigger');
     const profileContainer = document.getElementById('admin-profile-container');
     const logoutBtn = document.getElementById('admin-logout-btn');
-    const hotelOfferTableBody = document.getElementById('hotel-offer-table-body');
-    const hotelOfferSearchInput = document.getElementById('hotel-offer-search-input');
-    const hotelOfferResetAllBtn = document.getElementById('hotel-offer-reset-all-btn');
-    const hotelOfferForm = document.getElementById('hotel-offer-form');
-    const hotelOfferEditorCopy = document.getElementById('hotel-offer-editor-copy');
-    const hotelOfferTitleInput = document.getElementById('hotel-offer-title');
-    const hotelOfferBadgeInput = document.getElementById('hotel-offer-badge');
-    const hotelOfferOriginalPriceInput = document.getElementById('hotel-offer-original-price');
-    const hotelOfferCurrentPriceInput = document.getElementById('hotel-offer-current-price');
-    const hotelOfferResetBtn = document.getElementById('hotel-offer-reset-btn');
-    const hotelOfferPreview = document.getElementById('hotel-offer-preview');
     const syncSidebarUI = (isOpen) => window.AdminSidebarUI?.applySidebarUI({ layout, sidebar, isOpen });
 
-    const MOCK_INVENTORY = Object.freeze([
-        { id: 'INV-H01', domain: 'hotel', title: '신라호텔 제주 - 스탠다드 트윈', price: 350000, stock: 12, status: 'OPEN' },
-        { id: 'INV-H02', domain: 'hotel', title: '파르나스 호텔 제주 - 풀빌라', price: 1200000, stock: 0, status: 'SOLD_OUT' },
-        { id: 'INV-F01', domain: 'flight', title: '제주항공 7C141 (GMP-CJU)', price: 45000, stock: 45, status: 'OPEN' },
-        { id: 'INV-R01', domain: 'rentcar', title: '스타렌터카 - 아이오닉 5 롱레인지', price: 95000, stock: 3, status: 'WARNING' },
-        { id: 'INV-F02', domain: 'flight', title: '대한항공 KE1231 (CJU-GMP)', price: 85000, stock: 2, status: 'WARNING' },
-        { id: 'INV-R02', domain: 'rentcar', title: '무지개렌터카 - 카니발 9인승', price: 155000, stock: 1, status: 'WARNING' }
-    ]);
-
-    let hotelOfferCatalog = [];
-    let hotelOfferOverrides = readHotelOfferOverrides();
-    let hotelOfferSearchKeyword = '';
-    let selectedHotelOfferId = null;
-
-    function readHotelOfferOverrides() {
-        try {
-            const rawValue = window.localStorage.getItem(HOTEL_LIST_OFFER_STORAGE_KEY);
-            if (!rawValue) {
-                return {};
-            }
-
-            const parsed = JSON.parse(rawValue);
-            if (!parsed || typeof parsed !== 'object') {
-                return {};
-            }
-
-            return Object.entries(parsed).reduce((accumulator, [hotelId, value]) => {
-                if (!value || typeof value !== 'object') {
-                    return accumulator;
+    const TAB_CONFIG = Object.freeze({
+        stay: Object.freeze({
+            searchPlaceholder: '호텔명 또는 코드 검색...',
+            primaryAction: '호텔 등록',
+            secondaryAction: '재고 동기화',
+            emptyMessage: '호텔 상품이 없다.',
+            columns: Object.freeze(['상품 코드', '도메인', '상품명 / 옵션', '재고 / 수량', '기준가', '상태', '관리']),
+            rows: Object.freeze([
+                {
+                    searchText: 'PRD-H01 신라호텔 제주 디럭스 트윈 객실 12 350000 판매중',
+                    cells: [
+                        '<strong>PRD-H01</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(28, 90%, 55%); border-color:hsl(28, 90%, 55%);">호텔</span>',
+                        '신라호텔 제주 - 디럭스 트윈',
+                        '12 객실',
+                        '₩350,000',
+                        '<span class="admin-badge success">판매중</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
+                },
+                {
+                    searchText: 'PRD-H02 파르나스 호텔 제주 스위트 풀빌라 객실 0 1200000 품절',
+                    cells: [
+                        '<strong>PRD-H02</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(28, 90%, 55%); border-color:hsl(28, 90%, 55%);">호텔</span>',
+                        '파르나스 호텔 제주 - 스위트 풀빌라',
+                        '0 객실',
+                        '₩1,200,000',
+                        '<span class="admin-badge danger">품절</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
                 }
-
-                const nextOverride = {};
-
-                if (Object.prototype.hasOwnProperty.call(value, 'badge') && typeof value.badge === 'string') {
-                    nextOverride.badge = value.badge;
+            ])
+        }),
+        flight: Object.freeze({
+            searchPlaceholder: '항공편명 또는 좌석 코드 검색...',
+            primaryAction: '좌석 정책',
+            secondaryAction: '재고 동기화',
+            emptyMessage: '항공 상품이 없다.',
+            columns: Object.freeze(['상품 코드', '도메인', '노선 / 편명', '좌석', '기준가', '상태', '관리']),
+            rows: Object.freeze([
+                {
+                    searchText: 'FLT-F01 김포 제주 7C141 좌석 45 45000 판매중',
+                    cells: [
+                        '<strong>FLT-F01</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(210, 80%, 60%); border-color:hsl(210, 80%, 60%);">항공</span>',
+                        '제주항공 7C141 (GMP-CJU)',
+                        '45 석',
+                        '₩45,000',
+                        '<span class="admin-badge success">판매중</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
+                },
+                {
+                    searchText: 'FLT-F02 제주 김포 KE1231 좌석 2 85000 재고부족',
+                    cells: [
+                        '<strong>FLT-F02</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(210, 80%, 60%); border-color:hsl(210, 80%, 60%);">항공</span>',
+                        '대한항공 KE1231 (CJU-GMP)',
+                        '2 석',
+                        '₩85,000',
+                        '<span class="admin-badge warning">재고 부족</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
                 }
-
-                const originalPrice = sanitizePriceValue(value.originalPrice);
-                if (originalPrice !== null) {
-                    nextOverride.originalPrice = originalPrice;
+            ])
+        }),
+        rentcar: Object.freeze({
+            searchPlaceholder: '차종 또는 차량 코드 검색...',
+            primaryAction: '배차 정책',
+            secondaryAction: '재고 동기화',
+            emptyMessage: '렌터카 상품이 없다.',
+            columns: Object.freeze(['상품 코드', '도메인', '차종 / 옵션', '보유 대수', '기준가', '상태', '관리']),
+            rows: Object.freeze([
+                {
+                    searchText: 'CAR-R01 아이오닉 5 롱레인지 3 95000 재고부족',
+                    cells: [
+                        '<strong>CAR-R01</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(140, 60%, 45%); border-color:hsl(140, 60%, 45%);">렌터카</span>',
+                        '스타렌터카 - 아이오닉 5 롱레인지',
+                        '3 대',
+                        '₩95,000',
+                        '<span class="admin-badge warning">재고 부족</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
+                },
+                {
+                    searchText: 'CAR-R02 카니발 9인승 1 155000 품절임박',
+                    cells: [
+                        '<strong>CAR-R02</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(140, 60%, 45%); border-color:hsl(140, 60%, 45%);">렌터카</span>',
+                        '무지개렌터카 - 카니발 9인승',
+                        '1 대',
+                        '₩155,000',
+                        '<span class="admin-badge warning">품절 임박</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
                 }
-
-                const currentPrice = sanitizePriceValue(value.currentPrice);
-                if (currentPrice !== null) {
-                    nextOverride.currentPrice = currentPrice;
+            ])
+        }),
+        voucher: Object.freeze({
+            searchPlaceholder: '바우처명 또는 코드 검색...',
+            primaryAction: '상품 등록',
+            secondaryAction: '바우처 동기화',
+            emptyMessage: '바우처 상품이 없다.',
+            columns: Object.freeze(['상품 코드', '도메인', '바우처 / 옵션', '잔여 수량', '판매가', '상태', '관리']),
+            rows: Object.freeze([
+                {
+                    searchText: 'PRD-A01 카약 체험 18 29000 판매중',
+                    cells: [
+                        '<strong>PRD-A01</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(200, 70%, 55%); border-color:hsl(200, 70%, 55%);">바우처</span>',
+                        '제주 해안 카약 체험',
+                        '18 건',
+                        '₩29,000',
+                        '<span class="admin-badge success">판매중</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
+                },
+                {
+                    searchText: 'PRD-A02 패러세일링 2 79000 노출대기',
+                    cells: [
+                        '<strong>PRD-A02</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(200, 70%, 55%); border-color:hsl(200, 70%, 55%);">바우처</span>',
+                        '오션 패러세일링',
+                        '2 건',
+                        '₩79,000',
+                        '<span class="admin-badge warning">노출 대기</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
                 }
-
-                if (Object.keys(nextOverride).length > 0) {
-                    accumulator[hotelId] = nextOverride;
+            ])
+        }),
+special: Object.freeze({
+            searchPlaceholder: '특가명 또는 쿠폰 코드 검색...',
+            primaryAction: '특가 생성',
+            secondaryAction: '혜택 정책',
+            emptyMessage: '특가 / 쿠폰 데이터가 없다.',
+            columns: Object.freeze(['상품 코드', '도메인', '특가 / 쿠폰', '발행 수량', '금액', '상태', '관리']),
+            rows: Object.freeze([
+                {
+                    searchText: 'PRD-P01 공항 라운지 240 15000 판매중',
+                    cells: [
+                        '<strong>PRD-P01</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(32, 85%, 55%); border-color:hsl(32, 85%, 55%);">특가</span>',
+                        '공항 라운지 이용권 특가',
+                        '240 장',
+                        '₩15,000',
+                        '<span class="admin-badge success">판매중</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
+                },
+                {
+                    searchText: 'PRD-P02 렌터카 충전권 0 30000 품절',
+                    cells: [
+                        '<strong>PRD-P02</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(32, 85%, 55%); border-color:hsl(32, 85%, 55%);">특가</span>',
+                        '전기차 충전권 쿠폰',
+                        '0 장',
+                        '₩30,000',
+                        '<span class="admin-badge danger">품절</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
                 }
+            ])
+        }),
+        usim: Object.freeze({
+            searchPlaceholder: '유심명 또는 코드 검색...',
+            primaryAction: '재고 등록',
+            secondaryAction: '유심 정책',
+            emptyMessage: '유심 상품이 없다.',
+            columns: Object.freeze(['상품 코드', '도메인', '유심 / 기간', '재고', '판매가', '상태', '관리']),
+            rows: Object.freeze([
+                {
+                    searchText: 'PRD-S01 eSIM 5일 66 12000 판매중',
+                    cells: [
+                        '<strong>PRD-S01</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(210, 60%, 58%); border-color:hsl(210, 60%, 58%);">유심</span>',
+                        '제주 eSIM 5일',
+                        '66 개',
+                        '₩12,000',
+                        '<span class="admin-badge success">판매중</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
+                },
+                {
+                    searchText: 'PRD-S02 데이터 10GB 5 18000 재고부족',
+                    cells: [
+                        '<strong>PRD-S02</strong>',
+                        '<span class="admin-badge neutral" style="color:hsl(210, 60%, 58%); border-color:hsl(210, 60%, 58%);">유심</span>',
+                        '제주 데이터 유심 10GB / 7일',
+                        '5 개',
+                        '₩18,000',
+                        '<span class="admin-badge warning">재고 부족</span>',
+                        '<button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">수정</button>'
+                    ]
+                }
+            ])
+        })
+    });
 
-                return accumulator;
-            }, {});
-        } catch (error) {
-            console.error('[AdminLodging] Failed to parse hotel offer overrides:', error);
-            return {};
-        }
-    }
+    const DEFAULT_TAB = 'stay';
+    const currencyFormatter = new Intl.NumberFormat('ko-KR');
+    let activeTab = DEFAULT_TAB;
+    let searchKeyword = '';
 
-    function persistHotelOfferOverrides(nextOverrides) {
-        hotelOfferOverrides = nextOverrides;
+    const escapeHtml = (value) => String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
 
-        if (Object.keys(nextOverrides).length === 0) {
-            window.localStorage.removeItem(HOTEL_LIST_OFFER_STORAGE_KEY);
-            return;
-        }
+    const formatCurrency = (value) => `₩${currencyFormatter.format(value)}`;
 
-        window.localStorage.setItem(HOTEL_LIST_OFFER_STORAGE_KEY, JSON.stringify(nextOverrides));
-    }
-
-    function sanitizePriceValue(value) {
-        const normalized = String(value ?? '').replace(/[^0-9]/g, '');
-        if (!normalized) {
-            return null;
-        }
-
-        const parsed = Number.parseInt(normalized, 10);
-        if (Number.isNaN(parsed) || parsed < 0) {
-            return null;
-        }
-
-        return parsed;
-    }
-
-    function formatWon(value) {
-        if (!Number.isFinite(value)) {
-            return '-';
-        }
-
-        return `₩${currencyFormatter.format(Math.round(value))}`;
-    }
-
-    function escapeHtml(value) {
-        return String(value)
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#39;');
-    }
-
-    function getHotelOfferById(hotelId) {
-        return hotelOfferCatalog.find((hotel) => hotel.id === hotelId) ?? null;
-    }
-
-    function getEffectiveHotelOffer(hotel) {
-        const override = hotelOfferOverrides[hotel.id] ?? {};
-        const hasBadgeOverride = Object.prototype.hasOwnProperty.call(override, 'badge');
-        const hasPriceOverride =
-            typeof override.originalPrice === 'number' ||
-            typeof override.currentPrice === 'number' ||
-            hasBadgeOverride;
-
-        return {
-            ...hotel,
-            badge: hasBadgeOverride ? override.badge : hotel.badge,
-            originalPrice: typeof override.originalPrice === 'number' ? override.originalPrice : hotel.originalPrice,
-            currentPrice: typeof override.currentPrice === 'number' ? override.currentPrice : hotel.currentPrice,
-            isCustomized: hasPriceOverride
-        };
-    }
-
-    function renderSidebarMenus(role) {
+    const renderSidebarMenus = (role) => {
         const accessibleMenus = window.RBAC_CONFIG.getAccessibleMenus(role);
         return accessibleMenus.map((menu) => `
             <a href="${menu.path}" class="admin-menu-item ${menu.id === 'lodging' ? 'active' : ''}" data-id="${menu.id}">
@@ -190,340 +272,85 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span>${menu.label}</span>
             </a>
         `).join('');
-    }
+    };
 
-    function getStatusBadge(status) {
-        switch (status) {
-            case 'OPEN':
-                return '<span class="admin-badge success">판매중</span>';
-            case 'WARNING':
-                return '<span class="admin-badge warning">품절 임박</span>';
-            case 'SOLD_OUT':
-                return '<span class="admin-badge danger">판매 완료 (품절)</span>';
-            default:
-                return '<span class="admin-badge neutral">-</span>';
-        }
-    }
+    const renderTableHead = (tabKey) => {
+        const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
+        if (!tableHeadRow) return;
 
-    function getDomainBadge(domain) {
-        switch (domain) {
-            case 'hotel':
-                return '<span class="admin-badge neutral" style="color:hsl(28, 90%, 55%); border-color:hsl(28, 90%, 55%);">스테이</span>';
-            case 'flight':
-                return '<span class="admin-badge neutral" style="color:hsl(210, 80%, 60%); border-color:hsl(210, 80%, 60%);">에어</span>';
-            case 'rentcar':
-                return '<span class="admin-badge neutral" style="color:hsl(140, 60%, 45%); border-color:hsl(140, 60%, 45%);">렌터카</span>';
-            default:
-                return '';
-        }
-    }
+        tableHeadRow.innerHTML = config.columns.map((column) => `<th>${escapeHtml(column)}</th>`).join('');
+    };
 
-    function renderInventoryTable(domain) {
-        const filtered = domain === 'all'
-            ? MOCK_INVENTORY
-            : MOCK_INVENTORY.filter((item) => item.domain === domain);
+    const renderTableBody = (tabKey) => {
+        const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
+        if (!tableBody) return;
 
-        if (filtered.length === 0) {
-            return '<tr><td colspan="7" style="text-align:center; padding: 40px;">해당 분류의 재고 데이터가 없습니다.</td></tr>';
+        const keyword = searchKeyword.trim().toLowerCase();
+        const rows = config.rows.filter((row) => {
+            if (!keyword) return true;
+            return row.searchText.toLowerCase().includes(keyword);
+        });
+
+        if (rows.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="${config.columns.length}" style="text-align:center; padding: 40px;">${escapeHtml(config.emptyMessage)}</td></tr>`;
+            return;
         }
 
-        return filtered.map((item) => `
+        tableBody.innerHTML = rows.map((row) => `
             <tr>
-                <td><strong>${item.id}</strong></td>
-                <td>${getDomainBadge(item.domain)}</td>
-                <td>${item.title}</td>
-                <td>${formatWon(item.price)}</td>
-                <td style="font-weight:bold; color: ${item.stock < 5 ? 'var(--admin-danger)' : 'var(--admin-text-primary)'}">${item.stock} 개</td>
-                <td>${getStatusBadge(item.status)}</td>
-                <td>
-                    <button class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">재고 수정</button>
-                    <button class="admin-btn" style="padding: 4px 8px; font-size: 0.75rem; background:var(--admin-surface-hover); color:var(--admin-text-primary); border:1px solid var(--admin-border);">상세</button>
-                </td>
+                ${row.cells.map((cell) => `<td>${cell}</td>`).join('')}
             </tr>
         `).join('');
-    }
+    };
 
-    function renderHotelOfferTable() {
-        if (!hotelOfferTableBody) {
-            return;
+    const syncActionBar = (tabKey) => {
+        const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
+        if (searchInput) {
+            searchInput.placeholder = config.searchPlaceholder;
         }
 
-        if (hotelOfferCatalog.length === 0) {
-            hotelOfferTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px;">호텔 리스트 오퍼 데이터를 불러오지 못했다.</td></tr>';
-            return;
+        if (actionButtons.length >= 3) {
+            actionButtons[0].textContent = '검색';
+            actionButtons[1].textContent = config.secondaryAction;
+            actionButtons[2].textContent = config.primaryAction;
         }
+    };
 
-        const query = hotelOfferSearchKeyword.trim().toLowerCase();
-        const filteredCatalog = hotelOfferCatalog
-            .map(getEffectiveHotelOffer)
-            .filter((hotel) => {
-                if (!query) {
-                    return true;
-                }
-
-                const searchable = `${hotel.id} ${hotel.title} ${hotel.badge ?? ''}`.toLowerCase();
-                return searchable.includes(query);
-            });
-
-        if (filteredCatalog.length === 0) {
-            hotelOfferTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px;">검색 조건에 맞는 호텔이 없다.</td></tr>';
-            return;
-        }
-
-        hotelOfferTableBody.innerHTML = filteredCatalog.map((hotel) => `
-            <tr class="${selectedHotelOfferId === hotel.id ? 'hotel-offer-row-active' : ''}">
-                <td><strong>${escapeHtml(hotel.id)}</strong></td>
-                <td>${escapeHtml(hotel.title)}</td>
-                <td>${hotel.badge ? escapeHtml(hotel.badge) : '<span class="admin-badge neutral">숨김</span>'}</td>
-                <td>${formatWon(hotel.originalPrice)}</td>
-                <td>${formatWon(hotel.currentPrice)}</td>
-                <td>
-                    <span class="hotel-offer-status${hotel.isCustomized ? ' hotel-offer-status--custom' : ''}">
-                        ${hotel.isCustomized ? '커스텀 적용' : '기본값'}
-                    </span>
-                </td>
-                <td>
-                    <button class="admin-btn admin-btn-outline" data-action="edit-offer" data-hotel-id="${escapeHtml(hotel.id)}" type="button">
-                        수정
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    function updateHotelOfferPreview() {
-        if (!hotelOfferPreview) {
-            return;
-        }
-
-        if (!selectedHotelOfferId) {
-            hotelOfferPreview.textContent = '아직 선택된 호텔이 없다.';
-            return;
-        }
-
-        const selectedHotel = getHotelOfferById(selectedHotelOfferId);
-        if (!selectedHotel) {
-            hotelOfferPreview.textContent = '선택한 호텔 데이터를 찾을 수 없다.';
-            return;
-        }
-
-        const badge = hotelOfferBadgeInput?.value ?? selectedHotel.badge;
-        const originalPrice = sanitizePriceValue(hotelOfferOriginalPriceInput?.value) ?? selectedHotel.originalPrice;
-        const currentPrice = sanitizePriceValue(hotelOfferCurrentPriceInput?.value) ?? selectedHotel.currentPrice;
-
-        hotelOfferPreview.innerHTML = `
-            <strong>${escapeHtml(selectedHotel.title)}</strong><br>
-            배지: ${badge.trim() ? escapeHtml(badge.trim()) : '숨김'}<br>
-            정상가: ${formatWon(originalPrice)}<br>
-            판매가: ${formatWon(currentPrice)}
-        `;
-    }
-
-    function hydrateHotelOfferEditor(hotelId) {
-        const selectedHotel = getHotelOfferById(hotelId);
-        if (!selectedHotel) {
-            return;
-        }
-
-        const effectiveHotel = getEffectiveHotelOffer(selectedHotel);
-        selectedHotelOfferId = hotelId;
-
-        if (hotelOfferTitleInput) {
-            hotelOfferTitleInput.value = effectiveHotel.title;
-        }
-
-        if (hotelOfferBadgeInput) {
-            hotelOfferBadgeInput.value = effectiveHotel.badge ?? '';
-        }
-
-        if (hotelOfferOriginalPriceInput) {
-            hotelOfferOriginalPriceInput.value = String(effectiveHotel.originalPrice);
-        }
-
-        if (hotelOfferCurrentPriceInput) {
-            hotelOfferCurrentPriceInput.value = String(effectiveHotel.currentPrice);
-        }
-
-        if (hotelOfferEditorCopy) {
-            hotelOfferEditorCopy.textContent = `${effectiveHotel.id} 항목을 수정 중이다. 저장하면 호텔 리스트 카드에 바로 반영된다.`;
-        }
-
-        renderHotelOfferTable();
-        updateHotelOfferPreview();
-    }
-
-    function clearHotelOfferEditor(copy = '왼쪽 목록에서 수정할 호텔을 골라라.') {
-        selectedHotelOfferId = null;
-
-        if (hotelOfferTitleInput) {
-            hotelOfferTitleInput.value = '';
-        }
-
-        if (hotelOfferBadgeInput) {
-            hotelOfferBadgeInput.value = '';
-        }
-
-        if (hotelOfferOriginalPriceInput) {
-            hotelOfferOriginalPriceInput.value = '';
-        }
-
-        if (hotelOfferCurrentPriceInput) {
-            hotelOfferCurrentPriceInput.value = '';
-        }
-
-        if (hotelOfferEditorCopy) {
-            hotelOfferEditorCopy.textContent = copy;
-        }
-
-        if (hotelOfferPreview) {
-            hotelOfferPreview.textContent = '아직 선택된 호텔이 없다.';
-        }
-
-        renderHotelOfferTable();
-    }
-
-    function handleHotelOfferSubmit(event) {
-        event.preventDefault();
-
-        if (!selectedHotelOfferId) {
-            if (hotelOfferEditorCopy) {
-                hotelOfferEditorCopy.textContent = '저장할 호텔을 먼저 선택해라.';
-            }
-            return;
-        }
-
-        const selectedHotel = getHotelOfferById(selectedHotelOfferId);
-        if (!selectedHotel) {
-            if (hotelOfferEditorCopy) {
-                hotelOfferEditorCopy.textContent = '선택한 호텔 원본 데이터를 찾지 못했다.';
-            }
-            return;
-        }
-
-        const nextBadge = (hotelOfferBadgeInput?.value ?? '').trim();
-        const nextOriginalPrice = sanitizePriceValue(hotelOfferOriginalPriceInput?.value);
-        const nextCurrentPrice = sanitizePriceValue(hotelOfferCurrentPriceInput?.value);
-
-        if (nextOriginalPrice === null || nextCurrentPrice === null) {
-            if (hotelOfferEditorCopy) {
-                hotelOfferEditorCopy.textContent = '가격은 숫자로 넣어야 한다.';
-            }
-            updateHotelOfferPreview();
-            return;
-        }
-
-        if (nextCurrentPrice > nextOriginalPrice) {
-            if (hotelOfferEditorCopy) {
-                hotelOfferEditorCopy.textContent = '판매가는 정상가보다 클 수 없다.';
-            }
-            updateHotelOfferPreview();
-            return;
-        }
-
-        const nextOverride = {};
-
-        if (nextBadge !== selectedHotel.badge) {
-            nextOverride.badge = nextBadge;
-        }
-
-        if (nextOriginalPrice !== selectedHotel.originalPrice) {
-            nextOverride.originalPrice = nextOriginalPrice;
-        }
-
-        if (nextCurrentPrice !== selectedHotel.currentPrice) {
-            nextOverride.currentPrice = nextCurrentPrice;
-        }
-
-        const nextOverrides = { ...hotelOfferOverrides };
-        if (Object.keys(nextOverride).length === 0) {
-            delete nextOverrides[selectedHotelOfferId];
-        } else {
-            nextOverrides[selectedHotelOfferId] = nextOverride;
-        }
-
-        persistHotelOfferOverrides(nextOverrides);
-        hydrateHotelOfferEditor(selectedHotelOfferId);
-
-        if (hotelOfferEditorCopy) {
-            hotelOfferEditorCopy.textContent = `${selectedHotel.title} 노출 값 저장 완료. 호텔 리스트 새로고침하면 바로 확인된다.`;
-        }
-    }
-
-    function resetSelectedHotelOffer() {
-        if (!selectedHotelOfferId) {
-            if (hotelOfferEditorCopy) {
-                hotelOfferEditorCopy.textContent = '초기화할 호텔을 먼저 선택해라.';
-            }
-            return;
-        }
-
-        const selectedHotel = getHotelOfferById(selectedHotelOfferId);
-        const nextOverrides = { ...hotelOfferOverrides };
-        delete nextOverrides[selectedHotelOfferId];
-        persistHotelOfferOverrides(nextOverrides);
-
-        if (selectedHotel) {
-            hydrateHotelOfferEditor(selectedHotelOfferId);
-            if (hotelOfferEditorCopy) {
-                hotelOfferEditorCopy.textContent = `${selectedHotel.title} 항목을 기본값으로 되돌렸다.`;
-            }
-        } else {
-            clearHotelOfferEditor();
-        }
-    }
-
-    function resetAllHotelOffers() {
-        if (hotelOfferCatalog.length === 0) {
-            return;
-        }
-
-        const shouldReset = window.confirm('호텔 리스트 혜택 문구와 가격 오버라이드를 전부 기본값으로 되돌릴까?');
-        if (!shouldReset) {
-            return;
-        }
-
-        persistHotelOfferOverrides({});
-        clearHotelOfferEditor('전체 오버라이드를 초기화했다. 다시 호텔을 선택해서 수정하면 된다.');
-    }
-
-    async function loadHotelOfferCatalog() {
-        if (!hotelOfferTableBody) {
-            return;
-        }
-
-        try {
-            const response = await fetch(HOTEL_LIST_OFFER_CATALOG_URL, {
-                headers: {
-                    Accept: 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`hotel offer catalog fetch failed: ${response.status}`);
-            }
-
-            const parsed = await response.json();
-            hotelOfferCatalog = Array.isArray(parsed) ? parsed : [];
-            renderHotelOfferTable();
-        } catch (error) {
-            console.error('[AdminLodging] Failed to load hotel offer catalog:', error);
-            hotelOfferCatalog = [];
-            renderHotelOfferTable();
-        }
-    }
+    const setActiveTab = (tabKey) => {
+        activeTab = TAB_CONFIG[tabKey] ? tabKey : DEFAULT_TAB;
+        tabButtons.forEach((button) => {
+            button.classList.toggle('active', button.dataset.domain === activeTab);
+        });
+        syncActionBar(activeTab);
+        renderTableHead(activeTab);
+        renderTableBody(activeTab);
+    };
 
     if (userNameEl) userNameEl.textContent = session.name;
     if (userRoleEl) userRoleEl.textContent = session.role;
     if (sidebarMenuContainer) sidebarMenuContainer.innerHTML = renderSidebarMenus(session.role);
 
-    domainFilters.forEach((btn) => {
-        btn.addEventListener('click', (event) => {
-            const domain = event.currentTarget.dataset.domain;
-            domainFilters.forEach((item) => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            AdminStore.dispatch({ type: 'UI/SET_DOMAIN', payload: domain });
+    tabButtons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const tabKey = event.currentTarget.dataset.domain;
+            searchKeyword = '';
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            AdminStore.dispatch({ type: 'UI/SET_DOMAIN', payload: tabKey });
         });
     });
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (event) => {
+            searchKeyword = event.currentTarget.value;
+            renderTableBody(activeTab);
+        });
+    }
+
+    if (searchButton) {
+        searchButton.addEventListener('click', () => renderTableBody(activeTab));
+    }
 
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', () => {
@@ -565,52 +392,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    if (hotelOfferSearchInput) {
-        hotelOfferSearchInput.addEventListener('input', (event) => {
-            hotelOfferSearchKeyword = event.currentTarget.value;
-            renderHotelOfferTable();
-        });
-    }
-
-    if (hotelOfferTableBody) {
-        hotelOfferTableBody.addEventListener('click', (event) => {
-            const actionButton = event.target.closest('[data-action="edit-offer"]');
-            if (!actionButton) {
-                return;
-            }
-
-            const hotelId = actionButton.dataset.hotelId;
-            if (!hotelId) {
-                return;
-            }
-
-            hydrateHotelOfferEditor(hotelId);
-        });
-    }
-
-    if (hotelOfferForm) {
-        hotelOfferForm.addEventListener('submit', handleHotelOfferSubmit);
-    }
-
-    if (hotelOfferResetBtn) {
-        hotelOfferResetBtn.addEventListener('click', resetSelectedHotelOffer);
-    }
-
-    if (hotelOfferResetAllBtn) {
-        hotelOfferResetAllBtn.addEventListener('click', resetAllHotelOffers);
-    }
-
-    [hotelOfferBadgeInput, hotelOfferOriginalPriceInput, hotelOfferCurrentPriceInput].forEach((input) => {
-        if (!input) {
-            return;
-        }
-
-        input.addEventListener('input', () => {
-            updateHotelOfferPreview();
-        });
-    });
-
-    function updateThemeDOM(theme) {
+    const updateThemeDOM = (theme) => {
         const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         const activeTheme = theme === 'system' ? (isSystemDark ? 'dark' : 'light') : theme;
         document.body.setAttribute('data-theme', activeTheme);
@@ -618,22 +400,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (btn.dataset.theme === theme) btn.classList.add('active');
             else btn.classList.remove('active');
         });
-    }
+    };
 
     AdminStore.subscribe((newState) => {
         syncSidebarUI(newState.ui.sidebarOpen);
         updateThemeDOM(newState.ui.theme);
-
-        if (tableBody) {
-            tableBody.innerHTML = renderInventoryTable(newState.ui.domain);
-        }
+        setActiveTab(newState.ui.domain);
     });
 
     const initialState = AdminStore.getState();
     syncSidebarUI(initialState.ui.sidebarOpen);
     updateThemeDOM(initialState.ui.theme);
-    if (tableBody) tableBody.innerHTML = renderInventoryTable(initialState.ui.domain);
-    clearHotelOfferEditor();
-    await loadHotelOfferCatalog();
+    setActiveTab(TAB_CONFIG[initialState.ui.domain] ? initialState.ui.domain : DEFAULT_TAB);
     window.addEventListener('resize', () => syncSidebarUI(AdminStore.getState().ui.sidebarOpen));
 });

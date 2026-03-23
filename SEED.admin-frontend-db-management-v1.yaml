@@ -1,0 +1,40 @@
+goal: >
+  Freeze the admin frontend refit contract for the expanded DB management
+  domains while preserving the existing admin layout, dashboard composition,
+  and visual system. The work stays on the current admin pages only and
+  expands their tabs and labels instead of introducing new top-level pages.
+constraints:
+  - Keep `front/admin` as the source of truth for this seed.
+  - Preserve the existing admin layout, page chrome, and dashboard structure; no structural redesign.
+  - Reuse the current menu language and icon style where possible; refresh labels/icons only when needed to reflect the new DB domains.
+  - Expand existing pages only: `lodging.html/js`, `members.html/js`, `reservations.html/js`, and `cms.html/js`.
+  - Do not create new top-level admin pages.
+  - Do not touch `jeju-web` or any deployment mirror paths.
+  - Do not introduce a new visual system; keep the current design language, table/card patterns, and spacing behavior.
+  - Prefer repurposing existing segment controls over stacking duplicate tabs or adding redundant filters.
+  - New menu items are allowed only if relabeling an existing entry cannot express the scope cleanly.
+  - Keep any new tab content aligned to the current page/table/card language rather than inventing new UI primitives.
+  - The lodging page becomes a `상품/재고 관리 허브` with tabs for 숙소, 항공 inventory, 렌터카 inventory, 액티비티, 바우처, and 유심.
+  - The members page covers tabs for 회원, 멤버십, 권한, and 지원 카테고리.
+  - The reservations page covers tabs for 예약, 결제, 환불, and 탑승객/이용자.
+  - The cms page covers tabs for CMS, 배너, and 노출 규칙.
+acceptance_criteria:
+  - Existing admin navigation remains in place, with menu labels and icons refreshed only as needed for the expanded DB management vocabulary.
+  - The lodging admin page is redefined as a `상품/재고 관리 허브` and exposes the agreed six tabs without changing the current layout.
+  - The members admin page exposes the agreed four tabs without introducing duplicate semantic controls.
+  - The reservations admin page exposes the agreed four tabs without changing the dashboard layout or table/card structure.
+  - The cms admin page exposes the agreed three tabs without introducing a new page shell or visual treatment.
+  - Existing segment buttons are reused or repurposed when they already cover the same semantics, rather than adding stacked duplicate controls.
+  - The admin dashboard layout remains intact and no structural redesign is introduced.
+  - No new top-level admin pages are added; the scope is contained to expanding the existing pages.
+  - The resulting admin frontend remains visually consistent with the current design language and current page-level patterns.
+verification:
+  - Run targeted admin page runtime smoke checks on the existing admin pages that were expanded.
+  - Run `pnpm run guard:text`.
+out_of_scope:
+  - `jeju-web` edits.
+  - New top-level admin pages.
+  - New visual system or dashboard redesign.
+  - Backend, database, or API implementation work.
+  - Deployment mirror changes.
+  - Reworking unrelated admin pages outside `lodging`, `members`, `reservations`, and `cms`.

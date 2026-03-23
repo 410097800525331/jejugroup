@@ -35,3 +35,15 @@
 - summary: `rg.exe access denied during schema review`
 - details: `Initial repo-wide rg searches failed with "Access is denied", so the review switched to Select-String and direct file reads for the SQL inspection.`
 - status: `resolved`
+
+- time: `2026-03-24 00:35:02 +09:00`
+- location: `PowerShell rg search on D:\git\jejugroup`
+- summary: `rg.exe access denied during admin IA gap review`
+- details: `Repo-wide rg probes for admin IA and DB-backed operation names failed with "Access is denied", so the scan switched to Select-String and direct file reads to finish the route B work.`
+- status: `resolved`
+
+- time: `2026-03-24 02:06:00 +09:00`
+- location: `git add in D:\git\jejugroup`
+- summary: `git staging was briefly blocked by an index.lock error`
+- details: `git add first failed with "Unable to create .git/index.lock". A follow-up check found no active git.exe process and no surviving lock file, so staging was retried after the transient lock cleared.`
+- status: `resolved`

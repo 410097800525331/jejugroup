@@ -427,6 +427,25 @@
     - `flight_routes=3`, `flight_schedules=0`, `flight_fare_policies=0`, `flight_seat_inventories=0`, `rental_locations=1`, `rental_vehicle_classes=2`, `rental_vehicles=2`, `rental_rate_policies=2`, `rental_vehicle_inventories=2`
   - reviewer first reported three source-fit/idempotency issues, follow-up fixes landed, and the final reviewer pass reported `발견 없음`
 
+- time: `2026-03-24 00:05 +09:00`
+- route: `Route B`
+- task: `Refit the existing admin frontend pages into DB-oriented management hubs without changing the layout`
+- participants: `main`, `worker_seed (Turing the 3rd)`, `worker_admin_batch (Carver the 3rd)`, `reviewer_admin_frontend (Steward the 4th)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.admin-frontend-db-management-v1.yaml`
+  - `worker_admin_batch`: `front/admin/js/rbac_config.js, front/admin/css/components.css, front/admin/pages/lodging.html, front/admin/js/lodging.js, front/admin/pages/members.html, front/admin/js/members.js, front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/pages/cms.html, front/admin/js/cms.js`
+  - `reviewer_admin_frontend`: `review only`
+- verification:
+  - `node --check front/admin/js/rbac_config.js`
+  - `node --check front/admin/js/lodging.js`
+  - `node --check front/admin/js/members.js`
+  - `node --check front/admin/js/reservations.js`
+  - `node --check front/admin/js/cms.js`
+  - `pnpm run guard:text`
+  - Vite runtime spot-check confirmed `lodging`, `members`, `reservations`, and `cms` pages load with updated menu labels and tab sets
+  - reviewer first reported one CMS action-bar label mismatch and two title/H1 mismatches, the follow-up fix landed, and the final page set is aligned with the agreed structure
+
 - time: `2026-03-23 22:50 +09:00`
 - route: `Route B`
 - task: `Add flight and rentcar inventory tables on top of the local schema`
@@ -466,3 +485,92 @@
   - `worker_seed_batch`: `jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql, jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql, jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql, jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql`
 - verification:
   - `git diff --check -- STATE.md jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql` passed
+
+- time: `2026-03-23 23:57 +09:00`
+- route: `Route B`
+- task: `Review the admin frontend refit for lodging, members, reservations, and cms`
+- participants: `reviewer_admin_frontend`
+- write_sets:
+  - `reviewer_admin_frontend`: `review only`
+- verification:
+  - `node --check front/admin/js/rbac_config.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `pnpm run guard:text` passed
+
+- time: `2026-03-24 00:48 +09:00`
+- route: `Route B`
+- task: `Finish priority 1 admin IA labels and priority 2 frontend gap inventory under the latest approved taxonomy`
+- participants: `main`, `worker_admin_batch (Meitner)`, `reviewer_admin_frontend (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_batch`: `front/admin/js/rbac_config.js, front/admin/css/components.css, front/admin/pages/lodging.html, front/admin/js/lodging.js, front/admin/pages/members.html, front/admin/js/members.js, front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/pages/cms.html, front/admin/js/cms.js, docs/admin-frontend-gap-inventory.md, ERROR_LOG.md`
+  - `reviewer_admin_frontend`: `review only`
+- verification:
+  - `node --check front/admin/js/rbac_config.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/admin/js/rbac_config.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/reservations.js front/admin/js/cms.js front/admin/pages/lodging.html front/admin/pages/members.html front/admin/pages/reservations.html front/admin/pages/cms.html docs/admin-frontend-gap-inventory.md ERROR_LOG.md` passed
+  - reviewer initially flagged one outdated `support_tickets` placement label in `docs/admin-frontend-gap-inventory.md`; the follow-up doc fix landed and the final IA/taxonomy check passed
+
+- time: `2026-03-24 01:22 +09:00`
+- route: `Route B`
+- task: `Refine admin lodging/cms/reservations IA around banner placement, hotel labels, and reservation domain filtering`
+- participants: `main`, `worker_admin_refine (Gibbs)`, `reviewer_admin_refine (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_refine`: `front/admin/js/rbac_config.js, front/admin/pages/lodging.html, front/admin/js/lodging.js, front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/css/components.css`
+  - `reviewer_admin_refine`: `review only`
+- verification:
+  - `node --check front/admin/js/rbac_config.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/admin/js/rbac_config.js front/admin/js/lodging.js front/admin/js/cms.js front/admin/js/reservations.js front/admin/pages/lodging.html front/admin/pages/cms.html front/admin/pages/reservations.html front/admin/css/components.css` passed
+  - reviewer confirmed the banner placement affordance and reservations domain filter behavior, then flagged lingering lodging taxonomy residue; the follow-up cleanup landed and local re-read of the final files confirmed `호텔 / 항공 / 렌터카 / 바우처 / 유심 / 특가`, `공지사항 / FAQ / 배너`, and the reservations domain subfilter state
+
+- time: `2026-03-24 01:40 +09:00`
+- route: `Route B`
+- task: `Reflow the reservations admin header/action layout and align the toolbar into a single row`
+- participants: `main`, `worker_reservations_layout (Banach, Gibbs the 2nd)`, `reviewer_reservations_layout (Steward the 2nd, Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_reservations_layout`: `front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/css/components.css`
+  - `reviewer_reservations_layout`: `review only`
+- verification:
+  - `node --check front/admin/js/reservations.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/admin/pages/reservations.html front/admin/js/reservations.js front/admin/css/components.css` passed
+  - reservations quick actions moved above the toolbar, the search group now sits beside the domain subfilter, and the segment control moved into the toolbar band
+  - reviewer first flagged the subfilter wrap risk on desktop; the follow-up CSS moved the reservations-specific `.admin-subfilter-control` override after the shared rule so desktop `nowrap` wins
+
+- time: `2026-03-24 01:56 +09:00`
+- route: `Route B`
+- task: `Normalize reservations toolbar control heights to the segment-control baseline`
+- participants: `main`, `worker_reservations_layout (Dewey the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_reservations_layout`: `front/admin/css/components.css`
+- verification:
+  - `node --check front/admin/js/reservations.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/admin/pages/reservations.html front/admin/js/reservations.js front/admin/css/components.css` passed
+  - reservations toolbar search input width was then trimmed to `320px` and the control heights were aligned to the `admin-segment-control` baseline
+
+- time: `2026-03-24 01:05 +09:00`
+- route: `Route B`
+- task: `Fix main landing header orphan util divider after login`
+- participants: `main`, `worker_shell_runtime (Boyle)`, `reviewer_header_util (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shell_runtime`: `front/apps/shell/src/runtime/layout/header.ts`
+  - `reviewer_header_util`: `review only`
+- verification:
+  - `pnpm -C front/apps/shell check` passed
+  - reviewer found no blocking issues in `front/apps/shell/src/runtime/layout/header.ts`
