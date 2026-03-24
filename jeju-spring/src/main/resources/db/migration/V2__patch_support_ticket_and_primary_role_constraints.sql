@@ -10,4 +10,5 @@ ALTER TABLE support_attachments
         ON UPDATE CASCADE;
 
 ALTER TABLE user_roles
-    ADD UNIQUE KEY uk_user_roles_one_primary_per_user ((CASE WHEN is_primary = 1 THEN user_id END));
+    MODIFY COLUMN is_primary TINYINT(1) NULL DEFAULT 1,
+    ADD UNIQUE KEY uk_user_roles_one_primary_per_user (user_id, is_primary);

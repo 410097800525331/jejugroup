@@ -545,12 +545,15 @@ body.admin-mode[data-theme="light"] .admin-chart-filters {
 /* Segment Control (Business Unit Filter) */
 .admin-segment-control {
     display: inline-flex;
+    align-items: center;
     background-color: rgba(0,0,0,0.15);
     padding: 4px;
+    min-height: 42px;
     border-radius: 8px;
     border: 1px solid var(--admin-glass-border);
     flex-wrap: wrap;
     gap: 4px;
+    box-sizing: border-box;
 }
 
 body.admin-mode[data-theme="light"] .admin-segment-control {
@@ -560,6 +563,8 @@ body.admin-mode[data-theme="light"] .admin-segment-control {
 .segment-btn {
     background: transparent;
     border: none;
+    min-height: calc(42px - 8px);
+    padding: 0 16px;
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--admin-text-secondary);
@@ -567,6 +572,10 @@ body.admin-mode[data-theme="light"] .admin-segment-control {
     cursor: pointer;
     transition: all var(--admin-transition-base);
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
 .segment-btn:hover {

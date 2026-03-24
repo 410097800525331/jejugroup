@@ -53,6 +53,7 @@
     const chartCtx = document.getElementById('admin-main-chart');
     const chartFilters = document.querySelectorAll('.chart-filter-btn');
     const domainFilters = document.querySelectorAll('.segment-btn');
+    const recentActivityTable = document.getElementById('admin-recent-activity');
     const syncSidebarUI = (isOpen) => window.AdminSidebarUI?.applySidebarUI({ layout, sidebar, isOpen });
     
     // Store Chart Instance Globally 
@@ -84,21 +85,18 @@
             activeUsers: '현재 접속자'
         };
 
-        // 다형성 부여: 화면에 보이는 수치를 도메인 상태에 따라 스케일 조절 (모의 데이터 연산)
-        let multiplier = 1;
-        if(domain === 'flight') multiplier = 0.4;
-        else if(domain === 'hotel') multiplier = 0.45;
-        else if(domain === 'rentcar') multiplier = 0.15;
-
-        const formatNumber = (num, isMoney) => {
-            return isMoney ? `₩${Math.round(num).toLocaleString('ko-KR')}` : Math.round(num).toLocaleString('ko-KR');
+        const formatValue = (value) => {
+            if (typeof value === 'number') {
+                return value.toLocaleString('ko-KR');
+            }
+            return String(value ?? '-');
         };
 
         const computedKpi = {
-            todayReservations: formatNumber(kpiData.todayReservations * multiplier, false),
-            revenue: formatNumber(12450000 * multiplier, true), 
-            cancelRate: domain === 'all' ? kpiData.cancelRate : (parseFloat(kpiData.cancelRate) * (Math.random() * (1.2 - 0.8) + 0.8)).toFixed(1) + '%',
-            activeUsers: formatNumber(kpiData.activeUsers * multiplier, false)
+            todayReservations: formatValue(kpiData.todayReservations),
+            revenue: formatValue(kpiData.revenue),
+            cancelRate: formatValue(kpiData.cancelRate),
+            activeUsers: formatValue(kpiData.activeUsers)
         };
         
         return Object.entries(computedKpi).map(([key, value]) => `
@@ -113,6 +111,43 @@
                 </div>
             </div>
         `).join('');
+    };
+
+    const escapeHtml = (value) => String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const renderRecentActivityRows = (recentActivity) => {
+        const rows = Array.isArray(recentActivity) ? recentActivity : [];
+
+        if (!rows.length) {
+            return `
+                <tr class="admin-empty-row">
+                    <td colspan="4">최근 활동이 없습니다.</td>
+                </tr>
+            `;
+        }
+
+        return rows.map((item) => {
+            const type = String(item?.type ?? '').toUpperCase();
+            const badgeClass = type === 'CANCEL' ? 'danger' : type === 'INQUIRY' ? 'warning' : 'success';
+            const typeLabel = escapeHtml(type || '-');
+            const desc = escapeHtml(item?.desc ?? '-');
+            const time = escapeHtml(item?.time ?? '-');
+            const status = escapeHtml(item?.status ?? '-');
+
+            return `
+                <tr>
+                    <td><span class="admin-badge ${badgeClass}">${typeLabel}</span></td>
+                    <td>${desc}</td>
+                    <td>${time}</td>
+                    <td><span class="admin-badge ${badgeClass}">${status}</span></td>
+                </tr>
+            `;
+        }).join('');
     };
 
     // 4. Mount & Bind
@@ -191,9 +226,13 @@
         // Handle Sidebar Toggle Reactively
         syncSidebarUI(newState.ui.sidebarOpen);
 
-        // Handle Domain Reactive Update (Re-render KPIs and Chart)
+        // Handle Domain Reactive Update (Re-render KPIs, Activity, and Chart)
         if (kpiGrid) {
             kpiGrid.innerHTML = renderKPICards(newState.kpi, newState.ui.domain);
+        }
+
+        if (recentActivityTable) {
+            recentActivityTable.innerHTML = renderRecentActivityRows(newState.recentActivity);
         }
         
         const activeFilterBtn = document.querySelector('.chart-filter-btn.active');
@@ -209,71 +248,13 @@
 
     // 6. Chart Logic Implementation
     
-    // Pure function for Mock Data Generation based on domain weight
-    const generateChartData = (range, domain) => {
-        let labels = [];
-        let dataRevenue = [];
-        let dataReservation = [];
-        let count = 0;
-
-        switch(range) {
-            case 'hour':
-                labels = Array.from({length: 24}, (_, i) => `${i}:00`);
-                count = 24;
-                break;
-            case 'day':
-                labels = Array.from({length: 7}, (_, i) => `D-${6-i}`);
-                count = 7;
-                break;
-            case 'week':
-                labels = Array.from({length: 8}, (_, i) => `${i+1}주차`);
-                count = 8;
-                break;
-            case 'month':
-                labels = Array.from({length: 12}, (_, i) => `${i+1}월`);
-                count = 12;
-                break;
-            case 'halfYear':
-                labels = ['1-6월', '7-12월', '최근1-6', '최근7-12'];
-                count = 4;
-                break;
-            case '1year':
-                labels = Array.from({length: 12}, (_, i) => `25년 ${i+1}월`);
-                count = 12;
-                break;
-            case '2year':
-                labels = ['24년 1Q', '24년 2Q', '24년 3Q', '24년 4Q', '25년 1Q', '25년 2Q', '25년 3Q', '25년 4Q'];
-                count = 8;
-                break;
-            case '5year':
-                labels = ['2022', '2023', '2024', '2025', '2026'];
-                count = 5;
-                break;
-            default:
-                labels = ['데이터 없음'];
-                count = 1;
-        }
-
-        // Base randomness modifier based on domain (Scaled down for "만원" unit)
-        let baseRevMin = 100, baseRevMax = 500;
-        let baseResMin = 50, baseResMax = 500;
-
-        if (domain === 'flight') {
-            baseRevMin = 40; baseRevMax = 200; baseResMin = 20; baseResMax = 200;
-        } else if (domain === 'hotel') {
-            baseRevMin = 45; baseRevMax = 225; baseResMin = 22; baseResMax = 225;
-        } else if (domain === 'rentcar') {
-            baseRevMin = 15; baseRevMax = 75; baseResMin = 8; baseResMax = 75;
-        }
-
-        // Generate Random Fake Data Based on Count and Domain Weight
-        for(let i = 0; i < count; i++) {
-            let revFormat = (Math.random() * (baseRevMax - baseRevMin) + baseRevMin).toFixed(1);
-            dataRevenue.push(parseFloat(revFormat));
-            dataReservation.push(Math.floor(Math.random() * (baseResMax - baseResMin + 1) + baseResMin));
-        }
-
-        return { labels, dataRevenue, dataReservation };
+    // Zero-state chart rendering: keep the chart shell alive without fake business data
+    const generateChartData = () => {
+        return {
+            labels: [],
+            dataRevenue: [],
+            dataReservation: []
+        };
     };
 
     const initOrUpdateChart = (range, theme, domain = 'all') => {
@@ -421,6 +402,7 @@
     syncSidebarUI(state.ui.sidebarOpen);
     updateThemeDOM(state.ui.theme);
     if (kpiGrid) kpiGrid.innerHTML = renderKPICards(state.kpi, state.ui.domain);
+    if (recentActivityTable) recentActivityTable.innerHTML = renderRecentActivityRows(state.recentActivity);
     initOrUpdateChart('day', state.ui.theme, state.ui.domain);
     window.addEventListener('resize', () => syncSidebarUI(AdminStore.getState().ui.sidebarOpen));
 });

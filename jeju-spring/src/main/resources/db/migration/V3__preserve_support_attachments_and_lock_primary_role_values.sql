@@ -1,6 +1,6 @@
 ALTER TABLE user_roles
     ADD CONSTRAINT chk_user_roles_is_primary
-        CHECK (is_primary IN (0, 1));
+        CHECK (is_primary = 1 OR is_primary IS NULL);
 
 ALTER TABLE support_attachments
     DROP FOREIGN KEY fk_support_attachments_comment_ticket_pair;

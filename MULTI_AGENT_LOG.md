@@ -259,6 +259,32 @@
   - `pnpm run spring:test` passed
   - `pnpm run spring:war-package` passed
 
+- time: `2026-03-24 10:12 +09:00`
+- route: `Route B`
+- task: `Remove inline admin page hardcoding by extracting admin mock/config data out of the page controllers`
+- participants: `main`, `worker_seed (Socrates)`, `worker_admin_data (Galileo)`, `worker_admin_pages (Gauss)`, `reviewer_admin_dehardcode (Sartre)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.admin-page-dehardcode-v1.yaml`
+  - `worker_admin_data`: `front/admin/data/**, front/admin/js/store.js`
+  - `worker_admin_pages`: `front/admin/js/cms.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/reservations.js`
+  - `reviewer_admin_dehardcode`: `review only`
+- verification:
+  - `node --check front/admin/js/store.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `node --check front/admin/data/cms-config.js` passed
+  - `node --check front/admin/data/lodging-config.js` passed
+  - `node --check front/admin/data/members-config.js` passed
+  - `node --check front/admin/data/reservations-config.js` passed
+  - `pnpm run guard:text` passed
+  - targeted ESM shape checks confirmed config aliases (`tabs.*` and top-level tab keys), dashboard chart label maps, and store seed import/hydrate wiring
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.admin-page-dehardcode-v1.yaml front/admin/data/store-seed.js front/admin/data/dashboard-data.js front/admin/data/cms-config.js front/admin/data/lodging-config.js front/admin/data/members-config.js front/admin/data/reservations-config.js front/admin/js/store.js front/admin/js/cms.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/reservations.js` passed
+  - `reviewer_admin_dehardcode` reported no blocking findings after follow-up shape fixes
+
 - time: `2026-03-23 20:36 +09:00`
 - route: `Route B`
 - task: `Shift landing language handling to the shared front-i18n bridge authority`
@@ -574,3 +600,47 @@
 - verification:
   - `pnpm -C front/apps/shell check` passed
   - reviewer found no blocking issues in `front/apps/shell/src/runtime/layout/header.ts`
+
+- time: `2026-03-24 09:45 +09:00`
+- route: `Route B`
+- task: `Consume extracted admin data modules from the five admin page controllers`
+- participants: `worker_admin_pages`
+- write_sets:
+  - `worker_admin_pages`: `front/admin/js/cms.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/reservations.js`
+- verification:
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- STATE.md front/admin/js/cms.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/reservations.js` passed
+
+- time: `2026-03-24 11:18 +09:00`
+- route: `Route B`
+- task: `Remove dummy business data from the scoped admin data/dashboard slice without changing admin layout or controls`
+- participants: `main`, `worker_seed (Dalton)`, `worker_admin_data (Aristotle)`, `worker_admin_dashboard (Laplace)`, `reviewer_admin_no_dummy (Euclid)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.admin-page-dehardcode-v1.yaml`
+  - `worker_admin_data`: `front/admin/data/**, front/admin/js/store.js`
+  - `worker_admin_dashboard`: `front/admin/js/dashboard.js, front/admin/pages/dashboard.html`
+  - `reviewer_admin_no_dummy`: `review only`
+- verification:
+  - scoped grep over `front/admin/data/**`, `front/admin/js/store.js`, `front/admin/js/dashboard.js`, and `front/admin/pages/dashboard.html` found no remaining sample business records like named customers/reservations/products/inquiry rows
+  - `node --check front/admin/js/store.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.admin-page-dehardcode-v1.yaml front/admin/data/store-seed.js front/admin/data/dashboard-data.js front/admin/data/cms-config.js front/admin/data/lodging-config.js front/admin/data/members-config.js front/admin/data/reservations-config.js front/admin/js/store.js front/admin/js/dashboard.js front/admin/pages/dashboard.html` passed
+  - `reviewer_admin_no_dummy` reported no blocking findings; residual gap is browser-level smoke for async store-seed import timing and empty Chart.js rendering
+
+- time: `2026-03-24 11:09 +09:00`
+- route: `Route B`
+- task: `Schema refactor follow-up for V2 MariaDB compatibility and V20 replay/name alignment`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_db_migration_followup`: `jeju-spring/src/main/resources/db/migration/**`
+  - `reviewer_db_migration_followup`: `review only`
+- verification:
+  - pending

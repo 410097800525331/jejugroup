@@ -8,25 +8,33 @@ const AdminStore = (() => {
     'use strict';
 
     const sidebarUi = window.AdminSidebarUI;
+    const storeSeed = window.AdminStoreSeed ?? {};
+    const defaultKpi = Object.freeze({
+        todayReservations: 0,
+        revenue: '0',
+        cancelRate: '0%',
+        activeUsers: 0
+    });
+    const defaultRecentActivity = Object.freeze([]);
+
+    const normalizeKpi = (kpi) => ({
+        ...defaultKpi,
+        ...(kpi && typeof kpi === 'object' ? kpi : {})
+    });
+
+    const normalizeRecentActivity = (recentActivity) => (
+        Array.isArray(recentActivity) ? recentActivity : defaultRecentActivity
+    );
 
     // Initial State (Deep Freeze to prevent accidental mutation)
     const initialState = Object.freeze({
-        kpi: Object.freeze({
-            todayReservations: 124,
-            revenue: '₩12,450,000',
-            cancelRate: '3.2%',
-            activeUsers: 890
-        }),
-        recentActivity: Object.freeze([
-            { id: 1, type: 'RESERVATION', desc: '신라호텔 2박 예약 완료', time: '10분 전' },
-            { id: 2, type: 'CANCEL', desc: '대한항공 편도 취소', time: '25분 전' },
-            { id: 3, type: 'INQUIRY', desc: '결제 오류 문의 (VIP)', time: '1시간 전' }
-        ]),
+        kpi: Object.freeze(normalizeKpi(storeSeed.kpi)),
+        recentActivity: Object.freeze(normalizeRecentActivity(storeSeed.recentActivity)),
         ui: Object.freeze({
             sidebarOpen: sidebarUi?.getInitialSidebarOpen?.() ?? (window.innerWidth > 1024),
-            activeMenu: 'dashboard',
-            theme: localStorage.getItem('adminTheme') || 'system',
-            domain: 'all' // 'all', 'flight', 'hotel', 'rentcar'
+            activeMenu: storeSeed.ui?.activeMenu ?? 'dashboard',
+            theme: localStorage.getItem('adminTheme') || storeSeed.ui?.theme || 'system',
+            domain: storeSeed.ui?.domain ?? 'all' // 'all', 'flight', 'hotel', 'rentcar'
         })
     });
 
@@ -107,7 +115,7 @@ const AdminStore = (() => {
 
     /**
      * Subscribe to state changes
-     * @param {Function} listener 
+     * @param {Function} listener
      * @returns {Function} Unsubscribe function
      */
     const subscribe = (listener) => {
@@ -118,6 +126,39 @@ const AdminStore = (() => {
     const notifyListeners = () => {
         listeners.forEach(listener => listener(state));
     };
+
+    const isSameState = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+
+    const hydrateFromSeed = (seed) => {
+        if (!seed || typeof seed !== 'object') return;
+
+        window.AdminStoreSeed = seed;
+
+        const nextState = Object.freeze({
+            ...state,
+            kpi: Object.freeze(normalizeKpi(seed.kpi ?? state.kpi)),
+            recentActivity: Object.freeze(normalizeRecentActivity(seed.recentActivity ?? state.recentActivity)),
+            ui: Object.freeze({
+                ...state.ui,
+                activeMenu: seed.ui?.activeMenu ?? state.ui.activeMenu,
+                theme: localStorage.getItem('adminTheme') || seed.ui?.theme || state.ui.theme,
+                domain: seed.ui?.domain ?? state.ui.domain
+            })
+        });
+
+        if (!isSameState(nextState, state)) {
+            state = nextState;
+            notifyListeners();
+        }
+    };
+
+    import('../data/store-seed.js')
+        .then(({ default: seed }) => {
+            hydrateFromSeed(seed);
+        })
+        .catch((error) => {
+            console.warn('[AdminStore] Failed to load store seed module:', error);
+        });
 
     return Object.freeze({
         getState,

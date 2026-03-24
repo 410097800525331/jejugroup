@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
-class JejuSpringApplicationTests {
+class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 
 	@Autowired
 	private MockMvc mockMvc;

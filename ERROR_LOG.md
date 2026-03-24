@@ -47,3 +47,27 @@
 - summary: `git staging was briefly blocked by an index.lock error`
 - details: `git add first failed with "Unable to create .git/index.lock". A follow-up check found no active git.exe process and no surviving lock file, so staging was retried after the transient lock cleared.`
 - status: `resolved`
+
+- time: `2026-03-24 11:08:00 +09:00`
+- location: `pnpm run spring:test`
+- summary: `Spring tests are blocked by an invalid Flyway V2 migration on MariaDB`
+- details: `The test context now reaches Flyway migration, but V2__patch_support_ticket_and_primary_role_constraints.sql fails with MariaDB syntax error 1064 at the unique-key expression on line 12. This is outside the allowed java/test write set, so the migration itself could not be corrected here.`
+- status: `open`
+
+- time: `2026-03-24 11:22 +09:00`
+- location: `pnpm run spring:test`
+- summary: `spring:test still follows the repo's alwaysdata DB import path instead of the local replay target`
+- details: `Even after overriding shell env and Java system properties, the Gradle test JVM kept resolving spring.flyway/db settings from jeju-spring/.env and pointed at mysql-jejugroup.alwaysdata.net/jejugroup_db. The migration files themselves now replay successfully on a local fresh MySQL database, but the repository test command still does not exercise that local target in this workspace.`
+- status: `open`
+
+- time: `2026-03-24 11:22 +09:00`
+- location: `jeju-spring/src/main/resources/db/migration/V2__patch_support_ticket_and_primary_role_constraints.sql`
+- summary: `MariaDB-compatible primary-role uniqueness fix landed`
+- details: `Replaced the unsupported unique-key expression with a nullable is_primary column plus a composite unique key on (user_id, is_primary), and aligned V3's CHECK constraint to the nullable sentinel shape. The local fresh replay now reaches V20 cleanly.`
+- status: `resolved`
+
+- time: `2026-03-24 11:38:19 +09:00`
+- location: `jeju-spring/gradlew.bat test --tests com.jejugroup.jejuspring.customercenter.CustomerCenterIntegrationTests`
+- summary: `CustomerCenterIntegrationTests test replay is blocked by Flyway database access`
+- details: `The targeted test run failed before executing assertions because Flyway could not connect to the configured MySQL host with Access denied for user 'jejugroup'@'123.142.12.196'. compileTestJava succeeded afterward, so the assertion change itself still compiles.`
+- status: `open`

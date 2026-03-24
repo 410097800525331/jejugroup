@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jejugroup.jejuspring.auth.model.SessionUser;
+import com.jejugroup.jejuspring.IntegrationTestDatabaseProperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -31,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CustomerCenterIntegrationTests {
+class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
     private static final long SUPPORT_CATEGORY_ID = 910101L;
     private static final long SUPPORT_TICKET_ID = 910201L;
     private static final String SUPPORT_SERVICE_TYPE = "jeju-air";
@@ -366,13 +369,16 @@ class CustomerCenterIntegrationTests {
     void publicNoticeEndpointsFilterByServiceTypeAndHideInactiveRows() throws Exception {
         seedNoticeFixtures();
 
-        mockMvc.perform(get("/api/customer-center/notices").param("serviceType", NOTICE_SERVICE_TYPE))
+        String responseBody = mockMvc.perform(get("/api/customer-center/notices").param("serviceType", NOTICE_SERVICE_TYPE))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.data[?(@.title == '" + NOTICE_ACTIVE_TITLE + "')].length()")
-                .value(org.hamcrest.Matchers.greaterThanOrEqualTo(1)))
-            .andExpect(jsonPath("$.data[?(@.title == '" + NOTICE_INACTIVE_TITLE + "')].length()")
-                .value(0));
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        List<Map<String, Object>> notices = JsonPath.read(responseBody, "$.data");
+        assertThat(notices).extracting(notice -> notice.get("title")).contains(NOTICE_ACTIVE_TITLE);
+        assertThat(notices).extracting(notice -> notice.get("title")).doesNotContain(NOTICE_INACTIVE_TITLE);
 
         mockMvc.perform(get("/api/customer-center/notices/{noticeId}", NOTICE_ACTIVE_ID).param("serviceType", NOTICE_SERVICE_TYPE))
             .andExpect(status().isOk())
@@ -463,13 +469,16 @@ class CustomerCenterIntegrationTests {
     void publicFaqEndpointsFilterByServiceTypeAndHideInactiveRows() throws Exception {
         seedFaqFixtures();
 
-        mockMvc.perform(get("/api/customer-center/faqs").param("serviceType", FAQ_SERVICE_TYPE))
+        String responseBody = mockMvc.perform(get("/api/customer-center/faqs").param("serviceType", FAQ_SERVICE_TYPE))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.data[?(@.question == '" + FAQ_ACTIVE_QUESTION + "')].length()")
-                .value(org.hamcrest.Matchers.greaterThanOrEqualTo(1)))
-            .andExpect(jsonPath("$.data[?(@.question == '" + FAQ_INACTIVE_QUESTION + "')].length()")
-                .value(0));
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        List<Map<String, Object>> faqs = JsonPath.read(responseBody, "$.data");
+        assertThat(faqs).extracting(faq -> faq.get("question")).contains(FAQ_ACTIVE_QUESTION);
+        assertThat(faqs).extracting(faq -> faq.get("question")).doesNotContain(FAQ_INACTIVE_QUESTION);
 
         mockMvc.perform(get("/api/customer-center/faqs/{faqId}", FAQ_ACTIVE_ID).param("serviceType", FAQ_SERVICE_TYPE))
             .andExpect(status().isOk())

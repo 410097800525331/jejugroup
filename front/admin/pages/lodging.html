@@ -131,28 +131,27 @@
         <main class="admin-main">
             <div class="admin-page-header">
                 <h1 class="admin-page-title">상품 관리 허브</h1>
-                <div style="display: flex; gap: var(--admin-space-md); align-items: center;">
-                    <div class="admin-segment-control" id="admin-domain-filters">
-                        <button class="segment-btn active" data-domain="stay">호텔</button>
-                        <button class="segment-btn" data-domain="flight">항공</button>
-                        <button class="segment-btn" data-domain="rentcar">렌터카</button>
-                        <button class="segment-btn" data-domain="voucher">바우처</button>
-                    <button class="segment-btn" data-domain="usim">유심</button>
-                    <button class="segment-btn" data-domain="special">특가</button>
-                    </div>
-                </div>
+            </div>
+
+            <div class="admin-reservations-quick-actions">
+                <button class="admin-btn admin-btn-outline">재고 동기화</button>
+                <button class="admin-btn admin-btn-primary">신규 상품 등록</button>
             </div>
 
             <div class="admin-table-actions"
-                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center;">
+                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center; gap: var(--admin-space-md); flex-wrap: wrap;">
                 <div style="display:flex; gap:8px;">
                     <input type="text" placeholder="상품명 또는 코드 검색..."
                         style="padding: 8px 12px; border-radius:6px; border:1px solid var(--admin-border); background:var(--admin-surface); color:var(--admin-text-primary); outline:none;">
                     <button class="admin-btn admin-btn-outline">검색</button>
                 </div>
-                <div style="display:flex; gap:8px;">
-                    <button class="admin-btn admin-btn-outline">재고 동기화</button>
-                    <button class="admin-btn admin-btn-primary">신규 상품 등록</button>
+                <div class="admin-segment-control" id="admin-domain-filters">
+                    <button class="segment-btn active" data-domain="stay">호텔</button>
+                    <button class="segment-btn" data-domain="flight">항공</button>
+                    <button class="segment-btn" data-domain="rentcar">렌터카</button>
+                    <button class="segment-btn" data-domain="voucher">바우처</button>
+                    <button class="segment-btn" data-domain="usim">유심</button>
+                    <button class="segment-btn" data-domain="special">특가</button>
                 </div>
             </div>
 

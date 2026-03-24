@@ -129,17 +129,15 @@
         <main class="admin-main">
             <div class="admin-page-header">
                 <h1 class="admin-page-title">콘텐츠 운영 관리</h1>
-                <div style="display: flex; gap: var(--admin-space-md); align-items: center;">
-                    <div class="admin-segment-control" id="admin-domain-filters">
-                        <button class="segment-btn active" data-domain="notices">공지사항</button>
-                        <button class="segment-btn" data-domain="faqs">FAQ</button>
-                        <button class="segment-btn" data-domain="banner">배너</button>
-                    </div>
-                </div>
+            </div>
+
+            <div class="admin-reservations-quick-actions">
+                <button class="admin-btn admin-btn-outline" id="cms-secondary-action-btn">배포 정리</button>
+                <button class="admin-btn admin-btn-primary" id="cms-primary-action-btn">신규 항목 생성</button>
             </div>
 
             <div class="admin-table-actions"
-                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center;">
+                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center; gap: var(--admin-space-md); flex-wrap: wrap;">
                 <div style="display:flex; gap:8px;">
                     <input type="text" placeholder="콘텐츠 제목 또는 태그 검색..."
                         style="padding: 8px 12px; border-radius:6px; border:1px solid var(--admin-border); background:var(--admin-surface); color:var(--admin-text-primary); outline:none;">
@@ -153,9 +151,10 @@
                     </select>
                     <button class="admin-btn admin-btn-outline" id="cms-search-btn">검색</button>
                 </div>
-                <div style="display:flex; gap:8px;">
-                    <button class="admin-btn admin-btn-outline" id="cms-secondary-action-btn">배포 정리</button>
-                    <button class="admin-btn admin-btn-primary" id="cms-primary-action-btn">신규 항목 생성</button>
+                <div class="admin-segment-control" id="admin-domain-filters">
+                    <button class="segment-btn active" data-domain="notices">공지사항</button>
+                    <button class="segment-btn" data-domain="faqs">FAQ</button>
+                    <button class="segment-btn" data-domain="banner">배너</button>
                 </div>
             </div>
 
