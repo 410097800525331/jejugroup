@@ -1,0 +1,26 @@
+goal: >
+  Reduce admin menu navigation latency in the front/admin experience by removing
+  the whole-document auth stall and letting fallback-capable pages render
+  immediately instead of waiting on slow live payload fetches.
+constraints:
+  - Keep this seed front/admin only; front remains the source of truth.
+  - Do not touch `jeju-web` or `jeju-spring` paths in this run.
+  - Do not change route constants, page ownership, or unrelated admin navigation behavior.
+  - Keep the admin IA and page contracts intact while removing the full-document hidden wait during auth/session resolution.
+  - Let pages with safe fallback config bootstrap immediately and hydrate live admin payloads in the background.
+  - Do not change payload shapes or auth redirect correctness.
+  - Treat backend admin API slowness as residual risk for this run; do not require backend fixes in acceptance.
+acceptance_criteria:
+  - Admin navigation no longer blanks the whole document while auth/session resolution is in progress.
+  - Admin menu transitions do not depend on a full-page reload when a client-side transition is sufficient.
+  - Fallback-capable admin pages render from safe local config immediately instead of blocking on live payload fetches.
+  - Live admin payloads still hydrate after initial render without breaking auth redirects or page ownership.
+  - The fix preserves existing admin auth behavior and payload contracts.
+verification:
+  - Review the changed front/admin code for removal of the whole-document hidden stall and any blocking page bootstrap on slow live payload fetches.
+  - Run the relevant front/admin checks available in the repository.
+out_of_scope:
+  - Backend admin API performance work, including slow live payload endpoints.
+  - New admin features or visual redesign.
+  - Route constant changes, page ownership changes, or unrelated admin navigation work.
+  - Any edits under `jeju-web` or `jeju-spring`.
