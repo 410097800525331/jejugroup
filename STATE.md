@@ -2,40 +2,37 @@
 
 ## Current Task
 
-- task: `Convert admin navigation to a single-load admin shell that enters once and switches sections without full page reloads`
-- phase: `paused`
-- scope: `STATE.md, MULTI_AGENT_LOG.md, SEED.admin-shell-single-load-v1.yaml, front/admin/pages/**, front/admin/js/**, optional ERROR_LOG.md append-only`
-- verification_target: `After entering admin once, sidebar menu switches sections inside the same admin shell without full document reload, shared auth/sidebar/theme state is initialized once, and section content lazy-loads or hydrates without breaking current admin ownership or redirects`
+- task: `Slice the current dirty worktree into reviewable commit boundaries without losing the admin shell and smoke work`
+- phase: `completed`
+- scope: `STATE.md, MULTI_AGENT_LOG.md, current dirty worktree inventory, optional commit-boundary notes`
+- verification_target: `The current worktree is classified into clean, reviewable commit slices with clear boundaries between front/admin source changes, smoke coverage, and any generated or mirror-only artifacts so follow-up staging/commits can happen safely`
 
 ## Route
 
 - route: `Route B`
-- reason: `The goal, scope, and verification target changed materially from the previous admin latency patch. This is a larger architecture slice across multiple front/admin pages and scripts that needs a frozen contract, worker delegation, and reviewer validation. The concrete trigger is the user-approved move to a single-load admin shell so menu switches stop doing full page reloads.`
+- reason: `The goal changed from implementation to worktree slicing across multiple changed areas, including front/admin source, smoke coverage, and jeju-spring mirror/generated artifacts. This requires a fresh Route B classification because the scope spans multiple directories and the main risk is mixing human-edited source changes with downstream/generated changes in the wrong commit boundaries.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_shell`: `SEED.admin-shell-single-load-v1.yaml`
-  - `worker_admin_shell_js`: `front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js, front/admin/js/rbac_config.js, front/admin/js/sidebar_ui.js, optional new front/admin/js/admin_shell.js`
-  - `worker_admin_shell_pages`: `front/admin/pages/dashboard.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html, front/admin/pages/reservations.html`
-- note: `Route B planner-only main. The admin shell refactor is front/admin only because jeju-spring and jeju-web stay out of scope, and the write sets are split into seed, JS runtime, and HTML entrypoint ownership to avoid overlap.`
+- note: `Route B planner-only main during investigation. No implementation write set is active yet because this stage is read-only classification of the existing dirty worktree into commit slices.`
 
 ## Contract Freeze
 
-- contract_freeze: `Keep the admin IA, route ownership, and front-only source of truth intact. Do not touch jeju-spring, jeju-web, generated assets, or route constants. Enter admin through one shell runtime that initializes auth/sidebar/theme once, keep direct entry to existing admin page URLs working, and switch admin sections inside the shell without full page reloads while preserving current payload shapes and redirect safety.`
+- contract_freeze: `Keep the existing dirty worktree intact while classifying it. Do not discard, overwrite, or mirror-sync anything during investigation. The goal is only to determine safe commit boundaries between front/admin source work, smoke coverage, and downstream or generated jeju-spring/front-mirror changes.`
 
-- status: `frozen`
-- path: `SEED.admin-shell-single-load-v1.yaml`
+- status: `none`
+- path: `none`
 - revision: `v1`
-- note: `Frozen single-load admin shell contract ready for implementation.`
+- note: `No new seed; this is a read-only slicing task over the existing dirty worktree.`
 
 - reviewer: `reviewer_admin_latency`
-- reviewer_target: `front/admin/js/**, front/admin/pages/**`
-- reviewer_focus: `No broken direct entry to existing admin URLs, no broken auth redirect behavior, no mirror-boundary violation, and no section-switch regression after the single-load admin shell refactor`
+- reviewer_target: `current dirty worktree boundaries`
+- reviewer_focus: `Commit slices should separate human-edited front/admin source from smoke-only changes and from downstream or generated jeju-spring/front-mirror artifacts so later commits stay reviewable and safe`
 
 ## Last Update
 
-- timestamp: `2026-03-24 20:52:00 +09:00`
-- note: `Paused for handoff. The workspace now contains a new front/admin/js/admin_shell.js shell runtime, and all five admin HTML entrypoints point at that shared bootstrap instead of page-specific boot scripts. Remaining work in the next environment is to review the section JS diffs carefully, verify direct entry for every admin URL, verify same-document section switching plus popstate/history behavior, run reviewer/mechanical checks, and then either fix regressions or close the Route B task.`
+- timestamp: `2026-03-24 20:18:00 +09:00`
+- note: `Dirty worktree slicing is complete. Slice 1 is staged as the human-edited admin source + smoke + state/log bundle (`front/admin/js/**`, `scripts/smoke/**`, `SEED.admin-shell-ui-state-rollback-v1.yaml`, `STATE.md`, `MULTI_AGENT_LOG.md`). Slice 2 is staged as the downstream `jeju-spring/front-mirror/admin/**` mirror bundle, and Slice 3 is staged as the separate `jeju-spring/front-mirror/pages/cs/**` asset/template refresh. Remaining unstaged changes are limited to unrelated `jeju-spring/src/main/resources/static/front-mirror/pages/mypage/**` CSS edits plus the untracked `.codex-temp/` workspace artifact, which should not be mixed into the admin commits.`

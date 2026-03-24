@@ -1,3 +1,6 @@
+const fs = require("node:fs");
+const path = require("node:path");
+
 const ADMIN_SESSION = {
   id: "local-admin",
   name: "로컬 관리자",
@@ -142,6 +145,286 @@ const ADMIN_DASHBOARD_SEED = {
   },
 };
 
+const ADMIN_CHART_STUB = `
+window.Chart = class Chart {
+  constructor() {}
+  destroy() {}
+  update() {}
+};
+`;
+
+const ADMIN_LUCIDE_STUB = `
+window.lucide = {
+  createIcons() {}
+};
+`;
+
+const ADMIN_RESERVATIONS_TABLES = {
+  defaultTab: "booking",
+  tabs: {
+    booking: {
+      searchPlaceholder: "예약 테이블 또는 도메인 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "예약 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          domainKey: "air",
+          searchText: "예약 제주항공",
+          cells: ["AIR", "jeju_air_reservations", "예약 관리", "정상", "18", "예약 기준", "관리"],
+        },
+      ],
+    },
+    payment: {
+      searchPlaceholder: "결제 테이블 또는 도메인 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "결제 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          domainKey: "stay",
+          searchText: "결제 제주스테이",
+          cells: ["STAY", "jeju_stay_payments", "결제 관리", "정상", "9", "결제 기준", "관리"],
+        },
+      ],
+    },
+    refund: {
+      searchPlaceholder: "환불 테이블 또는 도메인 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "환불 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          domainKey: "air",
+          searchText: "환불 제주항공",
+          cells: ["AIR", "jeju_air_refunds", "환불 관리", "정상", "2", "환불 기준", "관리"],
+        },
+      ],
+    },
+    traveler: {
+      searchPlaceholder: "이용자 테이블 또는 도메인 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "탑승객 / 이용자 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          domainKey: "air",
+          searchText: "여행자 홍민지",
+          cells: ["AIR", "jeju_air_travelers", "탑승객 관리", "정상", "24", "여행자 기준", "관리"],
+        },
+      ],
+    },
+  },
+};
+
+const ADMIN_LODGING_TABLES = {
+  defaultTab: "stay",
+  tabs: {
+    stay: {
+      searchPlaceholder: "stay 테이블 또는 역할 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "stay 상품 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          searchText: "제주스테이 객실 운영",
+          cells: ["STAY", "jeju_stay_rooms", "객실 운영", "정상", "128", "숙박 기준", "관리"],
+        },
+      ],
+    },
+    air: {
+      searchPlaceholder: "air 테이블 또는 역할 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "air 상품 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          searchText: "제주항공 운항 스키마",
+          cells: ["AIR", "jeju_air_routes", "운항 관리", "정상", "84", "항공 기준", "관리"],
+        },
+      ],
+    },
+    rent: {
+      searchPlaceholder: "rent 테이블 또는 역할 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "rent 상품 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          searchText: "렌터카 예약 스키마",
+          cells: ["RENT", "jeju_rent_bookings", "차량 예약", "정상", "31", "렌터카 기준", "관리"],
+        },
+      ],
+    },
+    voucher: {
+      searchPlaceholder: "voucher 테이블 또는 역할 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "voucher 상품 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          searchText: "바우처 배포 스키마",
+          cells: ["VOUCHER", "jeju_voucher_codes", "바우처 관리", "정상", "12", "배포 기준", "관리"],
+        },
+      ],
+    },
+    special: {
+      searchPlaceholder: "special 테이블 또는 역할 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "special 상품 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          searchText: "특가 상품 편성",
+          cells: ["SPECIAL", "jeju_special_products", "특가 관리", "정상", "7", "특가 기준", "관리"],
+        },
+      ],
+    },
+    usim: {
+      searchPlaceholder: "usim 테이블 또는 역할 검색",
+      primaryAction: "스키마 새로고침",
+      secondaryAction: "현재 DB 기준",
+      emptyMessage: "usim 상품 스키마가 아직 없습니다.",
+      columns: ["도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"],
+      rows: [
+        {
+          searchText: "유심 재고 스키마",
+          cells: ["USIM", "jeju_usim_inventory", "유심 관리", "정상", "44", "유심 기준", "관리"],
+        },
+      ],
+    },
+  },
+};
+
+const ADMIN_MEMBERS_TABLES = {
+  defaultTab: "member",
+  tabs: {
+    member: {
+      searchPlaceholder: "회원명 또는 ID 검색",
+      primaryAction: "회원 DB 보기",
+      secondaryAction: "새로고침",
+      emptyMessage: "회원 데이터가 없습니다.",
+      columns: ["사용자 ID", "구분", "기본 정보", "기준 일시", "상태 / 권한", "관리"],
+      rows: [
+        {
+          searchText: "홍민지 local-admin",
+          cells: ["hong_minji", "회원", "홍민지 / minji.hong@jejugroup.example", "2026-03-24 09:00", "GOLD / MEMBER", "관리"],
+        },
+      ],
+    },
+    accounts: {
+      searchPlaceholder: "연동 계정 또는 provider 검색",
+      primaryAction: "계정 DB 보기",
+      secondaryAction: "새로고침",
+      emptyMessage: "연동 계정 데이터가 없습니다.",
+      columns: ["사용자 ID", "구분", "연동 정보", "최근 인증", "상태 / 기본값", "관리"],
+      rows: [
+        {
+          searchText: "naver hong_minji",
+          cells: ["hong_minji", "연동 계정", "NAVER / 기본", "2026-03-24 08:50", "활성 / 기본", "관리"],
+        },
+      ],
+    },
+    permissions: {
+      searchPlaceholder: "권한명 또는 식별자 검색",
+      primaryAction: "권한 DB 보기",
+      secondaryAction: "새로고침",
+      emptyMessage: "권한 데이터가 없습니다.",
+      columns: ["식별자", "구분", "기본 정보", "기준 일시", "상태 / 연결", "관리"],
+      rows: [
+        {
+          searchText: "SUPER_ADMIN local-admin",
+          cells: ["super_admin", "권한", "전체 관리자 권한", "2026-03-24 09:05", "활성 / 연결", "관리"],
+        },
+      ],
+    },
+    inquiries: {
+      searchPlaceholder: "문의번호 또는 문의 제목 검색",
+      primaryAction: "문의 DB 보기",
+      secondaryAction: "새로고침",
+      emptyMessage: "문의 데이터가 없습니다.",
+      columns: ["문의 ID", "서비스", "문의 요약", "작성 일시", "처리 상태", "관리"],
+      rows: [
+        {
+          searchText: "예약 변경 문의",
+          cells: ["T-1001", "제주항공", "항공권 예약 변경 문의", "2026-03-23 09:00", "pending", "관리"],
+        },
+      ],
+    },
+  },
+};
+
+const ADMIN_CMS_TABLES = {
+  defaultTab: "notices",
+  tabs: {
+    notices: {
+      searchPlaceholder: "공지 제목 또는 서비스 검색",
+      primaryAction: "공지 DB 보기",
+      secondaryAction: "정렬",
+      emptyMessage: "공지 데이터가 없습니다.",
+      columns: ["공지 ID", "서비스", "유형", "제목", "게시 / 예약일", "노출 상태", "관리"],
+      rows: [
+        {
+          statusKey: "active",
+          searchText: "제주항공 점검 공지",
+          cells: ["N-001", "제주항공", "공지", "시스템 점검 안내", "2026-03-24", "노출", "관리"],
+        },
+      ],
+    },
+    faqs: {
+      searchPlaceholder: "FAQ 질문 또는 서비스 검색",
+      primaryAction: "FAQ DB 보기",
+      secondaryAction: "정렬",
+      emptyMessage: "FAQ 데이터가 없습니다.",
+      columns: ["FAQ ID", "서비스", "질문 유형", "질문", "등록일", "노출 상태", "관리"],
+      rows: [
+        {
+          statusKey: "inactive",
+          searchText: "제주 스테이 예약 취소",
+          cells: ["F-014", "제주스테이", "예약", "제주 스테이 예약 취소는 어떻게 하나요?", "2026-03-23", "비노출", "관리"],
+        },
+      ],
+    },
+    categories: {
+      searchPlaceholder: "서비스 또는 카테고리 코드 검색",
+      primaryAction: "분류 DB 보기",
+      secondaryAction: "정렬",
+      emptyMessage: "문의 카테고리 데이터가 없습니다.",
+      columns: ["카테고리 ID", "서비스", "코드 / 정렬", "이름", "설명", "노출 상태", "관리"],
+      rows: [
+        {
+          statusKey: "draft",
+          searchText: "예약 변경 분류",
+          cells: ["C-003", "제주스테이", "예약 / 변경", "예약 변경", "예약 변경 문의 분류", "예약 중", "관리"],
+        },
+      ],
+    },
+  },
+};
+
+const ADMIN_SECTION_TABLE_FIXTURES = {
+  reservations: ADMIN_RESERVATIONS_TABLES,
+  lodging: ADMIN_LODGING_TABLES,
+  members: ADMIN_MEMBERS_TABLES,
+  cms: ADMIN_CMS_TABLES,
+};
+
+const ADMIN_SECTION_CONFIG_PATHS = {
+  reservations: path.resolve("front", "admin", "data", "reservations-config.js"),
+  lodging: path.resolve("front", "admin", "data", "lodging-config.js"),
+  members: path.resolve("front", "admin", "data", "members-config.js"),
+  cms: path.resolve("front", "admin", "data", "cms-config.js"),
+};
+
 const CUSTOMER_CENTER_ROUTE_PATTERNS = {
   authSession: "**/api/auth/session",
   notices: "**/api/customer-center/notices",
@@ -159,6 +442,14 @@ const routeJson = async (route, payload, status = 200) => {
   await route.fulfill(toJsonResponse(payload, status));
 };
 
+const routeScript = async (route, body) => {
+  await route.fulfill({
+    status: 200,
+    contentType: "application/javascript; charset=utf-8",
+    body,
+  });
+};
+
 const seedLocalStorageSession = async (page, session) => {
   await page.addInitScript(
     (nextSession) => {
@@ -171,6 +462,91 @@ const seedLocalStorageSession = async (page, session) => {
 const installAdminDashboardMock = async (page) => {
   await page.route("**/api/admin/dashboard**", async (route) => {
     await routeJson(route, ADMIN_DASHBOARD_SEED);
+  });
+};
+
+const installAdminRuntimeStubs = async (page) => {
+  await page.route("**/cdn.jsdelivr.net/npm/chart.js**", async (route) => {
+    await routeScript(route, ADMIN_CHART_STUB);
+  });
+
+  await page.route("**/unpkg.com/lucide@latest**", async (route) => {
+    await routeScript(route, ADMIN_LUCIDE_STUB);
+  });
+};
+
+const buildAdminConfigModuleBody = (filePath) => {
+  const source = fs.readFileSync(filePath, "utf8");
+  const shellExports = [
+    "const forwardToShell = (method, ...args) => window.AdminShell?.[method]?.(...args);",
+    "export const registerSection = (...args) => forwardToShell('registerSection', ...args);",
+    "export const bootSection = (...args) => forwardToShell('bootSection', ...args);",
+    "export const getSectionDefinition = (...args) => forwardToShell('getSectionDefinition', ...args);",
+  ].join("\n");
+
+  return `${source}\n${shellExports}\n`;
+};
+
+const installAdminConfigModuleShims = async (page) => {
+  for (const [sectionId, filePath] of Object.entries(ADMIN_SECTION_CONFIG_PATHS)) {
+    await page.route(`**/admin/data/${sectionId}-config.js`, async (route) => {
+      await routeScript(route, buildAdminConfigModuleBody(filePath));
+    });
+  }
+};
+
+const installAdminApiMocks = async (page) => {
+  await page.route("**/api/admin/**", async (route) => {
+    const url = new URL(route.request().url());
+    const pathname = url.pathname;
+
+    if (pathname.includes("/api/admin/dashboard")) {
+      await routeJson(route, ADMIN_DASHBOARD_SEED);
+      return;
+    }
+
+    const tableMatch = pathname.match(/\/api\/admin\/tables\/([^/]+)$/);
+    if (tableMatch) {
+      const sectionId = tableMatch[1];
+      const tableFixture = ADMIN_SECTION_TABLE_FIXTURES[sectionId];
+      if (tableFixture) {
+        await routeJson(route, {
+          success: true,
+          data: tableFixture,
+        });
+        return;
+      }
+    }
+
+    await route.continue();
+  });
+};
+
+const installAdminSmokeFixtures = async (page, options = {}) => {
+  const { session = ADMIN_SESSION } = options;
+
+  await seedLocalStorageSession(page, session);
+  await installAdminRuntimeStubs(page);
+  await installAdminConfigModuleShims(page);
+  await installAdminApiMocks(page);
+};
+
+const installOneShotRouteFailure = async (page, pattern, options = {}) => {
+  const { status = 500, body = "<!doctype html><title>admin section failed</title>" } = options;
+  let failed = false;
+
+  await page.route(pattern, async (route) => {
+    if (failed) {
+      await route.continue();
+      return;
+    }
+
+    failed = true;
+    await route.fulfill({
+      status,
+      contentType: "text/html; charset=utf-8",
+      body,
+    });
   });
 };
 
@@ -228,6 +604,7 @@ const installCustomerCenterSmokeMocks = async (page, { authenticated = false } =
 
 module.exports = {
   ADMIN_DASHBOARD_SEED,
+  ADMIN_SECTION_TABLE_FIXTURES,
   ADMIN_SESSION,
   CUSTOMER_CENTER_FAQS,
   CUSTOMER_CENTER_NOTICES,
@@ -237,6 +614,8 @@ module.exports = {
   MYPAGE_SESSION,
   installAdminDashboardMock,
   installAdminSession,
+  installAdminSmokeFixtures,
+  installOneShotRouteFailure,
   installCustomerCenterSmokeMocks,
   installMypageSession,
   routeJson,

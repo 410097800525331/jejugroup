@@ -1,6 +1,12 @@
 (() => {
     'use strict';
 
+    const currentScript = document.currentScript;
+    if (currentScript && !currentScript.dataset.adminRuntime) {
+        currentScript.dataset.adminRuntime = new URL(currentScript.getAttribute('src') || '', window.location.href).href;
+        currentScript.dataset.adminLoaded = 'true';
+    }
+
     if (window.AdminShell) {
         return;
     }
@@ -53,9 +59,13 @@
         mountedSectionId: null,
         mountedRoot: null,
         sectionRegistry: new Map(),
+        navigationToken: 0,
         pendingSectionId: null,
+        pendingNavigationToken: 0,
         loadedScripts: new Map(),
-        cachedMarkup: new Map()
+        sharedScriptPromise: null,
+        cachedMarkup: new Map(),
+        sectionStateSnapshots: new Map()
     };
 
     const escapeHtml = (value) => String(value ?? '')
@@ -71,6 +81,18 @@
     };
 
     const getSectionDef = (sectionId) => SECTION_DEFS[sectionId] ?? SECTION_DEFS.dashboard;
+
+    const beginNavigation = (sectionId) => {
+        const token = state.navigationToken + 1;
+        state.navigationToken = token;
+        state.pendingSectionId = sectionId;
+        state.pendingNavigationToken = token;
+        return token;
+    };
+
+    const isCurrentNavigation = (sectionId, token) => (
+        token === state.pendingNavigationToken && state.pendingSectionId === sectionId
+    );
 
     const getCurrentMain = () => document.querySelector('main.admin-main');
 
@@ -111,24 +133,93 @@
 
     const resolveUrl = (path) => new URL(path, window.location.href).href;
 
-    const loadScriptOnce = (sectionId) => {
-        const def = getSectionDef(sectionId);
-        if (state.loadedScripts.has(sectionId)) {
-            return state.loadedScripts.get(sectionId);
+    const sharedRuntimeGuards = Object.freeze({
+        [resolveUrl('../js/auth_guard.js')]: () => Boolean(window.AdminAuth),
+        [resolveUrl('../js/rbac_config.js')]: () => Boolean(window.RBAC_CONFIG),
+        [resolveUrl('../js/sidebar_ui.js')]: () => Boolean(window.AdminSidebarUI),
+        [resolveUrl('../js/store.js')]: () => Boolean(window.AdminStore),
+        [resolveUrl('../js/api_client.js')]: () => Boolean(window.AdminApiClient),
+        [resolveUrl('../js/portal_nav.js')]: () => Boolean(window.AdminPortalNav)
+    });
+
+    const ensureScriptOnce = (src) => {
+        if (!src) {
+            return Promise.resolve(false);
+        }
+
+        if (state.loadedScripts.has(src)) {
+            return state.loadedScripts.get(src);
+        }
+
+        const existing = document.querySelector(`script[data-admin-runtime="${src}"]`);
+        if (existing) {
+            if (existing.dataset.adminFailed === 'true') {
+                existing.remove();
+            } else {
+                const ready = sharedRuntimeGuards[src]?.() || existing.dataset.adminLoaded === 'true';
+                const readyPromise = ready
+                    ? Promise.resolve(true)
+                    : new Promise((resolve) => {
+                        existing.addEventListener('load', () => resolve(true), { once: true });
+                        existing.addEventListener('error', () => resolve(false), { once: true });
+                    });
+                state.loadedScripts.set(src, readyPromise);
+                return readyPromise;
+            }
         }
 
         const promise = new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = resolveUrl(def.scriptPath);
+            script.src = src;
             script.async = true;
-            script.dataset.adminRuntime = def.scriptPath;
-            script.onload = () => resolve(true);
-            script.onerror = (error) => reject(error);
+            script.dataset.adminRuntime = src;
+            script.onload = () => {
+                script.dataset.adminLoaded = 'true';
+                resolve(true);
+            };
+            script.onerror = (error) => {
+                state.loadedScripts.delete(src);
+                script.dataset.adminFailed = 'true';
+                script.remove();
+                reject(error);
+            };
             document.head.appendChild(script);
         });
 
-        state.loadedScripts.set(sectionId, promise);
+        state.loadedScripts.set(src, promise);
         return promise;
+    };
+
+    const loadSectionScript = (sectionId) => {
+        const def = getSectionDef(sectionId);
+        return ensureScriptOnce(resolveUrl(def.scriptPath));
+    };
+
+    const ensureSharedRuntime = async () => {
+        if (state.sharedScriptPromise) {
+            return state.sharedScriptPromise;
+        }
+
+        const sharedScriptPaths = [
+            '../js/auth_guard.js',
+            '../js/rbac_config.js',
+            '../js/sidebar_ui.js',
+            '../js/store.js',
+            '../js/api_client.js',
+            '../js/portal_nav.js'
+        ];
+
+        state.sharedScriptPromise = (async () => {
+            for (const path of sharedScriptPaths) {
+                await ensureScriptOnce(resolveUrl(path));
+            }
+            return true;
+        })().catch((error) => {
+            state.sharedScriptPromise = null;
+            throw error;
+        });
+
+        return state.sharedScriptPromise;
     };
 
     const waitForSession = async () => {
@@ -208,8 +299,50 @@
         });
     };
 
+    const cloneSectionState = (sectionState) => {
+        if (!sectionState || typeof sectionState !== 'object') {
+            return null;
+        }
+
+        return { ...sectionState };
+    };
+
+    const captureMountedSectionState = (sectionId, root) => {
+        if (!sectionId) {
+            return null;
+        }
+
+        const entry = state.sectionRegistry.get(sectionId);
+        if (!entry || typeof entry.getState !== 'function') {
+            return null;
+        }
+
+        try {
+            const snapshot = entry.getState({
+                root: root ?? getCurrentMain(),
+                shell: window.AdminShell,
+                session: state.session,
+                sectionId
+            });
+            if (snapshot && typeof snapshot === 'object') {
+                const clonedSnapshot = cloneSectionState(snapshot);
+                state.sectionStateSnapshots.set(sectionId, clonedSnapshot);
+                return clonedSnapshot;
+            }
+        } catch (error) {
+            console.warn('[AdminShell] Section state snapshot failed:', error);
+        }
+
+        return null;
+    };
+
     const activateSection = async (sectionId, options = {}) => {
-        const { force = false } = options;
+        const {
+            force = false,
+            navigationToken = state.pendingNavigationToken,
+            restoreSectionState = false,
+            sectionState = null
+        } = options;
         const def = getSectionDef(sectionId);
         const mountEntry = state.sectionRegistry.get(sectionId);
         const root = getCurrentMain();
@@ -217,8 +350,16 @@
             return false;
         }
 
+        if (navigationToken && !isCurrentNavigation(sectionId, navigationToken)) {
+            return false;
+        }
+
         if (!force && state.mountedSectionId === sectionId && state.mountedRoot === root) {
             return true;
+        }
+
+        if (state.mountedSectionId && state.mountedSectionId !== sectionId) {
+            captureMountedSectionState(state.mountedSectionId, state.mountedRoot || root);
         }
 
         if (typeof state.cleanupSection === 'function') {
@@ -239,8 +380,20 @@
             root,
             shell: window.AdminShell,
             session: state.session,
-            sectionId
+            sectionId,
+            sectionState: restoreSectionState ? (sectionState ?? cloneSectionState(state.sectionStateSnapshots.get(sectionId))) : null
         });
+
+        if (navigationToken && !isCurrentNavigation(sectionId, navigationToken)) {
+            if (typeof cleanup === 'function') {
+                try {
+                    cleanup();
+                } catch (error) {
+                    console.warn('[AdminShell] Stale section cleanup failed:', error);
+                }
+            }
+            return false;
+        }
 
         if (typeof cleanup === 'function') {
             state.cleanupSection = cleanup;
@@ -254,6 +407,8 @@
     };
 
     const ensureSharedChrome = async () => {
+        await ensureSharedRuntime();
+
         if (state.sharedReady) {
             return state.session;
         }
@@ -376,10 +531,42 @@
 
     const bootSection = async (sectionId, options = {}) => {
         const targetSectionId = sectionId || getSectionIdFromPath();
-        state.pendingSectionId = targetSectionId;
-        await ensureSharedChrome();
-        await activateSection(targetSectionId, options);
+        if (state.pendingSectionId && state.pendingSectionId !== targetSectionId) {
+            return state.session;
+        }
+
+        const navigationToken = state.pendingNavigationToken || beginNavigation(targetSectionId);
+
+        try {
+            await ensureSharedChrome();
+            if (!isCurrentNavigation(targetSectionId, navigationToken)) {
+                return state.session;
+            }
+
+            const activated = await activateSection(targetSectionId, {
+                ...options,
+                navigationToken
+            });
+            if (!activated) {
+                if (!isCurrentNavigation(targetSectionId, navigationToken)) {
+                    return state.session;
+                }
+                throw new Error(`Admin section boot failed: ${targetSectionId}`);
+            }
+        } catch (error) {
+            if (!isCurrentNavigation(targetSectionId, navigationToken)) {
+                return state.session;
+            }
+            throw error;
+        }
+
         return state.session;
+    };
+
+    const bootstrapInitialSection = () => {
+        const initialSectionId = state.pendingSectionId || getSectionIdFromPath();
+        state.pendingSectionId = initialSectionId;
+        void loadSectionScript(initialSectionId);
     };
 
     const registerSection = (sectionId, entry) => {
@@ -393,7 +580,9 @@
         });
 
         if (state.pendingSectionId === sectionId && state.sharedReady) {
-            void activateSection(sectionId);
+            void activateSection(sectionId, {
+                navigationToken: state.pendingNavigationToken
+            });
         }
     };
 
@@ -428,32 +617,103 @@
             return;
         }
 
-        const markup = await loadSectionMarkup(sectionId);
-        const currentMain = getCurrentMain();
-        if (currentMain) {
-            currentMain.outerHTML = markup.main.outerHTML;
+        const navigationToken = beginNavigation(sectionId);
+        const previousSectionId = currentSectionId;
+        const previousTitle = document.title;
+        const previousUrl = window.location.href;
+        const previousMain = getCurrentMain();
+        const previousMainHtml = previousMain?.outerHTML || '';
+        const previousSectionState = previousSectionId
+            ? captureMountedSectionState(previousSectionId, previousMain)
+            : null;
+        let swappedMain = false;
+
+        try {
+            const markup = await loadSectionMarkup(sectionId);
+            if (!isCurrentNavigation(sectionId, navigationToken)) {
+                return;
+            }
+
+            const currentMain = getCurrentMain();
+            if (currentMain) {
+                currentMain.outerHTML = markup.main.outerHTML;
+                swappedMain = true;
+            }
+
+            if (!isCurrentNavigation(sectionId, navigationToken)) {
+                return;
+            }
+
+            const pageUrl = resolveUrl(`../pages/${def.pagePath}`);
+            if (options.replaceState) {
+                window.history.replaceState({ adminSection: sectionId }, '', pageUrl);
+            } else {
+                window.history.pushState({ adminSection: sectionId }, '', pageUrl);
+            }
+
+            document.title = markup.title;
+            state.activeSectionId = sectionId;
+            state.mountedRoot = getCurrentMain();
+            updateActiveMenu(sectionId);
+            syncSharedTheme(window.AdminStore?.getState?.().ui?.theme || 'system');
+            syncSidebarUi();
+
+            if (!state.sectionRegistry.has(sectionId)) {
+                await loadSectionScript(sectionId);
+                if (!isCurrentNavigation(sectionId, navigationToken)) {
+                    return;
+                }
+                return;
+            }
+
+            await activateSection(sectionId, { force: true, navigationToken });
+        } catch (error) {
+            if (!isCurrentNavigation(sectionId, navigationToken)) {
+                return;
+            }
+
+            const rollbackSectionState = !swappedMain && previousSectionId
+                ? captureMountedSectionState(previousSectionId, getCurrentMain())
+                : null;
+            const sectionStateForRollback = rollbackSectionState ?? previousSectionState;
+
+            if (swappedMain && previousMainHtml) {
+                const currentMain = getCurrentMain();
+                if (currentMain) {
+                    currentMain.outerHTML = previousMainHtml;
+                }
+            }
+
+            if (window.location.href !== previousUrl) {
+                window.history.replaceState({ adminSection: previousSectionId }, '', previousUrl);
+            }
+
+            document.title = previousTitle;
+            state.activeSectionId = previousSectionId;
+            state.mountedSectionId = previousSectionId;
+            state.mountedRoot = getCurrentMain();
+            state.pendingSectionId = previousSectionId;
+            state.pendingNavigationToken = state.navigationToken;
+
+            if (previousSectionId && state.sectionRegistry.has(previousSectionId)) {
+                try {
+                    await activateSection(previousSectionId, {
+                        force: true,
+                        navigationToken: state.navigationToken,
+                        restoreSectionState: true,
+                        sectionState: sectionStateForRollback
+                    });
+                    return;
+                } catch (restoreError) {
+                    console.warn('[AdminShell] Section rollback remount failed:', restoreError);
+                }
+            }
+
+            updateActiveMenu(previousSectionId);
+            syncSharedTheme(window.AdminStore?.getState?.().ui?.theme || 'system');
+            syncSidebarUi();
+            console.warn('[AdminShell] Section navigation failed:', error);
         }
-
-        const pageUrl = resolveUrl(`../pages/${def.pagePath}`);
-        if (options.replaceState) {
-            window.history.replaceState({ adminSection: sectionId }, '', pageUrl);
-        } else {
-            window.history.pushState({ adminSection: sectionId }, '', pageUrl);
-        }
-
-        document.title = markup.title;
-        state.activeSectionId = sectionId;
-        state.mountedRoot = getCurrentMain();
-        updateActiveMenu(sectionId);
-        syncSharedTheme(window.AdminStore?.getState?.().ui?.theme || 'system');
-        syncSidebarUi();
-
-        if (!state.sectionRegistry.has(sectionId)) {
-            await loadScriptOnce(sectionId);
-            return;
-        }
-
-        await activateSection(sectionId, { force: true });
     };
 
     window.addEventListener('popstate', () => {
@@ -470,7 +730,7 @@
         getSession: () => state.session,
         getMainRoot: getCurrentMain,
         loadSectionMarkup,
-        loadSectionScript: loadScriptOnce,
+        loadSectionScript,
         navigateToSection,
         registerSection,
         bootSection,
@@ -483,4 +743,5 @@
     });
 
     state.pendingSectionId = getSectionIdFromPath();
+    bootstrapInitialSection();
 })();

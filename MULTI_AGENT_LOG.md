@@ -805,3 +805,74 @@
   - `node --check front/admin/js/admin_shell.js` passed locally
   - sanity check confirmed all five admin HTML entrypoints now reference `../js/admin_shell.js`
   - task was paused for handoff before reviewer pass and before end-to-end browser verification of direct entry, same-document section switching, and history/popstate behavior
+
+- time: `2026-03-24 19:04 +09:00`
+- route: `Route B`
+- task: `Close out the admin single-load shell handoff by hardening direct entry, shared runtime loading, and stale async section navigation safety`
+- participants: `main`, `worker_admin_shell_js (Averroes/Hypatia/Mendel/Kepler/Turing the 2nd)`, `reviewer_admin_latency (Steward/Athena/Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_shell_js`: `front/admin/js/admin_shell.js, front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/store.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js, front/admin/js/rbac_config.js, front/admin/js/sidebar_ui.js, front/admin/js/portal_nav.js`
+  - `reviewer_admin_latency`: `review only`
+- verification:
+  - `worker_admin_shell_js` added shell-side direct-entry section bootstrap so existing admin URLs no longer depend on page-specific boot scripts being present in HTML
+  - `worker_admin_shell_js` made the shell load shared runtime dependencies itself, switched runtime script de-duplication to absolute URL keys, and exposed `window.AdminStore` so shared sidebar/theme/profile sync can run on direct entry
+  - `worker_admin_shell_js` added navigation tokens, stale async guard checks, boot failure propagation, failed script-node retry handling, rollback remount logic, and deterministic `sidebar_ui -> store` shared runtime ordering in `front/admin/js/admin_shell.js`
+  - `node --check front/admin/js/admin_shell.js` passed
+  - `node --check front/admin/js/auth_guard.js` passed
+  - `node --check front/admin/js/api_client.js` passed
+  - `node --check front/admin/js/store.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `node --check front/admin/js/rbac_config.js` passed
+  - `node --check front/admin/js/sidebar_ui.js` passed
+  - `node --check front/admin/js/portal_nav.js` passed
+  - `git diff --check -- STATE.md front/admin/js/admin_shell.js front/admin/js/auth_guard.js front/admin/js/api_client.js front/admin/js/store.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js front/admin/js/rbac_config.js front/admin/js/sidebar_ui.js front/admin/js/portal_nav.js` passed
+  - `pnpm run guard:text` passed
+  - final reviewer pass reported no blocking findings; residual risk remains that failed section-navigation rollback remounts reset transient in-memory UI state such as unsaved filter/search inputs in the restored section
+  - browser automation and smoke verification were intentionally not run in this close-out because the current workspace rules forbid browser-based final checks unless the user explicitly asks for them
+
+- time: `2026-03-24 19:39 +09:00`
+- route: `Route B`
+- task: `Preserve transient admin section UI state when same-document navigation rolls back after a section mount failure`
+- participants: `main`, `worker_seed_admin_shell_state (Hypatia the 2nd)`, `worker_admin_shell_state (Euler the 2nd/Boyle the 3rd/Fermat the 3rd/Lagrange the 4th)`, `reviewer_admin_latency (Athena the 3rd/Steward the 3rd/Athena the 4th/Athena the 5th)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_shell_state`: `SEED.admin-shell-ui-state-rollback-v1.yaml`
+  - `worker_admin_shell_state`: `front/admin/js/admin_shell.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
+  - `reviewer_admin_latency`: `review only`
+- verification:
+  - `worker_seed_admin_shell_state` froze `SEED.admin-shell-ui-state-rollback-v1.yaml` for rollback-only transient UI state restoration across admin shell failures
+  - `worker_admin_shell_state` added section-level `getState()` snapshots, rollback-only sectionState injection, dashboard domain/range restore handling, async stale-callback invalidation, latest-state recapture before rollback when the previous DOM is still present, and restored direct-entry store-domain tab selection in the config-backed admin sections
+  - `node --check front/admin/js/admin_shell.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `git diff --check -- front/admin/js/admin_shell.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js SEED.admin-shell-ui-state-rollback-v1.yaml STATE.md` passed
+  - `pnpm run lint` passed
+  - final reviewer pass reported `발견 없음`
+  - browser automation and smoke verification were intentionally not run because the current workspace rules forbid browser-based final checks unless the user explicitly asks for them
+
+- time: `2026-03-24 20:02 +09:00`
+- route: `Route B`
+- task: `Add admin shell smoke coverage for direct entry, same-document section switching, and rollback state restoration`
+- participants: `main`, `worker_admin_shell_smoke (Parfit the 5th/Euler the 5th/Gibbs the 6th/Dirac the 6th)`, `reviewer_admin_latency (Steward the 5th/Athena the 6th)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_shell_smoke`: `scripts/smoke/front-entrypoints.runtime.spec.cjs, scripts/smoke/helpers/smoke-fixtures.cjs`
+  - `reviewer_admin_latency`: `review only`
+- verification:
+  - `worker_admin_shell_smoke` added admin direct-entry smoke for `dashboard`, `reservations`, `lodging`, `members`, and `cms`
+  - `worker_admin_shell_smoke` added same-document admin section-switch coverage using a persistent window sentinel to ensure no full reload occurs
+  - `worker_admin_shell_smoke` added rollback-time CMS state restoration coverage after a forced failed section switch and allowed exactly one expected `500 /admin/pages/members.html` in that scenario while keeping all other runtime issues blocking
+  - `worker_admin_shell_smoke` aligned admin smoke title expectations to the runtime shell titles and added an admin-shell-ready wait so non-dashboard direct entry cases do not assert before auth/menu bootstrap finishes
+  - `node --check scripts/smoke/front-entrypoints.runtime.spec.cjs` passed
+  - `node --check scripts/smoke/helpers/smoke-fixtures.cjs` passed
+  - `git diff --check -- scripts/smoke/front-entrypoints.runtime.spec.cjs scripts/smoke/helpers/smoke-fixtures.cjs` passed
+  - `pnpm run smoke:front` passed with `17 passed`
+  - final reviewer pass reported `발견 없음`

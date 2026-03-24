@@ -1,6 +1,12 @@
 (() => {
     'use strict';
 
+    const currentScript = document.currentScript;
+    if (currentScript && !currentScript.dataset.adminRuntime) {
+        currentScript.dataset.adminRuntime = new URL(currentScript.getAttribute('src') || '', window.location.href).href;
+        currentScript.dataset.adminLoaded = 'true';
+    }
+
     if (window.AdminApiClient) {
         return;
     }

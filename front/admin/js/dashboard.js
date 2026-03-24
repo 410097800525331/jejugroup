@@ -8,16 +8,17 @@
     const CHART_SCRIPT = 'https://cdn.jsdelivr.net/npm/chart.js';
 
     const loadScriptOnce = (src) => new Promise((resolve, reject) => {
-        const existing = document.querySelector(`script[data-admin-runtime="${src}"]`);
+        const runtimeSrc = new URL(src, window.location.href).href;
+        const existing = document.querySelector(`script[data-admin-runtime="${runtimeSrc}"]`);
         if (existing) {
             resolve(existing);
             return;
         }
 
         const script = document.createElement('script');
-        script.src = src;
+        script.src = runtimeSrc;
         script.async = true;
-        script.dataset.adminRuntime = src;
+        script.dataset.adminRuntime = runtimeSrc;
         script.onload = () => resolve(script);
         script.onerror = reject;
         document.head.appendChild(script);
@@ -65,21 +66,40 @@
 
     const escapeHtml = (value) => window.AdminShell?.utils?.escapeHtml?.(value) ?? String(value ?? '');
 
-    const mountDashboard = async ({ root }) => {
+    let latestSectionState = null;
+    let mountToken = 0;
+
+    const mountDashboard = async ({ root, sectionState }) => {
         if (!root) {
             return () => {};
         }
 
+        const currentMountToken = ++mountToken;
+        let isMounted = true;
+        const isActiveMount = () => isMounted && currentMountToken === mountToken;
         const cleanup = window.AdminShell.utils.cleanupBag();
+        const shouldPreserveSectionState = Boolean(sectionState);
         await ensureChartRuntime();
+        if (!isActiveMount()) {
+            return () => {};
+        }
         const kpiGrid = root.querySelector('#admin-kpi-grid');
         const chartCtx = root.querySelector('#admin-main-chart');
         const chartFilters = Array.from(root.querySelectorAll('.chart-filter-btn'));
         const domainFilters = Array.from(root.querySelectorAll('.segment-btn'));
         const recentActivityTable = root.querySelector('#admin-recent-activity');
+        let activeDomain = sectionState?.domain || window.AdminStore?.getState?.().ui?.domain || 'all';
+        let activeRange = sectionState?.range || chartFilters.find((button) => button.classList.contains('active'))?.dataset.range || 'day';
         const chartState = {
             instance: null,
             requestToken: 0
+        };
+
+        const syncSectionState = () => {
+            latestSectionState = {
+                domain: activeDomain,
+                range: activeRange
+            };
         };
 
         const renderKPICards = (kpiData) => {
@@ -157,6 +177,13 @@
         const syncDomainFilters = (activeDomain) => {
             domainFilters.forEach((button) => {
                 button.classList.toggle('active', button.dataset.domain === activeDomain);
+            });
+        };
+
+        const syncChartFilters = (range) => {
+            activeRange = range;
+            chartFilters.forEach((button) => {
+                button.classList.toggle('active', button.dataset.range === activeRange);
             });
         };
 
@@ -239,21 +266,34 @@
         };
 
         const loadDashboardSeed = async (domain) => {
+            if (!isActiveMount()) {
+                return;
+            }
             const requestToken = ++chartState.requestToken;
             const requestedDomain = domain || 'all';
             try {
                 const seed = await window.AdminApiClient.fetchAdminPayload(`/api/admin/dashboard?domain=${encodeURIComponent(requestedDomain)}`);
-                if (requestToken !== chartState.requestToken) {
+                if (!isActiveMount() || requestToken !== chartState.requestToken) {
                     return;
                 }
                 if (window.AdminStore?.getState?.().ui?.domain !== requestedDomain) {
                     return;
                 }
                 if (seed && typeof window.AdminStore?.hydrateFromSeed === 'function') {
-                    window.AdminStore.hydrateFromSeed(seed);
+                    const hydratedSeed = shouldPreserveSectionState
+                        ? {
+                            ...seed,
+                            ui: {
+                                ...(seed.ui || {}),
+                                domain: activeDomain,
+                                range: activeRange
+                            }
+                        }
+                        : seed;
+                    window.AdminStore.hydrateFromSeed(hydratedSeed);
                 }
             } catch (error) {
-                if (requestToken !== chartState.requestToken) {
+                if (!isActiveMount() || requestToken !== chartState.requestToken) {
                     return;
                 }
                 console.warn('[AdminDashboard] Live dashboard load failed:', error);
@@ -261,20 +301,21 @@
         };
 
         const onDomainClick = (event) => {
-            const domain = event.currentTarget.dataset.domain;
+            activeDomain = event.currentTarget.dataset.domain || 'all';
             domainFilters.forEach((button) => button.classList.remove('active'));
             event.currentTarget.classList.add('active');
-            window.AdminStore?.dispatch?.({ type: 'UI/SET_DOMAIN', payload: domain });
-            void loadDashboardSeed(domain);
+            syncSectionState();
+            window.AdminStore?.dispatch?.({ type: 'UI/SET_DOMAIN', payload: activeDomain });
+            void loadDashboardSeed(activeDomain);
         };
 
         const onChartFilterClick = (event) => {
-            const range = event.currentTarget.dataset.range || 'day';
-            chartFilters.forEach((button) => button.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            activeRange = event.currentTarget.dataset.range || 'day';
+            syncChartFilters(activeRange);
+            syncSectionState();
             const currentTheme = window.AdminStore?.getState?.().ui?.theme || 'system';
-            const currentDomain = window.AdminStore?.getState?.().ui?.domain || 'all';
-            updateChart(range, currentTheme, currentDomain);
+            const currentDomain = window.AdminStore?.getState?.().ui?.domain || activeDomain || 'all';
+            updateChart(activeRange, currentTheme, currentDomain);
         };
 
         domainFilters.forEach((button) => {
@@ -288,6 +329,11 @@
         });
 
         const unsubscribe = window.AdminStore?.subscribe?.((nextState) => {
+            if (!isActiveMount()) {
+                return;
+            }
+            activeDomain = nextState.ui.domain;
+            syncSectionState();
             if (kpiGrid) {
                 kpiGrid.innerHTML = renderKPICards(nextState.kpi);
             }
@@ -295,9 +341,7 @@
                 recentActivityTable.innerHTML = renderRecentActivityRows(nextState.recentActivity);
             }
             syncDomainFilters(nextState.ui.domain);
-            const activeFilterBtn = root.querySelector('.chart-filter-btn.active');
-            const currentRange = activeFilterBtn ? activeFilterBtn.dataset.range : 'day';
-            updateChart(currentRange, nextState.ui.theme, nextState.ui.domain);
+            updateChart(activeRange, nextState.ui.theme, nextState.ui.domain);
         });
 
         cleanup.add(() => {
@@ -308,20 +352,27 @@
 
         const initialState = window.AdminStore?.getState?.();
         if (initialState) {
+            if (sectionState?.domain && initialState.ui.domain !== activeDomain) {
+                window.AdminStore?.dispatch?.({ type: 'UI/SET_DOMAIN', payload: activeDomain });
+            }
             if (kpiGrid) {
                 kpiGrid.innerHTML = renderKPICards(initialState.kpi);
             }
             if (recentActivityTable) {
                 recentActivityTable.innerHTML = renderRecentActivityRows(initialState.recentActivity);
             }
-            syncDomainFilters(initialState.ui.domain);
-            const activeFilterBtn = root.querySelector('.chart-filter-btn.active');
-            const currentRange = activeFilterBtn ? activeFilterBtn.dataset.range : 'day';
-            updateChart(currentRange, initialState.ui.theme, initialState.ui.domain);
-            void loadDashboardSeed(initialState.ui.domain);
+            syncDomainFilters(activeDomain);
+            syncChartFilters(activeRange);
+            syncSectionState();
+            updateChart(activeRange, initialState.ui.theme, activeDomain);
+            void loadDashboardSeed(activeDomain);
         }
 
         return () => {
+            isMounted = false;
+            if (mountToken === currentMountToken) {
+                mountToken += 1;
+            }
             cleanup.run();
             if (chartState.instance) {
                 chartState.instance.destroy();
@@ -336,6 +387,7 @@
             pagePath: 'dashboard.html',
             scriptPath: SHELL_SCRIPT,
             title: SECTION_TITLE,
+            getState: () => (latestSectionState ? { ...latestSectionState } : null),
             mount: mountDashboard
         });
         await shell.bootSection(SECTION_ID);

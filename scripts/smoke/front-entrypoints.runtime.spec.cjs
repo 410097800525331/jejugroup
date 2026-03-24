@@ -4,15 +4,23 @@ const path = require("node:path");
 const { expectNoRuntimeIssues, createIssueTracker } = require("./helpers/runtime-issues.cjs");
 const { createStaticServerController } = require("./helpers/static-server.cjs");
 const {
-  installAdminDashboardMock,
-  installAdminSession,
+  installAdminSmokeFixtures,
   installMypageSession,
+  installOneShotRouteFailure,
 } = require("./helpers/smoke-fixtures.cjs");
 
 const HOST = "127.0.0.1";
 const PORT = 4174;
 const ROOT_DIR = path.resolve("front");
 const GENERATED_WEBAPP_OVERLAY_DIR = path.resolve("front", ".generated", "webapp-overlay");
+const ADMIN_DASHBOARD_RUNTIME_TITLE = "제주 그룹 관리자 대시보드";
+const ADMIN_RUNTIME_TITLES = {
+  dashboard: ADMIN_DASHBOARD_RUNTIME_TITLE,
+  reservations: "예약 관리",
+  lodging: "숙박 관리",
+  members: "회원 관리",
+  cms: "CMS 관리",
+};
 const ENTRY_POINTS = [
   path.join(ROOT_DIR, "index.html"),
   path.join(ROOT_DIR, "admin", "pages", "dashboard.html"),
@@ -30,6 +38,58 @@ const server = createStaticServerController({
   port: PORT,
   rootDirs: [GENERATED_WEBAPP_OVERLAY_DIR, ROOT_DIR],
 });
+
+const ADMIN_DIRECT_ENTRY_CASES = [
+  {
+    sectionId: "dashboard",
+    path: "/admin/pages/dashboard.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#admin-main-chart")).toBeVisible();
+      await expect(page.locator("#admin-kpi-grid .admin-card")).toHaveCount(4);
+      await expect(page.locator("#admin-domain-filters .segment-btn.active")).toHaveText("전체(종합)");
+    },
+  },
+  {
+    sectionId: "reservations",
+    path: "/admin/pages/reservations.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#reservations-table-body tr")).toContainText("예약 관리");
+      await expect(page.locator("#admin-domain-filters .segment-btn.active")).toHaveText("예약");
+    },
+  },
+  {
+    sectionId: "lodging",
+    path: "/admin/pages/lodging.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#lodging-table-body tr")).toContainText("객실 운영");
+      await expect(page.locator('#admin-domain-filters .segment-btn.active')).toHaveText("STAY");
+    },
+  },
+  {
+    sectionId: "members",
+    path: "/admin/pages/members.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#members-table-body tr")).toContainText("홍민지");
+      await expect(page.locator('#admin-domain-filters .segment-btn.active')).toHaveText("회원");
+    },
+  },
+  {
+    sectionId: "cms",
+    path: "/admin/pages/cms.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#cms-table-body tr")).toContainText("시스템 점검 안내");
+      await expect(page.locator('#admin-domain-filters .segment-btn.active')).toHaveText("공지사항");
+    },
+  },
+];
+
+async function waitForAdminShellReady(page) {
+  await page.waitForFunction(() => {
+    const userName = document.querySelector("#admin-user-name")?.textContent?.trim();
+    const menuLinks = document.querySelectorAll("#admin-sidebar-menu a[data-admin-section]");
+    return userName === "로컬 관리자" && menuLinks.length > 0;
+  }, { timeout: 15000 });
+}
 
 test.beforeAll(async () => {
   for (const entryPoint of ENTRY_POINTS) {
@@ -89,21 +149,118 @@ test("login page smoke", async ({ page }) => {
   expectNoRuntimeIssues(issues);
 });
 
-test("admin dashboard smoke", async ({ page }) => {
+for (const testCase of ADMIN_DIRECT_ENTRY_CASES) {
+  test(`admin direct entry smoke: ${testCase.sectionId}`, async ({ page }) => {
+    const issues = createIssueTracker(page);
+
+  await installAdminSmokeFixtures(page);
+  await page.goto(server.url(testCase.path), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await waitForAdminShellReady(page);
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES[testCase.sectionId]);
+  await expect(page.locator(`#admin-sidebar-menu a[data-admin-section="${testCase.sectionId}"]`)).toHaveClass(/active/);
+  await expect(page.locator("#admin-sidebar-toggle")).toBeVisible();
+  await expect(page.locator("#admin-user-name")).toContainText("로컬 관리자");
+  await testCase.assertVisible(page);
+
+    expectNoRuntimeIssues(issues);
+  });
+}
+
+test("admin shell switches sections without full reload", async ({ page }) => {
   const issues = createIssueTracker(page);
 
-  await installAdminSession(page);
-  await installAdminDashboardMock(page);
+  await installAdminSmokeFixtures(page);
 
   await page.goto(server.url("/admin/pages/dashboard.html"), {
     waitUntil: "domcontentloaded",
   });
 
-  await expect(page).toHaveTitle(/관리자 대시보드/);
-  await expect(page.locator("#admin-sidebar-toggle")).toBeVisible();
-  await expect(page.locator("#admin-user-name")).toContainText("로컬 관리자");
+  await waitForAdminShellReady(page);
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES.dashboard);
+
+  const documentMarker = await page.evaluate(() => {
+    window.__adminSmokeDocumentMarker = `doc-${Math.random().toString(36).slice(2)}`;
+    return window.__adminSmokeDocumentMarker;
+  });
+
+  await page.locator('#admin-sidebar-menu a[data-admin-section="lodging"]').click();
+
+  await expect(page).toHaveURL(server.url("/admin/pages/lodging.html"));
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES.lodging);
+  await expect(page.locator('#admin-sidebar-menu a[data-admin-section="lodging"]')).toHaveClass(/active/);
+  await expect(page.locator("#lodging-table-body tr")).toContainText("객실 운영");
+  expect(await page.evaluate(() => window.__adminSmokeDocumentMarker)).toBe(documentMarker);
 
   expectNoRuntimeIssues(issues);
+});
+
+test("admin shell restores cms state after failed section switch", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await installAdminSmokeFixtures(page);
+
+  await page.goto(server.url("/admin/pages/cms.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await waitForAdminShellReady(page);
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES.cms);
+  const documentMarker = await page.evaluate(() => {
+    window.__adminSmokeDocumentMarker = `doc-${Math.random().toString(36).slice(2)}`;
+    return window.__adminSmokeDocumentMarker;
+  });
+  await page.locator('#admin-domain-filters .segment-btn[data-domain="faqs"]').click();
+  await page.locator('.admin-table-actions input[type="text"]').fill("제주");
+  await page.locator('#cms-status-filter').selectOption("inactive");
+
+  await expect(page.locator("#cms-table-body tr")).toContainText("예약 취소는 어떻게 하나요?");
+  await expect(page.locator('.admin-table-actions input[type="text"]')).toHaveValue("제주");
+  await expect(page.locator('#cms-status-filter')).toHaveValue("inactive");
+
+  const beforeRollback = await page.evaluate(() => ({
+    section: document.body.dataset.adminSection,
+    tab: document.querySelector('#admin-domain-filters .segment-btn.active')?.dataset.domain,
+    search: document.querySelector('.admin-table-actions input[type="text"]')?.value,
+    status: document.querySelector('#cms-status-filter')?.value,
+    marker: window.__adminSmokeDocumentMarker,
+  }));
+
+  await installOneShotRouteFailure(page, "**/admin/pages/members.html");
+  await page.locator('#admin-sidebar-menu a[data-admin-section="members"]').click();
+
+  await expect(page).toHaveURL(server.url("/admin/pages/cms.html"));
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES.cms);
+  await expect(page.locator('#admin-sidebar-menu a[data-admin-section="cms"]')).toHaveClass(/active/);
+  await expect(page.locator('#admin-domain-filters .segment-btn.active')).toHaveAttribute("data-domain", "faqs");
+  await expect(page.locator('.admin-table-actions input[type="text"]')).toHaveValue("제주");
+  await expect(page.locator('#cms-status-filter')).toHaveValue("inactive");
+  await expect(page.locator("#cms-table-body tr")).toContainText("예약 취소는 어떻게 하나요?");
+  expect(await page.evaluate(() => window.__adminSmokeDocumentMarker)).toBe(documentMarker);
+
+  const afterRollback = await page.evaluate(() => ({
+    section: document.body.dataset.adminSection,
+    tab: document.querySelector('#admin-domain-filters .segment-btn.active')?.dataset.domain,
+    search: document.querySelector('.admin-table-actions input[type="text"]')?.value,
+    status: document.querySelector('#cms-status-filter')?.value,
+    marker: window.__adminSmokeDocumentMarker,
+  }));
+
+  expect(afterRollback).toEqual(beforeRollback);
+  const expectedRollbackFailure = `500 ${server.url("/admin/pages/members.html")}`;
+  const filteredResponseErrors = [...issues.responseErrors];
+  const expectedFailureIndex = filteredResponseErrors.indexOf(expectedRollbackFailure);
+
+  if (expectedFailureIndex !== -1) {
+    filteredResponseErrors.splice(expectedFailureIndex, 1);
+  }
+
+  expectNoRuntimeIssues({
+    ...issues,
+    responseErrors: filteredResponseErrors,
+  });
 });
 
 test("jeju air landing smoke", async ({ page }) => {

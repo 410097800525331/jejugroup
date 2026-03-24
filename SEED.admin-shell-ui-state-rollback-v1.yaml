@@ -1,0 +1,28 @@
+goal: >
+  admin shell에서 same-document 섹션 전환이 실패해 이전 섹션으로 rollback될 때,
+  이전 섹션의 transient UI state를 기본값으로 초기화하지 말고 복원한다.
+constraints:
+  - scope is front/admin only
+  - rollback restoration applies only to transient UI state that already exists in the current codebase: active tab, search keyword/input, status filter, reservations subfilter domain key, and dashboard-selected domain/range
+  - dashboard rollback should preserve the user's currently selected domain and chart range as much as the existing code allows
+  - preserve existing direct entry behavior for admin URLs
+  - preserve current auth, sidebar, theme, route ownership, payload/API shape, and mirror boundaries
+  - do not introduce new UI state models or broaden the rollback contract beyond the existing section-local state
+acceptance_criteria:
+  - If a same-document admin section switch fails after navigation begins, the shell restores the previous section instead of leaving the shell on a partially switched screen.
+  - After rollback, the previously visible section keeps its transient UI state rather than reinitializing to defaults.
+  - Lodging, members, CMS, reservations, and dashboard all retain their section-local tab/search/filter selections across rollback.
+  - Dashboard keeps the selected domain and chart range after rollback whenever those controls already existed before the failed switch.
+  - Direct entry to existing admin URLs, shared bootstrap behavior, and current payload contracts remain unchanged.
+verification:
+  - Review the rollback path in front/admin/js/admin_shell.js against the section mount/cleanup flow to confirm state restoration happens on rollback.
+  - Review the section controllers in front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, and front/admin/js/reservations.js to confirm their existing transient UI state is preserved by the rollback contract.
+  - Run local non-browser verification and code review checks only; browser automation is not part of the default seed path.
+  - Confirm the change does not alter payload/API shape, direct entry URLs, auth/sidebar/theme initialization, or mirror boundaries.
+out_of_scope:
+  - feature redesign or new admin UX
+  - payload/API schema changes
+  - route constant changes or route ownership changes
+  - mirror updates under jeju-web or jeju-spring
+  - browser automation as a required verification step
+  - introducing new transient state beyond the section-local state already present in code

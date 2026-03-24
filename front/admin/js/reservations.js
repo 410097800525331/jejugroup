@@ -8,16 +8,17 @@
     const CONFIG_SCRIPT = '../data/reservations-config.js';
 
     const loadScriptOnce = (src) => new Promise((resolve, reject) => {
-        const existing = document.querySelector(`script[data-admin-runtime="${src}"]`);
+        const runtimeSrc = new URL(src, window.location.href).href;
+        const existing = document.querySelector(`script[data-admin-runtime="${runtimeSrc}"]`);
         if (existing) {
             resolve(existing);
             return;
         }
 
         const script = document.createElement('script');
-        script.src = src;
+        script.src = runtimeSrc;
         script.async = true;
-        script.dataset.adminRuntime = src;
+        script.dataset.adminRuntime = runtimeSrc;
         script.onload = () => resolve(script);
         script.onerror = reject;
         document.head.appendChild(script);
@@ -36,11 +37,17 @@
         return window.__ADMIN_RESERVATIONS_RUNTIME_PROMISE__;
     };
 
-    const mountReservations = async ({ root }) => {
+    let latestSectionState = null;
+    let mountToken = 0;
+
+    const mountReservations = async ({ root, sectionState }) => {
         if (!root) {
             return () => {};
         }
 
+        const currentMountToken = ++mountToken;
+        let isMounted = true;
+        const isActiveMount = () => isMounted && currentMountToken === mountToken;
         const cleanup = window.AdminShell.utils.cleanupBag();
         const tabButtons = Array.from(root.querySelectorAll('#admin-domain-filters .segment-btn'));
         const tableBody = root.querySelector('#reservations-table-body');
@@ -51,15 +58,31 @@
         const domainFilterButtons = Array.from(root.querySelectorAll('#reservation-domain-filters .subfilter-btn'));
 
         const [configModule] = await Promise.all([ensureRuntime()]);
+        if (!isActiveMount()) {
+            return () => {};
+        }
         const fallbackTabConfig = configModule.default ?? configModule.RESERVATIONS_TAB_CONFIG ?? configModule.tabConfig ?? {};
         let TAB_CONFIG = Object.freeze(fallbackTabConfig);
         let DEFAULT_TAB = configModule.DEFAULT_TAB ?? configModule.defaultTab ?? 'booking';
-        let activeTab = DEFAULT_TAB;
-        let searchKeyword = '';
-        let activeDomainKey = 'all';
-        let hasUserSelectedTab = false;
+        const initialState = window.AdminStore?.getState?.();
+        const initialDomain = initialState?.ui?.domain;
+        let activeTab = sectionState?.activeTab && fallbackTabConfig[sectionState.activeTab]
+            ? sectionState.activeTab
+            : (!sectionState && initialDomain && fallbackTabConfig[initialDomain] ? initialDomain : DEFAULT_TAB);
+        let searchKeyword = sectionState?.searchKeyword ?? '';
+        let activeDomainKey = sectionState?.activeDomainKey ?? 'all';
+        let hasUserSelectedTab = sectionState?.hasUserSelectedTab ?? false;
 
         const escapeHtml = (value) => window.AdminShell.utils.escapeHtml(value);
+
+        const syncSectionState = () => {
+            latestSectionState = {
+                activeTab,
+                searchKeyword,
+                activeDomainKey,
+                hasUserSelectedTab
+            };
+        };
 
         const renderTableHead = (tabKey) => {
             const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
@@ -129,17 +152,18 @@
             renderTableHead(activeTab);
             renderTableBody(activeTab);
             syncDomainFilters();
+            syncSectionState();
         };
 
         const applyLiveTabConfig = (liveTabConfig) => {
-            if (!liveTabConfig || typeof liveTabConfig !== 'object') {
+            if (!isActiveMount() || !liveTabConfig || typeof liveTabConfig !== 'object') {
                 return;
             }
 
             TAB_CONFIG = Object.freeze(liveTabConfig.tabs ?? TAB_CONFIG);
             DEFAULT_TAB = liveTabConfig.defaultTab ?? DEFAULT_TAB;
             if (!hasUserSelectedTab) {
-                activeTab = DEFAULT_TAB;
+                activeTab = TAB_CONFIG[activeTab] ? activeTab : DEFAULT_TAB;
             }
             setActiveTab(activeTab);
         };
@@ -147,6 +171,9 @@
         void window.AdminApiClient.fetchAdminPayloadInBackground('/api/admin/tables/reservations', {
             onSuccess: applyLiveTabConfig,
             onError: (error) => {
+                if (!isActiveMount()) {
+                    return;
+                }
                 console.warn('[AdminReservations] Live config load failed:', error);
             }
         });
@@ -157,11 +184,13 @@
             if (searchInput) {
                 searchInput.value = '';
             }
+            syncSectionState();
             window.AdminStore?.dispatch?.({ type: 'UI/SET_DOMAIN', payload: event.currentTarget.dataset.domain });
         };
 
         const onSearchInput = (event) => {
             searchKeyword = event.currentTarget.value;
+            syncSectionState();
             renderTableBody(activeTab);
         };
 
@@ -169,6 +198,7 @@
 
         const onDomainFilterClick = (event) => {
             activeDomainKey = event.currentTarget.dataset.domainKey || 'all';
+            syncSectionState();
             syncDomainFilters();
             renderTableBody(activeTab);
         };
@@ -194,6 +224,9 @@
         });
 
         const unsubscribe = window.AdminStore?.subscribe?.((nextState) => {
+            if (!isActiveMount()) {
+                return;
+            }
             setActiveTab(hasUserSelectedTab ? nextState.ui.domain : activeTab);
         });
         cleanup.add(() => {
@@ -202,14 +235,26 @@
             }
         });
 
-        const initialState = window.AdminStore?.getState?.();
         if (initialState) {
-            setActiveTab(TAB_CONFIG[initialState.ui.domain] ? initialState.ui.domain : DEFAULT_TAB);
-        } else {
-            setActiveTab(DEFAULT_TAB);
+            if (sectionState?.activeTab && initialState.ui.domain !== activeTab) {
+                window.AdminStore?.dispatch?.({ type: 'UI/SET_DOMAIN', payload: activeTab });
+            }
         }
 
-        return () => cleanup.run();
+        setActiveTab(activeTab);
+        if (searchInput) {
+            searchInput.value = searchKeyword;
+        }
+        syncDomainFilters();
+        syncSectionState();
+
+        return () => {
+            isMounted = false;
+            if (mountToken === currentMountToken) {
+                mountToken += 1;
+            }
+            cleanup.run();
+        };
     };
 
     const boot = async () => {
@@ -218,6 +263,7 @@
             pagePath: 'reservations.html',
             scriptPath: SHELL_SCRIPT,
             title: SECTION_TITLE,
+            getState: () => (latestSectionState ? { ...latestSectionState } : null),
             mount: mountReservations
         });
         await shell.bootSection(SECTION_ID);
