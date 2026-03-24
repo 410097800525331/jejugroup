@@ -9,7 +9,7 @@ Global multi-agent defaults remain in effect unless this file narrows them.
 
 - Package manager: pnpm
 - Landing source of truth: front/**
-- Deployment mirrors: jeju-web/src/main/webapp/**, jeju-spring/**
+- Deployment mirrors: jeju-spring/**, jeju-web/src/main/webapp/** (legacy mirror)
 - Display name: Jeju Group Landing Page
 - Page kind: hybrid-static-shell
 - Primary entry: front/index.html
@@ -22,7 +22,7 @@ Global multi-agent defaults remain in effect unless this file narrows them.
 - Authoring model: front is the only human-edited frontend source of truth
 - Working style: hybrid static HTML + shell runtime + selective React islands
 - Deployment goal: jeju-spring centered Spring Boot + Thymeleaf server deployment
-- Current deployment base: jeju-web based ROOT.war
+- Current deployment base: jeju-spring final runtime baseline ROOT.war
 - Task board path: `STATE.md`
 - Multi-agent log path: `MULTI_AGENT_LOG.md`
 - Error log path: `ERROR_LOG.md`
@@ -38,7 +38,7 @@ Global multi-agent defaults remain in effect unless this file narrows them.
 - Frontend source of truth remains front
 - Route constants stay aligned with front/core/modules/constants/routes.module.js
 - front is the only human-edited frontend source of truth
-- jeju-web and jeju-spring are downstream mirrors derived from front-led work
+- jeju-spring is the default runtime mirror and jeju-web is retained as a legacy downstream mirror derived from front-led work
 - Current env source of truth: jeju-web/.env
 
 ## Shared Asset Paths

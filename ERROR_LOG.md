@@ -95,3 +95,9 @@
 - summary: `Spring final runtime cutover verification is still blocked by the existing alwaysdata DB access path`
 - details: `The cutover branch rebuilt front, mirrored templates into jeju-spring, and reached Gradle test execution, but the Spring context still failed before app tests ran because Flyway could not connect to the configured alwaysdata MySQL host: Access denied for user 'jejugroup'@'123.142.12.196'. This confirms the remaining gap is the existing verification environment, not the new build/deploy or front-mirror cutover code path.`
 - status: `open`
+
+- time: `2026-03-24 15:02 +09:00`
+- location: `pnpm run spring:test`
+- summary: `spring:test was redirected to localhost, then failed once on a blank local password fallback before passing after the helper fix`
+- details: `The first rerun after the test-only precedence change reached localhost MySQL but failed with Access denied for user 'jejugroup'@'localhost' (using password: NO). The test helper was then updated to read the local DB values from jeju-spring/.env with last-value-wins precedence, and the next rerun passed cleanly.`
+- status: `resolved`

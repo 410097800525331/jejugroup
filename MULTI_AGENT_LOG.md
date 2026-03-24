@@ -664,3 +664,39 @@
   - generated `jeju-spring/src/main/resources/templates/front-mirror/pages/cs/customer_center.html` now points at `/front-mirror/pages/cs/assets/**`
   - `pnpm run spring:test` still failed before app tests on the pre-existing alwaysdata Flyway DB access-denied environment issue, and that gap was appended to `ERROR_LOG.md`
   - `reviewer_spring_cutover` first flagged the customer-center asset-path mismatch, the follow-up fix landed, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-24 14:46 +09:00`
+- route: `Route B`
+- task: `Close the Spring runtime cutover by aligning workspace contract docs and re-verifying the jeju-spring baseline`
+- participants: `main`, `worker_pipeline_cutover (Boyle)`, `worker_spring_entrypoints (Gibbs)`, `worker_runtime_contract_docs (Pascal)`, `reviewer_spring_cutover (Hegel)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_pipeline_cutover`: `package.json, scripts/pipelines/**, scripts/utils/env.js, scripts/spring/**`
+  - `worker_spring_entrypoints`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/**, jeju-spring/src/main/resources/**, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_runtime_contract_docs`: `AGENTS.md, WORKSPACE_CONTEXT.toml, PLAN.md, docs/hybrid-execution-checklist.md`
+  - `reviewer_spring_cutover`: `review only`
+- verification:
+  - `worker_pipeline_cutover` reported `no code changes needed`; root `build/deploy` already use the jeju-spring WAR and `run-jeju-spring-gradle.cjs` already mirrors `front -> jeju-spring` automatically before Gradle tasks
+  - `worker_spring_entrypoints` reported `no code changes needed`; host-only and excluded entrypoints already matched `FrontMirrorHostController`, front-mirror templates, and the transition/inventory docs
+  - `worker_runtime_contract_docs` updated `AGENTS.md`, `WORKSPACE_CONTEXT.toml`, `PLAN.md`, and `docs/hybrid-execution-checklist.md` so the active baseline is `jeju-spring final runtime baseline` while `jeju-web/.env` remains the current env source
+  - `pnpm run build` passed and produced `jeju-spring/build/jeju-spring.war`
+  - `pnpm run guard:text` passed
+  - `git diff --check -- AGENTS.md PLAN.md SEED.spring-final-runtime-cutover-v1.yaml STATE.md WORKSPACE_CONTEXT.toml docs/hybrid-execution-checklist.md` passed apart from the existing `AGENTS.md` CRLF->LF warning
+  - `pnpm run spring:test` still failed before app tests could execute because Flyway could not connect to the configured alwaysdata MySQL host: `Access denied for user 'jejugroup'@'123.142.12.196' (using password: YES)`
+  - `reviewer_spring_cutover (Hegel)` first flagged `WORKSPACE_CONTEXT.toml` for stale `repository_root` and `Java 17` baseline text; after the follow-up patch the final reviewer pass reported `발견 없음`
+- time: `2026-03-24 15:02 +09:00`
+- route: `Route B`
+- task: `Isolate spring:test from alwaysdata by forcing test-only DB precedence with a localhost fallback`
+- participants: `main`, `worker_test_db_isolation (Kierkegaard)`, `reviewer_test_db_isolation (Newton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-local-db-isolation-v1.yaml, ERROR_LOG.md`
+  - `worker_test_db_isolation`: `jeju-spring/src/test/**, jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml`
+  - `reviewer_test_db_isolation`: `review only`
+- verification:
+  - `worker_test_db_isolation` updated `jeju-spring/src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java` and added `jeju-spring/src/test/resources/application.yml` to force test-only DB precedence through `JEJU_SPRING_TEST_DB_* -> jeju-spring/.env -> localhost`
+  - first `pnpm run spring:test` rerun failed because the local DB password fallback was still blank and Flyway hit `Access denied for user 'jejugroup'@'localhost' (using password: NO)`
+  - the helper was then corrected to read `jeju-spring/.env` with last-value-wins precedence for duplicate keys
+  - final `pnpm run spring:test` passed against localhost MySQL
+  - `pnpm run guard:text` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md SEED.spring-test-local-db-isolation-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java jeju-spring/src/test/resources/application.yml` passed
+  - `reviewer_test_db_isolation (Newton)` reported `발견 없음` and confirmed production `jeju-spring/src/main/resources/application.yml` was unchanged

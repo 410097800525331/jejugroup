@@ -1,29 +1,37 @@
 goal: >-
-  Finish the repository-side Spring runtime cutover so the default root build and deploy
-  workflow packages jeju-spring, deploys the jeju-spring WAR, health-checks the Spring
-  runtime, and no longer depends on jeju-web/src/main/webapp for the default production path.
+  Freeze and finish the repository-side Spring runtime cutover so completion is judged by
+  one baseline only: jeju-spring is the final production runtime, root build and deploy
+  default to jeju-spring, jeju-web is no longer part of the default production path, and
+  every remaining front HTML entrypoint is explicitly classified as dedicated Spring,
+  Spring host-only, or excluded from this cutover.
 constraints:
   - front remains the only human-edited frontend source of truth.
+  - jeju-spring is the final runtime tier for this cutover.
+  - jeju-web/src/main/webapp is treated as a legacy mirror only, not the default runtime or deploy artifact source.
   - jeju-web/src/main/webapp and jeju-spring are downstream mirrors or deployment artifacts, not hand-edited source-of-truth surfaces.
   - Do not write into forbidden mirror paths directly.
   - Keep security rules intact for deploy credentials, healthcheck, APIs, and rendered HTML.
   - Keep the current hybrid shell/island architecture; do not turn the landing into a pure React app.
   - Use Route B worker delegation and keep main planner-only for implementation files.
 acceptance_criteria:
+  - Completion is judged against jeju-spring as the only final production runtime baseline.
   - Root pnpm run build produces a jeju-spring WAR as the default artifact.
   - Root pnpm run deploy uploads the jeju-spring build artifact instead of jeju-web/ROOT.war.
   - Default deploy healthcheck targets the Spring runtime rather than the legacy webapp baseline.
   - The default production path is valid without jeju-web/src/main/webapp.
+  - jeju-web is explicitly documented as a legacy mirror rather than an equal source/runtime.
   - front changes are propagated into jeju-spring templates and static assets automatically in the default build path.
   - The repository clearly documents the source-of-truth model so humans are not maintaining parallel front and jeju-spring originals.
-  - The currently Spring-served page list is explicit.
-  - Remaining pages are either hosted by Spring in this change or explicitly declared excluded from the final Spring runtime.
-  - The following currently unresolved entrypoints are addressed by host implementation or explicit exclusion: customer center, jejuhotel, jejustay_life, private_stay, travel_checklist, admin pages, jejuair fixed pages, oauth_callback.
+  - The dedicated Spring page set is explicit: landing, auth, mypage, stay hotel-list, travel static pages, and deals.
+  - The host-only Spring page set is explicit: customer_center, jejuhotel, jejustay_life, private_stay, travel_checklist, admin pages, and jejuair index.
+  - The excluded page set is explicit: oauth_callback and jejuair deep pages unless a later slice reclassifies them.
+  - The following currently unresolved entrypoints are closed by implementation or explicit classification: customer_center, jejuhotel, jejustay_life, private_stay, travel_checklist, admin pages, jejuair area, oauth_callback.
 verification:
   - pnpm run build
   - targeted checks for the resolved default artifact path and deploy source path
   - targeted checks for the Spring mirror output and page-host inventory
   - pnpm run guard:text
+  - pnpm run spring:test may remain blocked only if the already-known external DB/Flyway environment issue persists; if so, record that blocker without reopening the cutover scope
 out_of_scope:
   - Manual alwaysdata deployment execution
   - Changing deployment mirror paths under jeju-web/src/main/webapp directly

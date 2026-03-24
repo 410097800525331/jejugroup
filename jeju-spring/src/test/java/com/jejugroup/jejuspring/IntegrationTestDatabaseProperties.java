@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -18,14 +18,17 @@ public abstract class IntegrationTestDatabaseProperties {
 
     @DynamicPropertySource
     static void registerDatabaseProperties(DynamicPropertyRegistry registry) {
-        // shell override가 local .env보다 먼저 적용되도록 우선순위를 고정한다.
-        String dbUrl = firstNonBlank(env("DB_URL"), localEnv("DB_URL"), env("ALWAYSDATA_DB_URL"), DEFAULT_DB_URL);
-        String dbUser = firstNonBlank(env("DB_USER"), localEnv("DB_USER"), env("ALWAYSDATA_DB_USER"), "jejugroup");
-        String dbPassword = firstNonBlank(env("DB_PASSWORD"), localEnv("DB_PASSWORD"), env("ALWAYSDATA_DB_PASSWORD"), "");
+        // Test-only overrides win first; otherwise fall back to the local DB file, then localhost.
+        String dbUrl = firstNonBlank(env("JEJU_SPRING_TEST_DB_URL"), localEnv("DB_URL"), DEFAULT_DB_URL);
+        String dbUser = firstNonBlank(env("JEJU_SPRING_TEST_DB_USER"), localEnv("DB_USER"), "jejugroup");
+        String dbPassword = firstNonBlank(env("JEJU_SPRING_TEST_DB_PASSWORD"), localEnv("DB_PASSWORD"), "");
 
         registry.add("spring.datasource.url", () -> dbUrl);
         registry.add("spring.datasource.username", () -> dbUser);
         registry.add("spring.datasource.password", () -> dbPassword);
+        registry.add("spring.flyway.url", () -> dbUrl);
+        registry.add("spring.flyway.user", () -> dbUser);
+        registry.add("spring.flyway.password", () -> dbPassword);
         registry.add("app.alwaysdata.db-url", () -> dbUrl);
         registry.add("app.alwaysdata.db-user", () -> dbUser);
         registry.add("app.alwaysdata.db-password", () -> dbPassword);
@@ -47,11 +50,17 @@ public abstract class IntegrationTestDatabaseProperties {
             }
 
             try {
-                return Files.readAllLines(candidate, StandardCharsets.UTF_8).stream()
-                    .map(String::trim)
-                    .filter(line -> !line.isEmpty() && !line.startsWith("#") && line.contains("="))
-                    .map(line -> line.split("=", 2))
-                    .collect(Collectors.toMap(parts -> parts[0].trim(), parts -> parts[1].trim(), (left, right) -> left));
+                Map<String, String> values = new LinkedHashMap<>();
+                for (String line : Files.readAllLines(candidate, StandardCharsets.UTF_8)) {
+                    String trimmed = line.trim();
+                    if (trimmed.isEmpty() || trimmed.startsWith("#") || !trimmed.contains("=")) {
+                        continue;
+                    }
+
+                    String[] parts = trimmed.split("=", 2);
+                    values.put(parts[0].trim(), parts[1].trim());
+                }
+                return values;
             } catch (IOException exception) {
                 return Map.of();
             }
