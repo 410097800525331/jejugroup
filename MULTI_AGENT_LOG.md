@@ -764,3 +764,44 @@
   - `pnpm run smoke:cs` passed with 4/4 green
   - `git diff --check -- scripts/smoke/helpers/smoke-fixtures.cjs scripts/smoke/front-entrypoints.runtime.spec.cjs scripts/smoke/cs-customer-center.smoke.spec.cjs` passed
   - `reviewer_smoke_repair (Epicurus)` first flagged overly weak chatbot/FAQ assertions; after the follow-up patch the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-24 18:58 +09:00`
+- route: `Route B`
+- task: `Reduce the admin menu navigation latency by removing the whole-document auth stall and fallback-blocking bootstrap in front/admin`
+- participants: `main`, `worker_seed_admin_latency (Carver)`, `worker_seed_scope_refresh (Peirce)`, `worker_admin_front_latency (Dirac)`, `worker_admin_front_followup (Darwin)`, `worker_admin_page_shell_latency (Plato)`, `reviewer_admin_latency (Fermat)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_latency`: `SEED.admin-menu-latency-v1.yaml`
+  - `worker_seed_scope_refresh`: `SEED.admin-menu-latency-v1.yaml`
+  - `worker_admin_front_latency`: `front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
+  - `worker_admin_front_followup`: `front/admin/js/auth_guard.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
+  - `worker_admin_page_shell_latency`: `front/admin/pages/dashboard.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html, front/admin/pages/reservations.html`
+  - `reviewer_admin_latency`: `review only`
+- verification:
+  - `worker_seed_admin_latency (Carver)` first froze `SEED.admin-menu-latency-v1.yaml`, then `worker_seed_scope_refresh (Peirce)` narrowed the contract to the allowed `front/admin` slice after the repository do-not-touch review ruled out `jeju-spring/**`
+  - `worker_admin_front_latency (Dirac)` removed the whole-document `display:none` auth stall, introduced `fetchAdminPayloadInBackground`, rendered dashboard/config-backed pages from fallback data first, and moved live hydration to the background without changing payload shape expectations
+  - `reviewer_admin_latency (Fermat)` first flagged three issues: protected admin UI flash before redirect, stale dashboard seed overwrite risk, and live `defaultTab` not winning on untouched first render
+  - `worker_admin_front_followup (Darwin)` fixed those findings by adding an auth readiness gate that hides only the protected admin shell before session resolution, adding request-token plus current-domain guards to dashboard background hydration, and making live `defaultTab` win until the user explicitly changes tabs on the config-backed pages
+  - `worker_admin_page_shell_latency (Plato)` deferred the blocking `lucide` CDN script on all five admin HTML pages and deferred the blocking `chart.js` CDN script on the dashboard page while keeping `auth_guard.js` early and preserving the existing `DOMContentLoaded` icon bootstrap
+  - `git diff --check -- front/admin/js/auth_guard.js front/admin/js/api_client.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js SEED.admin-menu-latency-v1.yaml STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md` passed apart from an existing CRLF normalization warning on `front/admin/js/auth_guard.js`
+  - touched admin JS files passed `esbuild.transformSync` syntax parsing
+  - `pnpm run guard:text` passed
+  - final `reviewer_admin_latency (Fermat)` pass reported `블로킹 찾지 못했어`
+  - `git diff --check -- front/admin/pages/dashboard.html front/admin/pages/lodging.html front/admin/pages/members.html front/admin/pages/cms.html front/admin/pages/reservations.html` passed
+
+- time: `2026-03-24 20:52 +09:00`
+- route: `Route B`
+- task: `Convert admin navigation to a single-load admin shell that enters once and switches sections without full page reloads`
+- participants: `main`, `worker_seed_admin_shell (Kuhn)`, `worker_admin_shell_pages (Hume)`, `worker_admin_shell_js (Galileo)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, optional ERROR_LOG.md append-only`
+  - `worker_seed_admin_shell`: `SEED.admin-shell-single-load-v1.yaml`
+  - `worker_admin_shell_pages`: `front/admin/pages/dashboard.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html, front/admin/pages/reservations.html`
+  - `worker_admin_shell_js`: `front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js, front/admin/js/rbac_config.js, front/admin/js/sidebar_ui.js, front/admin/js/portal_nav.js, front/admin/js/admin_shell.js`
+- verification:
+  - `worker_seed_admin_shell (Kuhn)` froze `SEED.admin-shell-single-load-v1.yaml` for the front/admin-only single-load shell contract
+  - `worker_admin_shell_pages (Hume)` rewired all five admin HTML entrypoints to load the shared `front/admin/js/admin_shell.js` bootstrap while keeping `auth_guard.js` early and preserving dashboard `chart.js`
+  - observed workspace state now includes a new `front/admin/js/admin_shell.js` runtime that defines shared shell state, registers sections, fetches and swaps `.admin-main` content, and updates history/popstate without touching route constants
+  - `node --check front/admin/js/admin_shell.js` passed locally
+  - sanity check confirmed all five admin HTML entrypoints now reference `../js/admin_shell.js`
+  - task was paused for handoff before reviewer pass and before end-to-end browser verification of direct entry, same-document section switching, and history/popstate behavior

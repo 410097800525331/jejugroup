@@ -1,245 +1,227 @@
-/**
- * @file reservations.js
- * @description Reservation / payment / refund / traveler management view logic.
- */
-
-document.addEventListener('DOMContentLoaded', async () => {
+(() => {
     'use strict';
 
-    const routeResolverPromise = import('../../core/utils/path_resolver.js');
-    const redirectByRoute = (routeKey, mode = 'replace') => {
-        routeResolverPromise
-            .then(({ resolveRoute }) => {
-                const targetUrl = resolveRoute(routeKey);
-                if (mode === 'assign') {
-                    window.location.assign(targetUrl);
-                    return;
-                }
-                window.location.replace(targetUrl);
-            })
-            .catch((error) => {
-                console.error('[AdminReservations] Route resolution failed:', error);
-                const fallback = window.__JEJU_ROUTE_NAVIGATOR__?.homeUrl || new URL('index.html', window.location.href).href;
-                if (window.__JEJU_ROUTE_NAVIGATOR__?.safeNavigate) {
-                    window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(fallback, 'admin-route-fallback');
-                    return;
-                }
-                window.location.replace(fallback);
-            });
-    };
+    const SECTION_ID = 'reservations';
+    const SECTION_TITLE = '예약 / 결제 / 환불 / 여행자 관리';
+    const SHELL_SCRIPT = '../js/admin_shell.js';
+    const API_SCRIPT = '../js/api_client.js';
+    const CONFIG_SCRIPT = '../data/reservations-config.js';
 
-    const session = await window.AdminAuth?.waitForAdminSession?.();
-    if (!session || !session.role) return;
-
-    const sidebarMenuContainer = document.getElementById('admin-sidebar-menu');
-    const userRoleEl = document.getElementById('admin-user-role');
-    const userNameEl = document.getElementById('admin-user-name');
-    const sidebarToggle = document.getElementById('admin-sidebar-toggle');
-    const sidebar = document.getElementById('admin-sidebar');
-    const layout = document.querySelector('.admin-layout');
-    const tabButtons = document.querySelectorAll('#admin-domain-filters .segment-btn');
-    const tableBody = document.getElementById('reservations-table-body');
-    const tableHeadRow = document.querySelector('.admin-table thead tr');
-    const searchInput = document.querySelector('.admin-reservations-search-group input[type="text"]');
-    const searchButton = document.querySelector('.admin-reservations-search-group .admin-btn-outline');
-    const actionButtons = document.querySelectorAll('.admin-reservations-quick-actions .admin-btn');
-    const domainFilterButtons = document.querySelectorAll('#reservation-domain-filters .subfilter-btn');
-    const themeBtns = document.querySelectorAll('.theme-btn');
-    const profileTrigger = document.getElementById('admin-profile-trigger');
-    const profileContainer = document.getElementById('admin-profile-container');
-    const logoutBtn = document.getElementById('admin-logout-btn');
-    const syncSidebarUI = (isOpen) => window.AdminSidebarUI?.applySidebarUI({ layout, sidebar, isOpen });
-    let activeDomainKey = 'all';
-
-    const [reservationsDataModule, apiClientModule] = await Promise.all([
-        import('../data/reservations-config.js'),
-        import('./api_client.js')
-    ]);
-    const fallbackTabConfig = reservationsDataModule.default ?? reservationsDataModule.RESERVATIONS_TAB_CONFIG ?? reservationsDataModule.tabConfig ?? {};
-    const liveTabConfig = await apiClientModule.fetchAdminPayload('/api/admin/tables/reservations').catch((error) => {
-        console.warn('[AdminReservations] Live config load failed:', error);
-        return null;
-    });
-    const TAB_CONFIG = Object.freeze(liveTabConfig?.tabs ?? fallbackTabConfig);
-    const DEFAULT_TAB = liveTabConfig?.defaultTab ?? reservationsDataModule.DEFAULT_TAB ?? reservationsDataModule.defaultTab ?? 'booking';
-
-    let activeTab = DEFAULT_TAB;
-    let searchKeyword = '';
-
-    const escapeHtml = (value) => String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
-
-    const renderSidebarMenus = (role) => {
-        const accessibleMenus = window.RBAC_CONFIG.getAccessibleMenus(role);
-        return accessibleMenus.map((menu) => `
-            <a href="${menu.path}" class="admin-menu-item ${menu.id === 'reservations' ? 'active' : ''}" data-id="${menu.id}">
-                <span class="admin-menu-icon">${menu.icon}</span>
-                <span>${menu.label}</span>
-            </a>
-        `).join('');
-    };
-
-    const renderTableHead = (tabKey) => {
-        const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
-        if (!tableHeadRow) return;
-        tableHeadRow.innerHTML = config.columns.map((column) => `<th>${escapeHtml(column)}</th>`).join('');
-    };
-
-    const renderTableBody = (tabKey) => {
-        const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
-        if (!tableBody) return;
-
-        const keyword = searchKeyword.trim().toLowerCase();
-        const rows = config.rows.filter((row) => {
-            const domainMatch = activeDomainKey === 'all' || row.domainKey === activeDomainKey;
-            const searchMatch = !keyword || row.searchText.toLowerCase().includes(keyword);
-            return domainMatch && searchMatch;
-        });
-
-        if (rows.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="${config.columns.length}" style="text-align:center; padding: 40px;">${escapeHtml(config.emptyMessage)}</td></tr>`;
+    const loadScriptOnce = (src) => new Promise((resolve, reject) => {
+        const existing = document.querySelector(`script[data-admin-runtime="${src}"]`);
+        if (existing) {
+            resolve(existing);
             return;
         }
 
-        tableBody.innerHTML = rows.map((row) => `
-            <tr>
-                ${row.cells.map((cell) => `<td>${escapeHtml(cell ?? '')}</td>`).join('')}
-            </tr>
-        `).join('');
-    };
-
-    const syncActionBar = (tabKey) => {
-        const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
-        if (searchInput) {
-            searchInput.placeholder = config.searchPlaceholder;
-        }
-
-        if (searchButton) {
-            searchButton.textContent = '검색';
-        }
-
-        if (actionButtons.length >= 2) {
-            actionButtons[0].textContent = config.secondaryAction;
-            actionButtons[1].textContent = config.primaryAction;
-        }
-    };
-
-    const setActiveTab = (tabKey) => {
-        activeTab = TAB_CONFIG[tabKey] ? tabKey : DEFAULT_TAB;
-        tabButtons.forEach((button) => {
-            button.classList.toggle('active', button.dataset.domain === activeTab);
-        });
-        syncActionBar(activeTab);
-        renderTableHead(activeTab);
-        renderTableBody(activeTab);
-    };
-
-    const syncDomainFilters = () => {
-        domainFilterButtons.forEach((button) => {
-            button.classList.toggle('active', button.dataset.domainKey === activeDomainKey);
-        });
-    };
-
-    if (userNameEl) userNameEl.textContent = session.name;
-    if (userRoleEl) userRoleEl.textContent = session.role;
-    if (sidebarMenuContainer) sidebarMenuContainer.innerHTML = renderSidebarMenus(session.role);
-
-    tabButtons.forEach((button) => {
-        button.addEventListener('click', (event) => {
-            searchKeyword = '';
-            if (searchInput) searchInput.value = '';
-            AdminStore.dispatch({ type: 'UI/SET_DOMAIN', payload: event.currentTarget.dataset.domain });
-        });
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.dataset.adminRuntime = src;
+        script.onload = () => resolve(script);
+        script.onerror = reject;
+        document.head.appendChild(script);
     });
 
-    if (searchInput) {
-        searchInput.addEventListener('input', (event) => {
+    const ensureRuntime = () => {
+        if (window.__ADMIN_RESERVATIONS_RUNTIME_PROMISE__) {
+            return window.__ADMIN_RESERVATIONS_RUNTIME_PROMISE__;
+        }
+
+        window.__ADMIN_RESERVATIONS_RUNTIME_PROMISE__ = Promise.all([
+            loadScriptOnce(SHELL_SCRIPT),
+            loadScriptOnce(API_SCRIPT)
+        ]).then(() => import(CONFIG_SCRIPT));
+
+        return window.__ADMIN_RESERVATIONS_RUNTIME_PROMISE__;
+    };
+
+    const mountReservations = async ({ root }) => {
+        if (!root) {
+            return () => {};
+        }
+
+        const cleanup = window.AdminShell.utils.cleanupBag();
+        const tabButtons = Array.from(root.querySelectorAll('#admin-domain-filters .segment-btn'));
+        const tableBody = root.querySelector('#reservations-table-body');
+        const tableHeadRow = root.querySelector('.admin-table thead tr');
+        const searchInput = root.querySelector('.admin-reservations-search-group input[type="text"]');
+        const searchButton = root.querySelector('.admin-reservations-search-group .admin-btn-outline');
+        const actionButtons = Array.from(root.querySelectorAll('.admin-reservations-quick-actions .admin-btn'));
+        const domainFilterButtons = Array.from(root.querySelectorAll('#reservation-domain-filters .subfilter-btn'));
+
+        const [configModule] = await Promise.all([ensureRuntime()]);
+        const fallbackTabConfig = configModule.default ?? configModule.RESERVATIONS_TAB_CONFIG ?? configModule.tabConfig ?? {};
+        let TAB_CONFIG = Object.freeze(fallbackTabConfig);
+        let DEFAULT_TAB = configModule.DEFAULT_TAB ?? configModule.defaultTab ?? 'booking';
+        let activeTab = DEFAULT_TAB;
+        let searchKeyword = '';
+        let activeDomainKey = 'all';
+        let hasUserSelectedTab = false;
+
+        const escapeHtml = (value) => window.AdminShell.utils.escapeHtml(value);
+
+        const renderTableHead = (tabKey) => {
+            const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
+            if (!tableHeadRow || !config) {
+                return;
+            }
+            tableHeadRow.innerHTML = config.columns.map((column) => `<th>${escapeHtml(column)}</th>`).join('');
+        };
+
+        const renderTableBody = (tabKey) => {
+            const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
+            if (!tableBody || !config) {
+                return;
+            }
+
+            const keyword = searchKeyword.trim().toLowerCase();
+            const rows = (config.rows || []).filter((row) => {
+                const domainMatch = activeDomainKey === 'all' || row.domainKey === activeDomainKey;
+                const searchMatch = !keyword || String(row.searchText ?? '').toLowerCase().includes(keyword);
+                return domainMatch && searchMatch;
+            });
+
+            if (!rows.length) {
+                tableBody.innerHTML = `<tr><td colspan="${config.columns.length}" style="text-align:center; padding: 40px;">${escapeHtml(config.emptyMessage ?? '데이터가 없습니다.')}</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = rows.map((row) => `
+                <tr>
+                    ${(row.cells || []).map((cell) => `<td>${escapeHtml(cell ?? '')}</td>`).join('')}
+                </tr>
+            `).join('');
+        };
+
+        const syncActionBar = (tabKey) => {
+            const config = TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
+            if (!config) {
+                return;
+            }
+
+            if (searchInput) {
+                searchInput.placeholder = config.searchPlaceholder;
+            }
+
+            if (searchButton) {
+                searchButton.textContent = '검색';
+            }
+
+            if (actionButtons.length >= 2) {
+                actionButtons[0].textContent = config.secondaryAction || '조회';
+                actionButtons[1].textContent = config.primaryAction || '등록';
+            }
+        };
+
+        const syncDomainFilters = () => {
+            domainFilterButtons.forEach((button) => {
+                button.classList.toggle('active', button.dataset.domainKey === activeDomainKey);
+            });
+        };
+
+        const setActiveTab = (tabKey) => {
+            activeTab = TAB_CONFIG[tabKey] ? tabKey : DEFAULT_TAB;
+            tabButtons.forEach((button) => {
+                button.classList.toggle('active', button.dataset.domain === activeTab);
+            });
+            syncActionBar(activeTab);
+            renderTableHead(activeTab);
+            renderTableBody(activeTab);
+            syncDomainFilters();
+        };
+
+        const applyLiveTabConfig = (liveTabConfig) => {
+            if (!liveTabConfig || typeof liveTabConfig !== 'object') {
+                return;
+            }
+
+            TAB_CONFIG = Object.freeze(liveTabConfig.tabs ?? TAB_CONFIG);
+            DEFAULT_TAB = liveTabConfig.defaultTab ?? DEFAULT_TAB;
+            if (!hasUserSelectedTab) {
+                activeTab = DEFAULT_TAB;
+            }
+            setActiveTab(activeTab);
+        };
+
+        void window.AdminApiClient.fetchAdminPayloadInBackground('/api/admin/tables/reservations', {
+            onSuccess: applyLiveTabConfig,
+            onError: (error) => {
+                console.warn('[AdminReservations] Live config load failed:', error);
+            }
+        });
+
+        const onTabClick = (event) => {
+            hasUserSelectedTab = true;
+            searchKeyword = '';
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            window.AdminStore?.dispatch?.({ type: 'UI/SET_DOMAIN', payload: event.currentTarget.dataset.domain });
+        };
+
+        const onSearchInput = (event) => {
             searchKeyword = event.currentTarget.value;
             renderTableBody(activeTab);
-        });
-    }
+        };
 
-    if (searchButton) {
-        searchButton.addEventListener('click', () => renderTableBody(activeTab));
-    }
+        const onSearchButton = () => renderTableBody(activeTab);
 
-    domainFilterButtons.forEach((button) => {
-        button.addEventListener('click', (event) => {
+        const onDomainFilterClick = (event) => {
             activeDomainKey = event.currentTarget.dataset.domainKey || 'all';
             syncDomainFilters();
             renderTableBody(activeTab);
-        });
-    });
+        };
 
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', () => {
-            AdminStore.dispatch({ type: 'UI/TOGGLE_SIDEBAR' });
+        tabButtons.forEach((button) => {
+            button.addEventListener('click', onTabClick);
+            cleanup.add(() => button.removeEventListener('click', onTabClick));
         });
-    }
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                const { logoutSession } = await import('../../core/auth/session_manager.js');
-                await logoutSession();
-            } catch (_error) {
-                localStorage.removeItem('userSession');
+        if (searchInput) {
+            searchInput.addEventListener('input', onSearchInput);
+            cleanup.add(() => searchInput.removeEventListener('input', onSearchInput));
+        }
+
+        if (searchButton) {
+            searchButton.addEventListener('click', onSearchButton);
+            cleanup.add(() => searchButton.removeEventListener('click', onSearchButton));
+        }
+
+        domainFilterButtons.forEach((button) => {
+            button.addEventListener('click', onDomainFilterClick);
+            cleanup.add(() => button.removeEventListener('click', onDomainFilterClick));
+        });
+
+        const unsubscribe = window.AdminStore?.subscribe?.((nextState) => {
+            setActiveTab(hasUserSelectedTab ? nextState.ui.domain : activeTab);
+        });
+        cleanup.add(() => {
+            if (typeof unsubscribe === 'function') {
+                unsubscribe();
             }
-            redirectByRoute('HOME');
-        });
-    }
-
-    if (profileTrigger && profileContainer) {
-        profileTrigger.addEventListener('click', (event) => {
-            event.stopPropagation();
-            profileContainer.classList.toggle('active');
         });
 
-        document.addEventListener('click', (event) => {
-            if (!profileContainer.contains(event.target)) profileContainer.classList.remove('active');
-        });
-    }
+        const initialState = window.AdminStore?.getState?.();
+        if (initialState) {
+            setActiveTab(TAB_CONFIG[initialState.ui.domain] ? initialState.ui.domain : DEFAULT_TAB);
+        } else {
+            setActiveTab(DEFAULT_TAB);
+        }
 
-    const langBtns = document.querySelectorAll('.lang-btn');
-    langBtns.forEach((btn) => {
-        btn.addEventListener('click', (event) => {
-            langBtns.forEach((item) => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        });
-    });
-
-    themeBtns.forEach((btn) => {
-        btn.addEventListener('click', (event) => {
-            const selectedTheme = event.currentTarget.dataset.theme;
-            localStorage.setItem('adminTheme', selectedTheme);
-            AdminStore.dispatch({ type: 'UI/SET_THEME', payload: selectedTheme });
-        });
-    });
-
-    const updateThemeDOM = (theme) => {
-        const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const activeTheme = theme === 'system' ? (isSystemDark ? 'dark' : 'light') : theme;
-        document.body.setAttribute('data-theme', activeTheme);
-        themeBtns.forEach((btn) => {
-            if (btn.dataset.theme === theme) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
+        return () => cleanup.run();
     };
 
-    AdminStore.subscribe((newState) => {
-        syncSidebarUI(newState.ui.sidebarOpen);
-        updateThemeDOM(newState.ui.theme);
-        setActiveTab(newState.ui.domain);
-    });
+    const boot = async () => {
+        const shell = await ensureRuntime();
+        shell.registerSection(SECTION_ID, {
+            pagePath: 'reservations.html',
+            scriptPath: SHELL_SCRIPT,
+            title: SECTION_TITLE,
+            mount: mountReservations
+        });
+        await shell.bootSection(SECTION_ID);
+    };
 
-    const initialState = AdminStore.getState();
-    syncSidebarUI(initialState.ui.sidebarOpen);
-    updateThemeDOM(initialState.ui.theme);
-    setActiveTab(TAB_CONFIG[initialState.ui.domain] ? initialState.ui.domain : DEFAULT_TAB);
-    syncDomainFilters();
-    window.addEventListener('resize', () => syncSidebarUI(AdminStore.getState().ui.sidebarOpen));
-});
+    void boot();
+})();

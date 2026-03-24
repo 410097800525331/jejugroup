@@ -131,3 +131,15 @@
 - summary: `local Spring boot now reaches localhost MySQL, but the local DB user lacks schema access`
 - details: `The malformed duplicate DB_* block in jeju-spring/.env was removed and the default DB_URL now points at localhost. After that fix, bootRun no longer tried the alwaysdata host; Flyway now fails later with 'Access denied for user 'jejugroup'@'localhost' to database 'jejugroup_db''. The remaining blocker is local MySQL user/schema privilege setup rather than repository code or env parsing.`
 - status: `open`
+
+- time: `2026-03-24 18:35 +09:00`
+- location: `verification step for front/admin js parse check`
+- summary: `vm.SourceTextModule was unavailable in the current Node runtime`
+- details: `The first lightweight syntax-check attempt used vm.SourceTextModule, but the current Node build exposed it as non-constructible. I switched to esbuild.transformSync for the touched admin JS files and completed verification that way.`
+- status: `resolved`
+
+- time: `2026-03-24 20:52 +09:00`
+- location: `Route B admin shell handoff`
+- summary: `Single-load admin shell refactor paused before reviewer and browser verification`
+- details: `The workspace has a frozen seed at SEED.admin-shell-single-load-v1.yaml, a new front/admin/js/admin_shell.js bootstrap, and five admin HTML entrypoints rewired to that shared shell. The task was intentionally paused for cross-environment continuation before reviewer pass, direct-entry checks, same-document section-switch checks, and history/popstate verification were completed.`
+- status: `deferred`
