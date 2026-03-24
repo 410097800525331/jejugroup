@@ -1,0 +1,649 @@
+/*
+ * Admin Components - Cards, Tables, Badges
+ * Glassmorphism and premium data visualization foundations
+ */
+
+ /* Page Header */
+.admin-page-header {
+    margin-bottom: var(--admin-space-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--admin-space-md);
+}
+
+.admin-page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--admin-text-primary);
+    flex: 1 1 240px;
+}
+
+/* KPI Cards Layer (Grid) */
+.admin-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--admin-space-lg);
+    margin-bottom: var(--admin-space-xl);
+}
+
+/* Card Component (Glassmorphism) */
+.admin-card {
+    background-color: var(--admin-surface);
+    border: 1px solid var(--admin-glass-border);
+    border-radius: 12px;
+    padding: var(--admin-space-lg);
+    box-shadow: var(--admin-shadow-sm);
+    transition: transform var(--admin-transition-fast), box-shadow var(--admin-transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-md);
+    border-color: rgba(255,255,255,0.15);
+}
+
+.admin-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--admin-space-md);
+}
+
+.admin-card-title {
+    font-size: 0.9rem;
+    color: var(--admin-text-secondary);
+    font-weight: 500;
+    margin: 0;
+}
+
+.admin-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--admin-accent);
+}
+
+.admin-card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    margin: 0 0 var(--admin-space-xs) 0;
+}
+
+.admin-card-trend {
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.admin-card-trend.positive { color: var(--admin-success); }
+.admin-card-trend.negative { color: var(--admin-danger); }
+
+/* Data Tables */
+.admin-table-container {
+    background-color: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: 12px;
+    overflow-x: auto;
+}
+
+.admin-table-actions {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.admin-reservations-quick-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: var(--admin-space-md);
+    flex-wrap: wrap;
+}
+
+.admin-reservations-toolbar {
+    width: 100%;
+    --admin-toolbar-control-height: 42px;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--admin-space-md);
+    margin-bottom: var(--admin-space-lg);
+    flex-wrap: nowrap;
+}
+
+.admin-reservations-toolbar-left {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-reservations-search-group {
+    display: flex;
+    flex: 1 1 420px;
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.admin-reservations-search-group input[type="text"] {
+    flex: 0 0 320px;
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+    height: var(--admin-toolbar-control-height);
+    box-sizing: border-box;
+    padding: 0 12px;
+    border-radius: 6px;
+    border: 1px solid var(--admin-border);
+    background: var(--admin-surface);
+    color: var(--admin-text-primary);
+    outline: none;
+    line-height: calc(var(--admin-toolbar-control-height) - 2px);
+}
+
+.admin-reservations-search-group .admin-btn {
+    flex: 0 0 auto;
+    height: var(--admin-toolbar-control-height);
+    box-sizing: border-box;
+    padding-block: 0;
+    white-space: nowrap;
+}
+
+.admin-segment-control {
+    flex: 0 0 auto;
+    height: var(--admin-toolbar-control-height);
+    box-sizing: border-box;
+    align-self: center;
+}
+
+.admin-reservations-toolbar .admin-subfilter-control {
+    height: var(--admin-toolbar-control-height);
+    box-sizing: border-box;
+}
+
+.admin-reservations-toolbar .segment-btn,
+.admin-reservations-toolbar .subfilter-btn {
+    height: 100%;
+    box-sizing: border-box;
+    padding-block: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.admin-reservations-toolbar .segment-btn {
+    padding-inline: 16px;
+}
+
+.admin-reservations-toolbar .subfilter-btn {
+    padding-inline: 12px;
+}
+
+@media (max-width: 1180px) {
+    .admin-reservations-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .admin-reservations-toolbar-left {
+        flex-wrap: wrap;
+        flex: 1 1 100%;
+    }
+
+    .admin-reservations-search-group {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+    }
+
+    .admin-reservations-search-group input[type="text"] {
+        width: min(320px, 100%);
+        min-width: min(320px, 100%);
+        max-width: none;
+    }
+
+    .admin-reservations-toolbar .admin-segment-control {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-table th, .admin-table td {
+    padding: var(--admin-space-md) var(--admin-space-lg);
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table th {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--admin-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.admin-table tbody tr {
+    transition: background-color var(--admin-transition-fast);
+}
+
+.admin-table tbody tr:hover {
+    background-color: var(--admin-surface-hover);
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.admin-badge.success {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: var(--admin-success);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.admin-badge.warning {
+    background-color: rgba(241, 196, 15, 0.15);
+    color: var(--admin-warning);
+    border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+.admin-badge.danger {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: var(--admin-danger);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.admin-badge.neutral {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--admin-text-secondary);
+    border: 1px solid var(--admin-border);
+}
+
+/* Action Buttons */
+.admin-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-btn-primary {
+    background-color: var(--admin-accent);
+    color: #fff;
+}
+
+.admin-btn-primary:hover {
+    background-color: var(--admin-accent-hover);
+    box-shadow: 0 0 10px rgba(230, 126, 34, 0.4);
+}
+
+.admin-btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--admin-border);
+    color: var(--admin-text-primary);
+}
+
+.admin-btn-outline:hover {
+    background-color: var(--admin-surface-hover);
+    border-color: var(--admin-text-secondary);
+}
+
+.hotel-offer-admin-section {
+    margin-top: var(--admin-space-xl);
+}
+
+.hotel-offer-section-header {
+    align-items: flex-start;
+    gap: var(--admin-space-lg);
+}
+
+.hotel-offer-section-title {
+    margin: 0;
+    color: var(--admin-text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.hotel-offer-section-copy {
+    margin: var(--admin-space-xs) 0 0;
+    color: var(--admin-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 60ch;
+}
+
+.hotel-offer-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--admin-space-sm);
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--admin-space-lg);
+}
+
+.hotel-offer-search-input {
+    min-width: min(360px, 100%);
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--admin-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--admin-text-primary);
+    outline: none;
+}
+
+.hotel-offer-search-input:focus {
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.14);
+}
+
+.hotel-offer-admin-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(300px, 1fr);
+    gap: var(--admin-space-lg);
+    align-items: start;
+}
+
+.hotel-offer-editor-card {
+    border: 1px solid var(--admin-glass-border);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    padding: var(--admin-space-lg);
+    box-shadow: var(--admin-shadow-sm);
+    position: sticky;
+    top: calc(70px + var(--admin-space-lg));
+}
+
+.hotel-offer-editor-head {
+    margin-bottom: var(--admin-space-md);
+}
+
+.hotel-offer-editor-title {
+    margin: 0;
+    color: var(--admin-text-primary);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.hotel-offer-editor-copy {
+    margin: var(--admin-space-xs) 0 0;
+    color: var(--admin-text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.hotel-offer-form {
+    display: grid;
+    gap: var(--admin-space-md);
+}
+
+.hotel-offer-field {
+    display: grid;
+    gap: 6px;
+}
+
+.hotel-offer-field span {
+    color: var(--admin-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.hotel-offer-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--admin-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--admin-text-primary);
+    outline: none;
+}
+
+.hotel-offer-field input[readonly] {
+    color: var(--admin-text-secondary);
+    cursor: not-allowed;
+}
+
+.hotel-offer-field input:focus {
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.14);
+}
+
+.hotel-offer-preview {
+    border: 1px solid var(--admin-glass-border);
+    border-radius: 12px;
+    padding: var(--admin-space-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--admin-text-primary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.hotel-offer-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--admin-space-sm);
+}
+
+.hotel-offer-row-active {
+    background: rgba(230, 126, 34, 0.12);
+}
+
+.hotel-offer-status {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--admin-text-secondary);
+}
+
+.hotel-offer-status.hotel-offer-status--custom {
+    color: var(--admin-accent);
+}
+
+@media (max-width: 1180px) {
+    .hotel-offer-admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hotel-offer-editor-card {
+        position: static;
+    }
+}
+
+/* Chart Container Styles */
+.admin-chart-container {
+    padding: var(--admin-space-lg);
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-chart-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--admin-space-md);
+    gap: var(--admin-space-sm);
+}
+
+.admin-chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--admin-text-primary);
+    margin: 0;
+}
+
+.admin-chart-filters {
+    display: flex;
+    gap: 4px;
+    background-color: rgba(0,0,0,0.1);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--admin-glass-border);
+}
+
+body.admin-mode[data-theme="light"] .admin-chart-filters {
+    background-color: rgba(0,0,0,0.03);
+}
+
+.chart-filter-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--admin-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+}
+
+.chart-filter-btn:hover {
+    color: var(--admin-text-primary);
+}
+
+.chart-filter-btn.active {
+    background-color: var(--admin-surface);
+    color: var(--admin-accent);
+    box-shadow: var(--admin-shadow-sm);
+    font-weight: 600;
+}
+
+/* Segment Control (Business Unit Filter) */
+.admin-segment-control {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(0,0,0,0.15);
+    padding: 4px;
+    min-height: 42px;
+    border-radius: 8px;
+    border: 1px solid var(--admin-glass-border);
+    flex-wrap: wrap;
+    gap: 4px;
+    box-sizing: border-box;
+}
+
+body.admin-mode[data-theme="light"] .admin-segment-control {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.segment-btn {
+    background: transparent;
+    border: none;
+    min-height: calc(42px - 8px);
+    padding: 0 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--admin-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--admin-transition-base);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.segment-btn:hover {
+    color: var(--admin-text-primary);
+}
+
+.segment-btn.active {
+    background-color: var(--admin-surface);
+    color: var(--admin-text-primary);
+    box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: var(--admin-space-md);
+}
+
+.admin-filter-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--admin-text-secondary);
+}
+
+.admin-subfilter-control {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--admin-glass-border);
+    background-color: rgba(0,0,0,0.08);
+}
+
+body.admin-mode[data-theme="light"] .admin-subfilter-control {
+    background-color: rgba(0,0,0,0.03);
+}
+
+.admin-reservations-toolbar .admin-subfilter-control {
+    flex: 0 1 auto;
+    align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.subfilter-btn {
+    background: transparent;
+    border: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--admin-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    white-space: nowrap;
+}
+
+.subfilter-btn:hover {
+    color: var(--admin-text-primary);
+}
+
+.subfilter-btn.active {
+    background-color: var(--admin-surface);
+    color: var(--admin-text-primary);
+    box-shadow: var(--admin-shadow-sm);
+}

@@ -644,3 +644,23 @@
   - `reviewer_db_migration_followup`: `review only`
 - verification:
   - pending
+
+- time: `2026-03-24 14:12 +09:00`
+- route: `Route B`
+- task: `Finish the Spring runtime cutover so root build/deploy, healthcheck, page hosting, and source-of-truth rules are aligned on jeju-spring`
+- participants: `main`, `worker_pipeline_cutover (Darwin)`, `worker_spring_entrypoints (Dewey)`, `reviewer_spring_cutover (Sartre)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-final-runtime-cutover-v1.yaml, ERROR_LOG.md`
+  - `worker_pipeline_cutover`: `package.json, scripts/pipelines/build-war.js, scripts/pipelines/deploy.js, scripts/spring/mirror-front-to-thymeleaf.cjs, scripts/spring/sync-front-assets-to-spring.cjs`
+  - `worker_spring_entrypoints`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java`
+  - `reviewer_spring_cutover`: `review only`
+- verification:
+  - `pnpm run build` passed twice after the cutover changes
+  - `pnpm run guard:text` passed
+  - `node --check scripts/pipelines/build-war.js` passed
+  - `node --check scripts/pipelines/deploy.js` passed
+  - `node --check scripts/spring/mirror-front-to-thymeleaf.cjs` passed
+  - `node --check scripts/spring/sync-front-assets-to-spring.cjs` passed
+  - generated `jeju-spring/src/main/resources/templates/front-mirror/pages/cs/customer_center.html` now points at `/front-mirror/pages/cs/assets/**`
+  - `pnpm run spring:test` still failed before app tests on the pre-existing alwaysdata Flyway DB access-denied environment issue, and that gap was appended to `ERROR_LOG.md`
+  - `reviewer_spring_cutover` first flagged the customer-center asset-path mismatch, the follow-up fix landed, and the final reviewer pass reported `발견 없음`

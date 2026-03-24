@@ -1,0 +1,23 @@
+goal: >
+  Audit front dummy and hardcoded business content, classify which datasets can be
+  safely converted into DB seed from explicit front source, and keep source-missing
+  areas empty and separately tracked instead of inventing fallback records.
+constraints:
+  - Use `front` as the only frontend source of truth when determining whether a dataset is source-complete.
+  - Do not invent business values, IDs, categories, prices, schedules, or inventory when `front` does not provide them.
+  - When a dataset is incomplete for DB normalization, classify it as `source-missing` instead of forcing a seed.
+  - Preserve existing migration history; prefer adding new seed slices over rewriting prior migrations.
+  - Keep mirror/generated paths untouched.
+  - If a front dataset is already represented by an existing migration seed, record that overlap instead of duplicating it.
+acceptance_criteria:
+  - A repo artifact lists front dummy datasets and maps each one to a target DB table set or a `source-missing` bucket.
+  - The artifact explicitly distinguishes `already seeded`, `seedable now`, and `source-missing / hold`.
+  - No placeholder business data is invented for missing banner, hotel, price, inventory, or product details.
+  - If a high-confidence seed slice is added, it is limited to datasets whose values are explicit in `front`.
+verification:
+  - `pnpm run guard:text`
+  - targeted review of the inventory classification against the referenced front source files and existing migrations
+out_of_scope:
+  - inventing normalized room/inventory structures from incomplete front data
+  - forcing live DB application while the current DB is still blocked earlier in Flyway
+  - broad schema redesign

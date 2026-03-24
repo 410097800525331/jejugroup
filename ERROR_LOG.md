@@ -71,3 +71,27 @@
 - summary: `CustomerCenterIntegrationTests test replay is blocked by Flyway database access`
 - details: `The targeted test run failed before executing assertions because Flyway could not connect to the configured MySQL host with Access denied for user 'jejugroup'@'123.142.12.196'. compileTestJava succeeded afterward, so the assertion change itself still compiles.`
 - status: `open`
+
+- time: `2026-03-24 13:41:30 +09:00`
+- location: `live DB jeju_spring Flyway migrate`
+- summary: `Flyway rerun was blocked by leftover partial side effects from the original failed V2 attempt`
+- details: `After repairing flyway_schema_history, V2 failed again on duplicate key idx_support_comments_ticket_id_id. Inspection showed partial V2 changes had already been applied to support_comments/support_attachments, so the failed-history cleanup alone was insufficient.`
+- status: `resolved`
+
+- time: `2026-03-24 13:46:10 +09:00`
+- location: `live DB jeju_spring Flyway repair/migrate`
+- summary: `Live DB Flyway chain recovered through V21`
+- details: `Manually reverted the partial V2 side effects on support_comments/support_attachments back to the baseline shape, reran Flyway repair, and advanced the live DB from V1/V2-failed to V21 success. Key post-check counts: users=1, support_categories=24, notices=6, faqs=75, membership_plans=3, membership_plan_benefits=15, hotel_properties=6, flight_routes=3, rentcar_branches=1.`
+- status: `resolved`
+
+- time: `2026-03-24 14:05:16 +09:00`
+- location: `pnpm run spring:test`
+- summary: `Spring test replay is blocked by existing Flyway database bootstrap failure`
+- details: `The Gradle test task reached Flyway, then failed while connecting through the configured alwaysdata MySQL path. The failure happened before the new front-mirror host controller or template code could be exercised, so this remains a verification environment issue rather than a code-path regression in the new Spring host slice.`
+- status: `open`
+
+- time: `2026-03-24 14:12:03 +09:00`
+- location: `pnpm run spring:test`
+- summary: `Spring final runtime cutover verification is still blocked by the existing alwaysdata DB access path`
+- details: `The cutover branch rebuilt front, mirrored templates into jeju-spring, and reached Gradle test execution, but the Spring context still failed before app tests ran because Flyway could not connect to the configured alwaysdata MySQL host: Access denied for user 'jejugroup'@'123.142.12.196'. This confirms the remaining gap is the existing verification environment, not the new build/deploy or front-mirror cutover code path.`
+- status: `open`

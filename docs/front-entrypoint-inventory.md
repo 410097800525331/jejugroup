@@ -1,76 +1,64 @@
 # front 엔트리포인트 인벤토리
 
-## 기준
+## 목적
 
-- 이 문서는 `front` 내부 HTML 엔트리포인트의 현재 운영 분류를 기록한다
-- `node_modules` 내부 샘플 HTML 은 제외한다
-- 기준 축은 `렌더 방식`, `원본 위치`, `수정 위치`, `비고` 다
+- `front`가 원본이고 `jeju-spring`은 최종 런타임 계층이다.
+- 이 문서는 Spring이 어떤 경로를 전용 템플릿으로 서빙하는지, 어떤 경로를 host-only로 넘기는지, 어떤 경로를 제외하는지 정리한다.
 
-## 1. 독립 React 앱
+## 분류 기준
 
-| 서비스 | 개발 원본 | 실제 경로 | 수정 위치 | 비고 |
-| --- | --- | --- | --- | --- |
-| 고객센터 | `front/apps/cs/client/index.html` | `/pages/cs/customer_center.html` | `front/apps/cs/**` | 빌드 산출물 `front/.generated/webapp-overlay/pages/cs/**` 직접 수정 금지 |
+- `Spring-served dedicated template`
+  - Spring 컨트롤러가 Thymeleaf 템플릿을 직접 렌더링한다.
+- `Spring host-only`
+  - Spring 컨트롤러가 요청 경로를 `front-mirror/<legacy path>` 뷰 이름으로 바꿔 반환한다.
+  - 실제 화면 본문은 `front` 원본 기준으로 유지한다.
+- `Excluded from Spring final runtime`
+  - 이번 Spring final runtime 범위에서 넣지 않는다.
 
-## 2. 하이브리드 정적 + 셸 런타임 + React island
+## Spring-served dedicated template
 
-| 엔트리 | 수정 위치 | island 호스트 | 비고 |
+| 경로 | Spring 컨트롤러 | Spring view | front 원본 |
 | --- | --- | --- | --- |
-| `front/pages/auth/login.html` | `front/pages/auth/**`, `front/components/react/auth/**`, `front/apps/shell/**` | `jeju-login-app` | page shell bridge 사용 |
-| `front/pages/auth/signup.html` | `front/pages/auth/**`, `front/components/react/auth/**`, `front/apps/shell/**` | `jeju-signup-app` | page shell bridge 사용 |
-| `front/pages/auth/pass_auth.html` | `front/pages/auth/**`, `front/components/react/auth/**`, `front/apps/shell/**` | `jeju-pass-auth-app` | 단일 island 페이지 |
-| `front/pages/mypage/dashboard.html` | `front/pages/mypage/**`, `front/components/react/mypage/**`, `front/apps/shell/**` | `mypage-dashboard-root` | 마이페이지 island |
-| `front/jejustay/pages/hotel/jejuhotel.html` | `front/jejustay/pages/hotel/**`, `front/components/react/hotel/**`, `front/apps/shell/**` | `hotel-search-widget-root` | 호텔 검색 island |
-| `front/jejustay/pages/stay/jejustay_life.html` | `front/jejustay/pages/stay/**`, `front/components/react/life/**`, `front/apps/shell/**` | `life-search-widget-root` | 롱스테이 검색 island |
-| `front/jejustay/pages/stay/private_stay.html` | `front/jejustay/pages/stay/**`, `front/components/react/hotel/**`, `front/apps/shell/**` | `hotel-search-widget-root` | 호텔 검색 island 재사용 |
-| `front/jejustay/pages/travel/travel_checklist.html` | `front/jejustay/pages/travel/**`, `front/components/react/travel/**`, `front/apps/shell/**` | `jeju-travel-checklist-app` | 체크리스트 island 앱 |
+| `/` / `/index.html` | `web/LandingController` | `templates/index.html` | `front/index.html` |
+| `/auth/login` / `/pages/auth/login.html` | `auth/web/AuthPageController` | `templates/auth/login.html` | `front/pages/auth/login.html` |
+| `/auth/signup` / `/pages/auth/signup.html` | `auth/web/AuthPageController` | `templates/auth/signup.html` | `front/pages/auth/signup.html` |
+| `/auth/pass` / `/pages/auth/pass_auth.html` | `auth/web/AuthPageController` | `templates/auth/pass-auth.html` | `front/pages/auth/pass_auth.html` |
+| `/migration` | `migration/web/MigrationController` | `templates/migration/dashboard.html` | `front` migration 화면 |
+| `/deals` / `/jejustay/pages/deals/deals.html` | `deals/web/DealsController` | `templates/deals/main.html` | `front/jejustay/pages/deals/deals.html` |
+| `/deals/member` / `/jejustay/pages/deals/deals_member.html` | `deals/web/DealsController` | `templates/deals/member.html` | `front/jejustay/pages/deals/deals_member.html` |
+| `/deals/partner` / `/jejustay/pages/deals/deals_partner.html` | `deals/web/DealsController` | `templates/deals/partner.html` | `front/jejustay/pages/deals/deals_partner.html` |
+| `/mypage/dashboard` / `/pages/mypage/dashboard.html` | `mypage/web/MyPageController` | `templates/mypage/dashboard.html` | `front/pages/mypage/dashboard.html` |
+| `/stay/hotel-list` / `/jejustay/pages/hotel/hotel-list.html` | `stay/web/StayController` | `templates/stay/hotel-list.html` | `front/jejustay/pages/hotel/hotel-list.html` |
+| `/travel/activities` / `/jejustay/pages/travel/activities.html` | `travel/web/TravelController` | `templates/travel/activities.html` | `front/jejustay/pages/travel/activities.html` |
+| `/travel/esim` / `/jejustay/pages/travel/esim.html` | `travel/web/TravelController` | `templates/travel/esim.html` | `front/jejustay/pages/travel/esim.html` |
+| `/travel/guide` / `/jejustay/pages/travel/travel_guide.html` | `travel/web/TravelController` | `templates/travel/guide.html` | `front/jejustay/pages/travel/travel_guide.html` |
+| `/travel/tips` / `/jejustay/pages/travel/travel_tips.html` | `travel/web/TravelController` | `templates/travel/tips.html` | `front/jejustay/pages/travel/travel_tips.html` |
 
-## 3. 하이브리드 정적 + 셸 런타임
+## Spring host-only
 
-| 엔트리 그룹 | 실제 파일 |
-| --- | --- |
-| 메인 랜딩 | `front/index.html` |
-| JEJU STAY deals | `front/jejustay/pages/deals/deals.html`, `front/jejustay/pages/deals/deals_member.html`, `front/jejustay/pages/deals/deals_partner.html` |
-| JEJU STAY hotel static | `front/jejustay/pages/hotel/hotel-list.html` |
-| JEJU STAY travel static | `front/jejustay/pages/travel/activities.html`, `front/jejustay/pages/travel/esim.html`, `front/jejustay/pages/travel/travel_guide.html`, `front/jejustay/pages/travel/travel_tips.html` |
+| 경로 | 실제 반환 뷰 | front 원본 | 비고 |
+| --- | --- | --- | --- |
+| `/jejuair/index.html` | `front-mirror/jejuair/index` | `front/jejuair/index.html` | 제주에어 최상위 고정 영역 호스트 |
+| `/pages/cs/customer_center.html` | `front-mirror/pages/cs/customer_center` | `front/apps/cs/client/index.html` | 고객센터 host-only 진입점 |
+| `/jejustay/pages/hotel/jejuhotel.html` | `front-mirror/jejustay/pages/hotel/jejuhotel` | `front/jejustay/pages/hotel/jejuhotel.html` | 호텔 호스트 |
+| `/jejustay/pages/stay/jejustay_life.html` | `front-mirror/jejustay/pages/stay/jejustay_life` | `front/jejustay/pages/stay/jejustay_life.html` | 라이프 호스트 |
+| `/jejustay/pages/stay/private_stay.html` | `front-mirror/jejustay/pages/stay/private_stay` | `front/jejustay/pages/stay/private_stay.html` | 프라이빗 스테이 호스트 |
+| `/jejustay/pages/travel/travel_checklist.html` | `front-mirror/jejustay/pages/travel/travel_checklist` | `front/jejustay/pages/travel/travel_checklist.html` | 체크리스트 호스트 |
+| `/admin/pages/dashboard.html` | `front-mirror/admin/pages/dashboard` | `front/admin/pages/dashboard.html` | 관리자 대시보드 호스트 |
+| `/admin/pages/reservations.html` | `front-mirror/admin/pages/reservations` | `front/admin/pages/reservations.html` | 관리자 예약 호스트 |
+| `/admin/pages/lodging.html` | `front-mirror/admin/pages/lodging` | `front/admin/pages/lodging.html` | 관리자 숙박 호스트 |
+| `/admin/pages/members.html` | `front-mirror/admin/pages/members` | `front/admin/pages/members.html` | 관리자 회원 호스트 |
+| `/admin/pages/cms.html` | `front-mirror/admin/pages/cms` | `front/admin/pages/cms.html` | 관리자 CMS 호스트 |
 
-수정 기준
+## 제외 경로
 
-- 공용 셸, 헤더, 푸터, FAB, 챗봇: `front/apps/shell/**`, `front/components/react/layout/**`, `front/components/react/ui/**`, `front/components/react/widget/**`
-- 페이지 전용 마크업/스타일: 해당 `front/**/pages/**`
+| 경로 | 결정 | 이유 |
+| --- | --- | --- |
+| `/jejuair/pages/**` | 제외 | 이번 Spring final runtime에서 host-only로 올리지 않는다. |
+| `/pages/auth/oauth_callback.html` | 제외 | OAuth callback은 page host 책임에서 뺀다. |
 
-## 4. 고정 정적 유지
+## 경계 메모
 
-### `jejuair`
-
-- `front/jejuair/index.html`
-- `front/jejuair/pages/about/*`
-- `front/jejuair/pages/baggage/*`
-- `front/jejuair/pages/boarding/*`
-- `front/jejuair/pages/booking/*`
-- `front/jejuair/pages/cs/*`
-- `front/jejuair/pages/event/*`
-- `front/jejuair/pages/jmembers/*`
-- `front/jejuair/pages/pet/*`
-
-운영 규칙
-
-- React 전환 대상으로 보지 않는다
-- 기능 수정은 가능하지만 구조 변경은 보수적으로 진행한다
-
-### 기타 고정 정적
-
-- `front/admin/pages/cms.html`
-- `front/admin/pages/dashboard.html`
-- `front/admin/pages/lodging.html`
-- `front/admin/pages/members.html`
-- `front/admin/pages/reservations.html`
-- `front/pages/auth/oauth_callback.html`
-
-## 5. 수정 금지 산출물
-
-- `front/.generated/webapp-overlay/pages/cs/assets/**`
-- `front/pages/**/assets/**`
-- `front/components/runtime/**`
-- `front/.generated/webapp-overlay/**`
-- `jeju-web/src/main/webapp/**` 직접 원본처럼 수정 금지
+- 전용 Spring 템플릿은 Spring이 직접 렌더링한다.
+- host-only 경로는 실제 `front-mirror/...` 템플릿으로 응답한다.
+- 컨트롤러와 문서가 같은 기준을 보도록 이 표를 유지한다.

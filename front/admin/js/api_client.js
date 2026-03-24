@@ -1,0 +1,28 @@
+const apiConfigPromise = import("../../core/config/api_config.js");
+
+const toApiUrl = async (path) => {
+    const { API_BASE_URL } = await apiConfigPromise;
+    return `${API_BASE_URL}${path}`;
+};
+
+export const fetchAdminPayload = async (path) => {
+    const apiUrl = await toApiUrl(path);
+    const response = await fetch(apiUrl, {
+        credentials: "include",
+        headers: {
+            Accept: "application/json"
+        },
+        method: "GET"
+    });
+
+    if (!response.ok) {
+        throw new Error(`Admin API request failed: ${response.status}`);
+    }
+
+    const payload = await response.json();
+    if (!payload?.success) {
+        throw new Error(payload?.message || "Admin API payload was not successful");
+    }
+
+    return payload.data ?? null;
+};

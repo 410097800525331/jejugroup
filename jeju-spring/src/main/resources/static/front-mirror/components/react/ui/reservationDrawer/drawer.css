@@ -1,0 +1,223 @@
+.res-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 15, 18, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+}
+
+.res-drawer-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Premium Glassmorphism Side Drawer */
+.res-drawer-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 480px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(32px) saturate(200%);
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    border-left: 1px solid rgba(255, 255, 255, 0.6);
+    z-index: 9999;
+    transform: translateX(100%);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -30px 0 80px rgba(0, 0, 0, 0.1);
+    will-change: transform;
+}
+
+.res-drawer-panel.active {
+    transform: translateX(0);
+}
+
+/* Close Button Floating */
+.res-drawer-close {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #111;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.res-drawer-close:hover {
+    background: #FF5000;
+    color: #fff;
+    border-color: #FF5000;
+    transform: rotate(90deg) scale(1.05);
+    box-shadow: 0 8px 24px rgba(255, 80, 0, 0.3);
+}
+
+/* Visual Header Typography Focus */
+.res-drawer-visual {
+    padding: 80px 48px 40px;
+}
+
+.res-drawer-title {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #111;
+    margin: 0 0 16px;
+    line-height: 1.3;
+}
+
+.res-drawer-title span {
+    color: #FF5000;
+}
+
+.res-drawer-desc {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.6;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+/* Body Area */
+.res-drawer-body {
+    padding: 0 48px 48px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.res-drawer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-top: 10px;
+}
+
+.res-drawer-form .input-group {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.res-drawer-form label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+}
+
+/* Neumorphic / Glassmorphic Inputs */
+.res-drawer-form input {
+    width: 100%;
+    padding: 18px 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    font-size: 16px;
+    color: #111;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.res-drawer-form input::placeholder {
+    color: #bcc1c8;
+    transition: opacity 0.3s;
+}
+
+.res-drawer-form input:focus::placeholder {
+    opacity: 0;
+}
+
+.res-drawer-form input:focus {
+    background: #fff;
+    border-color: #FF5000;
+    box-shadow: 0 0 0 4px rgba(255, 80, 0, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.01);
+    transform: translateY(-2px);
+}
+
+/* Premium Dark to Orange Action Button */
+.res-drawer-btn {
+    margin-top: 40px;
+    width: 100%;
+    padding: 22px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: -0.01em;
+}
+
+.res-drawer-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%) skewX(-15deg);
+    transition: transform 0.6s ease;
+}
+
+.res-drawer-btn:hover {
+    background: #FF5000;
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(255, 80, 0, 0.3);
+}
+
+.res-drawer-btn:hover::before {
+    transform: translateX(100%) skewX(-15deg);
+}
+
+/* Footer Section */
+.res-drawer-footer {
+    margin-top: auto;
+    padding-top: 40px;
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.res-drawer-footer a {
+    color: #111;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding-bottom: 2px;
+    border-bottom: 2px solid transparent;
+}
+
+.res-drawer-footer a:hover {
+    color: #FF5000;
+    border-bottom-color: #FF5000;
+}

@@ -26,7 +26,7 @@
     "smoke:front": "pnpm dlx @playwright/test test scripts/smoke/front-entrypoints.runtime.spec.cjs --reporter=list",
     "sync": "node scripts/pipelines/sync-front.js",
     "prepare:webapp": "pnpm run build:front && pnpm run sync",
-    "build": "pnpm run prepare:webapp && node scripts/pipelines/build-war.js",
+    "build": "node scripts/pipelines/build-war.js",
     "deploy": "pnpm run build && node scripts/pipelines/deploy.js",
     "publish": "pnpm run deploy",
     "spring:run": "node scripts/spring/run-jeju-spring-gradle.cjs bootRun",

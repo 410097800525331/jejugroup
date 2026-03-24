@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>회원가입 | 제주그룹</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/styles/globals.css}" href="/front-mirror/styles/globals.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/header.css}" href="/front-mirror/components/react/layout/header.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/mega-menu.css}" href="/front-mirror/components/react/layout/mega-menu.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/footer.css}" href="/front-mirror/components/react/layout/footer.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/pages/auth/signup.css}" href="/front-mirror/pages/auth/signup.css">
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
+  <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+</head>
+
+<body class="signup-page">
+  <div id="jeju-page-shell-header"></div>
+
+  <main class="signup-wrapper">
+    <div id="jeju-signup-app" aria-live="polite"></div>
+  </main>
+
+  <div id="jeju-page-shell-footer"></div>
+
+  <script type="module" th:src="@{/front-mirror/components/runtime/bootstrap.js}" src="/front-mirror/components/runtime/bootstrap.js"></script>
+</body>
+
+</html>

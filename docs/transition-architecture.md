@@ -1,127 +1,73 @@
-# 하이브리드 구조 운영 문서
+# 전환 아키텍처
 
-## 문서 성격
+## 목적
 
-- 파일명은 기존 참조 경로를 유지하기 위해 `transition-architecture.md` 를 그대로 사용
-- 하지만 현재 운영 기준은 `전면 React 전환 중` 이 아니라 `하이브리드 구조 확정` 이다
-- 이 문서는 `front`, `jeju-web`, `jeju-spring` 을 어떻게 다뤄야 하는지, 어떤 영역이 React 앱이고 어떤 영역이 고정 정적인지 정리하는 운영 기준서다
+- `front`는 사람이 직접 수정하는 유일한 프런트 원본이다.
+- `jeju-spring`은 최종 런타임에서 그 원본을 서빙하거나 호스트만 맡는 계층이다.
+- `jeju-web/src/main/webapp`은 레거시 미러로만 남기고 기본 런타임 의존성에서 뺀다.
 
-## 구조 결론
+## 현재 구조
 
-- `jejuair` 는 비전환 고정 영역이다
-- `front` 는 사람이 직접 수정하는 프런트엔드 원본이자 필요 시 되돌아볼 수 있는 원본 보관 성격의 작업 공간이다
-- `front/apps/cs` 는 독립 React 앱 원본이다
-- `front/apps/shell` 은 공용 하이브리드 런타임 원본이다
-- `front/components/react` 는 공용 React 컴포넌트 원본이다
-- `jejustay`, `auth`, `mypage`, 메인 랜딩은 정적 HTML + 셸 런타임 + React island 조합을 허용하는 하이브리드 영역이다
-- `jeju-web/src/main/webapp` 는 계속 배포 미러로 사용한다
-- `jeju-spring` 은 Spring Boot + Thymeleaf 기준의 배포 미러로 사용한다
+### 전용 Spring 템플릿
 
-## 디렉터리 역할
+- Spring 컨트롤러가 Thymeleaf 템플릿을 직접 렌더링한다.
+- 이 묶음은 `front` 원본과 1:1로 대응되는 전용 페이지다.
 
-### `front`
+### Spring host-only
 
-- 사람이 직접 수정하는 프런트엔드 원본
-- 프런트엔드 기준의 원본 보관 및 fallback reference 역할을 함께 가진다
-- 화면 마크업, 스타일, 공용 런타임, 앱 엔트리 수정은 여기서 시작
+- Spring은 경로와 호스트만 제공하고, 실제 화면 의미는 `front` 원본을 따른다.
+- 이 경로들은 `templates/front-mirror/**` 아래의 실제 미러 템플릿으로 응답한다.
+- 컨트롤러는 요청 경로를 그대로 `front-mirror/<legacy path>` 형태의 뷰 이름으로 바꿔 반환한다.
 
-### `front/apps/cs`
+### 제외 경로
 
-- 고객센터 React 앱 원본
-- 개발 엔트리는 `front/apps/cs/client/index.html`
-- 실제 서비스 경로 `/pages/cs/customer_center.html` 은 빌드 산출물 또는 개발 서버 middleware 로 연결
+- `jejuair/pages/**`는 이번 Spring final runtime 범위에서 제외한다.
+- `/pages/auth/oauth_callback.html`도 이번 Spring final runtime 범위에서 제외한다.
 
-### `front/apps/shell`
+## 전용 Spring 템플릿 목록
 
-- 하이브리드 페이지 공용 런타임 원본
-- 페이지 셸, island 마운트, 런타임 브리지, 공용 부트스트랩 로직 담당
+| 경로 | Spring 컨트롤러 | 템플릿 | front 원본 |
+| --- | --- | --- | --- |
+| `/` / `/index.html` | `web/LandingController` | `templates/index.html` | `front/index.html` |
+| `/auth/login` / `/pages/auth/login.html` | `auth/web/AuthPageController` | `templates/auth/login.html` | `front/pages/auth/login.html` |
+| `/auth/signup` / `/pages/auth/signup.html` | `auth/web/AuthPageController` | `templates/auth/signup.html` | `front/pages/auth/signup.html` |
+| `/auth/pass` / `/pages/auth/pass_auth.html` | `auth/web/AuthPageController` | `templates/auth/pass-auth.html` | `front/pages/auth/pass_auth.html` |
+| `/migration` | `migration/web/MigrationController` | `templates/migration/dashboard.html` | `front` migration 화면 |
+| `/deals` / `/jejustay/pages/deals/deals.html` | `deals/web/DealsController` | `templates/deals/main.html` | `front/jejustay/pages/deals/deals.html` |
+| `/deals/member` / `/jejustay/pages/deals/deals_member.html` | `deals/web/DealsController` | `templates/deals/member.html` | `front/jejustay/pages/deals/deals_member.html` |
+| `/deals/partner` / `/jejustay/pages/deals/deals_partner.html` | `deals/web/DealsController` | `templates/deals/partner.html` | `front/jejustay/pages/deals/deals_partner.html` |
+| `/mypage/dashboard` / `/pages/mypage/dashboard.html` | `mypage/web/MyPageController` | `templates/mypage/dashboard.html` | `front/pages/mypage/dashboard.html` |
+| `/stay/hotel-list` / `/jejustay/pages/hotel/hotel-list.html` | `stay/web/StayController` | `templates/stay/hotel-list.html` | `front/jejustay/pages/hotel/hotel-list.html` |
+| `/travel/activities` / `/jejustay/pages/travel/activities.html` | `travel/web/TravelController` | `templates/travel/activities.html` | `front/jejustay/pages/travel/activities.html` |
+| `/travel/esim` / `/jejustay/pages/travel/esim.html` | `travel/web/TravelController` | `templates/travel/esim.html` | `front/jejustay/pages/travel/esim.html` |
+| `/travel/guide` / `/jejustay/pages/travel/travel_guide.html` | `travel/web/TravelController` | `templates/travel/guide.html` | `front/jejustay/pages/travel/travel_guide.html` |
+| `/travel/tips` / `/jejustay/pages/travel/travel_tips.html` | `travel/web/TravelController` | `templates/travel/tips.html` | `front/jejustay/pages/travel/travel_tips.html` |
 
-### `front/components/react`
+## Spring host-only 목록
 
-- 공용 React 컴포넌트 원본
-- layout, auth, hotel, life, travel, ui, widget 계열을 관리
+| 경로 | 실제 반환 뷰 | front 원본 | 비고 |
+| --- | --- | --- | --- |
+| `/jejuair/index.html` | `front-mirror/jejuair/index` | `front/jejuair/index.html` | 제주에어 최상위 고정 영역 호스트 |
+| `/pages/cs/customer_center.html` | `front-mirror/pages/cs/customer_center` | `front/apps/cs/client/index.html` | 고객센터 host-only 진입점 |
+| `/jejustay/pages/hotel/jejuhotel.html` | `front-mirror/jejustay/pages/hotel/jejuhotel` | `front/jejustay/pages/hotel/jejuhotel.html` | 호텔 호스트 |
+| `/jejustay/pages/stay/jejustay_life.html` | `front-mirror/jejustay/pages/stay/jejustay_life` | `front/jejustay/pages/stay/jejustay_life.html` | 라이프 호스트 |
+| `/jejustay/pages/stay/private_stay.html` | `front-mirror/jejustay/pages/stay/private_stay` | `front/jejustay/pages/stay/private_stay.html` | 프라이빗 스테이 호스트 |
+| `/jejustay/pages/travel/travel_checklist.html` | `front-mirror/jejustay/pages/travel/travel_checklist` | `front/jejustay/pages/travel/travel_checklist.html` | 체크리스트 호스트 |
+| `/admin/pages/dashboard.html` | `front-mirror/admin/pages/dashboard` | `front/admin/pages/dashboard.html` | 관리자 대시보드 호스트 |
+| `/admin/pages/reservations.html` | `front-mirror/admin/pages/reservations` | `front/admin/pages/reservations.html` | 관리자 예약 호스트 |
+| `/admin/pages/lodging.html` | `front-mirror/admin/pages/lodging` | `front/admin/pages/lodging.html` | 관리자 숙박 호스트 |
+| `/admin/pages/members.html` | `front-mirror/admin/pages/members` | `front/admin/pages/members.html` | 관리자 회원 호스트 |
+| `/admin/pages/cms.html` | `front-mirror/admin/pages/cms` | `front/admin/pages/cms.html` | 관리자 CMS 호스트 |
 
-### `front/jejuair`
+## 제외 경로
 
-- 비전환 고정 영역
-- 현재 구조와 정적 페이지 흐름을 유지
-- 기능 수정은 가능하지만 React 전환 대상으로 간주하지 않는다
+| 경로 | 결정 | 이유 |
+| --- | --- | --- |
+| `/jejuair/pages/**` | 제외 | 최종 Spring runtime에서 host-only로 끌어오지 않는다. |
+| `/pages/auth/oauth_callback.html` | 제외 | OAuth callback은 page host 책임에서 뺀다. |
 
-### `front/jejustay`
+## 경계 원칙
 
-- 하이브리드 운영 영역
-- 정적 HTML 엔트리를 유지하되 필요 구간은 셸 런타임과 island 로 통합
-
-### `front/pages`
-
-- 인증, 마이페이지 등 공용 서비스 페이지
-- 일부는 React island 호스트를 포함하는 하이브리드 페이지다
-
-### `jeju-web/src/main/webapp`
-
-- 배포용 미러
-- `front` 원본에서 동기화된 결과를 유지하는 위치
-- 직접 수정 금지
-
-### `jeju-spring`
-
-- Spring Boot + Thymeleaf 기준 배포 미러
-- 프런트엔드 최종 반영 결과를 소비하는 런타임 측 작업 공간
-- 직접 프런트엔드 원본처럼 수정하지 않는다
-
-## 렌더링 모드 기준
-
-### 고정 정적
-
-- `front/jejuair/**`
-- `front/admin/pages/**`
-- `front/pages/auth/oauth_callback.html`
-
-### 하이브리드 정적 + 셸 런타임
-
-- `front/index.html`
-- `front/jejustay/pages/deals/**`
-- `front/jejustay/pages/hotel/hotel-list.html`
-- `front/jejustay/pages/travel/activities.html`
-- `front/jejustay/pages/travel/esim.html`
-- `front/jejustay/pages/travel/travel_guide.html`
-- `front/jejustay/pages/travel/travel_tips.html`
-
-### 하이브리드 정적 + 셸 런타임 + React island
-
-- `front/pages/auth/login.html`
-- `front/pages/auth/signup.html`
-- `front/pages/auth/pass_auth.html`
-- `front/pages/mypage/dashboard.html`
-- `front/jejustay/pages/hotel/jejuhotel.html`
-- `front/jejustay/pages/stay/jejustay_life.html`
-- `front/jejustay/pages/stay/private_stay.html`
-- `front/jejustay/pages/travel/travel_checklist.html`
-
-### 독립 React 앱
-
-- `front/apps/cs`
-
-## 현재 배포 흐름
-
-1. `front` 원본 수정
-2. `pnpm run prepare:webapp` 또는 `pnpm run sync` 로 `jeju-web/src/main/webapp` 미러 반영
-3. sync 단계에서 webapp 내 HTML 엔트리를 대응 JSP 로 자동 미러 생성
-4. 필요 시 Spring Boot + Thymeleaf 배포 경로에서 `jeju-spring` 미러 결과를 사용
-5. `pnpm run build` 또는 `pnpm run deploy` 로 WAR 생성 및 배포
-
-## 운영 규칙
-
-- 프런트엔드 수정은 항상 `front` 기준으로 판단
-- `jeju-web/src/main/webapp` 직접 수정 금지
-- `jeju-spring` 직접 수정 금지
-- 빌드 산출물 `front/components/runtime/*`, `front/.generated/**` 직접 수정 금지
-- `jejuair` 는 비전환 고정 정책을 유지
-- 새 페이지를 추가할 때는 `고정 정적`, `하이브리드`, `독립 앱` 중 하나를 먼저 선언하고 시작할 것
-
-## 같이 봐야 하는 문서
-
-- [하이브리드 실행 체크리스트](D:/git/jejugroup/docs/hybrid-execution-checklist.md)
-- [front 엔트리포인트 인벤토리](D:/git/jejugroup/docs/front-entrypoint-inventory.md)
-- [텍스트 무결성 가드레일](D:/git/jejugroup/docs/text-integrity-guardrails.md)
-- [메인 Vite 개발 서버 문서](D:/git/jejugroup/docs/front-main-vite-dev-server-2026-03-14.md)
+- 전용 Spring 템플릿은 Spring이 직접 렌더링한다.
+- host-only 경로는 `front-mirror/<legacy path>` 뷰를 반환한다.
+- `front`와 `jeju-spring`의 경계는 문서와 컨트롤러가 같은 기준을 보게 유지한다.

@@ -1,0 +1,30 @@
+goal: >-
+  Finish the repository-side Spring runtime cutover so the default root build and deploy
+  workflow packages jeju-spring, deploys the jeju-spring WAR, health-checks the Spring
+  runtime, and no longer depends on jeju-web/src/main/webapp for the default production path.
+constraints:
+  - front remains the only human-edited frontend source of truth.
+  - jeju-web/src/main/webapp and jeju-spring are downstream mirrors or deployment artifacts, not hand-edited source-of-truth surfaces.
+  - Do not write into forbidden mirror paths directly.
+  - Keep security rules intact for deploy credentials, healthcheck, APIs, and rendered HTML.
+  - Keep the current hybrid shell/island architecture; do not turn the landing into a pure React app.
+  - Use Route B worker delegation and keep main planner-only for implementation files.
+acceptance_criteria:
+  - Root pnpm run build produces a jeju-spring WAR as the default artifact.
+  - Root pnpm run deploy uploads the jeju-spring build artifact instead of jeju-web/ROOT.war.
+  - Default deploy healthcheck targets the Spring runtime rather than the legacy webapp baseline.
+  - The default production path is valid without jeju-web/src/main/webapp.
+  - front changes are propagated into jeju-spring templates and static assets automatically in the default build path.
+  - The repository clearly documents the source-of-truth model so humans are not maintaining parallel front and jeju-spring originals.
+  - The currently Spring-served page list is explicit.
+  - Remaining pages are either hosted by Spring in this change or explicitly declared excluded from the final Spring runtime.
+  - The following currently unresolved entrypoints are addressed by host implementation or explicit exclusion: customer center, jejuhotel, jejustay_life, private_stay, travel_checklist, admin pages, jejuair fixed pages, oauth_callback.
+verification:
+  - pnpm run build
+  - targeted checks for the resolved default artifact path and deploy source path
+  - targeted checks for the Spring mirror output and page-host inventory
+  - pnpm run guard:text
+out_of_scope:
+  - Manual alwaysdata deployment execution
+  - Changing deployment mirror paths under jeju-web/src/main/webapp directly
+  - Public-runtime browser verification against deployed domains unless the user asks for it

@@ -1,0 +1,20 @@
+goal: >
+  Recover the live DB from the failed Flyway V2 checkpoint so pending migrations
+  can advance using the repository's current migration files.
+constraints:
+  - Prefer Flyway-native recovery (`repair`, then `migrate`) over manual schema edits.
+  - Do not invent ad-hoc schema drift or apply hand-written SQL outside the migration chain unless the migration chain itself is blocked.
+  - Use the repository's current migration files as the source of truth.
+  - Only edit migration files if a new concrete blocker appears while rerunning migrate.
+  - Keep the recovery single-lane and record any material failures in `ERROR_LOG.md`.
+acceptance_criteria:
+  - The live DB no longer shows V2 in `FAILED` state.
+  - Flyway advances beyond V2 using the current repository migrations.
+  - If migrate stops again, the exact blocking migration and reason are identified concretely.
+verification:
+  - Inspect Flyway info before and after recovery
+  - Confirm whether pending migrations advanced and record the final state
+out_of_scope:
+  - Broad schema redesign
+  - Inventing missing business data
+  - Changing unrelated frontend/admin behavior

@@ -8,6 +8,9 @@ const springResourcesDir = path.join(rootDir, 'jeju-spring', 'src', 'main', 'res
 const templateMirrorDir = path.join(springResourcesDir, 'templates', 'front-mirror');
 const staticMirrorDir = path.join(springResourcesDir, 'static', 'front-mirror');
 const generatedRuntimeDir = path.join(frontDir, '.generated', 'webapp-overlay', 'components', 'runtime');
+const customerCenterOverlayDir = path.join(frontDir, '.generated', 'webapp-overlay', 'pages', 'cs');
+const customerCenterTemplateDir = path.join(templateMirrorDir, 'pages', 'cs');
+const customerCenterStaticDir = path.join(staticMirrorDir, 'pages', 'cs');
 
 const EXCLUDED_BASENAMES = new Set([
   '.git',
@@ -256,6 +259,34 @@ const copyGeneratedRuntime = async (options) => {
   return true;
 };
 
+const copyCustomerCenterOverlay = async (options) => {
+  if (!(await fs.pathExists(customerCenterOverlayDir))) {
+    return false;
+  }
+
+  const htmlSourcePath = path.join(customerCenterOverlayDir, 'customer_center.html');
+  const assetsSourceDir = path.join(customerCenterOverlayDir, 'assets');
+  const htmlTargetPath = path.join(customerCenterTemplateDir, 'customer_center.html');
+  const assetsTargetDir = path.join(customerCenterStaticDir, 'assets');
+
+  if (!options.dryRun) {
+    await fs.ensureDir(customerCenterTemplateDir);
+    await fs.ensureDir(customerCenterStaticDir);
+
+    if (await fs.pathExists(htmlSourcePath)) {
+      const source = await fs.readFile(htmlSourcePath, 'utf8');
+      const transformed = transformHtmlSource(source, 'pages/cs/customer_center.html');
+      await fs.writeFile(htmlTargetPath, transformed, 'utf8');
+    }
+
+    if (await fs.pathExists(assetsSourceDir)) {
+      await fs.copy(assetsSourceDir, assetsTargetDir, { overwrite: true });
+    }
+  }
+
+  return true;
+};
+
 const buildShellRuntime = (options) => {
   if (!options.buildShell) {
     return;
@@ -275,6 +306,8 @@ const cleanTargets = async (options) => {
 
   await fs.remove(templateMirrorDir);
   await fs.remove(staticMirrorDir);
+  await fs.remove(customerCenterTemplateDir);
+  await fs.remove(customerCenterStaticDir);
 };
 
 async function mirrorFrontToThymeleaf(argv = process.argv.slice(2)) {
@@ -301,11 +334,13 @@ async function mirrorFrontToThymeleaf(argv = process.argv.slice(2)) {
   }
 
   const runtimeCopied = await copyGeneratedRuntime(options);
+  const customerCenterCopied = await copyCustomerCenterOverlay(options);
 
   console.log(`[mirror-front-to-thymeleaf] template ${htmlFiles.length}개, static ${staticFiles.length}개 처리`);
   console.log(`[mirror-front-to-thymeleaf] template target: ${templateMirrorDir}`);
   console.log(`[mirror-front-to-thymeleaf] static target: ${staticMirrorDir}`);
   console.log(`[mirror-front-to-thymeleaf] generated runtime copied: ${runtimeCopied ? 'yes' : 'no'}`);
+  console.log(`[mirror-front-to-thymeleaf] customer center overlay copied: ${customerCenterCopied ? 'yes' : 'no'}`);
 }
 
 if (require.main === module) {

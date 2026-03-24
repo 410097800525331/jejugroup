@@ -1,0 +1,88 @@
+/* ========== Hero Section ========== */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--header-height) + var(--space-xl)) var(--container-padding) var(--space-2xl);
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 51% 61%;
+    transform: scale(1.1) translateX(-45px) translateY(19px);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.1) 40%,
+            rgba(0, 0, 0, 0.5) 100%);
+}
+
+.hero-content {
+    text-align: center;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.hero-content > #hotel-search-widget-root,
+.hero-content > #life-search-widget-root {
+    --hero-search-slot-height: 144px;
+    width: 100%;
+    min-height: var(--hero-search-slot-height);
+    padding-top: var(--space-xl);
+}
+
+.hero-content > #hotel-search-widget-root .search-widget-large,
+.hero-content > #life-search-widget-root .search-widget-large {
+    margin-top: 0;
+}
+
+.hero-content > #hotel-search-widget-root[data-search-widget-state="pending"],
+.hero-content > #life-search-widget-root[data-search-widget-state="pending"] {
+    opacity: 0;
+}
+
+.hero-content > #hotel-search-widget-root[data-search-widget-state="ready"],
+.hero-content > #life-search-widget-root[data-search-widget-state="ready"] {
+    opacity: 1;
+}
+
+html.hero-reveal-pending .hero-subtitle-top,
+html.hero-reveal-pending .hero-content > #hotel-search-widget-root,
+html.hero-reveal-pending .hero-content > #life-search-widget-root {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+}
+
+.hero-subtitle-top {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: auto;
+        padding: calc(var(--header-height) + var(--space-xl)) var(--container-padding) var(--space-2xl);
+    }
+}

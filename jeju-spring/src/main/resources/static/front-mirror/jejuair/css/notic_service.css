@@ -1,0 +1,163 @@
+@charset "utf-8";
+
+/* 공지사항 */
+.notice_content {
+  display: none;
+}
+.notice_content.is_active {
+  display: block;
+}
+.notice_table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #000;
+  margin-top: 40px;
+}
+.notice_table th,
+.notice_table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--main-bg);
+  font-size: 1.4rem;
+  text-align: center;
+}
+.notice_table th {
+  background: #f7f7f7;
+}
+.notice_subject a {
+  display: inline-block;
+  transition: color 0.2s ease;
+}
+.notice_subject a:hover {
+  color: var(--main-color);
+}
+.notice_pagination {
+  margin-top: 40px;
+  text-align: center;
+}
+.page_btn {
+  min-width: 40px;
+  padding: 6px 10px;
+  margin: 0 3px;
+  border: 1px solid #ddd;
+}
+.page_btn.is_active {
+  background: var(--main-color);
+  border-color: var(--main-color);
+  color: #fff;
+}
+@media (max-width: 768px) {
+  .notice_table th:nth-child(4),
+  .notice_table td:nth-child(4) {
+    display: none;
+  }
+}
+@media (max-width: 576px) {
+  .notice_table th:nth-child(3),
+  .notice_table td:nth-child(3) {
+    display: none;
+  }
+  .notice_table th,
+  .notice_table td,
+  .notice_subject a {
+    padding: 4px;
+    font-size: 1.1rem;
+  }
+}
+
+/* 고객센터 */
+.customer_quick {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0 50px;
+}
+.customer_quick li a {
+  display: block;
+  padding: 4px 18px;
+  border-radius: 22px;
+  border: 1px solid #ddd;
+  transition: .3s;
+  cursor: pointer;
+}
+.customer_quick li a:hover {
+  background: var(--main-color);
+  border-color: var(--main-color);
+  color: #fff;
+}
+.faq_list {
+  margin-top: 16px;
+  border-top: 1px solid #ddd;
+}
+
+.faq_item {
+  border-bottom: 1px solid var(--main-bg);
+}
+.faq_question {
+  width: 100%;
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  cursor: pointer;
+}
+.faq_answer {
+  display: none;
+  padding: 16px;
+  background: #fafafa;
+}
+.inquiry_section {
+  margin-top: 30px;
+}
+.inquiry_list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 16px;
+}
+.inquiry_list li {
+  padding: 20px;
+  border: 1px solid var(--main-bg);
+  cursor: pointer;
+}
+.customer_info {
+  display: flex;
+  gap: 20px;
+  margin-top: 50px;
+}
+.customer_info a {
+  flex: 1;
+  padding: 20px 50px;
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 8px;
+}
+.customer_info a:nth-child(1) {
+  background: #FF8300;
+}
+.customer_info a:nth-child(2) {
+  background: #01A7E1;
+}
+.customer_info img {
+  width: 80px;
+  margin-right: 24px;
+  border-radius: 50%;
+}
+@media (max-width: 768px) {
+  .notice_table th:nth-child(4),
+  .notice_table td:nth-child(4) {
+    display: none;
+  }
+}
+@media (max-width: 576px) {
+  .customer_quick li a {
+    padding: 4px 10px;
+    font-size: 1.2rem;
+  }
+  .customer_info img {
+    width: 60px; height: 60px;
+    margin-right: 14px;
+  }
+  .customer_info a {
+    padding: 8px;
+    font-size: 1.2rem;
+  }
+}

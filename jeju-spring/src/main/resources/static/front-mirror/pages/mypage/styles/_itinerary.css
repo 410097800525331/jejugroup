@@ -1,0 +1,129 @@
+/* 나의 여행지 일정 (Itinerary) */
+#mypage-dashboard-root {
+  & .layer-itinerary { margin-top: 80px; }
+
+  & .itinerary-timeline-wrap {
+    display: flex; flex-direction: column; gap: 40px; position: relative; padding-left: 20px;
+  }
+  & .itinerary-timeline-wrap::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(to bottom, var(--meta-accent) 0%, var(--meta-surface-border) 100%);
+  }
+
+  & .itinerary-day-block { display: grid; grid-template-columns: 200px 1fr; gap: 40px; margin-bottom: 40px; }
+
+  & .expand-toggle-btn {
+    display: flex; align-items: center; gap: 8px; padding: 10px 20px;
+    background: #fff; border: 1px solid var(--meta-surface-border);
+    font-size: 13px; font-weight: 800; color: var(--meta-text-main);
+    transition: all 0.3s; box-shadow: var(--shadow-sm);
+  }
+  & .expand-toggle-btn:hover { border-color: var(--meta-accent); color: var(--meta-accent); transform: translateY(-2px); }
+
+  & .itinerary-timeline-wrap {
+    position: relative; transition: all 0.5s var(--ease-smooth);
+  }
+  
+  & .timeline-gradient-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 280px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #fff 80%);
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px;
+    z-index: 10; transition: all 0.4s;
+  }
+  
+  & .timeline-gradient-overlay.active {
+    position: relative; height: 100px; background: none; 
+    margin-top: 20px; padding-bottom: 0;
+  }
+  
+  & .expand-cta-btn {
+    padding: 16px 40px; 
+    background: rgba(255, 80, 0, 0.08); color: #FF5000;
+    font-size: 15px; font-weight: 800; border: 1.5px solid rgba(255, 80, 0, 0.15);
+    box-shadow: none;
+    display: flex; align-items: center; gap: 10px; transition: all 0.4s var(--ease-spring);
+  }
+  & .expand-cta-btn i { color: #FF5000; }
+  & .expand-cta-btn:hover { 
+    background: rgba(255, 80, 0, 0.12); border-color: #FF5000; 
+    transform: translateY(-4px); box-shadow: 0 16px 32px rgba(255, 80, 0, 0.1); 
+  }
+
+  & .day-side-info { display: flex; flex-direction: column; gap: 12px; }
+  & .day-date { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--meta-text-main); }
+  & .day-time { font-size: 15px; color: var(--meta-text-muted); font-weight: 700; }
+
+  & .companions-card-wrap {
+    margin-top: 16px; padding: 16px; 
+    background: rgba(255, 255, 255, 0.6); border: 1px solid var(--meta-surface-border);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  & .comp-head { display: flex; align-items: center; gap: 6px; color: var(--meta-text-muted); }
+  & .comp-head i { font-size: 14px; color: var(--meta-accent); }
+  & .comp-head .small-label { margin: 0; font-weight: 700; font-size: 12px; color: var(--meta-text-muted); }
+
+  & .avatar-stack { display: flex; align-items: center; margin-bottom: 4px; }
+  & .avatar-stack.is-empty {
+    min-height: 48px; padding: 12px 14px; border-radius: 16px;
+    background: rgba(148, 163, 184, 0.08); border: 1px dashed var(--meta-surface-border);
+  }
+  & .companion-avatar { margin-left: -12px; }
+  & .companion-avatar:first-child { margin-left: 0; }
+  & .comp-count-label { font-size: 12px; font-weight: 700; color: var(--meta-text-muted); margin-left: 12px; }
+  & .avatar-stack.is-empty .comp-count-label { margin-left: 0; }
+
+  & .link-action-btn {
+    margin-top: 8px; width: 100%; padding: 10px; font-size: 12px; font-weight: 700;
+    background: #fff; border: 1px solid var(--meta-surface-border); color: var(--meta-text-muted);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: all 0.3s;
+  }
+  & .link-action-btn:hover { background: var(--meta-bg-light); color: var(--meta-accent); border-color: var(--meta-accent); }
+
+
+
+  & .itinerary-content-card {
+    padding: 32px; border-radius: var(--radius-lg); background: #fff;
+    border: 1px solid var(--meta-surface-border); box-shadow: var(--shadow-sm);
+  }
+  
+  & .iti-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--meta-bg-light); }
+  & .iti-title { font-size: 22px; font-weight: 800; color: var(--meta-text-main); margin: 0; }
+  
+  & .map-link-btn {
+    display: flex; align-items: center; gap: 6px; padding: 10px 16px;
+    font-size: 13px; font-weight: 700; background: var(--meta-bg-light); color: var(--meta-text-main);
+    transition: all 0.3s;
+  }
+  & .map-link-btn:hover { background: var(--brand-stay); color: #fff; }
+  & .map-link-btn.is-disabled {
+    background: rgba(148, 163, 184, 0.12); color: var(--meta-text-muted);
+    pointer-events: none;
+  }
+
+  & .activity-checklist-wrap .small-label { margin-bottom: 12px; }
+  & .checklist-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  & .checklist-list.is-empty {
+    min-height: 132px; border: 1px dashed var(--meta-surface-border);
+    border-radius: var(--radius-md); background: rgba(148, 163, 184, 0.06);
+  }
+  & .checklist-item {
+    padding: 14px 20px; border-radius: var(--radius-md); background: var(--meta-bg-light);
+    border: 1px solid transparent; transition: all 0.2s;
+  }
+  & .checklist-item.checked { background: rgba(0, 147, 138, 0.05); border-color: rgba(0, 147, 138, 0.1); }
+  & .checklist-item:hover { transform: translateX(6px); background: #fff; border-color: var(--meta-surface-border); }
+  & .checklist-empty-caption {
+    margin: 12px 0 0; font-size: 13px; font-weight: 700; color: var(--meta-text-muted);
+  }
+
+  & .checkbox-control { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+  & .check-text { font-size: 15px; font-weight: 600; color: var(--meta-text-main); transition: color 0.2s; }
+  & .checklist-item.checked .check-text { color: var(--brand-rent); text-decoration: line-through; opacity: 0.6; }
+
+  @media (max-width: 1024px) {
+    & .itinerary-day-block { grid-template-columns: 1fr; gap: 16px; }
+    & .day-side-info { flex-direction: row; align-items: center; gap: 20px; }
+    & .companions-wrap { margin-top: 0; }
+  }
+}
