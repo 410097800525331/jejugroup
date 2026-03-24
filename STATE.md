@@ -2,37 +2,37 @@
 
 ## Current Task
 
-- task: `Align JejuSpringApplicationTests with the auth front-mirror alias cutover`
-- phase: `implementation`
-- scope: `STATE.md, jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java`
-- verification_target: `Spring application tests no longer assume /auth/* returns the old temporary auth HTML directly and instead verify the new alias + front-mirror ownership contract`
+- task: `Normalize auth-page navigation so login/signup/pass pages route to public runtime URLs instead of internal /front-mirror paths`
+- phase: `paused`
+- scope: `STATE.md, auth page/header/footer navigation sources, optional docs/runtime references`
+- verification_target: `auth login/signup/pass pages render from front-mirror as intended and their visible navigation points at public runtime URLs like /index.html and /pages/... rather than internal /front-mirror/... paths`
 
 ## Route
 
-- route: `Route A`
-- reason: `The remaining slice is now a single-file test expectation adjustment in JejuSpringApplicationTests.java after the runtime controllers and docs are already updated. No shared assets, no additional docs, and no second implementation lane are needed for this narrow follow-up.`
+- route: `Route B`
+- reason: `The auth runtime ownership cutover itself is already complete and pushed, but the next remaining issue is broader runtime navigation drift across auth templates and shared shell/header behavior. This is no longer the old single-file test slice, so the next machine should reopen it with a fresh broader route decision.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md, jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java`
-- note: `Route A single-writer follow-up. The auth front-source cutover contract is already frozen; this slice only updates Spring test expectations to match that runtime behavior.`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- note: `Paused handoff state only. The previous Route A test-followup is complete and already pushed on lsh; the next machine should continue from a fresh route decision for the remaining auth navigation issue.`
 
 ## Contract Freeze
 
-- contract_freeze: `Keep the auth front-source cutover behavior unchanged. /auth/login, /auth/signup, and /auth/pass are compatible aliases, and /pages/auth/*.html is the canonical front-mirror rendered path. Update tests only so they assert that contract instead of the old temporary Spring auth templates.`
+- contract_freeze: `Auth page bodies are already cut back to the front source-of-truth via front-mirror. The remaining follow-up is only to normalize visible navigation so end users are sent to public runtime URLs, not internal /front-mirror/... paths.`
 
 - status: `frozen`
 - path: `SEED.auth-front-source-cutover-v1.yaml`
 - revision: `v1`
-- note: `Frozen auth front-source cutover contract still applies to this test-only follow-up.`
+- note: `The auth front-source cutover baseline is complete; remaining work is navigation cleanup on top of that baseline.`
 
-- reviewer: `not required for Route A`
-- reviewer_target: `n/a`
-- reviewer_focus: `n/a`
+- reviewer: `pending`
+- reviewer_target: `auth navigation cleanup`
+- reviewer_focus: `Make sure auth pages do not leak internal /front-mirror URLs in visible navigation and keep the new auth runtime ownership intact`
 
 ## Last Update
 
-- timestamp: `2026-03-24 21:36:00 +09:00`
-- note: `Route A follow-up starts now because the only remaining gap is JejuSpringApplicationTests still assuming /auth/* returns the old temporary auth HTML directly.`
+- timestamp: `2026-03-24 22:35:00 +09:00`
+- note: `Paused for next-machine handoff. Auth runtime ownership cutover, docs alignment, test expectation alignment, local targeted Gradle verification, and lsh push are complete. The next remaining issue observed in the browser is that some auth-page navigation still points at internal /front-mirror/... URLs instead of public runtime paths such as /index.html and /pages/....`
