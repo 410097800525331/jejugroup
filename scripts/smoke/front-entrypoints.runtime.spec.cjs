@@ -5,6 +5,7 @@ const { expectNoRuntimeIssues, createIssueTracker } = require("./helpers/runtime
 const { createStaticServerController } = require("./helpers/static-server.cjs");
 const {
   installAdminSmokeFixtures,
+  installCustomerCenterSmokeMocks,
   installMypageSession,
   installOneShotRouteFailure,
 } = require("./helpers/smoke-fixtures.cjs");
@@ -120,6 +121,8 @@ test("main landing smoke", async ({ page }) => {
 });
 
 test("main landing customer center link routes to bundled customer center page", async ({ page }) => {
+  await installCustomerCenterSmokeMocks(page);
+
   await page.goto(server.url("/index.html"), {
     waitUntil: "domcontentloaded",
   });
