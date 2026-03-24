@@ -308,7 +308,7 @@ td.end {
   color: var(--main-color);
   font-weight: 600;
 }
-.search_btn {
+button.search_btn {
   margin-top: 32px;
   width: 100%;
   height: 56px;
