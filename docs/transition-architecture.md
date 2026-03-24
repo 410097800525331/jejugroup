@@ -31,9 +31,6 @@
 | 경로 | Spring 컨트롤러 | 템플릿 | front 원본 |
 | --- | --- | --- | --- |
 | `/` / `/index.html` | `web/LandingController` | `templates/index.html` | `front/index.html` |
-| `/auth/login` / `/pages/auth/login.html` | `auth/web/AuthPageController` | `templates/auth/login.html` | `front/pages/auth/login.html` |
-| `/auth/signup` / `/pages/auth/signup.html` | `auth/web/AuthPageController` | `templates/auth/signup.html` | `front/pages/auth/signup.html` |
-| `/auth/pass` / `/pages/auth/pass_auth.html` | `auth/web/AuthPageController` | `templates/auth/pass-auth.html` | `front/pages/auth/pass_auth.html` |
 | `/migration` | `migration/web/MigrationController` | `templates/migration/dashboard.html` | `front` migration 화면 |
 | `/deals` / `/jejustay/pages/deals/deals.html` | `deals/web/DealsController` | `templates/deals/main.html` | `front/jejustay/pages/deals/deals.html` |
 | `/deals/member` / `/jejustay/pages/deals/deals_member.html` | `deals/web/DealsController` | `templates/deals/member.html` | `front/jejustay/pages/deals/deals_member.html` |
@@ -50,6 +47,9 @@
 | 경로 | 실제 반환 뷰 | front 원본 | 비고 |
 | --- | --- | --- | --- |
 | `/jejuair/index.html` | `front-mirror/jejuair/index` | `front/jejuair/index.html` | 제주에어 최상위 고정 영역 호스트 |
+| `/pages/auth/login.html` | `front-mirror/pages/auth/login` | `front/pages/auth/login.html` | auth canonical page, `/auth/login` 호환 alias |
+| `/pages/auth/signup.html` | `front-mirror/pages/auth/signup` | `front/pages/auth/signup.html` | auth canonical page, `/auth/signup` 호환 alias |
+| `/pages/auth/pass_auth.html` | `front-mirror/pages/auth/pass_auth` | `front/pages/auth/pass_auth.html` | auth canonical page, `/auth/pass` 호환 alias |
 | `/pages/cs/customer_center.html` | `front-mirror/pages/cs/customer_center` | `front/apps/cs/client/index.html` | 고객센터 host-only 진입점 |
 | `/jejustay/pages/hotel/jejuhotel.html` | `front-mirror/jejustay/pages/hotel/jejuhotel` | `front/jejustay/pages/hotel/jejuhotel.html` | 호텔 호스트 |
 | `/jejustay/pages/stay/jejustay_life.html` | `front-mirror/jejustay/pages/stay/jejustay_life` | `front/jejustay/pages/stay/jejustay_life.html` | 라이프 호스트 |

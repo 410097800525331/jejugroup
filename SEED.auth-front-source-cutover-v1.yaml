@@ -1,0 +1,24 @@
+goal: "auth login/signup/pass_auth runtime이 temporary Spring 전용 auth 템플릿이 아니라 front source-of-truth 기반 front-mirror auth 템플릿으로 다시 서빙되도록 고정한다"
+constraints:
+  - "canonical rendered pages are front-mirror auth templates under /pages/auth/*.html"
+  - "short /auth/login, /auth/signup, /auth/pass routes may remain as compatible aliases if needed"
+  - "temporary Spring auth templates under templates/auth/* must stop being the runtime source for login/signup/pass_auth"
+  - "API payloads and auth endpoint contracts must not change"
+  - "OAuth callback exclusion must remain unchanged"
+  - "docs/inventory must be updated to match the new runtime ownership"
+acceptance_criteria:
+  - "login, signup, and pass_auth requests resolve to the front-mirror auth template family under templates/front-mirror/pages/auth/*.html"
+  - "the Spring auth controller no longer treats templates/auth/* as the active runtime source for these pages"
+  - "/auth/login, /auth/signup, and /auth/pass continue to work as compatible aliases when present"
+  - "/pages/auth/oauth_callback.html remains excluded from the Spring final runtime baseline"
+  - "docs/transition-architecture.md and docs/front-entrypoint-inventory.md reflect the new ownership and route classification"
+verification:
+  - "inspect AuthPageController and FrontMirrorHostController to confirm the runtime path points at front-mirror auth views"
+  - "inspect the three auth templates under templates/front-mirror/pages/auth to confirm they are the rendered targets"
+  - "inspect docs/transition-architecture.md and docs/front-entrypoint-inventory.md for matching route ownership language"
+  - "confirm no auth payload or endpoint contract changes are introduced"
+out_of_scope:
+  - "changing auth API payloads or endpoint schemas"
+  - "changing OAuth callback handling beyond preserving the existing exclusion"
+  - "rewriting unrelated front pages or unrelated Spring host-only routes"
+  - "adding new auth features, flows, or UI redesign work"

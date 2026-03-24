@@ -2,83 +2,68 @@ package com.jejugroup.jejuspring.auth.web;
 
 import java.util.Set;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.jejugroup.jejuspring.auth.view.LoginPageView;
-import com.jejugroup.jejuspring.auth.view.PassAuthPageView;
-import com.jejugroup.jejuspring.auth.view.SignupPageView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Controller
 public class AuthPageController {
     private static final Set<String> SUPPORTED_SHELLS = Set.of("main", "stay", "air");
 
-    @GetMapping({ "/auth/login", "/pages/auth/login.html" })
-    public String loginPage(
+    @GetMapping({ "/auth/login", "/auth/signup", "/auth/pass" })
+    public String authAlias(
         @RequestParam(name = "shell", required = false) String shell,
-        Model model
+        @RequestParam(name = "redirect", required = false) String redirect,
+        HttpServletRequest request
     ) {
         String resolvedShell = normalizeShell(shell);
-        model.addAttribute(
-            "loginPage",
-            new LoginPageView(
-                "로그인 | JejuGroup Spring",
-                resolvedShell,
-                "/api/auth/login",
-                "/api/auth/session",
-                withShellQuery("/pages/auth/signup.html", resolvedShell),
-                withShellQuery("/pages/auth/pass_auth.html", resolvedShell),
-                "/admin/pages/dashboard.html",
-                "/index.html",
-                "/migration"
-            )
-        );
-        return "auth/login";
+        String targetPath = toFrontMirrorAuthPath(normalizeRequestPath(request));
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(targetPath)
+            .queryParam("shell", resolvedShell);
+        appendRedirect(builder, redirect);
+
+        return "redirect:" + builder.build().encode().toUriString();
     }
 
-    @GetMapping({ "/auth/signup", "/pages/auth/signup.html" })
-    public String signupPage(
-        @RequestParam(name = "shell", required = false) String shell,
-        Model model
-    ) {
-        String resolvedShell = normalizeShell(shell);
-        model.addAttribute(
-            "signupPage",
-            new SignupPageView(
-                "회원가입 | JejuGroup Spring",
-                resolvedShell,
-                "/api/auth/verify",
-                "/api/auth/signup",
-                withShellQuery("/pages/auth/login.html", resolvedShell),
-                withShellQuery("/pages/auth/pass_auth.html", resolvedShell),
-                "/migration",
-                "PASS"
-            )
-        );
-        return "auth/signup";
+    private String normalizeRequestPath(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        if (contextPath != null && !contextPath.isBlank() && requestUri.startsWith(contextPath)) {
+            return requestUri.substring(contextPath.length());
+        }
+        return requestUri;
     }
 
-    @GetMapping({ "/auth/pass", "/pages/auth/pass_auth.html" })
-    public String passAuthPage(
-        @RequestParam(name = "shell", required = false) String shell,
-        Model model
-    ) {
-        String resolvedShell = normalizeShell(shell);
-        model.addAttribute(
-            "passAuthPage",
-            new PassAuthPageView(
-                "PASS 인증 | JejuGroup Spring",
-                resolvedShell,
-                "/api/auth/verify",
-                withShellQuery("/pages/auth/login.html", resolvedShell),
-                withShellQuery("/pages/auth/signup.html", resolvedShell),
-                "/migration",
-                "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-            )
-        );
-        return "auth/pass-auth";
+    private String toFrontMirrorAuthPath(String requestPath) {
+        if ("/auth/login".equals(requestPath)) {
+            return "/pages/auth/login.html";
+        }
+
+        if ("/auth/signup".equals(requestPath)) {
+            return "/pages/auth/signup.html";
+        }
+
+        return "/pages/auth/pass_auth.html";
+    }
+
+    private void appendRedirect(UriComponentsBuilder builder, String redirect) {
+        if (!isSafeRedirectTarget(redirect)) {
+            return;
+        }
+
+        builder.queryParam("redirect", redirect);
+    }
+
+    private boolean isSafeRedirectTarget(String redirect) {
+        if (redirect == null || redirect.isBlank()) {
+            return false;
+        }
+
+        return redirect.startsWith("/") && !redirect.startsWith("//");
     }
 
     private String normalizeShell(String shell) {
@@ -88,9 +73,5 @@ public class AuthPageController {
 
         String normalized = shell.trim().toLowerCase();
         return SUPPORTED_SHELLS.contains(normalized) ? normalized : "main";
-    }
-
-    private String withShellQuery(String path, String shell) {
-        return "%s?shell=%s".formatted(path, shell);
     }
 }

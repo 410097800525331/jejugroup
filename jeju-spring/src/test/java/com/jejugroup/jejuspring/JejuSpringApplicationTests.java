@@ -82,27 +82,48 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 	}
 
 	@Test
-	void authLoginPageLoads() throws Exception {
+	void authLoginAliasRedirectsToFrontMirrorPage() throws Exception {
 		mockMvc.perform(get("/auth/login"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("First Manual Migration Slice")))
-			.andExpect(content().string(containsString("JejuGroup account")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrlPattern("/pages/auth/login.html?shell=main*"));
 	}
 
 	@Test
-	void authSignupPageLoads() throws Exception {
+	void authLoginFrontMirrorPageLoads() throws Exception {
+		mockMvc.perform(get("/pages/auth/login.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("로그인")))
+			.andExpect(content().string(containsString("회원 전용 혜택을 받아보세요.")));
+	}
+
+	@Test
+	void authSignupAliasRedirectsToFrontMirrorPage() throws Exception {
 		mockMvc.perform(get("/auth/signup"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("Second Manual Migration Slice")))
-			.andExpect(content().string(containsString("Create Account")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrlPattern("/pages/auth/signup.html?shell=main*"));
 	}
 
 	@Test
-	void authPassPageLoads() throws Exception {
+	void authSignupFrontMirrorPageLoads() throws Exception {
+		mockMvc.perform(get("/pages/auth/signup.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("회원가입 | 제주그룹")))
+			.andExpect(content().string(containsString("jeju-signup-app")));
+	}
+
+	@Test
+	void authPassAliasRedirectsToFrontMirrorPage() throws Exception {
 		mockMvc.perform(get("/auth/pass"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrlPattern("/pages/auth/pass_auth.html?shell=main*"));
+	}
+
+	@Test
+	void authPassFrontMirrorPageLoads() throws Exception {
+		mockMvc.perform(get("/pages/auth/pass_auth.html"))
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("PASS")))
-			.andExpect(content().string(containsString("Third Manual Migration Slice")));
+			.andExpect(content().string(containsString("jeju-pass-auth-app")));
 	}
 
 	@Test

@@ -143,3 +143,15 @@
 - summary: `Single-load admin shell refactor paused before reviewer and browser verification`
 - details: `The workspace has a frozen seed at SEED.admin-shell-single-load-v1.yaml, a new front/admin/js/admin_shell.js bootstrap, and five admin HTML entrypoints rewired to that shared shell. The task was intentionally paused for cross-environment continuation before reviewer pass, direct-entry checks, same-document section-switch checks, and history/popstate verification were completed.`
 - status: `deferred`
+
+- time: `2026-03-24 21:32 +09:00`
+- location: `pnpm run spring:test`
+- summary: `auth front-source cutover verification is blocked by the existing missing Gradle wrapper jar`
+- details: `The auth login/signup/pass_auth cutover changes rebuilt front successfully and refreshed front-mirror outputs, but Spring mechanical verification still failed before test execution because jeju-spring/gradle/wrapper/gradle-wrapper.jar is absent in this workspace. This prevents running JejuSpringApplicationTests for the new auth alias/front-mirror contract here, even after aligning the test expectations.`
+- status: `open`
+
+- time: `2026-03-24 21:47 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\gradlew.bat test --tests com.jejugroup.jejuspring.JejuSpringApplicationTests`
+- summary: `Spring test verification is still blocked by the missing Gradle wrapper jar`
+- details: `The focused JejuSpringApplicationTests run failed immediately with "Unable to access jarfile D:\git\jejugroup\jeju-spring\\gradle\\wrapper\\gradle-wrapper.jar". This is the same workspace blocker as the earlier spring:test failure and prevents mechanical confirmation of the auth alias/front-mirror contract in this environment.`
+- status: `open`

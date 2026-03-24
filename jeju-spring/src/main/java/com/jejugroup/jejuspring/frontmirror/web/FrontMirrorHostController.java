@@ -50,6 +50,48 @@ public class FrontMirrorHostController {
             )
         ),
         Map.entry(
+            "/pages/auth/login.html",
+            new HostPageSpec(
+                "로그인",
+                "Spring host page",
+                "로그인 진입점은 Spring이 호스트만 맡고 본문은 front 원본을 따른다.",
+                "front/pages/auth/login.html",
+                "auth-host",
+                List.of(
+                    "로그인 화면은 front-mirror auth 템플릿으로 유지한다.",
+                    "AuthPageController는 /auth/login 별칭만 남긴다."
+                )
+            )
+        ),
+        Map.entry(
+            "/pages/auth/signup.html",
+            new HostPageSpec(
+                "회원가입",
+                "Spring host page",
+                "회원가입 진입점은 Spring이 호스트만 맡고 본문은 front 원본을 따른다.",
+                "front/pages/auth/signup.html",
+                "auth-host",
+                List.of(
+                    "회원가입 화면은 front-mirror auth 템플릿으로 유지한다.",
+                    "AuthPageController는 /auth/signup 별칭만 남긴다."
+                )
+            )
+        ),
+        Map.entry(
+            "/pages/auth/pass_auth.html",
+            new HostPageSpec(
+                "PASS 인증",
+                "Spring host page",
+                "PASS 인증 진입점은 Spring이 호스트만 맡고 본문은 front 원본을 따른다.",
+                "front/pages/auth/pass_auth.html",
+                "auth-host",
+                List.of(
+                    "PASS 인증 화면은 front-mirror auth 템플릿으로 유지한다.",
+                    "AuthPageController는 /auth/pass 별칭만 남긴다."
+                )
+            )
+        ),
+        Map.entry(
             "/jejustay/pages/hotel/jejuhotel.html",
             new HostPageSpec(
                 "제주스테이 호텔",
@@ -186,6 +228,9 @@ public class FrontMirrorHostController {
     @GetMapping({
         "/jejuair/index.html",
         "/pages/cs/customer_center.html",
+        "/pages/auth/login.html",
+        "/pages/auth/signup.html",
+        "/pages/auth/pass_auth.html",
         "/jejustay/pages/hotel/jejuhotel.html",
         "/jejustay/pages/stay/jejustay_life.html",
         "/jejustay/pages/stay/private_stay.html",
