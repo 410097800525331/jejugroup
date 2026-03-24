@@ -4,6 +4,7 @@
 
 - `front`가 원본이고 `jeju-spring`은 최종 런타임 계층이다.
 - 이 문서는 Spring이 어떤 경로를 전용 템플릿으로 서빙하는지, 어떤 경로를 host-only로 넘기는지, 어떤 경로를 제외하는지 정리한다.
+- 이 문서는 현재 final runtime baseline 기준을 적는다.
 
 ## 분류 기준
 
@@ -12,8 +13,9 @@
 - `Spring host-only`
   - Spring 컨트롤러가 요청 경로를 `front-mirror/<legacy path>` 뷰 이름으로 바꿔 반환한다.
   - 실제 화면 본문은 `front` 원본 기준으로 유지한다.
-- `Excluded from Spring final runtime`
-  - 이번 Spring final runtime 범위에서 넣지 않는다.
+  - 현재 final-runtime baseline에서는 완료된 런타임 커버리지로 인정한다.
+- `Permanent exclusions from Spring final runtime`
+  - 현재 final runtime baseline에서 영구 제외한다.
 
 ## Spring-served dedicated template
 
@@ -50,15 +52,16 @@
 | `/admin/pages/members.html` | `front-mirror/admin/pages/members` | `front/admin/pages/members.html` | 관리자 회원 호스트 |
 | `/admin/pages/cms.html` | `front-mirror/admin/pages/cms` | `front/admin/pages/cms.html` | 관리자 CMS 호스트 |
 
-## 제외 경로
+## 영구 제외 경로
 
 | 경로 | 결정 | 이유 |
 | --- | --- | --- |
-| `/jejuair/pages/**` | 제외 | 이번 Spring final runtime에서 host-only로 올리지 않는다. |
-| `/pages/auth/oauth_callback.html` | 제외 | OAuth callback은 page host 책임에서 뺀다. |
+| `/jejuair/pages/**` | 영구 제외 | 현재 final runtime baseline에서 host-only로 올리지 않는다. |
+| `/pages/auth/oauth_callback.html` | 영구 제외 | OAuth callback은 page host 책임에서 현재 baseline 밖으로 둔다. |
 
 ## 경계 메모
 
 - 전용 Spring 템플릿은 Spring이 직접 렌더링한다.
 - host-only 경로는 실제 `front-mirror/...` 템플릿으로 응답한다.
+- host-only 경로는 현재 final-runtime baseline의 완료된 런타임 커버리지로 친다.
 - 컨트롤러와 문서가 같은 기준을 보도록 이 표를 유지한다.

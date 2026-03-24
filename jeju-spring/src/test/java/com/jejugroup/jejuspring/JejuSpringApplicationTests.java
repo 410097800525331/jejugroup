@@ -1,5 +1,6 @@
 package com.jejugroup.jejuspring;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.time.LocalDate;
 
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,8 +31,29 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	@Autowired
+	private Environment environment;
+
 	@Test
 	void contextLoads() {
+	}
+
+	@Test
+	void resolvedSpringTestDatabaseUrlsStayOffAlwaysdata() throws Exception {
+		String datasourceUrl = environment.getProperty("spring.datasource.url");
+		String flywayUrl = environment.getProperty("spring.flyway.url");
+
+		org.assertj.core.api.Assertions.assertThat(datasourceUrl).isNotBlank();
+		org.assertj.core.api.Assertions.assertThat(flywayUrl).isNotBlank();
+		org.assertj.core.api.Assertions.assertThat(datasourceUrl).doesNotContain("alwaysdata");
+		org.assertj.core.api.Assertions.assertThat(flywayUrl).doesNotContain("alwaysdata");
+		org.assertj.core.api.Assertions.assertThat(flywayUrl).isEqualTo(datasourceUrl);
+
+		try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
+			String actualUrl = connection.getMetaData().getURL();
+			org.assertj.core.api.Assertions.assertThat(actualUrl).isEqualTo(datasourceUrl);
+			org.assertj.core.api.Assertions.assertThat(actualUrl).doesNotContain("alwaysdata");
+		}
 	}
 
 	@Test

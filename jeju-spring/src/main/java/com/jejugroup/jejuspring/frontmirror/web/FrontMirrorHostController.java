@@ -12,6 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Final-runtime baseline의 host-only 경로를 서빙한다.
+ * 이 범위의 host-only 라우트는 완료된 런타임 커버리지로 본다.
+ */
 @Controller
 public class FrontMirrorHostController {
     private static final Map<String, HostPageSpec> HOST_PAGES = Map.ofEntries(

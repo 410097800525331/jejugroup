@@ -101,3 +101,33 @@
 - summary: `spring:test was redirected to localhost, then failed once on a blank local password fallback before passing after the helper fix`
 - details: `The first rerun after the test-only precedence change reached localhost MySQL but failed with Access denied for user 'jejugroup'@'localhost' (using password: NO). The test helper was then updated to read the local DB values from jeju-spring/.env with last-value-wins precedence, and the next rerun passed cleanly.`
 - status: `resolved`
+
+- time: `2026-03-24 15:37 +09:00`
+- location: `runtime env-source cutover`
+- summary: `default runtime env ownership no longer depends on jeju-web/.env`
+- details: `Deploy/runtime helpers now default to jeju-spring/.env, the explicit JEJU_SHARED_ENV_PATH override remains available, and the helper/example contract was aligned so SSH/admin/API fallback keys are documented and accepted consistently. pnpm run build and pnpm run spring:test both passed after the cutover.`
+- status: `resolved`
+
+- time: `2026-03-24 15:49 +09:00`
+- location: `pnpm run smoke:front`
+- summary: `front runtime smoke still fails on admin API dependency and mypage DOM expectation`
+- details: `The rerun after final-runtime policy cleanup still failed in two places. admin dashboard smoke triggered request failures to http://localhost:9090/jeju-web/api/auth/session and /api/admin/dashboard?domain=all, which shows the local static smoke path still depends on the old jeju-web-style API base when no Spring backend is serving those endpoints. mypage dashboard smoke also failed because #mypage-dashboard-root .meta-dashboard-layout was not found within the timeout, so the current DOM/runtime no longer matches the smoke expectation.`
+- status: `open`
+
+- time: `2026-03-24 15:50 +09:00`
+- location: `pnpm run smoke:cs`
+- summary: `customer-center smoke expectations are stale against the current bundled app`
+- details: `All four cs smoke cases failed on missing expected text such as "세 가지 서비스, 하나의 완벽한 여행", "2026년 2월 제주항공 신규 노선 운항 안내", "JEJU GROUP FAQ LIBRARY", and "나의 문의 내역". The current customer-center app routes still build and mount, but the smoke assertions are out of sync with the present UI copy and/or route-state behavior.`
+- status: `open`
+
+- time: `2026-03-24 16:08 +09:00`
+- location: `local smoke repair`
+- summary: `front and customer-center smoke blockers were repaired under the current Spring baseline`
+- details: `The smoke harness now seeds the local admin and mypage session paths, mocks the admin dashboard and customer-center API responses needed for local verification, and aligns the customer-center assertions with the current UI copy. Both pnpm run smoke:front and pnpm run smoke:cs now pass without weakening the runtime-issue checks.`
+- status: `resolved`
+
+- time: `2026-03-24 16:47 +09:00`
+- location: `pnpm run spring:run`
+- summary: `local Spring boot now reaches localhost MySQL, but the local DB user lacks schema access`
+- details: `The malformed duplicate DB_* block in jeju-spring/.env was removed and the default DB_URL now points at localhost. After that fix, bootRun no longer tried the alwaysdata host; Flyway now fails later with 'Access denied for user 'jejugroup'@'localhost' to database 'jejugroup_db''. The remaining blocker is local MySQL user/schema privilege setup rather than repository code or env parsing.`
+- status: `open`

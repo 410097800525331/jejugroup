@@ -1,0 +1,31 @@
+goal: >-
+  Finalize the Spring final-runtime closure policy by explicitly freezing the
+  permanent exclusions, accepting host-only coverage as completed runtime
+  coverage, cleaning transitional wording, and re-running the core verification
+  commands against that baseline.
+constraints:
+  - Keep the current build/deploy/runtime baseline on jeju-spring.
+  - Do not reopen the decision to convert every host-only page into a dedicated Thymeleaf template in this slice.
+  - Treat `/jejuair/pages/**` and `/pages/auth/oauth_callback.html` as permanent exclusions for the current final-runtime baseline unless a later architecture decision reopens them.
+  - Treat Spring host-only routing as completed runtime coverage for this baseline.
+  - Keep verification honest: record smoke failures as remaining blockers instead of papering over them.
+  - Use Route B worker delegation and keep main planner-only for implementation files.
+acceptance_criteria:
+  - `docs/front-entrypoint-inventory.md` explicitly marks the excluded routes as permanent exclusions for the current baseline.
+  - `docs/front-entrypoint-inventory.md` and `docs/transition-architecture.md` explicitly state that host-only routes count as completed runtime coverage.
+  - `FrontMirrorHostController.java` aligns with the same host-only completion semantics.
+  - `application.yml` no longer reads like the repo is still undecided about the current final-runtime baseline.
+  - `pnpm run build` is re-run and passes.
+  - `pnpm run spring:test` is re-run and passes.
+  - core smoke commands are re-run and their pass/fail state is recorded accurately.
+verification:
+  - pnpm run build
+  - pnpm run spring:test
+  - pnpm run smoke:front
+  - pnpm run smoke:cs
+  - git diff --check on the touched files
+out_of_scope:
+  - Converting all host-only pages into dedicated Thymeleaf templates
+  - Reclassifying the permanent exclusions back into scope
+  - Deploying to alwaysdata or Oracle Cloud
+  - Hiding or weakening failing smoke checks

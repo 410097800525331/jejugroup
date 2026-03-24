@@ -700,3 +700,67 @@
   - `pnpm run guard:text` passed
   - `git diff --check -- STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md SEED.spring-test-local-db-isolation-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java jeju-spring/src/test/resources/application.yml` passed
   - `reviewer_test_db_isolation (Newton)` reported `발견 없음` and confirmed production `jeju-spring/src/main/resources/application.yml` was unchanged
+
+- time: `2026-03-24 15:14 +09:00`
+- route: `Route B`
+- task: `Add a regression guard so spring:test fails if the resolved test datasource/flyway path drifts back to alwaysdata`
+- participants: `main`, `worker_test_regression_guard (Schrodinger)`, `reviewer_test_regression_guard (Helmholtz)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-alwaysdata-regression-guard-v1.yaml`
+  - `worker_test_regression_guard`: `jeju-spring/src/test/**`
+  - `reviewer_test_regression_guard`: `review only`
+- verification:
+  - `worker_test_regression_guard` updated `jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java` with a runtime-resolved guard over `spring.datasource.url`, `spring.flyway.url`, and the live datasource metadata URL
+  - `pnpm run spring:test` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.spring-test-alwaysdata-regression-guard-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java` passed apart from the existing `MULTI_AGENT_LOG.md` CRLF normalization warning
+  - the new regression test makes an `alwaysdata` drift fail on the actual runtime-resolved path rather than a static grep
+  - `reviewer_test_regression_guard (Helmholtz)` reported `발견 없음` and confirmed datasource/flyway symmetry plus no production/runtime file drift
+
+- time: `2026-03-24 15:37 +09:00`
+- route: `Route B`
+- task: `Cut the remaining jeju-web/.env runtime dependency by making jeju-spring/.env the default env source for Spring runtime and deploy scripts`
+- participants: `main`, `worker_runtime_env_cutover (Faraday)`, `worker_env_contract_docs (Godel)`, `reviewer_runtime_env_cutover (Feynman)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-runtime-env-source-cutover-v1.yaml, ERROR_LOG.md`
+  - `worker_runtime_env_cutover`: `scripts/utils/env.js, scripts/utils/checkPath.js, jeju-spring/src/main/resources/application.yml, jeju-spring/.env.example`
+  - `worker_env_contract_docs`: `AGENTS.md, WORKSPACE_CONTEXT.toml`
+  - `reviewer_runtime_env_cutover`: `review only`
+- verification:
+  - `worker_runtime_env_cutover` switched the default helper env path to `jeju-spring/.env`, preserved `JEJU_SHARED_ENV_PATH` override behavior, aligned `scripts/utils/env.js` with `SSH_*` primary plus `ALWAYSDATA_*` fallbacks, and updated `jeju-spring/.env.example` to reflect the real helper/runtime keys including admin/API fallback keys
+  - `worker_env_contract_docs` updated `AGENTS.md` and `WORKSPACE_CONTEXT.toml` so `jeju-spring/.env` is the documented default env source and `jeju-web/.env` is legacy-only historical reference
+  - `pnpm run build` passed and produced `jeju-spring/build/jeju-spring.war`
+  - `pnpm run spring:test` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.spring-runtime-env-source-cutover-v1.yaml scripts/utils/env.js jeju-spring/src/main/resources/application.yml AGENTS.md WORKSPACE_CONTEXT.toml` passed apart from existing CRLF normalization warnings on tracked text files
+  - `reviewer_runtime_env_cutover (Feynman)` first flagged missing admin/API key contract alignment between `env.js` and `.env.example`; after the follow-up patch the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-24 15:52 +09:00`
+- route: `Route B`
+- task: `Finalize the Spring final-runtime closure policy and re-run the core verification commands`
+- participants: `main`, `worker_runtime_closure_policy (Nash)`, `reviewer_runtime_closure (Hooke)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-final-runtime-closure-v2.yaml, ERROR_LOG.md`
+  - `worker_runtime_closure_policy`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/application.yml`
+  - `reviewer_runtime_closure`: `review only`
+- verification:
+  - `worker_runtime_closure_policy` marked `/jejuair/pages/**` and `/pages/auth/oauth_callback.html` as permanent exclusions for the current baseline and aligned docs/controller wording so host-only routes count as completed runtime coverage
+  - `pnpm run build` passed
+  - `pnpm run spring:test` passed
+  - `pnpm run smoke:front` failed: admin dashboard still requests `http://localhost:9090/jeju-web/api/auth/session` and `/api/admin/dashboard?domain=all`, and mypage dashboard no longer matches the smoke DOM expectation for `.meta-dashboard-layout`
+  - `pnpm run smoke:cs` failed: all four assertions are stale against the current bundled customer-center UI copy and/or route-state behavior
+  - `git diff --check -- docs/front-entrypoint-inventory.md docs/transition-architecture.md jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java jeju-spring/src/main/resources/application.yml` passed
+  - `reviewer_runtime_closure (Hooke)` first flagged one remaining `제외` wording in `docs/transition-architecture.md`; after the follow-up patch the closure policy has no remaining reviewer findings, but the smoke failures stay open as real blockers
+
+- time: `2026-03-24 16:08 +09:00`
+- route: `Route B`
+- task: `Repair the remaining local smoke blockers for admin, mypage, and customer-center`
+- participants: `main`, `worker_smoke_repair (Lorentz)`, `reviewer_smoke_repair (Epicurus)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-local-smoke-repair-v1.yaml, ERROR_LOG.md`
+  - `worker_smoke_repair`: `scripts/smoke/**`
+  - `reviewer_smoke_repair`: `review only`
+- verification:
+  - `worker_smoke_repair` added `scripts/smoke/helpers/smoke-fixtures.cjs` and updated the front/customer-center smoke specs so admin and mypage get local session/API mocks and customer-center assertions match the current baseline copy and route behavior
+  - `pnpm run smoke:front` passed with 11/11 green
+  - `pnpm run smoke:cs` passed with 4/4 green
+  - `git diff --check -- scripts/smoke/helpers/smoke-fixtures.cjs scripts/smoke/front-entrypoints.runtime.spec.cjs scripts/smoke/cs-customer-center.smoke.spec.cjs` passed
+  - `reviewer_smoke_repair (Epicurus)` first flagged overly weak chatbot/FAQ assertions; after the follow-up patch the final reviewer pass reported `발견 없음`

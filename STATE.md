@@ -2,42 +2,37 @@
 
 ## Current Task
 
-- task: `Isolate jeju-spring integration tests from the alwaysdata DB path so pnpm run spring:test targets the local test database by default`
-- phase: `completed`
-- scope: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-local-db-isolation-v1.yaml, jeju-spring/src/test/**, jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml, and optional ERROR_LOG.md append if new verification blockers appear`
-- verification_target: `pnpm run spring:test no longer resolves datasource/flyway to alwaysdata by default and instead uses the local test DB path or explicit test-only overrides`
+- task: `Fix the local Spring bootRun blocker by cleaning the duplicated DB_* entries in jeju-spring/.env`
+- phase: `implementation`
+- scope: `STATE.md, jeju-spring/.env, optional ERROR_LOG.md append-only`
+- verification_target: `pnpm run spring:run reaches a healthy local startup instead of failing on the malformed localhost DB credential`
 
 ## Route
 
-- route: `Route B`
-- reason: `This task changes Spring test configuration and requires test changes plus mechanical verification with pnpm run spring:test, which is a hard Route B trigger in this workspace. The isolation logic is tightly coupled around one test-runtime slice, so one worker is allowed and safer than splitting overlapping test ownership.`
+- route: `Route A`
+- reason: `This is a tiny local hotfix confined to one runtime env file. The concrete trigger is the malformed duplicate DB_* block in jeju-spring/.env, including a trailing-space DB_USER value that breaks localhost bootRun.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-local-db-isolation-v1.yaml, optional ERROR_LOG.md append-only`
-  - `worker_test_db_isolation`: `jeju-spring/src/test/**, jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml`
-- note: `main stays planner-only for implementation. The isolation logic is concentrated in one test-runtime ownership lane, so a single worker owns the entire write slice to avoid overlapping test config edits.`
+  - `main`: `STATE.md, jeju-spring/.env, optional ERROR_LOG.md append-only`
+- note: `Route A single-writer hotfix. No subagent delegation is needed because the change is confined to one local env file.`
 
 ## Contract Freeze
 
-- contract_freeze: `Keep the production/runtime env flow unchanged, but make Spring integration tests stop inheriting the alwaysdata DB path by default. pnpm run spring:test must use a local test DB baseline or explicit test-only overrides, and the change must stay scoped to test/runtime configuration rather than reopening the production cutover contract.`
+- contract_freeze: `Do not touch runtime code. Remove the malformed duplicate DB_* block or trailing-space credential issue in jeju-spring/.env so local bootRun uses one clean localhost credential set.`
 
-## Seed
-
-- status: `completed`
-- path: `SEED.spring-test-local-db-isolation-v1.yaml`
+- status: `n/a`
+- path: `n/a`
 - revision: `v1`
-- note: `The next slice freezes around one blocker only: keep production env behavior intact while forcing spring:test to prefer the local test DB path instead of alwaysdata.`
+- note: `Tiny local env hotfix; no separate seed file was needed.`
 
-## Reviewer
-
-- reviewer: `reviewer_test_db_isolation`
-- reviewer_target: `test-only DB property precedence, production-env non-regression, and spring:test verification integrity`
-- reviewer_focus: `alwaysdata path removal from tests, local DB fallback correctness, Flyway/datasource precedence, and accidental production-runtime drift`
+- reviewer: `n/a`
+- reviewer_target: `n/a`
+- reviewer_focus: `n/a`
 
 ## Last Update
 
-- timestamp: `2026-03-24 15:06:14 +09:00`
-- note: `Test-only DB precedence now resolves through JEJU_SPRING_TEST_DB_* -> jeju-spring/.env -> localhost, final pnpm run spring:test passed against localhost MySQL, and reviewer closed with no remaining findings while production application.yml stayed unchanged.`
+- timestamp: `2026-03-24 16:47:00 +09:00`
+- note: `The duplicate/trailing-space DB_* issue in jeju-spring/.env was fixed and bootRun no longer points at alwaysdata. The remaining local blocker is now outside the repo: MySQL rejects jejugroup@localhost for database jejugroup_db, so localhost DB/schema privileges must be corrected before bootRun can finish startup.`

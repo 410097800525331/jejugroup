@@ -3,6 +3,11 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { expectNoRuntimeIssues, createIssueTracker } = require("./helpers/runtime-issues.cjs");
 const { createStaticServerController } = require("./helpers/static-server.cjs");
+const {
+  installAdminDashboardMock,
+  installAdminSession,
+  installMypageSession,
+} = require("./helpers/smoke-fixtures.cjs");
 
 const HOST = "127.0.0.1";
 const PORT = 4174;
@@ -87,6 +92,9 @@ test("login page smoke", async ({ page }) => {
 test("admin dashboard smoke", async ({ page }) => {
   const issues = createIssueTracker(page);
 
+  await installAdminSession(page);
+  await installAdminDashboardMock(page);
+
   await page.goto(server.url("/admin/pages/dashboard.html"), {
     waitUntil: "domcontentloaded",
   });
@@ -121,7 +129,7 @@ test("login air shell footer smoke", async ({ page }) => {
 
   await expect(page.locator(".company_info h3")).toHaveText(/\(주\)\s*제주항공/);
   await expect(page.locator('a[data-route="SERVICES.AIR.ABOUT.COMPANY"]').first()).toBeVisible();
-  await expect(page.locator('img[alt="유튜브"]')).toBeVisible();
+  await expect(page.locator('footer a[href="https://www.youtube.com/@jejuair_official"]').first()).toBeVisible();
 
   expectNoRuntimeIssues(issues);
 });
@@ -159,13 +167,17 @@ test("pass auth page smoke", async ({ page }) => {
 test("mypage dashboard smoke", async ({ page }) => {
   const issues = createIssueTracker(page);
 
+  await installMypageSession(page);
+
   await page.goto(server.url("/pages/mypage/dashboard.html"), {
     waitUntil: "domcontentloaded",
   });
 
   await expect(page.locator("#mypage-dashboard-root .meta-dashboard-layout")).toBeVisible();
   await expect(page.locator(".full-width-trip-list")).toBeVisible();
-  await expect(page.getByText("Jeju Ocean Suite")).toBeVisible();
+  await expect(page.getByRole("heading", { name: /홍민지 님 어서오세요!/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: "예약 현황" })).toBeVisible();
+  await expect(page.locator(".summary-stats-column .stat-card").first()).toContainText("보유 포인트");
 
   expectNoRuntimeIssues(issues);
 });
