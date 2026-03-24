@@ -167,3 +167,5 @@ const AdminStore = (() => {
         subscribe
     });
 })();
+
+window.AdminStore = AdminStore;
