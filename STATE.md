@@ -2,41 +2,41 @@
 
 ## Current Task
 
-- task: `CustomerCenterIntegrationTests jsonPath length matcher follow-up`
-- phase: `implementation`
-- scope: `jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java only`
-- verification_target: `targeted test assertion rewrite and spring:test replay for the two failing cases`
+- task: `Document the admin-facing schema as a table summary plus ERD`
+- phase: `implement`
+- scope: `docs/admin-schema-table-erd.md only`
+- verification_target: `the doc shows domain-grouped table summaries and a coherent mermaid ERD for the current admin-facing schema`
 
 ## Route
 
 - route: `Route A`
-- reason: `Single test file follow-up with two assertion rewrites and no multi-file fan-out.`
+- reason: `This is a single-file documentation pass with no code or migration edits.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md, jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java`
-- note: `main may edit the test directly on Route A; keep the change inside the single-file write set.`
+  - `main`: `STATE.md, docs/admin-schema-table-erd.md`
+- note: `Single-lane doc work. Existing schema/code changes remain untouched.`
 
 ## Contract Freeze
 
-- contract_freeze: `Frozen on 2026-03-24 03:30:00 +09:00 via SEED.admin-schema-domain-refactor-v1.yaml`
+- contract_freeze: `Create one doc that summarizes the current admin-facing schema in tables and a mermaid ERD, based on the current renamed/additional tables and bookings-common principle.`
 
 ## Seed
 
-- status: `frozen`
-- path: `SEED.admin-schema-domain-refactor-v1.yaml`
-- revision: `1`
-- note: `The frozen seed keeps bookings-common and payment-common tables, renames stay-domain generic tables to hotel_* names, adds flight/rentcar/special/usim/admin support tables, and requires clear front/admin path comments.`
+- status: `not used`
+- path: `n/a`
+- revision: `n/a`
+- note: `Seed skipped because this is a single-file documentation task.`
 
 ## Reviewer
 
-- reviewer: `n/a`
+- reviewer: `none`
 - reviewer_target: `n/a`
 - reviewer_focus: `n/a`
 
 ## Last Update
 
-- timestamp: `2026-03-24 11:18 +09:00`
-- note: `Reclassified the task as a Route A single-file test assertion follow-up for customer center integration tests.`
+- timestamp: `2026-03-24 11:55:00 +09:00`
+- note: `User requested a table+ERD doc for the current admin-facing schema.`
