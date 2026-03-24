@@ -14,7 +14,7 @@ public record AppProperties(
     public AppProperties {
         migration = migration == null
             ? new Migration(
-                "jeju-spring/.env",
+                "./.env",
                 List.of("Spring datasource auto-config now targets the local MySQL baseline while AuthService keeps the legacy users-table contract.")
             )
             : migration;

@@ -60,6 +60,25 @@ const getStatIconName = (tone: StatItem["tone"]) => {
   }
 };
 
+const scrollToSectionTitle = (sectionSelector: string) => {
+  const section = document.querySelector<HTMLElement>(sectionSelector);
+  if (!section) {
+    return;
+  }
+
+  const targetHeading = section.querySelector<HTMLElement>(".section-title") ?? section;
+  const shellHeader =
+    document.querySelector<HTMLElement>("#jeju-page-shell-header .header") ??
+    document.querySelector<HTMLElement>(".header");
+  const headerOffset = shellHeader?.getBoundingClientRect().height ?? 72;
+  const top = window.scrollY + targetHeading.getBoundingClientRect().top - headerOffset - 24;
+
+  window.scrollTo({
+    top: Math.max(0, top),
+    behavior: "smooth",
+  });
+};
+
 export const SummarySection = () => {
   const { state } = useDashboardState() as { state: DashboardStateSlice };
   const profile = state.profile ?? PROFILE;
@@ -97,13 +116,13 @@ export const SummarySection = () => {
               <p className="profile-welcome-msg">제주에서 보냈던 소중한 시간들을 다시 이어보세요.</p>
               
               <div className="profile-quick-nav">
-                <button className="nav-btn pill-shape" onClick={() => document.querySelector('.layer-full-management')?.scrollIntoView({ behavior: 'smooth' })}>
+                <button className="nav-btn pill-shape" type="button" onClick={() => scrollToSectionTitle(".layer-full-management")}>
                   <i data-lucide="calendar-check" className="lucide-calendar-check" /> 예약 현황
                 </button>
-                <button className="nav-btn pill-shape" onClick={() => document.querySelector('.layer-itinerary')?.scrollIntoView({ behavior: 'smooth' })}>
+                <button className="nav-btn pill-shape" type="button" onClick={() => scrollToSectionTitle(".layer-itinerary")}>
                   <i data-lucide="map" className="lucide-map" /> 여행 일정
                 </button>
-                <button className="nav-btn pill-shape" onClick={() => document.querySelector('.layer-account-benefits')?.scrollIntoView({ behavior: 'smooth' })}>
+                <button className="nav-btn pill-shape" type="button" onClick={() => scrollToSectionTitle(".layer-account-benefits")}>
                   <i data-lucide="user-cog" className="lucide-user-cog" /> 정보 및 혜택
                 </button>
               </div>
@@ -121,13 +140,11 @@ export const SummarySection = () => {
               <i data-lucide={getStatIconName(stat.tone)} className={`lucide-${getStatIconName(stat.tone)}`} />
             </div>
 
-
             <div className="stat-content">
               <span className="stat-label">{stat.label}</span>
               <strong className="stat-value">{stat.value}</strong>
             </div>
           </SectionCard>
-
         ))}
       </div>
     </section>

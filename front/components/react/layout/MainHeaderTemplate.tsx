@@ -42,7 +42,13 @@ export const MainHeaderTemplate = ({ basePath }: MainHeaderTemplateProps) => {
           회원가입
         </a>
         <span className="util-divider">|</span>
-        <a href="#" className="util-link route-link" data-action="OPEN_RESERVATION_DRAWER" data-lang="reservationCheck">
+        <a
+          href="#"
+          className="util-link route-link"
+          data-action="OPEN_RESERVATION_DRAWER"
+          data-lang="reservationCheck"
+          id="indexReservationCheckBtn"
+        >
           예약 확인
         </a>
         <span className="util-divider">|</span>
@@ -95,6 +101,30 @@ export const MainHeaderTemplate = ({ basePath }: MainHeaderTemplateProps) => {
               <i className="fa-solid fa-spinner fa-spin" />
             </button>
           </div>
+          <a
+            href={resolveRouteHref("MYPAGE.DASHBOARD", { shell: "main" })}
+            className="weather-header-btn mypage-cta route-link"
+            data-route="MYPAGE.DASHBOARD"
+            data-route-params='{"shell":"main"}'
+            aria-label="마이페이지"
+          >
+            <span className="mypage-cta-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path
+                  d="M4 11.5 12 4l8 7.5v7.5a1 1 0 0 1-1 1h-4.5v-5.2H9.5V20H5a1 1 0 0 1-1-1z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M11 20v-4.2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </a>
         </div>
       </div>
     </header>

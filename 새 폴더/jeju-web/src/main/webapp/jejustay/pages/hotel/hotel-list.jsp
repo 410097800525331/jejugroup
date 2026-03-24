@@ -1,0 +1,55 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEJU STAY | 호텔 검색 결과</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Stylesheets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./hotel.css">
+    <link rel="stylesheet" href="../../../components/react/layout/header.css">
+    <link rel="stylesheet" href="../../../components/react/layout/footer.css">
+    <link rel="stylesheet" href="./hotel-list.css">
+    <!-- Chatbot & FAB -->
+    <link rel="stylesheet" href="../../../components/react/ui/FAB/fab.css">
+    <link rel="stylesheet" href="../../../components/react/widget/chatbot-style.css">
+</head>
+
+<body class="stay-hotel-list-page">
+    <!-- 글로벌 헤더 -->
+    <div id="hotel-header-placeholder"></div>
+
+    <!-- 스티키 검색바 -->
+    <div class="sticky-search-wrapper" id="stickySearch">
+        <div class="container-wide">
+            <div id="hotel-list-search-widget-root"></div>
+        </div>
+    </div>
+
+    <main class="container-wide">
+        <div class="hotel-feed-container" id="hotel-list-page-root"></div>
+    </main>
+
+    <!-- 글로벌 푸터 -->
+    <div id="hotel-footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="../../../core/constants/lang_data.js"></script>
+    <script type="module" src="../../../components/runtime/bootstrap.js"></script>
+</body>
+
+</html>

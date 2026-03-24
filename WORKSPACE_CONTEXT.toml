@@ -3,7 +3,7 @@ version = 1
 [workspace]
 name = "jejugroup-landing"
 display_name = "Jeju Group Landing Page"
-repository_root = "D:/git/jejugroup"
+repository_root = "D:/lsh/git/jejugroup"
 primary_entry = "front/index.html"
 page_url = "/index.html"
 page_kind = "hybrid-static-shell"
@@ -23,7 +23,7 @@ base_font = "FlightSans"
 facts = [
   "Package manager: pnpm",
   "Landing source of truth: front/**",
-  "Deployment mirrors: jeju-web/src/main/webapp/**, jeju-spring/**",
+  "Deployment mirrors: jeju-spring/**, jeju-web/src/main/webapp/** (legacy mirror)",
 ]
 
 [required_context]
@@ -46,7 +46,7 @@ webapp_mirror = "jeju-web/src/main/webapp"
 spring_mirror = "jeju-spring"
 webapp_mirror_role = "deployment mirror only, never primary edit target"
 spring_mirror_role = "Spring Boot + Thymeleaf deployment mirror only, never primary frontend source"
-legacy_webapp_role = "historically mirrored front assets and JSP-converted outputs, but no longer the long-term target because the final goal is Spring deployment"
+legacy_webapp_role = "historically mirrored front assets and JSP-converted outputs, but now legacy-only because the final runtime baseline is jeju-spring"
 
 [editing_rules]
 edit_in = [
@@ -84,38 +84,38 @@ front_work_areas = [
 ]
 delivery_flow = [
   "edit and verify in front first",
-  "sync to jeju-web/src/main/webapp through pnpm run sync or pnpm run prepare:webapp",
-  "treat jeju-web as a deployment mirror, not a source workspace",
-  "use jeju-spring as the Spring Boot + Thymeleaf deployment-side mirror/runtime",
+  "sync to jeju-spring through the existing spring mirror scripts, and keep jeju-web only for legacy compatibility",
+  "treat jeju-spring as the Spring Boot + Thymeleaf deployment-side mirror/runtime",
+  "treat jeju-web as a legacy deployment mirror, not a source workspace",
 ]
-legacy_transition_note = "jeju-web remains in the current deployment path, but new long-term server direction is jeju-spring rather than more jsp-first expansion"
+legacy_transition_note = "jeju-web remains only as a legacy compatibility mirror, while the default deployment path and runtime baseline are jeju-spring"
 
 [deployment_target]
 final_goal = "Spring Boot + Thymeleaf server deployment"
 server_runtime = "Spring Boot WAR + Thymeleaf"
 frontend_role = "front prepares the source assets and templates that feed deployment mirrors"
-mirror_policy = "jeju-web and jeju-spring are downstream mirrors derived from front-led work"
+mirror_policy = "jeju-spring is the default deployment/runtime mirror and jeju-web is the legacy compatibility mirror derived from front-led work"
 final_execution_mode = "WAR deployment to an external Tomcat server"
 runtime_version_policy = "final JDK and Tomcat versions are not fixed yet"
 oracle_cloud_timing = "final deployment runtime versions will be fixed during the Oracle Cloud transition"
 
 [version_policy]
 status = "pending"
-current_jeju_spring_baseline = "Java 17 + WAR packaging"
+current_jeju_spring_baseline = "Java 21 + WAR packaging"
 final_jdk_version = "pending"
 final_tomcat_version = "pending"
 note = "final runtime versions will be decided at Oracle Cloud migration time"
 
 [deployment_current]
 frontend_source = "front"
-active_deploy_base = "jeju-web based ROOT.war"
+active_deploy_base = "jeju-spring final runtime baseline ROOT.war"
 deploy_target = "alwaysdata"
-deploy_method = "custom deployment script uploads jeju-web ROOT.war to alwaysdata first"
+deploy_method = "custom deployment script uploads the jeju-spring ROOT.war to alwaysdata first"
 shared_env_source = "jeju-web/.env"
 shared_db_source = "legacy DB contract via jeju-web/.env"
-runtime_summary = "currently described as JDK 17 + Tomcat 9 + WAR deployment"
+runtime_summary = "jeju-spring final runtime baseline + WAR deployment"
 notes = [
-  "front is edited as the source and mirrored into jeju-web for the current deployment path",
+  "front is edited as the source and mirrored into jeju-spring for the default deployment path",
   "jeju-spring also references jeju-web/.env in the current transitional setup",
 ]
 

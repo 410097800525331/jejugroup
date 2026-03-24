@@ -159,6 +159,61 @@
   - `pnpm run guard:text` passed
   - `reviewer_maven_cleanup` reported no blocking findings
 
+- time: `2026-03-23 12:24 +09:00`
+- route: `Route B`
+- task: `Set up the first local jeju-spring DB baseline with Flyway and the initial auth/support schema`
+- participants: `main`, `worker_db_runtime (Parfit/Zeno/Ohm)`, `worker_db_schema_finalize (Huygens/Leibniz/Beauvoir/Boole/Gauss/James)`, `reviewer_db_baseline (Dalton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-db-baseline-v1.yaml`
+  - `worker_db_runtime`: `jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml, jeju-spring/src/main/java/com/jejugroup/jejuspring/JejuSpringApplication.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java, jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java, .gitignore`
+  - `worker_db_schema_finalize`: `jeju-spring/src/main/resources/db/migration/V1__jeju_spring_db_baseline.sql, V2__patch_support_ticket_and_primary_role_constraints.sql, V3__preserve_support_attachments_and_lock_primary_role_values.sql, V4__support_attachments_comment_link_and_candidate_key.sql, V5__support_attachments_comment_ticket_alignment_check.sql, V6__finalize_ticket_scoped_support_attachments_and_table_comments.sql`
+  - `reviewer_db_baseline`: `review only`
+- verification:
+  - local `jejugroup_local` schema was reset and replayed from scratch
+  - `flyway_schema_history` recorded `V1` through `V6`
+  - `pnpm run spring:test` passed against local MySQL
+  - `pnpm run spring:war-package` passed
+  - MySQL `SHOW CREATE TABLE support_attachments` confirmed the final ticket-scoped attachment shape
+  - MySQL `SHOW TABLE STATUS` confirmed Korean table comments on the v1 tables
+  - `reviewer_db_baseline` reported no blocking findings
+
+- time: `2026-03-23 13:15 +09:00`
+- route: `Route B`
+- task: `Extend the local jeju-spring DB baseline with the second schema slice for bookings, payments, mypage source data, products, inventory, CMS, banners, and admin operations`
+- participants: `main`, `worker_db_slice_booking (Ptolemy/Volta/Pasteur/Aristotle)`, `worker_db_slice_catalog (Mencius/Anscombe)`, `reviewer_db_slice2 (Ampere)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-db-slice2.yaml`
+  - `worker_db_slice_booking`: `jeju-spring/src/main/resources/db/migration/V8__booking_payment_mypage_source.sql, V10__booking_tree_integrity_and_payment_external_id_uniqueness.sql`
+  - `worker_db_slice_catalog`: `jeju-spring/src/main/resources/db/migration/V9__product_inventory_cms_admin_ops.sql, V11__price_policies_room_type_ownership_integrity.sql`
+  - `reviewer_db_slice2`: `review only`
+- verification:
+  - local `jejugroup_local` schema was reset and replayed from scratch
+  - `flyway_schema_history` recorded `V1` through `V11`
+  - `pnpm run spring:test` passed against local MySQL
+  - `pnpm run spring:war-package` passed
+  - MySQL inspection confirmed new second-slice tables including `bookings`, `booking_items`, `payment_attempts`, `travel_events`, `membership_plans`, `properties`, `inventory_stocks`, `cms_pages`, `banners`, and `admin_action_logs`
+  - MySQL inspection confirmed the new uniqueness/ownership constraints for external payment IDs and `price_policies(property_id, property_room_type_id)`
+  - MySQL CLI output for table comments still displayed mojibake due console encoding, but the comment values were applied in DB and remain readable in Workbench
+
+- time: `2026-03-23 15:32 +09:00`
+- route: `Route B`
+- task: `Add the first read-only booking/payment/mypage APIs on top of the local DB baseline`
+- participants: `main`, `worker_read_api_booking (Einstein/Halley)`, `worker_read_api_mypage (Hubble/Godel/Wegener/Sartre/Aquinas)`, `worker_read_api_schema_patch (Darwin/Fermat)`, `reviewer_read_api_v1 (Hypatia/Euclid/Newton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-read-api-v1.yaml`
+  - `worker_read_api_booking`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**`
+  - `worker_read_api_mypage`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+  - `worker_read_api_schema_patch`: `jeju-spring/src/main/resources/db/migration/V12__user_membership_links.sql, jeju-spring/src/main/resources/db/migration/V13__member_only_companion_links.sql`
+  - `reviewer_read_api_v1`: `review only`
+- verification:
+  - new read endpoints added: `/api/booking/me`, `/api/booking/users/{userId}`, `/api/mypage/dashboard`
+  - local schema replay including `V12` and `V13` completed successfully
+  - `pnpm run spring:test` passed
+  - `pnpm run spring:war-package` passed
+  - mypage now reads memberships from `user_memberships`, derives itinerary from `travel_events`, and treats companion links as member-only real user ids
+  - `/api/mypage/dashboard` now surfaces `401/404/503` instead of fake success fallback on API failures
+  - final reviewer reported no remaining blockers
+
 - time: `2026-03-23 10:18 +09:00`
 - route: `Route B`
 - task: `Strip Maven metadata directories from the packaged jeju-spring WAR artifacts`
@@ -172,3 +227,476 @@
   - packaged `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war` returned `MAVEN_HITS=0` when scanned for `META-INF/maven/`
   - packaged WAR still contains `WEB-INF/lib/**` and `WEB-INF/lib-provided/**`
   - `reviewer_war_sanitize` reported no blocking findings
+
+- time: `2026-03-23 15:36 +09:00`
+- route: `Route B`
+- task: `Add a mypage CTA to the main landing header and lock mypage shell chrome to the main landing shell`
+- participants: `main`, `worker_layout_header_mypage (Lagrange)`, `worker_shell_mypage_default (Pauli)`, `worker_dashboard_weather_style (Sagan)`, `reviewer_mypage_header_shell (Meitner)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.mypage-header-main-shell.yaml`
+  - `worker_layout_header_mypage`: `front/components/react/layout/MainHeaderTemplate.tsx, front/components/react/layout/header.css`
+  - `worker_shell_mypage_default`: `front/apps/shell/src/runtime/pages/pageShell.ts, front/pages/mypage/dashboard.html`
+  - `worker_dashboard_weather_style`: `front/pages/mypage/dashboard.html`
+  - `reviewer_mypage_header_shell`: `review only`
+- verification:
+  - `pnpm run check:shell` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/components/react/layout/MainHeaderTemplate.tsx front/components/react/layout/header.css front/apps/shell/src/runtime/pages/pageShell.ts front/pages/mypage/dashboard.html STATE.md SEED.mypage-header-main-shell.yaml` passed
+  - `reviewer_mypage_header_shell` reported no blocking findings after the follow-up weather.css include on the mypage dashboard page
+
+- time: `2026-03-23 17:45 +09:00`
+- route: `Route B`
+- task: `Implement Spring customer-center CRUD/API on top of the completed local MySQL + Flyway baseline`
+- participants: `main`, `worker_seed (Aquinas)`, `worker_support_crud (Mencius)`, `worker_cms_crud (Ampere)`, `worker_customercenter_tests (Poincare)`, `reviewer_customer_center (Ramanujan)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.customer-center-spring-crud-v1.yaml`
+  - `worker_support_crud`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/**`
+  - `worker_cms_crud`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/**`
+  - `worker_customercenter_tests`: `jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/**`
+  - `reviewer_customer_center`: `review only`
+- verification:
+  - `pnpm run spring:test` passed
+  - `pnpm run spring:war-package` passed
+
+- time: `2026-03-24 10:12 +09:00`
+- route: `Route B`
+- task: `Remove inline admin page hardcoding by extracting admin mock/config data out of the page controllers`
+- participants: `main`, `worker_seed (Socrates)`, `worker_admin_data (Galileo)`, `worker_admin_pages (Gauss)`, `reviewer_admin_dehardcode (Sartre)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.admin-page-dehardcode-v1.yaml`
+  - `worker_admin_data`: `front/admin/data/**, front/admin/js/store.js`
+  - `worker_admin_pages`: `front/admin/js/cms.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/reservations.js`
+  - `reviewer_admin_dehardcode`: `review only`
+- verification:
+  - `node --check front/admin/js/store.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `node --check front/admin/data/cms-config.js` passed
+  - `node --check front/admin/data/lodging-config.js` passed
+  - `node --check front/admin/data/members-config.js` passed
+  - `node --check front/admin/data/reservations-config.js` passed
+  - `pnpm run guard:text` passed
+  - targeted ESM shape checks confirmed config aliases (`tabs.*` and top-level tab keys), dashboard chart label maps, and store seed import/hydrate wiring
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.admin-page-dehardcode-v1.yaml front/admin/data/store-seed.js front/admin/data/dashboard-data.js front/admin/data/cms-config.js front/admin/data/lodging-config.js front/admin/data/members-config.js front/admin/data/reservations-config.js front/admin/js/store.js front/admin/js/cms.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/reservations.js` passed
+  - `reviewer_admin_dehardcode` reported no blocking findings after follow-up shape fixes
+
+- time: `2026-03-23 20:36 +09:00`
+- route: `Route B`
+- task: `Shift landing language handling to the shared front-i18n bridge authority`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `node --check front/core/pages/landing/main.js` passed
+  - landing script now loads `front/core/constants/front-i18n.js` before `front/core/pages/landing/main.js`
+  - `membershipNotice2` keeps inline HTML rendering via `data-lang-html="true"`
+
+- time: `2026-03-23 21:45 +09:00`
+- route: `Route B`
+- task: `Finish customer-center productization with admin notice/faq write flow, support comment/attachment UI, and support enum hardening`
+- participants: `main`, `worker_seed (Linnaeus)`, `worker_cs_shared_api (Halley/Franklin)`, `worker_cs_cms_admin (Harvey/Bacon)`, `worker_cs_support_detail (Feynman/Bernoulli)`, `worker_backend_hardening (Pascal/Averroes)`, `worker_cs_tests (Banach/Peirce/Volta)`, `reviewer_customer_center_productization (Kierkegaard/Huygens)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.customer-center-productization-v1.yaml`
+  - `worker_cs_shared_api`: `front/apps/cs/client/src/lib/**, front/apps/cs/client/src/types/service-center.ts, front/apps/cs/client/src/contexts/AuthContext.tsx`
+  - `worker_cs_cms_admin`: `front/apps/cs/client/src/pages/Notices.tsx, front/apps/cs/client/src/pages/FAQs.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeCard.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx, front/apps/cs/client/src/components/serviceCenter/FAQItem.tsx`
+  - `worker_cs_support_detail`: `front/apps/cs/client/src/pages/Inquiries.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryListItem.tsx, front/apps/cs/client/src/components/serviceCenter/InquirySupportComments.tsx, front/apps/cs/client/src/components/serviceCenter/InquirySupportAttachments.tsx, front/apps/cs/client/src/data/mockInquiries.ts`
+  - `worker_backend_hardening`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/**`
+  - `worker_cs_tests`: `front/apps/cs/client/src/test/**`
+  - `reviewer_customer_center_productization`: `review only`
+- verification:
+  - `pnpm -C front/apps/cs check` passed
+  - `pnpm -C front/apps/cs test` passed
+  - `pnpm -C front/apps/cs build` passed
+  - `$env:DB_USER='jejugroup'; pnpm run spring:test` passed
+  - `$env:DB_USER='jejugroup'; pnpm run spring:war-package` passed
+  - `reviewer_customer_center_productization` reported no blocking findings
+
+- time: `2026-03-23 22:49 +09:00`
+- route: `Route B`
+- task: `Add a shared front i18n bridge that keeps lang_data.js and supports both legacy DOM pages and React consumers`
+- participants: `main`, `worker_seed (Harvey)`, `worker_core_data (Singer)`, `worker_i18n_bridge (Franklin)`, `reviewer_i18n_bridge (Heisenberg)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.front-shared-i18n-bridge-v1.yaml`
+  - `worker_core_data`: `front/core/constants/lang_data.js, front/core/constants/front-ko-en-copy-map.js`
+  - `worker_i18n_bridge`: `front/core/constants/front-i18n.js`
+  - `reviewer_i18n_bridge`: `review only`
+- verification:
+  - `node --check front/core/constants/lang_data.js` passed
+  - `node --check front/core/constants/front-ko-en-copy-map.js` passed
+  - `node --check front/core/constants/front-i18n.js` passed
+  - `pnpm run guard:text` passed
+  - targeted runtime smoke confirmed `JSON.stringify(require(...))` works for `lang_data.js` and the copy map, `resolveCurrentLang()` prefers `jeju_lang` over `jeju_fab_lang`, copy-map fallback translation works, and `setCurrentLang()` syncs `jeju_lang`, `front.lang`, and `jeju_fab_lang`
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.front-shared-i18n-bridge-v1.yaml front/core/constants/lang_data.js front/core/constants/front-ko-en-copy-map.js front/core/constants/front-i18n.js` passed
+  - `reviewer_i18n_bridge` reported no blocking findings after follow-up fixes
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/SupportApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/application/CustomerCenterCmsService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/web/CustomerCenterCmsApiController.java jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java SEED.customer-center-spring-crud-v1.yaml STATE.md` passed
+  - `reviewer_customer_center` reported no blocking findings
+
+- time: `2026-03-23 16:24 +09:00`
+- route: `Route B`
+- task: `Update front/apps/cs inquiry form tests for logged-out gating and logged-in submit flow`
+- participants: `main`, `reviewer_self_check`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, front/apps/cs/client/src/test/InquiryForm.test.tsx`
+  - `reviewer_self_check`: `review only`
+- verification:
+  - `pnpm -C front/apps/cs test` passed
+
+- time: `2026-03-23 20:45 +09:00`
+- route: `Route B`
+- task: `Stabilize JEJU STAY hotel/life/private hero first-load reveal consistency`
+- participants: `main`, `worker_seed (Volta)`, `worker_shared_motion (Confucius)`, `worker_feature_stay (Poincare)`, `reviewer_hero_reveal_consistency (Plato)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.jejustay-hero-reveal-consistency-v1.yaml`
+  - `worker_shared_motion`: `front/components/react/hotel/HotelSearchWidgetIsland.tsx, front/components/react/life/LifeSearchWidgetIsland.tsx, front/jejustay/pages/hotel/modules/interactions/premiumAnimations.js`
+  - `worker_feature_stay`: `front/jejustay/pages/hotel/hotel.js, front/jejustay/pages/stay/jejustay_life.js, front/jejustay/pages/stay/private_stay.js, front/jejustay/pages/hotel/styles/hero-section.css, front/jejustay/pages/stay/jejustay_life.css`
+  - `reviewer_hero_reveal_consistency`: `review only`
+- verification:
+  - `pnpm run check:shell` passed
+  - `pnpm run build:shell` passed
+  - `pnpm run guard:text` passed
+  - `node --check front/jejustay/pages/hotel/hotel.js` passed
+  - `node --check front/jejustay/pages/stay/jejustay_life.js` passed
+  - `node --check front/jejustay/pages/stay/private_stay.js` passed
+  - `git diff --check -- STATE.md SEED.jejustay-hero-reveal-consistency-v1.yaml front/components/react/hotel/HotelSearchWidgetIsland.tsx front/components/react/life/LifeSearchWidgetIsland.tsx front/jejustay/pages/hotel/modules/interactions/premiumAnimations.js front/jejustay/pages/hotel/hotel.js front/jejustay/pages/stay/private_stay.js front/jejustay/pages/stay/jejustay_life.js front/jejustay/pages/hotel/styles/hero-section.css front/jejustay/pages/stay/jejustay_life.css` passed
+  - `reviewer_hero_reveal_consistency` reported no blocking findings
+
+- time: `2026-03-23 19:18 +09:00`
+- route: `Route B`
+- task: `Connect front/apps/cs to the customer-center Spring APIs for notices, faqs, auth session, and support tickets`
+- participants: `main`, `worker_seed (Nash)`, `worker_cs_shared (Hegel/Schrodinger/Beauvoir/Ptolemy)`, `worker_cs_read_pages (Maxwell)`, `worker_cs_inquiries (Euclid/Goodall/Epicurus)`, `worker_cs_tests (Darwin/Hilbert/Arendt)`, `reviewer_cs_api_integration (Bohr/Carver)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.cs-customer-center-api-integration-v1.yaml`
+  - `worker_cs_shared`: `front/apps/cs/client/src/lib/**, front/apps/cs/client/src/types/service-center.ts, front/apps/cs/client/src/data/inquiryOptions.ts, front/apps/cs/client/src/contexts/AuthContext.tsx`
+  - `worker_cs_read_pages`: `front/apps/cs/client/src/pages/Home.tsx, front/apps/cs/client/src/pages/Notices.tsx, front/apps/cs/client/src/pages/FAQs.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeCard.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx, front/apps/cs/client/src/components/serviceCenter/FAQItem.tsx`
+  - `worker_cs_inquiries`: `front/apps/cs/client/src/pages/Inquiries.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryListItem.tsx, front/apps/cs/client/src/data/mockInquiries.ts`
+  - `worker_cs_tests`: `front/apps/cs/client/src/test/**`
+  - `reviewer_cs_api_integration`: `review only`
+- verification:
+  - `pnpm -C front/apps/cs check` passed
+  - `pnpm -C front/apps/cs test` passed
+  - `pnpm -C front/apps/cs build` passed
+  - `git diff --check -- front/apps/cs/client/src/lib/serviceCenterApi.ts front/apps/cs/client/src/types/service-center.ts front/apps/cs/client/src/contexts/AuthContext.tsx front/apps/cs/client/src/pages/Home.tsx front/apps/cs/client/src/pages/Notices.tsx front/apps/cs/client/src/pages/FAQs.tsx front/apps/cs/client/src/pages/Inquiries.tsx front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx front/apps/cs/client/src/components/serviceCenter/InquiryListItem.tsx front/apps/cs/client/src/components/serviceCenter/NoticeCard.tsx front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx front/apps/cs/client/src/components/serviceCenter/FAQItem.tsx front/apps/cs/client/src/test/InquiryForm.test.tsx front/apps/cs/client/src/test/AuthContext.test.tsx front/apps/cs/client/src/test/serviceCenterApi.test.ts SEED.cs-customer-center-api-integration-v1.yaml STATE.md` passed
+  - `reviewer_cs_api_integration` reported no blocking findings
+
+- time: `2026-03-23 21:15 +09:00`
+- route: `Route B`
+- task: `Harden jeju-spring customer-center support status/priority validation and extend support integration coverage`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run spring:test` passed
+  - `pnpm run spring:war-package` passed
+
+- time: `2026-03-23 20:46 +09:00`
+- route: `Route B`
+- task: `Unify landing and shell language state through the shared front-i18n bridge`
+- participants: `main`, `worker_seed (Banach)`, `worker_shared_i18n (Wegener)`, `worker_feature_landing (Dalton)`, `worker_shell_runtime (Ohm)`, `reviewer_front_language_state (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.front-language-state-unification-v1.yaml`
+  - `worker_shared_i18n`: `front/core/constants/front-i18n.js (audit only; no code change needed)`
+  - `worker_feature_landing`: `front/index.html, front/core/pages/landing/main.js`
+  - `worker_shell_runtime`: `front/apps/shell/src/runtime/context/ShellStateContext.tsx, front/apps/shell/src/runtime/ui/fab.tsx, front/apps/shell/src/runtime/widget/chatbot.tsx`
+  - `reviewer_front_language_state`: `review only`
+- verification:
+  - `node --check front/core/constants/front-i18n.js` passed
+  - `node --check front/core/pages/landing/main.js` passed
+  - `pnpm run check:shell` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/index.html front/core/pages/landing/main.js front/apps/shell/src/runtime/context/ShellStateContext.tsx front/apps/shell/src/runtime/ui/fab.tsx front/apps/shell/src/runtime/widget/chatbot.tsx SEED.front-language-state-unification-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed
+  - `reviewer_front_language_state` first reported two landing fallback/init regressions, those follow-up fixes landed, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-23 21:15 +09:00`
+- route: `Route B`
+- task: `Fix the landing language-toggle DOM collapse from body data-lang being retranslated`
+- participants: `main`, `worker_shared_i18n (Hegel)`, `worker_feature_landing (Raman)`, `reviewer_front_language_state (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shared_i18n`: `front/core/constants/front-i18n.js`
+  - `worker_feature_landing`: `front/core/pages/landing/main.js`
+  - `reviewer_front_language_state`: `review only`
+- verification:
+  - `node --check front/core/constants/front-i18n.js` passed
+  - `node --check front/core/pages/landing/main.js` passed
+  - `pnpm run check:shell` passed
+  - `pnpm run guard:text` passed
+  - custom Playwright landing language smoke passed after confirming the landing DOM stays mounted, persisted language stays `en`, and hotel FAB/chatbot pick up English state
+  - official `main landing smoke` Playwright check passed again after the bugfix
+  - `reviewer_front_language_state` first reported one stale residue risk, the follow-up guard landed, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-23 23:15 +09:00`
+- route: `Route B`
+- task: `Apply the local DB batch seed across property, CMS, booking/voucher, and flight/rental inventory slices`
+- participants: `main`, `worker_seed (Huygens the 2nd)`, `worker_seed_batch (Feynman the 2nd)`, `reviewer_seed_batch (Steward the 3rd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.local-db-seed-batch-v1.yaml`
+  - `worker_seed_batch`: `jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql, jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql, jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql, jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql`
+  - `reviewer_seed_batch`: `review only`
+- verification:
+  - local DB direct apply completed for `V16` through `V19`
+  - batch seed contract revised to revision `2` so property/catalog scope no longer claims default `inventory_stocks` rows without trustworthy source data
+  - local DB counts after reconciliation:
+    - `properties=6`, `property_room_types=8`, `property_tags=8`, `property_benefits=8`, `property_display_overrides=8`, `price_policies=8`, `inventory_stocks=2`
+    - `cms_pages=5`, `cms_blocks=5`, `content_items=5`, `banner_slots=1`, `banners=1`, `exposure_rules=2`
+    - `users=1`, `user_profiles=1`, `bookings=5`, `booking_items=5`, `coupons=4`, `voucher_products=2`, `voucher_product_benefits=6`
+    - `flight_routes=3`, `flight_schedules=0`, `flight_fare_policies=0`, `flight_seat_inventories=0`, `rental_locations=1`, `rental_vehicle_classes=2`, `rental_vehicles=2`, `rental_rate_policies=2`, `rental_vehicle_inventories=2`
+  - reviewer first reported three source-fit/idempotency issues, follow-up fixes landed, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-24 00:05 +09:00`
+- route: `Route B`
+- task: `Refit the existing admin frontend pages into DB-oriented management hubs without changing the layout`
+- participants: `main`, `worker_seed (Turing the 3rd)`, `worker_admin_batch (Carver the 3rd)`, `reviewer_admin_frontend (Steward the 4th)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.admin-frontend-db-management-v1.yaml`
+  - `worker_admin_batch`: `front/admin/js/rbac_config.js, front/admin/css/components.css, front/admin/pages/lodging.html, front/admin/js/lodging.js, front/admin/pages/members.html, front/admin/js/members.js, front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/pages/cms.html, front/admin/js/cms.js`
+  - `reviewer_admin_frontend`: `review only`
+- verification:
+  - `node --check front/admin/js/rbac_config.js`
+  - `node --check front/admin/js/lodging.js`
+  - `node --check front/admin/js/members.js`
+  - `node --check front/admin/js/reservations.js`
+  - `node --check front/admin/js/cms.js`
+  - `pnpm run guard:text`
+  - Vite runtime spot-check confirmed `lodging`, `members`, `reservations`, and `cms` pages load with updated menu labels and tab sets
+  - reviewer first reported one CMS action-bar label mismatch and two title/H1 mismatches, the follow-up fix landed, and the final page set is aligned with the agreed structure
+
+- time: `2026-03-23 22:50 +09:00`
+- route: `Route B`
+- task: `Add flight and rentcar inventory tables on top of the local schema`
+- participants: `main`, `worker_seed (Avicenna)`, `worker_inventory_schema (Wegener)`, `reviewer_customer_center_followup (Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.flight-rentcar-inventory-v1.yaml`
+  - `worker_inventory_schema`: `jeju-spring/src/main/resources/db/migration/V15__add_flight_and_rental_inventory_tables.sql`
+  - `reviewer_customer_center_followup`: `review only`
+- verification:
+  - local DB was updated directly from `V15__add_flight_and_rental_inventory_tables.sql`
+  - confirmed table creation for `flight_routes`, `flight_schedules`, `flight_fare_policies`, `flight_seat_inventories`, `rental_locations`, `rental_vehicle_classes`, `rental_vehicles`, `rental_rate_policies`, `rental_vehicle_inventories`
+  - reviewer first reported one flight fare policy route/schedule integrity gap, the migration was tightened with a composite FK and `ON DELETE RESTRICT`, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-23 22:30 +09:00`
+- route: `Route B`
+- task: `Seed phase1 customer-center master data into the existing local tables`
+- participants: `main`, `worker_seed (Socrates)`, `worker_customer_center_seed (Banach)`, `worker_customer_center_seed_tests (Anscombe)`, `reviewer_customer_center_followup (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.customer-center-existing-table-seed-phase1.yaml`
+  - `worker_customer_center_seed`: `jeju-spring/src/main/resources/db/migration/V14__seed_customer_center_master_data.sql`
+  - `worker_customer_center_seed_tests`: `jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java`
+  - `reviewer_customer_center_followup`: `review only`
+- verification:
+  - local DB was seeded manually from `V14__seed_customer_center_master_data.sql`
+  - local row counts confirmed `support_categories=24`, `notices=6`, `faqs=75`
+  - reviewer reported `발견 없음`
+  - `pnpm run spring:test` and `pnpm run spring:war-package` were both blocked by missing `jeju-spring/gradle/wrapper/gradle-wrapper.jar`, and that gap was appended to `ERROR_LOG.md`
+
+- time: `2026-03-23 23:03 +09:00`
+- route: `Route B`
+- task: `Seed the remaining local DB batch migrations sequentially under the frozen seed contract`
+- participants: `main`, `worker_seed_batch`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_batch`: `jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql, jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql, jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql, jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql`
+- verification:
+  - `git diff --check -- STATE.md jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql` passed
+
+- time: `2026-03-23 23:57 +09:00`
+- route: `Route B`
+- task: `Review the admin frontend refit for lodging, members, reservations, and cms`
+- participants: `reviewer_admin_frontend`
+- write_sets:
+  - `reviewer_admin_frontend`: `review only`
+- verification:
+  - `node --check front/admin/js/rbac_config.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `pnpm run guard:text` passed
+
+- time: `2026-03-24 00:48 +09:00`
+- route: `Route B`
+- task: `Finish priority 1 admin IA labels and priority 2 frontend gap inventory under the latest approved taxonomy`
+- participants: `main`, `worker_admin_batch (Meitner)`, `reviewer_admin_frontend (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_batch`: `front/admin/js/rbac_config.js, front/admin/css/components.css, front/admin/pages/lodging.html, front/admin/js/lodging.js, front/admin/pages/members.html, front/admin/js/members.js, front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/pages/cms.html, front/admin/js/cms.js, docs/admin-frontend-gap-inventory.md, ERROR_LOG.md`
+  - `reviewer_admin_frontend`: `review only`
+- verification:
+  - `node --check front/admin/js/rbac_config.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/admin/js/rbac_config.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/reservations.js front/admin/js/cms.js front/admin/pages/lodging.html front/admin/pages/members.html front/admin/pages/reservations.html front/admin/pages/cms.html docs/admin-frontend-gap-inventory.md ERROR_LOG.md` passed
+  - reviewer initially flagged one outdated `support_tickets` placement label in `docs/admin-frontend-gap-inventory.md`; the follow-up doc fix landed and the final IA/taxonomy check passed
+
+- time: `2026-03-24 01:22 +09:00`
+- route: `Route B`
+- task: `Refine admin lodging/cms/reservations IA around banner placement, hotel labels, and reservation domain filtering`
+- participants: `main`, `worker_admin_refine (Gibbs)`, `reviewer_admin_refine (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_refine`: `front/admin/js/rbac_config.js, front/admin/pages/lodging.html, front/admin/js/lodging.js, front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/css/components.css`
+  - `reviewer_admin_refine`: `review only`
+- verification:
+  - `node --check front/admin/js/rbac_config.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/admin/js/rbac_config.js front/admin/js/lodging.js front/admin/js/cms.js front/admin/js/reservations.js front/admin/pages/lodging.html front/admin/pages/cms.html front/admin/pages/reservations.html front/admin/css/components.css` passed
+  - reviewer confirmed the banner placement affordance and reservations domain filter behavior, then flagged lingering lodging taxonomy residue; the follow-up cleanup landed and local re-read of the final files confirmed `호텔 / 항공 / 렌터카 / 바우처 / 유심 / 특가`, `공지사항 / FAQ / 배너`, and the reservations domain subfilter state
+
+- time: `2026-03-24 01:40 +09:00`
+- route: `Route B`
+- task: `Reflow the reservations admin header/action layout and align the toolbar into a single row`
+- participants: `main`, `worker_reservations_layout (Banach, Gibbs the 2nd)`, `reviewer_reservations_layout (Steward the 2nd, Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_reservations_layout`: `front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/css/components.css`
+  - `reviewer_reservations_layout`: `review only`
+- verification:
+  - `node --check front/admin/js/reservations.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/admin/pages/reservations.html front/admin/js/reservations.js front/admin/css/components.css` passed
+  - reservations quick actions moved above the toolbar, the search group now sits beside the domain subfilter, and the segment control moved into the toolbar band
+  - reviewer first flagged the subfilter wrap risk on desktop; the follow-up CSS moved the reservations-specific `.admin-subfilter-control` override after the shared rule so desktop `nowrap` wins
+
+- time: `2026-03-24 01:56 +09:00`
+- route: `Route B`
+- task: `Normalize reservations toolbar control heights to the segment-control baseline`
+- participants: `main`, `worker_reservations_layout (Dewey the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_reservations_layout`: `front/admin/css/components.css`
+- verification:
+  - `node --check front/admin/js/reservations.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- front/admin/pages/reservations.html front/admin/js/reservations.js front/admin/css/components.css` passed
+  - reservations toolbar search input width was then trimmed to `320px` and the control heights were aligned to the `admin-segment-control` baseline
+
+- time: `2026-03-24 01:05 +09:00`
+- route: `Route B`
+- task: `Fix main landing header orphan util divider after login`
+- participants: `main`, `worker_shell_runtime (Boyle)`, `reviewer_header_util (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shell_runtime`: `front/apps/shell/src/runtime/layout/header.ts`
+  - `reviewer_header_util`: `review only`
+- verification:
+  - `pnpm -C front/apps/shell check` passed
+  - reviewer found no blocking issues in `front/apps/shell/src/runtime/layout/header.ts`
+
+- time: `2026-03-24 09:45 +09:00`
+- route: `Route B`
+- task: `Consume extracted admin data modules from the five admin page controllers`
+- participants: `worker_admin_pages`
+- write_sets:
+  - `worker_admin_pages`: `front/admin/js/cms.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/reservations.js`
+- verification:
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- STATE.md front/admin/js/cms.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/reservations.js` passed
+
+- time: `2026-03-24 11:18 +09:00`
+- route: `Route B`
+- task: `Remove dummy business data from the scoped admin data/dashboard slice without changing admin layout or controls`
+- participants: `main`, `worker_seed (Dalton)`, `worker_admin_data (Aristotle)`, `worker_admin_dashboard (Laplace)`, `reviewer_admin_no_dummy (Euclid)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.admin-page-dehardcode-v1.yaml`
+  - `worker_admin_data`: `front/admin/data/**, front/admin/js/store.js`
+  - `worker_admin_dashboard`: `front/admin/js/dashboard.js, front/admin/pages/dashboard.html`
+  - `reviewer_admin_no_dummy`: `review only`
+- verification:
+  - scoped grep over `front/admin/data/**`, `front/admin/js/store.js`, `front/admin/js/dashboard.js`, and `front/admin/pages/dashboard.html` found no remaining sample business records like named customers/reservations/products/inquiry rows
+  - `node --check front/admin/js/store.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `pnpm run guard:text` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.admin-page-dehardcode-v1.yaml front/admin/data/store-seed.js front/admin/data/dashboard-data.js front/admin/data/cms-config.js front/admin/data/lodging-config.js front/admin/data/members-config.js front/admin/data/reservations-config.js front/admin/js/store.js front/admin/js/dashboard.js front/admin/pages/dashboard.html` passed
+  - `reviewer_admin_no_dummy` reported no blocking findings; residual gap is browser-level smoke for async store-seed import timing and empty Chart.js rendering
+
+- time: `2026-03-24 11:09 +09:00`
+- route: `Route B`
+- task: `Schema refactor follow-up for V2 MariaDB compatibility and V20 replay/name alignment`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_db_migration_followup`: `jeju-spring/src/main/resources/db/migration/**`
+  - `reviewer_db_migration_followup`: `review only`
+- verification:
+  - pending
+
+- time: `2026-03-24 14:12 +09:00`
+- route: `Route B`
+- task: `Finish the Spring runtime cutover so root build/deploy, healthcheck, page hosting, and source-of-truth rules are aligned on jeju-spring`
+- participants: `main`, `worker_pipeline_cutover (Darwin)`, `worker_spring_entrypoints (Dewey)`, `reviewer_spring_cutover (Sartre)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-final-runtime-cutover-v1.yaml, ERROR_LOG.md`
+  - `worker_pipeline_cutover`: `package.json, scripts/pipelines/build-war.js, scripts/pipelines/deploy.js, scripts/spring/mirror-front-to-thymeleaf.cjs, scripts/spring/sync-front-assets-to-spring.cjs`
+  - `worker_spring_entrypoints`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java`
+  - `reviewer_spring_cutover`: `review only`
+- verification:
+  - `pnpm run build` passed twice after the cutover changes
+  - `pnpm run guard:text` passed
+  - `node --check scripts/pipelines/build-war.js` passed
+  - `node --check scripts/pipelines/deploy.js` passed
+  - `node --check scripts/spring/mirror-front-to-thymeleaf.cjs` passed
+  - `node --check scripts/spring/sync-front-assets-to-spring.cjs` passed
+  - generated `jeju-spring/src/main/resources/templates/front-mirror/pages/cs/customer_center.html` now points at `/front-mirror/pages/cs/assets/**`
+  - `pnpm run spring:test` still failed before app tests on the pre-existing alwaysdata Flyway DB access-denied environment issue, and that gap was appended to `ERROR_LOG.md`
+  - `reviewer_spring_cutover` first flagged the customer-center asset-path mismatch, the follow-up fix landed, and the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-24 14:46 +09:00`
+- route: `Route B`
+- task: `Close the Spring runtime cutover by aligning workspace contract docs and re-verifying the jeju-spring baseline`
+- participants: `main`, `worker_pipeline_cutover (Boyle)`, `worker_spring_entrypoints (Gibbs)`, `worker_runtime_contract_docs (Pascal)`, `reviewer_spring_cutover (Hegel)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_pipeline_cutover`: `package.json, scripts/pipelines/**, scripts/utils/env.js, scripts/spring/**`
+  - `worker_spring_entrypoints`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/**, jeju-spring/src/main/resources/**, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_runtime_contract_docs`: `AGENTS.md, WORKSPACE_CONTEXT.toml, PLAN.md, docs/hybrid-execution-checklist.md`
+  - `reviewer_spring_cutover`: `review only`
+- verification:
+  - `worker_pipeline_cutover` reported `no code changes needed`; root `build/deploy` already use the jeju-spring WAR and `run-jeju-spring-gradle.cjs` already mirrors `front -> jeju-spring` automatically before Gradle tasks
+  - `worker_spring_entrypoints` reported `no code changes needed`; host-only and excluded entrypoints already matched `FrontMirrorHostController`, front-mirror templates, and the transition/inventory docs
+  - `worker_runtime_contract_docs` updated `AGENTS.md`, `WORKSPACE_CONTEXT.toml`, `PLAN.md`, and `docs/hybrid-execution-checklist.md` so the active baseline is `jeju-spring final runtime baseline` while `jeju-web/.env` remains the current env source
+  - `pnpm run build` passed and produced `jeju-spring/build/jeju-spring.war`
+  - `pnpm run guard:text` passed
+  - `git diff --check -- AGENTS.md PLAN.md SEED.spring-final-runtime-cutover-v1.yaml STATE.md WORKSPACE_CONTEXT.toml docs/hybrid-execution-checklist.md` passed apart from the existing `AGENTS.md` CRLF->LF warning
+  - `pnpm run spring:test` still failed before app tests could execute because Flyway could not connect to the configured alwaysdata MySQL host: `Access denied for user 'jejugroup'@'123.142.12.196' (using password: YES)`
+  - `reviewer_spring_cutover (Hegel)` first flagged `WORKSPACE_CONTEXT.toml` for stale `repository_root` and `Java 17` baseline text; after the follow-up patch the final reviewer pass reported `발견 없음`
+- time: `2026-03-24 15:02 +09:00`
+- route: `Route B`
+- task: `Isolate spring:test from alwaysdata by forcing test-only DB precedence with a localhost fallback`
+- participants: `main`, `worker_test_db_isolation (Kierkegaard)`, `reviewer_test_db_isolation (Newton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-local-db-isolation-v1.yaml, ERROR_LOG.md`
+  - `worker_test_db_isolation`: `jeju-spring/src/test/**, jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml`
+  - `reviewer_test_db_isolation`: `review only`
+- verification:
+  - `worker_test_db_isolation` updated `jeju-spring/src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java` and added `jeju-spring/src/test/resources/application.yml` to force test-only DB precedence through `JEJU_SPRING_TEST_DB_* -> jeju-spring/.env -> localhost`
+  - first `pnpm run spring:test` rerun failed because the local DB password fallback was still blank and Flyway hit `Access denied for user 'jejugroup'@'localhost' (using password: NO)`
+  - the helper was then corrected to read `jeju-spring/.env` with last-value-wins precedence for duplicate keys
+  - final `pnpm run spring:test` passed against localhost MySQL
+  - `pnpm run guard:text` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md SEED.spring-test-local-db-isolation-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java jeju-spring/src/test/resources/application.yml` passed
+  - `reviewer_test_db_isolation (Newton)` reported `발견 없음` and confirmed production `jeju-spring/src/main/resources/application.yml` was unchanged

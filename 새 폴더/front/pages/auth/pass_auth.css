@@ -1,0 +1,385 @@
+@charset "utf-8";
+
+@font-face {
+  font-family: "FlightSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Regular.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "FlightSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Bold.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 700;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  padding: 0;
+}
+
+body.pass-auth-page {
+  background: #fff;
+  color: #111;
+  font-family: "FlightSans", sans-serif;
+  overflow-x: hidden;
+}
+
+#jeju-pass-auth-app {
+  min-height: 100vh;
+}
+
+.pass-modal-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 20px;
+}
+
+.pass-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  padding: 30px 0 20px;
+}
+
+.pass-logo-red {
+  background-color: #f7323f;
+  color: #fff;
+  display: inline-block;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  line-height: 1;
+  padding: 4px 10px;
+}
+
+.pass-header-text {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.step-header-pass {
+  border-bottom: none;
+  gap: 16px;
+  margin-bottom: 0;
+  padding-bottom: 12px;
+}
+
+.step-header-pass .step-title {
+  color: #111;
+  font-size: 26px;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.step-header-pass .step-indicator {
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.step-header-pass .progress-bg,
+.step-header-pass .progress-bar {
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+.step-header-pass .progress-bar,
+.step-header-pass .step-circle.active,
+.step-header-pass .step-circle.completed {
+  background-color: #f7323f;
+}
+
+.step-header-pass .step-circle.active {
+  color: #fff;
+}
+
+.step-header-pass .step-circle.completed {
+  border-color: #f7323f;
+}
+
+.pass-screen {
+  animation: fade 0.3s ease;
+  display: block;
+  flex: 1;
+  padding: 20px 0;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.telecom-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.telecom-btn {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  color: #111;
+  cursor: pointer;
+  display: flex;
+  font-size: 16px;
+  font-weight: 700;
+  height: 80px;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.telecom-btn span {
+  display: block;
+}
+
+.telecom-btn.mvno {
+  background: #f7f7f7;
+  color: #666;
+  font-size: 14px;
+  gap: 2px;
+}
+
+.telecom-btn:hover,
+.authmethod-btn:hover {
+  border-color: #111;
+}
+
+.authmethod-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.authmethod-btn {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.method-info strong {
+  color: #111;
+  display: block;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.method-info span {
+  color: #888;
+  font-size: 13px;
+}
+
+.pass-input-group {
+  margin-bottom: 15px;
+}
+
+.pass-input-group input {
+  border: 1px solid #111;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+  height: 54px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.pass-input-group input.readonly {
+  background: #fdfdfd;
+  border-color: #ddd;
+  color: #111;
+  pointer-events: none;
+}
+
+.pass-reg-group {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.pass-reg-group input {
+  border: 1px solid #111;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+  height: 54px;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.pass-reg-group #passRegNum1 {
+  width: 140px;
+}
+
+.pass-reg-group #passRegNum2 {
+  width: 54px;
+}
+
+.pass-reg-group .dash {
+  color: #666;
+  font-size: 16px;
+}
+
+.pass-reg-group .dots {
+  color: #888;
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.phone-input-group {
+  display: none;
+}
+
+.phone-input-group.visible {
+  animation: slideDown 0.3s ease;
+  display: block;
+}
+
+.captcha-wrapper {
+  display: none;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.captcha-wrapper.visible {
+  animation: slideDown 0.3s ease;
+  display: flex;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pass-next-btn {
+  background: #f7323f;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  height: 56px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.pass-next-btn:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.pass-inline-meta {
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+}
+
+.pass-inline-meta.success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #0f8a61;
+}
+
+.pass-confirm-ui {
+  margin-top: 80px;
+  text-align: center;
+}
+
+.pass-title-center {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.pass-subtitle {
+  color: #888;
+  font-size: 14px;
+}
+
+.pass-loader {
+  animation: spin 1s linear infinite;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 3px solid #fff;
+  display: inline-block;
+  height: 20px;
+  vertical-align: middle;
+  width: 20px;
+}
+
+.pass-loader-lg {
+  border-color: rgba(247, 50, 63, 0.2);
+  border-top-color: #f7323f;
+  border-width: 4px;
+  height: 50px;
+  margin-bottom: 30px;
+  width: 50px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.pass-footer {
+  color: #888;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: auto;
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+.pass-footer strong {
+  color: #444;
+}
+
+.pass-auth-page .input-feedback {
+  margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+  .pass-modal-content {
+    padding: 0 16px;
+  }
+
+  .step-header-pass .step-title {
+    font-size: 22px;
+  }
+}

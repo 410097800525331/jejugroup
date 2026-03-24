@@ -1,0 +1,31 @@
+goal: 남은 customer-center 제품화를 마무리한다.
+constraints:
+  - admin notice/faq write는 기존 customer-center 앱(front/apps/cs) 안에서 해결하고, 불필요한 front/admin 대수술은 하지 않는다.
+  - support comment/attachment UI는 ticket detail 흐름 안에서 owner/admin 정책을 따라야 한다.
+  - attachment는 메타데이터 CRUD만 다루며 binary upload/download는 out_of_scope다.
+  - support status/priority는 jeju-spring 백엔드에서 화이트리스트 검증으로 고정한다.
+  - service_type 축은 jeju-air / jeju-stay / jeju-rental / common을 유지한다.
+  - 기존 UI 톤과 customer-center 구조는 유지하고, 불필요한 시각 리뉴얼은 하지 않는다.
+acceptance_criteria:
+  - front/apps/cs에서 admin 세션일 때 notice create/update/delete가 실제 write 플로우로 동작한다.
+  - front/apps/cs에서 admin 세션일 때 faq create/update/delete가 실제 write 플로우로 동작한다.
+  - customer-center의 admin write UI는 기존 앱 내부 흐름과 권한 판정에 맞게 노출되며, front/admin 대수술 없이 완료된다.
+  - inquiries detail 화면에서 support comments UI가 표시되고 owner/admin 정책에 따라 작성·수정·삭제 흐름이 동작한다.
+  - inquiries detail 화면에서 attachments metadata UI가 표시되고 메타데이터 CRUD가 동작한다.
+  - attachment 관련 binary upload/download는 구현하지 않는다.
+  - jeju-spring support API는 status/priority 값이 허용 목록 밖이면 거부한다.
+  - support API 검증은 service_type 축을 jeju-air / jeju-stay / jeju-rental / common으로 유지한 상태에서 통과한다.
+  - 기존 customer-center UI 톤과 구조가 유지되고, 불필요한 리뉴얼성 변경이 없다.
+verification:
+  - pnpm -C front/apps/cs check
+  - pnpm -C front/apps/cs test
+  - pnpm -C front/apps/cs build
+  - pnpm run spring:test
+  - pnpm run spring:war-package
+  - targeted admin/support checks
+out_of_scope:
+  - front/admin의 대규모 재구성 또는 별도 write UX 신설
+  - attachment binary upload/download 구현
+  - customer-center 전면 UI 리디자인
+  - service_type 축 추가/변경
+  - support status/priority의 클라이언트 측 임의 확장 허용

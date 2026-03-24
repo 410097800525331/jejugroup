@@ -1,0 +1,25 @@
+version: 1
+task: "Add a mypage CTA to the main landing header and lock mypage shell chrome to the main landing shell"
+context:
+  repo: "jejugroup-landing"
+  source_of_truth: "front"
+  constraints:
+    - "Do not edit jeju-web or jeju-spring mirrors directly"
+    - "Keep the landing as hybrid static HTML + shell runtime"
+    - "Use the existing route/shell system instead of hardcoded location hacks"
+objectives:
+  - "Place a new mypage CTA in main header right-controls immediately to the right of the weather control"
+  - "Use a home icon treatment that fits the existing Jeju orange accent and weather-button footprint"
+  - "Navigate to the mypage dashboard through the route system with shell main context"
+  - "Ensure direct or stale-shell mypage loads still default to the main landing shell header/footer unless an explicit shell query says otherwise"
+acceptance_criteria:
+  - "The main header renders a clickable mypage control beside the weather button"
+  - "The control uses a home icon and matches the weather header button footprint"
+  - "The mypage control resolves to MYPAGE.DASHBOARD with shell=main"
+  - "The mypage dashboard page still mounts through page shell hosts and defaults its shell chrome to main"
+  - "Query-driven shell selection keeps precedence over page defaults"
+  - "No generated assets or deployment mirrors are edited"
+verification:
+  - "pnpm run check:shell"
+  - "pnpm run guard:text"
+  - "reviewer pass"

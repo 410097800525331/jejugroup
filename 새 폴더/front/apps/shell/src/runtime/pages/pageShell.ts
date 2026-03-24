@@ -1,0 +1,177 @@
+import { clearAirShellBase, mountAirPageShell, syncAirShellBase } from "@runtime/pages/airShell";
+import { installLegacyGlobals } from "@runtime/globals";
+import { mountHotelShell, mountMainShell } from "@runtime/layout/shellMount";
+import { markRuntimeReady } from "@runtime/lifecycle";
+import { getAppRoot } from "@runtime/utils/appRoot";
+
+const SHELL_QUERY_KEY = "shell";
+const SHELL_STORAGE_KEY = "jeju:mypage-shell";
+const SHELLS = new Set(["main", "stay", "air"]);
+let mountedShell: string | null = null;
+
+const getHeaderHost = () => {
+  return document.getElementById("jeju-page-shell-header");
+};
+
+const getFooterHost = () => {
+  return document.getElementById("jeju-page-shell-footer");
+};
+
+const getPageShellHosts = () => {
+  return {
+    footerHost: getFooterHost(),
+    headerHost: getHeaderHost(),
+  };
+};
+
+const toAbsoluteUrl = (resourcePath: string) => new URL(resourcePath, getAppRoot()).href;
+
+const normalizeShellForPage = (shell: string) => shell;
+
+const loadStyle = (href: string) => {
+  const absoluteHref = /^[a-z]+:/i.test(href) ? href : toAbsoluteUrl(href);
+  const alreadyLoaded = Array.from(document.styleSheets).some((sheet) => sheet.href === absoluteHref);
+  if (alreadyLoaded) {
+    return;
+  }
+
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = absoluteHref;
+  document.head.appendChild(link);
+};
+
+const setDocumentBase = (shell: string) => {
+  if (shell === "air") {
+    syncAirShellBase(toAbsoluteUrl);
+    return;
+  }
+
+  clearAirShellBase();
+};
+
+const resolveShellFromReferrer = () => {
+  if (!document.referrer) {
+    return null;
+  }
+
+  try {
+    const referrerUrl = new URL(document.referrer);
+    const pathname = referrerUrl.pathname.toLowerCase();
+
+    if (pathname.includes("/jejuair/")) {
+      return "air";
+    }
+
+    if (pathname.includes("/jejustay/")) {
+      return "stay";
+    }
+
+    if (pathname.endsWith("/index.html") || pathname === "/" || pathname.includes("/front/index.html")) {
+      return "main";
+    }
+  } catch (_error) {
+    return null;
+  }
+
+  return null;
+};
+
+const resolveShell = () => {
+  const params = new URLSearchParams(window.location.search);
+  const queryShell = params.get(SHELL_QUERY_KEY);
+  if (queryShell && SHELLS.has(queryShell)) {
+    return normalizeShellForPage(queryShell);
+  }
+
+  const referrerShell = resolveShellFromReferrer();
+  if (referrerShell) {
+    return normalizeShellForPage(referrerShell);
+  }
+
+  const storedShell = window.sessionStorage.getItem(SHELL_STORAGE_KEY);
+  if (storedShell && SHELLS.has(storedShell)) {
+    return normalizeShellForPage(storedShell);
+  }
+
+  return normalizeShellForPage("main");
+};
+
+const persistShell = (shell: string) => {
+  window.sessionStorage.setItem(SHELL_STORAGE_KEY, shell);
+  document.body.dataset.mypageShell = shell;
+};
+
+const mountReactMainShell = async () => {
+  const { footerHost, headerHost } = getPageShellHosts();
+  if (!headerHost || !footerHost) {
+    return;
+  }
+
+  headerHost.innerHTML = '<div id="main-header-placeholder"></div>';
+  footerHost.innerHTML = '<div id="main-footer-placeholder"></div>';
+  await mountMainShell();
+};
+
+const mountReactStayShell = async () => {
+  const { footerHost, headerHost } = getPageShellHosts();
+  if (!headerHost || !footerHost) {
+    return;
+  }
+
+  headerHost.innerHTML = '<div id="hotel-header-placeholder"></div>';
+  footerHost.innerHTML = '<div id="hotel-footer-placeholder"></div>';
+  await mountHotelShell();
+};
+
+const mountAirShell = async () => {
+  const { footerHost, headerHost } = getPageShellHosts();
+  if (!headerHost || !footerHost) {
+    return;
+  }
+
+  await mountAirPageShell(
+    {
+      footerHost,
+      headerHost,
+    },
+    {
+      loadStyle,
+    },
+  );
+};
+
+export const hasPageShellHosts = () => {
+  const { footerHost, headerHost } = getPageShellHosts();
+  return Boolean(headerHost || footerHost);
+};
+
+export const mountPageShellRuntime = async () => {
+  const { footerHost, headerHost } = getPageShellHosts();
+  if (!headerHost || !footerHost) {
+    return "main";
+  }
+
+  const shell = resolveShell();
+  persistShell(shell);
+  setDocumentBase(shell);
+  installLegacyGlobals();
+
+  if (mountedShell === shell && headerHost.childElementCount > 0 && footerHost.childElementCount > 0) {
+    markRuntimeReady("page-shell");
+    return shell;
+  }
+
+  if (shell === "air") {
+    await mountAirShell();
+    await new Promise((resolve) => window.setTimeout(resolve, 40));
+  } else if (shell === "stay") {
+    await mountReactStayShell();
+  } else {
+    await mountReactMainShell();
+  }
+
+  mountedShell = shell;
+  markRuntimeReady("page-shell");
+  return shell;
+};

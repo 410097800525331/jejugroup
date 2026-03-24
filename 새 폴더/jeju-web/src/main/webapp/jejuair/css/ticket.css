@@ -1,0 +1,349 @@
+@charset "utf-8";
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+  z-index: 100;
+  padding: 8px 0;
+}
+.dropdown ul li {
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.dropdown ul li:hover {
+  background: #f5f5f5;
+}
+/* 티켓 */
+.ticket {
+  z-index: 1000;
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-40%);
+  width: 350px;
+  padding: 30px;
+  font-size: 1.4rem;
+  transition: transform 0.35s ease;
+}
+.ticket.hidden {
+  transform: translate(92%, -40%);
+}
+/* 패널 토글 */
+.ticket_panel {
+  position: absolute;
+  right: 35%;
+  top: 12%;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 260px;
+  background: #fff;
+  border-radius: 18px 0 0 18px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  transition: transform 0.3s ease;
+}
+.ticket_panel.active {
+  background: var(--main-color);
+}
+.panel_toggle_btn img {
+  width: 40px;
+  height: 40px;
+}
+.panel_toggle_btn.active {
+  transform: scaleX(-1);
+  -webkit-filter: brightness(0) invert(1);
+  filter: brightness(0) invert(1);
+}
+/* 티켓 내부 */
+.ticket_wrap {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+/* 커팅 선 */
+.ticket_cutline {
+  border-top: 2px dashed var(--text-sub);
+  margin: 6px 0 6px;
+  position: relative;
+}
+/* 톱니 */
+.ticket_cutline::before,
+.ticket_cutline::after {
+  content: "";
+  position: absolute;
+  top: -12px;
+  width: 24px;
+  height: 24px;
+  background: #eee;
+  border-radius: 50%;
+}
+.ticket_cutline::before {
+  left: -12px;
+}
+.ticket_cutline::after {
+  right: -12px;
+}
+/* 탭 구조 */
+.ticket_tab_content {
+  display: none;
+}
+.ticket_tab_content.active {
+  display: block;
+}
+/* 메인 탭 */
+#tab_booking .ticket_top[data-tab="tab_round"],
+#tab_flight .ticket_bottom[data-sub="schedule"] {
+  display: block;
+}
+.tab_sub,
+.tab_menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+}
+.tab_menu div {
+  padding: 8px 0;
+  background: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: 0.2s;
+}
+.tab_menu div:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+.tab_menu div.active {
+  background: var(--main-color);
+  color: #fff;
+}
+/* tab sub */
+.tab_sub div {
+  padding: 4px 0;
+}
+.ticket_sub_tab_btn {
+  margin: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.ticket_sub_tab_btn.active {
+  border-radius: 12px;
+  padding: 4px 0;
+  border: 1px solid var(--main-color);
+  color: var(--main-color);
+}
+/* 출발지 ↔ 도착지 */
+.arrow_btn {
+  width: 35px;
+  height: 35px;
+  margin: 10px auto;
+  cursor: pointer;
+}
+/* 입력 영역 */
+.ticket_top,
+.ticket_bottom {
+  padding: 20px;
+}
+/* .ticketing_target {
+  position: relative;
+} */
+.input_box {
+  position: relative;
+  width: 100%;
+  padding-bottom: 6px;
+}
+.input_box input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #dcdcdc;
+  padding: 6px 28px 6px 0;
+  font-size: 1.35rem;
+  transition: 0.2s;
+}
+.input_box input:focus {
+  border-bottom-color: var(--main-color);
+}
+.input_box img {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-40%);
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+  object-fit: contain;
+}
+/* 검색/결제 */
+.pay_method {
+  margin-top: 12px;
+  margin-bottom: 20px;
+}
+.pay_method>label {
+  display: block;
+  font-size: 1.25rem;
+  margin-bottom: 6px;
+}
+.pay_options {
+  display: flex;
+  gap: 10px;
+  font-size: 1.3rem;
+}
+.discount_row {
+  margin-bottom: 26px;
+}
+.discount_row label {
+  font-size: 1.25rem;
+}
+.discount_input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  border: 1px solid #dcdcdc;
+  background: #fafafa;
+}
+.coupon_btn {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--main-color);
+  color: var(--main-color);
+  border-radius: 6px;
+  font-size: 1.35rem;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: 0.2s;
+}
+.coupon_btn:hover {
+  background: var(--sub-color);
+}
+/* search */
+.search {
+  text-align: center;
+}
+.search_btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.5rem;
+  border: 1px solid var(--main-color);
+  background: var(--main-color);
+  box-shadow: 0 4px 14px rgba(255, 90, 0, 0.3);
+  transition: 0.2s;
+}
+.search_btn:hover {
+  filter: brightness(1.05);
+}
+/* 예약 조회 */
+.reserve_msg {
+  font-size: 1.2rem;
+  padding: 30px 0;
+}
+.reserve_msg li {
+  margin-bottom: 8px;
+}
+/* 탑승객 */
+.dropdown.passenger {
+  padding: 16px;
+}
+.dropdown.passenger .row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.dropdown.passenger .ctrl button {
+  width: 28px;
+  height: 28px;
+}
+.apply_btn {
+  width: 100%;
+  margin-top: 8px;
+}
+/* 캘린더 */
+.calendar_layer.ticket_calendar {
+  position: absolute;
+  display: none;
+  z-index: 9999;
+}
+.calendar_layer.ticket_calendar.active {
+  display: block;
+}
+.calendar_dim {
+  display: none;
+}
+.calendar_box {
+  width: 320px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+.calendar_head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+/* 테이블 */
+.calendar_month table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.calendar_month th {
+  font-size: 13px;
+  padding-bottom: 6px;
+}
+.calendar_month td {
+  position: relative;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+.calendar_month td:not(.disabled):hover {
+  background: rgba(255,90,0,0.12);
+}
+/* 지난 날짜 */
+.calendar_month td.disabled {
+  color: #ccc;
+  pointer-events: none;
+  cursor: default;
+}
+/* 선택 된 날짜 */
+.calendar_month td.start {
+  background: var(--main-color);
+  color: #fff;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.calendar_month td.range {
+  background: #ffe3d5;
+  border-radius: 0;
+}
+.calendar_month td.end {
+  background: var(--main-color);
+  color: #fff;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.calendar_month td.start.end {
+  border-radius: 999px;
+}
+.calendar_footer {
+  margin-top: 12px;
+  text-align: center;
+}
+.calendar_apply_btn {
+  font-size: 14px;
+}
+.calendar_apply_btn:disabled {
+  background: #ddd;
+  cursor: default;
+}

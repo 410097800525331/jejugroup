@@ -1,63 +1,172 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { render, fireEvent, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import InquiryForm from "../components/serviceCenter/InquiryForm";
-import { AuthProvider } from "../contexts/AuthContext";
 
-const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <AuthProvider>{children}</AuthProvider>
-);
+const mocks = vi.hoisted(() => ({
+  useAuth: vi.fn(),
+  createTicket: vi.fn(),
+}));
 
-describe("InquiryForm Validation", () => {
-  it("shows error messages when submitting an empty form", async () => {
-    render(<InquiryForm />, { wrapper: Wrapper });
-    
-    const submitButton = screen.getByRole("button", { name: /제출하기/i });
-    expect(submitButton).toBeDisabled();
+vi.mock("@/contexts/AuthContext", () => ({
+  useAuth: mocks.useAuth,
+}));
+
+vi.mock("@/lib/serviceCenterApi", () => ({
+  createTicket: mocks.createTicket,
+}));
+
+describe("InquiryForm", () => {
+  beforeEach(() => {
+    mocks.useAuth.mockReset();
+    mocks.createTicket.mockReset();
   });
 
-  it("enables submit button only when all fields are valid", async () => {
-    render(<InquiryForm />, { wrapper: Wrapper });
-    
-    // 비로그인 상태이므로 모든 필드를 채워야 함
-    const nameInput = screen.getByLabelText(/이름/i);
-    const phoneInput = screen.getByLabelText(/연락처/i);
-    const emailInput = screen.getByLabelText(/이메일/i);
-    const titleInput = screen.getByLabelText(/제목/i);
-    const contentInput = screen.getByLabelText(/문의 내용/i);
-    const agreementCheckbox = screen.getByLabelText(/동의합니다/i);
-    const submitButton = screen.getByRole("button", { name: /제출하기/i });
-    const typeSelect = screen.getByLabelText(/문의 유형/i);
-
-    expect(submitButton).toBeDisabled();
-
-    // Fill the form
-    fireEvent.change(nameInput, { target: { value: "홍길동" } });
-    fireEvent.change(phoneInput, { target: { value: "01012345678" } });
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    
-    // 기본 서비스가 'common'이므로 'general' 유형 선택
-    fireEvent.change(typeSelect, { target: { value: "general" } });
-    
-    fireEvent.change(titleInput, { target: { value: "문의드립니다 제목입니다." } });
-    fireEvent.change(contentInput, { target: { value: "상세 내용입니다. 10자 이상 작성합니다. 만족스럽네요." } });
-    fireEvent.click(agreementCheckbox);
-
-    // Wait for the form to update validation state
-    await waitFor(() => {
-      expect(submitButton).not.toBeDisabled();
+  it("disables inquiry submission for logged-out users", () => {
+    mocks.useAuth.mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      sessionState: "success",
+      sessionError: null,
     });
+
+    const { container } = render(<InquiryForm />);
+
+    const submitButton = container.querySelector(".inquiry-submit-btn") as HTMLButtonElement | null;
+    const serviceSelect = container.querySelector("#service") as HTMLSelectElement | null;
+    const inquiryTypeSelect = container.querySelector("#inquiryType") as HTMLSelectElement | null;
+
+    expect(submitButton).not.toBeNull();
+    expect(serviceSelect).not.toBeNull();
+    expect(inquiryTypeSelect).not.toBeNull();
+    expect(submitButton).toBeDisabled();
+    expect(serviceSelect).toBeDisabled();
+    expect(inquiryTypeSelect).toBeDisabled();
+    expect(mocks.createTicket).not.toHaveBeenCalled();
   });
 
-  it("shows error for invalid email", async () => {
-    render(<InquiryForm />, { wrapper: Wrapper });
-    
-    const emailInput = screen.getByLabelText(/이메일/i);
-    
-    fireEvent.change(emailInput, { target: { value: "invalid-email" } });
-    fireEvent.blur(emailInput);
+  it("submits through the API when the user is logged in", async () => {
+    mocks.useAuth.mockReturnValue({
+      user: {
+        id: "user-1",
+        name: "Hong Gil-dong",
+        email: "hong@example.com",
+        phone: "01012345678",
+      },
+      isAuthenticated: true,
+      sessionState: "success",
+      sessionError: null,
+    });
+    mocks.createTicket.mockResolvedValue({
+      ok: true,
+      status: 201,
+      data: null,
+      error: null,
+    });
+
+    const onSubmitted = vi.fn();
+    const { container } = render(<InquiryForm onSubmitted={onSubmitted} />);
+
+    const inquiryTypeSelect = container.querySelector("#inquiryType") as HTMLSelectElement | null;
+    const titleInput = container.querySelector("#title") as HTMLInputElement | null;
+    const contentInput = container.querySelector("#content") as HTMLTextAreaElement | null;
+    const agreementCheckbox = container.querySelector('input[name="agreement"]') as HTMLInputElement | null;
+    const form = container.querySelector("form");
+
+    expect(inquiryTypeSelect).not.toBeNull();
+    expect(titleInput).not.toBeNull();
+    expect(contentInput).not.toBeNull();
+    expect(agreementCheckbox).not.toBeNull();
+    expect(form).not.toBeNull();
+
+    fireEvent.change(inquiryTypeSelect!, { target: { value: "general" } });
+    fireEvent.change(titleInput!, { target: { value: "Inquiry form regression" } });
+    fireEvent.change(contentInput!, { target: { value: "This is a valid content body for submission." } });
+
+    if (!agreementCheckbox!.checked) {
+      fireEvent.click(agreementCheckbox!);
+    }
+
+    fireEvent.submit(form!);
 
     await waitFor(() => {
-      expect(screen.getByText(/유효한 이메일 주소를 입력해 주세요/i)).toBeInTheDocument();
+      expect(mocks.createTicket).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mocks.createTicket).toHaveBeenCalledWith({
+      serviceType: "common",
+      inquiryType: "general",
+      title: "Inquiry form regression",
+      content: "This is a valid content body for submission.",
+      name: "Hong Gil-dong",
+      email: "hong@example.com",
+      phone: "01012345678",
+      agreement: true,
+    });
+    expect(onSubmitted).toHaveBeenCalledTimes(1);
+  });
+
+  it("clears stale inquiryType values when the service changes", async () => {
+    mocks.useAuth.mockReturnValue({
+      user: {
+        id: "user-1",
+        name: "Hong Gil-dong",
+        email: "hong@example.com",
+        phone: "01012345678",
+      },
+      isAuthenticated: true,
+      sessionState: "success",
+      sessionError: null,
+    });
+    mocks.createTicket.mockResolvedValue({
+      ok: true,
+      status: 201,
+      data: null,
+      error: null,
+    });
+
+    const { container } = render(<InquiryForm />);
+
+    const serviceSelect = container.querySelector("#service") as HTMLSelectElement | null;
+    const inquiryTypeSelect = container.querySelector("#inquiryType") as HTMLSelectElement | null;
+    const titleInput = container.querySelector("#title") as HTMLInputElement | null;
+    const contentInput = container.querySelector("#content") as HTMLTextAreaElement | null;
+    const agreementCheckbox = container.querySelector('input[name="agreement"]') as HTMLInputElement | null;
+    const submitButton = container.querySelector(".inquiry-submit-btn") as HTMLButtonElement | null;
+    const form = container.querySelector("form");
+
+    expect(serviceSelect).not.toBeNull();
+    expect(inquiryTypeSelect).not.toBeNull();
+    expect(titleInput).not.toBeNull();
+    expect(contentInput).not.toBeNull();
+    expect(agreementCheckbox).not.toBeNull();
+    expect(submitButton).not.toBeNull();
+    expect(form).not.toBeNull();
+
+    fireEvent.change(inquiryTypeSelect!, { target: { value: "general" } });
+    fireEvent.change(titleInput!, { target: { value: "Service sync regression" } });
+    fireEvent.change(contentInput!, { target: { value: "This content is long enough to validate the form." } });
+
+    if (!agreementCheckbox!.checked) {
+      fireEvent.click(agreementCheckbox!);
+    }
+
+    await waitFor(() => {
+      expect(submitButton!).not.toBeDisabled();
+    });
+
+    fireEvent.change(serviceSelect!, { target: { value: "jeju-air" } });
+
+    await waitFor(() => {
+      expect(inquiryTypeSelect!.value).toBe("");
+    });
+
+    expect(submitButton!).toBeDisabled();
+
+    fireEvent.submit(form!);
+
+    await waitFor(() => {
+      expect(mocks.createTicket).not.toHaveBeenCalled();
     });
   });
 });

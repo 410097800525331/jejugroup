@@ -1,0 +1,28 @@
+goal: >
+  Add the second local DB schema slice for bookings, payments, mypage source
+  data, products, inventory, CMS, banners, and admin operation tables, while
+  keeping the existing v1 auth/support baseline intact.
+constraints:
+  - Limit implementation to new Flyway migrations under jeju-spring/src/main/resources/db/migration.
+  - Keep the existing v1 auth/support schema untouched except for additive foreign keys from the new tables.
+  - Do not add application code, repository code, or controller/service logic in this slice.
+  - Keep `itinerary` as a derived view concept; do not add an itinerary table.
+  - Use easy Korean table comments for every new table.
+  - Keep the local MySQL + Flyway + Gradle workflow intact.
+acceptance_criteria:
+  - The schema adds booking/order tables for bookings, booking items, and booking participants.
+  - The schema adds payment tables for payment attempts, payment transactions, and refunds.
+  - The schema adds mypage-source tables for travel events, coupons, user coupons, point ledger, membership plans, and membership benefits.
+  - The schema adds product/inventory tables for properties, room types, property benefits, property display overrides, property tags, voucher products, voucher benefits, inventory stocks, inventory adjustments, and price policies.
+  - The schema adds CMS/admin tables for banners, banner slots, cms pages, cms blocks, content items, exposure rules, admin action logs, user blacklists, and admin preferences.
+  - Fresh local replay applies cleanly after the existing V1-V7 chain.
+  - The new tables expose easy Korean comments that operators can read directly.
+verification:
+  - Reset the local jeju-spring schema and replay the full migration chain including the new V8/V9 files.
+  - Run pnpm run spring:test.
+  - Run pnpm run spring:war-package.
+  - Inspect local MySQL to confirm the new tables exist and show Korean comments.
+out_of_scope:
+  - CRUD/service/controller implementation for the new tables.
+  - Env-source migration beyond the already working local baseline.
+  - Additional DB slices after this second schema cut.

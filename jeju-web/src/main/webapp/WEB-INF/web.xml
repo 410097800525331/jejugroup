@@ -6,6 +6,7 @@
          metadata-complete="true">
   <display-name>jeju-web</display-name>
 
+  <!-- CORS 필터 등록 -->
   <filter>
     <filter-name>CorsFilter</filter-name>
     <filter-class>util.CorsFilter</filter-class>
@@ -15,13 +16,27 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <!-- Servlet mappings -->
   <servlet>
     <servlet-name>SignupServlet</servlet-name>
     <servlet-class>controller.SignupServlet</servlet-class>
   </servlet>
+  <servlet-mapping>
+    <servlet-name>SignupServlet</servlet-name>
+    <url-pattern>/api/auth/signup</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <servlet-name>LoginServlet</servlet-name>
     <servlet-class>controller.LoginServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>SessionServlet</servlet-name>
+    <servlet-class>controller.SessionServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>controller.LogoutServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>VerifyController</servlet-name>
@@ -31,34 +46,17 @@
     <servlet-name>PublicConfigServlet</servlet-name>
     <servlet-class>controller.PublicConfigServlet</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>InquiryListServlet</servlet-name>
-    <servlet-class>controller.InquiryListServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>InquiryWriteServlet</servlet-name>
-    <servlet-class>controller.InquiryWriteServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>InquiryInsertServlet</servlet-name>
-    <servlet-class>controller.InquiryInsertServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>InquiryDetailServlet</servlet-name>
-    <servlet-class>controller.InquiryDetailServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>InquiryApiServlet</servlet-name>
-    <servlet-class>controller.InquiryApiServlet</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>SignupServlet</servlet-name>
-    <url-pattern>/api/auth/signup</url-pattern>
-  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
     <url-pattern>/api/auth/login</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SessionServlet</servlet-name>
+    <url-pattern>/api/auth/session</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>LogoutServlet</servlet-name>
+    <url-pattern>/api/auth/logout</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>VerifyController</servlet-name>
@@ -67,26 +65,6 @@
   <servlet-mapping>
     <servlet-name>PublicConfigServlet</servlet-name>
     <url-pattern>/api/public/config</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>InquiryListServlet</servlet-name>
-    <url-pattern>/inquiry/list</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>InquiryWriteServlet</servlet-name>
-    <url-pattern>/inquiry/write</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>InquiryInsertServlet</servlet-name>
-    <url-pattern>/inquiry/insert</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>InquiryDetailServlet</servlet-name>
-    <url-pattern>/inquiry/detail</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>InquiryApiServlet</servlet-name>
-    <url-pattern>/api/inquiries</url-pattern>
   </servlet-mapping>
 
   <welcome-file-list>

@@ -1,0 +1,25 @@
+goal: JEJU STAY hotel, life, private_stay pages must recover a consistent first-load hero reveal for the subtitle and search widget without changing the existing copy or widget behavior.
+constraints:
+  - Keep the shared shell boundary intact; only page-level hero reveal behavior may change.
+  - Preserve the existing subtitle copy, search widget copy, and widget interaction behavior.
+  - Reserve a stable hero slot for the subtitle and search widget so first paint does not shift layout.
+  - Use a single upward fade reveal sequence only; do not introduce staggered, delayed, or multi-step entrance choreography.
+  - Prevent flicker, down-then-up jumps, or any visible reflow between initial render and reveal completion.
+  - Keep the implementation limited to the JEJU STAY hotel, life, and private_stay page path plus any directly related shared shell runtime needed for the reveal contract.
+acceptance_criteria:
+  - On first load of `front/jejustay/pages/hotel/jejuhotel.html`, `front/jejustay/pages/stay/jejustay_life.html`, and `front/jejustay/pages/stay/private_stay.html`, the hero subtitle and search widget appear with the same reserved slot and reveal timing.
+  - The subtitle and widget reveal as one consistent upward fade, with no flicker and no down-then-up jump.
+  - The hero layout keeps its space stable before and during widget mount, so the page does not visibly shift when the widget becomes interactive.
+  - Existing copy, widget behavior, and shell-mounted header/footer behavior remain unchanged.
+  - The fix does not introduce mirror-path edits or shared-shell boundary violations.
+verification:
+  - `pnpm run check:shell`
+  - `pnpm run build:shell`
+  - `pnpm run guard:text`
+  - `git diff --name-only -- front/jejustay/pages/hotel/jejuhotel.html front/jejustay/pages/stay/jejustay_life.html front/jejustay/pages/stay/private_stay.html front/apps/shell/src/runtime/pages/hotelSearchWidget.tsx front/apps/shell/src/runtime/pages/lifeSearchWidget.tsx front/apps/shell/src/runtime/pages/hotelListSearchWidget.tsx front/apps/shell/src/runtime/pages/islandMount.tsx front/apps/shell/src/runtime/pages/pageShell.ts front/apps/shell/src/runtime/layout/shellMount.tsx`
+out_of_scope:
+  - Changing the hero copy, widget copy, or page marketing copy.
+  - Redesigning the JEJU STAY hero, layout, typography, or color system.
+  - Touching route constants, deployment mirrors, or unrelated pages.
+  - Adding new animation systems, polling, or background orchestration.
+  - Modifying header, footer, or other shared shell behaviors unrelated to the hero reveal.

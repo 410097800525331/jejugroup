@@ -1,0 +1,497 @@
+import { j as e, a as p } from "./react-vendor-BoSfm_Te.js";
+import { U as E, a as b, S as f, b as S, c as I, P as R, d as g, e as A, M as k, f as w, g as C, L as T, h as L, H as y, i as j, j as M, k as V, G as H, C as O, l as P, m as _, n as G, o as D, p as U, q as $, B as x, r as B, s as q, t as Y } from "./icon-vendor-Dpra3II6.js";
+import { a as F } from "./legacy-core-C4kaoWaO.js";
+const W = {
+  "book-open": B,
+  "building-2": x,
+  calendar: $,
+  "chevron-left": U,
+  "chevron-right": D,
+  "check-circle": G,
+  "clipboard-list": _,
+  compass: P,
+  "credit-card": O,
+  gift: H,
+  headphones: V,
+  heart: M,
+  home: j,
+  hotel: y,
+  lightbulb: L,
+  "log-out": T,
+  map: C,
+  menu: w,
+  minus: k,
+  percent: A,
+  plane: g,
+  plus: R,
+  search: I,
+  "shield-check": S,
+  smartphone: f,
+  user: b,
+  users: E
+}, i = ({ name: s, className: a }) => {
+  const l = W[s] ?? q;
+  return /* @__PURE__ */ e.jsx(l, { className: a, strokeWidth: 1.9, "aria-hidden": "true", focusable: "false" });
+}, J = ({ item: s }) => /* @__PURE__ */ e.jsxs("li", { className: "hotel-shell-nav-item", children: [
+  /* @__PURE__ */ e.jsxs("a", { href: "#", className: "hotel-shell-nav-link route-link", "data-route": s.route, children: [
+    /* @__PURE__ */ e.jsxs("span", { className: "hotel-shell-nav-icon-roll stagger-wrapper", "aria-hidden": "true", children: [
+      /* @__PURE__ */ e.jsx("span", { className: "hotel-shell-nav-icon-layer stagger-original", children: /* @__PURE__ */ e.jsx(i, { name: s.icon, className: "hotel-shell-nav-icon" }) }),
+      /* @__PURE__ */ e.jsx("span", { className: "hotel-shell-nav-icon-layer stagger-clone", children: /* @__PURE__ */ e.jsx(i, { name: s.icon, className: "hotel-shell-nav-icon" }) })
+    ] }),
+    /* @__PURE__ */ e.jsx("span", { "data-lang": s.dataLang, children: s.label })
+  ] }),
+  /* @__PURE__ */ e.jsxs("div", { className: "hotel-shell-mega-dropdown", children: [
+    /* @__PURE__ */ e.jsx("div", { className: "hotel-shell-mega-menu-list-container", children: s.menuItems.map((a) => /* @__PURE__ */ e.jsxs(
+      "a",
+      {
+        href: "#",
+        className: "hotel-shell-mega-menu-item route-link",
+        "data-route": a.route,
+        "data-preview": a.previewId,
+        children: [
+          /* @__PURE__ */ e.jsx(i, { name: a.icon, className: "hotel-shell-mega-menu-icon" }),
+          /* @__PURE__ */ e.jsx("span", { children: a.label }),
+          a.isNew ? /* @__PURE__ */ e.jsx("span", { className: "hotel-shell-badge-new", children: "NEW" }) : null
+        ]
+      },
+      `${a.route}-${a.previewId}`
+    )) }),
+    /* @__PURE__ */ e.jsxs("div", { className: "hotel-shell-mega-menu-preview", children: [
+      /* @__PURE__ */ e.jsx("div", { className: "hotel-shell-preview-loader", children: /* @__PURE__ */ e.jsx("i", { className: "fas fa-spinner fa-spin" }) }),
+      s.previews.map((a, l) => /* @__PURE__ */ e.jsx(
+        "img",
+        {
+          id: a.id,
+          src: a.src,
+          alt: a.alt,
+          className: `hotel-shell-preview-image ${l === 0 ? "active" : ""}`
+        },
+        a.id
+      ))
+    ] })
+  ] })
+] }), z = [
+  {
+    route: "SERVICES.STAY.MAIN",
+    icon: "building-2",
+    dataLang: "navAccommodations",
+    label: "숙소 예약",
+    menuItems: [
+      { route: "SERVICES.STAY.MAIN", previewId: "preview-hotel", icon: "hotel", label: "호텔 & 리조트" },
+      { route: "SERVICES.STAY.LIFE", previewId: "preview-month", icon: "calendar", label: "한달살기", isNew: !0 },
+      { route: "SERVICES.STAY.PRIVATE", previewId: "preview-private", icon: "home", label: "프라이빗 스테이" }
+    ],
+    previews: [
+      {
+        id: "preview-hotel",
+        src: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80",
+        alt: "Hotel"
+      },
+      {
+        id: "preview-month",
+        src: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80",
+        alt: "Month Stay"
+      },
+      {
+        id: "preview-private",
+        src: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600&q=80",
+        alt: "Private Stay"
+      }
+    ]
+  },
+  {
+    route: "SERVICES.TRAVEL.ACTIVITIES",
+    icon: "plane",
+    dataLang: "navTravel",
+    label: "여행 상품",
+    menuItems: [
+      { route: "SERVICES.TRAVEL.ACTIVITIES", previewId: "preview-activity", icon: "compass", label: "액티비티" },
+      { route: "SERVICES.TRAVEL.ESIM", previewId: "preview-esim", icon: "smartphone", label: "eSIM / 유심" }
+    ],
+    previews: [
+      {
+        id: "preview-activity",
+        src: "https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=600&q=80",
+        alt: "Activity"
+      },
+      {
+        id: "preview-esim",
+        src: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80",
+        alt: "eSIM"
+      }
+    ]
+  },
+  {
+    route: "SERVICES.DEALS.MAIN",
+    icon: "percent",
+    dataLang: "navDeals",
+    label: "혜택 & 특가",
+    menuItems: [
+      { route: "SERVICES.DEALS.MAIN", previewId: "preview-promo", icon: "gift", label: "이번 달 프로모션" },
+      { route: "SERVICES.DEALS.MEMBER", previewId: "preview-member", icon: "users", label: "회원 전용 혜택" },
+      { route: "SERVICES.DEALS.PARTNER", previewId: "preview-partner", icon: "credit-card", label: "제휴 카드 할인" }
+    ],
+    previews: [
+      {
+        id: "preview-promo",
+        src: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80",
+        alt: "Promo"
+      },
+      {
+        id: "preview-member",
+        src: "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=600&q=80",
+        alt: "Member"
+      },
+      {
+        id: "preview-partner",
+        src: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80",
+        alt: "Partner"
+      }
+    ]
+  },
+  {
+    route: "SERVICES.TRAVEL.GUIDE",
+    icon: "book-open",
+    dataLang: "navGuide",
+    label: "여행 정보",
+    menuItems: [
+      { route: "SERVICES.TRAVEL.GUIDE", previewId: "preview-guide", icon: "map", label: "여행 가이드북" },
+      { route: "SERVICES.TRAVEL.TIPS", previewId: "preview-tips", icon: "lightbulb", label: "여행 팁" },
+      { route: "SERVICES.TRAVEL.CHECKLIST", previewId: "preview-checklist", icon: "check-circle", label: "여행 체크리스트" }
+    ],
+    previews: [
+      {
+        id: "preview-guide",
+        src: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80",
+        alt: "Guide"
+      },
+      {
+        id: "preview-tips",
+        src: "https://images.unsplash.com/photo-1527631746610-bca00a040d60?w=600&q=80",
+        alt: "Tips"
+      },
+      {
+        id: "preview-checklist",
+        src: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&q=80",
+        alt: "Checklist"
+      }
+    ]
+  }
+], K = [
+  { route: "SERVICES.STAY.MAIN", dataLang: "mobileNavHotel", label: "숙소 예약", active: !0 },
+  { route: "SERVICES.STAY.LIFE", dataLang: "mobileNavLife", label: "한달살기" },
+  { route: "SERVICES.TRAVEL.ACTIVITIES", dataLang: "mobileNavActivity", label: "액티비티" },
+  { route: "SERVICES.TRAVEL.ESIM", dataLang: "mobileNavEsim", label: "eSIM" },
+  { route: "SERVICES.TRAVEL.GUIDE", dataLang: "mobileNavGuide", label: "여행 가이드" },
+  { route: "SERVICES.TRAVEL.TIPS", dataLang: "mobileNavTips", label: "여행 일정 팁" },
+  { action: "OPEN_RESERVATION_DRAWER", dataLang: "navResCheck", label: "예약 확인" },
+  { route: "AUTH.LOGIN", routeParams: '{"shell":"stay"}', dataLang: "navLogin", label: "로그인" }
+], ie = ({ basePath: s }) => /* @__PURE__ */ e.jsxs("header", { className: "header hotel-shell-header", id: "header", children: [
+  /* @__PURE__ */ e.jsxs("div", { className: "hotel-shell-header-container", children: [
+    /* @__PURE__ */ e.jsx("a", { href: "#", className: "hotel-shell-logo route-link", "data-route": "SERVICES.STAY.MAIN", children: /* @__PURE__ */ e.jsx("img", { src: `${s}jejustay/images/logo_jejuhotel.png`, alt: "JEJU STAY", className: "hotel-shell-logo-img" }) }),
+    /* @__PURE__ */ e.jsx("nav", { className: "hotel-shell-main-nav", children: /* @__PURE__ */ e.jsx("ul", { className: "hotel-shell-nav-list", children: z.map((a) => /* @__PURE__ */ e.jsx(J, { item: a }, `${a.route}-${a.dataLang}`)) }) }),
+    /* @__PURE__ */ e.jsxs("div", { className: "hotel-shell-header-utils", children: [
+      /* @__PURE__ */ e.jsxs(
+        "a",
+        {
+          href: "#",
+          className: "hotel-shell-util-link admin-link route-link",
+          "data-route": "ADMIN.DASHBOARD",
+          id: "headerAdminBtn",
+          style: { display: "none" },
+          children: [
+            /* @__PURE__ */ e.jsx(i, { name: "shield-check", className: "hotel-shell-util-icon" }),
+            /* @__PURE__ */ e.jsx("span", { children: "관리자 페이지" })
+          ]
+        }
+      ),
+      /* @__PURE__ */ e.jsxs(
+        "a",
+        {
+          href: "#",
+          className: "hotel-shell-util-link route-link",
+          "data-action": "OPEN_RESERVATION_DRAWER",
+          id: "headerAuthActionBtn",
+          children: [
+            /* @__PURE__ */ e.jsxs("span", { className: "hotel-shell-util-icon", "aria-hidden": "true", children: [
+              /* @__PURE__ */ e.jsx("span", { "data-auth-icon": "guest", children: /* @__PURE__ */ e.jsx(i, { name: "clipboard-list", className: "hotel-shell-util-icon" }) }),
+              /* @__PURE__ */ e.jsx("span", { "data-auth-icon": "member", hidden: !0, children: /* @__PURE__ */ e.jsx(i, { name: "user", className: "hotel-shell-util-icon" }) })
+            ] }),
+            /* @__PURE__ */ e.jsx(
+              "span",
+              {
+                "data-auth-label": !0,
+                "data-auth-label-ko": "비회원 예약확인",
+                "data-auth-label-en": "Guest Reservation Check",
+                "data-auth-member-label-ko": "마이페이지",
+                "data-auth-member-label-en": "My Page",
+                children: "비회원 예약확인"
+              }
+            )
+          ]
+        }
+      ),
+      /* @__PURE__ */ e.jsxs(
+        "a",
+        {
+          href: "#",
+          className: "hotel-shell-util-link route-link",
+          "data-route": "AUTH.LOGIN",
+          "data-route-params": '{"shell":"stay"}',
+          id: "headerLoginBtn",
+          children: [
+            /* @__PURE__ */ e.jsx(i, { name: "user", className: "hotel-shell-util-icon" }),
+            /* @__PURE__ */ e.jsx("span", { "data-lang": "navLogin", children: "로그인" })
+          ]
+        }
+      ),
+      /* @__PURE__ */ e.jsxs("a", { href: "#", className: "hotel-shell-util-link route-link", "data-route": "CS.CUSTOMER_CENTER", children: [
+        /* @__PURE__ */ e.jsx(i, { name: "headphones", className: "hotel-shell-util-icon" }),
+        /* @__PURE__ */ e.jsx("span", { "data-lang": "navCs", children: "고객센터" })
+      ] })
+    ] }),
+    /* @__PURE__ */ e.jsx("button", { className: "hotel-shell-mobile-menu-btn", id: "mobileMenuBtn", "aria-label": "메뉴 열기", children: /* @__PURE__ */ e.jsx(i, { name: "menu", className: "hotel-shell-util-icon" }) })
+  ] }),
+  /* @__PURE__ */ e.jsx("div", { className: "hotel-shell-mobile-nav", id: "mobileNav", children: /* @__PURE__ */ e.jsx("ul", { className: "hotel-shell-mobile-nav-list", children: K.map((a) => /* @__PURE__ */ e.jsx("li", { children: /* @__PURE__ */ e.jsx(
+    "a",
+    {
+      href: "#",
+      className: `hotel-shell-mobile-nav-link route-link${a.active ? " active" : ""}`,
+      "data-route": a.route,
+      "data-route-params": a.routeParams,
+      "data-action": a.action,
+      "data-lang": a.dataLang,
+      children: a.label
+    }
+  ) }, `${a.route ?? a.action ?? a.dataLang}-${a.dataLang}`)) }) })
+] }), Q = [
+  {
+    href: "/index.html",
+    icon: j,
+    key: "main",
+    title: "제주그룹 메인"
+  },
+  {
+    href: "/jejuair/index.html",
+    icon: g,
+    key: "air",
+    title: "제주에어"
+  },
+  {
+    href: "/jejustay/pages/hotel/jejuhotel.html",
+    icon: x,
+    key: "stay",
+    title: "제주스테이"
+  },
+  {
+    href: "https://jejurentcar.netlify.app/",
+    icon: Y,
+    key: "rentcar",
+    rel: "noreferrer",
+    target: "_blank",
+    title: "제주렌터카"
+  }
+], X = (s) => s * Math.PI / 180, Z = (s, a, l, n, r) => {
+  const h = a > 1 ? (r - n) / (a - 1) : 0, d = n + h * s, o = X(d), c = Math.cos(o) * l, m = Math.sin(o) * l;
+  return {
+    "--tx": `${c.toFixed(2)}px`,
+    "--ty": `${m.toFixed(2)}px`,
+    transitionDelay: `${(s * 0.03).toFixed(2)}s`
+  };
+};
+function ee({
+  items: s,
+  label: a = "Family Sites",
+  originX: l = "right",
+  radiusPx: n = 98,
+  startAngle: r,
+  endAngle: h
+}) {
+  const [d, o] = p.useState(!1), c = p.useRef(null), m = r ?? 180, v = h ?? 270;
+  return p.useEffect(() => {
+    const t = (u) => {
+      c.current && !c.current.contains(u.target) && o(!1);
+    };
+    return document.addEventListener("mousedown", t), () => {
+      document.removeEventListener("mousedown", t);
+    };
+  }, []), /* @__PURE__ */ e.jsxs("div", { className: `family-radial-shell family-radial-shell--${l}`, children: [
+    /* @__PURE__ */ e.jsxs(
+      "div",
+      {
+        className: `family-radial-menu family-radial-menu--${l} ${d ? "active" : ""}`,
+        ref: c,
+        children: [
+          /* @__PURE__ */ e.jsx(
+            "button",
+            {
+              type: "button",
+              className: `family-radial-btn ${d ? "active" : ""}`,
+              onClick: () => o((t) => !t),
+              "aria-label": a,
+              title: a,
+              children: /* @__PURE__ */ e.jsx("span", { className: "family-radial-btn__glyph", "aria-hidden": "true" })
+            }
+          ),
+          /* @__PURE__ */ e.jsx("div", { className: "family-radial-items", children: s.map((t, u) => {
+            const N = t.icon;
+            return /* @__PURE__ */ e.jsx(
+              "a",
+              {
+                className: "family-radial-item",
+                href: t.href,
+                rel: t.rel,
+                style: Z(u, s.length, n, m, v),
+                target: t.target,
+                title: t.title,
+                children: /* @__PURE__ */ e.jsx(N, { size: 18, strokeWidth: 2.2 })
+              },
+              t.key
+            );
+          }) })
+        ]
+      }
+    ),
+    a ? /* @__PURE__ */ e.jsx("p", { className: "family-radial-label", children: a }) : null
+  ] });
+}
+function ae(s) {
+  return /* @__PURE__ */ e.jsx(ee, { items: Q, originX: "center", radiusPx: 98, ...s });
+}
+const ne = () => /* @__PURE__ */ e.jsxs("footer", { className: "footer section shell-footer", id: "section-footer", children: [
+  /* @__PURE__ */ e.jsxs("div", { className: "footer-content", children: [
+    /* @__PURE__ */ e.jsxs("div", { className: "footer-info", children: [
+      /* @__PURE__ */ e.jsx("p", { children: /* @__PURE__ */ e.jsx("strong", { "data-lang": "footerCompany", children: "(주) 제주 그룹" }) }),
+      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCEO", children: "대표이사 김대표" }),
+      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerBizNum", children: "사업자등록번호 616-81-50527" }),
+      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerSaleNum", children: "통신판매신고 제주 2006-125" }),
+      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerHosting", children: "호스팅 사업자 AWS" }),
+      /* @__PURE__ */ e.jsx("br", {}),
+      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerAddr", children: "주소: 제주특별자치도 제주시 첨단로 64 (연동, 건설공제회관 3층)" }),
+      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCs", children: "고객센터: 1599-1500 (09:00 ~ 19:00)" }),
+      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCsEmail", children: "고객 문의: jejugroup.help@jejugroup.net" }),
+      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerPartnerEmail", children: "제휴 문의: partnership@jejugroup.net" })
+    ] }),
+    /* @__PURE__ */ e.jsxs("div", { className: "footer-right-group", children: [
+      /* @__PURE__ */ e.jsx(ae, {}),
+      /* @__PURE__ */ e.jsxs("div", { className: "footer-social", children: [
+        /* @__PURE__ */ e.jsx("a", { href: "#", className: "social-icon", "aria-label": "YouTube", children: /* @__PURE__ */ e.jsx("i", { className: "fab fa-youtube" }) }),
+        /* @__PURE__ */ e.jsx("a", { href: "#", className: "social-icon", "aria-label": "Instagram", children: /* @__PURE__ */ e.jsx("i", { className: "fab fa-instagram" }) }),
+        /* @__PURE__ */ e.jsx("a", { href: "#", className: "social-icon", "aria-label": "TikTok", children: /* @__PURE__ */ e.jsx("i", { className: "fab fa-tiktok" }) }),
+        /* @__PURE__ */ e.jsx("a", { href: "#", className: "social-icon", "aria-label": "Facebook", children: /* @__PURE__ */ e.jsx("i", { className: "fab fa-facebook" }) })
+      ] })
+    ] })
+  ] }),
+  /* @__PURE__ */ e.jsx("div", { className: "footer-copyright", children: /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCopyright", children: "Copyright © Jeju Group. All Rights Reserved." }) })
+] }), re = ({ basePath: s }) => {
+  const a = (n, r) => {
+    try {
+      return F(n, r ?? {});
+    } catch {
+      return "#";
+    }
+  }, l = (n = "") => {
+    const r = a("HOME");
+    return r === "#" ? "#" : `${r}${n}`;
+  };
+  return /* @__PURE__ */ e.jsxs("header", { className: "header main-header", id: "header", children: [
+    /* @__PURE__ */ e.jsxs("div", { className: "header-util", id: "index-header-util", children: [
+      /* @__PURE__ */ e.jsx(
+        "a",
+        {
+          href: a("AUTH.LOGIN", { shell: "main" }),
+          className: "util-link route-link",
+          "data-route": "AUTH.LOGIN",
+          "data-route-params": '{"shell":"main"}',
+          "data-lang": "login",
+          id: "indexLoginBtn",
+          children: "로그인"
+        }
+      ),
+      /* @__PURE__ */ e.jsx("span", { className: "util-divider", children: "|" }),
+      /* @__PURE__ */ e.jsx(
+        "a",
+        {
+          href: a("AUTH.SIGNUP", { shell: "main" }),
+          className: "util-link route-link",
+          "data-route": "AUTH.SIGNUP",
+          "data-route-params": '{"shell":"main"}',
+          "data-lang": "signup",
+          children: "회원가입"
+        }
+      ),
+      /* @__PURE__ */ e.jsx("span", { className: "util-divider", children: "|" }),
+      /* @__PURE__ */ e.jsx(
+        "a",
+        {
+          href: "#",
+          className: "util-link route-link",
+          "data-action": "OPEN_RESERVATION_DRAWER",
+          "data-lang": "reservationCheck",
+          id: "indexReservationCheckBtn",
+          children: "예약 확인"
+        }
+      ),
+      /* @__PURE__ */ e.jsx("span", { className: "util-divider", children: "|" }),
+      /* @__PURE__ */ e.jsx(
+        "a",
+        {
+          href: a("CS.CUSTOMER_CENTER"),
+          className: "util-link route-link",
+          "data-route": "CS.CUSTOMER_CENTER",
+          "data-lang": "customerCenter",
+          children: "고객센터"
+        }
+      )
+    ] }),
+    /* @__PURE__ */ e.jsxs("div", { className: "header-inner", children: [
+      /* @__PURE__ */ e.jsx("div", { className: "logo", children: /* @__PURE__ */ e.jsx("a", { href: l(), className: "logo-link route-link", "data-route": "HOME", children: /* @__PURE__ */ e.jsx("img", { className: "logo-img", src: `${s}jejustay/images/logo_jejuGP_wide.png`, alt: "제주그룹" }) }) }),
+      /* @__PURE__ */ e.jsx("nav", { className: "gnb", id: "gnb", children: /* @__PURE__ */ e.jsxs("ul", { className: "gnb-list", children: [
+        /* @__PURE__ */ e.jsx("li", { className: "gnb-item", children: /* @__PURE__ */ e.jsx("a", { href: l("#section-2"), className: "gnb-link", "data-lang": "navAir", children: "제주항공" }) }),
+        /* @__PURE__ */ e.jsx("li", { className: "gnb-item", children: /* @__PURE__ */ e.jsx("a", { href: l("#section-3"), className: "gnb-link", "data-lang": "navHotel", children: "제주 스테이" }) }),
+        /* @__PURE__ */ e.jsx("li", { className: "gnb-item", children: /* @__PURE__ */ e.jsx("a", { href: l("#section-4"), className: "gnb-link", "data-lang": "navRentCar", children: "제주 렌트카" }) }),
+        /* @__PURE__ */ e.jsx("li", { className: "gnb-item", children: /* @__PURE__ */ e.jsx("a", { href: l("#section-5"), className: "gnb-link", "data-lang": "navMembership", children: "멤버십" }) })
+      ] }) }),
+      /* @__PURE__ */ e.jsxs("div", { className: "header-right-controls", children: [
+        /* @__PURE__ */ e.jsx("button", { className: "lang-toggle", children: "English" }),
+        /* @__PURE__ */ e.jsx("div", { id: "weather-widget", className: "weather-widget", children: /* @__PURE__ */ e.jsx("button", { className: "weather-header-btn", id: "weather-open-btn", children: /* @__PURE__ */ e.jsx("i", { className: "fa-solid fa-spinner fa-spin" }) }) }),
+        /* @__PURE__ */ e.jsx(
+          "a",
+          {
+            href: a("MYPAGE.DASHBOARD", { shell: "main" }),
+            className: "weather-header-btn mypage-cta route-link",
+            "data-route": "MYPAGE.DASHBOARD",
+            "data-route-params": '{"shell":"main"}',
+            "aria-label": "마이페이지",
+            children: /* @__PURE__ */ e.jsx("span", { className: "mypage-cta-icon", "aria-hidden": "true", children: /* @__PURE__ */ e.jsxs("svg", { viewBox: "0 0 24 24", focusable: "false", "aria-hidden": "true", children: [
+              /* @__PURE__ */ e.jsx(
+                "path",
+                {
+                  d: "M4 11.5 12 4l8 7.5v7.5a1 1 0 0 1-1 1h-4.5v-5.2H9.5V20H5a1 1 0 0 1-1-1z",
+                  fill: "currentColor"
+                }
+              ),
+              /* @__PURE__ */ e.jsx(
+                "path",
+                {
+                  d: "M11 20v-4.2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V20",
+                  fill: "none",
+                  stroke: "currentColor",
+                  strokeWidth: "1.6",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round"
+                }
+              )
+            ] }) })
+          }
+        )
+      ] })
+    ] })
+  ] });
+};
+export {
+  ie as H,
+  re as M,
+  ne as a,
+  i as b
+};

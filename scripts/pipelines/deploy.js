@@ -6,8 +6,10 @@ const env = require('../utils/env');
 const ssh = new NodeSSH();
 
 const rootDir = path.resolve(__dirname, '../../');
-const localWarPath = path.join(rootDir, 'jeju-web', 'ROOT.war');
-const DEFAULT_HEALTHCHECK_URL = process.env.HEALTHCHECK_URL || 'https://jejugroup.alwaysdata.net/';
+const springBuildDir = path.join(rootDir, 'jeju-spring', 'build');
+const springWarAliasPath = path.join(springBuildDir, 'jeju-spring.war');
+const springWarLibDir = path.join(springBuildDir, 'libs');
+const DEFAULT_HEALTHCHECK_URL = process.env.HEALTHCHECK_URL || 'https://jejugroup.alwaysdata.net/actuator/health';
 const HEALTHCHECK_TIMEOUT_MS = Number(process.env.HEALTHCHECK_TIMEOUT_MS || 60000);
 const HEALTHCHECK_INTERVAL_MS = Number(process.env.HEALTHCHECK_INTERVAL_MS || 3000);
 const TOMCAT_RESTART_TIMEOUT_SEC = Number(process.env.TOMCAT_RESTART_TIMEOUT_SEC || 60);
@@ -16,6 +18,37 @@ const RESTART_STRICT_MODE = String(process.env.RESTART_STRICT_MODE || 'false').t
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const escapeForShellSingleQuote = (value) => String(value || '').replace(/'/g, `'"'"'`);
+
+const isWarFile = (fileName) => fileName.toLowerCase().endsWith('.war') && !fileName.toLowerCase().endsWith('-plain.war');
+
+const resolveLocalSpringWarPath = () => {
+  if (fs.existsSync(springWarAliasPath)) {
+    return springWarAliasPath;
+  }
+
+  if (!fs.existsSync(springWarLibDir)) {
+    return '';
+  }
+
+  const entries = fs
+    .readdirSync(springWarLibDir, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && isWarFile(entry.name))
+    .map((entry) => path.join(springWarLibDir, entry.name))
+    .sort((left, right) => {
+      const leftName = path.basename(left);
+      const rightName = path.basename(right);
+      const leftPriority = leftName.startsWith('jeju-spring-') ? 0 : 1;
+      const rightPriority = rightName.startsWith('jeju-spring-') ? 0 : 1;
+
+      if (leftPriority !== rightPriority) {
+        return leftPriority - rightPriority;
+      }
+
+      return leftName.localeCompare(rightName);
+    });
+
+  return entries[0] || '';
+};
 
 const extractTomcatInstanceId = (serverXmlPath) => {
   if (!serverXmlPath) {
@@ -278,13 +311,13 @@ const waitForHealthCheck = async (url) => {
 
 const verifyRuntimeBcryptLoaded = async () => {
   const verifyCommand = `
-CLASS_FILE="/home/${env.SSH_USER}/ROOT/ROOT/WEB-INF/classes/controller/SignupServlet.class"
+CLASS_FILE="/home/${env.SSH_USER}/ROOT/ROOT/WEB-INF/classes/com/jejugroup/jejuspring/auth/application/AuthService.class"
 if [ ! -f "$CLASS_FILE" ]; then
   echo "[VERIFY] runtime-class-missing"
   exit 2
 fi
 
-if strings "$CLASS_FILE" | grep -Eq 'BCryptUtil|hashPassword'; then
+if strings "$CLASS_FILE" | grep -Eq 'BCryptPasswordEncoder|BCrypt'; then
   echo "[VERIFY] runtime-bcrypt-ok"
   exit 0
 fi
@@ -315,8 +348,9 @@ exit 1
 async function deploy() {
   console.log('[DEPLOY] alwaysdata 업로드 시작');
 
-  if (!fs.existsSync(localWarPath)) {
-    console.error('[ERROR] ROOT.war 없음, 먼저 build 실행 필요');
+  const localWarPath = resolveLocalSpringWarPath();
+  if (!localWarPath) {
+    console.error('[ERROR] jeju-spring WAR 없음, 먼저 build 실행 필요');
     process.exit(1);
   }
 

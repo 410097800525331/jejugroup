@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="제주그룹 통합 마이페이지에서 예약 현황, 멤버십, 쿠폰과 최근 이용 내역을 한눈에 확인하세요.">
+  <title>마이페이지 | 제주그룹 통합 대시보드</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" th:href="@{/front-mirror/styles/globals.css}" href="/front-mirror/styles/globals.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/header.css}" href="/front-mirror/components/react/layout/header.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/mega-menu.css}" href="/front-mirror/components/react/layout/mega-menu.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/footer.css}" href="/front-mirror/components/react/layout/footer.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/components/react/widget/weather.css}" href="/front-mirror/components/react/widget/weather.css">
+  <link rel="stylesheet" th:href="@{/front-mirror/pages/mypage/mypage.css}" href="/front-mirror/pages/mypage/mypage.css">
+</head>
+
+<body class="mypage-dashboard-page" data-shell-default="main">
+  <div id="jeju-page-shell-header"></div>
+  <main id="mypage-dashboard-root" aria-live="polite">
+    <!-- 초기 로딩 중에도 레이아웃 점프를 막기 위한 스켈레톤 -->
+    <div class="meta-dashboard-layout skeleton-loader" style="pointer-events: none;">
+      <section class="meta-section layer-hero bento-grid">
+        <div class="bento-box hero-glass-container soft-radius pulse-bg"
+          style="height: 200px; background: var(--meta-surface-glass);"></div>
+        <div class="bento-box wallet-box meta-glass-theme soft-radius pulse-bg"
+          style="height: 200px; background: var(--meta-surface-glass);"></div>
+      </section>
+    </div>
+  </main>
+  <div id="jeju-page-shell-footer"></div>
+  <script type="module" th:src="@{/front-mirror/components/runtime/bootstrap.js}" src="/front-mirror/components/runtime/bootstrap.js"></script>
+</body>
+
+</html>

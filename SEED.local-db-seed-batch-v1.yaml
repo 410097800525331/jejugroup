@@ -1,0 +1,55 @@
+goal: >
+  Freeze revision 2 of a single local DB seed batch contract for the current
+  schema, covering only front-derived slices that can be populated without
+  schema reshaping. The batch must target jeju-spring's local DB baseline and
+  keep the new inventory tables in scope only where trustworthy source data
+  exists.
+constraints:
+  - local DB only; do not couple this batch to public runtime, deployed checks, or jeju-web mirroring
+  - target jeju-spring on JDK 21 and Tomcat 10.1 baseline
+  - no schema reshape in this batch
+  - one migration file per slice with disjoint write ownership
+  - include only data that can be traced to front-derived source files
+  - leave tables without trustworthy front-derived source data out of scope
+  - preserve the existing schema plus the already-added inventory tables
+  - keep the contract deterministic and frozen; changes require a new seed revision
+  - included slice groups are limited to customer-center master data, property/catalog data, cms/banner data, booking/membership/voucher data where source is trustworthy enough, and minimal meaningful flight/rental inventory seed data
+  - inventory_stocks stays out of the property/catalog seed for this revision unless trustworthy front-derived minimum stock rows are explicitly available
+  - use only the specified source files for this batch:
+    - front/apps/cs/client/src/data/inquiryOptions.ts
+    - front/apps/cs/client/src/data/serviceCenterData.ts
+    - front/components/react/hotel/hotelListPageData.ts
+    - front/admin/data/hotel-list-offer-catalog.json
+    - front/admin/js/lodging.js
+    - front/admin/js/cms.js
+    - front/admin/js/reservations.js
+    - front/admin/js/members.js
+    - front/components/react/mypage/data.ts
+    - front/jejustay/pages/deals/deals.js
+    - front/jejuair/js/route.js
+acceptance_criteria:
+  - the contract names a single batch seed scope and freezes the slice boundaries without ambiguity
+  - customer-center master data is limited to support_categories, notices, and faqs
+  - property/catalog data is limited to properties, property_room_types, property_tags, property_benefits, property_display_overrides, and price_policies
+  - inventory_stocks is excluded in this revision because the current implementation does not have enough trustworthy front-derived source data for seed rows; it may be added only in a later revision with explicit minimum stock coverage
+  - cms/banner data is limited to cms_pages, cms_blocks, content_items, banner_slots, banners, and exposure_rules
+  - booking/membership/voucher coverage includes only rows that can be justified from the listed front sources for bookings, booking_items, users, user_profiles, and vouchers/coupons family tables as applicable
+  - inventory coverage includes only minimal meaningful rows for flight_* and rental_* tables sourced from the specified route and lodging data
+  - the contract explicitly excludes any table slice that lacks trustworthy source data rather than inventing filler rows
+  - the batch does not introduce schema changes, runtime changes, or mirror-path edits
+  - the contract is ready to hand off to implementation and later evaluation without reinterpretation
+verification:
+  - review the YAML for the required schema keys: goal, constraints, acceptance_criteria, verification, out_of_scope
+  - confirm every included slice maps to a single migration file and a single ownership lane
+  - confirm the source list is restricted to the approved front-derived files named above
+  - confirm V16 property/catalog seed does not require inventory_stocks rows for this revision
+  - validate locally against the DB only; pnpm run spring:test and spring:war-package may be skipped if the wrapper jar is missing
+  - if local DB validation is available, use it to confirm the frozen contract fits the existing schema without reshape
+out_of_scope:
+  - any schema reshape or new table design
+  - jeju-web or deployed/public runtime checks
+  - mirror synchronization work in jeju-web/src/main/webapp or jeju-spring beyond seed consumption
+  - tables that have no trustworthy front-derived source data
+  - inventory_stocks rows without trustworthy front-derived minimum stock data
+  - expanding the batch beyond the named slices
+  - full fidelity migration of marketing, analytics, or operational tables unrelated to the specified source files

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제휴 카드 할인 | JEJU STAY</title>
+    <meta name="description" content="신용카드, 항공사 제휴를 통한 JEJU STAY만의 특별한 할인 혜택을 확인하세요.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/front-mirror/jejustay/pages/hotel/hotel.css}" href="/front-mirror/jejustay/pages/hotel/hotel.css">
+    <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/header.css}" href="/front-mirror/components/react/layout/header.css">
+    <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/footer.css}" href="/front-mirror/components/react/layout/footer.css">
+    <link rel="stylesheet" th:href="@{/front-mirror/components/react/ui/FAB/fab.css}" href="/front-mirror/components/react/ui/FAB/fab.css">
+    <link rel="stylesheet" th:href="@{/front-mirror/components/react/widget/chatbot-style.css}" href="/front-mirror/components/react/widget/chatbot-style.css">
+
+    <style>
+        .partner-hero {
+            position: relative;
+            background: url('../../images/partner_hero_bg2k.png') center/cover no-repeat;
+            padding: 200px 0 120px;
+            text-align: center;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .partner-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 1;
+        }
+
+        .partner-hero .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .partner-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: #fff;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .partner-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin: 0 auto;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            line-height: 1.6;
+        }
+
+        .partner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            padding: 80px 0;
+        }
+
+        .partner-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #f0f0f0;
+        }
+
+        .partner-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-logo {
+            height: 40px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-logo i {
+            font-size: 2rem;
+            color: #2b3a4a;
+        }
+
+        .card-discount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ff7800;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .card-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .card-btn {
+            display: block;
+            text-align: center;
+            padding: 18px;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .card-btn:hover {
+            background: #333;
+        }
+
+        .bank-logos {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            padding: 60px 0;
+            opacity: 0.6;
+            filter: grayscale(1);
+        }
+
+        .bank-logos i {
+            font-size: 2.5rem;
+        }
+    </style>
+</head>
+
+<body class="deals-partner-page">
+    <!-- ========== Header Placeholder ========== -->
+    <div id="hotel-header-placeholder"></div>
+
+    <main>
+        <section class="partner-hero">
+            <div class="container text-center">
+                <h1 class="partner-title">Partnership Benefits</h1>
+                <p class="partner-subtitle">제휴 카드와 포인트로 더 스마트하게 떠나세요. 전 세계 어디든 당신의 혜택이 따라갑니다.</p>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="partner-grid">
+                <!-- Card 1 -->
+                <div class="partner-card">
+                    <div class="card-logo"><i class="fa-solid fa-credit-card"></i> <span
+                            style="margin-left: 10px; font-weight: 700;">HYUNDAI CARD</span></div>
+                    <div class="card-discount">MAX 15% OFF</div>
+                    <h3 class="card-title">현대카드 M포인트 사용 / 할인</h3>
+                    <p class="card-desc">국내외 숙소 예약 시 결제 금액의 최대 15%를 M포인트로 결제하거나 즉시 할인 혜택을 받으실 수 있습니다. 아멕스 프리미엄 카드는 추가
+                        혜택이 적용됩니다.</p>
+                    <a href="#" class="card-btn">상세 보기</a>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="partner-card">
+                    <div class="card-logo"><i class="fa-solid fa-credit-card"></i> <span
+                            style="margin-left: 10px; font-weight: 700;">SAMSUNG CARD</span></div>
+                    <div class="card-discount">₩20,000 OFF</div>
+                    <h3 class="card-title">삼성카드 LINK 전용 혜택</h3>
+                    <p class="card-desc">삼성카드 LINK를 통해 20만원 이상 결제 시 2만원 청구 할인 혜택을 드립니다. 전 세계 호텔 예약 시 별도의 쿠폰 없이 자동으로 혜택이
+                        적용됩니다.</p>
+                    <a href="#" class="card-btn">상세 보기</a>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="partner-card">
+                    <div class="card-logo"><i class="fa-solid fa-plane"></i> <span
+                            style="margin-left: 10px; font-weight: 700;">JEJU AIR</span></div>
+                    <div class="card-discount">2X POINTS</div>
+                    <h3 class="card-title">제주항공 탑승객 특별 적립</h3>
+                    <p class="card-desc">제주항공 항공권 예약 번호를 인증하면 리프레시 포인트가 2배로 적립됩니다. 항공과 숙소를 한 번에 예약하고 더 큰 혜택을 누리세요.</p>
+                    <a href="#" class="card-btn">인증하고 예약하기</a>
+                </div>
+            </div>
+
+            <div class="bank-logos">
+                <i class="fa-brands fa-cc-visa"></i>
+                <i class="fa-brands fa-cc-mastercard"></i>
+                <i class="fa-brands fa-cc-amex"></i>
+                <i class="fa-brands fa-cc-apple-pay"></i>
+                <i class="fa-brands fa-cc-paypal"></i>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== Footer Placeholder ========== -->
+    <div id="hotel-footer-placeholder"></div>
+
+    <script th:src="@{/front-mirror/core/constants/lang_data.js}" src="/front-mirror/core/constants/lang_data.js"></script>
+    <script type="module" th:src="@{/front-mirror/components/runtime/bootstrap.js}" src="/front-mirror/components/runtime/bootstrap.js"></script>
+</body>
+
+</html>

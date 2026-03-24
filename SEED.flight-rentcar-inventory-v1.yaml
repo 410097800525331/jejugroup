@@ -1,0 +1,32 @@
+goal: >
+  Add the next local DB-only inventory schema slice in jeju-spring for flight
+  and rentcar operations, using the JDK 21 and Tomcat 10.1 baseline.
+  The slice freezes new inventory tables only: flight route, schedule, fare,
+  and seat inventory; rentcar location, vehicle class, vehicle, rate, and
+  vehicle inventory.
+constraints:
+  - Target local DB only and jeju-spring only; do not expand runtime scope to jeju-web or any external deployment path.
+  - Keep the existing booking, property, and customer-center schema intact; do not rename, repurpose, or reshape existing tables.
+  - Use domain-prefixed table names that stay separate from shared result tables such as bookings and property tables; every new table name must clearly carry a flight or rentcar domain prefix.
+  - Treat `front/jejuair/js/route.js` and `front/admin/js/lodging.js` as source rationale for the flight and rentcar inventory domains, and preserve the current booking/property schema comments as the compatibility baseline.
+  - Prefer Flyway SQL migration for schema creation so the new tables can be applied through local DB migration.
+  - Keep the scope to schema addition only; do not invent application behavior, service APIs, or UI changes.
+  - Data seed rows are out of scope unless a small structural row is required to validate the schema shape.
+  - No Spring wrapper-based verification is required if the wrapper is still unavailable.
+acceptance_criteria:
+  - New flight inventory tables exist for route, schedule, fare, and seat inventory.
+  - New rentcar inventory tables exist for location, vehicle class, vehicle, rate, and vehicle inventory.
+  - Existing bookings, property, and customer-center tables continue to serve their current roles unchanged.
+  - The new table names are separated from shared tables by clear flight or rentcar domain prefixes and do not collide with the current schema.
+  - The schema can be applied through a local DB migration path in jeju-spring.
+  - The accepted slice is schema-only unless a minimal structural seed row is needed to prove the table layout.
+verification:
+  - Apply the local DB migration and confirm the new flight and rentcar inventory tables exist.
+  - Validate that the migration completes without altering the existing bookings, property, or customer-center tables.
+  - If the Spring wrapper is missing, skip wrapper-based verification and use direct local DB schema validation instead.
+out_of_scope:
+  - Booking, property, and customer-center schema redesign.
+  - Any shared result-table redesign or naming migration.
+  - Application code, service logic, or API work.
+  - Frontend UI changes.
+  - Non-structural data seeding beyond what is strictly needed for schema validation.

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 / 스키마 관리 - 제주여행 관리자</title>
+
+    <script th:src="@{/front-mirror/admin/js/auth_guard.js}" src="/front-mirror/admin/js/auth_guard.js"></script>
+
+    <link rel="stylesheet" th:href="@{/front-mirror/admin/css/theme.css}" href="/front-mirror/admin/css/theme.css">
+    <link rel="stylesheet" th:href="@{/front-mirror/admin/css/layout.css}" href="/front-mirror/admin/css/layout.css">
+    <link rel="stylesheet" th:href="@{/front-mirror/admin/css/components.css}" href="/front-mirror/admin/css/components.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="admin-mode">
+    <button class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="메뉴 토글">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:24px; height:24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div class="admin-layout">
+
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-logo">
+                <span>Jeju</span> Admin
+            </div>
+            <nav class="admin-menu" id="admin-sidebar-menu">
+            </nav>
+        </aside>
+
+        <header class="admin-header">
+            <div class="admin-header-right-group">
+                <!-- Return to Portals (Micro-Navigation) -->
+                <nav class="admin-portal-nav" aria-label="Portal Navigation">
+                    <a href="#" class="portal-btn route-link" data-route="HOME" title="메인 랜딩으로">
+                        <i data-lucide="home" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">메인</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
+                    </a>
+                    <a href="#" class="portal-btn route-link" data-route="SERVICES.AIR.MAIN" title="제주에어로">
+                        <i data-lucide="plane" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">에어</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
+                    </a>
+                    <a href="#" class="portal-btn route-link" data-route="SERVICES.STAY.MAIN" title="제주스테이로">
+                        <i data-lucide="building" style="width:16px; height:16px;"></i>
+                        <span class="portal-btn-copy">
+                            <span class="portal-btn-label">스테이</span>
+                            <span class="portal-btn-hint">사이트 이동</span>
+                        </span>
+                    </a>
+                </nav>
+                <div class="admin-profile-container" id="admin-profile-container">
+                    <div class="admin-user-profile" id="admin-profile-trigger">
+                        <div class="admin-user-info">
+                            <span class="admin-user-name" id="admin-user-name">Loading...</span>
+                            <span class="admin-user-role" id="admin-user-role">-</span>
+                        </div>
+                        <div class="admin-avatar">AD</div>
+                        <i data-lucide="chevron-down" class="admin-dropdown-icon"
+                            style="width:16px; margin-left:8px; color:var(--admin-text-secondary);"></i>
+                    </div>
+
+                    <div class="admin-dropdown-menu" id="admin-dropdown-menu">
+                        <div class="dropdown-header">
+                            <strong data-lang="adminSettings">환경 설정</strong>
+                        </div>
+
+                        <div class="dropdown-section">
+                            <span class="dropdown-section-title">테마 모드</span>
+                            <div class="admin-theme-toggle" id="admin-theme-toggle">
+                                <button class="theme-btn active" data-theme="system" title="시스템 테마">💻</button>
+                                <button class="theme-btn" data-theme="dark" title="다크 모드">🌙</button>
+                                <button class="theme-btn" data-theme="light" title="라이트 모드">☀️</button>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-section">
+                            <span class="dropdown-section-title">언어 설정</span>
+                            <div class="admin-lang-toggle">
+                                <button class="lang-btn active" data-lang-val="ko">KOR</button>
+                                <button class="lang-btn" data-lang-val="en">ENG</button>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-divider"></div>
+
+                        <ul class="dropdown-menu-list">
+                            <li>
+                                <a href="#" class="dropdown-item">
+                                    <span
+                                        style="font-size:1.1rem; width:20px; display:inline-block; text-align:center;">👥</span>
+                                    <span>관리자 명단 보기</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="dropdown-item">
+                                    <span
+                                        style="font-size:1.1rem; width:20px; display:inline-block; text-align:center;">⚙️</span>
+                                    <span>내 프로필 설정</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="dropdown-item">
+                                    <span
+                                        style="font-size:1.1rem; width:20px; display:inline-block; text-align:center;">🔒</span>
+                                    <span>보안 로그 (Audit)</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="dropdown-divider"></div>
+
+                        <button class="dropdown-item danger-item" id="admin-logout-btn">
+                            <span
+                                style="font-size:1.1rem; width:20px; display:inline-block; text-align:center;">🚪</span>
+                            <span>로그아웃</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div class="admin-page-header">
+                <h1 class="admin-page-title">상품 / 스키마 관리</h1>
+            </div>
+
+            <div class="admin-reservations-quick-actions">
+                <button class="admin-btn admin-btn-outline">현재 DB 기준</button>
+                <button class="admin-btn admin-btn-primary">스키마 새로고침</button>
+            </div>
+
+            <div class="admin-table-actions"
+                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center; gap: var(--admin-space-md); flex-wrap: wrap;">
+                <div style="display:flex; gap:8px;">
+                    <input type="text" placeholder="테이블 또는 역할 검색..."
+                        style="padding: 8px 12px; border-radius:6px; border:1px solid var(--admin-border); background:var(--admin-surface); color:var(--admin-text-primary); outline:none;">
+                    <button class="admin-btn admin-btn-outline">검색</button>
+                </div>
+                <div class="admin-segment-control" id="admin-domain-filters">
+                    <button class="segment-btn active" data-domain="stay">STAY</button>
+                    <button class="segment-btn" data-domain="air">AIR</button>
+                    <button class="segment-btn" data-domain="rent">RENT</button>
+                    <button class="segment-btn" data-domain="voucher">VOUCHER</button>
+                    <button class="segment-btn" data-domain="usim">USIM</button>
+                    <button class="segment-btn" data-domain="special">SPECIAL</button>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>도메인</th>
+                            <th>기대 테이블</th>
+                            <th>역할</th>
+                            <th>현재 상태</th>
+                            <th>행 수</th>
+                            <th>근거</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lodging-table-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display:flex; justify-content:center; margin-top:20px; gap:8px;">
+                <button class="admin-btn admin-btn-outline" disabled>&lt;</button>
+                <button class="admin-btn admin-btn-primary">1</button>
+                <button class="admin-btn admin-btn-outline">&gt;</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/front-mirror/admin/js/rbac_config.js}" src="/front-mirror/admin/js/rbac_config.js"></script>
+    <script th:src="@{/front-mirror/admin/js/sidebar_ui.js}" src="/front-mirror/admin/js/sidebar_ui.js"></script>
+    <script th:src="@{/front-mirror/admin/js/store.js}" src="/front-mirror/admin/js/store.js"></script>
+    <script th:src="@{/front-mirror/admin/js/portal_nav.js}" src="/front-mirror/admin/js/portal_nav.js"></script>
+    <script th:src="@{/front-mirror/admin/js/lodging.js}" src="/front-mirror/admin/js/lodging.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+
+</html>

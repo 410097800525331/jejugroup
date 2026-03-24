@@ -1,0 +1,60 @@
+@charset "utf-8";
+
+/* 탭 */
+.region_tabs {
+  display: flex;
+  gap: 16px;
+  margin: 32px 0;
+  border-bottom: 1px solid var(--main-bg);
+}
+.region_tabs li {
+  padding: 12px 4px;
+  cursor: pointer;
+}
+.region_tabs li.active {
+  color: var(--text-mian);
+  border-bottom: 2px solid #ff5a00;
+  font-weight: 600;
+}
+.route_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.route_card {
+  display: block;
+  overflow: hidden;
+  padding: 40px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--main-bg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.route_card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+}
+.route_img img {
+  height: 160px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  transition: transform 0.4s ease;
+}
+.route_card .route_info {
+  margin: 8px 0 12px;
+}
+@media (max-width: 1024px) {
+  .route_grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .route_grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 576px) {
+  .route_grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,26 @@
+goal: Remove hardcoded dummy business data from the scoped admin files while preserving the existing admin page design, layout, and interactions.
+constraints:
+  - Preserve the current dashboard layout, spacing, controls, filters, and interaction flow.
+  - Remove dummy internal business sample content itself from the scoped admin data and dashboard files; zero-state or empty-state output is allowed.
+  - Keep `front/admin/data/**` as the source of truth for any remaining admin data that the page consumes.
+  - Do not touch mirror or generated areas, including `jeju-web/src/main/webapp/**`, `jeju-spring/**`, `front/.generated/**`, and `front/components/runtime/**`.
+  - Keep the scope limited to `front/admin/data/**`, `front/admin/js/store.js`, `front/admin/js/dashboard.js`, and `front/admin/pages/dashboard.html`.
+  - Preserve existing routing, auth, sidebar, and theme behavior.
+  - Maintain UTF-8 and LF text integrity.
+acceptance_criteria:
+  - No hardcoded dummy customer, reservation, product, or inquiry sample content remains in the scoped admin files.
+  - Page controls, filters, and dashboard interactions still render and operate even when the underlying data is empty.
+  - Layout and visual hierarchy remain the same, with empty-state or zero-state handling used only where data rows were removed.
+  - No mirror/generated path is modified.
+  - The final diff stays within `front/admin/js/store.js`, `front/admin/js/dashboard.js`, `front/admin/pages/dashboard.html`, and `front/admin/data/**`.
+verification:
+  - `node --check front/admin/js/store.js`
+  - `node --check front/admin/js/dashboard.js`
+  - `node --check front/admin/pages/dashboard.html`
+  - `pnpm run guard:text`
+  - targeted diff check: confirm only `front/admin/js/store.js`, `front/admin/js/dashboard.js`, `front/admin/pages/dashboard.html`, and `front/admin/data/**` changed
+out_of_scope:
+  - UI redesign, copy rewrite, or behavior changes beyond preserving the current experience
+  - mirror regeneration, deployment, or any edits under `jeju-web/src/main/webapp/**` or `jeju-spring/**`
+  - changes to unrelated admin infrastructure, shared shell runtime, routing constants, or auth/session flows
+  - broad cleanup of existing encoding or formatting debt outside the touched admin files

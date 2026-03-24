@@ -1,0 +1,23 @@
+goal: >
+  Delete the remaining jeju-spring Maven-specific leftover script, remove the
+  stale Maven `target` output directory, and clean up the remaining Maven-default
+  documentation references after the Gradle migration.
+constraints:
+  - Limit changes to the stale Maven helper script, the stale `jeju-spring/target` output directory, and the doc files that still describe Maven as the jeju-spring default workflow.
+  - Do not edit front source-of-truth files under front/**.
+  - Do not change the active Gradle workflow, build logic, or application-domain code in this slice.
+  - Keep JDK 21 + external Tomcat 10.1 as the active jeju-spring baseline.
+  - Treat dependency metadata inside generated WAR/JAR artifacts as out of scope for this cleanup.
+acceptance_criteria:
+  - The stale file `scripts/spring/run-jeju-spring-maven.cjs` is removed.
+  - The stale `jeju-spring/target` directory is removed.
+  - Remaining active doc references that present Maven as the jeju-spring default workflow are removed or rewritten for Gradle.
+  - A targeted repo search over source/script/doc paths no longer finds `run-jeju-spring-maven`, `mvnw`, or `jeju-spring/pom.xml` as active default workflow references.
+verification:
+  - Run pnpm run guard:text.
+  - Run a targeted repo search over jeju-spring/scripts/docs paths for `run-jeju-spring-maven|mvnw|maven-wrapper|pom.xml|Spring Maven|Apache Maven`.
+  - Review the cleanup to confirm active Gradle entrypoints remain intact.
+out_of_scope:
+  - Repacking third-party dependency metadata inside WAR artifacts.
+  - Further Gradle build changes beyond what is required to remove stale Maven leftovers.
+  - Application logic, routes, templates, or env-source changes.

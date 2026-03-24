@@ -16,8 +16,8 @@
     <script type="module" crossorigin src="./assets/customer_center.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/vendor-CeqCwcKb.js">
     <link rel="modulepreload" crossorigin href="./assets/app-context-D5ZSqxdX.js">
-    <link rel="modulepreload" crossorigin href="./assets/app-components-CP3y1eAC.js">
-    <link rel="modulepreload" crossorigin href="./assets/app-pages-DnATcTu0.js">
+    <link rel="modulepreload" crossorigin href="./assets/app-components-7LZvwYVp.js">
+    <link rel="modulepreload" crossorigin href="./assets/app-pages-Cxvf11XD.js">
     <link rel="stylesheet" crossorigin href="./assets/app-components.css">
     <link rel="stylesheet" crossorigin href="./assets/customer_center.css">
   </head>

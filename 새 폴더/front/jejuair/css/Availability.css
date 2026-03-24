@@ -1,0 +1,352 @@
+@charset "utf-8";
+
+.form_group input:focus {
+  outline: none;
+  border-color: var(--main-color);
+  box-shadow: 0 0 0 2px rgba(255, 80, 0, 0.15);
+}
+.reservation_tab {
+  transition: background .2s, color .2s;
+}
+.trip_type button {
+  transition: all .2s;
+}
+.dropdown.active {
+  background: #fafafa;
+  animation: fadeUp .15s ease-out;
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.return_date {
+  display: none;
+}
+.trip_round.active .return_date {
+  display: block;
+}
+.trip_form {
+  display: none;
+}
+.trip_form.active {
+  display: block;
+}
+.trip_oneway .swap_symbol {
+  content: "→";
+}
+.reservation_wrap {
+  max-width: 1000px;
+  margin: 40px auto;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+  overflow: hidden;
+}
+/* 상단 메인 탭 */
+.reservation_tabs {
+  display: flex;
+  background: var(--main-bg);
+}
+.reservation_tab {
+  flex: 1;
+  text-align: center;
+  padding: 16px 0;
+  font-weight: 600;
+  color: var(--text-sub);
+  cursor: pointer;
+}
+.reservation_tab.active {
+  background: var(--text-sub);
+  color: #fff;
+}
+.reservation_content {
+  padding: 32px 40px 40px;
+  display: none;
+}
+.reservation_content.active {
+  display: block;
+}
+/* 왕복/편도/다구간 */
+.trip_type {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.trip_type button {
+  padding: 10px 28px;
+  border-radius: 999px;
+  border: 1px solid var(--main-bg);
+  background: #fff;
+  cursor: pointer;
+}
+.trip_type button.active {
+  border-color: var(--main-color);
+  color: var(--main-color);
+  font-weight: 600;
+}
+/* 공통 폼 */
+.form_row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+.form_group {
+  flex: 1;
+  position: relative;
+}
+.form_group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+.form_group input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid var(--main-bg);
+  cursor: pointer;
+}
+.swap_icon {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.swap_icon span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--main-color);
+  color: var(--main-color);
+  font-weight: 700;
+  cursor: pointer;
+}
+/* 드롭다운 */
+.dropdown {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--main-bg);
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .08);
+  display: none;
+  z-index: 10;
+}
+.dropdown.active {
+  display: block;
+}
+.dropdown ul {
+  margin: 0;
+  padding: 8px 0;
+}
+.dropdown li {
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.dropdown li:hover {
+  background: #f5f6f7;
+}
+/* 탑승객 선택 */
+.passenger_row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+.counter {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.counter button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--main-bg);
+  background: #fff;
+  cursor: pointer;
+}
+.passenger_apply_btn {
+  float: right;
+  background: var(--main-color);
+  color: #fff;
+  padding: 8px 16px;
+  margin-top: 8px;
+}
+/* 탑승일 */
+.calendar_layer {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 999;
+}
+
+.calendar_layer.active {
+  display: block;
+}
+
+.calendar_dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .4);
+}
+
+.calendar_box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  background: #fff;
+  border-radius: 16px;
+  transform: translate(-50%, -50%);
+  padding: 24px;
+}
+
+.calendar_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.calendar_body {
+  display: flex;
+  gap: 40px;
+}
+
+.calendar_month {
+  flex: 1;
+}
+
+.calendar_month table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calendar_month th {
+  font-weight: 500;
+  padding: 8px 0;
+}
+
+.calendar_month td {
+  text-align: center;
+  padding: 12px 0;
+  cursor: pointer;
+}
+
+.calendar_month td.disabled {
+  color: #ccc;
+  pointer-events: none;
+}
+
+.calendar_month td .price {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.calendar_month td.active {
+  background: var(--main-color);
+  color: #fff;
+  border-radius: 8px;
+}
+/* 범위선택 */
+td.start,
+td.end {
+  background: var(--main-color);
+  color: #fff;
+  border-radius: 8px;
+}
+
+td.in_range {
+  background: #fdecef;
+}
+
+td.start {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+td.end {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* 결제 */
+.payment_section label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 12px;
+}
+.payment_options {
+  display: flex;
+  gap: 24px;
+}
+.discount_section {
+  margin-top: 32px;
+}
+.coupon_btn {
+  width: 100%;
+  height: 48px;
+  margin-top: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--main-color);
+  background: #fff;
+  color: var(--main-color);
+  font-weight: 600;
+}
+.search_btn {
+  margin-top: 32px;
+  width: 100%;
+  height: 56px;
+  border-radius: 10px;
+  border: none;
+  background: var(--main-color);
+  color: #fff;
+  font-weight: 700;
+}
+/* 안내 문구 */
+.info_list {
+  margin: 24px 0 0;
+  padding-left: 16px;
+  color: #666;
+  font-size: 1.3rem;
+}
+
+.search_btn.loading {
+  background: #999;
+  pointer-events: none;
+  position: relative;
+}
+.search_btn.loading::after {
+  content: "항공편 조회 중...";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.info_list li {
+  margin-bottom: 6px;
+}
+@media (max-width: 768px) {
+  .form_row {
+    flex-direction: column;
+  }
+  .swap_icon {
+    display: none;
+  }
+}

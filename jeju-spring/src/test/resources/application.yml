@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: ${JEJU_SPRING_TEST_DB_URL:jdbc:mysql://localhost:3306/jejugroup_db?characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${JEJU_SPRING_TEST_DB_USER:jejugroup}
+    password: ${JEJU_SPRING_TEST_DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    url: ${JEJU_SPRING_TEST_DB_URL:jdbc:mysql://localhost:3306/jejugroup_db?characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true}
+    user: ${JEJU_SPRING_TEST_DB_USER:jejugroup}
+    password: ${JEJU_SPRING_TEST_DB_PASSWORD:}
+  thymeleaf:
+    cache: false
+
+app:
+  alwaysdata:
+    db-url: ${JEJU_SPRING_TEST_DB_URL:jdbc:mysql://localhost:3306/jejugroup_db?characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true}
+    db-user: ${JEJU_SPRING_TEST_DB_USER:jejugroup}
+    db-password: ${JEJU_SPRING_TEST_DB_PASSWORD:}

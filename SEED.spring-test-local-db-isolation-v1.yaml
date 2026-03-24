@@ -1,0 +1,27 @@
+goal: >-
+  Isolate jeju-spring integration tests from the alwaysdata datasource path so
+  pnpm run spring:test targets the local test database by default instead of the
+  shared production-style env import.
+constraints:
+  - Keep the production build/deploy/runtime contract unchanged.
+  - Scope changes to Spring test configuration, test resources, and only the minimum runtime bridge needed for tests.
+  - Do not move the shared env source of truth away from jeju-web/.env in this slice.
+  - Do not reopen the finished jeju-spring cutover contract around build/deploy/page hosting.
+  - Prefer explicit test-only properties or profiles over implicit inheritance from shared env files.
+  - Keep security-sensitive values out of source control; test defaults may target localhost only.
+  - Use Route B worker delegation and keep main planner-only for implementation files.
+acceptance_criteria:
+  - pnpm run spring:test no longer resolves Flyway or datasource settings to the alwaysdata host by default.
+  - Spring integration tests prefer explicit test-only overrides first, then a safe localhost test DB fallback.
+  - The test path remains compatible with the existing MySQL/Flyway migration chain.
+  - Production/runtime configuration for pnpm run build, pnpm run deploy, and normal Spring startup is unchanged by default.
+  - The implementation clearly separates test-only DB precedence from shared runtime env precedence.
+verification:
+  - pnpm run spring:test
+  - targeted inspection of the resolved test datasource/flyway precedence
+  - git diff --check on the touched files
+out_of_scope:
+  - Deploy/runtime env source migration away from jeju-web/.env
+  - Public runtime or deployed-domain verification
+  - Reworking non-test production datasource handling
+  - Broad DB schema redesign beyond what the current tests already expect

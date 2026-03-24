@@ -1,0 +1,234 @@
+:root {
+    --esim-primary: #ff5000;
+    --esim-surface: #ffffff;
+    --esim-soft: #fff5ef;
+    --esim-text: #1f2937;
+    --esim-muted: #6b7280;
+    --esim-border: #e5e7eb;
+    --esim-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+}
+
+body.travel-esim-page {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 30%, #fff8f2 100%);
+    color: var(--esim-text);
+}
+
+.esim-shell {
+    padding-bottom: 84px;
+}
+
+.esim-hero {
+    position: relative;
+    padding: 150px 24px 180px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.42)), url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1920&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-content {
+    width: min(100%, 1100px);
+    margin: 0 auto;
+    text-align: center;
+    color: #fff;
+}
+
+.hero-content h1 {
+    margin: 0 0 44px;
+    font-size: clamp(2.6rem, 5vw, 4rem);
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+}
+
+.search-box {
+    width: min(100%, 960px);
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 14px 42px rgba(0, 0, 0, 0.2);
+}
+
+.search-input,
+.search-button {
+    height: 58px;
+    border: none;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0 22px;
+    font-size: 1.04rem;
+    outline: none;
+}
+
+.search-button {
+    padding: 0 34px;
+    border-radius: 999px;
+    background: var(--esim-primary);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.page-section {
+    width: min(1440px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 72px 0;
+}
+
+.alt-section {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 40px;
+}
+
+.section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-end;
+    margin-bottom: 26px;
+}
+
+.section-head h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    letter-spacing: -0.03em;
+}
+
+.country-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.country-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--esim-surface);
+    box-shadow: var(--esim-shadow);
+    text-decoration: none;
+    color: inherit;
+}
+
+.country-card img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.country-copy {
+    display: grid;
+    gap: 6px;
+    padding: 18px 20px 20px;
+}
+
+.country-copy strong {
+    font-size: 1.15rem;
+}
+
+.country-copy span {
+    color: var(--esim-primary);
+    font-weight: 700;
+}
+
+.accordion-list,
+.faq-list {
+    display: grid;
+    gap: 14px;
+}
+
+.accordion-item,
+.faq-item {
+    overflow: hidden;
+    border-radius: 22px;
+    background: var(--esim-surface);
+    border: 1px solid var(--esim-border);
+}
+
+.accordion-button,
+.faq-button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.accordion-body,
+.faq-body {
+    display: none;
+    padding: 0 22px 20px;
+    color: var(--esim-muted);
+}
+
+.accordion-item.active .accordion-body,
+.faq-item.active .faq-body {
+    display: block;
+}
+
+.empty-state {
+    margin-top: 22px;
+    text-align: center;
+    color: var(--esim-muted);
+}
+
+.cta-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 26px;
+    flex-wrap: wrap;
+}
+
+.primary-link,
+.ghost-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.primary-link {
+    background: var(--esim-primary);
+    color: #fff;
+}
+
+.ghost-link {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    color: inherit;
+}
+
+@media (max-width: 900px) {
+    .country-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .page-section {
+        width: min(100% - 24px, 1440px);
+    }
+
+    .country-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-box,
+    .section-head {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

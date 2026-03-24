@@ -1,0 +1,36 @@
+goal: >
+  Align the current admin surface to the actual live DB state instead of the
+  older expanded admin schema expectation. Existing DB-backed domains must read
+  live Spring data, and domains whose tables do not exist yet must show truthful
+  schema-backed status rather than fake management rows.
+constraints:
+  - Keep `front` as the only human-edited frontend source of truth.
+  - Do not touch `jeju-web/src/main/webapp/**`, `jeju-spring/src/main/resources/static/**`, or other mirror/generated paths.
+  - Prefer adapting the admin UI to the current DB over adding new DB migrations.
+  - Normalize admin-facing reservation/product domain naming toward `air`, `stay`, `rent`, and `voucher` where the current DB or seed contracts already use those values.
+  - Preserve the existing admin shell, routing, sidebar, and page-level layout patterns.
+  - Existing tables must be read through live Spring-backed responses rather than hardcoded dummy rows.
+  - Missing tables must be represented truthfully from live schema inspection rather than by pretending data exists.
+  - Keep user-facing admin errors opaque and do not leak DB credentials, stack traces, or internal SQL details.
+acceptance_criteria:
+  - Admin authentication no longer depends only on local mock session detection; it can honor the current stored/server-backed auth session before deciding admin access.
+  - The dashboard renders live DB-backed counts/activity based on tables that currently exist.
+  - The members page is aligned to tables that actually exist now and renders live rows for those datasets.
+  - The CMS page is aligned to tables that actually exist now and renders live rows for those datasets.
+  - The reservations page no longer expects nonexistent booking/payment tables silently; it reflects live schema status and uses `air/stay/rent/voucher` naming where relevant.
+  - The lodging page no longer expects nonexistent product/inventory tables silently; it reflects live schema status and uses DB-aligned domain naming.
+  - Admin pages no longer rely on `rows: []` as their effective data source for the main table content.
+verification:
+  - `node --check front/admin/js/auth_guard.js`
+  - `node --check front/admin/js/dashboard.js`
+  - `node --check front/admin/js/members.js`
+  - `node --check front/admin/js/cms.js`
+  - `node --check front/admin/js/reservations.js`
+  - `node --check front/admin/js/lodging.js`
+  - `pnpm run guard:text`
+  - targeted code review of the new Spring admin read surface and the updated admin UI bindings
+out_of_scope:
+  - Adding the missing booking, product, inventory, banner, membership, or snapshot tables to the DB
+  - Regenerating deployment mirrors
+  - Rebuilding the admin UI visual system
+  - Changing public landing/business content unrelated to admin alignment

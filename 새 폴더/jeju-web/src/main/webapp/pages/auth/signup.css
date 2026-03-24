@@ -1,0 +1,840 @@
+﻿/* ==================== ?뱁룿???ㅼ젙 ==================== */
+@font-face {
+    font-family: 'FlightSans';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'FlightSans';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/FlightSans-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+:root {
+  --color-primary: #FF5000;
+  --color-primary-hover: #e04600;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-bg: #f8fafc;
+  --color-surface: rgba(255, 255, 255, 0.90);
+  --color-text-main: #222;
+  --color-text-muted: #666;
+  --color-border: #eee;
+  
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg: 0 20px 50px rgba(0,0,0,0.25);
+  
+  --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-duration: 400ms;
+}
+
+/* 1. 회원가입 페이지 배경과 레이아웃 조정 */
+/* 1. 회원가입 페이지 배경과 레이아웃 조정 */
+body.signup-page {
+  font-family: 'FlightSans', sans-serif;
+  background-color: #ffffff;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+html {
+  overflow-y: auto;
+  height: auto;
+}
+
+#main-header-placeholder {
+  position: relative;
+  z-index: 100; /* ?ㅻ뜑瑜?臾댁“嫄?理쒖긽?⑥쑝濡?*/
+}
+
+.signup-wrapper, #main-footer-placeholder {
+  position: relative;
+  z-index: 1;
+}
+
+/* 2. Header / Footer Sync (Login Style) */
+body.signup-page .header {
+  background: #ffffff;
+  box-shadow: none;
+  border-bottom: 1px solid #eeeeee;
+  position: relative;
+}
+
+body.signup-page .header .gnb-link,
+body.signup-page .header .util-link,
+body.signup-page .header .lang-toggle,
+body.signup-page .header .mypage-btn,
+body.signup-page .header .util-divider {
+  color: #333333;
+  text-shadow: none;
+}
+
+body.signup-page .header .gnb-link:hover,
+body.signup-page .header .util-link:hover,
+body.signup-page .header .lang-toggle:hover,
+body.signup-page .header .mypage-btn:hover {
+  color: #FF5000;
+}
+
+body.signup-page .header .logo-img {
+  filter: none;
+}
+
+body.signup-page .lang-toggle {
+  border-color: #ddd;
+  color: #333333;
+}
+
+body.signup-page .footer {
+  background-color: #EEEEEE;
+  padding: 60px 40px;
+  display: block;
+}
+
+body.signup-page .footer-copyright {
+  border-top: none;
+}
+
+/* Page Layout Wrapper */
+.signup-wrapper {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 20px 80px 20px;
+}
+
+#main-footer-placeholder {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* 3. Signup Container - Match Login Card Size */
+.signup-container {
+  background: transparent;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  position: relative;
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.step-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  margin-bottom: 0; /* Changed from 40px */
+  border-bottom: 2px solid #222; /* 타이트한 언더라인 바 */
+  gap: 20px;
+}
+
+.step-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 0.5rem;
+}
+
+.step-desc {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}
+
+/* 4. 입력폼 */
+.user_form {
+  margin-top: 15px; /* Reduced from 30px */
+}
+
+.input_group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input_group label {
+  display: block;
+  text-align: left;
+  margin: 16px 6px 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #444;
+}
+
+.input_group input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  border: 2px solid #ddd; /* 외곽선 1단계 진하게 처리 */
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* 湲?섏뒪紐⑦뵾利??곸뒪 異붽? */
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-family: 'FlightSans', sans-serif;
+}
+
+.input_group input::placeholder {
+  color: #bbb;
+}
+
+.input_group input:focus {
+  outline: none;
+  border-color: #FF5000;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(255, 80, 0, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  transform: translateY(-2px);
+}
+
+.input-with-button {
+  display: flex;
+  gap: 8px;
+}
+
+.input-with-button input {
+  flex: 1;
+}
+
+/* 5. 踰꾪듉 ?붿옄??(洹몃씪?곗씠??& 湲濡쒖슦 - login.css 怨듯넻) */
+.btn-primary, .btn-secondary {
+  border: none;
+  font-family: 'FlightSans', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  will-change: transform;
+}
+
+.btn-primary {
+  width: 100%;
+  margin-top: 10px;
+  padding: 16px 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #FF5000 0%, #FF8C00 100%);
+  color: #fff;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(255, 80, 0, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(255, 80, 0, 0.45);
+  filter: brightness(1.15);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.96);
+  box-shadow: 0 4px 15px rgba(255, 80, 0, 0.3);
+  filter: brightness(0.95);
+}
+
+.btn-primary:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-secondary {
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #444;
+  padding: 0 1.25rem;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+  color: #222;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.btn-secondary:active {
+  transform: scale(0.96);
+  filter: brightness(0.95);
+}
+
+.btn-verify {
+  background: linear-gradient(135deg, #FF5000 0%, #FF8C00 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 10px rgba(255, 80, 0, 0.2);
+}
+
+.btn-verify:hover {
+  background: linear-gradient(135deg, #FF5000 0%, #FF8C00 100%);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 80, 0, 0.3);
+  filter: brightness(1.1);
+}
+
+.btn-verify:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 5px rgba(255, 80, 0, 0.15);
+}
+
+/* Terms Checkbox */
+.agree_box {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  margin-top: 30px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.agree_box:hover {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.agree_box label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--color-text-main);
+}
+
+.agree_box label span {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.agree_box input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #FF5000;
+  cursor: pointer;
+}
+
+/* Auth Buttons */
+.auth-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-btn {
+  padding: 16px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  background: white;
+  font-size: 15px;
+  font-family: 'FlightSans', sans-serif;
+  font-weight: 700;
+  color: var(--color-text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-btn:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.auth-btn:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+.auth-btn.pass { color: #fff; background: #222; }
+.auth-btn.kakao { color: #3c1e1e; background: #fee500; }
+.auth-btn.naver { color: #fff; background: #03c75a; }
+
+.auth-btn.pass:hover { background: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+.auth-btn.kakao:hover { background: #ffd900; box-shadow: 0 10px 20px rgba(254,229,0,0.3); }
+.auth-btn.naver:hover { background: #02b350; box-shadow: 0 10px 20px rgba(3,199,90,0.3); }
+
+.auth-notice {
+  padding: 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  border-radius: 12px;
+  font-weight: 600;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  animation: slideDown 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Success Step */
+.success-content {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.success-icon {
+  font-size: 5rem;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+  animation: bounceScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.success-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--color-text-main);
+}
+
+.success-desc {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  font-size: 1.05rem;
+}
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Feedback messages */
+.input-feedback {
+  font-size: 0.85rem;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+.input-feedback.error { color: var(--color-error); }
+.input-feedback.success { color: var(--color-success); }
+
+
+
+/* ==================== 4-Step Wizard Layout ==================== */
+.step-panel {
+  display: none;
+  animation: fadeInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.step-panel.active {
+  display: block;
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Step Indicator (Progress - JejuAir style right-aligned) */
+.step-indicator {
+  position: relative;
+  display: block; /* Flex->Block for 100% width line */
+  width: 100%;
+  margin: 10px 0 20px 0;
+  padding: 0 10px; /* 양옆 여백 */
+}
+
+.progress-bg {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  right: 10px;
+  width: calc(100% - 20px);
+  height: 1px;
+  background-color: #ddd;
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.progress-bar {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  height: 2px;
+  background-color: var(--color-primary);
+  z-index: 2;
+  transform: translateY(-50%);
+  transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: 0%; 
+  max-width: calc(100% - 20px);
+}
+
+.step-circles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 3;
+}
+
+.step-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  font-size: 0;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.step-circle.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  transform: none;
+  box-shadow: none;
+  border: none;
+  animation: popCircle 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.step-circle.completed {
+  background-color: var(--color-primary);
+  border: none;
+  color: #fff;
+}
+
+@keyframes popCircle {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 제목 변경 애니메이션용 */
+.step-title {
+  transition: opacity 0.3s ease;
+}
+
+/* Readonly Input Styling */
+.readonly-input {
+  background-color: #f7f7f7;
+  color: #666;
+  border-color: #e0e0e0;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+
+
+/* ==================== Flat UI Elements (JejuAir Style) ==================== */
+.flat-agree-box {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-top: 0; /* Reduced from 30px */
+}
+
+.agree-desc, .opt-desc {
+  font-size: 13px;
+  color: #666;
+  padding-left: 36px;
+  margin-bottom: 8px; /* Reduced to ~30% of 24px */
+  line-height: 1.5;
+}
+
+.opt-desc {
+  font-size: 11px;
+  color: #888;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+/* Custom Rounded Checkbox */
+.custom-chk {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0; /* Changed from 12px to 0 for better padding control */
+  padding: 16px 0; /* 상하 여백 늘려줌 */
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 전체동의 섹션 하단은 진한 줄 */
+.check-all-wrapper {
+  border-bottom: 2px solid #222;
+  margin-bottom: 8px;
+  padding-bottom: 16px;
+}
+
+.custom-chk.check-all {
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: none;
+  padding-top: 5px; /* Inherited 16px -> 5px (~30%) */
+  padding-bottom: 8px;
+}
+
+.custom-chk.check-all {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.custom-chk .hidden-chk {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-chk .chk-mark {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  margin-right: 12px;
+  transition: all 0.2s ease;
+}
+
+/* Check icon (SVG tick) inside the circle */
+.custom-chk .chk-mark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 8px;
+  top: 4px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-chk input:checked ~ .chk-mark {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.custom-chk input:checked ~ .chk-mark::after {
+  display: block;
+}
+
+.arrow-right {
+  margin-left: auto;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Flat Grey to Orange Button */
+.flat-actions {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.btn-flat {
+  width: 100%;
+  max-width: 400px;
+  height: 60px;
+  background-color: #ccc;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 4px; /* 살짝 둥근 모서리 */
+  cursor: not-allowed;
+  transition: background-color 0.3s ease;
+}
+
+.btn-flat:not([disabled]) {
+  background-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.btn-flat:not([disabled]):hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Animations */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceScale {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 600px) {
+  .signup-wrapper {
+    padding: 60px 0 0 0;
+  }
+  .signup-container {
+    border-radius: 20px 20px 0 0;
+    box-shadow: none;
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.6);
+  }
+  .step-panel {
+    padding: 1rem 1.5rem 2rem;
+  }
+  .step-header {
+    padding: 1rem 1.5rem;
+  }
+  .step-indicator {
+    padding: 1.5rem 1.5rem 0.5rem;
+  }
+}
+
+
+
+/* Password Strength Meter */
+.password-strength-container {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideDown 0.3s ease;
+}
+
+.password-strength-meter {
+  display: flex;
+  gap: 4px;
+  flex-grow: 1;
+  height: 6px;
+}
+
+.meter-bar {
+  flex: 1;
+  height: 100%;
+  background-color: #eee;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+
+.strength-text {
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 35px;
+  text-align: right;
+}
+
+/* Status Colors */
+.strength-weak #meterBar1 { background-color: #ff4d4f; }
+.strength-weak #strengthText { color: #ff4d4f; }
+
+.strength-medium #meterBar1,
+.strength-medium #meterBar2 { background-color: #faad14; }
+.strength-medium #strengthText { color: #faad14; }
+
+.strength-strong #meterBar1,
+.strength-strong #meterBar2,
+.strength-strong #meterBar3 { background-color: #52c41a; }
+.strength-strong #strengthText { color: #52c41a; }
+
+#jeju-signup-app {
+  max-width: 480px;
+  width: 100%;
+}
+
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header {
+  background: #ffffff;
+  border-bottom: 1px solid #eeeeee;
+  box-shadow: none;
+  position: relative;
+}
+
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-logo-img {
+  filter: none;
+}
+
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-nav-link,
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-util-link,
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-mobile-menu-btn {
+  color: #1f2937;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+}
+
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-nav-link:hover,
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-util-link:hover,
+body.signup-page[data-mypage-shell="stay"] .hotel-shell-header .hotel-shell-mobile-menu-btn:hover {
+  color: #FF5000;
+}
+
+.auth-method-note {
+  color: #666;
+  font-size: 13px;
+  margin: 16px 0 0;
+  text-align: center;
+}
+
+.auth-feedback {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.auth-summary-chip {
+  align-items: center;
+  background: rgba(255, 80, 0, 0.08);
+  border-radius: 12px;
+  color: #ff5000;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 14px;
+}
+
+.auth-summary-chip span {
+  color: #333;
+}
+
+.signup-submit-feedback {
+  margin-top: 8px;
+}
+
+.input-feedback.warning {
+  color: #faad14;
+}

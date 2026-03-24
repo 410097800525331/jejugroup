@@ -1,0 +1,22 @@
+goal: >
+  Strip `META-INF/maven/**` metadata directories from the packaged jeju-spring
+  WAR artifact, including nested dependency jars, while keeping the Gradle WAR
+  workflow and runtime behavior intact.
+constraints:
+  - Limit implementation changes to jeju-spring/build.gradle packaging logic.
+  - Keep the active Gradle workflow, JDK 21 baseline, and external Tomcat 10.1 WAR model intact.
+  - Do not change application-domain code, routes, templates, env loading, or dependency coordinates in this slice unless strictly required for packaging sanitation.
+  - Preserve all dependency jars and provided jars; only remove `META-INF/maven/**` metadata entries.
+  - Keep `pnpm run spring:war-package` as the verification entrypoint.
+acceptance_criteria:
+  - `pnpm run spring:war-package` succeeds after the change.
+  - The packaged `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war` no longer contains `META-INF/maven/` strings from the packaged artifact contents.
+  - The WAR still contains the expected runtime and provided dependency jars.
+verification:
+  - Run pnpm run spring:war-package.
+  - Inspect the packaged WAR for `META-INF/maven` strings or entries.
+  - Review the resulting WAR layout to confirm `WEB-INF/lib/**` and `WEB-INF/lib-provided/**` still exist.
+out_of_scope:
+  - Further Gradle cleanup unrelated to metadata stripping.
+  - Changes to docs or logs unless required to record the completed task.
+  - Replacing dependency metadata with custom signatures or alternative provenance schemes.

@@ -1,0 +1,84 @@
+# ===== OS / Editor =====
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.iml
+
+# ===== Node / Front =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.env.*
+dist/
+build/
+.cache/
+.next/
+out/
+coverage/
+.generated/
+front/.generated/
+
+# ===== Java / Eclipse / IntelliJ =====
+*.class
+*.jar
+*.war
+*.ear
+target/
+bin/
+out/
+.settings/
+.classpath
+.project
+.factorypath
+.metadata/
+rebel.xml
+
+# ===== Tomcat / Server runtime =====
+Servers/
+tomcat*/
+work/
+logs/
+temp/
+
+# ===== Your earlier issue: build outputs =====
+**/build/
+**/classes/
+
+# ===== DB / dumps (팀에서 공유하기로 한 게 아니면) =====
+*.sql
+!jeju-spring/src/main/resources/db/migration/*.sql
+*.dump
+*.bak
+*.sqlite
+*.db
+
+# ===== Secrets / Keys / Configs =====
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+*.cer
+*.crt
+# Secret configs
+secrets/
+.secret
+.env*
+*.env
+auth.json
+credentials.json
+# Editor / OS
+*.log
+*.sqlite3
+.local/
+.config/
+
+# Eclipse project files
+.project
+.classpath
+.settings/

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useReducer, type Dispatch, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useReducer, useState, type Dispatch, type ReactNode } from "react";
 import { applyDashboardSnapshot, createDashboardFallbackSnapshot, normalizeDashboardSnapshot } from "@front-components/mypage/data";
 import type { BookingItem, BookingType, DashboardSnapshot, ItineraryCompanion, ItineraryItem, StatItem, SupportItem, TravelEvent, UserProfile } from "./types";
 import {
@@ -183,9 +183,7 @@ const mergeProfilePatch = (profile: UserProfile, patch: Partial<UserProfile>): U
 });
 
 const mergeTravelEventSources = (session: unknown) => {
-  const fallbackAccountSession = { id: createDashboardFallbackSnapshot().profile.id };
-  const accountScopedSession = session ?? fallbackAccountSession;
-  const baseSource = mergeDashboardSources(session, readAccountDashboardMock(accountScopedSession));
+  const baseSource = mergeDashboardSources(session, readAccountDashboardMock(session));
   const baseSnapshot = normalizeDashboardSnapshot(baseSource);
 
   if (baseSnapshot.linkedCompanions.length === 0) {
@@ -218,6 +216,8 @@ const mergeTravelEventSources = (session: unknown) => {
 
 export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
+  const [authResolved, setAuthResolved] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const handleDispatch = (action: DashboardAction) => {
     if (action.type === "HYDRATE_DASHBOARD") {
       applyDashboardSnapshot(action.payload);
@@ -245,12 +245,24 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
     const hydrate = async (source?: unknown | null) => {
       const resolvedSession = source === undefined ? await resolveSession() : source;
+      if (!resolvedSession) {
+        if (!active) {
+          return;
+        }
+
+        setIsAuthenticated(false);
+        setAuthResolved(true);
+        return;
+      }
+
       const snapshot = mergeTravelEventSources(resolvedSession);
 
       if (!active) {
         return;
       }
 
+      setIsAuthenticated(true);
+      setAuthResolved(true);
       applyDashboardSnapshot(snapshot);
       dispatch({ type: "HYDRATE_DASHBOARD", payload: snapshot });
     };
@@ -298,6 +310,27 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     }),
     [handleDispatch, state],
   );
+
+  if (!authResolved || !isAuthenticated) {
+    return (
+      <div className="mypage-auth-empty-state soft-radius" role="status" aria-live="polite">
+        <div className="mypage-auth-empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path
+              d="M12 3.75 21 19.5a1.2 1.2 0 0 1-1.04 1.8H4.04A1.2 1.2 0 0 1 3 19.5L12 3.75Z"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+            <path d="M12 9v5.25" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            <circle cx="12" cy="17.25" r="1.1" fill="currentColor" />
+          </svg>
+        </div>
+        <p className="mypage-auth-empty-text">로그인을 해주세요.</p>
+      </div>
+    );
+  }
 
   return <DashboardContext.Provider value={value}>{children}</DashboardContext.Provider>;
 };

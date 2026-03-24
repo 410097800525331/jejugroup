@@ -6,21 +6,19 @@ import InquiryForm from "@/components/serviceCenter/InquiryForm";
 import InquiryList from "@/components/serviceCenter/InquiryList";
 import SearchBar from "@/components/serviceCenter/SearchBar";
 import ServiceCenterFooter from "@/components/serviceCenter/ServiceCenterFooter";
-import { createInquiry, fetchInquiries } from "@/services/inquiries";
+import { MOCK_INQUIRIES } from "@/data/mockInquiries";
 import type { InquiryRecord, InquirySubmission } from "@/types/service-center";
 import "@/styles/bbs.css";
 
 export default function Inquiries() {
-  const [inquiries, setInquiries] = useState<InquiryRecord[]>([]);
+  const [inquiries, setInquiries] = useState<InquiryRecord[]>(MOCK_INQUIRIES);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState<"list" | "write">("list");
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
   const pageSize = 4;
 
   const handleChatbotClick = () => {
-    alert("제주 그룹 AI 챗봇은 현재 준비 중입니다. 잠시만 기다려주세요.");
+    alert("제주 그룹 스마트 챗봇이 준비 중입니다. 잠시만 기다려 주세요!");
   };
 
   const filteredInquiries = useMemo(() => {
@@ -54,46 +52,22 @@ export default function Inquiries() {
     }
   }, [currentPage, totalPages]);
 
-  useEffect(() => {
-    let active = true;
-
-    const loadInquiries = async () => {
-      setIsLoading(true);
-      setErrorMessage("");
-
-      try {
-        const loadedInquiries = await fetchInquiries();
-        if (!active) {
-          return;
-        }
-
-        setInquiries(loadedInquiries);
-      } catch (error) {
-        if (!active) {
-          return;
-        }
-
-        setErrorMessage(error instanceof Error ? error.message : "문의 목록을 불러오지 못했습니다.");
-      } finally {
-        if (active) {
-          setIsLoading(false);
-        }
-      }
+  const handleInquirySubmitted = (inquiry: InquirySubmission) => {
+    const nextInquiry: InquiryRecord = {
+      ...inquiry,
+      id: Date.now(),
+      date: new Intl.DateTimeFormat("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+        .format(new Date())
+        .replace(/\.\s/g, ".")
+        .replace(/\.$/, ""),
+      status: "pending",
     };
 
-    void loadInquiries();
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const handleInquirySubmitted = async (inquiry: InquirySubmission) => {
-    await createInquiry(inquiry);
-
-    const loadedInquiries = await fetchInquiries();
-    setInquiries(loadedInquiries);
-    setErrorMessage("");
+    setInquiries((previous) => [nextInquiry, ...previous]);
     setSearchQuery("");
     setCurrentPage(1);
     setView("list");
@@ -126,35 +100,14 @@ export default function Inquiries() {
             ) : null}
           </div>
 
-          {errorMessage ? (
-            <div
-              style={{
-                marginBottom: "20px",
-                padding: "14px 16px",
-                borderRadius: "12px",
-                background: "#fff1f2",
-                color: "#be123c",
-                fontWeight: 700,
-              }}
-            >
-              {errorMessage}
-            </div>
-          ) : null}
-
           {view === "list" ? (
-            isLoading ? (
-              <div className="bbs-container">
-                <div className="py-20 text-center text-gray-400">문의 목록을 불러오는 중입니다.</div>
-              </div>
-            ) : (
-              <InquiryList
-                currentPage={currentPage}
-                inquiries={pagedInquiries}
-                onPageChange={setCurrentPage}
-                onWriteClick={() => setView("write")}
-                totalPages={totalPages}
-              />
-            )
+            <InquiryList
+              currentPage={currentPage}
+              inquiries={pagedInquiries}
+              onPageChange={setCurrentPage}
+              onWriteClick={() => setView("write")}
+              totalPages={totalPages}
+            />
           ) : (
             <div className="bbs-container">
               <InquiryForm onSubmitted={handleInquirySubmitted} />

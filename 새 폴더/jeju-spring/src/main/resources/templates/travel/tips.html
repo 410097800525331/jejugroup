@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/common :: pageHead('국가별 여행 팁 | JEJU STAY')}"></th:block>
+    <link rel="stylesheet" th:href="@{/assets/css/travel/tips.css}" href="/assets/css/travel/tips.css">
+</head>
+<body class="travel-tips-page" th:attr="data-shell=${page.shell}">
+<main class="tips-shell">
+    <section class="tips-hero">
+        <div class="tips-hero-overlay"></div>
+        <div class="tips-hero-content">
+            <p class="eyebrow">Global Travel Tips</p>
+            <h1>떠나기 전, 꼭 확인해야 할<br>국가별 정보를 모았다</h1>
+            <p>날씨, 결제, 교통, 매너까지 한 번에 본다.</p>
+        </div>
+    </section>
+
+    <section class="city-selector">
+        <div class="city-tabs" id="tips-city-tabs">
+            <button class="city-tab active" data-city="tokyo" type="button">Tokyo, Japan</button>
+            <button class="city-tab" data-city="paris" type="button">Paris, France</button>
+            <button class="city-tab" data-city="newyork" type="button">New York, USA</button>
+            <button class="city-tab" data-city="bangkok" type="button">Bangkok, Thailand</button>
+            <button class="city-tab" data-city="bali" type="button">Bali, Indonesia</button>
+            <button class="city-tab" data-city="danang" type="button">Da Nang, Vietnam</button>
+        </div>
+    </section>
+
+    <section class="tips-content">
+        <div class="city-brief" id="tips-city-brief">
+            <img alt="city" class="city-brief-img" id="tips-city-image" src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&q=80">
+            <div>
+                <h2 id="tips-city-title">Tokyo, Japan</h2>
+                <p id="tips-city-description">현대와 전통이 공존하는 아시아 대표 도시. 맛집, 쇼핑, 교통 효율이 좋아서 첫 자유여행지로도 안정적이다.</p>
+            </div>
+        </div>
+
+        <div class="tips-grid">
+            <article class="tip-card">
+                <h3 id="tip-card-1-title">전압 및 소켓</h3>
+                <ul class="tip-list" id="tip-card-1-list"></ul>
+            </article>
+            <article class="tip-card">
+                <h3 id="tip-card-2-title">환율 및 결제</h3>
+                <ul class="tip-list" id="tip-card-2-list"></ul>
+            </article>
+            <article class="tip-card">
+                <h3 id="tip-card-3-title">날씨 및 옷차림</h3>
+                <ul class="tip-list" id="tip-card-3-list"></ul>
+            </article>
+            <article class="tip-card">
+                <h3 id="tip-card-4-title">언어 및 매너</h3>
+                <ul class="tip-list" id="tip-card-4-list"></ul>
+            </article>
+        </div>
+
+        <div class="tips-footer-links">
+            <a class="ghost-link" th:href="${page.authLoginPath}" href="/auth/login">로그인으로 이동</a>
+            <a class="ghost-link" th:href="${page.migrationPath}" href="/migration">migration hub</a>
+        </div>
+    </section>
+</main>
+
+<script type="module" th:src="@{/assets/js/travel/tips-page.js}" src="/assets/js/travel/tips-page.js"></script>
+</body>
+</html>

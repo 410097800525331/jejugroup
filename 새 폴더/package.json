@@ -1,0 +1,50 @@
+{
+  "private": true,
+  "workspaces": [
+    "front/apps/cs",
+    "front/apps/shell",
+    "front/components/react"
+  ],
+  "scripts": {
+    "scan:routes": "node front/scripts/scan_hardcoded_routes.js",
+    "lint": "pnpm run guard:text && pnpm run scan:routes && pnpm run check:shell && pnpm run check:cs",
+    "build:front": "pnpm run build:shell && pnpm run build:cs",
+    "test:build": "pnpm run build:front",
+    "test:smoke": "pnpm run smoke:cs && pnpm run smoke:front",
+    "test": "pnpm run lint && pnpm run test:build",
+    "dev:front": "vite --config vite.front.config.mjs",
+    "dev:cs": "pnpm -C front/apps/cs dev",
+    "check:cs": "pnpm -C front/apps/cs check",
+    "build:cs": "pnpm -C front/apps/cs build",
+    "check:shell": "pnpm -C front/apps/shell check",
+    "build:shell": "pnpm -C front/apps/shell build",
+    "guard:text": "node scripts/guards/check-text-integrity.js --all",
+    "guard:text:staged": "node scripts/guards/check-text-integrity.js --staged",
+    "guard:mirror:staged": "node scripts/guards/check-webapp-mirror.js --staged",
+    "setup:hooks": "node scripts/guards/install-hooks.js",
+    "smoke:cs": "pnpm dlx @playwright/test test scripts/smoke/cs-customer-center.smoke.spec.cjs --reporter=list",
+    "smoke:front": "pnpm dlx @playwright/test test scripts/smoke/front-entrypoints.runtime.spec.cjs --reporter=list",
+    "sync": "node scripts/pipelines/sync-front.js",
+    "prepare:webapp": "pnpm run build:front && pnpm run sync",
+    "build": "pnpm run prepare:webapp && node scripts/pipelines/build-war.js",
+    "deploy": "pnpm run build && node scripts/pipelines/deploy.js",
+    "publish": "pnpm run deploy",
+    "spring:run": "node scripts/spring/run-jeju-spring-gradle.cjs bootRun",
+    "spring:test": "node scripts/spring/run-jeju-spring-gradle.cjs test",
+    "spring:war-package": "node scripts/spring/run-jeju-spring-gradle.cjs bootWar",
+    "spring:package": "pnpm run spring:war-package"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "mysql2": "^3.18.0",
+    "node-ssh": "^13.2.1",
+    "ssh2": "^1.17.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "@faker-js/faker": "^10.3.0",
+    "bcryptjs": "^3.0.3",
+    "fs-extra": "^11.3.4",
+    "vite": "^5.4.14"
+  }
+}
