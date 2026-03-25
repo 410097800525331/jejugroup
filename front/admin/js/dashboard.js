@@ -1,6 +1,13 @@
 (() => {
     'use strict';
 
+    const currentScript = document.currentScript;
+    const runtimeBaseUrl = currentScript?.src || window.location.href;
+    if (currentScript && !currentScript.dataset.adminRuntime) {
+        currentScript.dataset.adminRuntime = runtimeBaseUrl;
+        currentScript.dataset.adminLoaded = 'true';
+    }
+
     const SECTION_ID = 'dashboard';
     const SECTION_TITLE = '제주 그룹 관리자 대시보드';
     const SHELL_SCRIPT = '../js/admin_shell.js';
@@ -8,7 +15,7 @@
     const CHART_SCRIPT = 'https://cdn.jsdelivr.net/npm/chart.js';
 
     const loadScriptOnce = (src) => new Promise((resolve, reject) => {
-        const runtimeSrc = new URL(src, window.location.href).href;
+        const runtimeSrc = new URL(src, runtimeBaseUrl).href;
         const existing = document.querySelector(`script[data-admin-runtime="${runtimeSrc}"]`);
         if (existing) {
             resolve(existing);

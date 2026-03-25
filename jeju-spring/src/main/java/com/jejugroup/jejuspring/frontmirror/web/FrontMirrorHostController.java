@@ -743,7 +743,7 @@ public class FrontMirrorHostController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        String viewName = "/".equals(path) ? "index" : toFrontMirrorViewName(path);
+        String viewName = toFrontMirrorViewName(path);
         if (!templateExists(viewName)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "front-mirror template is missing");
         }

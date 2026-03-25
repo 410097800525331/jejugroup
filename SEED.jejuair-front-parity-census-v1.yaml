@@ -1,0 +1,56 @@
+goal: >
+  Re-census the remaining JejuAir front parity against the canonical front source,
+  fix any safe source-of-truth gaps immediately, and close the jejuair host-only
+  parity status with browser evidence.
+
+constraints:
+  - front/** is the only human-edited frontend source of truth.
+  - jeju-spring front-mirror outputs are regenerated artifacts only; no hand-patching in spring files.
+  - Compare front:3001 vs spring:8080 at the browser level for the canonical JejuAir host-only pages.
+  - Scope is limited to the 22 canonical JejuAir host-only pages listed in STATE.md and the controller/inventory contract.
+  - If a mismatch is found, classify it as runtime divergence, asset/path/base-href issue, or dynamic/cosmetic noise.
+  - Keep fixes minimal and source-of-truth safe; prefer front-source or mirror-script corrections over spring-specific edits.
+  - Preserve UTF-8 and LF.
+
+acceptance_criteria:
+  - The census covers all 22 canonical JejuAir host-only pages:
+    - /jejuair/index.html
+    - /jejuair/pages/about/about.html
+    - /jejuair/pages/about/career.html
+    - /jejuair/pages/about/ccm.html
+    - /jejuair/pages/baggage/cabinBaggage.html
+    - /jejuair/pages/baggage/liability.html
+    - /jejuair/pages/baggage/preorderedBaggage.html
+    - /jejuair/pages/baggage/transportLimitation.html
+    - /jejuair/pages/boarding/eDocument.html
+    - /jejuair/pages/boarding/fastProcedure.html
+    - /jejuair/pages/boarding/viewCheckin.html
+    - /jejuair/pages/booking/Availability.html
+    - /jejuair/pages/booking/payment.html
+    - /jejuair/pages/booking/route.html
+    - /jejuair/pages/booking/viewOnOffReservationList.html
+    - /jejuair/pages/event/event.html
+    - /jejuair/pages/jmembers/jmembersAirplane.html
+    - /jejuair/pages/jmembers/jmembersGolf.html
+    - /jejuair/pages/jmembers/jmembersInsurance.html
+    - /jejuair/pages/jmembers/jmembersSightseeing.html
+    - /jejuair/pages/pet/petPass.html
+    - /jejuair/pages/pet/petService.html
+  - The final census/report states which mismatches were runtime divergence, asset/path/base-href issues, and dynamic/cosmetic noise.
+  - Any safe parity gap that can be fixed from the front source or mirror pipeline is fixed before close-out.
+  - The refreshed report explains why remaining exceptions, if any, are deliberate or noise rather than bugs.
+  - The final conclusion is explicit and binary: JejuAir is either substantively parity-complete or it is not.
+
+verification:
+  - Refresh the browser census using front:3001 vs spring:8080 for all 22 canonical JejuAir host-only pages.
+  - Confirm the controller/inventory scope matches the 22-page census.
+  - If code changes are made, rerun the relevant front build and mirror regeneration for JejuAir outputs.
+  - Re-run the browser census after any fix and record the refreshed result.
+  - Verify the final report captures the exact remaining exceptions, if any, and the binary close-out decision.
+
+out_of_scope:
+  - Reworking non-JejuAir routes or unrelated landing pages.
+  - Creating or preserving dedicated Spring-only JejuAir templates that bypass the front-mirror contract.
+  - Hand-patching jeju-spring frontend files to force parity.
+  - Changing business behavior outside the JejuAir host-only parity slice.
+  - Expanding the census beyond the canonical 22-page JejuAir host-only set unless the controller contract itself changes.

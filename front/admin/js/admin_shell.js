@@ -3,7 +3,7 @@
 
     const currentScript = document.currentScript;
     if (currentScript && !currentScript.dataset.adminRuntime) {
-        currentScript.dataset.adminRuntime = new URL(currentScript.getAttribute('src') || '', window.location.href).href;
+        currentScript.dataset.adminRuntime = currentScript.src || new URL(currentScript.getAttribute('src') || '', window.location.href).href;
         currentScript.dataset.adminLoaded = 'true';
     }
 
@@ -132,14 +132,16 @@
     };
 
     const resolveUrl = (path) => new URL(path, window.location.href).href;
+    const runtimeBaseUrl = currentScript?.src || window.location.href;
+    const resolveRuntimeUrl = (path) => new URL(path, runtimeBaseUrl).href;
 
     const sharedRuntimeGuards = Object.freeze({
-        [resolveUrl('../js/auth_guard.js')]: () => Boolean(window.AdminAuth),
-        [resolveUrl('../js/rbac_config.js')]: () => Boolean(window.RBAC_CONFIG),
-        [resolveUrl('../js/sidebar_ui.js')]: () => Boolean(window.AdminSidebarUI),
-        [resolveUrl('../js/store.js')]: () => Boolean(window.AdminStore),
-        [resolveUrl('../js/api_client.js')]: () => Boolean(window.AdminApiClient),
-        [resolveUrl('../js/portal_nav.js')]: () => Boolean(window.AdminPortalNav)
+        [resolveRuntimeUrl('../js/auth_guard.js')]: () => Boolean(window.AdminAuth),
+        [resolveRuntimeUrl('../js/rbac_config.js')]: () => Boolean(window.RBAC_CONFIG),
+        [resolveRuntimeUrl('../js/sidebar_ui.js')]: () => Boolean(window.AdminSidebarUI),
+        [resolveRuntimeUrl('../js/store.js')]: () => Boolean(window.AdminStore),
+        [resolveRuntimeUrl('../js/api_client.js')]: () => Boolean(window.AdminApiClient),
+        [resolveRuntimeUrl('../js/portal_nav.js')]: () => Boolean(window.AdminPortalNav)
     });
 
     const ensureScriptOnce = (src) => {
@@ -192,7 +194,7 @@
 
     const loadSectionScript = (sectionId) => {
         const def = getSectionDef(sectionId);
-        return ensureScriptOnce(resolveUrl(def.scriptPath));
+        return ensureScriptOnce(resolveRuntimeUrl(def.scriptPath));
     };
 
     const ensureSharedRuntime = async () => {
@@ -211,7 +213,7 @@
 
         state.sharedScriptPromise = (async () => {
             for (const path of sharedScriptPaths) {
-                await ensureScriptOnce(resolveUrl(path));
+                await ensureScriptOnce(resolveRuntimeUrl(path));
             }
             return true;
         })().catch((error) => {
