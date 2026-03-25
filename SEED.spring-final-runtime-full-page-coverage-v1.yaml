@@ -1,0 +1,53 @@
+goal: >-
+  Freeze a deterministic seed contract for closing the remaining Spring final
+  runtime coverage gap by connecting every remaining human-managed front HTML
+  entrypoint that is not already covered by an existing dedicated template or
+  host-only route. The current frozen target set is the remaining host-only
+  expansion surface below, while already covered dedicated template and
+  host-only paths remain unchanged:
+  - /jejuair/pages/baggage/cabinBaggage.html
+  - /jejuair/pages/baggage/liability.html
+  - /jejuair/pages/baggage/preorderedBaggage.html
+  - /jejuair/pages/baggage/transportLimitation.html
+  - /jejuair/pages/boarding/eDocument.html
+  - /jejuair/pages/boarding/fastProcedure.html
+  - /jejuair/pages/boarding/viewCheckin.html
+  - /jejuair/pages/booking/Availability.html
+  - /jejuair/pages/booking/payment.html
+  - /jejuair/pages/booking/route.html
+  - /jejuair/pages/booking/viewOnOffReservationList.html
+  - /jejuair/pages/event/event.html
+  - /jejuair/pages/jmembers/jmembersAirplane.html
+  - /jejuair/pages/jmembers/jmembersGolf.html
+  - /jejuair/pages/jmembers/jmembersInsurance.html
+  - /jejuair/pages/jmembers/jmembersSightseeing.html
+  - /jejuair/pages/pet/petPass.html
+  - /jejuair/pages/pet/petService.html
+  - /pages/auth/oauth_callback.html
+  .generated outputs remain excluded.
+constraints:
+  - front remains the only human-edited frontend source of truth.
+  - Do not modify any front source file as part of this seed.
+  - Treat already covered dedicated-template and host-only paths as preserved baseline, not as new redefinitions.
+  - Assume the front-mirror template targets already exist for the remaining host-only routes.
+  - Keep the final runtime baseline aligned across controller wiring, docs, and verification so the same full set is observed everywhere.
+  - Exclude generated artifacts such as .generated and do not expand the contract to build outputs.
+  - Keep the scope limited to the remaining paths listed in the goal unless a later frozen contract explicitly reclassifies them.
+acceptance_criteria:
+  - The seed names exactly the remaining target set above as the full coverage expansion surface for this slice.
+  - The seed explicitly preserves already covered dedicated-template and host-only paths instead of redefining them.
+  - The seed states that .generated and other generated artifacts stay out of scope.
+  - The seed requires controller wiring, inventory docs, and verification coverage to reference the same full target set.
+  - The seed keeps front source files untouched.
+  - The seed is deterministic YAML with a stable key order and no implementation ambiguity.
+verification:
+  - Compare this seed against STATE.md to confirm it matches the active Spring final-runtime coverage task and write set.
+  - Confirm the controller/docs/verification work from the same remaining full-page target set without adding any extra paths.
+  - Confirm no front source files are changed by this seed-only slice.
+  - Confirm generated artifacts such as .generated remain excluded from the frozen contract.
+out_of_scope:
+  - Editing any front HTML entrypoint, shell runtime, or shared React component.
+  - Rewriting or redefining already covered dedicated-template or host-only paths.
+  - Touching jeju-spring or jeju-web implementation files in this seed slice.
+  - Including generated artifacts or build outputs in the frozen contract.
+  - Expanding beyond the explicit remaining target set unless a later seed does that intentionally.

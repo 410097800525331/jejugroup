@@ -876,3 +876,82 @@
   - `git diff --check -- scripts/smoke/front-entrypoints.runtime.spec.cjs scripts/smoke/helpers/smoke-fixtures.cjs` passed
   - `pnpm run smoke:front` passed with `17 passed`
   - final reviewer pass reported `발견 없음`
+
+- time: `2026-03-25 10:18 +09:00`
+- route: `Route B`
+- task: `Expand the Spring final-runtime baseline to host the three jejuair about pages through front-mirror`
+- participants: `main`, `worker_seed (Helmholtz)`, `worker_about_smoke (Kant)`, `worker_about_host_runtime (Chandrasekhar -> handoff, Feynman)`, `reviewer_jejuair_about_host_only (Averroes)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.jejuair-about-host-only-v1.yaml`
+  - `worker_about_host_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_about_smoke`: `scripts/smoke/front-entrypoints.runtime.spec.cjs`
+  - `reviewer_jejuair_about_host_only`: `review only`
+- verification:
+  - `worker_seed (Helmholtz)` froze `SEED.jejuair-about-host-only-v1.yaml` so only `/jejuair/pages/about/about.html`, `/career.html`, `/ccm.html` enter the host-only baseline and the rest of `/jejuair/pages/**` stays excluded
+  - `worker_about_host_runtime (Chandrasekhar -> handoff, Feynman)` updated `FrontMirrorHostController` plus the two runtime inventory docs so those three paths appear in the host-only boundary and the exclusion language stays narrow
+  - `worker_about_smoke (Kant)` added a representative direct-entry smoke for `/jejuair/pages/about/about.html`
+  - `Select-String` confirmed the three about paths are present in `FrontMirrorHostController`, `docs/front-entrypoint-inventory.md`, and `docs/transition-architecture.md`
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front` passed with `18 passed`
+  - `pnpm run spring:test` passed; Vite emitted a non-blocking existing-style runtime warning about `new URL('/', import.meta.url)` staying unresolved until runtime
+  - `git diff --check -- STATE.md SEED.jejuair-about-host-only-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java docs/front-entrypoint-inventory.md docs/transition-architecture.md scripts/smoke/front-entrypoints.runtime.spec.cjs` passed apart from existing CRLF-to-LF normalization warnings on tracked text files
+  - `reviewer_jejuair_about_host_only (Averroes)` reported `발견 없음`; residual note only mentioned that `career.html` and `ccm.html` are not individually smoke-covered, which stays acceptable under the frozen representative-smoke contract
+
+- time: `2026-03-25 10:29 +09:00`
+- route: `Route B`
+- task: `Finish Spring final-runtime coverage for the remaining human-edited front HTML entrypoints`
+- participants: `main`, `worker_seed (Hilbert)`, `worker_full_host_runtime (Ampere)`, `worker_full_host_verification (Carson)`, `reviewer_full_page_runtime (Boole)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.spring-final-runtime-full-page-coverage-v1.yaml`
+  - `worker_full_host_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_full_host_verification`: `scripts/smoke/front-entrypoints.runtime.spec.cjs`
+  - `reviewer_full_page_runtime`: `review only`
+- verification:
+  - `worker_seed (Hilbert)` froze `SEED.spring-final-runtime-full-page-coverage-v1.yaml` so the remaining 19 `jejuair/pages/...` entrypoints plus `/pages/auth/oauth_callback.html` became the exact full-coverage expansion target while existing covered routes stayed unchanged
+  - `worker_full_host_runtime (Ampere)` added those remaining paths to `FrontMirrorHostController` and aligned `docs/front-entrypoint-inventory.md` plus `docs/transition-architecture.md` to the now-full runtime coverage baseline
+  - `worker_full_host_verification (Carson)` expanded `scripts/smoke/front-entrypoints.runtime.spec.cjs` with direct-entry smoke coverage for the remaining jejuair groups and `/pages/auth/oauth_callback.html`
+  - representative `Select-String` checks confirmed the new baggage, boarding, booking, event, jmembers, pet, and oauth callback paths are present in controller/docs/smoke
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front` passed with `37 passed`
+  - `pnpm run spring:test` passed; the build pipeline regenerated `jeju-spring/src/main/resources/static/front-mirror/**` assets and emitted the same non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved
+  - `git diff --check -- STATE.md SEED.spring-final-runtime-full-page-coverage-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java docs/front-entrypoint-inventory.md docs/transition-architecture.md scripts/smoke/front-entrypoints.runtime.spec.cjs` passed apart from existing CRLF-to-LF normalization warnings on tracked text files
+  - `reviewer_full_page_runtime (Boole)` reported `발견 없음` and confirmed the generated `jeju-spring/src/main/resources/static/front-mirror/**` changes look like expected build-output regeneration rather than scope drift
+
+- time: `2026-03-25 10:42 +09:00`
+- route: `Route B`
+- task: `Remove the obsolete Spring-specific auth template stack now that auth runtime ownership is fully on front-mirror canonical pages`
+- participants: `main`, `worker_seed (Kepler)`, `worker_auth_cleanup (Laplace)`, `worker_readme_followup (Einstein)`, `reviewer_auth_cleanup (Nietzsche)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.auth-legacy-template-cleanup-v1.yaml`
+  - `worker_auth_cleanup`: `jeju-spring/src/main/resources/templates/auth/**, jeju-spring/src/main/resources/static/assets/css/auth/**, jeju-spring/src/main/resources/static/assets/js/auth/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java`
+  - `worker_readme_followup`: `jeju-spring/README.md`
+  - `reviewer_auth_cleanup`: `review only`
+- verification:
+  - `worker_seed (Kepler)` froze `SEED.auth-legacy-template-cleanup-v1.yaml` so canonical auth runtime ownership remains on `/pages/auth/*.html` front-mirror pages, `/auth/*` stays redirect-only, and only the obsolete Spring auth stack is in cleanup scope
+  - `worker_auth_cleanup (Laplace)` deleted `jeju-spring/src/main/resources/templates/auth/*`, `jeju-spring/src/main/resources/static/assets/css/auth/*`, and `jeju-spring/src/main/resources/static/assets/js/auth/*`, and updated `MigrationDashboardFactory` so auth route descriptions match the redirect-alias plus canonical front-mirror model
+  - `worker_readme_followup (Einstein)` removed stale `templates/auth` and auth-helper references from `jeju-spring/README.md`
+  - runtime-source `git grep` for `templates/auth`, `assets/js/auth/`, and `assets/css/auth/` over `jeju-spring/src/main` plus `jeju-spring/README.md` returned no matches
+  - `pnpm run guard:text` passed
+  - `pnpm run spring:test` passed; as before, the build pipeline regenerated `jeju-spring/src/main/resources/static/front-mirror/**` outputs and emitted the same non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved
+  - `git diff --check -- STATE.md SEED.auth-legacy-template-cleanup-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java jeju-spring/README.md jeju-spring/src/main/resources/templates/auth jeju-spring/src/main/resources/static/assets/css/auth jeju-spring/src/main/resources/static/assets/js/auth` passed
+  - `reviewer_auth_cleanup (Nietzsche)` reported `발견 없음` and confirmed the old Spring auth stack no longer reads like an active runtime path while generated asset churn remains unrelated build output
+
+- time: `2026-03-25 09:34 +09:00`
+- route: `Route B`
+- task: `Restore public runtime URL resolution so auth/header navigation stops leaking /front-mirror/... links on host-only pages`
+- participants: `main`, `worker_route_resolver (Bernoulli)`, `reviewer_auth_public_routes (McClintock)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_route_resolver`: `front/core/utils/path_resolver.js`
+  - `reviewer_auth_public_routes`: `review only`
+- verification:
+  - `worker_route_resolver` changed `front/core/utils/path_resolver.js` so leading-slash public page routes stay origin-rooted while relative asset paths still resolve against `appRoot`
+  - `node --check front/core/utils/path_resolver.js` passed
+  - targeted local check simulating `window.__JEJU_ROUTE_NAVIGATOR__.appRoot = https://example.com/front-mirror/` confirmed `HOME`, `AUTH.LOGIN`, `AUTH.PASS_AUTH`, and `SERVICES.STAY.MAIN` resolve to public origin-rooted URLs while external `SERVICES.RENT_CAR` remains unchanged
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front` passed with `17 passed`
+  - `git diff --check -- front/core/utils/path_resolver.js STATE.md` passed
+  - `reviewer_auth_public_routes (McClintock)` reported `발견 없음`; residual note only mentioned that the non-browser fallback path was not directly exercised by the targeted browser-context verification

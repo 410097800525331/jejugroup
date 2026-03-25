@@ -26,9 +26,29 @@ const ENTRY_POINTS = [
   path.join(ROOT_DIR, "index.html"),
   path.join(ROOT_DIR, "admin", "pages", "dashboard.html"),
   path.join(ROOT_DIR, "jejuair", "index.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "about", "about.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "baggage", "cabinBaggage.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "baggage", "liability.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "baggage", "preorderedBaggage.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "baggage", "transportLimitation.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "boarding", "eDocument.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "boarding", "fastProcedure.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "boarding", "viewCheckin.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "booking", "Availability.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "booking", "payment.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "booking", "route.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "booking", "viewOnOffReservationList.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "event", "event.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "jmembers", "jmembersAirplane.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "jmembers", "jmembersGolf.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "jmembers", "jmembersInsurance.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "jmembers", "jmembersSightseeing.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "pet", "petPass.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "pet", "petService.html"),
   path.join(ROOT_DIR, "pages", "auth", "login.html"),
   path.join(ROOT_DIR, "pages", "auth", "signup.html"),
   path.join(ROOT_DIR, "pages", "auth", "pass_auth.html"),
+  path.join(ROOT_DIR, "pages", "auth", "oauth_callback.html"),
   path.join(ROOT_DIR, "pages", "mypage", "dashboard.html"),
   path.join(ROOT_DIR, "jejustay", "pages", "hotel", "jejuhotel.html"),
   path.join(ROOT_DIR, "jejustay", "pages", "travel", "travel_checklist.html"),
@@ -83,6 +103,38 @@ const ADMIN_DIRECT_ENTRY_CASES = [
     },
   },
 ];
+
+const JEJUAIR_DIRECT_ENTRY_CASES = [
+  "/jejuair/pages/baggage/cabinBaggage.html",
+  "/jejuair/pages/baggage/liability.html",
+  "/jejuair/pages/baggage/preorderedBaggage.html",
+  "/jejuair/pages/baggage/transportLimitation.html",
+  "/jejuair/pages/boarding/eDocument.html",
+  "/jejuair/pages/boarding/fastProcedure.html",
+  "/jejuair/pages/boarding/viewCheckin.html",
+  "/jejuair/pages/booking/Availability.html",
+  "/jejuair/pages/booking/payment.html",
+  "/jejuair/pages/booking/route.html",
+  "/jejuair/pages/booking/viewOnOffReservationList.html",
+  "/jejuair/pages/event/event.html",
+  "/jejuair/pages/jmembers/jmembersAirplane.html",
+  "/jejuair/pages/jmembers/jmembersGolf.html",
+  "/jejuair/pages/jmembers/jmembersInsurance.html",
+  "/jejuair/pages/jmembers/jmembersSightseeing.html",
+  "/jejuair/pages/pet/petPass.html",
+  "/jejuair/pages/pet/petService.html",
+];
+
+async function assertJejuAirDirectEntry(page, pathName) {
+  await page.goto(server.url(pathName), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle(/제주항공/);
+  await expect(page.locator("body")).toHaveClass(/jejuair-main-content/);
+  await expect(page.locator("header#header_wrap")).toBeVisible();
+  await expect(page.locator("footer#footer_wrap")).toBeVisible();
+}
 
 async function waitForAdminShellReady(page) {
   await page.waitForFunction(() => {
@@ -276,6 +328,44 @@ test("jeju air landing smoke", async ({ page }) => {
   await expect(page).toHaveTitle(/제주항공/);
   await expect(page.locator(".swiper.mySwiper")).toBeVisible();
   await expect(page.locator('.allmore_btn.route-link[data-route="SERVICES.AIR.BOOKING.ROUTE"]').first()).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju air about direct entry smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejuair/pages/about/about.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle("제주항공");
+  await expect(page.locator(".header_intro_section")).toBeVisible();
+  await expect(page.locator(".eco_ideas_list .eco_idea_item")).toHaveCount(3);
+  await expect(page.locator("footer")).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+for (const pathName of JEJUAIR_DIRECT_ENTRY_CASES) {
+  test(`jeju air direct entry smoke: ${pathName}`, async ({ page }) => {
+    const issues = createIssueTracker(page);
+
+    await assertJejuAirDirectEntry(page, pathName);
+
+    expectNoRuntimeIssues(issues);
+  });
+}
+
+test("oauth callback page smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/pages/auth/oauth_callback.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle("OAuth Callback Placeholder");
+  await expect(page.locator("body > h1")).toHaveText(/OAuth/i);
 
   expectNoRuntimeIssues(issues);
 });

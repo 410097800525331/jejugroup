@@ -1,0 +1,21 @@
+goal: "Freeze the obsolete Spring auth template cleanup contract so implementation can remove only dead Spring auth assets while preserving canonical front-mirror auth runtime and redirect aliases."
+constraints:
+  - "Canonical auth runtime is owned by front-mirror pages at /pages/auth/login.html, /pages/auth/signup.html, /pages/auth/pass_auth.html, and /pages/auth/oauth_callback.html."
+  - "/auth/login, /auth/signup, and /auth/pass remain redirect aliases only."
+  - "Cleanup targets are fixed to jeju-spring/src/main/resources/templates/auth/login.html, jeju-spring/src/main/resources/templates/auth/signup.html, jeju-spring/src/main/resources/templates/auth/pass-auth.html, jeju-spring/src/main/resources/static/assets/css/auth/**, and jeju-spring/src/main/resources/static/assets/js/auth/**."
+  - "Stale migration wording in MigrationDashboardFactory is in scope and must stop claiming the old Thymeleaf auth slices are active runtime pages."
+  - "Front source files and current front-mirror auth templates are out of scope."
+acceptance_criteria:
+  - "The seed explicitly preserves canonical auth runtime ownership on the front-mirror /pages/auth/*.html family."
+  - "The obsolete Spring auth templates and matching auth static asset trees are identified as cleanup-only targets."
+  - "The redirect-alias-only status of /auth/login, /auth/signup, and /auth/pass is preserved."
+  - "MigrationDashboardFactory wording is covered so reviewers can remove stale runtime claims about the old Thymeleaf auth slices."
+verification:
+  - "Parse the YAML and confirm it contains only the required schema keys."
+  - "Review the listed paths and confirm scope is limited to the obsolete Spring auth stack plus MigrationDashboardFactory wording."
+  - "Confirm no front source files or current front-mirror auth templates are included in scope."
+out_of_scope:
+  - "Any changes to front source files."
+  - "Any changes to current front-mirror auth templates."
+  - "Any changes to auth API contracts, controller behavior, or redirect alias behavior beyond preserving the aliases."
+  - "Any unrelated Spring templates, styles, scripts, or routes outside the obsolete auth stack."

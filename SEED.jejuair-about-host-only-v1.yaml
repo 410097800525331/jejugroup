@@ -1,0 +1,43 @@
+goal: >-
+  Freeze a deterministic seed contract for expanding the Spring final runtime
+  baseline so that exactly these jejuair about pages are added as host-only
+  coverage:
+  - /jejuair/pages/about/about.html
+  - /jejuair/pages/about/career.html
+  - /jejuair/pages/about/ccm.html
+constraints:
+  - The existing front-mirror templates are already assumed to exist as the
+    render targets for these pages.
+  - Add only the three listed about pages to the Spring final runtime baseline
+    as host-only entries.
+  - Keep the broader /jejuair/pages/** exclusion in place for every other
+    jejuair subpage.
+  - Keep FrontMirrorHostController, docs/front-entrypoint-inventory.md, and
+    docs/transition-architecture.md aligned to the same inclusion and exclusion
+    set.
+  - Do not modify any front source files as part of this slice.
+  - Smoke verification may include at least one representative case from the
+    three host-only pages, but it must not broaden coverage beyond them.
+acceptance_criteria:
+  - The frozen contract names exactly and only the three about paths above.
+  - The contract states that the Spring final runtime baseline gains host-only
+    coverage only for those three paths.
+  - The contract preserves the broader /jejuair/pages/** exclusion for all
+    other jejuair subpages.
+  - The contract requires the controller and the two docs files to reflect the
+    same host-only boundary.
+  - The contract explicitly keeps front source files untouched.
+verification:
+  - Compare this seed against STATE.md and confirm the active task still matches
+    the about-page host-only expansion.
+  - Confirm the controller and docs work from the same three-path inclusion
+    list, with no extra jejuair pages added.
+  - If smoke coverage is added later, include only a representative one of the
+    three paths or another path from the same frozen set.
+out_of_scope:
+  - Adding any other /jejuair/pages/** path to Spring host-only coverage.
+  - Removing or weakening the broader /jejuair/pages/** exclusion.
+  - Changing any front source file.
+  - Redesigning the runtime mirror architecture beyond this narrow host-only
+    admission.
+  - Expanding smoke coverage to pages outside the three frozen about paths.

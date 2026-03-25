@@ -44,9 +44,9 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
 }, Y = () => {
   const e = K();
   return e || (V() ? null : D() ? z() : null);
-}, Re = () => !!Y(), F = "https://jejugroup.alwaysdata.net", E = "http://localhost:9090/jeju-web", Q = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), J = () => {
+}, we = () => !!Y(), F = "https://jejugroup.alwaysdata.net", y = "http://localhost:9090/jeju-web", Q = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), J = () => {
   const t = new URLSearchParams(window.location.search).get("api");
-  return t === "local" ? E : t === "remote" ? F : Q.has(window.location.hostname) && window.location.port !== "9090" ? E : "";
+  return t === "local" ? y : t === "remote" ? F : Q.has(window.location.hostname) && window.location.port !== "9090" ? y : "";
 }, x = J(), f = "userSession", q = "jeju:session-updated", W = "/api/auth/session", Z = "/api/auth/logout", R = (e) => `${x}${e}`, X = (e) => {
   if (!e)
     return null;
@@ -56,7 +56,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
   } catch {
     return null;
   }
-}, _ = (e) => {
+}, w = (e) => {
   try {
     const t = e ? { session: { ...e } } : { session: null };
     window.dispatchEvent(new CustomEvent(q, { detail: t }));
@@ -78,14 +78,14 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
   } catch (n) {
     console.warn("[SessionManager] Session save failed:", n);
   }
-  return _(t), t;
-}, O = () => {
+  return w(t), t;
+}, _ = () => {
   try {
     localStorage.removeItem(f);
   } catch (e) {
     console.warn("[SessionManager] Session clear failed:", e);
   }
-  _(null);
+  w(null);
 }, re = async () => {
   const e = await fetch(R(W), {
     method: "GET",
@@ -95,7 +95,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
     }
   });
   if (e.status === 401)
-    return O(), null;
+    return _(), null;
   if (!e.ok)
     throw new Error(`Session fetch failed: ${e.status}`);
   const t = await e.json();
@@ -121,7 +121,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
   } catch (e) {
     console.warn("[SessionManager] Logout request failed:", e);
   } finally {
-    O();
+    _();
   }
 }, S = (e) => {
   if (e === null || typeof e != "object")
@@ -145,7 +145,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
   kind: "external",
   url: e,
   ...t
-}), b = (e) => {
+}), O = (e) => {
   if (!e || typeof e != "object")
     return e;
   if ("kind" in e) {
@@ -155,9 +155,9 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
     return `${e.path}${t}${n}`;
   }
   return Object.fromEntries(
-    Object.entries(e).map(([t, n]) => [t, b(n)])
+    Object.entries(e).map(([t, n]) => [t, O(n)])
   );
-}, I = S({
+}, b = S({
   HOME: r("/index.html"),
   AUTH: {
     LOGIN: r("/pages/auth/login.html", { shellStrategy: "auth-shell" }),
@@ -251,7 +251,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
       EVENT: r("/jejuair/pages/event/event.html")
     }
   }
-}), be = S(b(I)), se = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, ae = /^[a-z][a-z0-9+.-]*:/i, p = "shell", oe = "jeju:mypage-shell", ie = /* @__PURE__ */ new Set(["main", "stay", "air"]), le = (e, t) => t.split(".").reduce((n, s) => {
+}), be = S(O(b)), se = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, ae = /^[a-z][a-z0-9+.-]*:/i, p = "shell", oe = "jeju:mypage-shell", ie = /* @__PURE__ */ new Set(["main", "stay", "air"]), le = (e, t) => t.split(".").reduce((n, s) => {
   if (n && typeof n == "object" && s in n)
     return n[s];
 }, e), ce = (e) => {
@@ -290,20 +290,18 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
     "../../",
     import.meta.url
   );
-}, de = (e) => {
-  if (ae.test(e))
-    return e;
-  const t = e.startsWith("/") ? e.slice(1) : e;
-  return new URL(t, he()).href;
-}, u = (e) => {
+}, de = () => {
+  var e;
+  return typeof window < "u" && typeof ((e = window.location) == null ? void 0 : e.origin) == "string" ? new URL(window.location.origin) : new URL("/", import.meta.url);
+}, me = (e) => ae.test(e) ? e : e.startsWith("/") ? new URL(e, de()).href : new URL(e, he()).href, u = (e) => {
   if (typeof e != "string")
     return null;
   const t = e.trim().toLowerCase();
   return ie.has(t) ? t : null;
-}, me = (e = "") => {
+}, pe = (e = "") => {
   const t = String(e).toLowerCase();
   return t.includes("/jejuair/") ? "air" : t.includes("/jejustay/") ? "stay" : "main";
-}, pe = () => {
+}, ge = () => {
   var t, n, s;
   if (typeof window > "u")
     return "main";
@@ -318,7 +316,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
     if (a)
       return a;
   }
-  const e = me(window.location.pathname);
+  const e = pe(window.location.pathname);
   if (e)
     return e;
   try {
@@ -328,39 +326,39 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
   } catch {
   }
   return "main";
-}, ge = (e, t) => {
+}, fe = (e, t) => {
   const n = e.defaultQuery ? {
     ...e.defaultQuery,
     ...t
   } : t;
   if (!e || e.shellStrategy !== "auth-shell" || u(n == null ? void 0 : n[p]))
     return n;
-  const s = pe();
+  const s = ge();
   return {
     ...n,
     [p]: s
   };
-}, w = (e, t = {}) => {
+}, I = (e, t = {}) => {
   if (typeof e != "string" || e.trim() === "")
     throw new TypeError("[RouteResolver] routeKey must be a non-empty string.");
   if (t === null || typeof t != "object" || Array.isArray(t))
     throw new TypeError("[RouteResolver] params must be a plain object.");
-  const n = e.trim(), s = le(I, n);
+  const n = e.trim(), s = le(b, n);
   if (!s || typeof s != "object" || !s.kind)
     throw new Error(`[RouteResolver] Route key not found: ${e}`);
   const a = ce(s);
   if (typeof a != "string" || a.trim() === "")
     throw new Error(`[RouteResolver] Route template not found: ${e}`);
-  const o = ge(s, t), i = new Set(s.defaultQuery ? Object.keys(s.defaultQuery) : []), l = a.replace(se, (je, P, U) => {
-    const h = P || U, d = o[h];
+  const o = fe(s, t), i = new Set(s.defaultQuery ? Object.keys(s.defaultQuery) : []), l = a.replace(se, (Re, U, P) => {
+    const h = U || P, d = o[h];
     if (d == null)
       throw new Error(`[RouteResolver] Missing route param: ${h} (${e})`);
     return i.add(h), encodeURIComponent(String(d));
-  }), c = l.indexOf("#"), N = c >= 0 ? l.slice(0, c) : l, L = c >= 0 ? l.slice(c) : "", v = `${de(N)}${L}`;
+  }), c = l.indexOf("#"), L = c >= 0 ? l.slice(0, c) : l, N = c >= 0 ? l.slice(c) : "", v = `${me(L)}${N}`;
   return ue(v, o, i);
 };
-let y = !1;
-const fe = ["ctrlKey", "metaKey", "shiftKey", "altKey"], Se = (e) => fe.some((t) => !!e[t]), T = (e) => {
+let E = !1;
+const Se = ["ctrlKey", "metaKey", "shiftKey", "altKey"], ye = (e) => Se.some((t) => !!e[t]), T = (e) => {
   const t = e.getAttribute("data-route-params");
   if (!t)
     return {};
@@ -375,7 +373,7 @@ const fe = ["ctrlKey", "metaKey", "shiftKey", "altKey"], Se = (e) => fe.some((t)
   const t = e.getAttribute("data-route");
   if (t)
     try {
-      const s = T(e), a = w(t, s), o = e.getAttribute("data-route-mode") || "assign", i = (n = window.__JEJU_ROUTE_NAVIGATOR__) == null ? void 0 : n.safeNavigate;
+      const s = T(e), a = I(t, s), o = e.getAttribute("data-route-mode") || "assign", i = (n = window.__JEJU_ROUTE_NAVIGATOR__) == null ? void 0 : n.safeNavigate;
       if (i) {
         i(a, "router-binder", { mode: o });
         return;
@@ -398,13 +396,13 @@ const fe = ["ctrlKey", "metaKey", "shiftKey", "altKey"], Se = (e) => fe.some((t)
     const s = n.getAttribute("data-route");
     if (s)
       try {
-        const a = T(n), o = w(s, a);
+        const a = T(n), o = I(s, a);
         n.setAttribute("href", o);
       } catch (a) {
         n.setAttribute("href", "#"), console.warn(`[RouterBinder] Failed to hydrate href for '${s}':`, a);
       }
   });
-}, ye = () => {
+}, Ae = () => {
   if (!document.body)
     return;
   new MutationObserver((t) => {
@@ -417,19 +415,19 @@ const fe = ["ctrlKey", "metaKey", "shiftKey", "altKey"], Se = (e) => fe.some((t)
     childList: !0,
     subtree: !0
   });
-}, Ae = (e = document) => {
+}, je = (e = document) => {
   if (e instanceof Document) {
     g(e.documentElement);
     return;
   }
   g(e);
 }, Ie = () => {
-  y || (y = !0, Ae(document), ye(), document.body.addEventListener("click", (e) => {
+  E || (E = !0, je(document), Ae(), document.body.addEventListener("click", (e) => {
     const t = e.target.closest("[data-route]");
-    t && (e.defaultPrevented || t.hasAttribute("data-route-animated-nav") || Se(e) || t instanceof HTMLAnchorElement && t.getAttribute("target") && t.getAttribute("target") !== "_self" || (e.preventDefault(), Ee(t)));
+    t && (e.defaultPrevented || t.hasAttribute("data-route-animated-nav") || ye(e) || t instanceof HTMLAnchorElement && t.getAttribute("target") && t.getAttribute("target") !== "_self" || (e.preventDefault(), Ee(t)));
   }));
 };
-function we(e) {
+function Te(e) {
   if (typeof e != "string")
     return e;
   const t = {
@@ -441,20 +439,20 @@ function we(e) {
   };
   return e.replace(/[&<>"']/g, (n) => t[n]);
 }
-function Te(e) {
+function Le(e) {
   return /[<>'";\(\)={}]/.test(e) ? (console.warn("Security Warning: Invalid parameter detected"), !1) : !0;
 }
 export {
   x as A,
   be as R,
-  w as a,
+  I as a,
   D as b,
-  Re as c,
-  we as d,
+  we as c,
+  Te as d,
   k as h,
   Ie as i,
   Oe as l,
   _e as r,
   te as s,
-  Te as v
+  Le as v
 };

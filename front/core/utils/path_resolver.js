@@ -75,13 +75,24 @@ const resolveAppBaseUrl = () => {
   return new URL(/* @vite-ignore */ '../../', import.meta.url);
 };
 
+const resolveSiteOriginUrl = () => {
+  if (typeof window !== 'undefined' && typeof window.location?.origin === 'string') {
+    return new URL(window.location.origin);
+  }
+
+  return new URL('/', import.meta.url);
+};
+
 const toAbsolutePath = (pathLike) => {
   if (EXTERNAL_URL_PATTERN.test(pathLike)) {
     return pathLike;
   }
 
-  const normalizedPath = pathLike.startsWith('/') ? pathLike.slice(1) : pathLike;
-  return new URL(normalizedPath, resolveAppBaseUrl()).href;
+  if (pathLike.startsWith('/')) {
+    return new URL(pathLike, resolveSiteOriginUrl()).href;
+  }
+
+  return new URL(pathLike, resolveAppBaseUrl()).href;
 };
 
 const normalizeShell = (value) => {

@@ -20,11 +20,7 @@
 - 이 경로들은 `templates/front-mirror/**` 아래의 실제 미러 템플릿으로 응답한다.
 - 컨트롤러는 요청 경로를 그대로 `front-mirror/<legacy path>` 형태의 뷰 이름으로 바꿔 반환한다.
 - 이 host-only 경로들은 현재 final-runtime baseline에서 완료된 runtime coverage로 인정한다.
-
-### 제외 경로
-
-- `jejuair/pages/**`는 현재 Spring final runtime baseline에서 영구 제외한다.
-- `/pages/auth/oauth_callback.html`도 현재 Spring final runtime baseline에서 영구 제외한다.
+- 이 slice에서는 남은 human-edited front HTML 진입점을 모두 host-only로 연결한다.
 
 ## 전용 Spring 템플릿 목록
 
@@ -47,6 +43,28 @@
 | 경로 | 실제 반환 뷰 | front 원본 | 비고 |
 | --- | --- | --- | --- |
 | `/jejuair/index.html` | `front-mirror/jejuair/index` | `front/jejuair/index.html` | 제주에어 최상위 고정 영역 호스트 |
+| `/jejuair/pages/about/about.html` | `front-mirror/jejuair/pages/about/about` | `front/jejuair/pages/about/about.html` | 제주에어 about 호스트 전용 진입점 |
+| `/jejuair/pages/about/career.html` | `front-mirror/jejuair/pages/about/career` | `front/jejuair/pages/about/career.html` | 제주에어 about 호스트 전용 진입점 |
+| `/jejuair/pages/about/ccm.html` | `front-mirror/jejuair/pages/about/ccm` | `front/jejuair/pages/about/ccm.html` | 제주에어 about 호스트 전용 진입점 |
+| `/jejuair/pages/baggage/cabinBaggage.html` | `front-mirror/jejuair/pages/baggage/cabinBaggage` | `front/jejuair/pages/baggage/cabinBaggage.html` | 수하물 기내반입 호스트 |
+| `/jejuair/pages/baggage/liability.html` | `front-mirror/jejuair/pages/baggage/liability` | `front/jejuair/pages/baggage/liability.html` | 수하물 배상책임 호스트 |
+| `/jejuair/pages/baggage/preorderedBaggage.html` | `front-mirror/jejuair/pages/baggage/preorderedBaggage` | `front/jejuair/pages/baggage/preorderedBaggage.html` | 수하물 사전구매 호스트 |
+| `/jejuair/pages/baggage/transportLimitation.html` | `front-mirror/jejuair/pages/baggage/transportLimitation` | `front/jejuair/pages/baggage/transportLimitation.html` | 수하물 운송제한 호스트 |
+| `/jejuair/pages/boarding/eDocument.html` | `front-mirror/jejuair/pages/boarding/eDocument` | `front/jejuair/pages/boarding/eDocument.html` | 탑승 전자문서 호스트 |
+| `/jejuair/pages/boarding/fastProcedure.html` | `front-mirror/jejuair/pages/boarding/fastProcedure` | `front/jejuair/pages/boarding/fastProcedure.html` | 탑승 빠른절차 호스트 |
+| `/jejuair/pages/boarding/viewCheckin.html` | `front-mirror/jejuair/pages/boarding/viewCheckin` | `front/jejuair/pages/boarding/viewCheckin.html` | 탑승 체크인 조회 호스트 |
+| `/jejuair/pages/booking/Availability.html` | `front-mirror/jejuair/pages/booking/Availability` | `front/jejuair/pages/booking/Availability.html` | 예약 가능 여부 호스트 |
+| `/jejuair/pages/booking/payment.html` | `front-mirror/jejuair/pages/booking/payment` | `front/jejuair/pages/booking/payment.html` | 예약 결제 호스트 |
+| `/jejuair/pages/booking/route.html` | `front-mirror/jejuair/pages/booking/route` | `front/jejuair/pages/booking/route.html` | 예약 노선 호스트 |
+| `/jejuair/pages/booking/viewOnOffReservationList.html` | `front-mirror/jejuair/pages/booking/viewOnOffReservationList` | `front/jejuair/pages/booking/viewOnOffReservationList.html` | 예약 현황 호스트 |
+| `/jejuair/pages/event/event.html` | `front-mirror/jejuair/pages/event/event` | `front/jejuair/pages/event/event.html` | 이벤트 호스트 |
+| `/jejuair/pages/jmembers/jmembersAirplane.html` | `front-mirror/jejuair/pages/jmembers/jmembersAirplane` | `front/jejuair/pages/jmembers/jmembersAirplane.html` | J멤버스 비행기 호스트 |
+| `/jejuair/pages/jmembers/jmembersGolf.html` | `front-mirror/jejuair/pages/jmembers/jmembersGolf` | `front/jejuair/pages/jmembers/jmembersGolf.html` | J멤버스 골프 호스트 |
+| `/jejuair/pages/jmembers/jmembersInsurance.html` | `front-mirror/jejuair/pages/jmembers/jmembersInsurance` | `front/jejuair/pages/jmembers/jmembersInsurance.html` | J멤버스 보험 호스트 |
+| `/jejuair/pages/jmembers/jmembersSightseeing.html` | `front-mirror/jejuair/pages/jmembers/jmembersSightseeing` | `front/jejuair/pages/jmembers/jmembersSightseeing.html` | J멤버스 관광 호스트 |
+| `/jejuair/pages/pet/petPass.html` | `front-mirror/jejuair/pages/pet/petPass` | `front/jejuair/pages/pet/petPass.html` | 반려동물 패스 호스트 |
+| `/jejuair/pages/pet/petService.html` | `front-mirror/jejuair/pages/pet/petService` | `front/jejuair/pages/pet/petService.html` | 반려동물 서비스 호스트 |
+| `/pages/auth/oauth_callback.html` | `front-mirror/pages/auth/oauth_callback` | `front/pages/auth/oauth_callback.html` | OAuth callback host-only 진입점 |
 | `/pages/auth/login.html` | `front-mirror/pages/auth/login` | `front/pages/auth/login.html` | auth canonical page, `/auth/login` 호환 alias |
 | `/pages/auth/signup.html` | `front-mirror/pages/auth/signup` | `front/pages/auth/signup.html` | auth canonical page, `/auth/signup` 호환 alias |
 | `/pages/auth/pass_auth.html` | `front-mirror/pages/auth/pass_auth` | `front/pages/auth/pass_auth.html` | auth canonical page, `/auth/pass` 호환 alias |
@@ -61,15 +79,9 @@
 | `/admin/pages/members.html` | `front-mirror/admin/pages/members` | `front/admin/pages/members.html` | 관리자 회원 호스트 |
 | `/admin/pages/cms.html` | `front-mirror/admin/pages/cms` | `front/admin/pages/cms.html` | 관리자 CMS 호스트 |
 
-## 제외 경로
-
-| 경로 | 결정 | 이유 |
-| --- | --- | --- |
-| `/jejuair/pages/**` | 영구 제외 | 현재 final runtime baseline에서 host-only로 끌어오지 않는다. |
-| `/pages/auth/oauth_callback.html` | 영구 제외 | OAuth callback은 page host 책임에서 현재 baseline 밖으로 둔다. |
-
 ## 경계 원칙
 
 - 전용 Spring 템플릿은 Spring이 직접 렌더링한다.
-- host-only 경로는 `front-mirror/<legacy path>` 뷰를 반환하며, 완료된 runtime coverage로 본다.
+- host-only 경로는 `front-mirror/<legacy path>` 뷰를 반환한다.
+- 이 슬라이스에서는 남은 human-edited front HTML 진입점을 모두 host-only로 연결한다.
 - `front`와 `jeju-spring`의 경계는 문서와 컨트롤러가 같은 기준을 보게 유지한다.
