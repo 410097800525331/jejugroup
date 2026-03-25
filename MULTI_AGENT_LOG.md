@@ -1218,3 +1218,119 @@
 - verification:
   - `node scripts/spring/mirror-front-to-thymeleaf.cjs` passed
   - `jeju-web` was not touched
+
+- time: `2026-03-25 23:07 +09:00`
+- route: `Route B`
+- task: `Make the front footer fix actually load, verify the footer layout in front, and mirror the result into jeju-spring`
+- participants: `main`, `worker_shared_footer (Ampere)`, `worker_shared_mirror (Ohm)`, `reviewer_footer_regression (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shared_footer (Ampere)`: `front/components/react/layout/MainFooterTemplate.tsx, front/components/react/layout/footer.css`
+  - `worker_shared_mirror (Ohm)`: `jeju-spring/src/main/resources/static/front-mirror/** affected assets, jeju-spring/build/resources/main/static/front-mirror/** affected assets`
+  - `reviewer_footer_regression (Athena)`: `review only`
+- verification:
+  - `front` root cause was confirmed as missing `import "./footer.css"` in `MainFooterTemplate.tsx`, so the footer CSS never loaded in the source runtime
+  - `front:3001/index.html` verified `footer-info` as `display:grid`, two `footer-info-group` blocks on the same row, and `Family Sites` toggle opening 4 radial items
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs` regenerated `jeju-spring/src/main/resources/static/front-mirror/**`
+  - `node scripts/spring/run-jeju-spring-gradle.cjs processResources` was blocked by missing `gradle-wrapper.jar`; fallback copy refreshed `jeju-spring/build/resources/main/**` and both `shell-runtime.js` files now point to `runtime-layout-Bj_DwnxM.js`
+  - `git diff --check` passed for the touched task files
+  - `reviewer_footer_regression (Athena)` reported `발견 없음`
+  - final live `spring:8080` verification was blocked by `ERR_CONNECTION_REFUSED` and logged in `ERROR_LOG.md`
+
+- time: `2026-03-25 23:19 +09:00`
+- route: `Route B`
+- task: `Load production shell runtime CSS so the mirrored spring footer uses the same horizontal footer layout as front`
+- participants: `main`, `worker_shared_footer (Franklin)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_shared_footer (Franklin)`: `front/apps/shell/src/runtime/bootstrap.js, regenerated front/.generated runtime outputs, regenerated jeju-spring front-mirror runtime outputs`
+- verification:
+  - `front/apps/shell/src/runtime/bootstrap.js` now injects `components/runtime/style.css` for main/hotel shell entry
+  - `pnpm run build:shell` regenerated runtime outputs including `style.css` and `bootstrap.js`
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs --skip-build-shell` refreshed spring front-mirror runtime outputs
+  - live `spring:8080/index.html?fresh=2` verified stylesheet link `/front-mirror/components/runtime/style.css`
+  - live `spring:8080` verified `footer-info` computed `display:grid`, two groups on the same row, and `Family Sites` active menu with 4 visible radial items
+
+- time: `2026-03-25 23:34 +09:00`
+- route: `Route B`
+- task: `Restore the metallic finish on the landing membership tier badges and mirror it into jeju-spring`
+- participants: `main`, `worker_seed (Descartes)`, `worker_feature_landing (Pauli)`, `reviewer_membership_badge (Steward the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Descartes)`: `SEED.membership-badge-metal-finish-v1.yaml`
+  - `worker_feature_landing (Pauli)`: `front/styles/globals.css, regenerated jeju-spring/src/main/resources/static/front-mirror/styles/globals.css`
+  - `reviewer_membership_badge (Steward the 2nd)`: `review only`
+- verification:
+  - `SEED.membership-badge-metal-finish-v1.yaml` created to freeze the badge-only contract
+  - `front/styles/globals.css` now applies layered metallic gradients, radial highlights, inset shadows, and text shadows to `.tier-badge.silver`, `.tier-badge.gold`, and `.tier-badge.platinum`
+  - mirrored `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` matches the front source diff
+  - live `spring:8080/index.html?badgecheck=2#section-5` verified updated `backgroundImage`, `boxShadow`, and `textShadow` values for all three tier badges
+  - `pnpm run check:shell` passed
+  - `git diff --check` passed
+  - `reviewer_membership_badge (Steward the 2nd)` reported `발견 없음`
+
+- time: `2026-03-25 23:45 +09:00`
+- route: `Route B`
+- task: `Tighten the landing footer vertical spacing by 20px and mirror the same shorter footer into jeju-spring`
+- participants: `main`, `worker_seed (Ptolemy the 2nd)`, `worker_shared_footer (Confucius the 2nd)`, `worker_shared_mirror (Faraday the 2nd)`, `reviewer_footer_spacing (Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Ptolemy the 2nd)`: `SEED.footer-spacing-tighten-v1.yaml`
+  - `worker_shared_footer (Confucius the 2nd)`: `front/components/react/layout/footer.css`
+  - `worker_shared_mirror (Faraday the 2nd)`: `jeju-spring/src/main/resources/static/front-mirror/components/react/layout/footer.css, jeju-spring/src/main/resources/static/front-mirror/components/runtime/style.css, jeju-spring/build/resources/main/static/front-mirror/** affected assets`
+  - `reviewer_footer_spacing (Athena the 2nd)`: `review only`
+- verification:
+  - `SEED.footer-spacing-tighten-v1.yaml` created to freeze the footer-spacing-only contract
+  - `front/components/react/layout/footer.css` reduced `footer.shell-footer.section` `padding-top` and `padding-bottom` from `60px` to `50px`
+  - mirrored `jeju-spring/src/main/resources/static/front-mirror/components/react/layout/footer.css` matches the front source change
+  - live `spring:8080/index.html?footerspacing=1` verified `paddingTop` and `paddingBottom` both compute to `50px`
+  - live `spring:8080` also verified footer info remains `display:grid`, same-row 2-column layout is intact, and `Family Sites` still opens 4 radial items
+  - `reviewer_footer_spacing (Athena the 2nd)` reported `발견 없음`
+
+- time: `2026-03-25 23:40 +09:00`
+- route: `Route B`
+- task: `Tighten the landing footer vertical spacing by 20px and mirror the footer height reduction into jeju-spring`
+- participants: `main`, `worker_seed (Ptolemy the 2nd)`, `worker_shared_footer (Confucius the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Ptolemy the 2nd)`: `SEED.footer-spacing-tighten-v1.yaml`
+  - `worker_shared_footer (Confucius the 2nd)`: `front/components/react/layout/footer.css`
+- verification:
+  - `front/components/react/layout/footer.css` changed only `footer.shell-footer.section` padding from `60px` to `50px` on top and bottom, reducing footer height by `20px`
+  - `pnpm run build:shell` regenerated runtime `style.css`
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs --skip-build-shell` refreshed spring mirror assets
+  - `jeju-spring/build/resources/main/static/front-mirror/components/react/layout/footer.css` and `.../components/runtime/style.css` were updated for the running local spring server
+  - HTTP check against `http://127.0.0.1:8080/front-mirror/components/react/layout/footer.css` returned the new `padding-top: 50px` / `padding-bottom: 50px` values
+
+- time: `2026-03-25 22:57 +09:00`
+- route: `Route B`
+- task: `Repair the landing footer regression so the info blocks align horizontally again and the family-site widget stops collapsing`
+- participants: `main`, `worker_seed (Hypatia)`, `worker_shared_footer (Linnaeus)`, `worker_footer_widget (Hume)`, `reviewer_footer_regression (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Hypatia)`: `SEED.footer-regression-repair-v1.yaml`
+  - `worker_shared_footer (Linnaeus)`: `front/components/react/layout/footer.css`
+  - `worker_footer_widget (Hume)`: `front/components/react/layout/MainFooterTemplate.tsx`
+  - `reviewer_footer_regression (Steward)`: `review only`
+- verification:
+  - `SEED.footer-regression-repair-v1.yaml` created to freeze the footer-only contract
+  - `front/components/react/layout/MainFooterTemplate.tsx` now separates company info and address/contact into explicit footer info groups
+  - `front/components/react/layout/footer.css` now lays those groups out as a 2-column grid and keeps `footer-right-group` from shrinking
+  - `pnpm run check:shell` passed
+  - `git diff --check -- STATE.md SEED.footer-regression-repair-v1.yaml front/components/react/layout/MainFooterTemplate.tsx front/components/react/layout/footer.css` passed
+  - `reviewer_footer_regression (Steward)` reported `발견 없음`
+  - browser rendering was not rechecked in this turn
+
+- time: `2026-03-25 23:32 +09:00`
+- route: `Route B`
+- task: `Restore the landing membership badge metallic finish in front and mirror it to spring`
+- participants: `main`, `worker_feature_landing`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_feature_landing`: `front/styles/globals.css, front/index.html if strictly required`
+- verification:
+  - `front/styles/globals.css` now gives silver/gold/platinum badges layered metallic gradients, highlight sweeps, and inset sheen without changing card layout
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` rebuilt front and mirrored the updated stylesheet into `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css`
+  - `jeju-spring/build/resources/main/static/front-mirror/styles/globals.css` was copied from the updated source mirror so the running local spring server can serve the same badge styling
+  - `pnpm run check:shell` passed
+  - `git diff --check -- front/styles/globals.css` passed

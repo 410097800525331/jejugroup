@@ -160,6 +160,31 @@ const hasLifeSearchWidgetIsland = () => Boolean(document.getElementById("life-se
 const hasPageShellHosts = () =>
   Boolean(document.getElementById("jeju-page-shell-header") || document.getElementById("jeju-page-shell-footer"));
 
+const ensureRuntimeStyle = () => {
+  const href = new URL("components/runtime/style.css", APP_ROOT).href;
+  const alreadyLoaded = Array.from(document.querySelectorAll("link[rel='stylesheet']")).some((link) => {
+    const rawHref = link.getAttribute("href") || link.href;
+    if (!rawHref) {
+      return false;
+    }
+
+    try {
+      return new URL(rawHref, window.location.href).href === href;
+    } catch (_error) {
+      return rawHref === href;
+    }
+  });
+
+  if (alreadyLoaded) {
+    return;
+  }
+
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = href;
+  document.head.appendChild(link);
+};
+
 const bootRuntime = async () => {
   installRuntimeLifecycle();
   markRuntimeReady("bootstrap");
@@ -167,8 +192,10 @@ const bootRuntime = async () => {
   installLegacyGlobals();
 
   if (hasMainShell()) {
+    ensureRuntimeStyle();
     await mountMainShellRuntime();
   } else if (hasHotelShell()) {
+    ensureRuntimeStyle();
     await mountHotelShellRuntime();
   }
 

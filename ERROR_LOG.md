@@ -233,3 +233,33 @@
   summary: Verification command used deleted-path arguments
   details: The first diff-check attempt included deleted spring mirror file paths as explicit arguments, which git rejected because those paths no longer exist in the working tree. The follow-up check should target the spring resources directory instead of individual deleted file names.
   status: resolved
+
+- time: `2026-03-25 23:07:51 +09:00`
+- location: `node scripts/spring/run-jeju-spring-gradle.cjs processResources`
+- summary: `Gradle processResources could not run because gradle-wrapper.jar is missing`
+- details: `Refreshing jeju-spring/build/resources/main via the official Gradle wrapper path failed because jeju-spring/gradle/wrapper/gradle-wrapper.jar is absent in this workspace. I used a robocopy fallback from src/main/resources to build/resources/main so the stale front-mirror runtime files were refreshed anyway.`
+- status: `resolved`
+
+- time: `2026-03-25 23:07:51 +09:00`
+- location: `spring:8080 live footer verification`
+- summary: `Final live spring verification was blocked because 127.0.0.1:8080 stopped accepting connections`
+- details: `After refreshing build/resources/main, Playwright reload against http://127.0.0.1:8080/index.html returned ERR_CONNECTION_REFUSED, so the updated spring-served footer could not be rechecked live in this turn. Front:3001 verification and on-disk spring mirror/build-resource inspection both showed the new footer runtime is present.`
+- status: `open`
+
+- time: `2026-03-25 23:19:00 +09:00`
+- location: `spring:8080 live footer verification`
+- summary: `Previously blocked live spring verification succeeded after restarting bootRun and loading runtime style.css in production bootstrap`
+- details: `I restarted the local spring server with Gradle bootRun, then verified on http://127.0.0.1:8080/index.html?fresh=2 that /front-mirror/components/runtime/style.css is linked, footer-info computes to grid with two same-row groups, and Family Sites opens 4 radial items. This resolves the earlier ERR_CONNECTION_REFUSED/live-footer uncertainty.`
+- status: `resolved`
+
+- time: `2026-03-25 23:23:00 +09:00`
+- location: `Playwright browser launch during spring footer recheck`
+- summary: `Browser automation session failed to launch repeatedly`
+- details: `Playwright could not keep a persistent Chrome session open and exited immediately with "기존 브라우저 세션에서 여는 중입니다." multiple times, so live DOM verification had to be abandoned for this turn. Shell-side HTTP checks still confirmed spring responds with 200 and the mirrored runtime files are updated on disk.`
+- status: `open`
+
+- time: `2026-03-25 23:23:00 +09:00`
+- location: `spring:8080 live footer verification`
+- summary: `Spring server came back after resource refresh`
+- details: `After mirroring front changes and running Gradle processResources, http://127.0.0.1:8080/index.html responded with 200 again. The server is up; only the browser automation path was blocked from rechecking the rendered footer live.`
+- status: `resolved`

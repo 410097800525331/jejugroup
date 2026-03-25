@@ -1,5 +1,5 @@
 import { j as e, a as p } from "./react-vendor-BoSfm_Te.js";
-import { U as E, a as b, S as f, b as S, c as I, P as R, d as g, e as A, M as k, f as w, g as C, L as T, h as L, H as y, i as j, j as M, k as V, G as H, C as O, l as P, m as _, n as G, o as D, p as U, q as $, B as x, r as B, s as q, t as Y } from "./icon-vendor-Dpra3II6.js";
+import { U as f, a as E, S as b, b as S, c as I, P as R, d as g, e as A, M as k, f as w, g as C, L as T, h as L, H as y, i as j, j as M, k as V, G as H, C as O, l as P, m as _, n as G, o as D, p as U, q as $, B as x, r as B, s as q, t as Y } from "./icon-vendor-Dpra3II6.js";
 import { a as F } from "./legacy-core-CKE3csu2.js";
 const W = {
   "book-open": B,
@@ -26,9 +26,9 @@ const W = {
   plus: R,
   search: I,
   "shield-check": S,
-  smartphone: f,
-  user: b,
-  users: E
+  smartphone: b,
+  user: E,
+  users: f
 }, i = ({ name: s, className: a }) => {
   const l = W[s] ?? q;
   return /* @__PURE__ */ e.jsx(l, { className: a, strokeWidth: 1.9, "aria-hidden": "true", focusable: "false" });
@@ -361,16 +361,19 @@ function ae(s) {
 const ne = () => /* @__PURE__ */ e.jsxs("footer", { className: "footer section shell-footer", id: "section-footer", children: [
   /* @__PURE__ */ e.jsxs("div", { className: "footer-content", children: [
     /* @__PURE__ */ e.jsxs("div", { className: "footer-info", children: [
-      /* @__PURE__ */ e.jsx("p", { children: /* @__PURE__ */ e.jsx("strong", { "data-lang": "footerCompany", children: "(주) 제주 그룹" }) }),
-      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCEO", children: "대표이사 김대표" }),
-      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerBizNum", children: "사업자등록번호 616-81-50527" }),
-      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerSaleNum", children: "통신판매신고 제주 2006-125" }),
-      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerHosting", children: "호스팅 사업자 AWS" }),
-      /* @__PURE__ */ e.jsx("br", {}),
-      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerAddr", children: "주소: 제주특별자치도 제주시 첨단로 64 (연동, 건설공제회관 3층)" }),
-      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCs", children: "고객센터: 1599-1500 (09:00 ~ 19:00)" }),
-      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCsEmail", children: "고객 문의: jejugroup.help@jejugroup.net" }),
-      /* @__PURE__ */ e.jsx("p", { "data-lang": "footerPartnerEmail", children: "제휴 문의: partnership@jejugroup.net" })
+      /* @__PURE__ */ e.jsxs("div", { className: "footer-info-group footer-info-group--company", children: [
+        /* @__PURE__ */ e.jsx("p", { children: /* @__PURE__ */ e.jsx("strong", { "data-lang": "footerCompany", children: "(주) 제주 그룹" }) }),
+        /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCEO", children: "대표이사 김대표" }),
+        /* @__PURE__ */ e.jsx("p", { "data-lang": "footerBizNum", children: "사업자등록번호 616-81-50527" }),
+        /* @__PURE__ */ e.jsx("p", { "data-lang": "footerSaleNum", children: "통신판매신고 제주 2006-125" }),
+        /* @__PURE__ */ e.jsx("p", { "data-lang": "footerHosting", children: "호스팅 사업자 AWS" })
+      ] }),
+      /* @__PURE__ */ e.jsxs("div", { className: "footer-info-group footer-info-group--contact", children: [
+        /* @__PURE__ */ e.jsx("p", { "data-lang": "footerAddr", children: "주소: 제주특별자치도 제주시 첨단로 64 (연동, 건설공제회관 3층)" }),
+        /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCs", children: "고객센터: 1599-1500 (09:00 ~ 19:00)" }),
+        /* @__PURE__ */ e.jsx("p", { "data-lang": "footerCsEmail", children: "고객 문의: jejugroup.help@jejugroup.net" }),
+        /* @__PURE__ */ e.jsx("p", { "data-lang": "footerPartnerEmail", children: "제휴 문의: partnership@jejugroup.net" })
+      ] })
     ] }),
     /* @__PURE__ */ e.jsxs("div", { className: "footer-right-group", children: [
       /* @__PURE__ */ e.jsx(ae, {}),
