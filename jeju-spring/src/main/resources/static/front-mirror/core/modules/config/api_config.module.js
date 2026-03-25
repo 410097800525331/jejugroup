@@ -4,7 +4,7 @@
  */
 
 const REMOTE_API_BASE_URL = "https://jejugroup.alwaysdata.net";
-const LOCAL_API_BASE_URL = "http://localhost:9090/jeju-web";
+const LOCAL_API_BASE_URL = "http://localhost:8080";
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
 const getApiBaseUrl = () => {

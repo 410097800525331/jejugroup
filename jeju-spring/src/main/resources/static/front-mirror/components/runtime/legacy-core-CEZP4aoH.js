@@ -44,7 +44,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
 }, Y = () => {
   const e = K();
   return e || (V() ? null : D() ? z() : null);
-}, Re = () => !!Y(), F = "https://jejugroup.alwaysdata.net", E = "http://localhost:9090/jeju-web", Q = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), J = () => {
+}, Re = () => !!Y(), F = "https://jejugroup.alwaysdata.net", E = "http://localhost:8080", Q = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), J = () => {
   const t = new URLSearchParams(window.location.search).get("api");
   return t === "local" ? E : t === "remote" ? F : Q.has(window.location.hostname) && window.location.port !== "9090" ? E : "";
 }, x = J(), f = "userSession", q = "jeju:session-updated", W = "/api/auth/session", Z = "/api/auth/logout", R = (e) => `${x}${e}`, X = (e) => {
@@ -145,7 +145,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
   kind: "external",
   url: e,
   ...t
-}), b = (e) => {
+}), I = (e) => {
   if (!e || typeof e != "object")
     return e;
   if ("kind" in e) {
@@ -155,9 +155,9 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
     return `${e.path}${t}${n}`;
   }
   return Object.fromEntries(
-    Object.entries(e).map(([t, n]) => [t, b(n)])
+    Object.entries(e).map(([t, n]) => [t, I(n)])
   );
-}, I = S({
+}, b = S({
   HOME: r("/index.html"),
   AUTH: {
     LOGIN: r("/pages/auth/login.html", { shellStrategy: "auth-shell" }),
@@ -251,7 +251,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
       EVENT: r("/jejuair/pages/event/event.html")
     }
   }
-}), be = S(b(I)), se = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, ae = /^[a-z][a-z0-9+.-]*:/i, p = "shell", oe = "jeju:mypage-shell", ie = /* @__PURE__ */ new Set(["main", "stay", "air"]), le = (e, t) => t.split(".").reduce((n, s) => {
+}), Ie = S(I(b)), se = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, ae = /^[a-z][a-z0-9+.-]*:/i, p = "shell", oe = "jeju:mypage-shell", ie = /* @__PURE__ */ new Set(["main", "stay", "air"]), le = (e, t) => t.split(".").reduce((n, s) => {
   if (n && typeof n == "object" && s in n)
     return n[s];
 }, e), ce = (e) => {
@@ -345,7 +345,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
     throw new TypeError("[RouteResolver] routeKey must be a non-empty string.");
   if (t === null || typeof t != "object" || Array.isArray(t))
     throw new TypeError("[RouteResolver] params must be a plain object.");
-  const n = e.trim(), s = le(I, n);
+  const n = e.trim(), s = le(b, n);
   if (!s || typeof s != "object" || !s.kind)
     throw new Error(`[RouteResolver] Route key not found: ${e}`);
   const a = ce(s);
@@ -423,7 +423,7 @@ const fe = ["ctrlKey", "metaKey", "shiftKey", "altKey"], Se = (e) => fe.some((t)
     return;
   }
   g(e);
-}, Ie = () => {
+}, be = () => {
   y || (y = !0, Ae(document), ye(), document.body.addEventListener("click", (e) => {
     const t = e.target.closest("[data-route]");
     t && (e.defaultPrevented || t.hasAttribute("data-route-animated-nav") || Se(e) || t instanceof HTMLAnchorElement && t.getAttribute("target") && t.getAttribute("target") !== "_self" || (e.preventDefault(), Ee(t)));
@@ -446,13 +446,13 @@ function Te(e) {
 }
 export {
   x as A,
-  be as R,
+  Ie as R,
   w as a,
   D as b,
   Re as c,
   we as d,
   k as h,
-  Ie as i,
+  be as i,
   Oe as l,
   _e as r,
   te as s,

@@ -178,12 +178,15 @@
   background: #fff;
   cursor: pointer;
 }
-.passenger_apply_btn {
+button.passenger_apply_btn {
   float: right;
   background: var(--main-color);
   color: #fff;
   padding: 8px 16px;
   margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
 }
 /* 탑승일 */
 .calendar_layer {
@@ -308,7 +311,7 @@ td.end {
   color: var(--main-color);
   font-weight: 600;
 }
-.search_btn {
+button.search_btn {
   margin-top: 32px;
   width: 100%;
   height: 56px;

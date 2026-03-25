@@ -1,6 +1,6 @@
 import { a as o, j as i } from "./react-vendor-BoSfm_Te.js";
-import { b as O } from "./feature-layout--kV7j4z2.js";
-import { a as He } from "./legacy-core-C4kaoWaO.js";
+import { b as O } from "./feature-layout-D8u6glYG.js";
+import { a as He } from "./legacy-core-CEZP4aoH.js";
 import { W as Ue } from "./feature-ui-DAUngKpP.js";
 const Be = {
   monday: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],

@@ -1,20 +1,20 @@
 import { j as a, a as c } from "./react-vendor-BoSfm_Te.js";
-import { v as J, b as oe, s as Y, d as _, A as C, h as le, a as se, R as q } from "./legacy-core-C4kaoWaO.js";
-const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", { className: ["user_box", "inner2", "login-card", e].filter(Boolean).join(" "), children: s }), de = (s) => s === "success" ? "success" : s === "warning" ? "warning" : s === "error" ? "error" : "", P = ({ className: s = "", id: e, message: t, tone: r = "idle" }) => {
+import { v as J, b as oe, s as Y, d as _, A as C, h as le, a as se, R as q } from "./legacy-core-CEZP4aoH.js";
+const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", { className: ["user_box", "inner2", "login-card", e].filter(Boolean).join(" "), children: s }), de = (s) => s === "success" ? "success" : s === "warning" ? "warning" : s === "error" ? "error" : "", P = ({ className: s = "", id: e, message: t, tone: n = "idle" }) => {
   if (!t)
     return null;
-  const i = ["input-feedback", de(r), s].filter(Boolean).join(" ");
-  return /* @__PURE__ */ a.jsx("p", { className: i, id: e, children: t });
+  const o = ["input-feedback", de(n), s].filter(Boolean).join(" ");
+  return /* @__PURE__ */ a.jsx("p", { className: o, id: e, children: t });
 }, x = ({
   autoComplete: s,
   className: e,
   disabled: t,
-  feedback: r,
-  feedbackTone: o = "idle",
-  id: i,
-  inputMode: n,
+  feedback: n,
+  feedbackTone: l = "idle",
+  id: o,
+  inputMode: i,
   label: m,
-  maxLength: l,
+  maxLength: r,
   onChange: S,
   placeholder: g,
   readOnly: p,
@@ -22,14 +22,14 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
   type: N = "text",
   value: f
 }) => {
-  const j = /* @__PURE__ */ a.jsx(
+  const k = /* @__PURE__ */ a.jsx(
     "input",
     {
       autoComplete: s,
       disabled: t,
-      id: i,
-      inputMode: n,
-      maxLength: l,
+      id: o,
+      inputMode: i,
+      maxLength: r,
       onChange: S,
       placeholder: g,
       readOnly: p,
@@ -38,12 +38,12 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     }
   );
   return /* @__PURE__ */ a.jsxs("div", { className: ["input_group", e].filter(Boolean).join(" "), children: [
-    /* @__PURE__ */ a.jsx("label", { htmlFor: i, children: m }),
+    /* @__PURE__ */ a.jsx("label", { htmlFor: o, children: m }),
     y ? /* @__PURE__ */ a.jsxs("div", { className: "input-with-button", children: [
-      j,
+      k,
       y
-    ] }) : j,
-    r ? /* @__PURE__ */ a.jsx(P, { message: r, tone: o }) : null
+    ] }) : k,
+    n ? /* @__PURE__ */ a.jsx(P, { message: n, tone: l }) : null
   ] });
 }, he = "test", pe = "1234", me = "/pages/auth/", Z = (s) => {
   if (!s || typeof window > "u" || s.startsWith("javascript:") || s.startsWith("data:"))
@@ -70,7 +70,7 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     return Y(ge(s));
   const t = new URLSearchParams();
   t.append("id", _(s)), t.append("pw", _(e));
-  const r = await fetch(`${C}/api/auth/login`, {
+  const n = await fetch(`${C}/api/auth/login`, {
     body: t,
     credentials: "include",
     headers: {
@@ -78,38 +78,38 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     },
     method: "POST"
   });
-  if (!r.ok) {
-    let i = "로그인에 실패한 상태";
+  if (!n.ok) {
+    let o = "로그인에 실패한 상태";
     try {
-      const n = await r.json();
-      i = typeof n.message == "string" && n.message ? n.message : i;
+      const i = await n.json();
+      o = typeof i.message == "string" && i.message ? i.message : o;
     } catch {
     }
-    throw new Error(i);
+    throw new Error(o);
   }
-  const o = await r.json();
-  return Y(o.user);
+  const l = await n.json();
+  return Y(l.user);
 }, fe = async (s) => {
-  var i;
-  const e = new URLSearchParams(window.location.search), t = Z(e.get("redirect")), r = Z(document.referrer);
+  var o;
+  const e = new URLSearchParams(window.location.search), t = Z(e.get("redirect")), n = Z(document.referrer);
   if (t) {
     window.location.replace(t);
     return;
   }
-  if (r) {
-    window.location.replace(r);
+  if (n) {
+    window.location.replace(n);
     return;
   }
-  const o = le(s) ? "ADMIN.DASHBOARD" : "HOME";
+  const l = le(s) ? "ADMIN.DASHBOARD" : "HOME";
   try {
-    const n = se(o);
-    if ((i = window.__JEJU_ROUTE_NAVIGATOR__) != null && i.safeNavigate) {
-      window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(n, "login-success");
+    const i = se(l);
+    if ((o = window.__JEJU_ROUTE_NAVIGATOR__) != null && o.safeNavigate) {
+      window.__JEJU_ROUTE_NAVIGATOR__.safeNavigate(i, "login-success");
       return;
     }
-    window.location.replace(n);
+    window.location.replace(i);
   } catch {
-    window.location.replace(o === "ADMIN.DASHBOARD" ? q.ADMIN.DASHBOARD : q.HOME);
+    window.location.replace(l === "ADMIN.DASHBOARD" ? q.ADMIN.DASHBOARD : q.HOME);
   }
 }, be = (s) => ({
   completeSignup: (e) => {
@@ -341,10 +341,10 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     default:
       return s;
   }
-}, te = c.createContext(null), ae = c.createContext(null), $ = ({ children: s, savedLoginId: e = "" }) => {
-  const [t, r] = c.useReducer(xe, e, we), o = c.useMemo(() => be(r), [r]);
-  return /* @__PURE__ */ a.jsx(te.Provider, { value: t, children: /* @__PURE__ */ a.jsx(ae.Provider, { value: o, children: s }) });
-}, v = () => {
+}, te = c.createContext(null), ae = c.createContext(null), V = ({ children: s, savedLoginId: e = "" }) => {
+  const [t, n] = c.useReducer(xe, e, we), l = c.useMemo(() => be(n), [n]);
+  return /* @__PURE__ */ a.jsx(te.Provider, { value: t, children: /* @__PURE__ */ a.jsx(ae.Provider, { value: l, children: s }) });
+}, j = () => {
   const s = c.useContext(te);
   if (!s)
     throw new Error("useAuthState must be used within AuthProvider");
@@ -360,8 +360,8 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
   } catch {
     return "";
   }
-}, ve = () => {
-  const { errors: s, login: e } = v(), t = E(), r = c.useMemo(() => e.submitting || e.loginId.trim().length === 0 || e.password.trim().length === 0, [e.loginId, e.password, e.submitting]);
+}, je = () => {
+  const { errors: s, login: e } = j(), t = E(), n = c.useMemo(() => e.submitting || e.loginId.trim().length === 0 || e.password.trim().length === 0, [e.loginId, e.password, e.submitting]);
   c.useEffect(() => {
     try {
       if (e.rememberId && e.loginId.trim()) {
@@ -372,24 +372,24 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     } catch {
     }
   }, [e.loginId, e.rememberId]);
-  const o = c.useCallback(
-    (l) => {
-      t.patchLogin({ loginId: l.target.value }), t.resetError("login");
+  const l = c.useCallback(
+    (r) => {
+      t.patchLogin({ loginId: r.target.value }), t.resetError("login");
+    },
+    [t]
+  ), o = c.useCallback(
+    (r) => {
+      t.patchLogin({ password: r.target.value }), t.resetError("login");
     },
     [t]
   ), i = c.useCallback(
-    (l) => {
-      t.patchLogin({ password: l.target.value }), t.resetError("login");
-    },
-    [t]
-  ), n = c.useCallback(
-    (l) => {
-      t.patchLogin({ rememberId: l.target.checked });
+    (r) => {
+      t.patchLogin({ rememberId: r.target.checked });
     },
     [t]
   ), m = c.useCallback(
-    async (l) => {
-      l.preventDefault();
+    async (r) => {
+      r.preventDefault();
       const S = e.loginId.trim(), g = e.password.trim();
       try {
         t.patchLogin({ submitting: !0 }), t.resetError("login"), t.setStatus("submitting");
@@ -405,21 +405,21 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
   );
   return {
     errorMessage: s.login,
-    handleIdChange: o,
-    handlePasswordChange: i,
-    handleRememberChange: n,
+    handleIdChange: l,
+    handlePasswordChange: o,
+    handleRememberChange: i,
     handleSubmit: m,
-    isDisabled: r,
+    isDisabled: n,
     login: e
   };
-}, je = () => {
-  const { errorMessage: s, handleIdChange: e, handlePasswordChange: t, handleRememberChange: r, handleSubmit: o, isDisabled: i, login: n } = ve();
+}, ke = () => {
+  const { errorMessage: s, handleIdChange: e, handlePasswordChange: t, handleRememberChange: n, handleSubmit: l, isDisabled: o, login: i } = je();
   return /* @__PURE__ */ a.jsxs(ue, { children: [
     /* @__PURE__ */ a.jsxs("div", { className: "login-header", children: [
       /* @__PURE__ */ a.jsx("h1", { className: "login-title", children: "로그인" }),
       /* @__PURE__ */ a.jsx("p", { className: "login-desc", children: "포인트 적립에서 운임 할인까지 회원 전용 혜택을 받아보는 구간" })
     ] }),
-    /* @__PURE__ */ a.jsxs("form", { className: "login-form", id: "user_form", onSubmit: o, children: [
+    /* @__PURE__ */ a.jsxs("form", { className: "login-form", id: "user_form", onSubmit: l, children: [
       /* @__PURE__ */ a.jsx(
         x,
         {
@@ -428,7 +428,7 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
           label: "이메일/아이디",
           onChange: e,
           placeholder: "아이디 또는 이메일 입력",
-          value: n.loginId
+          value: i.loginId
         }
       ),
       /* @__PURE__ */ a.jsx(
@@ -440,13 +440,13 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
           onChange: t,
           placeholder: "비밀번호 입력",
           type: "password",
-          value: n.password
+          value: i.password
         }
       ),
       /* @__PURE__ */ a.jsx("div", { className: "error-wrapper", id: "login-error-wrapper", style: { display: s ? "block" : "none" }, children: /* @__PURE__ */ a.jsx("p", { className: "error-msg", children: s }) }),
       /* @__PURE__ */ a.jsxs("div", { className: "login_options", children: [
         /* @__PURE__ */ a.jsxs("label", { className: "remember-me", children: [
-          /* @__PURE__ */ a.jsx("input", { checked: n.rememberId, id: "saveId", onChange: r, type: "checkbox" }),
+          /* @__PURE__ */ a.jsx("input", { checked: i.rememberId, id: "saveId", onChange: n, type: "checkbox" }),
           /* @__PURE__ */ a.jsx("span", { children: "아이디 저장" })
         ] }),
         /* @__PURE__ */ a.jsxs("div", { className: "nav-links", children: [
@@ -455,37 +455,37 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
           /* @__PURE__ */ a.jsx("a", { className: "route-link", "data-route": "AUTH.SIGNUP", href: "#", children: "회원가입" })
         ] })
       ] }),
-      /* @__PURE__ */ a.jsx("button", { className: "login-btn btn", "data-state": n.submitting ? "loading" : "idle", disabled: i, type: "submit", children: n.submitting ? "로그인 중" : "로그인" })
+      /* @__PURE__ */ a.jsx("button", { className: "login-btn btn", "data-state": i.submitting ? "loading" : "idle", disabled: o, type: "submit", children: i.submitting ? "로그인 중" : "로그인" })
     ] })
   ] });
 }, gs = () => {
   const s = c.useMemo(() => Ae(), []);
-  return /* @__PURE__ */ a.jsx($, { savedLoginId: s, children: /* @__PURE__ */ a.jsx(je, {}) });
-}, re = ({ accent: s = "orange", currentStep: e, description: t, steps: r, title: o }) => {
-  const i = c.useMemo(() => r.length <= 1 ? "0%" : `${(e - 1) / (r.length - 1) * 100}%`, [e, r.length]);
+  return /* @__PURE__ */ a.jsx(V, { savedLoginId: s, children: /* @__PURE__ */ a.jsx(ke, {}) });
+}, re = ({ accent: s = "orange", currentStep: e, description: t, steps: n, title: l }) => {
+  const o = c.useMemo(() => n.length <= 1 ? "0%" : `${(e - 1) / (n.length - 1) * 100}%`, [e, n.length]);
   return /* @__PURE__ */ a.jsxs("header", { className: `step-header ${s === "red" ? "step-header-pass" : ""}`, children: [
     /* @__PURE__ */ a.jsxs("div", { className: "step-header-text", children: [
-      /* @__PURE__ */ a.jsx("h1", { className: "step-title", children: o }),
+      /* @__PURE__ */ a.jsx("h1", { className: "step-title", children: l }),
       t ? /* @__PURE__ */ a.jsx("p", { className: "step-desc", children: t }) : null
     ] }),
     /* @__PURE__ */ a.jsxs("div", { className: "step-indicator", "data-accent": s, children: [
       /* @__PURE__ */ a.jsx("div", { className: "progress-bg" }),
-      /* @__PURE__ */ a.jsx("div", { className: "progress-bar", style: { width: i } }),
-      /* @__PURE__ */ a.jsx("div", { className: "step-circles", children: r.map((n, m) => {
-        const l = m + 1, S = l === e ? "active" : l < e ? "completed" : "";
+      /* @__PURE__ */ a.jsx("div", { className: "progress-bar", style: { width: o } }),
+      /* @__PURE__ */ a.jsx("div", { className: "step-circles", children: n.map((i, m) => {
+        const r = m + 1, S = r === e ? "active" : r < e ? "completed" : "";
         return /* @__PURE__ */ a.jsx(
           "div",
           {
-            "aria-label": `${l}단계 ${n.label}`,
+            "aria-label": `${r}단계 ${i.label}`,
             className: `step-circle ${S}`.trim(),
-            children: l === e && n.iconClassName ? /* @__PURE__ */ a.jsx("i", { className: n.iconClassName }) : null
+            children: r === e && i.iconClassName ? /* @__PURE__ */ a.jsx("i", { className: i.iconClassName }) : null
           },
-          n.label
+          i.label
         );
       }) })
     ] })
   ] });
-}, X = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI", ke = (s) => new Promise((e) => window.setTimeout(e, s)), Ce = async () => {
+}, X = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI", ve = (s) => new Promise((e) => window.setTimeout(e, s)), Ce = async () => {
   try {
     const s = await fetch(`${C}/api/auth/verify`), e = await s.json().catch(() => ({}));
     return !s.ok || typeof e.siteKey != "string" || !e.siteKey.trim() ? X : e.siteKey;
@@ -518,24 +518,24 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     };
   }
 }, Te = async () => {
-  await ke(3e3);
+  await ve(3e3);
 }, Pe = () => {
-  const { passAuth: s } = v(), e = E();
+  const { passAuth: s } = j(), e = E();
   return c.useEffect(() => {
     let t = !0;
     return s.recaptchaSiteKey ? void 0 : ((async () => {
-      const o = await Ce();
-      t && e.patchPassAuth({ recaptchaSiteKey: o });
+      const l = await Ce();
+      t && e.patchPassAuth({ recaptchaSiteKey: l });
     })(), () => {
       t = !1;
     });
   }, [e, s.recaptchaSiteKey]), null;
 }, ne = "JEJU_PASS_AUTH_SUCCESS", Ee = () => {
-  const t = window.screenX + Math.max(0, (window.outerWidth - 430) / 2), r = window.screenY + Math.max(0, (window.outerHeight - 800) / 2), o = se("AUTH.PASS_AUTH");
+  const t = window.screenX + Math.max(0, (window.outerWidth - 430) / 2), n = window.screenY + Math.max(0, (window.outerHeight - 800) / 2), l = se("AUTH.PASS_AUTH");
   return window.open(
-    o,
+    l,
     "PASS_Auth_Popup",
-    `width=430,height=800,left=${Math.round(t)},top=${Math.round(r)},toolbar=no,menubar=no,scrollbars=yes,resizable=no`
+    `width=430,height=800,left=${Math.round(t)},top=${Math.round(n)},toolbar=no,menubar=no,scrollbars=yes,resizable=no`
   );
 }, _e = (s) => ({
   payload: s,
@@ -549,49 +549,49 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
 }, Re = (s) => !window.opener || window.opener.closed ? !1 : (window.opener.postMessage(_e(s), window.location.origin), !0), K = (s) => s.replace(/\D/g, ""), F = (s) => {
   const e = K(s).slice(0, 11);
   return e.length < 4 ? e : e.length < 8 ? `${e.slice(0, 3)}-${e.slice(3)}` : e.length === 10 ? `${e.slice(0, 3)}-${e.slice(3, 6)}-${e.slice(6)}` : `${e.slice(0, 3)}-${e.slice(3, 7)}-${e.slice(7)}`;
-}, ce = (s) => /^\d{6}$/.test(s), Me = (s) => /^[1-8]$/.test(s), De = (s) => ce(s) ? `${s.slice(0, 2)}-${s.slice(2, 4)}-${s.slice(4, 6)}` : "", Le = (s) => s === "1" || s === "3" || s === "5" || s === "7" ? "M" : s === "2" || s === "4" || s === "6" || s === "8" ? "F" : "", I = () => {
-  const { errors: s, passAuth: e } = v(), t = E(), r = c.useRef(null), o = c.useRef(null), i = c.useRef(null), n = c.useRef(null), m = c.useMemo(() => ce(e.birthSix), [e.birthSix]), l = c.useMemo(() => Me(e.rrnDigit), [e.rrnDigit]), S = c.useMemo(() => K(e.phone).length === 11, [e.phone]), g = m && l, p = g && S, y = p && e.recaptchaStatus === "success" && !e.submitting, N = c.useMemo(() => e.step === 1 ? "이용 중인 통신사를 선택해 주세요" : e.step === 2 ? "인증 방법을 선택해 주세요" : e.step === 3 ? "이름을 입력해 주세요" : g ? p ? "보안문자를 완료해 주세요" : "휴대폰 번호를 입력해 주세요" : "생년월일과 성별 숫자를 입력해 주세요", [e.step, g, p]), f = c.useCallback(() => {
+}, ie = (s) => /^\d{6}$/.test(s), Me = (s) => /^[1-8]$/.test(s), De = (s) => ie(s) ? `${s.slice(0, 2)}-${s.slice(2, 4)}-${s.slice(4, 6)}` : "", Le = (s) => s === "1" || s === "3" || s === "5" || s === "7" ? "M" : s === "2" || s === "4" || s === "6" || s === "8" ? "F" : "", I = () => {
+  const { errors: s, passAuth: e } = j(), t = E(), n = c.useRef(null), l = c.useRef(null), o = c.useRef(null), i = c.useRef(null), m = c.useMemo(() => ie(e.birthSix), [e.birthSix]), r = c.useMemo(() => Me(e.rrnDigit), [e.rrnDigit]), S = c.useMemo(() => K(e.phone).length === 11, [e.phone]), g = m && r, p = g && S, y = p && e.recaptchaStatus === "success" && !e.submitting, N = c.useMemo(() => e.step === 1 ? "이용 중인 통신사를 선택해 주세요" : e.step === 2 ? "인증 방법을 선택해 주세요" : e.step === 3 ? "이름을 입력해 주세요" : g ? p ? "보안문자를 완료해 주세요" : "휴대폰 번호를 입력해 주세요" : "생년월일과 성별 숫자를 입력해 주세요", [e.step, g, p]), f = c.useCallback(() => {
     var h;
-    i.current !== null && ((h = window.grecaptcha) != null && h.reset) && window.grecaptcha.reset(i.current), t.patchPassAuth({
+    o.current !== null && ((h = window.grecaptcha) != null && h.reset) && window.grecaptcha.reset(o.current), t.patchPassAuth({
       recaptchaStatus: "idle",
       recaptchaToken: ""
     }), t.resetError("passAuth");
   }, [t]);
   c.useEffect(() => {
-    if (!p || !e.recaptchaSiteKey || i.current !== null)
+    if (!p || !e.recaptchaSiteKey || o.current !== null)
       return;
     let h = 0, b = 0, w = !0;
-    const V = () => {
+    const H = () => {
       var B;
-      return !w || !n.current || !((B = window.grecaptcha) != null && B.render) ? !1 : (i.current = window.grecaptcha.render(n.current, {
+      return !w || !i.current || !((B = window.grecaptcha) != null && B.render) ? !1 : (o.current = window.grecaptcha.render(i.current, {
         callback: async (G) => {
-          var z;
+          var W;
           t.patchPassAuth({
             recaptchaStatus: "loading",
             recaptchaToken: G
           }), t.setStatus("verifying");
-          const W = await Ne(G);
-          if (W.success) {
+          const z = await Ne(G);
+          if (z.success) {
             t.patchPassAuth({ recaptchaStatus: "success" }), t.resetError("passAuth"), t.setStatus("verified");
             return;
           }
           t.patchPassAuth({
             recaptchaStatus: "error",
             recaptchaToken: ""
-          }), t.setError("passAuth", W.message), t.setStatus("error"), i.current !== null && ((z = window.grecaptcha) != null && z.reset) && window.grecaptcha.reset(i.current);
+          }), t.setError("passAuth", z.message), t.setStatus("error"), o.current !== null && ((W = window.grecaptcha) != null && W.reset) && window.grecaptcha.reset(o.current);
         },
         sitekey: e.recaptchaSiteKey
       }), !0);
     };
-    return V() || (h = window.setInterval(() => {
-      V() && window.clearInterval(h);
+    return H() || (h = window.setInterval(() => {
+      H() && window.clearInterval(h);
     }, 200), b = window.setTimeout(() => {
       window.clearInterval(h);
     }, 4e3)), () => {
       w = !1, h && window.clearInterval(h), b && window.clearTimeout(b);
     };
   }, [t, e.recaptchaSiteKey, p]);
-  const j = c.useCallback(
+  const k = c.useCallback(
     (h) => {
       t.patchPassAuth({ telecom: h }), t.setPassAuthStep(2), t.resetError("passAuth");
     },
@@ -617,16 +617,16 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
       const b = K(h.target.value).slice(0, 6);
       t.patchPassAuth({ birthSix: b }), b.length === 6 && window.setTimeout(() => {
         var w;
-        return (w = r.current) == null ? void 0 : w.focus();
+        return (w = n.current) == null ? void 0 : w.focus();
       }, 0), (e.recaptchaToken || e.recaptchaStatus === "success") && f();
     },
     [t, e.recaptchaStatus, e.recaptchaToken, f]
-  ), k = c.useCallback(
+  ), v = c.useCallback(
     (h) => {
       const b = h.target.value.replace(/[^1-8]/g, "").slice(0, 1);
       t.patchPassAuth({ rrnDigit: b }), b.length === 1 && window.setTimeout(() => {
         var w;
-        return (w = o.current) == null ? void 0 : w.focus();
+        return (w = l.current) == null ? void 0 : w.focus();
       }, 0), (e.recaptchaToken || e.recaptchaStatus === "success") && f();
     },
     [t, e.recaptchaStatus, e.recaptchaToken, f]
@@ -662,15 +662,15 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     handleBirthChange: d,
     handleNameChange: M,
     handlePhoneChange: T,
-    handleRrnChange: k,
+    handleRrnChange: v,
     handleSelectMethod: R,
-    handleSelectTelecom: j,
+    handleSelectTelecom: k,
     handleSubmit: D,
     goToIdentityStep: u,
     passAuth: e,
-    phoneInputRef: o,
-    recaptchaHostRef: n,
-    rrnDigitInputRef: r,
+    phoneInputRef: l,
+    recaptchaHostRef: i,
+    rrnDigitInputRef: n,
     shouldShowPhoneField: g,
     shouldShowRecaptcha: p,
     stepTitle: N
@@ -680,22 +680,22 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     canSubmit: s,
     errorMessage: e,
     handleBirthChange: t,
-    handlePhoneChange: r,
-    handleRrnChange: o,
-    handleSubmit: i,
-    passAuth: n,
+    handlePhoneChange: n,
+    handleRrnChange: l,
+    handleSubmit: o,
+    passAuth: i,
     phoneInputRef: m,
-    recaptchaHostRef: l,
+    recaptchaHostRef: r,
     rrnDigitInputRef: S,
     shouldShowPhoneField: g,
     shouldShowRecaptcha: p
   } = I();
   return /* @__PURE__ */ a.jsxs("div", { className: "pass-screen active", children: [
-    /* @__PURE__ */ a.jsx("div", { className: "pass-input-group", children: /* @__PURE__ */ a.jsx("input", { className: "readonly", id: "passNameDisplay", readOnly: !0, type: "text", value: n.name }) }),
+    /* @__PURE__ */ a.jsx("div", { className: "pass-input-group", children: /* @__PURE__ */ a.jsx("input", { className: "readonly", id: "passNameDisplay", readOnly: !0, type: "text", value: i.name }) }),
     /* @__PURE__ */ a.jsxs("div", { className: "pass-reg-group", children: [
-      /* @__PURE__ */ a.jsx("input", { id: "passRegNum1", maxLength: 6, onChange: t, placeholder: "생년월일 6자리", type: "text", value: n.birthSix }),
+      /* @__PURE__ */ a.jsx("input", { id: "passRegNum1", maxLength: 6, onChange: t, placeholder: "생년월일 6자리", type: "text", value: i.birthSix }),
       /* @__PURE__ */ a.jsx("span", { className: "dash", children: "-" }),
-      /* @__PURE__ */ a.jsx("input", { id: "passRegNum2", maxLength: 1, onChange: o, ref: S, type: "text", value: n.rrnDigit }),
+      /* @__PURE__ */ a.jsx("input", { id: "passRegNum2", maxLength: 1, onChange: l, ref: S, type: "text", value: i.rrnDigit }),
       /* @__PURE__ */ a.jsx("span", { className: "dots", children: "●●●●●●" })
     ] }),
     g ? /* @__PURE__ */ a.jsx("div", { className: "pass-input-group phone-input-group visible", id: "phoneInputGroup", children: /* @__PURE__ */ a.jsx(
@@ -703,17 +703,17 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
       {
         id: "passPhoneInput",
         maxLength: 13,
-        onChange: r,
+        onChange: n,
         placeholder: "휴대폰 번호",
         ref: m,
         type: "text",
-        value: n.phone
+        value: i.phone
       }
     ) }) : null,
-    p ? /* @__PURE__ */ a.jsx("div", { className: "captcha-wrapper visible", id: "captchaWrapper", children: /* @__PURE__ */ a.jsx("div", { id: "recaptchaContainer", ref: l }) }) : null,
-    n.recaptchaStatus === "success" ? /* @__PURE__ */ a.jsx("div", { className: "pass-inline-meta success", children: "보안문자 확인 완료 상태" }) : null,
+    p ? /* @__PURE__ */ a.jsx("div", { className: "captcha-wrapper visible", id: "captchaWrapper", children: /* @__PURE__ */ a.jsx("div", { id: "recaptchaContainer", ref: r }) }) : null,
+    i.recaptchaStatus === "success" ? /* @__PURE__ */ a.jsx("div", { className: "pass-inline-meta success", children: "보안문자 확인 완료 상태" }) : null,
     /* @__PURE__ */ a.jsx(P, { message: e, tone: "error" }),
-    /* @__PURE__ */ a.jsx("button", { className: "pass-next-btn", disabled: !s, id: "btnPassSubmitAuth", onClick: () => void i(), type: "button", children: "확인" })
+    /* @__PURE__ */ a.jsx("button", { className: "pass-next-btn", disabled: !s, id: "btnPassSubmitAuth", onClick: () => void o(), type: "button", children: "확인" })
   ] });
 }, Oe = Object.freeze([
   { iconClassName: "fa-solid fa-signal", label: "통신사" },
@@ -742,20 +742,20 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
     title: "문자(SMS) 인증",
     value: "SMS"
   }
-], $e = () => {
+], Ve = () => {
   const { handleSelectMethod: s } = I();
   return /* @__PURE__ */ a.jsx("div", { className: "pass-screen active", children: /* @__PURE__ */ a.jsx("div", { className: "authmethod-list", children: Fe.map((e) => /* @__PURE__ */ a.jsx("button", { className: "authmethod-btn", onClick: () => s(e.value), type: "button", children: /* @__PURE__ */ a.jsxs("div", { className: "method-info", children: [
     /* @__PURE__ */ a.jsx("strong", { children: e.title }),
     /* @__PURE__ */ a.jsx("span", { children: e.description })
   ] }) }, e.value)) }) });
-}, He = () => {
-  const { errorMessage: s, goToIdentityStep: e, handleNameChange: t, passAuth: r } = I();
+}, $e = () => {
+  const { errorMessage: s, goToIdentityStep: e, handleNameChange: t, passAuth: n } = I();
   return /* @__PURE__ */ a.jsxs("div", { className: "pass-screen active", children: [
-    /* @__PURE__ */ a.jsx("div", { className: "pass-input-group", children: /* @__PURE__ */ a.jsx("input", { id: "passNameInput", onChange: t, placeholder: "이름", type: "text", value: r.name }) }),
+    /* @__PURE__ */ a.jsx("div", { className: "pass-input-group", children: /* @__PURE__ */ a.jsx("input", { id: "passNameInput", onChange: t, placeholder: "이름", type: "text", value: n.name }) }),
     /* @__PURE__ */ a.jsx(P, { message: s, tone: "error" }),
     /* @__PURE__ */ a.jsx("button", { className: "pass-next-btn", onClick: e, type: "button", children: "다음" })
   ] });
-}, Ve = () => {
+}, He = () => {
   const { handleSelectTelecom: s } = I();
   return /* @__PURE__ */ a.jsx("div", { className: "pass-screen active", children: /* @__PURE__ */ a.jsx("div", { className: "telecom-grid", children: Ke.map((e) => /* @__PURE__ */ a.jsx(
     "button",
@@ -772,8 +772,8 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
   /* @__PURE__ */ a.jsx("div", { className: "pass-loader pass-loader-lg" }),
   /* @__PURE__ */ a.jsx("div", { className: "pass-title-center", children: /* @__PURE__ */ a.jsx("strong", { children: "인증 진행 중 상태" }) }),
   /* @__PURE__ */ a.jsx("div", { className: "pass-subtitle", children: "잠시만 기다리면 회원가입 창으로 결과 전달 예정 상태" })
-] }) }), Ge = (s, e, t) => s === 1 ? "이용 중인 통신사를 선택해 주세요" : s === 2 ? "인증 방법을 선택해 주세요" : s === 3 ? "이름을 입력해 주세요" : e ? t ? "보안문자를 완료해 주세요" : "휴대폰 번호를 입력해 주세요" : "생년월일과 성별 숫자를 입력해 주세요", We = () => {
-  const { passAuth: s } = v(), e = s.birthSix.length === 6 && /^[1-8]$/.test(s.rrnDigit), t = e && s.phone.replace(/\D/g, "").length === 11;
+] }) }), Ge = (s, e, t) => s === 1 ? "이용 중인 통신사를 선택해 주세요" : s === 2 ? "인증 방법을 선택해 주세요" : s === 3 ? "이름을 입력해 주세요" : e ? t ? "보안문자를 완료해 주세요" : "휴대폰 번호를 입력해 주세요" : "생년월일과 성별 숫자를 입력해 주세요", ze = () => {
+  const { passAuth: s } = j(), e = s.birthSix.length === 6 && /^[1-8]$/.test(s.rrnDigit), t = e && s.phone.replace(/\D/g, "").length === 11;
   return /* @__PURE__ */ a.jsxs("div", { className: "pass-modal-content", children: [
     /* @__PURE__ */ a.jsx(Pe, {}),
     /* @__PURE__ */ a.jsxs("div", { className: "pass-header", children: [
@@ -793,9 +793,9 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
         title: Ge(s.step, e, t)
       }
     ),
-    s.step === 1 ? /* @__PURE__ */ a.jsx(Ve, {}) : null,
-    s.step === 2 ? /* @__PURE__ */ a.jsx($e, {}) : null,
-    s.step === 3 ? /* @__PURE__ */ a.jsx(He, {}) : null,
+    s.step === 1 ? /* @__PURE__ */ a.jsx(He, {}) : null,
+    s.step === 2 ? /* @__PURE__ */ a.jsx(Ve, {}) : null,
+    s.step === 3 ? /* @__PURE__ */ a.jsx($e, {}) : null,
     s.step === 4 ? /* @__PURE__ */ a.jsx(Ue, {}) : null,
     s.step === 5 ? /* @__PURE__ */ a.jsx(Be, {}) : null,
     /* @__PURE__ */ a.jsxs("div", { className: "pass-footer", children: [
@@ -805,7 +805,7 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
       "VeriSign 256-bit SSL 암호화 적용 상태"
     ] })
   ] });
-}, Ss = () => /* @__PURE__ */ a.jsx($, { children: /* @__PURE__ */ a.jsx(We, {}) }), ze = async (s) => {
+}, Ss = () => /* @__PURE__ */ a.jsx(V, { children: /* @__PURE__ */ a.jsx(ze, {}) }), We = async (s) => {
   const e = await fetch(`${C}/api/auth/verify`, {
     body: new URLSearchParams({
       action: "checkId",
@@ -825,8 +825,8 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
   };
 }, Je = async (s) => {
   const e = new URLSearchParams();
-  Object.entries(s).forEach(([o, i]) => {
-    e.append(o, _(i));
+  Object.entries(s).forEach(([l, o]) => {
+    e.append(l, _(o));
   });
   const t = await fetch(`${C}/api/auth/signup`, {
     body: e,
@@ -834,12 +834,12 @@ const ue = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", 
       "Content-Type": "application/x-www-form-urlencoded"
     },
     method: "POST"
-  }), r = await t.json().catch(() => ({}));
-  if (!t.ok || r.success === !1) {
-    const o = typeof r.message == "string" && r.message ? r.message : `회원가입 처리 실패 상태 (${t.status})`;
-    throw new Error(o);
+  }), n = await t.json().catch(() => ({}));
+  if (!t.ok || n.success === !1) {
+    const l = typeof n.message == "string" && n.message ? n.message : `회원가입 처리 실패 상태 (${t.status})`;
+    throw new Error(l);
   }
-  return r;
+  return n;
 }, U = Object.freeze({
   KAKAO_JS_KEY: "",
   NAVER_CLIENT_ID: ""
@@ -851,7 +851,7 @@ const Ye = (s) => {
     KAKAO_JS_KEY: String(e.kakaoJsKey ?? "").trim(),
     NAVER_CLIENT_ID: String(e.naverClientId ?? "").trim()
   };
-}, ie = async () => {
+}, ce = async () => {
   if (A)
     return { ...A };
   try {
@@ -873,15 +873,15 @@ const Ye = (s) => {
 }, qe = async () => {
   if (typeof Kakao > "u")
     return { message: "카카오 SDK 로드 실패 상태", ok: !1 };
-  const s = await ie();
+  const s = await ce();
   return s.KAKAO_JS_KEY ? (Kakao.isInitialized() || Kakao.init(s.KAKAO_JS_KEY), { message: "", ok: !0 }) : { message: "카카오 JavaScript 키 누락 상태", ok: !1 };
 }, Ze = () => new URL(window.location.pathname, window.location.origin).href, Xe = async (s) => {
   if (s === "kakao") {
     const t = await qe();
-    return t.ok ? new Promise((r) => {
+    return t.ok ? new Promise((n) => {
       Kakao.Auth.login({
         fail: () => {
-          r({
+          n({
             message: "카카오 로그인 연동 실패 상태",
             success: !1
           });
@@ -889,19 +889,19 @@ const Ye = (s) => {
         success: () => {
           Kakao.API.request({
             fail: () => {
-              r({
+              n({
                 message: "카카오 사용자 정보 조회 실패 상태",
                 success: !1
               });
             },
-            success: (o) => {
-              var n;
-              const i = o.kakao_account ?? {};
-              r({
+            success: (l) => {
+              var i;
+              const o = l.kakao_account ?? {};
+              n({
                 data: {
-                  gender: i.gender === "male" ? "M" : "F",
-                  name: i.name || ((n = o.properties) == null ? void 0 : n.nickname) || "회원",
-                  phone: F(i.phone_number || "01000000000"),
+                  gender: o.gender === "male" ? "M" : "F",
+                  name: o.name || ((i = l.properties) == null ? void 0 : i.nickname) || "회원",
+                  phone: F(o.phone_number || "01000000000"),
                   provider: "KAKAO"
                 },
                 success: !0
@@ -916,35 +916,35 @@ const Ye = (s) => {
       success: !1
     };
   }
-  const e = await ie();
+  const e = await ce();
   return typeof naver > "u" || typeof naver.LoginWithNaverId > "u" ? {
     message: "네이버 SDK 로드 실패 상태",
     success: !1
   } : e.NAVER_CLIENT_ID ? new Promise((t) => {
-    const r = "naverIdLogin";
-    let o = document.getElementById(r);
-    o || (o = document.createElement("div"), o.id = r, o.style.display = "none", document.body.appendChild(o));
+    const n = "naverIdLogin";
+    let l = document.getElementById(n);
+    l || (l = document.createElement("div"), l.id = n, l.style.display = "none", document.body.appendChild(l));
     try {
-      const i = new naver.LoginWithNaverId({
+      const o = new naver.LoginWithNaverId({
         callbackUrl: Ze(),
         clientId: e.NAVER_CLIENT_ID,
         isPopup: !0,
         loginButton: { color: "green", height: 60, type: 3 }
       });
-      i.init(), i.getLoginStatus((n) => {
-        if (n) {
+      o.init(), o.getLoginStatus((i) => {
+        if (i) {
           t({
             data: {
-              gender: i.user.getGender() === "M" ? "M" : "F",
-              name: i.user.getName() || "회원",
-              phone: F(i.user.getMobile() || "01000000000"),
+              gender: o.user.getGender() === "M" ? "M" : "F",
+              name: o.user.getName() || "회원",
+              phone: F(o.user.getMobile() || "01000000000"),
               provider: "NAVER"
             },
             success: !0
           });
           return;
         }
-        i.authorize(), t({
+        o.authorize(), t({
           pending: !0,
           success: !1
         });
@@ -1005,10 +1005,10 @@ const Ye = (s) => {
     tone: "idle"
   },
   isMatch: !1
-}, Q = /^[A-Za-z0-9]{4,20}$/, ee = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, H = () => {
-  const { errors: s, signup: e } = v(), t = E(), r = c.useMemo(() => e.terms.service && e.terms.privacy, [e.terms.privacy, e.terms.service]), o = c.useMemo(() => e.terms.service && e.terms.privacy && e.terms.marketing, [e.terms.marketing, e.terms.privacy, e.terms.service]), i = c.useMemo(() => {
-    const u = e.identity.isVerified && e.identity.provider === "PASS" && !!e.identity.birthDate && !!e.identity.rrnBackFirstDigit, d = e.account.idCheckStatus === "success" && e.account.idCheckedValue === e.account.userId.trim(), k = e.account.passwordStrength === "medium" || e.account.passwordStrength === "strong", T = e.account.passwordConfirmFeedback.tone === "success", D = ee.test(e.account.email.trim());
-    return u && d && k && T && D && !e.account.submitting;
+}, Q = /^[A-Za-z0-9]{4,20}$/, ee = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, $ = () => {
+  const { errors: s, signup: e } = j(), t = E(), n = c.useMemo(() => e.terms.service && e.terms.privacy, [e.terms.privacy, e.terms.service]), l = c.useMemo(() => e.terms.service && e.terms.privacy && e.terms.marketing, [e.terms.marketing, e.terms.privacy, e.terms.service]), o = c.useMemo(() => {
+    const u = e.identity.isVerified && e.identity.provider === "PASS" && !!e.identity.birthDate && !!e.identity.rrnBackFirstDigit, d = e.account.idCheckStatus === "success" && e.account.idCheckedValue === e.account.userId.trim(), v = e.account.passwordStrength === "medium" || e.account.passwordStrength === "strong", T = e.account.passwordConfirmFeedback.tone === "success", D = ee.test(e.account.email.trim());
+    return u && d && v && T && D && !e.account.submitting;
   }, [
     e.account.email,
     e.account.idCheckStatus,
@@ -1021,15 +1021,15 @@ const Ye = (s) => {
     e.identity.isVerified,
     e.identity.provider,
     e.identity.rrnBackFirstDigit
-  ]), n = c.useCallback(
+  ]), i = c.useCallback(
     (u, d) => {
-      const k = ss(u), T = ts(u, d);
+      const v = ss(u), T = ts(u, d);
       t.patchSignupAccount({
         password: u,
         passwordConfirm: d,
         passwordConfirmFeedback: T.feedback,
-        passwordFeedback: k.feedback,
-        passwordStrength: k.strength
+        passwordFeedback: v.feedback,
+        passwordStrength: v.strength
       });
     },
     [t]
@@ -1042,14 +1042,14 @@ const Ye = (s) => {
       });
     },
     [t]
-  ), l = c.useCallback(
+  ), r = c.useCallback(
     (u) => (d) => {
       t.patchSignupTerms({ [u]: d.target.checked });
     },
     [t]
   ), S = c.useCallback(() => {
-    r && (t.setSignupStep(2), t.resetError("signup"));
-  }, [t, r]), g = c.useCallback(() => {
+    n && (t.setSignupStep(2), t.resetError("signup"));
+  }, [t, n]), g = c.useCallback(() => {
     if (!Ee()) {
       t.setError("signup", "팝업 차단 해제 필요 상태"), t.setStatus("error");
       return;
@@ -1096,14 +1096,14 @@ const Ye = (s) => {
     [t]
   ), f = c.useCallback(
     (u) => {
-      n(u.target.value, e.account.passwordConfirm), t.resetError("signup");
+      i(u.target.value, e.account.passwordConfirm), t.resetError("signup");
     },
-    [t, e.account.passwordConfirm, n]
-  ), j = c.useCallback(
+    [t, e.account.passwordConfirm, i]
+  ), k = c.useCallback(
     (u) => {
-      n(e.account.password, u.target.value), t.resetError("signup");
+      i(e.account.password, u.target.value), t.resetError("signup");
     },
-    [t, e.account.password, n]
+    [t, e.account.password, i]
   ), R = c.useCallback(async () => {
     const u = e.account.userId.trim();
     if (!Q.test(u)) {
@@ -1124,7 +1124,7 @@ const Ye = (s) => {
       },
       idCheckStatus: "loading"
     });
-    const d = await ze(u);
+    const d = await We(u);
     t.patchSignupAccount({
       idCheckedValue: d.available ? u : "",
       idFeedback: {
@@ -1147,7 +1147,7 @@ const Ye = (s) => {
         t.setError("signup", "이메일 형식 재확인 필요 상태");
         return;
       }
-      if (!i) {
+      if (!o) {
         t.setError("signup", "입력값 점검 필요 상태");
         return;
       }
@@ -1169,24 +1169,24 @@ const Ye = (s) => {
         t.patchSignupAccount({ submitting: !1 });
       }
     },
-    [t, i, e.account.email, e.account.password, e.account.userId, e.identity]
+    [t, o, e.account.email, e.account.password, e.account.userId, e.identity]
   );
   return {
-    allTermsChecked: o,
-    canSubmit: i,
+    allTermsChecked: l,
+    canSubmit: o,
     errorMessage: s.signup,
     goToVerificationStep: S,
     handleCheckId: R,
     handleEmailChange: N,
     handleOpenPassAuth: g,
     handlePasswordChange: f,
-    handlePasswordConfirmChange: j,
+    handlePasswordConfirmChange: k,
     handleSocialSignup: p,
     handleSubmit: M,
     handleToggleAllTerms: m,
-    handleToggleTerm: l,
+    handleToggleTerm: r,
     handleUserIdChange: y,
-    requiredTermsChecked: r,
+    requiredTermsChecked: n,
     signup: e
   };
 }, as = (s) => s === "loading" ? "확인 중" : s === "success" ? "확인 완료" : "중복확인", rs = () => {
@@ -1194,14 +1194,14 @@ const Ye = (s) => {
     canSubmit: s,
     errorMessage: e,
     handleCheckId: t,
-    handleEmailChange: r,
-    handlePasswordChange: o,
-    handlePasswordConfirmChange: i,
-    handleSubmit: n,
+    handleEmailChange: n,
+    handlePasswordChange: l,
+    handlePasswordConfirmChange: o,
+    handleSubmit: i,
     handleUserIdChange: m,
-    signup: l
-  } = H();
-  return /* @__PURE__ */ a.jsxs("form", { className: "step-panel active", onSubmit: n, children: [
+    signup: r
+  } = $();
+  return /* @__PURE__ */ a.jsxs("form", { className: "step-panel active", onSubmit: i, children: [
     /* @__PURE__ */ a.jsx(
       x,
       {
@@ -1211,7 +1211,7 @@ const Ye = (s) => {
         },
         placeholder: "",
         readOnly: !0,
-        value: l.identity.name
+        value: r.identity.name
       }
     ),
     /* @__PURE__ */ a.jsx(
@@ -1223,54 +1223,54 @@ const Ye = (s) => {
         },
         placeholder: "",
         readOnly: !0,
-        value: l.identity.phone
+        value: r.identity.phone
       }
     ),
     /* @__PURE__ */ a.jsx(
       x,
       {
-        feedback: l.account.idFeedback.message,
-        feedbackTone: l.account.idFeedback.tone,
+        feedback: r.account.idFeedback.message,
+        feedbackTone: r.account.idFeedback.tone,
         id: "userId",
         label: "아이디",
         onChange: m,
         placeholder: "영문과 숫자 4~20자",
-        rightSlot: /* @__PURE__ */ a.jsx("button", { className: "btn-secondary btn-verify", disabled: l.account.idCheckStatus === "loading", onClick: () => void t(), type: "button", children: as(l.account.idCheckStatus) }),
-        value: l.account.userId
+        rightSlot: /* @__PURE__ */ a.jsx("button", { className: "btn-secondary btn-verify", disabled: r.account.idCheckStatus === "loading", onClick: () => void t(), type: "button", children: as(r.account.idCheckStatus) }),
+        value: r.account.userId
       }
     ),
     /* @__PURE__ */ a.jsx(
       x,
       {
-        feedback: l.account.passwordFeedback.message,
-        feedbackTone: l.account.passwordFeedback.tone,
+        feedback: r.account.passwordFeedback.message,
+        feedbackTone: r.account.passwordFeedback.tone,
         id: "password",
         label: "비밀번호",
-        onChange: o,
+        onChange: l,
         placeholder: "영문과 숫자 조합 8자 이상",
         type: "password",
-        value: l.account.password
+        value: r.account.password
       }
     ),
-    l.account.passwordStrength !== "hidden" ? /* @__PURE__ */ a.jsxs("div", { className: `password-strength-container strength-${l.account.passwordStrength}`, children: [
+    r.account.passwordStrength !== "hidden" ? /* @__PURE__ */ a.jsxs("div", { className: `password-strength-container strength-${r.account.passwordStrength}`, children: [
       /* @__PURE__ */ a.jsxs("div", { className: "password-strength-meter", children: [
         /* @__PURE__ */ a.jsx("div", { className: "meter-bar", id: "meterBar1" }),
         /* @__PURE__ */ a.jsx("div", { className: "meter-bar", id: "meterBar2" }),
         /* @__PURE__ */ a.jsx("div", { className: "meter-bar", id: "meterBar3" })
       ] }),
-      /* @__PURE__ */ a.jsx("span", { className: "strength-text", id: "strengthText", children: l.account.passwordStrength === "strong" ? "안전" : l.account.passwordStrength === "medium" ? "보통" : "불가" })
+      /* @__PURE__ */ a.jsx("span", { className: "strength-text", id: "strengthText", children: r.account.passwordStrength === "strong" ? "안전" : r.account.passwordStrength === "medium" ? "보통" : "불가" })
     ] }) : null,
     /* @__PURE__ */ a.jsx(
       x,
       {
-        feedback: l.account.passwordConfirmFeedback.message,
-        feedbackTone: l.account.passwordConfirmFeedback.tone,
+        feedback: r.account.passwordConfirmFeedback.message,
+        feedbackTone: r.account.passwordConfirmFeedback.tone,
         id: "passwordConfirm",
         label: "비밀번호 확인",
-        onChange: i,
+        onChange: o,
         placeholder: "비밀번호 다시 입력",
         type: "password",
-        value: l.account.passwordConfirm
+        value: r.account.passwordConfirm
       }
     ),
     /* @__PURE__ */ a.jsx(
@@ -1278,18 +1278,48 @@ const Ye = (s) => {
       {
         id: "userEmail",
         label: "이메일",
-        onChange: r,
+        onChange: n,
         placeholder: "example@email.com",
         type: "email",
-        value: l.account.email
+        value: r.account.email
       }
     ),
-    l.identity.telecom ? /* @__PURE__ */ a.jsxs("div", { className: "auth-summary-chip", children: [
+    r.identity.telecom ? /* @__PURE__ */ a.jsxs("div", { className: "auth-summary-chip", children: [
       "PASS 인증 완료",
-      /* @__PURE__ */ a.jsx("span", { children: l.identity.telecom })
+      /* @__PURE__ */ a.jsx("span", { children: r.identity.telecom })
     ] }) : null,
     /* @__PURE__ */ a.jsx(P, { className: "signup-submit-feedback", message: e, tone: "error" }),
-    /* @__PURE__ */ a.jsx("div", { className: "form-actions", children: /* @__PURE__ */ a.jsx("button", { className: "btn-primary", disabled: !s, id: "btnSignupSubmit", type: "submit", children: l.account.submitting ? "가입 처리 중" : "가입 완료" }) })
+    /* @__PURE__ */ a.jsxs("div", { style: { background: "#ffeeee", padding: "10px", fontSize: "12px", marginTop: "10px", borderRadius: "4px" }, children: [
+      /* @__PURE__ */ a.jsx("strong", { children: "[디버그: 다음 항목 중 False인 것을 찾아주세요]" }),
+      /* @__PURE__ */ a.jsx("br", {}),
+      "1. 본인인증 완료 (hasVerifiedPass): ",
+      String(r.identity.isVerified && r.identity.provider === "PASS" && !!r.identity.birthDate && !!r.identity.rrnBackFirstDigit),
+      /* @__PURE__ */ a.jsx("br", {}),
+      "2. 아이디 중복확인 (idChecked): ",
+      String(r.account.idCheckStatus === "success" && r.account.idCheckedValue === r.account.userId.trim()),
+      " ",
+      /* @__PURE__ */ a.jsx("br", {}),
+      "   👉 상세: 상태='",
+      r.account.idCheckStatus,
+      "', 체크된값='",
+      r.account.idCheckedValue,
+      "', 현재값='",
+      r.account.userId.trim(),
+      "'",
+      /* @__PURE__ */ a.jsx("br", {}),
+      "3. 비밀번호 강도 (passwordReady): ",
+      String(r.account.passwordStrength === "medium" || r.account.passwordStrength === "strong"),
+      /* @__PURE__ */ a.jsx("br", {}),
+      "4. 비밀번호 일치 (passwordMatched): ",
+      String(r.account.passwordConfirmFeedback.tone === "success"),
+      /* @__PURE__ */ a.jsx("br", {}),
+      "5. 이메일 형식 (emailReady): ",
+      String(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.account.email.trim())),
+      /* @__PURE__ */ a.jsx("br", {}),
+      "6. 처리중 여부 (!submitting): ",
+      String(!r.account.submitting)
+    ] }),
+    /* @__PURE__ */ a.jsx("div", { className: "form-actions", children: /* @__PURE__ */ a.jsx("button", { className: "btn-primary", disabled: !s, id: "btnSignupSubmit", type: "submit", children: r.account.submitting ? "가입 처리 중" : "가입 완료" }) })
   ] });
 }, ns = () => {
   const s = E();
@@ -1311,8 +1341,8 @@ const Ye = (s) => {
       window.removeEventListener("message", e);
     };
   }, [s]), null;
-}, cs = () => {
-  const { signup: s } = v();
+}, is = () => {
+  const { signup: s } = j();
   return /* @__PURE__ */ a.jsx("div", { className: "step-panel active", children: /* @__PURE__ */ a.jsxs("div", { className: "success-content", children: [
     /* @__PURE__ */ a.jsx("i", { className: "fa-solid fa-circle-check success-icon" }),
     /* @__PURE__ */ a.jsxs("h2", { className: "success-title", children: [
@@ -1322,7 +1352,7 @@ const Ye = (s) => {
     /* @__PURE__ */ a.jsx("p", { className: "success-desc", children: "제주그룹 계정 생성이 완료된 상태" }),
     /* @__PURE__ */ a.jsx("div", { className: "form-actions", children: /* @__PURE__ */ a.jsx("a", { className: "btn-primary route-link", "data-route": "AUTH.LOGIN", href: "#", children: "로그인 페이지로 이동" }) })
   ] }) });
-}, is = Object.freeze([
+}, cs = Object.freeze([
   { iconClassName: "fa-solid fa-plane", label: "약관동의" },
   { label: "본인인증" },
   { label: "정보입력" },
@@ -1347,7 +1377,7 @@ const Ye = (s) => {
     required: !1
   }
 ], ls = () => {
-  const { allTermsChecked: s, goToVerificationStep: e, handleToggleAllTerms: t, handleToggleTerm: r, requiredTermsChecked: o, signup: i } = H();
+  const { allTermsChecked: s, goToVerificationStep: e, handleToggleAllTerms: t, handleToggleTerm: n, requiredTermsChecked: l, signup: o } = $();
   return /* @__PURE__ */ a.jsxs("div", { className: "step-panel active", children: [
     /* @__PURE__ */ a.jsxs("div", { className: "agree_box flat-agree-box", children: [
       /* @__PURE__ */ a.jsxs("div", { className: "check-all-wrapper", children: [
@@ -1362,28 +1392,28 @@ const Ye = (s) => {
           "선택 항목과 무관하게 정상 서비스 이용은 가능한 상태"
         ] })
       ] }),
-      os.map((n) => /* @__PURE__ */ a.jsxs("div", { children: [
-        /* @__PURE__ */ a.jsxs("label", { className: `custom-chk ${n.required ? "" : "opt-chk"}`.trim(), children: [
+      os.map((i) => /* @__PURE__ */ a.jsxs("div", { children: [
+        /* @__PURE__ */ a.jsxs("label", { className: `custom-chk ${i.required ? "" : "opt-chk"}`.trim(), children: [
           /* @__PURE__ */ a.jsx(
             "input",
             {
-              checked: i.terms[n.key],
+              checked: o.terms[i.key],
               className: "hidden-chk",
-              onChange: r(n.key),
+              onChange: n(i.key),
               type: "checkbox"
             }
           ),
           /* @__PURE__ */ a.jsx("span", { className: "chk-mark" }),
-          n.label,
+          i.label,
           /* @__PURE__ */ a.jsx("i", { className: "fa-solid fa-chevron-right arrow-right" })
         ] }),
-        n.description ? /* @__PURE__ */ a.jsx("div", { className: "opt-desc", children: n.description }) : null
-      ] }, n.key))
+        i.description ? /* @__PURE__ */ a.jsx("div", { className: "opt-desc", children: i.description }) : null
+      ] }, i.key))
     ] }),
-    /* @__PURE__ */ a.jsx("div", { className: "form-actions flat-actions", children: /* @__PURE__ */ a.jsx("button", { className: "btn-flat", disabled: !o, onClick: e, type: "button", children: "다음" }) })
+    /* @__PURE__ */ a.jsx("div", { className: "form-actions flat-actions", children: /* @__PURE__ */ a.jsx("button", { className: "btn-flat", disabled: !l, onClick: e, type: "button", children: "다음" }) })
   ] });
 }, us = () => {
-  const { errorMessage: s, handleOpenPassAuth: e, handleSocialSignup: t } = H();
+  const { errorMessage: s, handleOpenPassAuth: e, handleSocialSignup: t } = $();
   return /* @__PURE__ */ a.jsxs("div", { className: "step-panel active", children: [
     /* @__PURE__ */ a.jsxs("div", { className: "auth-methods", children: [
       /* @__PURE__ */ a.jsxs("button", { className: "auth-btn kakao", onClick: () => void t("kakao"), type: "button", children: [
@@ -1403,18 +1433,18 @@ const Ye = (s) => {
     /* @__PURE__ */ a.jsx(P, { className: "auth-feedback", message: s, tone: s.includes("완료") ? "info" : "error" })
   ] });
 }, ds = (s) => s === 1 ? "약관동의" : s === 2 ? "본인인증" : s === 3 ? "정보입력" : "가입완료", hs = () => {
-  const { signup: s } = v();
+  const { signup: s } = j();
   return /* @__PURE__ */ a.jsxs("section", { className: "signup-container", children: [
     /* @__PURE__ */ a.jsx(ns, {}),
-    /* @__PURE__ */ a.jsx(re, { currentStep: s.step, steps: is, title: ds(s.step) }),
+    /* @__PURE__ */ a.jsx(re, { currentStep: s.step, steps: cs, title: ds(s.step) }),
     /* @__PURE__ */ a.jsxs("div", { className: "user_form", children: [
       s.step === 1 ? /* @__PURE__ */ a.jsx(ls, {}) : null,
       s.step === 2 ? /* @__PURE__ */ a.jsx(us, {}) : null,
       s.step === 3 ? /* @__PURE__ */ a.jsx(rs, {}) : null,
-      s.step === 4 ? /* @__PURE__ */ a.jsx(cs, {}) : null
+      s.step === 4 ? /* @__PURE__ */ a.jsx(is, {}) : null
     ] })
   ] });
-}, fs = () => /* @__PURE__ */ a.jsx($, { children: /* @__PURE__ */ a.jsx(hs, {}) });
+}, fs = () => /* @__PURE__ */ a.jsx(V, { children: /* @__PURE__ */ a.jsx(hs, {}) });
 export {
   gs as L,
   Ss as P,
