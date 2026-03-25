@@ -1,0 +1,34 @@
+goal: >
+  Freeze a deterministic recovery contract for front-mirror parity so the
+  Spring-regenerated mirror outputs preserve source HTML asset resolution
+  semantics, especially base-href-driven relative path behavior.
+constraints:
+  - `front/**` remains the only human-managed frontend source of truth.
+  - `jeju-spring/src/main/resources/templates/front-mirror/**` and `jeju-spring/src/main/resources/static/front-mirror/**` must be regenerated from `front` source, not fixed by manual Spring-side page-specific frontend edits.
+  - The recovery scope is limited to mirror generation logic and regenerated `front-mirror` outputs.
+  - Front source files themselves are out of scope for this recovery slice.
+  - Per-page manual Spring hotfixes are out of scope.
+  - The contract must preserve asset resolution semantics from the source HTML, including base-href-driven relative path behavior.
+acceptance_criteria:
+  - The seed states that `front` is the only editable frontend source and that Spring mirror outputs are derived artifacts.
+  - The seed states that the only recovery surface is mirror generation logic plus regenerated `front-mirror` outputs.
+  - The seed explicitly protects source HTML asset resolution semantics, including base-href-driven relative path behavior.
+  - The seed includes the following representative verification set:
+    - `front/jejuair/pages/about/about.html`
+    - `front/jejuair/pages/baggage/cabinBaggage.html`
+    - `front/jejuair/pages/booking/route.html`
+    - `front/jejustay/pages/travel/activities.html`
+  - The seed states that front source files themselves are out of scope.
+  - The seed states that per-page manual Spring hotfixes are out of scope.
+  - The seed is deterministic YAML with stable section ordering and no implementation ambiguity.
+verification:
+  - Compare the frozen contract against `STATE.md` to confirm the task is limited to seed recovery for front-mirror parity.
+  - Verify the representative set above is covered as the minimum parity recovery sample set.
+  - Verify regenerated Spring mirror outputs preserve the same asset resolution semantics as the source HTML, including base-href-driven relative path behavior.
+  - Verify no front source files are modified by this seed-only contract.
+  - Verify no per-page manual Spring hotfixes are required or admitted by the contract.
+out_of_scope:
+  - Editing any `front/**` source file.
+  - Applying manual Spring-side page-specific frontend fixes to compensate for mirror drift.
+  - Expanding the contract beyond mirror generation logic and regenerated `front-mirror` outputs.
+  - Changing unrelated Spring runtime behavior outside the mirror boundary.

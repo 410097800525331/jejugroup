@@ -939,6 +939,44 @@
   - `git diff --check -- STATE.md SEED.auth-legacy-template-cleanup-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java jeju-spring/README.md jeju-spring/src/main/resources/templates/auth jeju-spring/src/main/resources/static/assets/css/auth jeju-spring/src/main/resources/static/assets/js/auth` passed
   - `reviewer_auth_cleanup (Nietzsche)` reported `발견 없음` and confirmed the old Spring auth stack no longer reads like an active runtime path while generated asset churn remains unrelated build output
 
+- time: `2026-03-25 13:03 +09:00`
+- route: `Route B`
+- task: `Move mypage off the dedicated Spring frontend template and onto front-mirror canonical delivery`
+- participants: `main`, `worker_seed (Dalton)`, `worker_mypage_runtime (Franklin)`, `worker_mypage_tests (Hubble)`, `reviewer_mypage_cutover (Schrodinger)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.mypage-front-mirror-cutover-v1.yaml`
+  - `worker_mypage_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageController.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/templates/mypage/dashboard.html, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_mypage_tests`: `jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java, scripts/smoke/front-entrypoints.runtime.spec.cjs`
+  - `reviewer_mypage_cutover`: `review only`
+- verification:
+  - `worker_seed (Dalton)` froze `SEED.mypage-front-mirror-cutover-v1.yaml` so `front/pages/mypage/dashboard.html` stays the canonical source, `/pages/mypage/dashboard.html` becomes the canonical front-mirror page, and `/mypage/dashboard` is alias-only
+  - `worker_mypage_runtime (Franklin)` moved canonical mypage delivery into `FrontMirrorHostController`, reduced `MyPageController` to redirect-only alias handling, deleted `templates/mypage/dashboard.html`, and aligned docs to the canonical host-only model
+  - `worker_mypage_tests (Hubble)` updated Spring integration tests and smoke so canonical mypage expects front-mirror DOM markers while `/mypage/dashboard` expects redirect alias behavior
+  - `pnpm run smoke:front` passed
+  - `pnpm run spring:test` passed after the BOM cleanup follow-up on `FrontMirrorHostController.java`
+  - live verification confirmed `GET /pages/mypage/dashboard.html` returns `200` and contains `jeju-page-shell-header`, `mypage-dashboard-root`, and `jeju-page-shell-footer`
+  - live verification confirmed `GET /mypage/dashboard` returns `302` to `/pages/mypage/dashboard.html?shell=main&filter=all`
+  - `reviewer_mypage_cutover (Schrodinger)` reported `발견 없음`; residual risk only noted the usual browser-side JS wiring depth beyond DOM-marker checks
+
+- time: `2026-03-25 12:01 +09:00`
+- route: `Route B`
+- task: `Recover front-mirror parity so regenerated jeju-spring frontend files preserve front source asset resolution semantics`
+- participants: `main`, `worker_seed (Aquinas)`, `worker_front_mirror_recovery (Gauss)`, `reviewer_front_mirror_recovery (Hume)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.spring-front-mirror-parity-recovery-v1.yaml`
+  - `worker_front_mirror_recovery`: `scripts/spring/mirror-front-to-thymeleaf.cjs, regenerated jeju-spring/src/main/resources/templates/front-mirror/**, regenerated jeju-spring/src/main/resources/static/front-mirror/**`
+  - `reviewer_front_mirror_recovery`: `review only`
+- verification:
+  - `worker_seed (Aquinas)` froze `SEED.spring-front-mirror-parity-recovery-v1.yaml` so `front/**` remains the only human-edited source and `front-mirror/**` is treated as regenerated mirror output only
+  - `worker_front_mirror_recovery (Gauss)` updated `scripts/spring/mirror-front-to-thymeleaf.cjs` so relative asset rewriting now respects source `<base href>` semantics before prefixing `/front-mirror/...`
+  - regenerated representative templates now point at the expected asset families, including `/front-mirror/jejuair/css/main.css`, `/front-mirror/jejuair/css/about.css`, `/front-mirror/jejuair/css/ccm_baggage_pet.css`, `/front-mirror/jejuair/css/route.css`, and the matching `/front-mirror/jejuair/js/*.js` assets
+  - `node --check scripts/spring/mirror-front-to-thymeleaf.cjs` passed
+  - `pnpm run spring:test` passed after regeneration; the existing non-blocking Vite warning about `new URL('/', import.meta.url)` remained unchanged
+  - a live Spring response check for `/jejuair/pages/about/about.html` confirmed the page now references `/front-mirror/jejuair/css/main.css`
+  - `reviewer_front_mirror_recovery (Hume)` reported `발견 없음`; residual note only mentioned that `customer_center` remains a separate `.generated` overlay axis outside this front-only parity slice
+
 - time: `2026-03-25 09:34 +09:00`
 - route: `Route B`
 - task: `Restore public runtime URL resolution so auth/header navigation stops leaking /front-mirror/... links on host-only pages`
@@ -955,3 +993,74 @@
   - `pnpm run smoke:front` passed with `17 passed`
   - `git diff --check -- front/core/utils/path_resolver.js STATE.md` passed
   - `reviewer_auth_public_routes (McClintock)` reported `발견 없음`; residual note only mentioned that the non-browser fallback path was not directly exercised by the targeted browser-context verification
+- time: `2026-03-25 12:47 +09:00`
+- route: `Route B`
+- task: `Add representative smoke coverage for front-mirror-backed JEJU STAY activities, hotel-list, and deals entrypoints`
+- participants: `worker_runtime_smoke (gogi)`
+- write_sets:
+  - `worker_runtime_smoke`: `scripts/smoke/front-entrypoints.runtime.spec.cjs`
+- verification:
+  - `pnpm run smoke:front -- --grep "jeju stay (activities|hotel list|deals) smoke"` passed with `3 passed`
+  - `node --check scripts/smoke/front-entrypoints.runtime.spec.cjs` passed
+  - `git diff --check -- scripts/smoke/front-entrypoints.runtime.spec.cjs` passed
+
+- time: `2026-03-25 15:08 +09:00`
+- route: `Route B`
+- task: `Run a full browser-level parity census across every current front-backed canonical host-only page and alias redirect`
+- participants: `main`, `worker_seed (Pascal)`, `worker_parity_report (Poincare)`, `reviewer_parity_census (Lovelace)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.front-parity-census-v1.yaml`
+  - `worker_parity_report`: `docs/front-parity-census-2026-03-25.md`
+  - `reviewer_parity_census`: `review only`
+- verification:
+  - `worker_seed (Pascal)` froze `SEED.front-parity-census-v1.yaml` so the census contract covers every current front-backed canonical host-only route plus the known redirect aliases while excluding dedicated non-front parity pages like `/migration`
+  - main ran a fresh Playwright census outside the shared browser session and checked all 47 canonical host-only routes between `front:3001` and `spring:8080` using final URL, title hash, normalized body-text hash, body class, and structural counts for headings/links/buttons/images
+  - main separately checked all 12 documented alias redirects against `spring:8080` final redirect outcomes
+  - census result: canonical exact matches `29/47`, canonical mismatches `18`, alias redirect outcomes matched `9/12`, alias redirect outcomes differed `3` and those three were the documented auth aliases that intentionally append `?shell=main`
+  - mismatch groups were classified into root wrapper divergence (`/`), cosmetic text drift (`/index.html`, `/pages/mypage/dashboard.html`), auth runtime divergence, JEJU STAY header utility divergence, and admin dashboard divergence
+  - `worker_parity_report (Poincare)` wrote `docs/front-parity-census-2026-03-25.md` with scope, method, grouped findings, customer-center-in-scope confirmation, alias wording corrected to redirect-outcome language, and close-out order
+  - `git diff --check -- STATE.md SEED.front-parity-census-v1.yaml docs/front-parity-census-2026-03-25.md MULTI_AGENT_LOG.md` passed
+  - `reviewer_parity_census (Lovelace)` first caught over-strong alias wording and missing explicit `pages/cs` mention; the report was corrected and the reviewer found no remaining blocking process issue beyond the documented residual risk that the review itself was documentation-focused rather than a second independent browser replay
+
+- time: `2026-03-25 16:03 +09:00`
+- route: `Route B`
+- task: `Fix the shared shell header parity bug on auth/main-shell pages`
+- participants: `main`, `worker_seed (Sartre)`, `worker_shell_header_parity (Mendel)`, `reviewer_shell_header_parity (Boole)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.auth-header-shell-parity-v1.yaml`
+  - `worker_shell_header_parity`: `front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx`
+  - `reviewer_shell_header_parity`: `review only`
+- verification:
+  - `worker_seed (Sartre)` froze `SEED.auth-header-shell-parity-v1.yaml` so the slice stays limited to shared shell header auth-sync timing and main-vs-stay login-route correctness
+  - `worker_shell_header_parity (Mendel)` updated `front/apps/shell/src/runtime/layout/header.ts` to preserve existing per-button `data-route-params` when resetting login buttons and to retry bounded header auth sync when the main header utility area mounts late
+  - `worker_shell_header_parity (Mendel)` updated `front/apps/shell/src/runtime/layout/shellMount.tsx` to trigger one delayed `initHeader()` resync after main/hotel shell mount completion so late-mounted auth pages converge without page-specific hacks
+  - `pnpm --dir front/apps/shell check` passed
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front -- --grep "login page smoke|signup page smoke|jeju stay deals smoke"` passed with `3 passed`
+  - fresh browser verification confirmed `front:3001` and `spring:8080` both render `/pages/auth/login.html` and `/pages/auth/signup.html` with the same top utility state and `indexLoginBtn` targeting `?shell=main`; representative `/jejustay/pages/deals/deals.html` also kept matching `headerAdminBtn` visibility
+  - `reviewer_shell_header_parity (Boole)` reported no blocking finding; residual risk only noted that the extra post-mount `initHeader()` call now relies on existing idempotence guards in header helpers
+
+- time: `2026-03-25 14:24 +09:00`
+- route: `Route B`
+- task: `Close the remaining customer_center parity gap and lock the source -> generated overlay -> spring mirror chain`
+- participants: `main`, `worker_seed (Nash)`, `worker_customer_center_mirror (Dirac)`, `worker_customer_center_docs (Feynman)`, `worker_customer_center_devproxy (Noether)`, `reviewer_customer_center_parity (Schrodinger)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.customer-center-front-mirror-parity-v1.yaml`
+  - `worker_customer_center_mirror`: `scripts/spring/mirror-front-to-thymeleaf.cjs, jeju-spring/src/main/resources/templates/front-mirror/apps/cs/**, jeju-spring/src/main/resources/static/front-mirror/apps/cs/**`
+  - `worker_customer_center_docs`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_customer_center_devproxy`: `vite.front.config.mjs`
+  - `reviewer_customer_center_parity`: `review only`
+- verification:
+  - `worker_seed (Nash)` froze `SEED.customer-center-front-mirror-parity-v1.yaml` so customer_center stays on the single chain `front/apps/cs -> front/.generated/webapp-overlay/pages/cs -> jeju-spring front-mirror`
+  - `worker_customer_center_mirror (Dirac)` changed `scripts/spring/mirror-front-to-thymeleaf.cjs` so generic spring mirroring excludes raw `front/apps/cs/**` and customer_center delivery comes only from the generated overlay; stale `jeju-spring/src/main/resources/templates/front-mirror/apps/cs/**` and `static/front-mirror/apps/cs/**` outputs were removed
+  - `worker_customer_center_docs (Feynman)` aligned `docs/front-entrypoint-inventory.md` and `docs/transition-architecture.md` to the canonical runtime artifact path `front/.generated/webapp-overlay/pages/cs/customer_center.html` and removed the accidental BOM follow-up
+  - `worker_customer_center_devproxy (Noether)` added unified front dev proxies for `/api/customer-center` and `/api/auth/session` in `vite.front.config.mjs` so `front:3001` customer_center resolves the same backend data boundary as `spring:8080`
+  - browser verification confirmed matching titles and representative markers on `/index.html`, `/pages/auth/login.html`, `/pages/mypage/dashboard.html`, `/jejuair/pages/about/about.html`, `/jejustay/pages/travel/activities.html`, `/jejustay/pages/deals/deals.html`, and `/pages/cs/customer_center.html#/notices`; the original front:3001 notices 404 gap was closed after the dev proxy change
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front` passed with `40 passed`
+  - `pnpm run spring:test` passed; the existing non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved stayed unchanged
+  - `git diff --check -- STATE.md SEED.customer-center-front-mirror-parity-v1.yaml vite.front.config.mjs scripts/spring/mirror-front-to-thymeleaf.cjs docs/transition-architecture.md docs/front-entrypoint-inventory.md` passed
+  - `reviewer_customer_center_parity (Schrodinger)` reported no blocking findings; residual risk only noted that future new customer_center backend paths would need to be added to the dev proxy set if the page starts using them

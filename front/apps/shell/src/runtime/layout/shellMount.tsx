@@ -56,6 +56,12 @@ const ensureLucideIcons = (attempt = 0) => {
   }, 100);
 };
 
+const queueHeaderResync = () => {
+  window.setTimeout(() => {
+    initHeader();
+  }, 0);
+};
+
 export const mountMainShell = async () => {
   const basePath = getAppRoot();
 
@@ -73,6 +79,7 @@ export const mountMainShell = async () => {
   ]);
 
   markRuntimeReady("main-shell");
+  queueHeaderResync();
 };
 
 export const mountHotelShell = async () => {
@@ -94,4 +101,5 @@ export const mountHotelShell = async () => {
   ]);
 
   markRuntimeReady("hotel-shell");
+  queueHeaderResync();
 };

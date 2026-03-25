@@ -1,48 +1,33 @@
 package com.jejugroup.jejuspring.deals.web;
 
-import java.util.Set;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.jejugroup.jejuspring.deals.application.DealsFactory;
 
 @Controller
 public class DealsController {
-    private static final Set<String> SUPPORTED_SHELLS = Set.of("main", "stay", "air");
-
-    private final DealsFactory dealsFactory;
-
-    public DealsController(DealsFactory dealsFactory) {
-        this.dealsFactory = dealsFactory;
+    @GetMapping("/deals")
+    public String deals(HttpServletRequest request) {
+        return redirectToCanonical(request, "/jejustay/pages/deals/deals.html");
     }
 
-    @GetMapping({ "/deals", "/jejustay/pages/deals/deals.html" })
-    public String deals(@RequestParam(name = "shell", required = false) String shell, Model model) {
-        model.addAttribute("page", dealsFactory.buildMain(normalizeShell(shell)));
-        return "deals/main";
+    @GetMapping("/deals/member")
+    public String member(HttpServletRequest request) {
+        return redirectToCanonical(request, "/jejustay/pages/deals/deals_member.html");
     }
 
-    @GetMapping({ "/deals/member", "/jejustay/pages/deals/deals_member.html" })
-    public String member(@RequestParam(name = "shell", required = false) String shell, Model model) {
-        model.addAttribute("page", dealsFactory.buildMember(normalizeShell(shell)));
-        return "deals/member";
+    @GetMapping("/deals/partner")
+    public String partner(HttpServletRequest request) {
+        return redirectToCanonical(request, "/jejustay/pages/deals/deals_partner.html");
     }
 
-    @GetMapping({ "/deals/partner", "/jejustay/pages/deals/deals_partner.html" })
-    public String partner(@RequestParam(name = "shell", required = false) String shell, Model model) {
-        model.addAttribute("page", dealsFactory.buildPartner(normalizeShell(shell)));
-        return "deals/partner";
-    }
-
-    private String normalizeShell(String shell) {
-        if (shell == null) {
-            return "stay";
+    private String redirectToCanonical(HttpServletRequest request, String canonicalPath) {
+        String queryString = request.getQueryString();
+        if (queryString == null || queryString.isBlank()) {
+            return "redirect:%s".formatted(canonicalPath);
         }
 
-        String normalized = shell.trim().toLowerCase();
-        return SUPPORTED_SHELLS.contains(normalized) ? normalized : "stay";
+        return "redirect:%s?%s".formatted(canonicalPath, queryString);
     }
 }

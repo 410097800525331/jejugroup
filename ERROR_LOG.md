@@ -155,3 +155,45 @@
 - summary: `Spring test verification is still blocked by the missing Gradle wrapper jar`
 - details: `The focused JejuSpringApplicationTests run failed immediately with "Unable to access jarfile D:\git\jejugroup\jeju-spring\\gradle\\wrapper\\gradle-wrapper.jar". This is the same workspace blocker as the earlier spring:test failure and prevents mechanical confirmation of the auth alias/front-mirror contract in this environment.`
 - status: `open`
+
+- time: `2026-03-25 10:36 +09:00`
+- location: `seed verification for SEED.spring-final-runtime-full-page-coverage-v1.yaml`
+- summary: `automatic YAML parse verification was blocked by missing local YAML parser packages`
+- details: `ruby was not installed, python resolved to the Microsoft Store stub, and node could not load the yaml module in this workspace. The seed file itself was written successfully and git diff --check passed, but full machine parsing could not be completed without adding tools outside the allowed write set.`
+- status: `deferred`
+- time: 2026-03-25 10:29:38 +09:00
+  location: SEED.auth-legacy-template-cleanup-v1.yaml verification
+  summary: ConvertFrom-Yaml was unavailable in PowerShell during YAML validation
+  details: The seed file itself was written successfully, but the initial local parse check failed because the cmdlet is not installed in this shell.
+  status: resolved
+- time: `2026-03-25 10:40:00 +09:00`
+- location: `SEED.auth-legacy-template-cleanup-v1.yaml verification`
+- summary: `local YAML parse tooling was unavailable in this workspace`
+- details: `PowerShell lacks ConvertFrom-Yaml, python resolves to the Microsoft Store stub, and no YAML module/parser is installed. The seed file was still written and inspected directly.`
+- status: `deferred`
+
+- time: `2026-03-25 12:01:23 +09:00`
+- location: `PowerShell rg search on D:\lsh\git\jejugroup`
+- summary: `rg.exe access denied during seed context discovery`
+- details: `Initial repo-wide rg searches failed with "Access is denied", so repository discovery switched to Get-ChildItem and direct file reads for the seed task.`
+- status: `resolved`
+
+- time: `2026-03-25 12:32:31 +09:00`
+- location: `jeju-spring compileJava during runtime cleanup`
+- summary: `StayController buildPage helper was removed too aggressively and broke StayApiController compilation`
+- details: `The first compileJava run failed because StayApiController still called StayController.buildPage(). I restored the helper and its factory dependency, then reran compileJava successfully.`
+- status: `resolved`
+
+- time: `2026-03-25 12:39:35 +09:00`
+- location: `jeju-spring/gradlew.bat test --tests com.jejugroup.jejuspring.JejuSpringApplicationTests.landingPageLoadsAtRoot`
+- summary: `Gradle test rerun hit a transient build/test-results lock cleanup failure`
+- details: `The first rerun could not delete build/test-results/test/binary/output.bin because a previous Gradle daemon still held the directory. Stopping the daemons and rerunning with --no-daemon completed the same test successfully.`
+- status: `resolved`
+| time | location | summary | details | status |
+| --- | --- | --- | --- | --- |
+| 2026-03-25 13:10:00 +09:00 | `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java` | `gradlew test` compilation blocked by BOM | `./gradlew test --tests com.jejugroup.jejuspring.JejuSpringApplicationTests` failed during `:compileJava` with `illegal character: '\ufeff'` at the first line of `FrontMirrorHostController.java`. This is pre-existing and outside the requested write set, so verification could not complete. | `open` |
+- time: `2026-03-25 13:10:00 +09:00`
+- location: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java`
+- summary: `gradlew compileJava failed because the file was rewritten with a UTF-8 BOM`
+- details: `The first compileJava attempt failed with illegal character '\ufeff' at the first line of FrontMirrorHostController.java. I rewrote that file without a BOM and will rerun verification.`
+- status: `resolved`

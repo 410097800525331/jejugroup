@@ -1,0 +1,24 @@
+goal: "mypage front-mirror cutover seed를 deterministic YAML로 고정한다."
+constraints:
+  - "front/pages/mypage/dashboard.html is the canonical frontend source."
+  - "jeju-spring/src/main/resources/templates/front-mirror/pages/mypage/dashboard.html is the runtime mirror."
+  - "Canonical /pages/mypage/dashboard.html delivery must switch to the front-mirror page."
+  - "/mypage/dashboard may remain as an alias or redirect, but page rendering itself must not depend on the dedicated Spring frontend template when front parity is required."
+  - "auth/session/DB-backed logic must remain behind /api/mypage/dashboard and related server APIs, not inside a dedicated page template."
+  - "Do not edit any front/** source in this cutover seed."
+  - "Do not remove the mypage API."
+acceptance_criteria:
+  - "The seed explicitly treats front/pages/mypage/dashboard.html as the canonical source and the front-mirror template as the runtime delivery target."
+  - "The seed states that /pages/mypage/dashboard.html is served via the front-mirror page path."
+  - "The seed states that /mypage/dashboard can stay as an alias or redirect without owning page rendering."
+  - "The seed keeps auth/session/DB behavior in /api/mypage/dashboard and related APIs."
+  - "The seed requires representative verification for unauthenticated /pages/mypage/dashboard.html, unauthenticated /mypage/dashboard, authenticated /api/mypage/dashboard, and front-mirror DOM marker parity including mypage-dashboard-root and jeju-page-shell-header."
+verification:
+  - "Unauthenticated request to /pages/mypage/dashboard.html."
+  - "Unauthenticated request to /mypage/dashboard."
+  - "Authenticated request to /api/mypage/dashboard."
+  - "Front-mirror DOM marker parity check for mypage-dashboard-root, jeju-page-shell-header, and related markers."
+out_of_scope:
+  - "Editing any front/** source."
+  - "Page-by-page Spring redesign."
+  - "Removing the mypage API."

@@ -20,6 +20,34 @@ import org.springframework.web.server.ResponseStatusException;
 public class FrontMirrorHostController {
     private static final Map<String, HostPageSpec> HOST_PAGES = Map.ofEntries(
         Map.entry(
+            "/",
+            new HostPageSpec(
+                "제주그룹 랜딩",
+                "Landing host page",
+                "메인 랜딩은 front-mirror 경계에서 서빙한다.",
+                "front/index.html",
+                "landing-host",
+                List.of(
+                    "/와 /index.html은 같은 host-only 랜딩이다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
+            "/index.html",
+            new HostPageSpec(
+                "제주그룹 랜딩",
+                "Landing host page",
+                "메인 랜딩은 front-mirror 경계에서 서빙한다.",
+                "front/index.html",
+                "landing-host",
+                List.of(
+                    "/와 /index.html은 같은 host-only 랜딩이다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
             "/jejuair/index.html",
             new HostPageSpec(
                 "제주에어",
@@ -31,6 +59,118 @@ public class FrontMirrorHostController {
                     "landing CTA는 이 경로로 연결된다.",
                     "깊은 하위 페이지는 이번 cutover 범위 밖이다.",
                     "화면 본문은 front 원본 기준으로 유지한다."
+                )
+            )
+        ),
+        Map.entry(
+            "/jejustay/pages/deals/deals.html",
+            new HostPageSpec(
+                "제주그룹 혜택",
+                "Landing host page",
+                "deals 메인 화면은 front-mirror 경계에서 서빙한다.",
+                "front/jejustay/pages/deals/deals.html",
+                "landing-host",
+                List.of(
+                    "/deals는 이 canonical host-only 경로로 redirect 된다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
+            "/jejustay/pages/deals/deals_member.html",
+            new HostPageSpec(
+                "제주그룹 멤버 혜택",
+                "Landing host page",
+                "member deals 화면은 front-mirror 경계에서 서빙한다.",
+                "front/jejustay/pages/deals/deals_member.html",
+                "landing-host",
+                List.of(
+                    "/deals/member는 이 canonical host-only 경로로 redirect 된다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
+            "/jejustay/pages/deals/deals_partner.html",
+            new HostPageSpec(
+                "제주그룹 파트너 혜택",
+                "Landing host page",
+                "partner deals 화면은 front-mirror 경계에서 서빙한다.",
+                "front/jejustay/pages/deals/deals_partner.html",
+                "landing-host",
+                List.of(
+                    "/deals/partner는 이 canonical host-only 경로로 redirect 된다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
+            "/jejustay/pages/hotel/hotel-list.html",
+            new HostPageSpec(
+                "제주스테이 호텔 목록",
+                "Landing host page",
+                "호텔 목록은 front-mirror 경계에서 서빙한다.",
+                "front/jejustay/pages/hotel/hotel-list.html",
+                "landing-host",
+                List.of(
+                    "/stay/hotel-list는 이 canonical host-only 경로로 redirect 된다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
+            "/jejustay/pages/travel/activities.html",
+            new HostPageSpec(
+                "제주여행 액티비티",
+                "Landing host page",
+                "activities 화면은 front-mirror 경계에서 서빙한다.",
+                "front/jejustay/pages/travel/activities.html",
+                "landing-host",
+                List.of(
+                    "/travel/activities는 이 canonical host-only 경로로 redirect 된다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
+            "/jejustay/pages/travel/esim.html",
+            new HostPageSpec(
+                "제주여행 eSIM",
+                "Landing host page",
+                "eSIM 화면은 front-mirror 경계에서 서빙한다.",
+                "front/jejustay/pages/travel/esim.html",
+                "landing-host",
+                List.of(
+                    "/travel/esim은 이 canonical host-only 경로로 redirect 된다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
+            "/jejustay/pages/travel/travel_guide.html",
+            new HostPageSpec(
+                "제주여행 가이드",
+                "Landing host page",
+                "travel guide 화면은 front-mirror 경계에서 서빙한다.",
+                "front/jejustay/pages/travel/travel_guide.html",
+                "landing-host",
+                List.of(
+                    "/travel/guide는 이 canonical host-only 경로로 redirect 된다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
+                )
+            )
+        ),
+        Map.entry(
+            "/jejustay/pages/travel/travel_tips.html",
+            new HostPageSpec(
+                "제주여행 팁",
+                "Landing host page",
+                "travel tips 화면은 front-mirror 경계에서 서빙한다.",
+                "front/jejustay/pages/travel/travel_tips.html",
+                "landing-host",
+                List.of(
+                    "/travel/tips는 이 canonical host-only 경로로 redirect 된다.",
+                    "전용 Spring 템플릿은 더 이상 쓰지 않는다."
                 )
             )
         ),
@@ -456,6 +596,20 @@ public class FrontMirrorHostController {
             )
         ),
         Map.entry(
+            "/pages/mypage/dashboard.html",
+            new HostPageSpec(
+                "MyPage dashboard",
+                "Front mirror host",
+                "Canonical mypage dashboard is served from the front-mirror runtime page.",
+                "front/pages/mypage/dashboard.html",
+                "mypage-host",
+                List.of(
+                    "/mypage/dashboard is redirect-only.",
+                    "Dedicated Spring template rendering is no longer used here."
+                )
+            )
+        ),
+        Map.entry(
             "/admin/pages/dashboard.html",
             new HostPageSpec(
                 "관리자 대시보드",
@@ -534,6 +688,8 @@ public class FrontMirrorHostController {
     }
 
     @GetMapping({
+        "/",
+        "/index.html",
         "/jejuair/index.html",
         "/jejuair/pages/about/about.html",
         "/jejuair/pages/about/career.html",
@@ -561,10 +717,19 @@ public class FrontMirrorHostController {
         "/pages/auth/signup.html",
         "/pages/auth/pass_auth.html",
         "/pages/auth/oauth_callback.html",
+        "/jejustay/pages/deals/deals.html",
+        "/jejustay/pages/deals/deals_member.html",
+        "/jejustay/pages/deals/deals_partner.html",
+        "/jejustay/pages/hotel/hotel-list.html",
+        "/jejustay/pages/travel/activities.html",
+        "/jejustay/pages/travel/esim.html",
+        "/jejustay/pages/travel/travel_guide.html",
+        "/jejustay/pages/travel/travel_tips.html",
         "/jejustay/pages/hotel/jejuhotel.html",
         "/jejustay/pages/stay/jejustay_life.html",
         "/jejustay/pages/stay/private_stay.html",
         "/jejustay/pages/travel/travel_checklist.html",
+        "/pages/mypage/dashboard.html",
         "/admin/pages/dashboard.html",
         "/admin/pages/reservations.html",
         "/admin/pages/lodging.html",
@@ -578,7 +743,7 @@ public class FrontMirrorHostController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        String viewName = toFrontMirrorViewName(path);
+        String viewName = "/".equals(path) ? "index" : toFrontMirrorViewName(path);
         if (!templateExists(viewName)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "front-mirror template is missing");
         }
@@ -599,6 +764,9 @@ public class FrontMirrorHostController {
 
     private String toFrontMirrorViewName(String path) {
         if (!path.endsWith(".html")) {
+            if ("/".equals(path)) {
+                return "front-mirror/index";
+            }
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 

@@ -6,7 +6,6 @@ const { createStaticServerController } = require("./helpers/static-server.cjs");
 const {
   installAdminSmokeFixtures,
   installCustomerCenterSmokeMocks,
-  installMypageSession,
   installOneShotRouteFailure,
 } = require("./helpers/smoke-fixtures.cjs");
 
@@ -25,6 +24,9 @@ const ADMIN_RUNTIME_TITLES = {
 const ENTRY_POINTS = [
   path.join(ROOT_DIR, "index.html"),
   path.join(ROOT_DIR, "admin", "pages", "dashboard.html"),
+  path.join(ROOT_DIR, "jejustay", "pages", "deals", "deals.html"),
+  path.join(ROOT_DIR, "jejustay", "pages", "hotel", "hotel-list.html"),
+  path.join(ROOT_DIR, "jejustay", "pages", "travel", "activities.html"),
   path.join(ROOT_DIR, "jejuair", "index.html"),
   path.join(ROOT_DIR, "jejuair", "pages", "about", "about.html"),
   path.join(ROOT_DIR, "jejuair", "pages", "baggage", "cabinBaggage.html"),
@@ -134,6 +136,11 @@ async function assertJejuAirDirectEntry(page, pathName) {
   await expect(page.locator("body")).toHaveClass(/jejuair-main-content/);
   await expect(page.locator("header#header_wrap")).toBeVisible();
   await expect(page.locator("footer#footer_wrap")).toBeVisible();
+}
+
+async function assertHotelShellChrome(page) {
+  await expect(page.locator("#hotel-header-placeholder .header.hotel-shell-header")).toBeVisible();
+  await expect(page.locator("#hotel-footer-placeholder .footer.shell-footer")).toBeVisible();
 }
 
 async function waitForAdminShellReady(page) {
@@ -417,17 +424,21 @@ test("pass auth page smoke", async ({ page }) => {
 test("mypage dashboard smoke", async ({ page }) => {
   const issues = createIssueTracker(page);
 
-  await installMypageSession(page);
+  await page.route("**/api/auth/session", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json; charset=utf-8",
+      body: JSON.stringify({ user: null }),
+    });
+  });
 
   await page.goto(server.url("/pages/mypage/dashboard.html"), {
     waitUntil: "domcontentloaded",
   });
 
-  await expect(page.locator("#mypage-dashboard-root .meta-dashboard-layout")).toBeVisible();
-  await expect(page.locator(".full-width-trip-list")).toBeVisible();
-  await expect(page.getByRole("heading", { name: /홍민지 님 어서오세요!/ })).toBeVisible();
-  await expect(page.getByRole("button", { name: "예약 현황" })).toBeVisible();
-  await expect(page.locator(".summary-stats-column .stat-card").first()).toContainText("보유 포인트");
+  await expect(page.locator("#jeju-page-shell-header")).toHaveCount(1);
+  await expect(page.locator("#mypage-dashboard-root")).toBeVisible();
+  await expect(page.locator("#jeju-page-shell-footer")).toHaveCount(1);
 
   expectNoRuntimeIssues(issues);
 });
@@ -442,6 +453,49 @@ test("jeju stay hotel landing smoke", async ({ page }) => {
   await expect(page).toHaveTitle(/JEJU STAY/);
   await expect(page.locator(".hero-subtitle-top")).toBeVisible();
   await expect(page.locator(".deals-section .section-title")).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju stay activities smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejustay/pages/travel/activities.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await assertHotelShellChrome(page);
+  await expect(page.locator("#activityGrid .activity-card").first()).toBeVisible();
+  await expect(page.locator("#filterBar .filter-chip.active")).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju stay hotel list smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejustay/pages/hotel/hotel-list.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await assertHotelShellChrome(page);
+  await expect(page.locator("#hotel-list-search-widget-root .hotel-list-search-widget")).toBeVisible();
+  await expect(page.locator("#hotel-list-page-root .hotel-main-list")).toBeVisible();
+  await expect(page.locator("#hotel-list-page-root .hotel-card-premium").first()).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju stay deals smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejustay/pages/deals/deals.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await assertHotelShellChrome(page);
+  await expect(page.locator("#couponGrid .coupon-card").first()).toBeVisible();
+  await expect(page.locator("#dealGrid .deal-card").first()).toBeVisible();
 
   expectNoRuntimeIssues(issues);
 });

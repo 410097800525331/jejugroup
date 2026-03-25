@@ -2,37 +2,40 @@
 
 ## Current Task
 
-- task: `Prepare the current worktree for commit by classifying intentional source changes, generated front-mirror outputs, and log/state artifacts`
-- phase: `planning`
-- scope: `STATE.md, commit-prep classification over current modified files, optional follow-up cleanup decisions`
-- verification_target: `the current worktree is clearly divided into intentional source/docs deletions and expected generated outputs so the next commit step can proceed without mixing in accidental drift`
+- task: `Fix the shared shell header parity bug so auth/main-shell pages initialize the same admin utility and login-route state on front:3001 and spring:8080`
+- phase: `completed`
+- scope: `STATE.md, MULTI_AGENT_LOG.md, shared shell runtime contract for header auth-sync timing and main-vs-stay login route handling, front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx, and targeted browser verification on auth and representative host-only pages`
+- verification_target: `front:3001 and spring:8080 produce the same header utility/admin/login-link behavior on /pages/auth/login.html, /pages/auth/signup.html, and representative host-only pages after the shared shell runtime fix`
 
 ## Route
 
-- route: `Route A`
-- reason: `This new task is a read-heavy commit-preparation pass over the existing dirty worktree. At this stage main is only classifying and deciding what belongs together before any additional implementation writes happen.`
+- route: `Route B`
+- reason: `This is a new task after the census close-out. It touches shared shell runtime behavior under front/apps/shell, which is a repository hard-trigger boundary, and it changes cross-page header behavior rather than a single page file. Route B is required for a frozen contract, worker-owned implementation, and reviewer verification.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md`
-- note: `Read-only classification stage only. No additional implementation writes beyond STATE.md are active until the commit-prep decision is fixed.`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.auth-header-shell-parity-v1.yaml`
+  - `worker_shell_header_parity`: `front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx`
+  - `reviewer_shell_header_parity`: `review only`
+- note: `Route B planner-only main. The shared shell fix is confined to one worker-owned runtime slice before targeted browser verification and reviewer close-out.`
 
 ## Contract Freeze
 
-- contract_freeze: `No new product behavior is being introduced in this step. The goal is only to separate the already-made source changes from the generated front-mirror rebuild outputs and state/log files so the next commit action can be deliberate.`
+- contract_freeze: `The fix is limited to shared shell header runtime behavior. It must make auth/main-shell pages run the same header auth sync/admin utility initialization on front:3001 and spring:8080, and it must stop the main-shell login button from being rewritten to stay-shell routing. No page-specific HTML edits, no docs rewrites, and no unrelated shell redesign are allowed in this slice.`
 
 - status: `frozen`
-- path: `n/a`
+- path: `SEED.auth-header-shell-parity-v1.yaml`
 - revision: `v1`
-- note: `Commit-prep pass; no new seed required.`
+- note: `The census already identified the auth/main-shell header divergence. This new shared-runtime fix is now frozen as a separate implementation slice.`
 
-- reviewer: `none`
-- reviewer_target: `not used`
-- reviewer_focus: `not used`
+- reviewer: `reviewer_shell_header_parity`
+- reviewer_target: `shared shell header auth-sync timing and login-route correctness`
+- reviewer_focus: `No regression to shared shell mounting, no incorrect shell parameter rewrite on main-shell auth pages, and no remaining unexplained front:3001 vs spring:8080 header divergence on the targeted routes`
 
 ## Last Update
 
-- timestamp: `2026-03-25 10:42:51 +09:00`
-- note: `Switched to commit-prep classification. Current worktree contains intentional source/docs/runtime changes plus expected front-mirror regenerated outputs from spring:test, and the next step is to separate those sets cleanly before any commit action.`
+- timestamp: `2026-03-25 16:03:00 +09:00`
+- note: `Completed the shared-shell header parity fix. front:3001 and spring:8080 now match on auth-page admin utility visibility and main-shell login routing in fresh browser sessions, and the reviewer found no blocking issue.`

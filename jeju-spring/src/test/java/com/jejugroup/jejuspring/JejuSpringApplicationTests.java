@@ -18,6 +18,7 @@ import com.jejugroup.jejuspring.auth.model.SessionUser;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,7 +61,7 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 	void landingPageLoadsAtRoot() throws Exception {
 		mockMvc.perform(get("/"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("English")))
+			.andExpect(content().string(containsString("landing-root")))
 			.andExpect(content().string(containsString("Scroll Down")));
 	}
 
@@ -136,19 +137,29 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 	}
 
 	@Test
-	void myPageRedirectsWhenSessionMissing() throws Exception {
-		mockMvc.perform(get("/mypage/dashboard"))
+	void mypageDashboardAliasRedirectsToCanonicalPage() throws Exception {
+		mockMvc.perform(get("/mypage/dashboard").param("shell", "stay").param("filter", "rent"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrlPattern("/auth/login**"));
+			.andExpect(redirectedUrlPattern("/pages/mypage/dashboard.html?shell=stay&filter=rent*"));
 	}
 
 	@Test
-	void myPageLoadsWhenSessionUserAlsoExistsInDb() throws Exception {
+	void mypageDashboardCanonicalPageLoadsAsFrontMirror() throws Exception {
+		mockMvc.perform(get("/pages/mypage/dashboard.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("mypage-dashboard-root")))
+			.andExpect(content().string(containsString("jeju-page-shell-header")))
+			.andExpect(content().string(containsString("jeju-page-shell-footer")));
+	}
+
+	@Test
+	void mypageDashboardApiKeepsAuthenticatedBehavior() throws Exception {
 		seedUser("minji", "?띾?吏DB", "minji.db@jejugroup.example");
 
-		mockMvc.perform(get("/mypage/dashboard").sessionAttr("user", new SessionUser("minji", "", "USER")))
+		mockMvc.perform(get("/api/mypage/dashboard").sessionAttr("user", new SessionUser("minji", "", "USER")))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("?띾?吏DB")))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(content().string(containsString("\"success\":true")))
 			.andExpect(content().string(containsString("minji.db@jejugroup.example")));
 	}
 
@@ -180,43 +191,78 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 	}
 
 	@Test
-	void travelActivitiesPageLoads() throws Exception {
+	void travelActivitiesShortRouteRedirectsToCanonicalPage() throws Exception {
 		mockMvc.perform(get("/travel/activities"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("JEJU STAY Activities")))
-			.andExpect(content().string(containsString("Curated Picks")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/jejustay/pages/travel/activities.html"));
 	}
 
 	@Test
-	void travelEsimPageLoads() throws Exception {
+	void travelActivitiesCanonicalPageLoads() throws Exception {
+		mockMvc.perform(get("/jejustay/pages/travel/activities.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("activities-page")))
+			.andExpect(content().string(containsString("activity-grid")));
+	}
+
+	@Test
+	void travelEsimShortRouteRedirectsToCanonicalPage() throws Exception {
 		mockMvc.perform(get("/travel/esim"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("JEJU STAY eSIM")))
-			.andExpect(content().string(containsString("Popular Destinations")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/jejustay/pages/travel/esim.html"));
 	}
 
 	@Test
-	void travelGuidePageLoads() throws Exception {
+	void travelEsimCanonicalPageLoads() throws Exception {
+		mockMvc.perform(get("/jejustay/pages/travel/esim.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("eSIM |")))
+			.andExpect(content().string(containsString("country-grid")));
+	}
+
+	@Test
+	void travelGuideShortRouteRedirectsToCanonicalPage() throws Exception {
 		mockMvc.perform(get("/travel/guide"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("Travel Guide")))
-			.andExpect(content().string(containsString("Explore Countries")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/jejustay/pages/travel/travel_guide.html"));
 	}
 
 	@Test
-	void travelTipsPageLoads() throws Exception {
+	void travelGuideCanonicalPageLoads() throws Exception {
+		mockMvc.perform(get("/jejustay/pages/travel/travel_guide.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("guide-hero")))
+			.andExpect(content().string(containsString("guide-search-wrapper")));
+	}
+
+	@Test
+	void travelTipsShortRouteRedirectsToCanonicalPage() throws Exception {
 		mockMvc.perform(get("/travel/tips"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("Global Travel Tips")))
-			.andExpect(content().string(containsString("Tokyo, Japan")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/jejustay/pages/travel/travel_tips.html"));
 	}
 
 	@Test
-	void stayHotelListPageLoads() throws Exception {
-		mockMvc.perform(get("/stay/hotel-list"))
+	void travelTipsCanonicalPageLoads() throws Exception {
+		mockMvc.perform(get("/jejustay/pages/travel/travel_tips.html"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("hotel-list-page-data")))
-			.andExpect(content().string(containsString("migration hub")));
+			.andExpect(content().string(containsString("travel-tips-page")))
+			.andExpect(content().string(containsString("city-selector")));
+	}
+
+	@Test
+	void stayHotelListShortRouteRedirectsToCanonicalPage() throws Exception {
+		mockMvc.perform(get("/stay/hotel-list"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/jejustay/pages/hotel/hotel-list.html"));
+	}
+
+	@Test
+	void stayHotelListCanonicalPageLoads() throws Exception {
+		mockMvc.perform(get("/jejustay/pages/hotel/hotel-list.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("stay-hotel-list-page")))
+			.andExpect(content().string(containsString("hotel-list-page-root")));
 	}
 
 	@Test
@@ -229,27 +275,48 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 	}
 
 	@Test
-	void dealsMainPageLoads() throws Exception {
+	void dealsMainShortRouteRedirectsToCanonicalPage() throws Exception {
 		mockMvc.perform(get("/deals"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("ONLY JEJU GROUP")))
-			.andExpect(content().string(containsString("migration hub")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/jejustay/pages/deals/deals.html"));
 	}
 
 	@Test
-	void dealsMemberPageLoads() throws Exception {
+	void dealsMainCanonicalPageLoads() throws Exception {
+		mockMvc.perform(get("/jejustay/pages/deals/deals.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("deals-page")))
+			.andExpect(content().string(containsString("dealSection")));
+	}
+
+	@Test
+	void dealsMemberShortRouteRedirectsToCanonicalPage() throws Exception {
 		mockMvc.perform(get("/deals/member"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("JEJU UNIVERSE")))
-			.andExpect(content().string(containsString("Private Member Sale")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/jejustay/pages/deals/deals_member.html"));
 	}
 
 	@Test
-	void dealsPartnerPageLoads() throws Exception {
-		mockMvc.perform(get("/deals/partner"))
+	void dealsMemberCanonicalPageLoads() throws Exception {
+		mockMvc.perform(get("/jejustay/pages/deals/deals_member.html"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("Partnership Benefits")))
-			.andExpect(content().string(containsString("HYUNDAI CARD")));
+			.andExpect(content().string(containsString("deals-member-page")))
+			.andExpect(content().string(containsString("tier-section")));
+	}
+
+	@Test
+	void dealsPartnerShortRouteRedirectsToCanonicalPage() throws Exception {
+		mockMvc.perform(get("/deals/partner"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/jejustay/pages/deals/deals_partner.html"));
+	}
+
+	@Test
+	void dealsPartnerCanonicalPageLoads() throws Exception {
+		mockMvc.perform(get("/jejustay/pages/deals/deals_partner.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("deals-partner-page")))
+			.andExpect(content().string(containsString("partner-grid")));
 	}
 
 }
