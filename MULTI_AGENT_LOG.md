@@ -1098,6 +1098,25 @@
   - reran the fresh browser census and confirmed the current exact result is `44/47` with alias redirect outcomes `12/12`
   - rewrote `docs/front-parity-census-2026-03-25.md` so the report now reflects the true post-revert state and describes the remaining three exact mismatches as dynamic/timing noise candidates rather than substantive runtime divergence
 
+- time: `2026-03-25 18:41 +09:00`
+- route: `Route B`
+- task: `Re-census the remaining JejuAir front parity against the canonical front source and close the jejuair host-only parity status with browser evidence`
+- participants: `main`, `worker_seed (Banach)`, `worker_jejuair_report (Schrodinger)`, `reviewer_jejuair_parity (Cicero)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Banach)`: `SEED.jejuair-front-parity-census-v1.yaml`
+  - `worker_jejuair_report (Schrodinger)`: `docs/jejuair-front-parity-census-2026-03-25.md`
+  - `reviewer_jejuair_parity (Cicero)`: `review only`
+- verification:
+  - inventory/controller/templates check confirmed `front/jejuair/**/*.html` 22개, `FrontMirrorHostController` 제주에어 host-only 매핑 22개, `templates/front-mirror/jejuair/**` 22개가 1:1로 맞고 dedicated Spring-only JejuAir template 잔재는 없었다
+  - fresh browser census on `front:3001` vs `spring:8080` confirmed raw exact mismatch `22/22`; the exact diff was explained by Vite dev host `/@vite/client` injection plus spring front-mirror `/front-mirror/jejuair/**` asset/base rewrite
+  - normalized substantive browser census excluding `/@vite/client` and normalizing local asset URLs by origin + `/front-mirror` prefix + query removal confirmed `22/22 matched` with runtime divergence `0`
+  - dynamic noise was limited to `/jejuair/index.html` YouTube telemetry abort request variance, which did not change DOM/body/hash parity
+  - no source changes were required because no substantive parity gap remained to fix without violating the canonical front-source contract
+  - `pnpm run guard:text` passed
+  - `git diff --check -- STATE.md SEED.jejuair-front-parity-census-v1.yaml docs/jejuair-front-parity-census-2026-03-25.md MULTI_AGENT_LOG.md` passed
+  - `reviewer_jejuair_parity (Cicero)` reported `발견 없음`; residual risk only noted that future Vite injection or mirror rewrite changes would need the same census rerun
+
 - time: `2026-03-25 14:24 +09:00`
 - route: `Route B`
 - task: `Close the remaining customer_center parity gap and lock the source -> generated overlay -> spring mirror chain`
