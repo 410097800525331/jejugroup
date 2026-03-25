@@ -1,5 +1,5 @@
 import { j as e, a as p } from "./react-vendor-BoSfm_Te.js";
-import { U as E, a as b, S as f, b as S, c as I, P as R, d as g, e as A, M as k, f as w, g as C, L as T, h as L, H as M, i as j, j as y, k as V, G as H, C as O, l as P, m as _, n as G, o as D, p as U, q as $, B as x, r as B, s as Y, t as q } from "./icon-vendor-Dpra3II6.js";
+import { U as E, a as b, S as f, b as S, c as I, P as R, d as g, e as A, M as k, f as w, g as C, L as T, h as L, H as y, i as j, j as M, k as V, G as H, C as O, l as P, m as _, n as G, o as D, p as U, q as $, B as x, r as B, s as q, t as Y } from "./icon-vendor-Dpra3II6.js";
 import { a as F } from "./legacy-core-CKE3csu2.js";
 const W = {
   "book-open": B,
@@ -13,9 +13,9 @@ const W = {
   "credit-card": O,
   gift: H,
   headphones: V,
-  heart: y,
+  heart: M,
   home: j,
-  hotel: M,
+  hotel: y,
   lightbulb: L,
   "log-out": T,
   map: C,
@@ -30,7 +30,7 @@ const W = {
   user: b,
   users: E
 }, i = ({ name: s, className: a }) => {
-  const l = W[s] ?? Y;
+  const l = W[s] ?? q;
   return /* @__PURE__ */ e.jsx(l, { className: a, strokeWidth: 1.9, "aria-hidden": "true", focusable: "false" });
 }, J = ({ item: s }) => /* @__PURE__ */ e.jsxs("li", { className: "hotel-shell-nav-item", children: [
   /* @__PURE__ */ e.jsxs("a", { href: "#", className: "hotel-shell-nav-link route-link", "data-route": s.route, children: [
@@ -285,7 +285,7 @@ const W = {
   },
   {
     href: "https://jejurentcar.netlify.app/",
-    icon: q,
+    icon: Y,
     key: "rentcar",
     rel: "noreferrer",
     target: "_blank",
@@ -301,7 +301,7 @@ const W = {
 };
 function ee({
   items: s,
-  label: a = "FAMILY SITES",
+  label: a = "Family Sites",
   originX: l = "right",
   radiusPx: n = 98,
   startAngle: r,

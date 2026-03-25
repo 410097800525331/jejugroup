@@ -1150,3 +1150,71 @@
   - `git diff --check -- STATE.md MULTI_AGENT_LOG.md jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java jeju-spring/src/main/resources/templates/index.html` passed with one pre-existing CRLF normalization warning on the controller file
   - targeted content checks confirmed `FrontMirrorHostController` now resolves `/` through `toFrontMirrorViewName(path)` and no longer special-cases the root to the wrapper template
   - targeted content checks confirmed `templates/index.html` no longer contains the iframe wrapper and now only performs a direct `/index.html` redirect fallback
+
+- time: `2026-03-25 17:24 +09:00`
+- route: `Route B`
+- task: `Repair broken main landing and Jeju Stay internal design regressions from front first, then propagate only the affected outputs into jeju-spring`
+- participants: `main`, `worker_seed (Leibniz)`, `worker_feature_landing (Huygens)`, `worker_shared_layout (Rawls)`, `worker_feature_jejustay (Socrates)`, `worker_shared_mirror (Bohr)`, `reviewer_landing_jejustay_design (Chandrasekhar)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Leibniz)`: `SEED.front-landing-jejustay-design-repair-v1.yaml`
+  - `worker_feature_landing (Huygens)`: `front/index.html, front/core/pages/landing/main.js, front/styles/globals.css`
+  - `worker_shared_layout (Rawls)`: `front/components/react/layout/footer.css`
+  - `worker_feature_jejustay (Socrates)`: `front/jejustay/pages/travel/esim.html, front/jejustay/pages/travel/esim.css`
+  - `worker_shared_mirror (Bohr)`: `regenerated jeju-spring/src/main/resources/templates/front-mirror/index.html, regenerated jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, regenerated jeju-spring/src/main/resources/static/front-mirror/** affected assets`
+  - `reviewer_landing_jejustay_design (Chandrasekhar)`: `review only`
+- verification:
+  - `node --check front/core/pages/landing/main.js` passed
+  - `pnpm run build:front` passed
+  - `pnpm run guard:text` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` completed and regenerated the affected spring front-mirror outputs
+  - Spring `bootRun` was restarted so the regenerated resources were served by the live runtime again
+  - browser verification on `front:3001` confirmed the landing membership prices no longer render literal `<span>` text, footer content stays separated/readable, and the Jeju Stay eSIM Europe card now uses the same image/content card skeleton as the other cards
+  - browser verification on `spring:8080` confirmed `.membership-tier .tier-price` now keeps nested `span` nodes (`hasSpan=true` for all three tiers), `Family Sites` footer label remains intact, and the Europe eSIM card keeps `.card-image-wrap + .card-content`
+  - `reviewer_landing_jejustay_design (Chandrasekhar)` reported one non-blocking finding about the temporary `Price` HTML fallback widening the innerHTML surface; that follow-up was fixed by removing the fallback and keeping explicit `data-lang-html="true"` only
+  - user explicitly chose to leave the accidental `jeju-web` dirty changes unreverted; they remain outside this task's source-of-truth edits
+
+- time: `2026-03-25 17:52 +09:00`
+- route: `Route B`
+- task: `Revert the over-broad landing/footer design edits, keep only the membership text/span fix, restore the intended footer layout, recover the eSIM FAB mount, and re-check the mypage support-image symptom before mirroring the true fixes into jeju-spring`
+- participants: `main`, `worker_seed (Averroes)`, `worker_landing_revert (Ptolemy)`, `worker_shared_footer (Plato)`, `worker_jejustay_feature (Gibbs)`, `worker_shared_mirror (Harvey)`, `reviewer_regression_followup (Sartre)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Averroes)`: `SEED.front-regression-repair-followup-v1.yaml`
+  - `worker_landing_revert (Ptolemy)`: `front/index.html, front/styles/globals.css`
+  - `worker_shared_footer (Plato)`: `front/components/react/layout/footer.css`
+  - `worker_jejustay_feature (Gibbs)`: `front/jejustay/pages/travel/esim.html, front/jejustay/pages/travel/esim.css if strictly required`
+  - `worker_shared_mirror (Harvey)`: `regenerated jeju-spring/src/main/resources/templates/front-mirror/index.html, regenerated jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, regenerated jeju-spring/src/main/resources/static/front-mirror/** affected assets only`
+  - `reviewer_regression_followup (Sartre)`: `review only`
+- verification:
+  - new contract frozen in `SEED.front-regression-repair-followup-v1.yaml`
+  - landing was narrowed to the three `data-lang-html="true"` membership price nodes only; broader membership/footer overrides were removed
+  - footer root cause was traced to `front/styles/globals.css` where `.footer-info p` still rendered as `inline-block`; the live fix was reduced to `display: block`
+  - eSIM FAB root cause was confirmed as the missing `../../../components/react/ui/FAB/fab.css` link; adding it restored `#jeju-fab-root` and `.fab-wrapper` on both front and spring
+  - authenticated browser checks on `front:3001` and `spring:8080` confirmed mypage support images still render, so no mypage source changes were made
+  - `pnpm run build:front` passed
+  - `pnpm run guard:text` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` completed after the footer minimal fix so runtime bundles and mirror assets were rebuilt from the latest front source
+  - live browser verification on `spring:8080/index.html` confirmed membership prices keep nested `span` nodes and the computed footer paragraph display is now `block`
+  - live browser verification on `spring:8080/jejustay/pages/travel/esim.html` confirmed `fab.css` is present and FAB mounts again (`fabRoot=true`, `fabSystem=true`)
+  - `reviewer_regression_followup (Sartre)` reported no blocking findings; residual note only mentioned a stale mirror-drift suspicion that was cleared after the final rebuild + restart path
+
+- time: `2026-03-25 18:55 +09:00`
+- route: `Route B`
+- task: `Regenerate the affected jeju-spring mirror outputs from the current front sources`
+- participants: `worker_shared_mirror (gogi)`
+- write_sets:
+  - `worker_shared_mirror`: `jeju-spring/src/main/resources/templates/front-mirror/index.html, jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, jeju-spring/src/main/resources/static/front-mirror/** affected assets`
+- verification:
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs` passed
+  - spring mirror outputs were regenerated from current `front` sources without touching `jeju-web`
+
+- time: `2026-03-25 19:08 +09:00`
+- route: `Route B`
+- task: `Regenerate the spring mirror again after the one-line globals.css footer-info display tweak`
+- participants: `worker_shared_mirror (gogi)`
+- write_sets:
+  - `worker_shared_mirror`: `jeju-spring/src/main/resources/templates/front-mirror/index.html, jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, jeju-spring/src/main/resources/static/front-mirror/** affected assets only`
+- verification:
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs` passed
+  - `jeju-web` was not touched
