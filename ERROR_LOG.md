@@ -101,3 +101,99 @@
 - summary: `spring:test was redirected to localhost, then failed once on a blank local password fallback before passing after the helper fix`
 - details: `The first rerun after the test-only precedence change reached localhost MySQL but failed with Access denied for user 'jejugroup'@'localhost' (using password: NO). The test helper was then updated to read the local DB values from jeju-spring/.env with last-value-wins precedence, and the next rerun passed cleanly.`
 - status: `resolved`
+
+- time: `2026-03-24 15:37 +09:00`
+- location: `runtime env-source cutover`
+- summary: `default runtime env ownership no longer depends on jeju-web/.env`
+- details: `Deploy/runtime helpers now default to jeju-spring/.env, the explicit JEJU_SHARED_ENV_PATH override remains available, and the helper/example contract was aligned so SSH/admin/API fallback keys are documented and accepted consistently. pnpm run build and pnpm run spring:test both passed after the cutover.`
+- status: `resolved`
+
+- time: `2026-03-24 15:49 +09:00`
+- location: `pnpm run smoke:front`
+- summary: `front runtime smoke still fails on admin API dependency and mypage DOM expectation`
+- details: `The rerun after final-runtime policy cleanup still failed in two places. admin dashboard smoke triggered request failures to http://localhost:9090/jeju-web/api/auth/session and /api/admin/dashboard?domain=all, which shows the local static smoke path still depends on the old jeju-web-style API base when no Spring backend is serving those endpoints. mypage dashboard smoke also failed because #mypage-dashboard-root .meta-dashboard-layout was not found within the timeout, so the current DOM/runtime no longer matches the smoke expectation.`
+- status: `open`
+
+- time: `2026-03-24 15:50 +09:00`
+- location: `pnpm run smoke:cs`
+- summary: `customer-center smoke expectations are stale against the current bundled app`
+- details: `All four cs smoke cases failed on missing expected text such as "세 가지 서비스, 하나의 완벽한 여행", "2026년 2월 제주항공 신규 노선 운항 안내", "JEJU GROUP FAQ LIBRARY", and "나의 문의 내역". The current customer-center app routes still build and mount, but the smoke assertions are out of sync with the present UI copy and/or route-state behavior.`
+- status: `open`
+
+- time: `2026-03-24 16:08 +09:00`
+- location: `local smoke repair`
+- summary: `front and customer-center smoke blockers were repaired under the current Spring baseline`
+- details: `The smoke harness now seeds the local admin and mypage session paths, mocks the admin dashboard and customer-center API responses needed for local verification, and aligns the customer-center assertions with the current UI copy. Both pnpm run smoke:front and pnpm run smoke:cs now pass without weakening the runtime-issue checks.`
+- status: `resolved`
+
+- time: `2026-03-24 16:47 +09:00`
+- location: `pnpm run spring:run`
+- summary: `local Spring boot now reaches localhost MySQL, but the local DB user lacks schema access`
+- details: `The malformed duplicate DB_* block in jeju-spring/.env was removed and the default DB_URL now points at localhost. After that fix, bootRun no longer tried the alwaysdata host; Flyway now fails later with 'Access denied for user 'jejugroup'@'localhost' to database 'jejugroup_db''. The remaining blocker is local MySQL user/schema privilege setup rather than repository code or env parsing.`
+- status: `open`
+
+- time: `2026-03-24 18:35 +09:00`
+- location: `verification step for front/admin js parse check`
+- summary: `vm.SourceTextModule was unavailable in the current Node runtime`
+- details: `The first lightweight syntax-check attempt used vm.SourceTextModule, but the current Node build exposed it as non-constructible. I switched to esbuild.transformSync for the touched admin JS files and completed verification that way.`
+- status: `resolved`
+
+- time: `2026-03-24 20:52 +09:00`
+- location: `Route B admin shell handoff`
+- summary: `Single-load admin shell refactor paused before reviewer and browser verification`
+- details: `The workspace has a frozen seed at SEED.admin-shell-single-load-v1.yaml, a new front/admin/js/admin_shell.js bootstrap, and five admin HTML entrypoints rewired to that shared shell. The task was intentionally paused for cross-environment continuation before reviewer pass, direct-entry checks, same-document section-switch checks, and history/popstate verification were completed.`
+- status: `deferred`
+
+- time: `2026-03-24 21:32 +09:00`
+- location: `pnpm run spring:test`
+- summary: `auth front-source cutover verification is blocked by the existing missing Gradle wrapper jar`
+- details: `The auth login/signup/pass_auth cutover changes rebuilt front successfully and refreshed front-mirror outputs, but Spring mechanical verification still failed before test execution because jeju-spring/gradle/wrapper/gradle-wrapper.jar is absent in this workspace. This prevents running JejuSpringApplicationTests for the new auth alias/front-mirror contract here, even after aligning the test expectations.`
+- status: `open`
+
+- time: `2026-03-24 21:47 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\gradlew.bat test --tests com.jejugroup.jejuspring.JejuSpringApplicationTests`
+- summary: `Spring test verification is still blocked by the missing Gradle wrapper jar`
+- details: `The focused JejuSpringApplicationTests run failed immediately with "Unable to access jarfile D:\git\jejugroup\jeju-spring\\gradle\\wrapper\\gradle-wrapper.jar". This is the same workspace blocker as the earlier spring:test failure and prevents mechanical confirmation of the auth alias/front-mirror contract in this environment.`
+- status: `open`
+
+- time: `2026-03-25 10:36 +09:00`
+- location: `seed verification for SEED.spring-final-runtime-full-page-coverage-v1.yaml`
+- summary: `automatic YAML parse verification was blocked by missing local YAML parser packages`
+- details: `ruby was not installed, python resolved to the Microsoft Store stub, and node could not load the yaml module in this workspace. The seed file itself was written successfully and git diff --check passed, but full machine parsing could not be completed without adding tools outside the allowed write set.`
+- status: `deferred`
+- time: 2026-03-25 10:29:38 +09:00
+  location: SEED.auth-legacy-template-cleanup-v1.yaml verification
+  summary: ConvertFrom-Yaml was unavailable in PowerShell during YAML validation
+  details: The seed file itself was written successfully, but the initial local parse check failed because the cmdlet is not installed in this shell.
+  status: resolved
+- time: `2026-03-25 10:40:00 +09:00`
+- location: `SEED.auth-legacy-template-cleanup-v1.yaml verification`
+- summary: `local YAML parse tooling was unavailable in this workspace`
+- details: `PowerShell lacks ConvertFrom-Yaml, python resolves to the Microsoft Store stub, and no YAML module/parser is installed. The seed file was still written and inspected directly.`
+- status: `deferred`
+
+- time: `2026-03-25 12:01:23 +09:00`
+- location: `PowerShell rg search on D:\lsh\git\jejugroup`
+- summary: `rg.exe access denied during seed context discovery`
+- details: `Initial repo-wide rg searches failed with "Access is denied", so repository discovery switched to Get-ChildItem and direct file reads for the seed task.`
+- status: `resolved`
+
+- time: `2026-03-25 12:32:31 +09:00`
+- location: `jeju-spring compileJava during runtime cleanup`
+- summary: `StayController buildPage helper was removed too aggressively and broke StayApiController compilation`
+- details: `The first compileJava run failed because StayApiController still called StayController.buildPage(). I restored the helper and its factory dependency, then reran compileJava successfully.`
+- status: `resolved`
+
+- time: `2026-03-25 12:39:35 +09:00`
+- location: `jeju-spring/gradlew.bat test --tests com.jejugroup.jejuspring.JejuSpringApplicationTests.landingPageLoadsAtRoot`
+- summary: `Gradle test rerun hit a transient build/test-results lock cleanup failure`
+- details: `The first rerun could not delete build/test-results/test/binary/output.bin because a previous Gradle daemon still held the directory. Stopping the daemons and rerunning with --no-daemon completed the same test successfully.`
+- status: `resolved`
+| time | location | summary | details | status |
+| --- | --- | --- | --- | --- |
+| 2026-03-25 13:10:00 +09:00 | `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java` | `gradlew test` compilation blocked by BOM | `./gradlew test --tests com.jejugroup.jejuspring.JejuSpringApplicationTests` failed during `:compileJava` with `illegal character: '\ufeff'` at the first line of `FrontMirrorHostController.java`. This is pre-existing and outside the requested write set, so verification could not complete. | `open` |
+- time: `2026-03-25 13:10:00 +09:00`
+- location: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java`
+- summary: `gradlew compileJava failed because the file was rewritten with a UTF-8 BOM`
+- details: `The first compileJava attempt failed with illegal character '\ufeff' at the first line of FrontMirrorHostController.java. I rewrote that file without a BOM and will rerun verification.`
+- status: `resolved`

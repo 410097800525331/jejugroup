@@ -700,3 +700,367 @@
   - `pnpm run guard:text` passed
   - `git diff --check -- STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md SEED.spring-test-local-db-isolation-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java jeju-spring/src/test/resources/application.yml` passed
   - `reviewer_test_db_isolation (Newton)` reported `발견 없음` and confirmed production `jeju-spring/src/main/resources/application.yml` was unchanged
+
+- time: `2026-03-24 15:14 +09:00`
+- route: `Route B`
+- task: `Add a regression guard so spring:test fails if the resolved test datasource/flyway path drifts back to alwaysdata`
+- participants: `main`, `worker_test_regression_guard (Schrodinger)`, `reviewer_test_regression_guard (Helmholtz)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-alwaysdata-regression-guard-v1.yaml`
+  - `worker_test_regression_guard`: `jeju-spring/src/test/**`
+  - `reviewer_test_regression_guard`: `review only`
+- verification:
+  - `worker_test_regression_guard` updated `jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java` with a runtime-resolved guard over `spring.datasource.url`, `spring.flyway.url`, and the live datasource metadata URL
+  - `pnpm run spring:test` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.spring-test-alwaysdata-regression-guard-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java` passed apart from the existing `MULTI_AGENT_LOG.md` CRLF normalization warning
+  - the new regression test makes an `alwaysdata` drift fail on the actual runtime-resolved path rather than a static grep
+  - `reviewer_test_regression_guard (Helmholtz)` reported `발견 없음` and confirmed datasource/flyway symmetry plus no production/runtime file drift
+
+- time: `2026-03-24 15:37 +09:00`
+- route: `Route B`
+- task: `Cut the remaining jeju-web/.env runtime dependency by making jeju-spring/.env the default env source for Spring runtime and deploy scripts`
+- participants: `main`, `worker_runtime_env_cutover (Faraday)`, `worker_env_contract_docs (Godel)`, `reviewer_runtime_env_cutover (Feynman)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-runtime-env-source-cutover-v1.yaml, ERROR_LOG.md`
+  - `worker_runtime_env_cutover`: `scripts/utils/env.js, scripts/utils/checkPath.js, jeju-spring/src/main/resources/application.yml, jeju-spring/.env.example`
+  - `worker_env_contract_docs`: `AGENTS.md, WORKSPACE_CONTEXT.toml`
+  - `reviewer_runtime_env_cutover`: `review only`
+- verification:
+  - `worker_runtime_env_cutover` switched the default helper env path to `jeju-spring/.env`, preserved `JEJU_SHARED_ENV_PATH` override behavior, aligned `scripts/utils/env.js` with `SSH_*` primary plus `ALWAYSDATA_*` fallbacks, and updated `jeju-spring/.env.example` to reflect the real helper/runtime keys including admin/API fallback keys
+  - `worker_env_contract_docs` updated `AGENTS.md` and `WORKSPACE_CONTEXT.toml` so `jeju-spring/.env` is the documented default env source and `jeju-web/.env` is legacy-only historical reference
+  - `pnpm run build` passed and produced `jeju-spring/build/jeju-spring.war`
+  - `pnpm run spring:test` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.spring-runtime-env-source-cutover-v1.yaml scripts/utils/env.js jeju-spring/src/main/resources/application.yml AGENTS.md WORKSPACE_CONTEXT.toml` passed apart from existing CRLF normalization warnings on tracked text files
+  - `reviewer_runtime_env_cutover (Feynman)` first flagged missing admin/API key contract alignment between `env.js` and `.env.example`; after the follow-up patch the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-24 15:52 +09:00`
+- route: `Route B`
+- task: `Finalize the Spring final-runtime closure policy and re-run the core verification commands`
+- participants: `main`, `worker_runtime_closure_policy (Nash)`, `reviewer_runtime_closure (Hooke)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-final-runtime-closure-v2.yaml, ERROR_LOG.md`
+  - `worker_runtime_closure_policy`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/application.yml`
+  - `reviewer_runtime_closure`: `review only`
+- verification:
+  - `worker_runtime_closure_policy` marked `/jejuair/pages/**` and `/pages/auth/oauth_callback.html` as permanent exclusions for the current baseline and aligned docs/controller wording so host-only routes count as completed runtime coverage
+  - `pnpm run build` passed
+  - `pnpm run spring:test` passed
+  - `pnpm run smoke:front` failed: admin dashboard still requests `http://localhost:9090/jeju-web/api/auth/session` and `/api/admin/dashboard?domain=all`, and mypage dashboard no longer matches the smoke DOM expectation for `.meta-dashboard-layout`
+  - `pnpm run smoke:cs` failed: all four assertions are stale against the current bundled customer-center UI copy and/or route-state behavior
+  - `git diff --check -- docs/front-entrypoint-inventory.md docs/transition-architecture.md jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java jeju-spring/src/main/resources/application.yml` passed
+  - `reviewer_runtime_closure (Hooke)` first flagged one remaining `제외` wording in `docs/transition-architecture.md`; after the follow-up patch the closure policy has no remaining reviewer findings, but the smoke failures stay open as real blockers
+
+- time: `2026-03-24 16:08 +09:00`
+- route: `Route B`
+- task: `Repair the remaining local smoke blockers for admin, mypage, and customer-center`
+- participants: `main`, `worker_smoke_repair (Lorentz)`, `reviewer_smoke_repair (Epicurus)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-local-smoke-repair-v1.yaml, ERROR_LOG.md`
+  - `worker_smoke_repair`: `scripts/smoke/**`
+  - `reviewer_smoke_repair`: `review only`
+- verification:
+  - `worker_smoke_repair` added `scripts/smoke/helpers/smoke-fixtures.cjs` and updated the front/customer-center smoke specs so admin and mypage get local session/API mocks and customer-center assertions match the current baseline copy and route behavior
+  - `pnpm run smoke:front` passed with 11/11 green
+  - `pnpm run smoke:cs` passed with 4/4 green
+  - `git diff --check -- scripts/smoke/helpers/smoke-fixtures.cjs scripts/smoke/front-entrypoints.runtime.spec.cjs scripts/smoke/cs-customer-center.smoke.spec.cjs` passed
+  - `reviewer_smoke_repair (Epicurus)` first flagged overly weak chatbot/FAQ assertions; after the follow-up patch the final reviewer pass reported `발견 없음`
+
+- time: `2026-03-24 18:58 +09:00`
+- route: `Route B`
+- task: `Reduce the admin menu navigation latency by removing the whole-document auth stall and fallback-blocking bootstrap in front/admin`
+- participants: `main`, `worker_seed_admin_latency (Carver)`, `worker_seed_scope_refresh (Peirce)`, `worker_admin_front_latency (Dirac)`, `worker_admin_front_followup (Darwin)`, `worker_admin_page_shell_latency (Plato)`, `reviewer_admin_latency (Fermat)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_latency`: `SEED.admin-menu-latency-v1.yaml`
+  - `worker_seed_scope_refresh`: `SEED.admin-menu-latency-v1.yaml`
+  - `worker_admin_front_latency`: `front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
+  - `worker_admin_front_followup`: `front/admin/js/auth_guard.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
+  - `worker_admin_page_shell_latency`: `front/admin/pages/dashboard.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html, front/admin/pages/reservations.html`
+  - `reviewer_admin_latency`: `review only`
+- verification:
+  - `worker_seed_admin_latency (Carver)` first froze `SEED.admin-menu-latency-v1.yaml`, then `worker_seed_scope_refresh (Peirce)` narrowed the contract to the allowed `front/admin` slice after the repository do-not-touch review ruled out `jeju-spring/**`
+  - `worker_admin_front_latency (Dirac)` removed the whole-document `display:none` auth stall, introduced `fetchAdminPayloadInBackground`, rendered dashboard/config-backed pages from fallback data first, and moved live hydration to the background without changing payload shape expectations
+  - `reviewer_admin_latency (Fermat)` first flagged three issues: protected admin UI flash before redirect, stale dashboard seed overwrite risk, and live `defaultTab` not winning on untouched first render
+  - `worker_admin_front_followup (Darwin)` fixed those findings by adding an auth readiness gate that hides only the protected admin shell before session resolution, adding request-token plus current-domain guards to dashboard background hydration, and making live `defaultTab` win until the user explicitly changes tabs on the config-backed pages
+  - `worker_admin_page_shell_latency (Plato)` deferred the blocking `lucide` CDN script on all five admin HTML pages and deferred the blocking `chart.js` CDN script on the dashboard page while keeping `auth_guard.js` early and preserving the existing `DOMContentLoaded` icon bootstrap
+  - `git diff --check -- front/admin/js/auth_guard.js front/admin/js/api_client.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js SEED.admin-menu-latency-v1.yaml STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md` passed apart from an existing CRLF normalization warning on `front/admin/js/auth_guard.js`
+  - touched admin JS files passed `esbuild.transformSync` syntax parsing
+  - `pnpm run guard:text` passed
+  - final `reviewer_admin_latency (Fermat)` pass reported `블로킹 찾지 못했어`
+  - `git diff --check -- front/admin/pages/dashboard.html front/admin/pages/lodging.html front/admin/pages/members.html front/admin/pages/cms.html front/admin/pages/reservations.html` passed
+
+- time: `2026-03-24 20:52 +09:00`
+- route: `Route B`
+- task: `Convert admin navigation to a single-load admin shell that enters once and switches sections without full page reloads`
+- participants: `main`, `worker_seed_admin_shell (Kuhn)`, `worker_admin_shell_pages (Hume)`, `worker_admin_shell_js (Galileo)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, optional ERROR_LOG.md append-only`
+  - `worker_seed_admin_shell`: `SEED.admin-shell-single-load-v1.yaml`
+  - `worker_admin_shell_pages`: `front/admin/pages/dashboard.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html, front/admin/pages/reservations.html`
+  - `worker_admin_shell_js`: `front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js, front/admin/js/rbac_config.js, front/admin/js/sidebar_ui.js, front/admin/js/portal_nav.js, front/admin/js/admin_shell.js`
+- verification:
+  - `worker_seed_admin_shell (Kuhn)` froze `SEED.admin-shell-single-load-v1.yaml` for the front/admin-only single-load shell contract
+  - `worker_admin_shell_pages (Hume)` rewired all five admin HTML entrypoints to load the shared `front/admin/js/admin_shell.js` bootstrap while keeping `auth_guard.js` early and preserving dashboard `chart.js`
+  - observed workspace state now includes a new `front/admin/js/admin_shell.js` runtime that defines shared shell state, registers sections, fetches and swaps `.admin-main` content, and updates history/popstate without touching route constants
+  - `node --check front/admin/js/admin_shell.js` passed locally
+  - sanity check confirmed all five admin HTML entrypoints now reference `../js/admin_shell.js`
+  - task was paused for handoff before reviewer pass and before end-to-end browser verification of direct entry, same-document section switching, and history/popstate behavior
+
+- time: `2026-03-24 19:04 +09:00`
+- route: `Route B`
+- task: `Close out the admin single-load shell handoff by hardening direct entry, shared runtime loading, and stale async section navigation safety`
+- participants: `main`, `worker_admin_shell_js (Averroes/Hypatia/Mendel/Kepler/Turing the 2nd)`, `reviewer_admin_latency (Steward/Athena/Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_shell_js`: `front/admin/js/admin_shell.js, front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/store.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js, front/admin/js/rbac_config.js, front/admin/js/sidebar_ui.js, front/admin/js/portal_nav.js`
+  - `reviewer_admin_latency`: `review only`
+- verification:
+  - `worker_admin_shell_js` added shell-side direct-entry section bootstrap so existing admin URLs no longer depend on page-specific boot scripts being present in HTML
+  - `worker_admin_shell_js` made the shell load shared runtime dependencies itself, switched runtime script de-duplication to absolute URL keys, and exposed `window.AdminStore` so shared sidebar/theme/profile sync can run on direct entry
+  - `worker_admin_shell_js` added navigation tokens, stale async guard checks, boot failure propagation, failed script-node retry handling, rollback remount logic, and deterministic `sidebar_ui -> store` shared runtime ordering in `front/admin/js/admin_shell.js`
+  - `node --check front/admin/js/admin_shell.js` passed
+  - `node --check front/admin/js/auth_guard.js` passed
+  - `node --check front/admin/js/api_client.js` passed
+  - `node --check front/admin/js/store.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `node --check front/admin/js/rbac_config.js` passed
+  - `node --check front/admin/js/sidebar_ui.js` passed
+  - `node --check front/admin/js/portal_nav.js` passed
+  - `git diff --check -- STATE.md front/admin/js/admin_shell.js front/admin/js/auth_guard.js front/admin/js/api_client.js front/admin/js/store.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js front/admin/js/rbac_config.js front/admin/js/sidebar_ui.js front/admin/js/portal_nav.js` passed
+  - `pnpm run guard:text` passed
+  - final reviewer pass reported no blocking findings; residual risk remains that failed section-navigation rollback remounts reset transient in-memory UI state such as unsaved filter/search inputs in the restored section
+  - browser automation and smoke verification were intentionally not run in this close-out because the current workspace rules forbid browser-based final checks unless the user explicitly asks for them
+
+- time: `2026-03-24 19:39 +09:00`
+- route: `Route B`
+- task: `Preserve transient admin section UI state when same-document navigation rolls back after a section mount failure`
+- participants: `main`, `worker_seed_admin_shell_state (Hypatia the 2nd)`, `worker_admin_shell_state (Euler the 2nd/Boyle the 3rd/Fermat the 3rd/Lagrange the 4th)`, `reviewer_admin_latency (Athena the 3rd/Steward the 3rd/Athena the 4th/Athena the 5th)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_shell_state`: `SEED.admin-shell-ui-state-rollback-v1.yaml`
+  - `worker_admin_shell_state`: `front/admin/js/admin_shell.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
+  - `reviewer_admin_latency`: `review only`
+- verification:
+  - `worker_seed_admin_shell_state` froze `SEED.admin-shell-ui-state-rollback-v1.yaml` for rollback-only transient UI state restoration across admin shell failures
+  - `worker_admin_shell_state` added section-level `getState()` snapshots, rollback-only sectionState injection, dashboard domain/range restore handling, async stale-callback invalidation, latest-state recapture before rollback when the previous DOM is still present, and restored direct-entry store-domain tab selection in the config-backed admin sections
+  - `node --check front/admin/js/admin_shell.js` passed
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node --check front/admin/js/lodging.js` passed
+  - `node --check front/admin/js/members.js` passed
+  - `node --check front/admin/js/cms.js` passed
+  - `node --check front/admin/js/reservations.js` passed
+  - `git diff --check -- front/admin/js/admin_shell.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js SEED.admin-shell-ui-state-rollback-v1.yaml STATE.md` passed
+  - `pnpm run lint` passed
+  - final reviewer pass reported `발견 없음`
+  - browser automation and smoke verification were intentionally not run because the current workspace rules forbid browser-based final checks unless the user explicitly asks for them
+
+- time: `2026-03-24 20:02 +09:00`
+- route: `Route B`
+- task: `Add admin shell smoke coverage for direct entry, same-document section switching, and rollback state restoration`
+- participants: `main`, `worker_admin_shell_smoke (Parfit the 5th/Euler the 5th/Gibbs the 6th/Dirac the 6th)`, `reviewer_admin_latency (Steward the 5th/Athena the 6th)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_shell_smoke`: `scripts/smoke/front-entrypoints.runtime.spec.cjs, scripts/smoke/helpers/smoke-fixtures.cjs`
+  - `reviewer_admin_latency`: `review only`
+- verification:
+  - `worker_admin_shell_smoke` added admin direct-entry smoke for `dashboard`, `reservations`, `lodging`, `members`, and `cms`
+  - `worker_admin_shell_smoke` added same-document admin section-switch coverage using a persistent window sentinel to ensure no full reload occurs
+  - `worker_admin_shell_smoke` added rollback-time CMS state restoration coverage after a forced failed section switch and allowed exactly one expected `500 /admin/pages/members.html` in that scenario while keeping all other runtime issues blocking
+  - `worker_admin_shell_smoke` aligned admin smoke title expectations to the runtime shell titles and added an admin-shell-ready wait so non-dashboard direct entry cases do not assert before auth/menu bootstrap finishes
+  - `node --check scripts/smoke/front-entrypoints.runtime.spec.cjs` passed
+  - `node --check scripts/smoke/helpers/smoke-fixtures.cjs` passed
+  - `git diff --check -- scripts/smoke/front-entrypoints.runtime.spec.cjs scripts/smoke/helpers/smoke-fixtures.cjs` passed
+  - `pnpm run smoke:front` passed with `17 passed`
+  - final reviewer pass reported `발견 없음`
+
+- time: `2026-03-25 10:18 +09:00`
+- route: `Route B`
+- task: `Expand the Spring final-runtime baseline to host the three jejuair about pages through front-mirror`
+- participants: `main`, `worker_seed (Helmholtz)`, `worker_about_smoke (Kant)`, `worker_about_host_runtime (Chandrasekhar -> handoff, Feynman)`, `reviewer_jejuair_about_host_only (Averroes)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.jejuair-about-host-only-v1.yaml`
+  - `worker_about_host_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_about_smoke`: `scripts/smoke/front-entrypoints.runtime.spec.cjs`
+  - `reviewer_jejuair_about_host_only`: `review only`
+- verification:
+  - `worker_seed (Helmholtz)` froze `SEED.jejuair-about-host-only-v1.yaml` so only `/jejuair/pages/about/about.html`, `/career.html`, `/ccm.html` enter the host-only baseline and the rest of `/jejuair/pages/**` stays excluded
+  - `worker_about_host_runtime (Chandrasekhar -> handoff, Feynman)` updated `FrontMirrorHostController` plus the two runtime inventory docs so those three paths appear in the host-only boundary and the exclusion language stays narrow
+  - `worker_about_smoke (Kant)` added a representative direct-entry smoke for `/jejuair/pages/about/about.html`
+  - `Select-String` confirmed the three about paths are present in `FrontMirrorHostController`, `docs/front-entrypoint-inventory.md`, and `docs/transition-architecture.md`
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front` passed with `18 passed`
+  - `pnpm run spring:test` passed; Vite emitted a non-blocking existing-style runtime warning about `new URL('/', import.meta.url)` staying unresolved until runtime
+  - `git diff --check -- STATE.md SEED.jejuair-about-host-only-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java docs/front-entrypoint-inventory.md docs/transition-architecture.md scripts/smoke/front-entrypoints.runtime.spec.cjs` passed apart from existing CRLF-to-LF normalization warnings on tracked text files
+  - `reviewer_jejuair_about_host_only (Averroes)` reported `발견 없음`; residual note only mentioned that `career.html` and `ccm.html` are not individually smoke-covered, which stays acceptable under the frozen representative-smoke contract
+
+- time: `2026-03-25 10:29 +09:00`
+- route: `Route B`
+- task: `Finish Spring final-runtime coverage for the remaining human-edited front HTML entrypoints`
+- participants: `main`, `worker_seed (Hilbert)`, `worker_full_host_runtime (Ampere)`, `worker_full_host_verification (Carson)`, `reviewer_full_page_runtime (Boole)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.spring-final-runtime-full-page-coverage-v1.yaml`
+  - `worker_full_host_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_full_host_verification`: `scripts/smoke/front-entrypoints.runtime.spec.cjs`
+  - `reviewer_full_page_runtime`: `review only`
+- verification:
+  - `worker_seed (Hilbert)` froze `SEED.spring-final-runtime-full-page-coverage-v1.yaml` so the remaining 19 `jejuair/pages/...` entrypoints plus `/pages/auth/oauth_callback.html` became the exact full-coverage expansion target while existing covered routes stayed unchanged
+  - `worker_full_host_runtime (Ampere)` added those remaining paths to `FrontMirrorHostController` and aligned `docs/front-entrypoint-inventory.md` plus `docs/transition-architecture.md` to the now-full runtime coverage baseline
+  - `worker_full_host_verification (Carson)` expanded `scripts/smoke/front-entrypoints.runtime.spec.cjs` with direct-entry smoke coverage for the remaining jejuair groups and `/pages/auth/oauth_callback.html`
+  - representative `Select-String` checks confirmed the new baggage, boarding, booking, event, jmembers, pet, and oauth callback paths are present in controller/docs/smoke
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front` passed with `37 passed`
+  - `pnpm run spring:test` passed; the build pipeline regenerated `jeju-spring/src/main/resources/static/front-mirror/**` assets and emitted the same non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved
+  - `git diff --check -- STATE.md SEED.spring-final-runtime-full-page-coverage-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java docs/front-entrypoint-inventory.md docs/transition-architecture.md scripts/smoke/front-entrypoints.runtime.spec.cjs` passed apart from existing CRLF-to-LF normalization warnings on tracked text files
+  - `reviewer_full_page_runtime (Boole)` reported `발견 없음` and confirmed the generated `jeju-spring/src/main/resources/static/front-mirror/**` changes look like expected build-output regeneration rather than scope drift
+
+- time: `2026-03-25 10:42 +09:00`
+- route: `Route B`
+- task: `Remove the obsolete Spring-specific auth template stack now that auth runtime ownership is fully on front-mirror canonical pages`
+- participants: `main`, `worker_seed (Kepler)`, `worker_auth_cleanup (Laplace)`, `worker_readme_followup (Einstein)`, `reviewer_auth_cleanup (Nietzsche)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.auth-legacy-template-cleanup-v1.yaml`
+  - `worker_auth_cleanup`: `jeju-spring/src/main/resources/templates/auth/**, jeju-spring/src/main/resources/static/assets/css/auth/**, jeju-spring/src/main/resources/static/assets/js/auth/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java`
+  - `worker_readme_followup`: `jeju-spring/README.md`
+  - `reviewer_auth_cleanup`: `review only`
+- verification:
+  - `worker_seed (Kepler)` froze `SEED.auth-legacy-template-cleanup-v1.yaml` so canonical auth runtime ownership remains on `/pages/auth/*.html` front-mirror pages, `/auth/*` stays redirect-only, and only the obsolete Spring auth stack is in cleanup scope
+  - `worker_auth_cleanup (Laplace)` deleted `jeju-spring/src/main/resources/templates/auth/*`, `jeju-spring/src/main/resources/static/assets/css/auth/*`, and `jeju-spring/src/main/resources/static/assets/js/auth/*`, and updated `MigrationDashboardFactory` so auth route descriptions match the redirect-alias plus canonical front-mirror model
+  - `worker_readme_followup (Einstein)` removed stale `templates/auth` and auth-helper references from `jeju-spring/README.md`
+  - runtime-source `git grep` for `templates/auth`, `assets/js/auth/`, and `assets/css/auth/` over `jeju-spring/src/main` plus `jeju-spring/README.md` returned no matches
+  - `pnpm run guard:text` passed
+  - `pnpm run spring:test` passed; as before, the build pipeline regenerated `jeju-spring/src/main/resources/static/front-mirror/**` outputs and emitted the same non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved
+  - `git diff --check -- STATE.md SEED.auth-legacy-template-cleanup-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java jeju-spring/README.md jeju-spring/src/main/resources/templates/auth jeju-spring/src/main/resources/static/assets/css/auth jeju-spring/src/main/resources/static/assets/js/auth` passed
+  - `reviewer_auth_cleanup (Nietzsche)` reported `발견 없음` and confirmed the old Spring auth stack no longer reads like an active runtime path while generated asset churn remains unrelated build output
+
+- time: `2026-03-25 13:03 +09:00`
+- route: `Route B`
+- task: `Move mypage off the dedicated Spring frontend template and onto front-mirror canonical delivery`
+- participants: `main`, `worker_seed (Dalton)`, `worker_mypage_runtime (Franklin)`, `worker_mypage_tests (Hubble)`, `reviewer_mypage_cutover (Schrodinger)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.mypage-front-mirror-cutover-v1.yaml`
+  - `worker_mypage_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageController.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/templates/mypage/dashboard.html, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_mypage_tests`: `jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java, scripts/smoke/front-entrypoints.runtime.spec.cjs`
+  - `reviewer_mypage_cutover`: `review only`
+- verification:
+  - `worker_seed (Dalton)` froze `SEED.mypage-front-mirror-cutover-v1.yaml` so `front/pages/mypage/dashboard.html` stays the canonical source, `/pages/mypage/dashboard.html` becomes the canonical front-mirror page, and `/mypage/dashboard` is alias-only
+  - `worker_mypage_runtime (Franklin)` moved canonical mypage delivery into `FrontMirrorHostController`, reduced `MyPageController` to redirect-only alias handling, deleted `templates/mypage/dashboard.html`, and aligned docs to the canonical host-only model
+  - `worker_mypage_tests (Hubble)` updated Spring integration tests and smoke so canonical mypage expects front-mirror DOM markers while `/mypage/dashboard` expects redirect alias behavior
+  - `pnpm run smoke:front` passed
+  - `pnpm run spring:test` passed after the BOM cleanup follow-up on `FrontMirrorHostController.java`
+  - live verification confirmed `GET /pages/mypage/dashboard.html` returns `200` and contains `jeju-page-shell-header`, `mypage-dashboard-root`, and `jeju-page-shell-footer`
+  - live verification confirmed `GET /mypage/dashboard` returns `302` to `/pages/mypage/dashboard.html?shell=main&filter=all`
+  - `reviewer_mypage_cutover (Schrodinger)` reported `발견 없음`; residual risk only noted the usual browser-side JS wiring depth beyond DOM-marker checks
+
+- time: `2026-03-25 12:01 +09:00`
+- route: `Route B`
+- task: `Recover front-mirror parity so regenerated jeju-spring frontend files preserve front source asset resolution semantics`
+- participants: `main`, `worker_seed (Aquinas)`, `worker_front_mirror_recovery (Gauss)`, `reviewer_front_mirror_recovery (Hume)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.spring-front-mirror-parity-recovery-v1.yaml`
+  - `worker_front_mirror_recovery`: `scripts/spring/mirror-front-to-thymeleaf.cjs, regenerated jeju-spring/src/main/resources/templates/front-mirror/**, regenerated jeju-spring/src/main/resources/static/front-mirror/**`
+  - `reviewer_front_mirror_recovery`: `review only`
+- verification:
+  - `worker_seed (Aquinas)` froze `SEED.spring-front-mirror-parity-recovery-v1.yaml` so `front/**` remains the only human-edited source and `front-mirror/**` is treated as regenerated mirror output only
+  - `worker_front_mirror_recovery (Gauss)` updated `scripts/spring/mirror-front-to-thymeleaf.cjs` so relative asset rewriting now respects source `<base href>` semantics before prefixing `/front-mirror/...`
+  - regenerated representative templates now point at the expected asset families, including `/front-mirror/jejuair/css/main.css`, `/front-mirror/jejuair/css/about.css`, `/front-mirror/jejuair/css/ccm_baggage_pet.css`, `/front-mirror/jejuair/css/route.css`, and the matching `/front-mirror/jejuair/js/*.js` assets
+  - `node --check scripts/spring/mirror-front-to-thymeleaf.cjs` passed
+  - `pnpm run spring:test` passed after regeneration; the existing non-blocking Vite warning about `new URL('/', import.meta.url)` remained unchanged
+  - a live Spring response check for `/jejuair/pages/about/about.html` confirmed the page now references `/front-mirror/jejuair/css/main.css`
+  - `reviewer_front_mirror_recovery (Hume)` reported `발견 없음`; residual note only mentioned that `customer_center` remains a separate `.generated` overlay axis outside this front-only parity slice
+
+- time: `2026-03-25 09:34 +09:00`
+- route: `Route B`
+- task: `Restore public runtime URL resolution so auth/header navigation stops leaking /front-mirror/... links on host-only pages`
+- participants: `main`, `worker_route_resolver (Bernoulli)`, `reviewer_auth_public_routes (McClintock)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_route_resolver`: `front/core/utils/path_resolver.js`
+  - `reviewer_auth_public_routes`: `review only`
+- verification:
+  - `worker_route_resolver` changed `front/core/utils/path_resolver.js` so leading-slash public page routes stay origin-rooted while relative asset paths still resolve against `appRoot`
+  - `node --check front/core/utils/path_resolver.js` passed
+  - targeted local check simulating `window.__JEJU_ROUTE_NAVIGATOR__.appRoot = https://example.com/front-mirror/` confirmed `HOME`, `AUTH.LOGIN`, `AUTH.PASS_AUTH`, and `SERVICES.STAY.MAIN` resolve to public origin-rooted URLs while external `SERVICES.RENT_CAR` remains unchanged
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front` passed with `17 passed`
+  - `git diff --check -- front/core/utils/path_resolver.js STATE.md` passed
+  - `reviewer_auth_public_routes (McClintock)` reported `발견 없음`; residual note only mentioned that the non-browser fallback path was not directly exercised by the targeted browser-context verification
+- time: `2026-03-25 12:47 +09:00`
+- route: `Route B`
+- task: `Add representative smoke coverage for front-mirror-backed JEJU STAY activities, hotel-list, and deals entrypoints`
+- participants: `worker_runtime_smoke (gogi)`
+- write_sets:
+  - `worker_runtime_smoke`: `scripts/smoke/front-entrypoints.runtime.spec.cjs`
+- verification:
+  - `pnpm run smoke:front -- --grep "jeju stay (activities|hotel list|deals) smoke"` passed with `3 passed`
+  - `node --check scripts/smoke/front-entrypoints.runtime.spec.cjs` passed
+  - `git diff --check -- scripts/smoke/front-entrypoints.runtime.spec.cjs` passed
+
+- time: `2026-03-25 15:08 +09:00`
+- route: `Route B`
+- task: `Run a full browser-level parity census across every current front-backed canonical host-only page and alias redirect`
+- participants: `main`, `worker_seed (Pascal)`, `worker_parity_report (Poincare)`, `reviewer_parity_census (Lovelace)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.front-parity-census-v1.yaml`
+  - `worker_parity_report`: `docs/front-parity-census-2026-03-25.md`
+  - `reviewer_parity_census`: `review only`
+- verification:
+  - `worker_seed (Pascal)` froze `SEED.front-parity-census-v1.yaml` so the census contract covers every current front-backed canonical host-only route plus the known redirect aliases while excluding dedicated non-front parity pages like `/migration`
+  - main ran a fresh Playwright census outside the shared browser session and checked all 47 canonical host-only routes between `front:3001` and `spring:8080` using final URL, title hash, normalized body-text hash, body class, and structural counts for headings/links/buttons/images
+  - main separately checked all 12 documented alias redirects against `spring:8080` final redirect outcomes
+  - census result: canonical exact matches `29/47`, canonical mismatches `18`, alias redirect outcomes matched `9/12`, alias redirect outcomes differed `3` and those three were the documented auth aliases that intentionally append `?shell=main`
+  - mismatch groups were classified into root wrapper divergence (`/`), cosmetic text drift (`/index.html`, `/pages/mypage/dashboard.html`), auth runtime divergence, JEJU STAY header utility divergence, and admin dashboard divergence
+  - `worker_parity_report (Poincare)` wrote `docs/front-parity-census-2026-03-25.md` with scope, method, grouped findings, customer-center-in-scope confirmation, alias wording corrected to redirect-outcome language, and close-out order
+  - `git diff --check -- STATE.md SEED.front-parity-census-v1.yaml docs/front-parity-census-2026-03-25.md MULTI_AGENT_LOG.md` passed
+  - `reviewer_parity_census (Lovelace)` first caught over-strong alias wording and missing explicit `pages/cs` mention; the report was corrected and the reviewer found no remaining blocking process issue beyond the documented residual risk that the review itself was documentation-focused rather than a second independent browser replay
+
+- time: `2026-03-25 16:03 +09:00`
+- route: `Route B`
+- task: `Fix the shared shell header parity bug on auth/main-shell pages`
+- participants: `main`, `worker_seed (Sartre)`, `worker_shell_header_parity (Mendel)`, `reviewer_shell_header_parity (Boole)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.auth-header-shell-parity-v1.yaml`
+  - `worker_shell_header_parity`: `front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx`
+  - `reviewer_shell_header_parity`: `review only`
+- verification:
+  - `worker_seed (Sartre)` froze `SEED.auth-header-shell-parity-v1.yaml` so the slice stays limited to shared shell header auth-sync timing and main-vs-stay login-route correctness
+  - `worker_shell_header_parity (Mendel)` updated `front/apps/shell/src/runtime/layout/header.ts` to preserve existing per-button `data-route-params` when resetting login buttons and to retry bounded header auth sync when the main header utility area mounts late
+  - `worker_shell_header_parity (Mendel)` updated `front/apps/shell/src/runtime/layout/shellMount.tsx` to trigger one delayed `initHeader()` resync after main/hotel shell mount completion so late-mounted auth pages converge without page-specific hacks
+  - `pnpm --dir front/apps/shell check` passed
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front -- --grep "login page smoke|signup page smoke|jeju stay deals smoke"` passed with `3 passed`
+  - fresh browser verification confirmed `front:3001` and `spring:8080` both render `/pages/auth/login.html` and `/pages/auth/signup.html` with the same top utility state and `indexLoginBtn` targeting `?shell=main`; representative `/jejustay/pages/deals/deals.html` also kept matching `headerAdminBtn` visibility
+  - `reviewer_shell_header_parity (Boole)` reported no blocking finding; residual risk only noted that the extra post-mount `initHeader()` call now relies on existing idempotence guards in header helpers
+
+- time: `2026-03-25 14:24 +09:00`
+- route: `Route B`
+- task: `Close the remaining customer_center parity gap and lock the source -> generated overlay -> spring mirror chain`
+- participants: `main`, `worker_seed (Nash)`, `worker_customer_center_mirror (Dirac)`, `worker_customer_center_docs (Feynman)`, `worker_customer_center_devproxy (Noether)`, `reviewer_customer_center_parity (Schrodinger)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.customer-center-front-mirror-parity-v1.yaml`
+  - `worker_customer_center_mirror`: `scripts/spring/mirror-front-to-thymeleaf.cjs, jeju-spring/src/main/resources/templates/front-mirror/apps/cs/**, jeju-spring/src/main/resources/static/front-mirror/apps/cs/**`
+  - `worker_customer_center_docs`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
+  - `worker_customer_center_devproxy`: `vite.front.config.mjs`
+  - `reviewer_customer_center_parity`: `review only`
+- verification:
+  - `worker_seed (Nash)` froze `SEED.customer-center-front-mirror-parity-v1.yaml` so customer_center stays on the single chain `front/apps/cs -> front/.generated/webapp-overlay/pages/cs -> jeju-spring front-mirror`
+  - `worker_customer_center_mirror (Dirac)` changed `scripts/spring/mirror-front-to-thymeleaf.cjs` so generic spring mirroring excludes raw `front/apps/cs/**` and customer_center delivery comes only from the generated overlay; stale `jeju-spring/src/main/resources/templates/front-mirror/apps/cs/**` and `static/front-mirror/apps/cs/**` outputs were removed
+  - `worker_customer_center_docs (Feynman)` aligned `docs/front-entrypoint-inventory.md` and `docs/transition-architecture.md` to the canonical runtime artifact path `front/.generated/webapp-overlay/pages/cs/customer_center.html` and removed the accidental BOM follow-up
+  - `worker_customer_center_devproxy (Noether)` added unified front dev proxies for `/api/customer-center` and `/api/auth/session` in `vite.front.config.mjs` so `front:3001` customer_center resolves the same backend data boundary as `spring:8080`
+  - browser verification confirmed matching titles and representative markers on `/index.html`, `/pages/auth/login.html`, `/pages/mypage/dashboard.html`, `/jejuair/pages/about/about.html`, `/jejustay/pages/travel/activities.html`, `/jejustay/pages/deals/deals.html`, and `/pages/cs/customer_center.html#/notices`; the original front:3001 notices 404 gap was closed after the dev proxy change
+  - `pnpm run guard:text` passed
+  - `pnpm run smoke:front` passed with `40 passed`
+  - `pnpm run spring:test` passed; the existing non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved stayed unchanged
+  - `git diff --check -- STATE.md SEED.customer-center-front-mirror-parity-v1.yaml vite.front.config.mjs scripts/spring/mirror-front-to-thymeleaf.cjs docs/transition-architecture.md docs/front-entrypoint-inventory.md` passed
+  - `reviewer_customer_center_parity (Schrodinger)` reported no blocking findings; residual risk only noted that future new customer_center backend paths would need to be added to the dev proxy set if the page starts using them

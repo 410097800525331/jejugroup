@@ -39,7 +39,7 @@ Global multi-agent defaults remain in effect unless this file narrows them.
 - Route constants stay aligned with front/core/modules/constants/routes.module.js
 - front is the only human-edited frontend source of truth
 - jeju-spring is the default runtime mirror and jeju-web is retained as a legacy downstream mirror derived from front-led work
-- Current env source of truth: jeju-web/.env
+- Current env source of truth: jeju-spring/.env; jeju-web/.env is legacy-only historical reference
 
 ## Shared Asset Paths
 

@@ -2,42 +2,40 @@
 
 ## Current Task
 
-- task: `Isolate jeju-spring integration tests from the alwaysdata DB path so pnpm run spring:test targets the local test database by default`
+- task: `Fix the shared shell header parity bug so auth/main-shell pages initialize the same admin utility and login-route state on front:3001 and spring:8080`
 - phase: `completed`
-- scope: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-local-db-isolation-v1.yaml, jeju-spring/src/test/**, jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml, and optional ERROR_LOG.md append if new verification blockers appear`
-- verification_target: `pnpm run spring:test no longer resolves datasource/flyway to alwaysdata by default and instead uses the local test DB path or explicit test-only overrides`
+- scope: `STATE.md, MULTI_AGENT_LOG.md, shared shell runtime contract for header auth-sync timing and main-vs-stay login route handling, front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx, and targeted browser verification on auth and representative host-only pages`
+- verification_target: `front:3001 and spring:8080 produce the same header utility/admin/login-link behavior on /pages/auth/login.html, /pages/auth/signup.html, and representative host-only pages after the shared shell runtime fix`
 
 ## Route
 
 - route: `Route B`
-- reason: `This task changes Spring test configuration and requires test changes plus mechanical verification with pnpm run spring:test, which is a hard Route B trigger in this workspace. The isolation logic is tightly coupled around one test-runtime slice, so one worker is allowed and safer than splitting overlapping test ownership.`
+- reason: `This is a new task after the census close-out. It touches shared shell runtime behavior under front/apps/shell, which is a repository hard-trigger boundary, and it changes cross-page header behavior rather than a single page file. Route B is required for a frozen contract, worker-owned implementation, and reviewer verification.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-local-db-isolation-v1.yaml, optional ERROR_LOG.md append-only`
-  - `worker_test_db_isolation`: `jeju-spring/src/test/**, jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml`
-- note: `main stays planner-only for implementation. The isolation logic is concentrated in one test-runtime ownership lane, so a single worker owns the entire write slice to avoid overlapping test config edits.`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.auth-header-shell-parity-v1.yaml`
+  - `worker_shell_header_parity`: `front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx`
+  - `reviewer_shell_header_parity`: `review only`
+- note: `Route B planner-only main. The shared shell fix is confined to one worker-owned runtime slice before targeted browser verification and reviewer close-out.`
 
 ## Contract Freeze
 
-- contract_freeze: `Keep the production/runtime env flow unchanged, but make Spring integration tests stop inheriting the alwaysdata DB path by default. pnpm run spring:test must use a local test DB baseline or explicit test-only overrides, and the change must stay scoped to test/runtime configuration rather than reopening the production cutover contract.`
+- contract_freeze: `The fix is limited to shared shell header runtime behavior. It must make auth/main-shell pages run the same header auth sync/admin utility initialization on front:3001 and spring:8080, and it must stop the main-shell login button from being rewritten to stay-shell routing. No page-specific HTML edits, no docs rewrites, and no unrelated shell redesign are allowed in this slice.`
 
-## Seed
-
-- status: `completed`
-- path: `SEED.spring-test-local-db-isolation-v1.yaml`
+- status: `frozen`
+- path: `SEED.auth-header-shell-parity-v1.yaml`
 - revision: `v1`
-- note: `The next slice freezes around one blocker only: keep production env behavior intact while forcing spring:test to prefer the local test DB path instead of alwaysdata.`
+- note: `The census already identified the auth/main-shell header divergence. This new shared-runtime fix is now frozen as a separate implementation slice.`
 
-## Reviewer
-
-- reviewer: `reviewer_test_db_isolation`
-- reviewer_target: `test-only DB property precedence, production-env non-regression, and spring:test verification integrity`
-- reviewer_focus: `alwaysdata path removal from tests, local DB fallback correctness, Flyway/datasource precedence, and accidental production-runtime drift`
+- reviewer: `reviewer_shell_header_parity`
+- reviewer_target: `shared shell header auth-sync timing and login-route correctness`
+- reviewer_focus: `No regression to shared shell mounting, no incorrect shell parameter rewrite on main-shell auth pages, and no remaining unexplained front:3001 vs spring:8080 header divergence on the targeted routes`
 
 ## Last Update
 
-- timestamp: `2026-03-24 15:06:14 +09:00`
-- note: `Test-only DB precedence now resolves through JEJU_SPRING_TEST_DB_* -> jeju-spring/.env -> localhost, final pnpm run spring:test passed against localhost MySQL, and reviewer closed with no remaining findings while production application.yml stayed unchanged.`
+- timestamp: `2026-03-25 16:03:00 +09:00`
+- note: `Completed the shared-shell header parity fix. front:3001 and spring:8080 now match on auth-page admin utility visibility and main-shell login routing in fresh browser sessions, and the reviewer found no blocking issue.`

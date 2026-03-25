@@ -1,0 +1,23 @@
+goal: >-
+  Add a regression test guard so jeju-spring integration tests fail immediately
+  if the resolved spring:test datasource or Flyway path drifts back to an
+  alwaysdata host by default.
+constraints:
+  - Keep the production/runtime configuration unchanged.
+  - Scope changes to jeju-spring test files only.
+  - Reuse the existing passing spring:test isolation path; do not redesign it in this slice.
+  - The guard should verify resolved test properties, not just static source text.
+  - Avoid brittle assertions that depend on secrets or exact passwords.
+  - Use Route B worker delegation and keep main planner-only for implementation files.
+acceptance_criteria:
+  - spring:test includes an explicit regression test that fails if the resolved test datasource URL contains `alwaysdata`.
+  - The guard also covers the resolved Flyway URL or equivalent effective Flyway connection path.
+  - The added regression test passes on the current localhost-backed spring:test baseline.
+  - The new guard does not require changes to production application.yml or deploy scripts.
+verification:
+  - pnpm run spring:test
+  - git diff --check on the touched files
+out_of_scope:
+  - Further redesign of the test DB isolation helper
+  - Production env-source migration away from jeju-web/.env
+  - Build/deploy/runtime changes outside jeju-spring test files

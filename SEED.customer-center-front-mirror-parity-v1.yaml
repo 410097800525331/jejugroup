@@ -1,0 +1,50 @@
+goal: >
+  Freeze the customer_center parity contract so the only supported flow is
+  front/apps/cs source -> front/.generated/webapp-overlay/pages/cs artifact ->
+  jeju-spring front-mirror runtime, with Spring serving only regenerated mirror
+  output and no hand-made customer_center divergence on the Spring side.
+constraints:
+  - `front/apps/cs` is the human-edited source of truth for customer_center.
+  - `front/.generated/webapp-overlay/pages/cs` is the canonical generated artifact
+    boundary for customer_center delivery.
+  - `jeju-spring` must consume the generated customer_center mirror output only;
+    no manual Spring-side page edits, overrides, or parallel frontend copies are allowed.
+  - The contract must preserve a single deterministic source -> generated overlay ->
+    Spring runtime chain for customer_center.
+  - The freeze is limited to customer_center mirror parity and must not broaden into
+    unrelated route, layout, or runtime redesign work.
+acceptance_criteria:
+  - The seed states that customer_center originates from `front/apps/cs` and is not
+    authored directly inside `jeju-spring`.
+  - The seed states that `front/.generated/webapp-overlay/pages/cs` is the required
+    generated artifact layer between source and Spring runtime.
+  - The seed states that `jeju-spring` serves customer_center only as a regenerated
+    front-mirror of that artifact layer, with no hand-made divergence.
+  - The seed explicitly rejects any Spring-side customer_center page-specific fixups
+    that would create a second frontend source of truth.
+  - Representative parity verification is defined over these routes:
+    - `/index.html`
+    - `/pages/auth/login.html`
+    - `/pages/mypage/dashboard.html`
+    - `/jejuair/pages/about/about.html`
+    - `/jejustay/pages/travel/activities.html`
+    - `/jejustay/pages/deals/deals.html`
+    - `/pages/cs/customer_center.html`
+  - Verification must compare the front runtime and the Spring mirror runtime on the
+    representative routes and confirm the customer_center path follows the frozen chain.
+verification:
+  - Compare the front runtime and Spring mirror runtime for the representative routes
+    listed in acceptance criteria.
+  - Confirm `/pages/cs/customer_center.html` renders from the generated overlay path
+    and not from a hand-edited Spring template or static copy.
+  - Confirm the representative routes remain consistent in navigation, layout, and
+    page resolution between the front runtime and the Spring mirror runtime.
+  - Confirm no Spring-side customer_center divergence is introduced while satisfying
+    the parity check.
+out_of_scope:
+  - Editing any Spring-side customer_center frontend file by hand.
+  - Changing unrelated pages, layouts, or route constants outside the customer_center
+    parity contract.
+  - Reworking the broader front architecture beyond the source -> generated overlay ->
+    Spring mirror chain.
+  - Expanding this seed into a generic cross-site parity program.

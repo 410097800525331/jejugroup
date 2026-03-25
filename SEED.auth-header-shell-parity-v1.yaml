@@ -1,0 +1,29 @@
+goal: >
+  Freeze a deterministic contract for the shared shell header hotfix so
+  auth and main-shell pages served on front:3001 and spring:8080 both run
+  the same header auth sync/admin utility initialization, and the main-shell
+  login button keeps main-shell routing instead of being rewritten to
+  stay-shell routing.
+constraints:
+  - "The contract is limited to shared shell header runtime behavior."
+  - "Auth and main-shell pages on front:3001 and spring:8080 must share the same header auth sync/admin utility initialization path."
+  - "The main-shell login button must preserve main-shell routing semantics."
+  - "The main-shell login button must not be rewritten to stay-shell routing."
+  - "The seed must stay deterministic and avoid host-specific branching, timing-dependent behavior, or ad hoc page-only fixes."
+  - "No unrelated shell chrome, backend, mirror, or layout changes are admitted by this contract."
+acceptance_criteria:
+  - "On front:3001, the auth and main-shell pages initialize the header auth sync/admin utility path the same way."
+  - "On spring:8080, the same auth and main-shell pages initialize the same header auth sync/admin utility path."
+  - "The main-shell login button resolves through main-shell routing on both hosts."
+  - "The main-shell login button is not rewritten to stay-shell routing on either host."
+  - "The frozen contract can be validated by comparing the same target pages across both hosts and observing identical header initialization plus identical login-button routing semantics."
+verification:
+  - "Review the frozen seed against STATE.md before implementation."
+  - "Open the target auth and main-shell pages on front:3001 and spring:8080 and compare header auth sync/admin utility initialization."
+  - "Confirm the main-shell login button target remains main-shell routing on both hosts."
+  - "Confirm no stay-shell routing rewrite is applied to the main-shell login button."
+out_of_scope:
+  - "Changing unrelated shell chrome, footer behavior, or page layout."
+  - "Editing backend templates, deployment mirrors, or non-header runtime code."
+  - "Adding new auth flows, login UX redesign, or shell selection policy changes."
+  - "Fixing anything beyond shared header auth sync/admin utility initialization and main-shell login-button routing parity."

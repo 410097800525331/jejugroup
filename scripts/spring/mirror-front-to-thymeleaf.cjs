@@ -11,6 +11,7 @@ const generatedRuntimeDir = path.join(frontDir, '.generated', 'webapp-overlay', 
 const customerCenterOverlayDir = path.join(frontDir, '.generated', 'webapp-overlay', 'pages', 'cs');
 const customerCenterTemplateDir = path.join(templateMirrorDir, 'pages', 'cs');
 const customerCenterStaticDir = path.join(staticMirrorDir, 'pages', 'cs');
+const customerCenterFrontSourcePrefix = path.posix.join('apps', 'cs');
 
 const EXCLUDED_BASENAMES = new Set([
   '.git',
@@ -54,6 +55,7 @@ const URL_ATTRS = new Map([
   ['poster', 'th:poster'],
   ['action', 'th:action'],
 ]);
+const BASE_TAG_PLACEHOLDER = '__FRONT_MIRROR_BASE_TAG_PLACEHOLDER__';
 
 const parseArgs = (argv) => {
   const options = {
@@ -94,6 +96,10 @@ const isHtmlFile = (relativePath) => HTML_EXTENSIONS.has(path.posix.extname(rela
 const isStaticCandidate = (relativePath) =>
   STATIC_EXTENSIONS.has(path.posix.extname(relativePath).toLowerCase());
 
+const isExcludedGenericMirrorPath = (relativePath) =>
+  relativePath === customerCenterFrontSourcePrefix ||
+  relativePath.startsWith(`${customerCenterFrontSourcePrefix}/`);
+
 const isExternalUrl = (value) =>
   /^(?:[a-z]+:)?\/\//i.test(value) ||
   value.startsWith('data:') ||
@@ -114,8 +120,7 @@ const splitUrlParts = (value) => {
   };
 };
 
-const resolveFrontRelativePath = (htmlRelativePath, rawUrl) => {
-  const htmlDir = path.posix.dirname(htmlRelativePath);
+const resolveFrontRelativePath = (referencePath, rawUrl) => {
   const { pathname, suffix } = splitUrlParts(rawUrl);
 
   if (!pathname || isExternalUrl(pathname)) {
@@ -124,7 +129,7 @@ const resolveFrontRelativePath = (htmlRelativePath, rawUrl) => {
 
   const normalizedPath = pathname.startsWith('/')
     ? path.posix.normalize(pathname).replace(/^\/+/, '')
-    : path.posix.normalize(path.posix.join(htmlDir, pathname));
+    : path.posix.normalize(path.posix.join(referencePath, pathname));
 
   if (!normalizedPath || normalizedPath.startsWith('..')) {
     return null;
@@ -136,8 +141,19 @@ const resolveFrontRelativePath = (htmlRelativePath, rawUrl) => {
   };
 };
 
-const buildMirrorUrl = (htmlRelativePath, rawUrl, attrName) => {
-  const resolved = resolveFrontRelativePath(htmlRelativePath, rawUrl);
+const resolveDocumentBasePath = (htmlRelativePath, baseHref) => {
+  const htmlDir = path.posix.dirname(htmlRelativePath);
+
+  if (!baseHref) {
+    return htmlDir;
+  }
+
+  const resolved = resolveFrontRelativePath(htmlDir, baseHref);
+  return resolved ? resolved.relativePath : htmlDir;
+};
+
+const buildMirrorUrl = (referencePath, rawUrl, attrName) => {
+  const resolved = resolveFrontRelativePath(referencePath, rawUrl);
   if (!resolved) {
     return null;
   }
@@ -161,6 +177,19 @@ const buildMirrorUrl = (htmlRelativePath, rawUrl, attrName) => {
   };
 };
 
+const buildMirrorBaseHref = (htmlRelativePath, baseHref) => {
+  const baseTagReferencePath = path.posix.dirname(htmlRelativePath);
+  const resolved = resolveFrontRelativePath(baseTagReferencePath, baseHref);
+
+  if (!resolved) {
+    return null;
+  }
+
+  const basePathName = resolved.relativePath.replace(/\/+$/, '');
+  const basePath = basePathName ? `/front-mirror/${basePathName}/` : '/front-mirror/';
+  return basePath;
+};
+
 const ensureHtmlNamespace = (source) => {
   if (!/<html\b/i.test(source) || /xmlns:th=/i.test(source)) {
     return source;
@@ -169,9 +198,9 @@ const ensureHtmlNamespace = (source) => {
   return source.replace(/<html\b([^>]*)>/i, '<html$1 xmlns:th="http://www.thymeleaf.org">');
 };
 
-const rewriteUrlAttributes = (source, htmlRelativePath) =>
+const rewriteUrlAttributes = (source, referencePath) =>
   source.replace(/\s(href|src|poster|action)=(['"])([^'"]*)\2/gi, (match, attrName, quote, attrValue) => {
-    const rewritten = buildMirrorUrl(htmlRelativePath, attrValue, attrName.toLowerCase());
+    const rewritten = buildMirrorUrl(referencePath, attrValue, attrName.toLowerCase());
     if (!rewritten || !rewritten.thymeleafAttr) {
       return match;
     }
@@ -179,9 +208,9 @@ const rewriteUrlAttributes = (source, htmlRelativePath) =>
     return ` ${rewritten.thymeleafAttr}="@{${rewritten.thymeleafUrl}}" ${attrName}=${quote}${rewritten.literalUrl}${quote}`;
   });
 
-const rewriteDynamicImports = (source, htmlRelativePath) =>
+const rewriteDynamicImports = (source, referencePath) =>
   source.replace(/import\((['"])([^'"]+)\1\)/g, (match, quote, importPath) => {
-    const rewritten = buildMirrorUrl(htmlRelativePath, importPath, 'src');
+    const rewritten = buildMirrorUrl(referencePath, importPath, 'src');
     if (!rewritten) {
       return match;
     }
@@ -190,9 +219,27 @@ const rewriteDynamicImports = (source, htmlRelativePath) =>
   });
 
 const transformHtmlSource = (source, htmlRelativePath) => {
-  let transformed = ensureHtmlNamespace(source);
-  transformed = rewriteUrlAttributes(transformed, htmlRelativePath);
-  transformed = rewriteDynamicImports(transformed, htmlRelativePath);
+  const baseTagMatch = source.match(/<base\b([^>]*?)\bhref=(['"])([^'"]*)\2([^>]*?)>/i);
+  const baseHref = baseTagMatch ? baseTagMatch[3] : null;
+  const documentBasePath = resolveDocumentBasePath(htmlRelativePath, baseHref);
+  const baseTagReplacement = baseHref ? buildMirrorBaseHref(htmlRelativePath, baseHref) : null;
+
+  let transformed = source;
+  if (baseTagMatch && baseTagReplacement) {
+    transformed = transformed.replace(baseTagMatch[0], BASE_TAG_PLACEHOLDER);
+  }
+
+  transformed = ensureHtmlNamespace(transformed);
+  transformed = rewriteUrlAttributes(transformed, documentBasePath);
+  transformed = rewriteDynamicImports(transformed, documentBasePath);
+
+  if (baseTagMatch && baseTagReplacement) {
+    transformed = transformed.replace(
+      BASE_TAG_PLACEHOLDER,
+      `<base th:href="@{${baseTagReplacement}}" href="${baseTagReplacement}">`,
+    );
+  }
+
   return transformed;
 };
 
@@ -205,12 +252,16 @@ const collectFrontFiles = async (currentDir, files = []) => {
       continue;
     }
 
+    const relativePath = toPosix(path.relative(frontDir, absolutePath));
+    if (isExcludedGenericMirrorPath(relativePath)) {
+      continue;
+    }
+
     if (entry.isDirectory()) {
       await collectFrontFiles(absolutePath, files);
       continue;
     }
 
-    const relativePath = toPosix(path.relative(frontDir, absolutePath));
     files.push({
       absolutePath,
       relativePath,
@@ -265,9 +316,7 @@ const copyCustomerCenterOverlay = async (options) => {
   }
 
   const htmlSourcePath = path.join(customerCenterOverlayDir, 'customer_center.html');
-  const assetsSourceDir = path.join(customerCenterOverlayDir, 'assets');
   const htmlTargetPath = path.join(customerCenterTemplateDir, 'customer_center.html');
-  const assetsTargetDir = path.join(customerCenterStaticDir, 'assets');
 
   if (!options.dryRun) {
     await fs.ensureDir(customerCenterTemplateDir);
@@ -279,9 +328,13 @@ const copyCustomerCenterOverlay = async (options) => {
       await fs.writeFile(htmlTargetPath, transformed, 'utf8');
     }
 
-    if (await fs.pathExists(assetsSourceDir)) {
-      await fs.copy(assetsSourceDir, assetsTargetDir, { overwrite: true });
-    }
+    await fs.copy(customerCenterOverlayDir, customerCenterStaticDir, {
+      overwrite: true,
+      filter: (sourcePath) => {
+        const baseName = path.basename(sourcePath);
+        return baseName !== '.gitkeep' && baseName !== 'customer_center.html';
+      },
+    });
   }
 
   return true;

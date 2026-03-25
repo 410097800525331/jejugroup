@@ -92,6 +92,23 @@ const getLoginButton = () => {
   return document.getElementById("headerLoginBtn") || document.getElementById("indexLoginBtn");
 };
 
+const resolveLoginRouteParams = (loginButton: HTMLElement) => {
+  const rawRouteParams = loginButton.getAttribute("data-route-params");
+  if (rawRouteParams) {
+    try {
+      const parsedRouteParams = JSON.parse(rawRouteParams) as { shell?: unknown };
+      if (typeof parsedRouteParams.shell === "string" && parsedRouteParams.shell.trim() !== "") {
+        return { shell: parsedRouteParams.shell.trim() };
+      }
+    } catch (_error) {
+    }
+  }
+
+  return {
+    shell: loginButton.id === "headerLoginBtn" ? "stay" : "main",
+  };
+};
+
 const getHotelAuthUtilityButton = () => {
   return document.getElementById("headerAuthActionBtn");
 };
@@ -207,12 +224,14 @@ const updateLoginButtonAsLogin = (loginButton: HTMLElement & { href?: string }) 
     loginButton.textContent = "로그인";
   }
 
+  const loginRouteParams = resolveLoginRouteParams(loginButton);
+
   if ("href" in loginButton) {
-    loginButton.href = resolveRoute("AUTH.LOGIN", { shell: "stay" });
+    loginButton.href = resolveRoute("AUTH.LOGIN", loginRouteParams);
   }
 
   loginButton.setAttribute("data-route", "AUTH.LOGIN");
-  loginButton.setAttribute("data-route-params", '{"shell":"stay"}');
+  loginButton.setAttribute("data-route-params", JSON.stringify(loginRouteParams));
   loginButton.removeAttribute("data-logout-bound");
 };
 
@@ -303,7 +322,7 @@ const canOpenAdmin = async () => {
   }
 };
 
-const syncHeaderAuthState = async () => {
+const syncHeaderAuthState = async (attempt = 0) => {
   const adminButton = document.getElementById("headerAdminBtn");
   const loginButton = getLoginButton() as (HTMLElement & { href?: string }) | null;
   const utilityButton = getHotelAuthUtilityButton();
@@ -340,12 +359,15 @@ const syncHeaderAuthState = async () => {
 
   if (localAdmin && indexHeaderUtil) {
     appendIndexAdminLink(indexHeaderUtil);
+  } else if (localAdmin && loginButton?.id === "indexLoginBtn" && attempt < 5) {
+    queueHeaderAuthSync(attempt + 1);
+    return;
   }
 
   hydrateLucideIcons();
 };
 
-const queueHeaderAuthSync = () => {
+const queueHeaderAuthSync = (attempt = 0) => {
   if (headerAuthSyncQueued) {
     return;
   }
@@ -353,7 +375,7 @@ const queueHeaderAuthSync = () => {
   headerAuthSyncQueued = true;
   setTimeout(async () => {
     headerAuthSyncQueued = false;
-    await syncHeaderAuthState();
+    await syncHeaderAuthState(attempt);
   }, 0);
 };
 

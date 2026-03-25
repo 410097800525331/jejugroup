@@ -111,12 +111,12 @@ frontend_source = "front"
 active_deploy_base = "jeju-spring final runtime baseline ROOT.war"
 deploy_target = "alwaysdata"
 deploy_method = "custom deployment script uploads the jeju-spring ROOT.war to alwaysdata first"
-shared_env_source = "jeju-web/.env"
-shared_db_source = "legacy DB contract via jeju-web/.env"
+shared_env_source = "jeju-spring/.env"
+shared_db_source = "runtime env keys owned by jeju-spring/.env"
 runtime_summary = "jeju-spring final runtime baseline + WAR deployment"
 notes = [
   "front is edited as the source and mirrored into jeju-spring for the default deployment path",
-  "jeju-spring also references jeju-web/.env in the current transitional setup",
+  "jeju-spring now owns the shared env baseline; jeju-web/.env is historical only",
 ]
 
 [deployment_goal]
@@ -136,9 +136,9 @@ preferred_candidate = "VM + external Tomcat + WAR deployment"
 docker_plan = "undecided"
 
 [env_strategy]
-current_env_source_of_truth = "jeju-web/.env"
-current_usage = "jeju-spring reads the shared env from jeju-web right now"
-future_plan = "copy jeju-web/.env into jeju-spring and move runtime configuration ownership to Spring"
+current_env_source_of_truth = "jeju-spring/.env"
+current_usage = "jeju-spring reads the shared env from jeju-spring/.env by default"
+future_plan = "keep jeju-web/.env as a historical compatibility reference and preserve JEJU_SHARED_ENV_PATH override behavior"
 target_env_source_of_truth = "jeju-spring runtime env"
 
 [ux]
@@ -215,7 +215,7 @@ avoid = [
 zones = [
   "alwaysdata 배포 스크립트 실행",
   "ROOT.war 패키징 또는 업로드 방식 변경",
-  "jeju-web/.env 또는 jeju-spring 런타임 env 변경",
+  "jeju-spring/.env changes or legacy-only jeju-web/.env reference",
   "Oracle Cloud 전환 관련 설정 변경",
   "jeju-web/src/main/webapp/** 또는 jeju-spring/** 직접 수정",
 ]

@@ -5,12 +5,11 @@ spring:
     import: "optional:file:${JEJU_SHARED_ENV_PATH:./.env}[.properties]"
   datasource:
     url: ${DB_URL:${ALWAYSDATA_DB_URL:jdbc:mysql://localhost:3306/jejugroup_db?characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true}}
-    username: ${DB_USER:${jejugroup}}
+    username: ${DB_USER:${ALWAYSDATA_DB_USER:jejugroup}}
     password: ${DB_PASSWORD:${ALWAYSDATA_DB_PASSWORD:}}
     driver-class-name: com.mysql.cj.jdbc.Driver
   flyway:
     enabled: true
-    baseline-on-migrate: true
     locations: classpath:db/migration
   thymeleaf:
     cache: false
@@ -26,7 +25,7 @@ management:
   endpoint:
     health:
       probes:
-        enabled: false
+        enabled: true
 
 info:
   app:
@@ -37,8 +36,10 @@ app:
   migration:
     shared-env-path: ${JEJU_SHARED_ENV_PATH:./.env}
     notes:
-      - front stays as the editable source until each page is migrated to Thymeleaf
-      - jeju-web deploy credentials remain the shared source for alwaysdata and ssh
+      - front remains the editable source for browser content in the current final-runtime baseline
+      - Spring host-only routes already count as completed runtime coverage in this baseline
+      - jeju-spring/.env is the default shared env source for Spring runtime and deploy helpers
+      - set JEJU_SHARED_ENV_PATH when a different shared env file is needed
       - auth APIs now run on Spring MVC, but DB access still follows the legacy users table contract
   alwaysdata:
     db-url: ${DB_URL:${ALWAYSDATA_DB_URL:jdbc:mysql://localhost:3306/jejugroup_db?characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true}}

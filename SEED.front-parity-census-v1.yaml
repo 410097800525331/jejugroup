@@ -1,0 +1,25 @@
+goal: Freeze a deterministic contract for a full browser-level parity census across every current front-backed canonical host-only page and known redirect aliases, comparing the current front source-of-truth runtime against the jeju-spring runtime baseline.
+constraints:
+  - Use the current conversation and `STATE.md` as the source of truth for scope, route ownership, and verification intent.
+  - Check only current front-backed canonical host-only pages from the runtime inventory plus the known redirect aliases already documented in the repository.
+  - Compare behavior at the browser level using live runtime behavior, not static source diffs.
+  - Treat `front` as the human-edited source of truth and `jeju-spring` as the current deployment mirror baseline for this census.
+  - Keep the census deterministic: the route set, alias set, and pass/fail criteria must be stable for `ooo run` and `ooo evaluate`.
+  - Do not mutate implementation files while freezing the census contract.
+  - Do not include dedicated non-front parity pages in scope, including migration-only parity pages.
+acceptance_criteria:
+  - The census covers every current front-backed canonical host-only page listed in the runtime inventory, including `/`, `/index.html`, the `jejuair`, `pages/auth`, `pages/mypage`, `pages/cs`, `jejustay`, and `admin` host-only surfaces documented in the repository.
+  - The census covers the known redirect aliases documented for those host-only pages, including `/mypage/dashboard`, `/auth/login`, `/auth/signup`, `/auth/pass`, `/deals`, `/deals/member`, `/deals/partner`, `/stay/hotel-list`, `/travel/activities`, `/travel/esim`, `/travel/guide`, and `/travel/tips`.
+  - Each checked path is validated in a browser against both `front:3001` and `spring:8080` using the current runtime behavior.
+  - Every result is classified as either parity confirmed, a deliberate runtime difference that is explicitly explained, or an unresolved gap that is clearly named.
+  - The census does not claim full parity unless the evidence supports every checked canonical page and alias.
+verification:
+  - Open each in-scope path in a browser against `front:3001` and `spring:8080`.
+  - Confirm canonical host-only pages load the expected front-backed content and that redirect aliases resolve to the documented canonical destination or equivalent runtime outcome.
+  - Record any mismatch with the exact path, runtime target, and observed difference.
+  - Verify the final report only states parity for paths actually observed in the browser session.
+out_of_scope:
+  - Dedicated non-front parity pages such as migration-only pages.
+  - Static source comparison, build output comparison, or repo-wide diff checks as a substitute for browser verification.
+  - Changing route constants, shell runtime behavior, deployment mirrors, or any implementation file.
+  - Adding new pages, aliases, or scope beyond the current runtime inventory documented for this census.

@@ -7,9 +7,9 @@
 - `src/main/java/com/jejugroup/jejuspring/config`
   - 공용 환경 변수와 운영 설정 바인딩
 - `src/main/java/com/jejugroup/jejuspring/auth/web`
-  - login/signup/pass Thymeleaf route controller와 Spring MVC auth API controller
+  - `/auth/login` / `/auth/signup` / `/auth/pass` redirect alias controller와 Spring MVC auth API controller
 - `src/main/java/com/jejugroup/jejuspring/auth/view`
-  - login/signup/pass 화면 모델 record
+  - `/pages/auth/*.html` front-mirror 화면 모델 record
 - `src/main/java/com/jejugroup/jejuspring/auth/model`
   - 세션 사용자와 signup payload 모델
 - `src/main/java/com/jejugroup/jejuspring/auth/application`
@@ -46,8 +46,8 @@
   - deals coupon/card/page 화면 모델 record
 - `src/main/resources/templates/fragments`
   - 공용 Thymeleaf head 조각
-- `src/main/resources/templates/auth`
-  - login/signup/pass 템플릿
+- `src/main/resources/templates/front-mirror/pages/auth`
+  - login/signup/pass canonical front-mirror 템플릿
 - `src/main/resources/templates/migration`
   - migration status 대시보드
 - `src/main/resources/templates/mypage`
@@ -61,7 +61,7 @@
 - `src/main/resources/static/assets/css`
   - `app.css`는 공용 스타일, 나머지는 페이지 전용 스타일
 - `src/main/resources/static/assets/js`
-  - auth/travel 페이지 helper 스크립트
+  - travel 페이지 helper 스크립트
 
 ## 엔드포인트
 

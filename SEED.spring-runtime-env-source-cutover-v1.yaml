@@ -1,0 +1,27 @@
+goal: >-
+  Cut the remaining jeju-web/.env runtime dependency by making jeju-spring/.env
+  the default env source for Spring runtime and deploy helpers, while keeping an
+  explicit override path available when needed.
+constraints:
+  - Keep the current build/deploy/page-host cutover intact.
+  - Do not modify secrets or actual .env values in source control.
+  - Preserve an explicit override path via JEJU_SHARED_ENV_PATH or equivalent helper behavior where appropriate.
+  - Keep the deploy helper contract compatible with the existing key names already present in jeju-spring/.env.
+  - Update env examples and workspace contract docs to reflect the new default baseline.
+  - Use Route B worker delegation and keep main planner-only for implementation files.
+acceptance_criteria:
+  - The default helper path for deploy/runtime env resolution no longer requires jeju-web/.env.
+  - jeju-spring/.env is the documented default env source for runtime/deploy use.
+  - Any remaining legacy reference to jeju-web/.env is either removed or explicitly documented as legacy-only rather than default behavior.
+  - jeju-spring/.env.example reflects the default helper/runtime keys needed for the current baseline.
+  - pnpm run build still passes.
+  - pnpm run spring:test still passes.
+verification:
+  - pnpm run build
+  - pnpm run spring:test
+  - git diff --check on the touched files
+out_of_scope:
+  - Rotating or editing real secret values
+  - Removing jeju-web/.env from the repository entirely
+  - Oracle Cloud migration work
+  - Reworking deploy semantics beyond env-source defaults

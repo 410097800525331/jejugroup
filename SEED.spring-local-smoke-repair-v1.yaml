@@ -1,0 +1,25 @@
+goal: >-
+  Repair the remaining local smoke blockers for admin, mypage, and
+  customer-center so the current Spring final-runtime baseline can be verified
+  end-to-end with the repository smoke commands.
+constraints:
+  - Keep the just-frozen final-runtime policy intact.
+  - Limit implementation to smoke harness files under scripts/smoke/**.
+  - Do not weaken runtime-issue detection; requestfailed and 4xx/5xx checks stay meaningful.
+  - It is allowed to add local mock API responses, seed session state, and refresh stale UI text assertions when they reflect the current product baseline.
+  - Do not introduce external-domain smoke dependencies.
+  - Use Route B worker delegation and keep main planner-only for implementation files.
+acceptance_criteria:
+  - pnpm run smoke:front passes.
+  - pnpm run smoke:cs passes.
+  - admin smoke no longer depends on a dead localhost:9090/jeju-web API path.
+  - mypage smoke seeds whatever local session/mock state is required to reach the dashboard layout honestly.
+  - customer-center smoke asserts against the current UI copy and route behavior rather than stale text.
+verification:
+  - pnpm run smoke:front
+  - pnpm run smoke:cs
+  - git diff --check on the touched files
+out_of_scope:
+  - Production runtime code changes outside smoke harness files
+  - Reopening the final-runtime policy decisions
+  - External-domain smoke verification

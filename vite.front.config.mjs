@@ -10,6 +10,8 @@ const customerCenterDevBase = "/__cs_dev__/";
 const customerCenterRoutePath = "/pages/cs/customer_center.html";
 const bootstrapRoutePath = "/components/runtime/bootstrap.js";
 const shellRuntimeRoutePath = "/components/runtime/shell-runtime.js";
+const springRuntimeOrigin = "http://127.0.0.1:8080";
+const springRuntimeProxyPaths = ["/api/customer-center", "/api/auth/session"];
 const shellRuntimeSourcePath = "/apps/shell/src/runtime/index.ts";
 const bootstrapSourcePath = "/apps/shell/src/runtime/bootstrap.js";
 const bootstrapVirtualModuleId = "virtual:jeju-runtime-bootstrap";
@@ -198,6 +200,15 @@ export default defineConfig({
     host: "127.0.0.1",
     port: resolveFrontPort(),
     strictPort: true,
+    proxy: Object.fromEntries(
+      springRuntimeProxyPaths.map((proxyPath) => [
+        proxyPath,
+        {
+          changeOrigin: true,
+          target: springRuntimeOrigin,
+        },
+      ]),
+    ),
     fs: {
       strict: true,
       allow: [rootDir],

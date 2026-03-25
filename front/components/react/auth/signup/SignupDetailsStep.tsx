@@ -115,17 +115,6 @@ export const SignupDetailsStep = () => {
 
       <StatusMessage className="signup-submit-feedback" message={errorMessage} tone="error" />
 
-      <div style={{ background: '#ffeeee', padding: '10px', fontSize: '12px', marginTop: '10px', borderRadius: '4px' }}>
-        <strong>[디버그: 다음 항목 중 False인 것을 찾아주세요]</strong><br/>
-        1. 본인인증 완료 (hasVerifiedPass): {String(signup.identity.isVerified && signup.identity.provider === "PASS" && Boolean(signup.identity.birthDate) && Boolean(signup.identity.rrnBackFirstDigit))}<br/>
-        2. 아이디 중복확인 (idChecked): {String(signup.account.idCheckStatus === "success" && signup.account.idCheckedValue === signup.account.userId.trim())} <br/>
-        &nbsp;&nbsp;&nbsp;👉 상세: 상태='{signup.account.idCheckStatus}', 체크된값='{signup.account.idCheckedValue}', 현재값='{signup.account.userId.trim()}'<br/>
-        3. 비밀번호 강도 (passwordReady): {String(signup.account.passwordStrength === "medium" || signup.account.passwordStrength === "strong")}<br/>
-        4. 비밀번호 일치 (passwordMatched): {String(signup.account.passwordConfirmFeedback.tone === "success")}<br/>
-        5. 이메일 형식 (emailReady): {String(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signup.account.email.trim()))}<br/>
-        6. 처리중 여부 (!submitting): {String(!signup.account.submitting)}
-      </div>
-
       <div className="form-actions">
         <button className="btn-primary" disabled={!canSubmit} id="btnSignupSubmit" type="submit">
           {signup.account.submitting ? "가입 처리 중" : "가입 완료"}

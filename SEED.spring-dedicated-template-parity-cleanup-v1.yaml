@@ -1,0 +1,36 @@
+goal: >
+  Freeze a deterministic cleanup contract for dedicated Spring frontend
+  templates so pages that can preserve front parity move to front-mirror-backed
+  runtime handling, while only genuinely server-dependent views remain on
+  dedicated Spring rendering.
+constraints:
+  - `front/**` is the only human-edited source of truth for frontend content.
+  - `templates/front-mirror/**` is a runtime mirror derived from `front/**`, not a hand-authored Spring frontend source.
+  - Dedicated Spring frontend templates such as `templates/index.html`, `templates/travel/**`, `templates/stay/hotel-list.html`, `templates/deals/**`, and `templates/mypage/dashboard.html` must be reclassified by whether they can preserve parity through front-mirror-backed runtime handling.
+  - Purely presentational pages and static-data pages should move to front-mirror-backed runtime handling.
+  - Routes that truly require server-side auth, session state, or DB-backed view assembly may be retained temporarily, but only when front parity cannot be preserved otherwise.
+  - The cleanup contract must not introduce manual Spring-side page-by-page redesigns as a substitute for front parity.
+acceptance_criteria:
+  - The seed explicitly states that `front/**` is the only human-edited frontend source of truth.
+  - The seed explicitly states that `templates/front-mirror/**` is a runtime mirror derived from `front/**`.
+  - The seed classifies purely presentational or static-data pages as candidates to move to front-mirror-backed runtime handling.
+  - The seed allows temporary retention only for routes that genuinely need server-side auth, session, or DB-backed view assembly and cannot preserve parity otherwise.
+  - The seed includes these representative comparison targets:
+    - `/index.html`
+    - `/jejustay/pages/travel/activities.html`
+    - `/jejustay/pages/hotel/hotel-list.html`
+    - `/jejustay/pages/deals/deals.html`
+    - `/pages/mypage/dashboard.html`
+  - The seed makes it clear that those comparison targets are evaluated against front-mirror-backed runtime handling, not against fresh Spring-specific page designs.
+  - The seed is deterministic YAML with stable section ordering and no ambiguous fallback language.
+verification:
+  - Compare the frozen seed against `STATE.md` to confirm the task is limited to dedicated Spring frontend parity cleanup contract freezing.
+  - Verify the acceptance criteria include the required representative comparison targets.
+  - Verify the cleanup rules distinguish between purely presentational or static-data pages and routes that truly require server-side auth, session state, or DB-backed view assembly.
+  - Verify the contract keeps `front/**` as the only human-edited source of truth and treats `templates/front-mirror/**` as a derived runtime mirror.
+  - Verify the seed does not admit manual Spring-side page-by-page replacements as a parity strategy.
+out_of_scope:
+  - Editing any `front/**` source file.
+  - Creating or preserving page-by-page Spring-side hand-designed replacements as the cleanup mechanism.
+  - Reclassifying unrelated Spring runtime behavior outside dedicated frontend template parity cleanup.
+  - Changing non-frontend server logic unless it is strictly needed to support the front-mirror-backed runtime path.

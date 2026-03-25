@@ -1,0 +1,24 @@
+goal: front/admin을 단일 로드 셸로 바꿔, 관리자 진입은 기존 URL 그대로 유지하되 셸 내부 섹션 전환은 전체 페이지 리로드 없이 처리한다.
+constraints:
+  - scope is front/admin only
+  - existing admin URLs must remain valid direct entry points
+  - once inside admin, section switches must happen without full page reload
+  - shared auth/sidebar/theme must initialize once in the shell
+  - preserve current admin information architecture
+  - preserve current admin payload contracts
+acceptance_criteria:
+  - 각 기존 admin URL을 직접 열어도 해당 화면으로 정상 진입한다.
+  - admin 내부에서 섹션을 바꿔도 같은 문서 셸 안에서 전환되고 전체 문서 리로드가 발생하지 않는다.
+  - auth, sidebar, theme의 공통 초기화는 셸 로드당 1회만 수행된다.
+  - 현재 admin IA와 API/payload shape가 깨지지 않는다.
+verification:
+  - existing admin URLs are opened directly and confirmed to land correctly
+  - switching between admin sections is confirmed to stay in the same document without a full reload
+  - shared auth/sidebar/theme bootstrap is confirmed to run once per shell load
+  - current admin endpoint payloads are checked against existing contracts or fixtures for compatibility
+out_of_scope:
+  - changes outside front/admin
+  - route constant changes
+  - deployment mirror changes
+  - admin IA redesign
+  - payload schema changes

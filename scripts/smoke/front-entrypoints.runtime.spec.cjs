@@ -3,18 +3,54 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { expectNoRuntimeIssues, createIssueTracker } = require("./helpers/runtime-issues.cjs");
 const { createStaticServerController } = require("./helpers/static-server.cjs");
+const {
+  installAdminSmokeFixtures,
+  installCustomerCenterSmokeMocks,
+  installOneShotRouteFailure,
+} = require("./helpers/smoke-fixtures.cjs");
 
 const HOST = "127.0.0.1";
 const PORT = 4174;
 const ROOT_DIR = path.resolve("front");
 const GENERATED_WEBAPP_OVERLAY_DIR = path.resolve("front", ".generated", "webapp-overlay");
+const ADMIN_DASHBOARD_RUNTIME_TITLE = "제주 그룹 관리자 대시보드";
+const ADMIN_RUNTIME_TITLES = {
+  dashboard: ADMIN_DASHBOARD_RUNTIME_TITLE,
+  reservations: "예약 관리",
+  lodging: "숙박 관리",
+  members: "회원 관리",
+  cms: "CMS 관리",
+};
 const ENTRY_POINTS = [
   path.join(ROOT_DIR, "index.html"),
   path.join(ROOT_DIR, "admin", "pages", "dashboard.html"),
+  path.join(ROOT_DIR, "jejustay", "pages", "deals", "deals.html"),
+  path.join(ROOT_DIR, "jejustay", "pages", "hotel", "hotel-list.html"),
+  path.join(ROOT_DIR, "jejustay", "pages", "travel", "activities.html"),
   path.join(ROOT_DIR, "jejuair", "index.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "about", "about.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "baggage", "cabinBaggage.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "baggage", "liability.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "baggage", "preorderedBaggage.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "baggage", "transportLimitation.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "boarding", "eDocument.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "boarding", "fastProcedure.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "boarding", "viewCheckin.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "booking", "Availability.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "booking", "payment.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "booking", "route.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "booking", "viewOnOffReservationList.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "event", "event.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "jmembers", "jmembersAirplane.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "jmembers", "jmembersGolf.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "jmembers", "jmembersInsurance.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "jmembers", "jmembersSightseeing.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "pet", "petPass.html"),
+  path.join(ROOT_DIR, "jejuair", "pages", "pet", "petService.html"),
   path.join(ROOT_DIR, "pages", "auth", "login.html"),
   path.join(ROOT_DIR, "pages", "auth", "signup.html"),
   path.join(ROOT_DIR, "pages", "auth", "pass_auth.html"),
+  path.join(ROOT_DIR, "pages", "auth", "oauth_callback.html"),
   path.join(ROOT_DIR, "pages", "mypage", "dashboard.html"),
   path.join(ROOT_DIR, "jejustay", "pages", "hotel", "jejuhotel.html"),
   path.join(ROOT_DIR, "jejustay", "pages", "travel", "travel_checklist.html"),
@@ -25,6 +61,95 @@ const server = createStaticServerController({
   port: PORT,
   rootDirs: [GENERATED_WEBAPP_OVERLAY_DIR, ROOT_DIR],
 });
+
+const ADMIN_DIRECT_ENTRY_CASES = [
+  {
+    sectionId: "dashboard",
+    path: "/admin/pages/dashboard.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#admin-main-chart")).toBeVisible();
+      await expect(page.locator("#admin-kpi-grid .admin-card")).toHaveCount(4);
+      await expect(page.locator("#admin-domain-filters .segment-btn.active")).toHaveText("전체(종합)");
+    },
+  },
+  {
+    sectionId: "reservations",
+    path: "/admin/pages/reservations.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#reservations-table-body tr")).toContainText("예약 관리");
+      await expect(page.locator("#admin-domain-filters .segment-btn.active")).toHaveText("예약");
+    },
+  },
+  {
+    sectionId: "lodging",
+    path: "/admin/pages/lodging.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#lodging-table-body tr")).toContainText("객실 운영");
+      await expect(page.locator('#admin-domain-filters .segment-btn.active')).toHaveText("STAY");
+    },
+  },
+  {
+    sectionId: "members",
+    path: "/admin/pages/members.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#members-table-body tr")).toContainText("홍민지");
+      await expect(page.locator('#admin-domain-filters .segment-btn.active')).toHaveText("회원");
+    },
+  },
+  {
+    sectionId: "cms",
+    path: "/admin/pages/cms.html",
+    assertVisible: async (page) => {
+      await expect(page.locator("#cms-table-body tr")).toContainText("시스템 점검 안내");
+      await expect(page.locator('#admin-domain-filters .segment-btn.active')).toHaveText("공지사항");
+    },
+  },
+];
+
+const JEJUAIR_DIRECT_ENTRY_CASES = [
+  "/jejuair/pages/baggage/cabinBaggage.html",
+  "/jejuair/pages/baggage/liability.html",
+  "/jejuair/pages/baggage/preorderedBaggage.html",
+  "/jejuair/pages/baggage/transportLimitation.html",
+  "/jejuair/pages/boarding/eDocument.html",
+  "/jejuair/pages/boarding/fastProcedure.html",
+  "/jejuair/pages/boarding/viewCheckin.html",
+  "/jejuair/pages/booking/Availability.html",
+  "/jejuair/pages/booking/payment.html",
+  "/jejuair/pages/booking/route.html",
+  "/jejuair/pages/booking/viewOnOffReservationList.html",
+  "/jejuair/pages/event/event.html",
+  "/jejuair/pages/jmembers/jmembersAirplane.html",
+  "/jejuair/pages/jmembers/jmembersGolf.html",
+  "/jejuair/pages/jmembers/jmembersInsurance.html",
+  "/jejuair/pages/jmembers/jmembersSightseeing.html",
+  "/jejuair/pages/pet/petPass.html",
+  "/jejuair/pages/pet/petService.html",
+];
+
+async function assertJejuAirDirectEntry(page, pathName) {
+  await page.goto(server.url(pathName), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle(/제주항공/);
+  await expect(page.locator("body")).toHaveClass(/jejuair-main-content/);
+  await expect(page.locator("header#header_wrap")).toBeVisible();
+  await expect(page.locator("footer#footer_wrap")).toBeVisible();
+}
+
+async function assertHotelShellChrome(page) {
+  await expect(page.locator("#hotel-header-placeholder .header.hotel-shell-header")).toBeVisible();
+  await expect(page.locator("#hotel-footer-placeholder .footer.shell-footer")).toBeVisible();
+}
+
+async function waitForAdminShellReady(page) {
+  await page.waitForFunction(() => {
+    const userName = document.querySelector("#admin-user-name")?.textContent?.trim();
+    const menuLinks = document.querySelectorAll("#admin-sidebar-menu a[data-admin-section]");
+    return userName === "로컬 관리자" && menuLinks.length > 0;
+  }, { timeout: 15000 });
+}
 
 test.beforeAll(async () => {
   for (const entryPoint of ENTRY_POINTS) {
@@ -55,6 +180,8 @@ test("main landing smoke", async ({ page }) => {
 });
 
 test("main landing customer center link routes to bundled customer center page", async ({ page }) => {
+  await installCustomerCenterSmokeMocks(page);
+
   await page.goto(server.url("/index.html"), {
     waitUntil: "domcontentloaded",
   });
@@ -84,18 +211,118 @@ test("login page smoke", async ({ page }) => {
   expectNoRuntimeIssues(issues);
 });
 
-test("admin dashboard smoke", async ({ page }) => {
+for (const testCase of ADMIN_DIRECT_ENTRY_CASES) {
+  test(`admin direct entry smoke: ${testCase.sectionId}`, async ({ page }) => {
+    const issues = createIssueTracker(page);
+
+  await installAdminSmokeFixtures(page);
+  await page.goto(server.url(testCase.path), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await waitForAdminShellReady(page);
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES[testCase.sectionId]);
+  await expect(page.locator(`#admin-sidebar-menu a[data-admin-section="${testCase.sectionId}"]`)).toHaveClass(/active/);
+  await expect(page.locator("#admin-sidebar-toggle")).toBeVisible();
+  await expect(page.locator("#admin-user-name")).toContainText("로컬 관리자");
+  await testCase.assertVisible(page);
+
+    expectNoRuntimeIssues(issues);
+  });
+}
+
+test("admin shell switches sections without full reload", async ({ page }) => {
   const issues = createIssueTracker(page);
+
+  await installAdminSmokeFixtures(page);
 
   await page.goto(server.url("/admin/pages/dashboard.html"), {
     waitUntil: "domcontentloaded",
   });
 
-  await expect(page).toHaveTitle(/관리자 대시보드/);
-  await expect(page.locator("#admin-sidebar-toggle")).toBeVisible();
-  await expect(page.locator("#admin-user-name")).toContainText("로컬 관리자");
+  await waitForAdminShellReady(page);
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES.dashboard);
+
+  const documentMarker = await page.evaluate(() => {
+    window.__adminSmokeDocumentMarker = `doc-${Math.random().toString(36).slice(2)}`;
+    return window.__adminSmokeDocumentMarker;
+  });
+
+  await page.locator('#admin-sidebar-menu a[data-admin-section="lodging"]').click();
+
+  await expect(page).toHaveURL(server.url("/admin/pages/lodging.html"));
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES.lodging);
+  await expect(page.locator('#admin-sidebar-menu a[data-admin-section="lodging"]')).toHaveClass(/active/);
+  await expect(page.locator("#lodging-table-body tr")).toContainText("객실 운영");
+  expect(await page.evaluate(() => window.__adminSmokeDocumentMarker)).toBe(documentMarker);
 
   expectNoRuntimeIssues(issues);
+});
+
+test("admin shell restores cms state after failed section switch", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await installAdminSmokeFixtures(page);
+
+  await page.goto(server.url("/admin/pages/cms.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await waitForAdminShellReady(page);
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES.cms);
+  const documentMarker = await page.evaluate(() => {
+    window.__adminSmokeDocumentMarker = `doc-${Math.random().toString(36).slice(2)}`;
+    return window.__adminSmokeDocumentMarker;
+  });
+  await page.locator('#admin-domain-filters .segment-btn[data-domain="faqs"]').click();
+  await page.locator('.admin-table-actions input[type="text"]').fill("제주");
+  await page.locator('#cms-status-filter').selectOption("inactive");
+
+  await expect(page.locator("#cms-table-body tr")).toContainText("예약 취소는 어떻게 하나요?");
+  await expect(page.locator('.admin-table-actions input[type="text"]')).toHaveValue("제주");
+  await expect(page.locator('#cms-status-filter')).toHaveValue("inactive");
+
+  const beforeRollback = await page.evaluate(() => ({
+    section: document.body.dataset.adminSection,
+    tab: document.querySelector('#admin-domain-filters .segment-btn.active')?.dataset.domain,
+    search: document.querySelector('.admin-table-actions input[type="text"]')?.value,
+    status: document.querySelector('#cms-status-filter')?.value,
+    marker: window.__adminSmokeDocumentMarker,
+  }));
+
+  await installOneShotRouteFailure(page, "**/admin/pages/members.html");
+  await page.locator('#admin-sidebar-menu a[data-admin-section="members"]').click();
+
+  await expect(page).toHaveURL(server.url("/admin/pages/cms.html"));
+  await expect(page).toHaveTitle(ADMIN_RUNTIME_TITLES.cms);
+  await expect(page.locator('#admin-sidebar-menu a[data-admin-section="cms"]')).toHaveClass(/active/);
+  await expect(page.locator('#admin-domain-filters .segment-btn.active')).toHaveAttribute("data-domain", "faqs");
+  await expect(page.locator('.admin-table-actions input[type="text"]')).toHaveValue("제주");
+  await expect(page.locator('#cms-status-filter')).toHaveValue("inactive");
+  await expect(page.locator("#cms-table-body tr")).toContainText("예약 취소는 어떻게 하나요?");
+  expect(await page.evaluate(() => window.__adminSmokeDocumentMarker)).toBe(documentMarker);
+
+  const afterRollback = await page.evaluate(() => ({
+    section: document.body.dataset.adminSection,
+    tab: document.querySelector('#admin-domain-filters .segment-btn.active')?.dataset.domain,
+    search: document.querySelector('.admin-table-actions input[type="text"]')?.value,
+    status: document.querySelector('#cms-status-filter')?.value,
+    marker: window.__adminSmokeDocumentMarker,
+  }));
+
+  expect(afterRollback).toEqual(beforeRollback);
+  const expectedRollbackFailure = `500 ${server.url("/admin/pages/members.html")}`;
+  const filteredResponseErrors = [...issues.responseErrors];
+  const expectedFailureIndex = filteredResponseErrors.indexOf(expectedRollbackFailure);
+
+  if (expectedFailureIndex !== -1) {
+    filteredResponseErrors.splice(expectedFailureIndex, 1);
+  }
+
+  expectNoRuntimeIssues({
+    ...issues,
+    responseErrors: filteredResponseErrors,
+  });
 });
 
 test("jeju air landing smoke", async ({ page }) => {
@@ -112,6 +339,44 @@ test("jeju air landing smoke", async ({ page }) => {
   expectNoRuntimeIssues(issues);
 });
 
+test("jeju air about direct entry smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejuair/pages/about/about.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle("제주항공");
+  await expect(page.locator(".header_intro_section")).toBeVisible();
+  await expect(page.locator(".eco_ideas_list .eco_idea_item")).toHaveCount(3);
+  await expect(page.locator("footer")).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+for (const pathName of JEJUAIR_DIRECT_ENTRY_CASES) {
+  test(`jeju air direct entry smoke: ${pathName}`, async ({ page }) => {
+    const issues = createIssueTracker(page);
+
+    await assertJejuAirDirectEntry(page, pathName);
+
+    expectNoRuntimeIssues(issues);
+  });
+}
+
+test("oauth callback page smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/pages/auth/oauth_callback.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await expect(page).toHaveTitle("OAuth Callback Placeholder");
+  await expect(page.locator("body > h1")).toHaveText(/OAuth/i);
+
+  expectNoRuntimeIssues(issues);
+});
+
 test("login air shell footer smoke", async ({ page }) => {
   const issues = createIssueTracker(page);
 
@@ -121,7 +386,7 @@ test("login air shell footer smoke", async ({ page }) => {
 
   await expect(page.locator(".company_info h3")).toHaveText(/\(주\)\s*제주항공/);
   await expect(page.locator('a[data-route="SERVICES.AIR.ABOUT.COMPANY"]').first()).toBeVisible();
-  await expect(page.locator('img[alt="유튜브"]')).toBeVisible();
+  await expect(page.locator('footer a[href="https://www.youtube.com/@jejuair_official"]').first()).toBeVisible();
 
   expectNoRuntimeIssues(issues);
 });
@@ -159,13 +424,21 @@ test("pass auth page smoke", async ({ page }) => {
 test("mypage dashboard smoke", async ({ page }) => {
   const issues = createIssueTracker(page);
 
+  await page.route("**/api/auth/session", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json; charset=utf-8",
+      body: JSON.stringify({ user: null }),
+    });
+  });
+
   await page.goto(server.url("/pages/mypage/dashboard.html"), {
     waitUntil: "domcontentloaded",
   });
 
-  await expect(page.locator("#mypage-dashboard-root .meta-dashboard-layout")).toBeVisible();
-  await expect(page.locator(".full-width-trip-list")).toBeVisible();
-  await expect(page.getByText("Jeju Ocean Suite")).toBeVisible();
+  await expect(page.locator("#jeju-page-shell-header")).toHaveCount(1);
+  await expect(page.locator("#mypage-dashboard-root")).toBeVisible();
+  await expect(page.locator("#jeju-page-shell-footer")).toHaveCount(1);
 
   expectNoRuntimeIssues(issues);
 });
@@ -180,6 +453,49 @@ test("jeju stay hotel landing smoke", async ({ page }) => {
   await expect(page).toHaveTitle(/JEJU STAY/);
   await expect(page.locator(".hero-subtitle-top")).toBeVisible();
   await expect(page.locator(".deals-section .section-title")).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju stay activities smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejustay/pages/travel/activities.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await assertHotelShellChrome(page);
+  await expect(page.locator("#activityGrid .activity-card").first()).toBeVisible();
+  await expect(page.locator("#filterBar .filter-chip.active")).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju stay hotel list smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejustay/pages/hotel/hotel-list.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await assertHotelShellChrome(page);
+  await expect(page.locator("#hotel-list-search-widget-root .hotel-list-search-widget")).toBeVisible();
+  await expect(page.locator("#hotel-list-page-root .hotel-main-list")).toBeVisible();
+  await expect(page.locator("#hotel-list-page-root .hotel-card-premium").first()).toBeVisible();
+
+  expectNoRuntimeIssues(issues);
+});
+
+test("jeju stay deals smoke", async ({ page }) => {
+  const issues = createIssueTracker(page);
+
+  await page.goto(server.url("/jejustay/pages/deals/deals.html"), {
+    waitUntil: "domcontentloaded",
+  });
+
+  await assertHotelShellChrome(page);
+  await expect(page.locator("#couponGrid .coupon-card").first()).toBeVisible();
+  await expect(page.locator("#dealGrid .deal-card").first()).toBeVisible();
 
   expectNoRuntimeIssues(issues);
 });
