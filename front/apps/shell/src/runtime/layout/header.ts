@@ -367,7 +367,7 @@ const syncHeaderAuthState = async (attempt = 0) => {
   hydrateLucideIcons();
 };
 
-const queueHeaderAuthSync = (attempt = 0) => {
+export const queueHeaderAuthSync = (attempt = 0) => {
   if (headerAuthSyncQueued) {
     return;
   }
@@ -379,12 +379,12 @@ const queueHeaderAuthSync = (attempt = 0) => {
   }, 0);
 };
 
-export const initHeader = (attempt = 0) => {
+export const bindHeaderStructure = (attempt = 0) => {
   const header = getCurrentHeader();
   if (!header) {
     if (attempt < 20) {
       window.setTimeout(() => {
-        initHeader(attempt + 1);
+        bindHeaderStructure(attempt + 1);
       }, 50);
     }
     return;
@@ -395,6 +395,10 @@ export const initHeader = (attempt = 0) => {
   bindMobileMenuToggle();
   initMegaMenu();
   initStaggerNav();
+};
+
+export const initHeader = (attempt = 0) => {
+  bindHeaderStructure(attempt);
   queueHeaderAuthSync();
 };
 

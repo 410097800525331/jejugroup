@@ -1,0 +1,28 @@
+goal: >
+  Freeze a deterministic contract for the shared shell header refinement so
+  auth and main-shell pages keep parity on front:3001 and spring:8080 while
+  the broad post-mount initHeader replay is removed and replaced by a narrower
+  auth-only header resync path.
+constraints:
+  - "The contract is limited to shared shell header runtime behavior."
+  - "`shellMount.tsx` must stop replaying the broad post-mount `initHeader` flow."
+  - "The replacement path must be auth-only and must not expand into a generic post-mount replay."
+  - "Parity on auth and main-shell pages must remain intact on both front:3001 and spring:8080."
+  - "No unrelated shell chrome, layout, backend, mirror, or page-specific HTML changes are admitted by this contract."
+  - "The seed must stay deterministic and avoid host-specific branching, timing-dependent behavior, or ad hoc page-only fixes."
+acceptance_criteria:
+  - "On front:3001, auth and main-shell pages preserve the same header state as before the refinement while using the auth-only resync path."
+  - "On spring:8080, auth and main-shell pages preserve the same header state as before the refinement while using the auth-only resync path."
+  - "The shared shell no longer depends on the broad post-mount `initHeader` replay for parity."
+  - "The auth-only resync path is sufficient to keep header parity for the target auth and main-shell pages on both hosts."
+  - "The frozen contract can be validated by comparing the same target pages across both hosts and observing identical header output without the broad replay path."
+verification:
+  - "Review `STATE.md` before implementation to confirm the task and route stay aligned."
+  - "Validate the target auth and main-shell pages on front:3001 and spring:8080 against the frozen header contract."
+  - "Confirm the broad post-mount `initHeader` replay is absent from the intended runtime path."
+  - "Confirm the auth-only resync path preserves parity on both hosts."
+out_of_scope:
+  - "Changing unrelated shell chrome, footer behavior, or page layout."
+  - "Editing backend templates, deployment mirrors, or non-header runtime code."
+  - "Adding new auth flows, login UX redesign, or shell selection policy changes."
+  - "Fixing anything beyond shared shell header parity and the narrow auth-only resync path."

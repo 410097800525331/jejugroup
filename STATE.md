@@ -2,40 +2,37 @@
 
 ## Current Task
 
-- task: `Fix the shared shell header parity bug so auth/main-shell pages initialize the same admin utility and login-route state on front:3001 and spring:8080`
+- task: `Revert the remaining non-requested Family Sites casing change, then rerun the final parity census and refresh the report against the true current state`
 - phase: `completed`
-- scope: `STATE.md, MULTI_AGENT_LOG.md, shared shell runtime contract for header auth-sync timing and main-vs-stay login route handling, front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx, and targeted browser verification on auth and representative host-only pages`
-- verification_target: `front:3001 and spring:8080 produce the same header utility/admin/login-link behavior on /pages/auth/login.html, /pages/auth/signup.html, and representative host-only pages after the shared shell runtime fix`
+- scope: `STATE.md, front/components/react/layout/FamilyRadialMenu.tsx, derived runtime/mirror outputs, refreshed browser census, and docs/front-parity-census-2026-03-25.md`
+- verification_target: `all non-requested UI changes are reverted and the final parity census/report reflect the true post-revert state`
 
 ## Route
 
-- route: `Route B`
-- reason: `This is a new task after the census close-out. It touches shared shell runtime behavior under front/apps/shell, which is a repository hard-trigger boundary, and it changes cross-page header behavior rather than a single page file. Route B is required for a frozen contract, worker-owned implementation, and reviewer verification.`
+- route: `Route A`
+- reason: `This rollback is a tiny single-source correction plus regenerated outputs and a refreshed read-heavy census/report update. It stays within one narrow authored source slice and does not require parallel implementation ownership.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.auth-header-shell-parity-v1.yaml`
-  - `worker_shell_header_parity`: `front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx`
-  - `reviewer_shell_header_parity`: `review only`
-- note: `Route B planner-only main. The shared shell fix is confined to one worker-owned runtime slice before targeted browser verification and reviewer close-out.`
+  - `main`: `STATE.md, front/components/react/layout/FamilyRadialMenu.tsx, docs/front-parity-census-2026-03-25.md`
+- note: `Route A single-writer rollback/report slice. Regenerated outputs are expected verification side effects, not separate authored sources.`
 
 ## Contract Freeze
 
-- contract_freeze: `The fix is limited to shared shell header runtime behavior. It must make auth/main-shell pages run the same header auth sync/admin utility initialization on front:3001 and spring:8080, and it must stop the main-shell login button from being rewritten to stay-shell routing. No page-specific HTML edits, no docs rewrites, and no unrelated shell redesign are allowed in this slice.`
+- contract_freeze: `The only intended source rollback is restoring the shared footer label from FAMILY SITES back to Family Sites. After that rollback, the browser census and the parity report must be refreshed so they describe the actual current state without relying on my prior ad hoc casing change. No other user-facing copy or runtime behavior may be changed in this slice.`
 
 - status: `frozen`
-- path: `SEED.auth-header-shell-parity-v1.yaml`
+- path: `n/a`
 - revision: `v1`
-- note: `The census already identified the auth/main-shell header divergence. This new shared-runtime fix is now frozen as a separate implementation slice.`
+- note: `Tiny rollback requested directly by the user; no separate seed file is needed.`
 
-- reviewer: `reviewer_shell_header_parity`
-- reviewer_target: `shared shell header auth-sync timing and login-route correctness`
-- reviewer_focus: `No regression to shared shell mounting, no incorrect shell parameter rewrite on main-shell auth pages, and no remaining unexplained front:3001 vs spring:8080 header divergence on the targeted routes`
+- reviewer: `none`
+- reviewer_target: `not used`
+- reviewer_focus: `not used`
 
 ## Last Update
 
-- timestamp: `2026-03-25 16:03:00 +09:00`
-- note: `Completed the shared-shell header parity fix. front:3001 and spring:8080 now match on auth-page admin utility visibility and main-shell login routing in fresh browser sessions, and the reviewer found no blocking issue.`
+- timestamp: `2026-03-25 18:02:00 +09:00`
+- note: `Completed the final cleanup rollback. The non-requested Family Sites casing change was reverted, the final census report was rewritten against the true current state, and the latest exact browser census stands at 44/47 with 12/12 alias redirects matching.`

@@ -1,10 +1,10 @@
-import { c as F, r as K, j as g } from "./react-vendor-BoSfm_Te.js";
-import { M as Y, a as q, H as W } from "./feature-layout-BdQR-b-Q.js";
-import { r as z, c as Q, l as $, a as p, i as X } from "./legacy-core-CKE3csu2.js";
+import { c as V, r as F, j as g } from "./react-vendor-BoSfm_Te.js";
+import { M as K, a as q, H as Y } from "./feature-layout-Ccfd7on-.js";
+import { r as W, c as z, l as Q, a as p, i as $ } from "./legacy-core-CKE3csu2.js";
 const D = () => {
   typeof console < "u" && console.log("Footer interaction initialized");
 };
-let _ = !1, f = null, u = null, d = null;
+let _ = !1, f = null, m = null, d = null;
 const I = () => {
   const e = document.getElementById("header") || document.querySelector(".hotel-shell-header") || document.querySelector(".header");
   if (e) {
@@ -14,19 +14,19 @@ const I = () => {
     }
     e.classList.remove("scrolled");
   }
-}, Z = () => {
+}, X = () => {
   _ || (_ = !0, window.addEventListener("scroll", I), I());
 }, B = () => {
   f !== null && (window.clearTimeout(f), f = null);
 }, P = (e, t) => {
-  t.classList.remove("active"), u === e && (u = null), d === t && (d = null);
+  t.classList.remove("active"), m === e && (m = null), d === t && (d = null);
 }, T = (e, t) => {
-  B(), d && d !== t && u && P(u, d), t.classList.add("active"), u = e, d = t;
+  B(), d && d !== t && m && P(m, d), t.classList.add("active"), m = e, d = t;
 }, N = (e, t) => {
   B(), f = window.setTimeout(() => {
     e.matches(":hover") || t.matches(":hover") || P(e, t);
   }, 120);
-}, ee = () => {
+}, Z = () => {
   document.querySelectorAll(".hotel-shell-nav-item").forEach((t) => {
     if (t.dataset.megaHoverBound === "true")
       return;
@@ -41,7 +41,7 @@ const I = () => {
       N(t, r);
     }));
   });
-}, te = () => {
+}, ee = () => {
   document.querySelectorAll(".hotel-shell-mega-menu-item").forEach((t) => {
     t.dataset.previewHoverBound !== "true" && (t.dataset.previewHoverBound = "true", t.addEventListener("mouseenter", () => {
       const r = t.closest(".hotel-shell-mega-dropdown"), n = t.getAttribute("data-preview"), a = n ? document.getElementById(n) : null;
@@ -54,7 +54,7 @@ const I = () => {
       o && (o.style.display = "none");
     }));
   });
-}, re = () => {
+}, te = () => {
   document.querySelectorAll(".hotel-shell-mega-dropdown").forEach((e) => {
     if (e.dataset.previewInit === "true")
       return;
@@ -62,8 +62,8 @@ const I = () => {
     const t = e.querySelector(".hotel-shell-preview-image");
     t && t.classList.add("active");
   });
-}, ne = () => {
-  Z(), ee(), te(), re();
+}, re = () => {
+  X(), Z(), ee(), te();
 };
 let H = !1;
 const x = (e, t) => {
@@ -98,7 +98,7 @@ const x = (e, t) => {
   });
 }, Me = () => {
   H || (H = !0, document.addEventListener("mainHeaderLoaded", k));
-}, b = "userSession", ae = "jeju:session-updated";
+}, b = "userSession", ne = "jeju:session-updated";
 let M = !1, S = !1;
 const J = () => document.getElementById("header") || document.querySelector(".hotel-shell-header") || document.querySelector(".header"), L = () => {
   const e = J();
@@ -109,13 +109,13 @@ const J = () => document.getElementById("header") || document.querySelector(".ho
     }
     e.classList.remove("scrolled");
   }
-}, oe = () => {
+}, ae = () => {
   if (M) {
     L();
     return;
   }
   M = !0, window.addEventListener("scroll", L), L();
-}, se = () => {
+}, oe = () => {
   document.querySelectorAll(".hotel-shell-mega-menu-item").forEach((t) => {
     t.dataset.previewBound !== "true" && (t.dataset.previewBound = "true", t.addEventListener("mouseenter", () => {
       const r = t.dataset.preview, n = t.closest(".hotel-shell-mega-dropdown");
@@ -127,12 +127,12 @@ const J = () => document.getElementById("header") || document.querySelector(".ho
       });
     }));
   });
-}, ie = () => {
+}, se = () => {
   const e = document.getElementById("mobileMenuBtn"), t = document.getElementById("mobileNav");
   !e || !t || e.dataset.mobileToggleBound !== "true" && (e.dataset.mobileToggleBound = "true", e.addEventListener("click", () => {
     t.classList.toggle("active");
   }));
-}, ce = () => document.getElementById("headerLoginBtn") || document.getElementById("indexLoginBtn"), le = (e) => {
+}, ie = () => document.getElementById("headerLoginBtn") || document.getElementById("indexLoginBtn"), ce = (e) => {
   const t = e.getAttribute("data-route-params");
   if (t)
     try {
@@ -144,14 +144,14 @@ const J = () => document.getElementById("header") || document.querySelector(".ho
   return {
     shell: e.id === "headerLoginBtn" ? "stay" : "main"
   };
-}, de = () => document.getElementById("headerAuthActionBtn"), G = () => document.getElementById("indexReservationCheckBtn"), ue = () => {
+}, le = () => document.getElementById("headerAuthActionBtn"), G = () => document.getElementById("indexReservationCheckBtn"), de = () => {
   const e = G(), t = e == null ? void 0 : e.previousElementSibling;
   return t instanceof HTMLElement && t.classList.contains("util-divider") ? t : null;
-}, me = () => (document.documentElement.getAttribute("lang") || document.documentElement.lang || "ko").trim().toLowerCase(), he = (e, t) => {
+}, ue = () => (document.documentElement.getAttribute("lang") || document.documentElement.lang || "ko").trim().toLowerCase(), me = (e, t) => {
   const r = e.querySelector("[data-auth-label]");
   if (!r)
     return null;
-  const a = me().startsWith("ko");
+  const a = ue().startsWith("ko");
   return t ? a ? r.dataset.authMemberLabelKo || r.dataset.authMemberLabelEn || "마이페이지" : r.dataset.authMemberLabelEn || r.dataset.authMemberLabelKo || "My Page" : a ? r.dataset.authLabelKo || r.dataset.authLabelEn || "비회원 예약확인" : r.dataset.authLabelEn || r.dataset.authLabelKo || "Guest Reservation Check";
 }, j = (e = 0) => {
   const t = window.lucide;
@@ -162,43 +162,43 @@ const J = () => document.getElementById("header") || document.querySelector(".ho
   e >= 30 || window.setTimeout(() => {
     j(e + 1);
   }, 100);
-}, fe = async (e) => {
+}, he = async (e) => {
   const t = e.querySelector("span");
   t ? t.textContent = "로그아웃" : e.textContent = "로그아웃", "href" in e && (e.href = "#"), e.removeAttribute("data-route"), e.dataset.logoutBound !== "true" && (e.dataset.logoutBound = "true", e.addEventListener("click", async (r) => {
     r.preventDefault(), r.stopPropagation();
     try {
-      await $();
+      await Q();
     } catch {
       localStorage.removeItem(b);
     }
     window.location.reload();
   }));
-}, ge = (e) => {
+}, fe = (e) => {
   if (e.dataset.logoutBound === "true") {
     const n = e.cloneNode(!0);
     n.removeAttribute("data-logout-bound"), e.replaceWith(n), e = n;
   }
   const t = e.querySelector("span");
   t ? t.textContent = "로그인" : e.textContent = "로그인";
-  const r = le(e);
+  const r = ce(e);
   "href" in e && (e.href = p("AUTH.LOGIN", r)), e.setAttribute("data-route", "AUTH.LOGIN"), e.setAttribute("data-route-params", JSON.stringify(r)), e.removeAttribute("data-logout-bound");
-}, pe = (e, t) => {
-  const r = e.querySelector('[data-auth-icon="guest"]'), n = e.querySelector('[data-auth-icon="member"]'), a = e.querySelector("[data-auth-label]"), o = he(e, t);
+}, ge = (e, t) => {
+  const r = e.querySelector('[data-auth-icon="guest"]'), n = e.querySelector('[data-auth-icon="member"]'), a = e.querySelector("[data-auth-label]"), o = me(e, t);
   if (t) {
     e.removeAttribute("data-action"), e.setAttribute("data-route", "MYPAGE.DASHBOARD"), e.setAttribute("data-route-params", '{"shell":"stay"}'), e.setAttribute("href", p("MYPAGE.DASHBOARD", { shell: "stay" })), r && (r.hidden = !0), n && (n.hidden = !1), a && (a.textContent = o ?? "마이페이지");
     return;
   }
   e.setAttribute("data-action", "OPEN_RESERVATION_DRAWER"), e.removeAttribute("data-route"), e.removeAttribute("data-route-params"), e.setAttribute("href", p("SERVICES.AIR.BOOKING.GUEST_RESERVATION")), r && (r.hidden = !1), n && (n.hidden = !0), a && (a.textContent = o ?? "비회원 예약확인");
-}, ve = (e) => {
+}, pe = (e) => {
   if (e.querySelector('[data-route="ADMIN.DASHBOARD"]'))
     return;
   const t = document.createElement("a");
   t.id = "indexAdminBtn", t.href = "#", t.className = "util-link route-link", t.setAttribute("data-route", "ADMIN.DASHBOARD"), t.style.color = "#FF5000", t.style.fontWeight = "700", t.textContent = "관리자 페이지";
   const r = document.createElement("span");
   r.className = "util-divider", r.textContent = "|", e.prepend(t, r);
-}, we = async () => {
+}, ve = async () => {
   try {
-    return await z();
+    return await W();
   } catch {
   }
   try {
@@ -207,62 +207,64 @@ const J = () => document.getElementById("header") || document.querySelector(".ho
   } catch {
     return null;
   }
-}, Ee = async () => {
+}, we = async () => {
   try {
-    return Q();
+    return z();
   } catch {
     return !1;
   }
-}, ye = async (e = 0) => {
-  const t = document.getElementById("headerAdminBtn"), r = ce(), n = de(), a = G(), o = document.getElementById("index-header-util"), [i, c] = await Promise.all([we(), Ee()]), l = !!i;
-  r && (l ? await fe(r) : ge(r)), n && pe(n, l), a && (a.hidden = l);
-  const R = ue();
+}, Ee = async (e = 0) => {
+  const t = document.getElementById("headerAdminBtn"), r = ie(), n = le(), a = G(), o = document.getElementById("index-header-util"), [i, c] = await Promise.all([ve(), we()]), l = !!i;
+  r && (l ? await he(r) : fe(r)), n && ge(n, l), a && (a.hidden = l);
+  const R = de();
   if (R && (R.hidden = l), c && t && (t.style.display = "flex"), c && o)
-    ve(o);
+    pe(o);
   else if (c && (r == null ? void 0 : r.id) === "indexLoginBtn" && e < 5) {
-    v(e + 1);
+    u(e + 1);
     return;
   }
   j();
-}, v = (e = 0) => {
+}, u = (e = 0) => {
   S || (S = !0, setTimeout(async () => {
-    S = !1, await ye(e);
+    S = !1, await Ee(e);
   }, 0));
-}, h = (e = 0) => {
+}, y = (e = 0) => {
   if (!J()) {
     e < 20 && window.setTimeout(() => {
-      h(e + 1);
+      y(e + 1);
     }, 50);
     return;
   }
-  oe(), se(), ie(), ne(), k(), v();
+  ae(), oe(), se(), re(), k();
+}, ye = (e = 0) => {
+  y(e), u();
 }, Ce = () => {
   document.addEventListener("mainHeaderLoaded", () => {
-    h();
+    ye();
   }), window.addEventListener("storage", (e) => {
-    e.key === b && v();
-  }), window.addEventListener(ae, () => {
-    v();
+    e.key === b && u();
+  }), window.addEventListener(ne, () => {
+    u();
   });
 }, Ae = {
   "main-header": "mainHeaderLoaded",
   "main-footer": "mainFooterLoaded"
-}, w = /* @__PURE__ */ new Set(), E = /* @__PURE__ */ new Map(), Se = (e) => {
+}, v = /* @__PURE__ */ new Set(), w = /* @__PURE__ */ new Map(), Se = (e) => {
   const t = Ae[e];
   t && document.dispatchEvent(new Event(t));
 }, Le = (e) => {
-  (E.get(e) ?? []).forEach((r) => r()), E.delete(e);
+  (w.get(e) ?? []).forEach((r) => r()), w.delete(e);
 }, Oe = () => {
   window.__JEJU_RUNTIME_LIFECYCLE__ = {
-    isReady: (e) => w.has(e),
+    isReady: (e) => v.has(e),
     markReady: (e) => s(e),
     whenReady: (e) => be(e)
   };
 }, s = (e) => {
-  w.has(e) || (w.add(e), Se(e), document.dispatchEvent(new CustomEvent("jeju:runtime-ready", { detail: { stage: e } })), Le(e));
-}, be = (e) => w.has(e) ? Promise.resolve() : new Promise((t) => {
-  const r = E.get(e) ?? [];
-  r.push(t), E.set(e, r);
+  v.has(e) || (v.add(e), Se(e), document.dispatchEvent(new CustomEvent("jeju:runtime-ready", { detail: { stage: e } })), Le(e));
+}, be = (e) => v.has(e) ? Promise.resolve() : new Promise((t) => {
+  const r = w.get(e) ?? [];
+  r.push(t), w.set(e, r);
 }), A = () => {
   var n;
   const e = new URL(
@@ -288,49 +290,45 @@ const J = () => document.getElementById("header") || document.querySelector(".ho
       console.error("[ShellRuntime] onLoaded failed", r);
     }).finally(t);
   });
-}), y = (e, t, r) => {
+}), E = (e, t, r) => {
   const n = document.getElementById(e);
   if (!n)
     return Promise.resolve();
   const a = C.get(e);
   a && a.unmount();
-  const o = F(n);
-  return C.set(e, o), K.flushSync(() => {
+  const o = V(n);
+  return C.set(e, o), F.flushSync(() => {
     o.render(t);
   }), Re(r);
-}, m = (e = 0) => {
+}, h = (e = 0) => {
   const t = window.lucide;
   if (t != null && t.createIcons) {
     t.createIcons();
     return;
   }
   e >= 30 || window.setTimeout(() => {
-    m(e + 1);
+    h(e + 1);
   }, 100);
-}, V = () => {
-  window.setTimeout(() => {
-    h();
-  }, 0);
 }, qe = async () => {
   const e = A();
   await Promise.all([
-    y("main-header-placeholder", /* @__PURE__ */ g.jsx(Y, { basePath: e }), async () => {
-      h(), m(), s("main-header");
+    E("main-header-placeholder", /* @__PURE__ */ g.jsx(K, { basePath: e }), async () => {
+      y(), h(), s("main-header");
     }),
-    y("main-footer-placeholder", /* @__PURE__ */ g.jsx(q, {}), async () => {
-      D(), m(), s("main-footer");
+    E("main-footer-placeholder", /* @__PURE__ */ g.jsx(q, {}), async () => {
+      D(), h(), s("main-footer");
     })
-  ]), s("main-shell"), V();
+  ]), s("main-shell"), u();
 }, De = async () => {
   const e = A();
   await Promise.all([
-    y("hotel-header-placeholder", /* @__PURE__ */ g.jsx(W, { basePath: e }), async () => {
-      h(), m(), s("hotel-header"), s("main-header");
+    E("hotel-header-placeholder", /* @__PURE__ */ g.jsx(Y, { basePath: e }), async () => {
+      y(), h(), s("hotel-header"), s("main-header");
     }),
-    y("hotel-footer-placeholder", /* @__PURE__ */ g.jsx(q, {}), async () => {
-      D(), m(), s("hotel-footer"), s("main-footer");
+    E("hotel-footer-placeholder", /* @__PURE__ */ g.jsx(q, {}), async () => {
+      D(), h(), s("hotel-footer"), s("main-footer");
     })
-  ]), s("hotel-shell"), V();
+  ]), s("hotel-shell"), u();
 }, O = (e, t = "shell-runtime") => {
   var r;
   if ((r = window.__JEJU_ROUTE_NAVIGATOR__) != null && r.safeNavigate) {
@@ -366,7 +364,7 @@ const Be = async () => {
   if (!U) {
     U = !0;
     try {
-      X();
+      $();
       return;
     } catch (e) {
       console.warn("[ShellRuntime] router binder load failed", e);
@@ -380,14 +378,14 @@ const Be = async () => {
 };
 export {
   D as a,
-  ne as b,
+  re as b,
   k as c,
   Ce as d,
   Me as e,
   Be as f,
   De as g,
   qe as h,
-  h as i,
+  ye as i,
   A as j,
   Oe as k,
   s as m,

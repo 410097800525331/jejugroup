@@ -1042,6 +1042,62 @@
   - fresh browser verification confirmed `front:3001` and `spring:8080` both render `/pages/auth/login.html` and `/pages/auth/signup.html` with the same top utility state and `indexLoginBtn` targeting `?shell=main`; representative `/jejustay/pages/deals/deals.html` also kept matching `headerAdminBtn` visibility
   - `reviewer_shell_header_parity (Boole)` reported no blocking finding; residual risk only noted that the extra post-mount `initHeader()` call now relies on existing idempotence guards in header helpers
 
+- time: `2026-03-25 16:18 +09:00`
+- route: `Route B`
+- task: `Refine the shared shell header fix so parity is preserved without the broader post-mount initHeader replay`
+- participants: `main`, `worker_seed (Kant)`, `worker_shell_header_parity_refine (Maxwell)`, `reviewer_shell_header_parity_refine (Copernicus)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.auth-header-shell-parity-v2.yaml`
+  - `worker_shell_header_parity_refine`: `front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx`
+  - `reviewer_shell_header_parity_refine`: `review only`
+- verification:
+  - `worker_seed (Kant)` froze `SEED.auth-header-shell-parity-v2.yaml` so the refinement explicitly removes the broad post-mount `initHeader` replay and preserves parity via a narrower auth-only resync path
+  - `worker_shell_header_parity_refine (Maxwell)` extracted `bindHeaderStructure()` in `front/apps/shell/src/runtime/layout/header.ts`, kept `initHeader()` as a thin wrapper over structure binding plus auth sync, and exported `queueHeaderAuthSync()` for direct reuse
+  - `worker_shell_header_parity_refine (Maxwell)` changed `front/apps/shell/src/runtime/layout/shellMount.tsx` so shell mount no longer calls `initHeader()` directly; it now runs `bindHeaderStructure()` during mount and `queueHeaderAuthSync()` after mount completion
+  - `pnpm -C front/apps/shell check` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` regenerated the spring mirror runtime so `spring:8080` served the updated shell bundle
+  - fresh browser verification confirmed `front:3001` and `spring:8080` both keep `indexAdminBtn` visible on `/pages/auth/login.html` and `/pages/auth/signup.html`, both preserve `indexLoginBtn` at `?shell=main`, and representative `/jejustay/pages/deals/deals.html` still shows matching `headerAdminBtn` visibility
+  - `reviewer_shell_header_parity_refine (Copernicus)` cleared the previous blocker and reported no new blocker; residual risk only noted that the legacy `mainHeaderLoaded -> initHeader()` re-entry path still exists and that login-route fallback remains lightly coupled to DOM ids plus `data-route-params`
+
+- time: `2026-03-25 16:45 +09:00`
+- route: `Route B`
+- task: `Close the remaining parity gaps: root wrapper, admin dashboard runtime path, JEJU STAY remeasurement, and refreshed final census`
+- participants: `main`, `worker_seed (Avicenna)`, `worker_root_wrapper (McClintock)`, `worker_admin_dashboard (Hubble)`, `worker_census_report (Anscombe)`, `reviewer_remaining_parity (Volta)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.remaining-parity-closeout-v1.yaml`
+  - `worker_root_wrapper`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/templates/index.html`
+  - `worker_admin_dashboard`: `front/admin/js/admin_shell.js, front/admin/js/dashboard.js, jeju-spring/src/main/resources/static/front-mirror/admin/js/admin_shell.js, jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js`
+  - `worker_census_report`: `docs/front-parity-census-2026-03-25.md`
+  - `reviewer_remaining_parity`: `review only`
+- verification:
+  - `worker_seed (Avicenna)` froze `SEED.remaining-parity-closeout-v1.yaml` so the remaining slice stayed limited to root normalization, admin dashboard parity, JEJU STAY dynamic-text remeasurement, and a refreshed browser census/report
+  - `worker_root_wrapper (McClintock)` changed `FrontMirrorHostController` so `/` no longer special-cases to the wrapper template and instead resolves through the same `front-mirror/index` runtime as `/index.html`; `templates/index.html` was reduced to a thin fallback redirect shell
+  - `worker_admin_dashboard (Hubble)` changed `front/admin/js/admin_shell.js` and `front/admin/js/dashboard.js` to resolve sibling runtime scripts from the current script URL instead of `window.location.href`, and the derived spring mirror admin JS outputs were refreshed to match
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` refreshed the mirrored runtime after the root/admin changes
+  - targeted fresh-browser verification confirmed `/` and `/index.html` now render the same landing runtime body on both hosts and `/admin/pages/dashboard.html` now boots to the same dashboard title/body/sidebar/KPI state on both hosts
+  - fresh exact census was rerun route-by-route with a fresh browser page per route: canonical exact matches `30/47`, canonical exact mismatches `17`, alias redirect outcomes matched `12/12`
+  - targeted normalized remeasurement confirmed the remaining exact-only mismatch set reduces to cosmetic/dynamic drift:
+    `/` and `/index.html` matched after `Family Sites` casing normalization;
+    `/pages/auth/login.html`, `/pages/auth/signup.html`, and `/pages/mypage/dashboard.html` matched after footer/family-sites normalization;
+    all 12 JEJU STAY canonical pages matched after dynamic countdown normalization plus `Family Sites` casing normalization
+  - `worker_census_report (Anscombe)` refreshed `docs/front-parity-census-2026-03-25.md` to record the new exact census numbers, the closed wrapper/admin/auth/JEJU STAY substantive gap groups, and the remaining exact-only drift classification
+  - `reviewer_remaining_parity (Volta)` flagged that the first refreshed report overstated closure without enough explicit evidence in the log; this entry records the fresh exact census and the route-by-route normalized remeasurement that support the narrower final conclusion
+
+- time: `2026-03-25 18:02 +09:00`
+- route: `Route A`
+- task: `Revert the last non-requested Family Sites casing change and refresh the final parity report`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, front/components/react/layout/FamilyRadialMenu.tsx, docs/front-parity-census-2026-03-25.md`
+- verification:
+  - reverted the non-requested `FAMILY SITES` casing back to `Family Sites` in `front/components/react/layout/FamilyRadialMenu.tsx`
+  - reran `pnpm run build:front`
+  - reran `node scripts/spring/mirror-front-to-thymeleaf.cjs --skip-build-shell`
+  - reran the fresh browser census and confirmed the current exact result is `44/47` with alias redirect outcomes `12/12`
+  - rewrote `docs/front-parity-census-2026-03-25.md` so the report now reflects the true post-revert state and describes the remaining three exact mismatches as dynamic/timing noise candidates rather than substantive runtime divergence
+
 - time: `2026-03-25 14:24 +09:00`
 - route: `Route B`
 - task: `Close the remaining customer_center parity gap and lock the source -> generated overlay -> spring mirror chain`
@@ -1064,3 +1120,14 @@
   - `pnpm run spring:test` passed; the existing non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved stayed unchanged
   - `git diff --check -- STATE.md SEED.customer-center-front-mirror-parity-v1.yaml vite.front.config.mjs scripts/spring/mirror-front-to-thymeleaf.cjs docs/transition-architecture.md docs/front-entrypoint-inventory.md` passed
   - `reviewer_customer_center_parity (Schrodinger)` reported no blocking findings; residual risk only noted that future new customer_center backend paths would need to be added to the dev proxy set if the page starts using them
+
+- time: `2026-03-25 16:27 +09:00`
+- route: `Route B`
+- task: `Fix the root wrapper divergence so / no longer serves a distinct wrapper body from /index.html`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/templates/index.html`
+- verification:
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java jeju-spring/src/main/resources/templates/index.html` passed with one pre-existing CRLF normalization warning on the controller file
+  - targeted content checks confirmed `FrontMirrorHostController` now resolves `/` through `toFrontMirrorViewName(path)` and no longer special-cases the root to the wrapper template
+  - targeted content checks confirmed `templates/index.html` no longer contains the iframe wrapper and now only performs a direct `/index.html` redirect fallback

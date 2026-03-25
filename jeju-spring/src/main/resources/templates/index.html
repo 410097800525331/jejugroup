@@ -2,50 +2,13 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=/index.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jeju Group Landing</title>
-    <style>
-        html, body {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #0b0f14;
-        }
-
-        .landing-root {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .landing-frame {
-            border: 0;
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .landing-marker {
-            position: absolute;
-            left: 16px;
-            bottom: 16px;
-            z-index: 1;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: rgba(0, 0, 0, 0.45);
-            color: #fff;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-    </style>
 </head>
 <body>
-    <span hidden>English</span>
-    <main class="landing-root">
-        <iframe class="landing-frame" th:src="@{/index.html}" src="/index.html" title="Jeju Group Landing"></iframe>
-        <div class="landing-marker">Scroll Down</div>
-    </main>
+    <noscript>
+        <a th:href="@{/index.html}" href="/index.html">/index.html</a>
+    </noscript>
 </body>
 </html>

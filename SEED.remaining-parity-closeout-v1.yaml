@@ -1,0 +1,43 @@
+goal: >
+  Freeze the remaining parity close-out contract so the next implementation pass
+  removes the last documented runtime gaps: normalize `/` so it no longer
+  diverges from `/index.html`, fix `/admin/pages/dashboard.html` runtime parity,
+  remeasure the JEJU STAY mismatch set with dynamic text excluded so only real
+  gaps remain, and refresh the full browser census/report from the new evidence.
+constraints:
+  - Keep this seed deterministic and limited to the remaining parity close-out slice.
+  - Do not introduce unrelated redesign, new routes, or broad architecture changes.
+  - Treat `/` and `/index.html` as a single runtime parity target unless an
+    explicit canonical redirect or host-only normalization is required to make
+    them identical at runtime.
+  - Repair `/admin/pages/dashboard.html` only to restore runtime parity with the
+    front admin dashboard entry, not to redesign admin behavior.
+  - Remeasure the JEJU STAY mismatch set with dynamic text excluded so the
+    result contains only real structural/content gaps.
+  - Refresh the full browser census/report using the remeasured evidence, not
+    stale findings.
+  - Preserve the existing front-as-source-of-truth and mirror-boundary rules.
+acceptance_criteria:
+  - `/` no longer diverges from `/index.html` in the runtime browser census.
+  - `/admin/pages/dashboard.html` matches the expected admin dashboard runtime
+    behavior in the census.
+  - The JEJU STAY mismatch set is recomputed with dynamic text excluded and the
+    remaining mismatches are limited to real gaps.
+  - The full browser census/report is refreshed and reflects the updated
+    evidence set.
+  - The close-out contract remains narrowly scoped to these parity and reporting
+    outputs.
+verification:
+  - Compare `/` and `/index.html` at runtime in both front and spring contexts.
+  - Verify `/admin/pages/dashboard.html` against the front admin dashboard
+    runtime behavior.
+  - Re-run the JEJU STAY browser census with dynamic text excluded and inspect
+    the resulting mismatch set.
+  - Refresh the full browser census/report and confirm it cites the new
+    measurements.
+out_of_scope:
+  - New feature work, redesign, or content refresh outside the parity gaps.
+  - Route additions, route ownership changes, or shared shell/runtime rewrites.
+  - Changes to legacy mirror paths outside the implementation needed to restore
+    parity.
+  - Broader cleanup of unrelated landing, auth, or customer-center pages.

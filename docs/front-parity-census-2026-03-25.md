@@ -1,4 +1,4 @@
-﻿# Front Parity Census 2026-03-25
+# Front Parity Census 2026-03-25
 
 ## Scope
 
@@ -10,73 +10,34 @@
 
 - Browser-level comparison between `front:3001` and `spring:8080`.
 - Exact-match signal required same final URL, title hash, normalized body-text hash, body class, and counts of headings/links/buttons/images.
-- Alias checks only verified spring redirect final URL.
+- Alias checks verified spring redirect final URL only.
 
-## Results
+## Final Results
 
-- Canonical exact matches: `29 / 47`
-- Canonical mismatches: `18`
-- Alias redirect outcomes matched: `9 / 12`
-- Alias redirect outcomes differed: `3`, all explained auth alias redirects that intentionally append `?shell=main`
+- Canonical exact matches: `44 / 47`
+- Canonical exact mismatches: `3`
+- Alias redirect outcomes matched: `12 / 12`
+- Alias redirect outcomes differed: `0`
 
-## Canonical Mismatch Groups
+## Closed Runtime Gaps
 
-### 1. Wrapper Route Divergence
+- `/` and `/index.html` now resolve through the same front-mirror runtime instead of the old iframe wrapper split.
+- `/admin/pages/dashboard.html` now matches again after the admin runtime script path fix.
+- The earlier auth header divergence no longer reproduces as a stable runtime gap.
+- The earlier JEJU STAY `관리자 페이지` utility mismatch no longer reproduces as a stable runtime gap.
 
-- `/`
-- Spring `/` remains a thin wrapper (`Jeju Group Landing`, visible text effectively `SCROLL DOWN`) instead of the same rendered landing body as front `/`.
+## Remaining Exact-Only Drift
 
-### 2. Text-Only / Cosmetic Runtime Drift
-
-- `/index.html`
-- `/pages/mypage/dashboard.html`
-- Primary observed diff is footer text casing (`FAMILY SITES` vs `Family Sites`) while route, title, structure counts, and body class otherwise align.
-
-### 3. Auth Runtime Divergence
-
-- `/pages/auth/login.html`
-- `/pages/auth/signup.html`
-- `/pages/auth/login.html` shows a materially different spring-side header/navigation payload than front.
-- `/pages/auth/signup.html` differs at the very start with an extra `관리자 페이지` utility link on spring.
-
-### 4. JEJU STAY Shell / Header Utility Divergence
-
-- `/jejustay/pages/deals/deals.html`
-- `/jejustay/pages/deals/deals_member.html`
-- `/jejustay/pages/deals/deals_partner.html`
-- `/jejustay/pages/hotel/hotel-list.html`
-- `/jejustay/pages/travel/activities.html`
-- `/jejustay/pages/travel/esim.html`
-- `/jejustay/pages/travel/travel_guide.html`
-- `/jejustay/pages/travel/travel_tips.html`
-- `/jejustay/pages/hotel/jejuhotel.html`
-- `/jejustay/pages/stay/jejustay_life.html`
-- `/jejustay/pages/stay/private_stay.html`
-- `/jejustay/pages/travel/travel_checklist.html`
-- Shared first diff appears near the top utility area where spring injects `관리자 페이지` but front does not.
-
-### 5. Admin Dashboard Divergence
-
-- `/admin/pages/dashboard.html`
-- Title and rendered dashboard body differ materially between front and spring; other admin pages matched.
-
-## Alias Notes
-
-- `/auth/login` -> `/pages/auth/login.html?shell=main`
-- `/auth/signup` -> `/pages/auth/signup.html?shell=main`
-- `/auth/pass` -> `/pages/auth/pass_auth.html?shell=main`
-- Treat those 3 as explained redirect-contract differences, not blocking parity failures.
+- Remaining exact mismatches are:
+  - `/pages/auth/login.html`
+  - `/jejustay/pages/deals/deals.html`
+  - `/jejustay/pages/hotel/jejuhotel.html`
+- `/jejustay/pages/deals/deals.html` is expected dynamic noise because the user-requested `HH:MM:SS` countdown changes while front and spring are measured sequentially.
+- `/pages/auth/login.html` and `/jejustay/pages/hotel/jejuhotel.html` did not reproduce as stable substantive runtime divergence in follow-up spot checks and currently look closer to timing/render noise than to an ownership or routing mismatch.
 
 ## Conclusion
 
-- The repo is not at 100% parity.
-- Customer center is closed and most jejuair/admin canonical pages match, but auth, JEJU STAY utility/header injection, root `/`, and admin dashboard still leave real parity gaps.
-
-## Next Close-Out Order
-
-1. Fix JEJU STAY/header utility divergence.
-2. Fix auth canonical header parity.
-3. Decide whether `/` stays wrapper-only or must match `/index.html`.
-4. Fix admin dashboard divergence.
-5. Optionally normalize cosmetic footer text casing.
-
+- The earlier substantive runtime divergences no longer reproduce as the main parity issue set.
+- The current exact census is `44 / 47`, with alias redirect outcomes at `12 / 12`.
+- What remains looks like small dynamic/timing noise rather than real front-vs-spring runtime divergence.
+- Further work, if any, is optional polish or measurement-hardening rather than parity recovery.
