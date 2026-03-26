@@ -1,0 +1,38 @@
+goal: >
+  Fix local Spring signup id-check routing so the signup page served from
+  http://localhost:8080 uses the same-origin Spring auth API by default while
+  keeping explicit ?api=local and ?api=remote overrides working.
+background: >
+  The current local Spring signup path still falls back to the legacy
+  localhost:9090/jeju-web auth base in some cases. This seed freezes the
+  contract for correcting that routing without changing the broader auth
+  architecture.
+in_scope:
+  - "Local Spring signup page routing for id-check and signup submit requests"
+  - "API base selection on localhost:8080 so default auth calls stay same-origin"
+  - "Explicit ?api=local and ?api=remote override behavior"
+  - "front source-of-truth updates required for the fix"
+  - "Only the derived artifacts needed for the local Spring runtime refresh"
+out_of_scope:
+  - "Direct edits to jeju-web/src/main/webapp"
+  - "Unrelated auth UX or copy changes"
+  - "Changing non-signup auth flows unless they share the same routing contract"
+  - "Broad deployment or runtime architecture changes"
+constraints:
+  - "front remains the only human-edited frontend source of truth"
+  - "Do not modify jeju-web directly"
+  - "Preserve explicit local/remote API overrides"
+  - "When local Spring serves the page from localhost:8080, default auth requests must resolve to the same origin"
+  - "Regenerate only the derived artifacts that are necessary for the local Spring auth runtime"
+  - "Keep the change minimal and avoid unrelated file churn"
+acceptance_criteria:
+  - "On http://localhost:8080/pages/auth/signup.html, id-check and signup submit requests go to the same Spring origin by default"
+  - "Explicit ?api=local still routes to the local API target"
+  - "Explicit ?api=remote still routes to the remote API target"
+  - "No direct edits are made under jeju-web/src/main/webapp"
+  - "The fix is represented in front source and only the required derived artifacts are regenerated"
+verification:
+  - "Inspect the local API base selection logic to confirm localhost:8080 is treated as same-origin Spring auth"
+  - "Verify the signup page preserves ?api=local and ?api=remote override handling"
+  - "Confirm the touched files stay within front plus the required derived artifacts"
+  - "Validate the affected local Spring auth path with the repository's available verification command(s)"
