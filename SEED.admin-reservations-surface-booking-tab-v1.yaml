@@ -1,0 +1,23 @@
+goal: >
+  Continue the admin.table-surface rewrite by keeping `/api/admin/tables/reservations`
+  externally stable while turning its default booking tab from a schema-status board
+  into real booking rows backed by the booking tables.
+constraints:
+  - Preserve the existing `/api/admin/tables/{surface}` path and the current top-level JSON response shape with `defaultTab` and `tabs`.
+  - Limit this slice to the `reservations` surface inside the existing Spring admin read source file.
+  - Replace only the `booking` tab contents with real booking rows from booking-related tables.
+  - Keep the existing `payment`, `refund`, and `traveler` tabs compatible for now.
+  - Keep the emitted booking tab rows compatible with the current front reservations table columns and domain filter behavior.
+  - Do not revisit dashboard work, members surface work, cms surface work, other surfaces, front files, mirror outputs, or routing in this pass.
+acceptance_criteria:
+  - `/api/admin/tables/reservations` still returns a successful payload with the same top-level structure expected by the current admin surface contract.
+  - The `booking` tab rows are now sourced from `bookings` and related user data when those tables exist.
+  - The emitted booking rows include `domainKey` values compatible with the current reservations domain filters.
+  - The `payment`, `refund`, and `traveler` tabs remain structurally compatible.
+verification:
+  - `D:\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Refactoring the reservations `payment`, `refund`, or `traveler` tabs in this pass.
+  - Refactoring other `/api/admin/tables/{surface}` responses.
+  - Front admin UI changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.

@@ -1,0 +1,23 @@
+goal: >
+  Start the admin.table-surface rewrite by keeping `/api/admin/tables/members`
+  externally stable while aligning its tab contract with the front members view
+  and exposing membership data from `user_memberships`.
+constraints:
+  - Preserve the existing `/api/admin/tables/{surface}` path and the current top-level JSON response shape with `defaultTab` and `tabs`.
+  - Limit this slice to the `members` surface inside the existing Spring admin read source file.
+  - Replace the mismatched `accounts` tab in the backend members surface payload with a `membership` tab that matches the front members tab structure.
+  - Back the new membership tab with `user_memberships` and `membership_plans` data when those tables exist.
+  - Keep the existing `member`, `permissions`, and `inquiries` tabs compatible.
+  - Do not revisit dashboard KPI, recentActivity, chart series, other surfaces, front files, mirror outputs, or routing in this pass.
+acceptance_criteria:
+  - `/api/admin/tables/members` still returns a successful payload with the same top-level structure expected by the current admin surface contract.
+  - The `tabs` payload for the members surface now includes `membership` instead of the mismatched `accounts` key.
+  - The membership tab rows are sourced from `user_memberships` joined with membership plan data when those tables exist.
+  - The members surface default tab remains valid and existing non-membership tabs continue to work.
+verification:
+  - `D:\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Refactoring other `/api/admin/tables/{surface}` responses.
+  - Moving accounts data to another surface.
+  - Front admin UI changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.

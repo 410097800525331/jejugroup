@@ -1,0 +1,24 @@
+goal: >
+  Continue the admin rewrite track by keeping `/api/admin/dashboard` externally stable
+  while changing its `recentActivity` payload to read from booking, refund, and
+  admin-action sources instead of notice and support ticket rows.
+constraints:
+  - Preserve the existing `/api/admin/dashboard` path and the current top-level JSON response shape with `kpi`, `recentActivity`, and `ui`.
+  - Keep the front admin dashboard caller contract intact, including the existing recent-activity table rendering and badge categories.
+  - Limit this slice to Spring admin dashboard read logic inside the existing admin read source file.
+  - Prefer activity rows sourced from `bookings`, `payment_refunds` with their booking/payment joins, and `admin_action_logs`.
+  - Keep domain filtering aligned with the current admin dashboard domain mapping where booking-based sources support it.
+  - Do not revisit KPI semantics, table-surface behavior, front admin files, or mirror outputs in this pass.
+acceptance_criteria:
+  - `/api/admin/dashboard` still returns a successful payload with the same top-level structure expected by the current admin front runtime.
+  - `recentActivity` no longer depends on `notices` or `support_tickets` as its primary source.
+  - The activity feed includes booking lifecycle or cancellation-related events from booking/payment data when those tables exist.
+  - The activity feed includes admin operation events from `admin_action_logs` when that table exists.
+  - The emitted activity rows remain compatible with the current front dashboard table renderer and badge/status handling.
+verification:
+  - `D:\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Refactoring `/api/admin/dashboard` KPI fields again.
+  - Refactoring `/api/admin/tables/{surface}`.
+  - Front admin UI or static dashboard data changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.

@@ -2,22 +2,22 @@
 
 ## Current Task
 
-- task: `Expand the JSON API rewrite plan so it explicitly splits the redesign into admin plus two non-admin tracks`
+- task: `Prepare a clean handoff so the remaining API rewrite work can continue from another workspace without re-discovery`
 - phase: `implementation`
-- scope: `STATE.md, docs/api-rewrite-plan.json, NEXT_AGENT_START.md`
-- verification_target: `A single valid JSON file exists that an agent can copy/read directly, it explicitly defines a 3-track split of the redesign into admin, support+cms, and mypage+booking, and a start file at the repo root tells the next agent to read that JSON before doing any work`
+- scope: `STATE.md, NEXT_AGENT_START.md`
+- verification_target: `A new workspace can read NEXT_AGENT_START.md and immediately understand what is already done, what remains in track_admin, and which seeds/files/verification command to use next`
 
 ## Route
 
 - route: `Route A`
-- reason: `the user asked for the planning JSON to be extended into a concrete 3-track split and to make the next-machine handoff easy. The write scope stays limited to planning artifacts only.`
+- reason: `the user explicitly asked for a cross-workspace handoff. The write scope is limited to task-state and start instructions only, so this remains a documentation-only Route A slice.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md, docs/api-rewrite-plan.json, NEXT_AGENT_START.md`
-- note: `Single-file planning artifact only.`
+  - `main`: `STATE.md, NEXT_AGENT_START.md`
+- note: `Documentation-only handoff slice.`
 
 ## Contract Freeze
 
@@ -25,7 +25,7 @@
 - status: `n/a`
 - path: `n/a`
 - revision: `n/a`
-- note: `This is a documentation-only Route A task.`
+- note: `This slice only refreshes the cross-workspace handoff instructions.`
 
 ## Reviewer
 
@@ -35,5 +35,5 @@
 
 ## Last Update
 
-- timestamp: `2026-03-26 17:45:00 +09:00`
-- note: `Route A documentation pass continues. The single JSON plan is being expanded so the redesign is explicitly split into admin plus two non-admin tracks.`
+- timestamp: `2026-03-26 19:35:00 +09:00`
+- note: `Implementation slices are paused at a stable checkpoint and the workspace is switching into handoff mode. NEXT_AGENT_START.md is being refreshed so another workspace can continue without re-discovering the admin progress or remaining route order.`

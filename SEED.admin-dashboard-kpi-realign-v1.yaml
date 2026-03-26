@@ -1,0 +1,24 @@
+goal: >
+  Start the admin rewrite track by keeping `/api/admin/dashboard` externally stable
+  while changing its KPI payload to read from booking/payment admin data sources
+  instead of unrelated users/support/notice counts.
+constraints:
+  - Preserve the existing `/api/admin/dashboard` path and the current JSON response shape with `kpi`, `recentActivity`, and `ui`.
+  - Keep `activeUsers` sourced from `active_user_sessions` through the existing `ActiveUserPresenceService`.
+  - Limit the first slice to Spring admin dashboard read logic; do not refactor `table-surface`, front admin files, or mirror outputs in this pass.
+  - Treat `front/admin/js/dashboard.js` as the caller contract and keep metric keys `todayReservations`, `revenue`, `cancelRate`, and `activeUsers`.
+  - Realign dashboard KPI semantics toward `bookings`, `payment_transactions`, `payment_refunds`, and related booking/payment joins where the schema supports it.
+  - Keep the implementation reviewable by editing the existing Spring admin read file only for this first slice.
+acceptance_criteria:
+  - `/api/admin/dashboard` still returns a successful payload with the same top-level structure expected by the current admin front runtime.
+  - `todayReservations` no longer reads from the `users` table and instead reflects booking-based data.
+  - `revenue` no longer reads from support or notice counts and instead reflects payment transaction totals from booking-linked payment data.
+  - `cancelRate` no longer reads from notice counts and instead reflects booking cancellation-related data as a percentage.
+  - `activeUsers` keeps reading from the active-session presence flow without regression.
+verification:
+  - `D:\\git\\jejugroup\\jeju-spring\\gradlew.bat compileJava`
+out_of_scope:
+  - Splitting `AdminReadApiController.java` into multiple source files.
+  - Refactoring `/api/admin/tables/{surface}` in this pass.
+  - Front admin UI or chart rendering changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.

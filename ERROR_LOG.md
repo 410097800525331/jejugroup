@@ -370,3 +370,15 @@ status: open
 - summary: `경로 수정 후 processResources 재실행 성공`
 - details: `D:\lsh\git\jejugroup\jeju-spring에서 다시 실행해 build/resources/main 갱신을 마쳤다.`
 - status: `resolved`
+
+- time: `2026-03-26 18:16:00 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\gradlew.bat compileJava`
+- summary: `Gradle wrapper jar 누락으로 backend compile 검증이 막힘`
+- details: `첫 admin dashboard KPI slice 검증 중 \`./gradlew.bat compileJava\`를 jeju-spring 작업 디렉터리에서 실행했지만, \`gradle/wrapper/gradle-wrapper.jar\` 파일이 없어 wrapper가 기동되지 못했다. 코드 compile 결과를 확인하려면 wrapper jar를 복구하거나 다른 로컬 Gradle 진입점을 써야 한다.`
+- status: `deferred`
+
+- time: `2026-03-26 18:21:00 +09:00`
+- location: `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava`
+- summary: `로컬 Gradle 바이너리로 backend compile 검증 우회 성공`
+- details: `사용자가 알려준 .codex-temp Gradle 설치본을 사용해 jeju-spring 작업 디렉터리에서 \`compileJava\`를 재실행했고 정상 통과했다. wrapper jar 누락 이슈는 남아 있지만, 이번 admin dashboard KPI slice의 compile-level verification 자체는 완료됐다.`
+- status: `resolved`

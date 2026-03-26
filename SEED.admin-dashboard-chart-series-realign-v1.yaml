@@ -1,0 +1,26 @@
+goal: >
+  Continue the admin rewrite track by keeping `/api/admin/dashboard` externally stable
+  while populating `chartSeriesByRange` from booking and payment time-series data
+  instead of leaving the dashboard chart on static fallback data.
+constraints:
+  - Preserve the existing `/api/admin/dashboard` path and the current top-level JSON response shape with `kpi`, `recentActivity`, `chartSeriesByRange`, and `ui`.
+  - Keep the front admin dashboard caller contract intact, including the current chart range keys and the expected `{ revenue, reservation }` series shape.
+  - Limit this slice to Spring admin dashboard read logic inside the existing admin read source file.
+  - Prefer booking counts for reservation series and approved/captured payment totals for revenue series.
+  - Keep domain filtering aligned with the current admin dashboard domain mapping where booking-based sources support it.
+  - Ensure the default `day` range is backed by real data, and only populate additional ranges when the current front labels and backend time buckets can be aligned without lying.
+  - Do not revisit KPI semantics, recentActivity sourcing, table-surface behavior, front admin files, or mirror outputs in this pass.
+acceptance_criteria:
+  - `/api/admin/dashboard` still returns a successful payload with the same top-level structure expected by the current admin front runtime.
+  - The payload now includes `chartSeriesByRange` data sourced from booking/payment-backed queries.
+  - The default visible `day` range renders real reservation and revenue series data when the relevant tables exist.
+  - Additional common ranges such as `hour`, `week`, `month`, `1year`, or `5year` are populated only when their bucket order matches the current front labels; unsupported legacy ranges may remain empty fallback data.
+  - The emitted chart series remain compatible with the current front dashboard chart renderer.
+verification:
+  - `D:\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Refactoring `/api/admin/dashboard` KPI fields again.
+  - Refactoring `/api/admin/dashboard` recentActivity again.
+  - Refactoring `/api/admin/tables/{surface}`.
+  - Front admin UI or static dashboard data changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.

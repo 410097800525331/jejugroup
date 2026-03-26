@@ -1,5 +1,7 @@
 package com.jejugroup.jejuspring.admin.web;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,7 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -137,6 +142,11 @@ public class AdminReadApiController {
 @Service
 class AdminReadService {
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm", Locale.KOREA);
+    private static final Map<String, String> BOOKING_TYPE_BY_DOMAIN = Map.of(
+        "flight", "air",
+        "hotel", "stay",
+        "rentcar", "rent"
+    );
     private static final Map<String, String> SERVICE_TYPE_BY_DOMAIN = Map.of(
         "flight", "jeju-air",
         "hotel", "jeju-stay",
@@ -154,23 +164,15 @@ class AdminReadService {
 
     Map<String, Object> loadDashboard(String rawDomain) throws SQLException {
         String domain = normalizeDashboardDomain(rawDomain);
-        String serviceType = SERVICE_TYPE_BY_DOMAIN.get(domain);
+        String bookingType = BOOKING_TYPE_BY_DOMAIN.get(domain);
 
         try (Connection connection = openConnection()) {
             connection.setReadOnly(true);
 
-            long activeUserCount = activeUserPresenceService.countActiveUsers(connection);
-            long inquiryCount = countByServiceType(connection, "support_tickets", serviceType);
-            long noticeCount = countByServiceType(connection, "notices", serviceType);
-
             Map<String, Object> data = new LinkedHashMap<>();
-            data.put("kpi", mapOf(
-                "todayReservations", countAll(connection, "users"),
-                "revenue", inquiryCount,
-                "cancelRate", noticeCount,
-                "activeUsers", activeUserCount
-            ));
-            data.put("recentActivity", loadRecentActivity(connection, serviceType));
+            data.put("kpi", loadDashboardKpi(connection, bookingType));
+            data.put("recentActivity", loadRecentActivity(connection, bookingType));
+            data.put("chartSeriesByRange", loadDashboardChartSeries(connection, bookingType));
             data.put("ui", mapOf(
                 "activeMenu", "dashboard",
                 "theme", "system",
@@ -207,13 +209,13 @@ class AdminReadService {
             List.of("사용자 ID", "구분", "기본 정보", "기준 일시", "상태 / 권한", "관리"),
             loadMemberRows(connection)
         ));
-        tabs.put("accounts", tabConfig(
-            "연동 계정 또는 provider 검색",
+        tabs.put("membership", tabConfig(
+            "멤버십명 또는 회원명 검색",
             "새로고침",
-            "계정 DB 보기",
-            "현재 DB에 연동 계정 데이터가 없습니다.",
-            List.of("사용자 ID", "구분", "연동 정보", "최근 인증", "상태 / 기본값", "관리"),
-            loadAccountRows(connection)
+            "멤버십 DB 보기",
+            "현재 DB에 멤버십 데이터가 없습니다.",
+            List.of("대상", "도메인", "기본 정보", "갱신 시각", "상태 / 혜택", "관리"),
+            loadMembershipRows(connection)
         ));
         tabs.put("permissions", tabConfig(
             "role / permission / 사용자 검색",
@@ -253,13 +255,13 @@ class AdminReadService {
             List.of("FAQ ID", "서비스", "질문 유형", "질문", "등록일", "노출 상태", "관리"),
             loadFaqRows(connection)
         ));
-        tabs.put("categories", tabConfig(
-            "서비스 또는 카테고리 코드 검색",
-            "정렬",
-            "분류 DB 보기",
-            "현재 DB에 문의 카테고리 데이터가 없습니다.",
-            List.of("카테고리 ID", "서비스", "코드 / 정렬", "이름", "설명", "노출 상태", "관리"),
-            loadSupportCategoryRows(connection)
+        tabs.put("banner", tabConfig(
+            "배너 제목이나 슬롯으로 검색",
+            "배치 정리",
+            "배너 DB 보기",
+            "현재 DB에 배너 데이터가 없습니다.",
+            List.of("배너 ID", "사이트 / 위치", "배치 / 형태", "노출 규칙 / 조건", "제목", "노출 기간", "노출 상태", "관리"),
+            loadBannerRows(connection)
         ));
 
         return tableSurfaceConfig("notices", tabs);
@@ -397,21 +399,13 @@ class AdminReadService {
         boolean schemaBlocked
     ) throws SQLException {
         Map<String, Object> tabs = new LinkedHashMap<>();
-        tabs.put("booking", schemaTabConfig(
-            "예약 테이블 또는 도메인 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "예약 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildReservationRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                List.of(
-                    new SchemaExpectation("bookings", null, "예약 헤더", "V8"),
-                    new SchemaExpectation("booking_items", null, "예약 상품 항목", "V8")
-                )
-            )
+        tabs.put("booking", tabConfig(
+            "예약번호나 고객명으로 검색",
+            "신규 요청 처리",
+            "예약 DB 보기",
+            "예약 데이터가 없습니다.",
+            List.of("번호", "도메인", "예약 / 결제 정보", "고객 / 연락처", "금액", "시각", "상태", "관리"),
+            loadReservationBookingRows(connection)
         ));
         tabs.put("payment", schemaTabConfig(
             "결제 테이블 또는 도메인 검색",
@@ -515,22 +509,106 @@ class AdminReadService {
         return rows;
     }
 
-    private List<Map<String, Object>> loadAccountRows(Connection connection) throws SQLException {
-        if (!tableExists(connection, "user_auth_accounts")) {
+    private List<Map<String, Object>> loadReservationBookingRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "bookings")) {
             return List.of();
         }
 
         String query = """
             SELECT
-                ua.user_id,
-                ua.provider,
-                ua.provider_account_id,
-                ua.provider_email,
-                ua.is_primary,
-                ua.last_authenticated_at,
-                ua.created_at
-            FROM user_auth_accounts ua
-            ORDER BY COALESCE(ua.last_authenticated_at, ua.created_at) DESC, ua.id DESC
+                b.booking_no,
+                b.booking_type,
+                b.status,
+                b.payment_status,
+                b.total_amount,
+                b.paid_amount,
+                b.currency,
+                b.booked_at,
+                b.created_at,
+                b.cancelled_at,
+                COALESCE(NULLIF(TRIM(up.display_name), ''), u.name, b.user_id) AS display_name,
+                u.email,
+                u.phone
+            FROM bookings b
+            LEFT JOIN users u ON u.id = b.user_id
+            LEFT JOIN user_profiles up ON up.user_id = b.user_id
+            ORDER BY COALESCE(b.booked_at, b.created_at) DESC, b.id DESC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                String bookingType = text(resultSet.getString("booking_type"));
+                String domainKey = toReservationDomainKey(bookingType);
+                String bookingStatus = buildReservationBookingStatus(
+                    resultSet.getString("status"),
+                    resultSet.getString("payment_status"),
+                    resultSet.getTimestamp("cancelled_at")
+                );
+
+                rows.add(domainRow(
+                    searchable(
+                        resultSet.getString("booking_no"),
+                        resultSet.getString("display_name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("phone"),
+                        bookingStatus
+                    ),
+                    List.of(
+                        text(resultSet.getString("booking_no")),
+                        displayBookingType(bookingType),
+                        joinPlain(" / ", normalizeReservationStatusLabel(resultSet.getString("status")), normalizePaymentStatusLabel(resultSet.getString("payment_status"))),
+                        joinPlain(" / ", text(resultSet.getString("display_name")), text(resultSet.getString("email")), text(resultSet.getString("phone"))),
+                        formatReservationAmount(resultSet.getBigDecimal("paid_amount"), resultSet.getBigDecimal("total_amount"), resultSet.getString("currency")),
+                        formatTimestamp(coalesce(resultSet.getTimestamp("booked_at"), resultSet.getTimestamp("created_at"))),
+                        bookingStatus,
+                        "읽기 전용"
+                    ),
+                    domainKey
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadMembershipRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "user_memberships") || !tableExists(connection, "membership_plans")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                um.user_id,
+                COALESCE(NULLIF(TRIM(up.display_name), ''), u.name, um.user_id) AS display_name,
+                mp.plan_code,
+                mp.plan_name,
+                mp.tier_level,
+                mp.benefit_summary,
+                um.membership_status,
+                um.started_at,
+                um.updated_at,
+                COUNT(DISTINCT mpb.id) AS benefit_count
+            FROM user_memberships um
+            INNER JOIN membership_plans mp ON mp.id = um.membership_plan_id
+            LEFT JOIN membership_plan_benefits mpb
+                ON mpb.membership_plan_id = mp.id
+               AND mpb.is_active = 1
+            LEFT JOIN users u ON u.id = um.user_id
+            LEFT JOIN user_profiles up ON up.user_id = um.user_id
+            GROUP BY
+                um.id,
+                um.user_id,
+                display_name,
+                mp.plan_code,
+                mp.plan_name,
+                mp.tier_level,
+                mp.benefit_summary,
+                um.membership_status,
+                um.started_at,
+                um.updated_at
+            ORDER BY COALESCE(um.updated_at, um.started_at, um.created_at) DESC, um.id DESC
             """;
 
         List<Map<String, Object>> rows = new ArrayList<>();
@@ -538,26 +616,41 @@ class AdminReadService {
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 String userId = text(resultSet.getString("user_id"));
-                String provider = text(resultSet.getString("provider"));
-                String providerAccountId = text(resultSet.getString("provider_account_id"));
-                String providerEmail = text(resultSet.getString("provider_email"));
-                String recentAuth = formatTimestamp(coalesce(resultSet.getTimestamp("last_authenticated_at"), resultSet.getTimestamp("created_at")));
-                String state = resultSet.getInt("is_primary") == 1 ? "PRIMARY" : "LINKED";
+                String displayName = text(resultSet.getString("display_name"));
+                String planCode = text(resultSet.getString("plan_code"));
+                String planName = text(resultSet.getString("plan_name"));
+                String updatedAt = formatTimestamp(coalesce(resultSet.getTimestamp("updated_at"), resultSet.getTimestamp("started_at")));
+                String status = buildMembershipStatus(
+                    resultSet.getString("membership_status"),
+                    resultSet.getInt("tier_level"),
+                    resultSet.getLong("benefit_count"),
+                    resultSet.getString("benefit_summary")
+                );
 
                 rows.add(row(
-                    searchable(userId, provider, providerAccountId, providerEmail),
+                    searchable(userId, displayName, planCode, planName, status),
                     List.of(
-                        userId,
-                        "account",
-                        joinPlain(" / ", provider, providerAccountId, providerEmail),
-                        recentAuth,
-                        state,
+                        joinPlain(" / ", displayName, userId),
+                        "membership",
+                        joinPlain(" / ", planName, planCode),
+                        updatedAt,
+                        status,
                         "읽기 전용"
                     )
                 ));
             }
         }
         return rows;
+    }
+
+    private String buildMembershipStatus(String membershipStatus, int tierLevel, long benefitCount, String benefitSummary) {
+        return joinPlain(
+            " / ",
+            normalizeMembershipStatusLabel(membershipStatus),
+            "티어 " + tierLevel,
+            "혜택 " + benefitCount + "개",
+            text(benefitSummary)
+        );
     }
 
     private List<Map<String, Object>> loadPermissionRows(Connection connection) throws SQLException {
@@ -839,6 +932,108 @@ class AdminReadService {
         return rows;
     }
 
+    private List<Map<String, Object>> loadBannerRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "banners") || !tableExists(connection, "banner_slots")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                b.id,
+                bs.slot_code,
+                bs.slot_name,
+                bs.placement,
+                bs.screen_type,
+                b.banner_code,
+                b.title,
+                b.subtitle,
+                b.start_at,
+                b.end_at,
+                b.sort_order,
+                b.is_active,
+                COUNT(DISTINCT er.id) AS rule_count,
+                MIN(er.service_type) AS service_type
+            FROM banners b
+            INNER JOIN banner_slots bs ON bs.id = b.banner_slot_id
+            LEFT JOIN exposure_rules er
+                ON er.target_type = 'banner'
+               AND er.target_key = b.banner_code
+            GROUP BY
+                b.id,
+                bs.slot_code,
+                bs.slot_name,
+                bs.placement,
+                bs.screen_type,
+                b.banner_code,
+                b.title,
+                b.subtitle,
+                b.start_at,
+                b.end_at,
+                b.sort_order,
+                b.is_active
+            ORDER BY COALESCE(b.start_at, b.created_at) DESC, b.id DESC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                String bannerId = String.valueOf(resultSet.getLong("id"));
+                String placement = joinPlain(
+                    " / ",
+                    displayServiceType(resultSet.getString("service_type")),
+                    text(resultSet.getString("placement")),
+                    text(resultSet.getString("slot_name"))
+                );
+                String layout = joinPlain(
+                    " / ",
+                    text(resultSet.getString("slot_code")),
+                    text(resultSet.getString("screen_type")),
+                    "정렬 " + resultSet.getInt("sort_order")
+                );
+                String exposure = buildBannerExposureSummary(
+                    resultSet.getLong("rule_count"),
+                    resultSet.getTimestamp("start_at"),
+                    resultSet.getTimestamp("end_at")
+                );
+                String title = joinPlain(
+                    " / ",
+                    text(resultSet.getString("title")),
+                    text(resultSet.getString("subtitle"))
+                );
+                String period = buildBannerPeriodLabel(resultSet.getTimestamp("start_at"), resultSet.getTimestamp("end_at"));
+                String statusKey = resolveBannerStatusKey(
+                    resultSet.getInt("is_active"),
+                    resultSet.getTimestamp("start_at"),
+                    resultSet.getTimestamp("end_at")
+                );
+
+                rows.add(statusRow(
+                    searchable(
+                        bannerId,
+                        text(resultSet.getString("banner_code")),
+                        text(resultSet.getString("title")),
+                        text(resultSet.getString("slot_code")),
+                        text(resultSet.getString("slot_name"))
+                    ),
+                    List.of(
+                        bannerId,
+                        placement,
+                        layout,
+                        exposure,
+                        title,
+                        period,
+                        resolveStatusLabel(statusKey),
+                        "읽기 전용"
+                    ),
+                    statusKey
+                ));
+            }
+        }
+
+        return rows;
+    }
+
     private List<Map<String, Object>> buildSchemaRows(
         Connection connection,
         Set<String> existingTables,
@@ -906,70 +1101,11 @@ class AdminReadService {
         return rows;
     }
 
-    private List<Map<String, Object>> loadRecentActivity(Connection connection, String serviceType) throws SQLException {
+    private List<Map<String, Object>> loadRecentActivity(Connection connection, String bookingType) throws SQLException {
         List<ActivitySnapshot> activities = new ArrayList<>();
-
-        if (tableExists(connection, "notices")) {
-            String query = """
-                SELECT id, service_type, title, published_at, created_at, is_active
-                FROM notices
-                %s
-                ORDER BY COALESCE(published_at, created_at) DESC, id DESC
-                LIMIT 5
-                """.formatted(serviceType == null ? "" : "WHERE service_type = ?");
-
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                if (serviceType != null) {
-                    statement.setString(1, serviceType);
-                }
-
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    while (resultSet.next()) {
-                        Timestamp activityTime = coalesce(resultSet.getTimestamp("published_at"), resultSet.getTimestamp("created_at"));
-                        activities.add(new ActivitySnapshot(
-                            activityTime == null ? null : activityTime.toLocalDateTime(),
-                            mapOf(
-                                "type", "NOTICE",
-                                "desc", "[" + displayServiceType(resultSet.getString("service_type")) + "] " + text(resultSet.getString("title")),
-                                "time", formatTimestamp(activityTime),
-                                "status", resultSet.getInt("is_active") == 1 ? "ACTIVE" : "INACTIVE"
-                            )
-                        ));
-                    }
-                }
-            }
-        }
-
-        if (tableExists(connection, "support_tickets")) {
-            String query = """
-                SELECT id, service_type, title, status, created_at
-                FROM support_tickets
-                %s
-                ORDER BY created_at DESC, id DESC
-                LIMIT 5
-                """.formatted(serviceType == null ? "" : "WHERE service_type = ?");
-
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                if (serviceType != null) {
-                    statement.setString(1, serviceType);
-                }
-
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    while (resultSet.next()) {
-                        Timestamp createdAt = resultSet.getTimestamp("created_at");
-                        activities.add(new ActivitySnapshot(
-                            createdAt == null ? null : createdAt.toLocalDateTime(),
-                            mapOf(
-                                "type", "TICKET",
-                                "desc", "[" + displayServiceType(resultSet.getString("service_type")) + "] " + text(resultSet.getString("title")),
-                                "time", formatTimestamp(createdAt),
-                                "status", normalizeStatusLabel(resultSet.getString("status")).toUpperCase(Locale.ROOT)
-                            )
-                        ));
-                    }
-                }
-            }
-        }
+        activities.addAll(loadRecentBookingActivities(connection, bookingType));
+        activities.addAll(loadRecentRefundActivities(connection, bookingType));
+        activities.addAll(loadRecentAdminActionActivities(connection));
 
         activities.sort((left, right) -> {
             LocalDateTime leftTime = left.time();
@@ -990,6 +1126,159 @@ class AdminReadService {
             .limit(8)
             .map(ActivitySnapshot::payload)
             .toList();
+    }
+
+    private List<ActivitySnapshot> loadRecentBookingActivities(Connection connection, String bookingType) throws SQLException {
+        if (!tableExists(connection, "bookings")) {
+            return List.of();
+        }
+
+        StringBuilder query = new StringBuilder("""
+            SELECT booking_no, booking_type, status, payment_status, booked_at, cancelled_at, created_at
+            FROM bookings
+            """);
+
+        if (bookingType != null) {
+            query.append(" WHERE booking_type = ?");
+        }
+
+        query.append(" ORDER BY COALESCE(cancelled_at, booked_at, created_at) DESC, id DESC LIMIT 5");
+
+        List<ActivitySnapshot> activities = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query.toString())) {
+            if (bookingType != null) {
+                statement.setString(1, bookingType);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Timestamp activityTime = coalesce(
+                        resultSet.getTimestamp("cancelled_at"),
+                        coalesce(resultSet.getTimestamp("booked_at"), resultSet.getTimestamp("created_at"))
+                    );
+                    boolean cancelled = isCancelledBooking(
+                        resultSet.getString("status"),
+                        resultSet.getString("payment_status"),
+                        resultSet.getTimestamp("cancelled_at")
+                    );
+                    String bookingTypeLabel = displayBookingType(resultSet.getString("booking_type"));
+                    String bookingNo = text(resultSet.getString("booking_no"));
+                    String description = "[" + bookingTypeLabel + "] "
+                        + (bookingNo.isBlank() ? "예약" : bookingNo)
+                        + (cancelled ? " 취소" : " 예약 생성");
+
+                    activities.add(new ActivitySnapshot(
+                        activityTime == null ? null : activityTime.toLocalDateTime(),
+                        mapOf(
+                            "type", cancelled ? "cancel" : "reservation",
+                            "description", description,
+                            "time", formatTimestamp(activityTime),
+                            "statusTone", cancelled ? "danger" : "success",
+                            "statusLabel", cancelled ? "취소 완료" : "예약 접수"
+                        )
+                    ));
+                }
+            }
+        }
+
+        return activities;
+    }
+
+    private List<ActivitySnapshot> loadRecentRefundActivities(Connection connection, String bookingType) throws SQLException {
+        if (!tableExists(connection, "payment_refunds")
+            || !tableExists(connection, "payment_transactions")
+            || !tableExists(connection, "payment_attempts")
+            || !tableExists(connection, "bookings")) {
+            return List.of();
+        }
+
+        StringBuilder query = new StringBuilder("""
+            SELECT pr.refund_no, pr.status, pr.requested_at, pr.completed_at, pr.created_at,
+                   b.booking_no, b.booking_type
+            FROM payment_refunds pr
+            INNER JOIN payment_transactions pt ON pt.id = pr.payment_transaction_id
+            INNER JOIN payment_attempts pa ON pa.id = pt.payment_attempt_id
+            INNER JOIN bookings b ON b.id = pa.booking_id
+            """);
+
+        if (bookingType != null) {
+            query.append(" WHERE b.booking_type = ?");
+        }
+
+        query.append(" ORDER BY COALESCE(pr.completed_at, pr.requested_at, pr.created_at) DESC, pr.id DESC LIMIT 5");
+
+        List<ActivitySnapshot> activities = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query.toString())) {
+            if (bookingType != null) {
+                statement.setString(1, bookingType);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Timestamp activityTime = coalesce(
+                        resultSet.getTimestamp("completed_at"),
+                        coalesce(resultSet.getTimestamp("requested_at"), resultSet.getTimestamp("created_at"))
+                    );
+                    String refundNo = text(resultSet.getString("refund_no"));
+                    String bookingNo = text(resultSet.getString("booking_no"));
+                    String description = "[" + displayBookingType(resultSet.getString("booking_type")) + "] "
+                        + (bookingNo.isBlank() ? "예약" : bookingNo)
+                        + " / "
+                        + (refundNo.isBlank() ? "환불" : refundNo);
+
+                    activities.add(new ActivitySnapshot(
+                        activityTime == null ? null : activityTime.toLocalDateTime(),
+                        mapOf(
+                            "type", "cancel",
+                            "description", description,
+                            "time", formatTimestamp(activityTime),
+                            "statusTone", resolveRefundStatusTone(resultSet.getString("status")),
+                            "statusLabel", resolveRefundStatusLabel(resultSet.getString("status"))
+                        )
+                    ));
+                }
+            }
+        }
+
+        return activities;
+    }
+
+    private List<ActivitySnapshot> loadRecentAdminActionActivities(Connection connection) throws SQLException {
+        if (!tableExists(connection, "admin_action_logs")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT action_name, target_type, target_key, action_summary, created_at
+            FROM admin_action_logs
+            ORDER BY created_at DESC, id DESC
+            LIMIT 5
+            """;
+
+        List<ActivitySnapshot> activities = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Timestamp createdAt = resultSet.getTimestamp("created_at");
+                activities.add(new ActivitySnapshot(
+                    createdAt == null ? null : createdAt.toLocalDateTime(),
+                    mapOf(
+                        "type", "default",
+                        "description", buildAdminActionDescription(
+                            resultSet.getString("action_name"),
+                            resultSet.getString("action_summary"),
+                            resultSet.getString("target_type"),
+                            resultSet.getString("target_key")
+                        ),
+                        "time", formatTimestamp(createdAt),
+                        "statusTone", "info",
+                        "statusLabel", "관리 작업"
+                    )
+                ));
+            }
+        }
+
+        return activities;
     }
 
     private String normalizeDashboardDomain(String rawDomain) {
@@ -1072,6 +1361,307 @@ class AdminReadService {
         );
     }
 
+    private Map<String, Object> loadDashboardKpi(Connection connection, String bookingType) throws SQLException {
+        long todayReservations = countTodayReservations(connection, bookingType);
+        long revenue = loadTodayRevenue(connection, bookingType);
+        double cancelRate = loadTodayCancelRate(connection, bookingType, todayReservations);
+        long activeUsers = activeUserPresenceService.countActiveUsers(connection);
+
+        return mapOf(
+            "todayReservations", todayReservations,
+            "revenue", revenue,
+            "cancelRate", cancelRate,
+            "activeUsers", activeUsers
+        );
+    }
+
+    private Map<String, Object> loadDashboardChartSeries(Connection connection, String bookingType) throws SQLException {
+        Map<String, Object> chartSeriesByRange = new LinkedHashMap<>();
+        chartSeriesByRange.put("hour", loadChartRangeSeries(connection, bookingType, buildHourlyBuckets()));
+        chartSeriesByRange.put("day", loadChartRangeSeries(connection, bookingType, buildDailyBuckets()));
+        chartSeriesByRange.put("week", loadChartRangeSeries(connection, bookingType, buildWeeklyBuckets()));
+
+        Map<String, Object> monthSeries = loadChartRangeSeries(connection, bookingType, buildMonthlyBuckets());
+        chartSeriesByRange.put("month", monthSeries);
+        chartSeriesByRange.put("1year", copyChartSeries(monthSeries));
+        chartSeriesByRange.put("5year", loadChartRangeSeries(connection, bookingType, buildFiveYearBuckets()));
+
+        return chartSeriesByRange;
+    }
+
+    private Map<String, Object> loadChartRangeSeries(
+        Connection connection,
+        String bookingType,
+        List<TimeBucket> buckets
+    ) throws SQLException {
+        return mapOf(
+            "revenue", loadRevenueSeries(connection, bookingType, buckets),
+            "reservation", loadReservationSeries(connection, bookingType, buckets)
+        );
+    }
+
+    private List<Long> loadReservationSeries(
+        Connection connection,
+        String bookingType,
+        List<TimeBucket> buckets
+    ) throws SQLException {
+        if (!tableExists(connection, "bookings")) {
+            return zeroSeries(buckets.size());
+        }
+
+        StringBuilder query = new StringBuilder("""
+            SELECT COUNT(*)
+            FROM bookings
+            WHERE COALESCE(booked_at, created_at) >= ?
+              AND COALESCE(booked_at, created_at) < ?
+            """);
+
+        if (bookingType != null) {
+            query.append(" AND booking_type = ?");
+        }
+
+        List<Long> series = new ArrayList<>();
+        for (TimeBucket bucket : buckets) {
+            series.add(queryForLong(connection, query.toString(), bucket.startInclusive(), bucket.endExclusive(), bookingType));
+        }
+        return series;
+    }
+
+    private List<Long> loadRevenueSeries(
+        Connection connection,
+        String bookingType,
+        List<TimeBucket> buckets
+    ) throws SQLException {
+        if (!tableExists(connection, "payment_transactions")
+            || !tableExists(connection, "payment_attempts")
+            || !tableExists(connection, "bookings")) {
+            return zeroSeries(buckets.size());
+        }
+
+        StringBuilder query = new StringBuilder("""
+            SELECT COALESCE(SUM(pt.amount), 0)
+            FROM payment_transactions pt
+            JOIN payment_attempts pa ON pa.id = pt.payment_attempt_id
+            JOIN bookings b ON b.id = pa.booking_id
+            WHERE LOWER(COALESCE(pt.status, '')) IN ('approved', 'captured', 'paid', 'completed', 'success')
+              AND COALESCE(pt.approved_at, pt.processed_at, pt.created_at) >= ?
+              AND COALESCE(pt.approved_at, pt.processed_at, pt.created_at) < ?
+            """);
+
+        if (bookingType != null) {
+            query.append(" AND b.booking_type = ?");
+        }
+
+        List<Long> series = new ArrayList<>();
+        for (TimeBucket bucket : buckets) {
+            BigDecimal amount = queryForDecimal(connection, query.toString(), bucket.startInclusive(), bucket.endExclusive(), bookingType);
+            series.add(amount.setScale(0, RoundingMode.HALF_UP).longValue());
+        }
+        return series;
+    }
+
+    private List<TimeBucket> buildHourlyBuckets() {
+        LocalDate today = LocalDate.now();
+        List<TimeBucket> buckets = new ArrayList<>();
+        for (int hour = 0; hour < 24; hour++) {
+            LocalDateTime start = today.atTime(hour, 0);
+            buckets.add(new TimeBucket(start, start.plusHours(1)));
+        }
+        return buckets;
+    }
+
+    private List<TimeBucket> buildDailyBuckets() {
+        LocalDate today = LocalDate.now();
+        List<TimeBucket> buckets = new ArrayList<>();
+        for (int dayOffset = 6; dayOffset >= 0; dayOffset--) {
+            LocalDateTime start = today.minusDays(dayOffset).atStartOfDay();
+            buckets.add(new TimeBucket(start, start.plusDays(1)));
+        }
+        return buckets;
+    }
+
+    private List<TimeBucket> buildWeeklyBuckets() {
+        LocalDate currentWeekStart = LocalDate.now().with(DayOfWeek.MONDAY);
+        List<TimeBucket> buckets = new ArrayList<>();
+        for (int weekOffset = 7; weekOffset >= 0; weekOffset--) {
+            LocalDateTime start = currentWeekStart.minusWeeks(weekOffset).atStartOfDay();
+            buckets.add(new TimeBucket(start, start.plusWeeks(1)));
+        }
+        return buckets;
+    }
+
+    private List<TimeBucket> buildMonthlyBuckets() {
+        int currentYear = LocalDate.now().getYear();
+        List<TimeBucket> buckets = new ArrayList<>();
+        for (int month = 1; month <= 12; month++) {
+            YearMonth yearMonth = YearMonth.of(currentYear, month);
+            buckets.add(new TimeBucket(yearMonth.atDay(1).atStartOfDay(), yearMonth.plusMonths(1).atDay(1).atStartOfDay()));
+        }
+        return buckets;
+    }
+
+    private List<TimeBucket> buildFiveYearBuckets() {
+        int currentYear = LocalDate.now().getYear();
+        List<TimeBucket> buckets = new ArrayList<>();
+        for (int year = currentYear - 4; year <= currentYear; year++) {
+            LocalDateTime start = LocalDate.of(year, 1, 1).atStartOfDay();
+            buckets.add(new TimeBucket(start, start.plusYears(1)));
+        }
+        return buckets;
+    }
+
+    private List<Long> zeroSeries(int length) {
+        List<Long> series = new ArrayList<>();
+        for (int index = 0; index < length; index++) {
+            series.add(0L);
+        }
+        return series;
+    }
+
+    private Map<String, Object> copyChartSeries(Map<String, Object> source) {
+        Map<String, Object> copy = new LinkedHashMap<>();
+        copy.put("revenue", source.get("revenue"));
+        copy.put("reservation", source.get("reservation"));
+        return copy;
+    }
+
+    private long countTodayReservations(Connection connection, String bookingType) throws SQLException {
+        if (!tableExists(connection, "bookings")) {
+            return 0L;
+        }
+
+        StringBuilder query = new StringBuilder("""
+            SELECT COUNT(*)
+            FROM bookings
+            WHERE DATE(COALESCE(booked_at, created_at)) = CURRENT_DATE()
+            """);
+
+        if (bookingType != null) {
+            query.append(" AND booking_type = ?");
+        }
+
+        return queryForLong(connection, query.toString(), bookingType);
+    }
+
+    private boolean isCancelledBooking(String bookingStatus, String paymentStatus, Timestamp cancelledAt) {
+        if (cancelledAt != null) {
+            return true;
+        }
+
+        String normalizedStatus = text(bookingStatus).toLowerCase(Locale.ROOT);
+        if ("cancelled".equals(normalizedStatus)) {
+            return true;
+        }
+
+        String normalizedPaymentStatus = text(paymentStatus).toLowerCase(Locale.ROOT);
+        return "cancelled".equals(normalizedPaymentStatus)
+            || "refunded".equals(normalizedPaymentStatus)
+            || "partial_refund".equals(normalizedPaymentStatus);
+    }
+
+    private String displayBookingType(String bookingType) {
+        return switch (text(bookingType).toLowerCase(Locale.ROOT)) {
+            case "air" -> "항공";
+            case "stay" -> "숙박";
+            case "rent" -> "렌터카";
+            case "voucher" -> "바우처";
+            default -> "예약";
+        };
+    }
+
+    private String resolveRefundStatusTone(String rawStatus) {
+        return switch (text(rawStatus).toLowerCase(Locale.ROOT)) {
+            case "completed", "refunded", "approved" -> "success";
+            case "failed", "rejected", "cancelled" -> "danger";
+            default -> "warning";
+        };
+    }
+
+    private String resolveRefundStatusLabel(String rawStatus) {
+        return switch (text(rawStatus).toLowerCase(Locale.ROOT)) {
+            case "requested", "pending" -> "환불 요청";
+            case "completed", "refunded", "approved" -> "환불 완료";
+            case "failed" -> "환불 실패";
+            case "rejected" -> "환불 거절";
+            case "cancelled" -> "환불 취소";
+            default -> "환불 처리";
+        };
+    }
+
+    private String buildAdminActionDescription(String actionName, String actionSummary, String targetType, String targetKey) {
+        String normalizedActionName = text(actionName);
+        String normalizedSummary = text(actionSummary);
+        String normalizedTargetType = text(targetType);
+        String normalizedTargetKey = text(targetKey);
+
+        if (normalizedSummary.isBlank()) {
+            return joinPlain(
+                " / ",
+                normalizedActionName.isBlank() ? "관리 작업" : normalizedActionName,
+                normalizedTargetType,
+                normalizedTargetKey
+            );
+        }
+
+        return joinPlain(
+            " / ",
+            normalizedActionName.isBlank() ? "관리 작업" : normalizedActionName,
+            normalizedSummary,
+            normalizedTargetType.isBlank() && normalizedTargetKey.isBlank()
+                ? ""
+                : normalizedTargetType + ":" + normalizedTargetKey
+        );
+    }
+
+    private long loadTodayRevenue(Connection connection, String bookingType) throws SQLException {
+        if (!tableExists(connection, "payment_transactions")
+            || !tableExists(connection, "payment_attempts")
+            || !tableExists(connection, "bookings")) {
+            return 0L;
+        }
+
+        StringBuilder query = new StringBuilder("""
+            SELECT COALESCE(SUM(pt.amount), 0)
+            FROM payment_transactions pt
+            JOIN payment_attempts pa ON pa.id = pt.payment_attempt_id
+            JOIN bookings b ON b.id = pa.booking_id
+            WHERE LOWER(COALESCE(pt.status, '')) IN ('approved', 'captured', 'paid', 'completed', 'success')
+              AND DATE(COALESCE(pt.approved_at, pt.processed_at, pt.created_at)) = CURRENT_DATE()
+            """);
+
+        if (bookingType != null) {
+            query.append(" AND b.booking_type = ?");
+        }
+
+        BigDecimal revenue = queryForDecimal(connection, query.toString(), bookingType);
+        return revenue.setScale(0, RoundingMode.HALF_UP).longValue();
+    }
+
+    private double loadTodayCancelRate(Connection connection, String bookingType, long todayReservations) throws SQLException {
+        if (todayReservations <= 0L || !tableExists(connection, "bookings")) {
+            return 0.0d;
+        }
+
+        StringBuilder query = new StringBuilder("""
+            SELECT COUNT(*)
+            FROM bookings
+            WHERE (
+                cancelled_at IS NOT NULL
+                OR LOWER(COALESCE(status, '')) = 'cancelled'
+                OR LOWER(COALESCE(payment_status, '')) IN ('cancelled', 'refunded', 'partial_refund')
+            )
+              AND DATE(COALESCE(cancelled_at, updated_at, created_at)) = CURRENT_DATE()
+            """);
+
+        if (bookingType != null) {
+            query.append(" AND booking_type = ?");
+        }
+
+        long cancelledReservations = queryForLong(connection, query.toString(), bookingType);
+        double rawRate = (cancelledReservations * 100.0d) / todayReservations;
+        return Math.round(rawRate * 10.0d) / 10.0d;
+    }
+
     private long countAll(Connection connection, String tableName) throws SQLException {
         if (!tableExists(connection, tableName)) {
             return 0L;
@@ -1110,6 +1700,86 @@ class AdminReadService {
                 return 0L;
             }
             return resultSet.getLong(1);
+        }
+    }
+
+    private long queryForLong(Connection connection, String query, String parameter) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            if (parameter != null) {
+                statement.setString(1, parameter);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return 0L;
+                }
+                return resultSet.getLong(1);
+            }
+        }
+    }
+
+    private long queryForLong(
+        Connection connection,
+        String query,
+        LocalDateTime startInclusive,
+        LocalDateTime endExclusive,
+        String parameter
+    ) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setTimestamp(1, Timestamp.valueOf(startInclusive));
+            statement.setTimestamp(2, Timestamp.valueOf(endExclusive));
+            if (parameter != null) {
+                statement.setString(3, parameter);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return 0L;
+                }
+                return resultSet.getLong(1);
+            }
+        }
+    }
+
+    private BigDecimal queryForDecimal(Connection connection, String query, String parameter) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            if (parameter != null) {
+                statement.setString(1, parameter);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return BigDecimal.ZERO;
+                }
+
+                BigDecimal value = resultSet.getBigDecimal(1);
+                return value == null ? BigDecimal.ZERO : value;
+            }
+        }
+    }
+
+    private BigDecimal queryForDecimal(
+        Connection connection,
+        String query,
+        LocalDateTime startInclusive,
+        LocalDateTime endExclusive,
+        String parameter
+    ) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setTimestamp(1, Timestamp.valueOf(startInclusive));
+            statement.setTimestamp(2, Timestamp.valueOf(endExclusive));
+            if (parameter != null) {
+                statement.setString(3, parameter);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return BigDecimal.ZERO;
+                }
+
+                BigDecimal value = resultSet.getBigDecimal(1);
+                return value == null ? BigDecimal.ZERO : value;
+            }
         }
     }
 
@@ -1181,6 +1851,38 @@ class AdminReadService {
         return "현재 DB에 테이블이 없음";
     }
 
+    private String buildBannerExposureSummary(long ruleCount, Timestamp startAt, Timestamp endAt) {
+        return joinPlain(
+            " / ",
+            ruleCount > 0 ? "규칙 " + ruleCount + "개" : "기본 노출",
+            startAt != null ? "시작 " + formatTimestamp(startAt) : "",
+            endAt != null ? "종료 " + formatTimestamp(endAt) : ""
+        );
+    }
+
+    private String buildBannerPeriodLabel(Timestamp startAt, Timestamp endAt) {
+        return joinPlain(
+            " ~ ",
+            startAt == null ? "" : formatTimestamp(startAt),
+            endAt == null ? "" : formatTimestamp(endAt)
+        );
+    }
+
+    private String resolveBannerStatusKey(int isActive, Timestamp startAt, Timestamp endAt) {
+        if (isActive != 1) {
+            return "inactive";
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (startAt != null && startAt.toLocalDateTime().isAfter(now)) {
+            return "draft";
+        }
+        if (endAt != null && endAt.toLocalDateTime().isBefore(now)) {
+            return "inactive";
+        }
+        return "active";
+    }
+
     private String resolveNoticeStatusKey(int isActive, Timestamp publishedAt) {
         if (isActive != 1) {
             return "inactive";
@@ -1215,6 +1917,81 @@ class AdminReadService {
             case "resolved" -> "해결";
             case "closed" -> "종결";
             default -> rawStatus.trim();
+        };
+    }
+
+    private String normalizeMembershipStatusLabel(String rawStatus) {
+        if (!StringUtils.hasText(rawStatus)) {
+            return "상태 미확인";
+        }
+
+        return switch (rawStatus.trim().toLowerCase(Locale.ROOT)) {
+            case "active" -> "활성";
+            case "pending" -> "가입 대기";
+            case "paused" -> "일시중지";
+            case "expired" -> "만료";
+            case "cancelled" -> "해지";
+            default -> rawStatus.trim();
+        };
+    }
+
+    private String normalizeReservationStatusLabel(String rawStatus) {
+        if (!StringUtils.hasText(rawStatus)) {
+            return "예약 미확인";
+        }
+
+        return switch (rawStatus.trim().toLowerCase(Locale.ROOT)) {
+            case "pending" -> "예약 대기";
+            case "confirmed", "booked" -> "예약 확정";
+            case "completed" -> "이용 완료";
+            case "cancelled" -> "예약 취소";
+            default -> rawStatus.trim();
+        };
+    }
+
+    private String normalizePaymentStatusLabel(String rawStatus) {
+        if (!StringUtils.hasText(rawStatus)) {
+            return "결제 미확인";
+        }
+
+        return switch (rawStatus.trim().toLowerCase(Locale.ROOT)) {
+            case "paid", "approved", "captured" -> "결제 완료";
+            case "pending", "requested", "unpaid" -> "결제 대기";
+            case "refunded", "partial_refund" -> "환불 완료";
+            case "cancelled" -> "결제 취소";
+            default -> rawStatus.trim();
+        };
+    }
+
+    private String buildReservationBookingStatus(String bookingStatus, String paymentStatus, Timestamp cancelledAt) {
+        if (cancelledAt != null || "cancelled".equalsIgnoreCase(text(bookingStatus))) {
+            return "취소 완료";
+        }
+        if ("refunded".equalsIgnoreCase(text(paymentStatus)) || "partial_refund".equalsIgnoreCase(text(paymentStatus))) {
+            return "환불 완료";
+        }
+        if ("paid".equalsIgnoreCase(text(paymentStatus)) || "approved".equalsIgnoreCase(text(paymentStatus)) || "captured".equalsIgnoreCase(text(paymentStatus))) {
+            return "예약 확정";
+        }
+        return "처리 대기";
+    }
+
+    private String formatReservationAmount(BigDecimal paidAmount, BigDecimal totalAmount, String currency) {
+        BigDecimal amount = paidAmount != null && paidAmount.compareTo(BigDecimal.ZERO) > 0 ? paidAmount : totalAmount;
+        if (amount == null) {
+            amount = BigDecimal.ZERO;
+        }
+        String suffix = !StringUtils.hasText(currency) || "KRW".equalsIgnoreCase(currency) ? "원" : " " + currency;
+        return amount.setScale(0, RoundingMode.HALF_UP).toPlainString() + suffix;
+    }
+
+    private String toReservationDomainKey(String bookingType) {
+        return switch (text(bookingType).toLowerCase(Locale.ROOT)) {
+            case "air" -> "flight";
+            case "stay" -> "hotel";
+            case "rent" -> "rentcar";
+            case "voucher" -> "voucher";
+            default -> "all";
         };
     }
 
@@ -1307,5 +2084,11 @@ class AdminReadService {
         String currentTableLabel() {
             return legacyTable == null ? currentTable : currentTable + " (legacy: " + legacyTable + ")";
         }
+    }
+
+    private record TimeBucket(
+        LocalDateTime startInclusive,
+        LocalDateTime endExclusive
+    ) {
     }
 }
