@@ -1,6 +1,6 @@
 import { c as V, r as F, j as g } from "./react-vendor-BoSfm_Te.js";
-import { M as K, a as q, H as Y } from "./feature-layout-ClnO6w1y.js";
-import { r as W, c as z, l as Q, a as p, i as $ } from "./legacy-core-CKE3csu2.js";
+import { M as K, a as q, H as Y } from "./feature-layout-BzuJDlln.js";
+import { r as W, c as z, l as Q, a as p, i as $ } from "./legacy-core-DI4ZP0Ta.js";
 const D = () => {
   typeof console < "u" && console.log("Footer interaction initialized");
 };

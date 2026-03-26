@@ -1,0 +1,17 @@
+goal: Mirror the completed front footer auth-unify changes into jeju-spring using the existing front-to-thymeleaf sync pipeline.
+constraints:
+  - Use scripts/spring/sync-front-assets-to-spring.cjs and mirror-front-to-thymeleaf.cjs as the only sync pipeline.
+  - Do not hand-edit unrelated spring files.
+  - Do not touch jeju-web.
+  - Keep the scope limited to derived mirror/runtime artifacts.
+acceptance_criteria:
+  - Affected jeju-spring front-mirror templates, static assets, and runtime artifacts reflect the current front footer and Family Sites behavior contract.
+  - No unrelated spring drift is introduced.
+verification:
+  - Run the sync pipeline.
+  - Inspect the resulting git diff and git status.
+  - Reviewer confirms boundary and parity.
+out_of_scope:
+  - Front source edits.
+  - jeju-web mirror changes.
+  - Runtime redesign beyond derived sync output.

@@ -46,7 +46,7 @@ const C = "LOCAL_FRONT_ADMIN", A = "userSession", B = "ADMIN", G = /* @__PURE__ 
   return e || (V() ? null : D() ? z() : null);
 }, we = () => !!Y(), F = "https://jejugroup.alwaysdata.net", y = "http://localhost:9090/jeju-web", Q = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), J = () => {
   const t = new URLSearchParams(window.location.search).get("api");
-  return t === "local" ? y : t === "remote" ? F : Q.has(window.location.hostname) && window.location.port !== "9090" ? y : "";
+  return t === "local" ? y : t === "remote" ? F : !Q.has(window.location.hostname) || window.location.port === "8080" ? "" : window.location.port !== "9090" ? y : "";
 }, x = J(), f = "userSession", q = "jeju:session-updated", W = "/api/auth/session", Z = "/api/auth/logout", R = (e) => `${x}${e}`, X = (e) => {
   if (!e)
     return null;

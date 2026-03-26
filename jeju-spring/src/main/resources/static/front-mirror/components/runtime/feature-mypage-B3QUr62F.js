@@ -11,11 +11,11 @@ const B = {
   },
   phone: "010-1234-5678",
   tier: "GOLD"
-}, J = [
+}, X = [
   { label: "보유 포인트", tone: "point", value: "0P" },
   { label: "사용 가능한 쿠폰", tone: "coupon", value: "0장" },
   { label: "다가오는 여행", tone: "air", value: "0건" }
-], X = [
+], Z = [
   {
     amount: "324,000원",
     date: "2026.11.20 09:10",
@@ -73,11 +73,11 @@ const B = {
     type: "voucher",
     voucherUrl: "#"
   }
-], Z = {
+], ee = {
   id: "",
   isMember: !1,
   name: ""
-}, ge = {
+}, ve = {
   checked: !1,
   id: "",
   label: "",
@@ -85,7 +85,7 @@ const B = {
   ownerName: "",
   status: "reserved",
   type: "voucher"
-}, ve = {
+}, je = {
   activities: [],
   companions: [],
   date: "",
@@ -93,8 +93,8 @@ const B = {
   id: "",
   time: "",
   title: ""
-}, je = [], be = [];
-function ee({
+}, be = [], Ne = [];
+function se({
   currentAccountId: e,
   linkedCompanions: s,
   travelEvents: n
@@ -135,44 +135,44 @@ function ee({
   }
   return Array.from(i.values()).sort((r, c) => r.sortKey.localeCompare(c.sortKey)).map(({ sortKey: r, ...c }) => c);
 }
-const C = ae(B), K = M(J), Ne = ie(X), $ = U(je), F = H(be), se = ee({
+const C = ie(B), K = M(X), Se = re(Z), F = U(be), $ = H(Ne), te = se({
   currentAccountId: B.id ?? "",
-  linkedCompanions: $,
-  travelEvents: F
-}), te = [
+  linkedCompanions: F,
+  travelEvents: $
+}), ne = [
   { count: 0, href: "#", id: "qna", label: "1:1 문의 내역" },
   { count: 0, href: "#", id: "notice", label: "운항 및 예약 공지" },
   { count: null, href: "#", id: "faq", label: "자주 묻는 질문" }
-], ne = () => ({
-  bookings: ie(X),
-  itinerary: re(se),
-  linkedCompanions: U($),
-  profile: ae(B),
-  stats: M(J),
-  supportItems: oe(te),
-  travelEvents: H(F)
+], ae = () => ({
+  bookings: re(Z),
+  itinerary: oe(te),
+  linkedCompanions: U(F),
+  profile: ie(B),
+  stats: M(X),
+  supportItems: le(ne),
+  travelEvents: H($)
 }), z = (e) => {
-  const s = ne(), n = Me(e);
-  if (!He(n))
+  const s = ae(), n = Te(e);
+  if (!qe(n))
     return s;
-  const o = Te(n, s.profile), i = Be(n.linkedCompanions, s.linkedCompanions), r = Ke(n.travelEvents, s.travelEvents), c = n.travelEvents !== void 0 ? ee({
+  const o = ze(n, s.profile), i = Ke(n.linkedCompanions, s.linkedCompanions), r = Fe(n.travelEvents, s.travelEvents), c = n.travelEvents !== void 0 ? se({
     currentAccountId: o.id ?? s.profile.id ?? "",
     linkedCompanions: i,
     travelEvents: r
-  }) : Oe(n.itinerary, s.itinerary);
+  }) : Pe(n.itinerary, s.itinerary);
   return {
-    bookings: Re(n.bookings, s.bookings),
+    bookings: Oe(n.bookings, s.bookings),
     itinerary: c,
     linkedCompanions: i,
     profile: o,
-    stats: _e(n.stats ?? n, s.stats),
-    supportItems: Pe(n.supportItems ?? n.support ?? n.inquiries, s.supportItems),
+    stats: Re(n.stats ?? n, s.stats),
+    supportItems: Be(n.supportItems ?? n.support ?? n.inquiries, s.supportItems),
     travelEvents: r
   };
 }, k = (e) => {
-  Se(C, e.profile), we(K, e.stats), Ie(Ne, e.bookings), Ee(se, e.itinerary), Ce($, e.linkedCompanions), Ae(te, e.supportItems), ke(F, e.travelEvents);
+  we(C, e.profile), Ie(K, e.stats), Ee(Se, e.bookings), Ce(te, e.itinerary), Ae(F, e.linkedCompanions), ke(ne, e.supportItems), Me($, e.travelEvents);
 };
-function ae(e) {
+function ie(e) {
   return {
     ...e,
     memberships: [...e.memberships],
@@ -182,7 +182,7 @@ function ae(e) {
 function M(e) {
   return e.map((s) => ({ ...s }));
 }
-function ie(e) {
+function re(e) {
   return e.map((s) => ({
     ...s,
     tags: [...s.tags]
@@ -191,28 +191,28 @@ function ie(e) {
 function U(e) {
   return e.map((s) => ({ ...s }));
 }
-function re(e) {
+function oe(e) {
   return e.map((s) => ({
     ...s,
     activities: s.activities.map((n) => ({ ...n })),
     companions: s.companions.map((n) => ({ ...n }))
   }));
 }
-function oe(e) {
+function le(e) {
   return e.map((s) => ({ ...s }));
 }
 function H(e) {
   return e.map((s) => ({ ...s }));
 }
-const Se = (e, s) => {
+const we = (e, s) => {
   if (e.email = s.email, e.memberships.splice(0, e.memberships.length, ...s.memberships), e.name = s.name, e.phone = s.phone, e.tier = s.tier, e.role = s.role, e.id = s.id, s.passport) {
     e.passport = { ...s.passport };
     return;
   }
   delete e.passport;
-}, we = (e, s) => {
-  e.splice(0, e.length, ...s.map((n) => ({ ...n })));
 }, Ie = (e, s) => {
+  e.splice(0, e.length, ...s.map((n) => ({ ...n })));
+}, Ee = (e, s) => {
   e.splice(
     0,
     e.length,
@@ -221,7 +221,7 @@ const Se = (e, s) => {
       tags: [...n.tags]
     }))
   );
-}, Ee = (e, s) => {
+}, Ce = (e, s) => {
   e.splice(
     0,
     e.length,
@@ -231,21 +231,21 @@ const Se = (e, s) => {
       companions: n.companions.map((a) => ({ ...a }))
     }))
   );
-}, Ce = (e, s) => {
-  e.splice(0, e.length, ...s.map((n) => ({ ...n })));
 }, Ae = (e, s) => {
   e.splice(0, e.length, ...s.map((n) => ({ ...n })));
 }, ke = (e, s) => {
   e.splice(0, e.length, ...s.map((n) => ({ ...n })));
-}, Me = (e) => {
+}, Me = (e, s) => {
+  e.splice(0, e.length, ...s.map((n) => ({ ...n })));
+}, Te = (e) => {
   const s = {}, n = (a) => {
     N(a) && Object.assign(s, a);
   };
   return n(e), N(e) && (n(e.user), n(e.member), n(e.profile), n(e.data), n(e.session)), s;
-}, Te = (e, s) => {
-  const n = ze(e.memberships, e.tier ?? e.role), a = De(e.passport), o = l(e.tier) ?? l(e.role) ?? n[0], i = l(e.id) ?? l(e.memberId) ?? l(e.userId), r = l(e.name) ?? l(e.displayName) ?? l(e.fullName) ?? l(e.nickname) ?? l(e.id) ?? l(e.memberId) ?? l(e.userId) ?? s.name;
+}, ze = (e, s) => {
+  const n = _e(e.memberships, e.tier ?? e.role), a = De(e.passport), o = l(e.tier) ?? l(e.role) ?? n[0], i = l(e.id) ?? l(e.memberId) ?? l(e.userId), r = l(e.name) ?? l(e.displayName) ?? l(e.fullName) ?? l(e.nickname) ?? l(e.id) ?? l(e.memberId) ?? l(e.userId) ?? s.name;
   return {
-    email: l(e.email) ?? Fe(e, i, r) ?? s.email,
+    email: l(e.email) ?? Ue(e, i, r) ?? s.email,
     id: i ?? s.id,
     memberships: n,
     name: r,
@@ -254,7 +254,7 @@ const Se = (e, s) => {
     role: l(e.role),
     tier: o
   };
-}, ze = (e, s) => {
+}, _e = (e, s) => {
   const n = Array.isArray(e) ? e.map((o) => l(o)).filter((o) => !!o) : [];
   if (n.length > 0)
     return n;
@@ -271,14 +271,14 @@ const Se = (e, s) => {
   };
   if (!(!n.expiryDate && !n.issuingCountry && !n.number))
     return n;
-}, _e = (e, s) => Array.isArray(e) && e.length > 0 ? s.map((n, a) => Le(e[a], n, !0)) : Array.isArray(e) && e.length === 0 ? M(s) : N(e) ? $e(e, s) : M(s), Le = (e, s, n = !1) => {
-  const a = N(e) ? e : {}, o = ss(a.tone) ? a.tone : s.tone, i = l(a.label) ?? s.label, r = a.value ?? s.value;
+}, Re = (e, s) => Array.isArray(e) && e.length > 0 ? s.map((n, a) => Le(e[a], n, !0)) : Array.isArray(e) && e.length === 0 ? M(s) : N(e) ? $e(e, s) : M(s), Le = (e, s, n = !1) => {
+  const a = N(e) ? e : {}, o = ts(a.tone) ? a.tone : s.tone, i = l(a.label) ?? s.label, r = a.value ?? s.value;
   return {
     label: i,
     tone: o,
-    value: L(r, s)
+    value: R(r, s)
   };
-}, L = (e, s) => {
+}, R = (e, s) => {
   const n = l(e);
   if (!n)
     return s.value;
@@ -298,33 +298,33 @@ const Se = (e, s) => {
     default:
       return n;
   }
-}, Re = (e, s) => Array.isArray(e) ? e.length === 0 ? [] : e.map((n, a) => Ye(n, s[a % s.length] ?? s[0], !0)) : [], Oe = (e, s) => !Array.isArray(e) || e.length === 0 ? re(s) : e.map(
+}, Oe = (e, s) => Array.isArray(e) ? e.length === 0 ? [] : e.map((n, a) => Ye(n, s[a % s.length] ?? s[0], !0)) : [], Pe = (e, s) => !Array.isArray(e) || e.length === 0 ? oe(s) : e.map(
   (n, a) => Ve(
     n,
-    s.length > 0 ? s[a % s.length] ?? s[0] : ve
+    s.length > 0 ? s[a % s.length] ?? s[0] : je
   )
-), Pe = (e, s) => !Array.isArray(e) || e.length === 0 ? oe(s) : e.map((n, a) => We(n, s[a % s.length] ?? s[0])), Be = (e, s) => !Array.isArray(e) || e.length === 0 ? U(s) : e.map(
-  (n, a) => Je(
+), Be = (e, s) => !Array.isArray(e) || e.length === 0 ? le(s) : e.map((n, a) => Qe(n, s[a % s.length] ?? s[0])), Ke = (e, s) => !Array.isArray(e) || e.length === 0 ? U(s) : e.map(
+  (n, a) => Xe(
     n,
-    s.length > 0 ? s[a % s.length] ?? s[0] : Z
+    s.length > 0 ? s[a % s.length] ?? s[0] : ee
   )
-), le = (e) => !Array.isArray(e) || e.length === 0 ? [] : e.map((s) => Xe(s)).filter((s) => s !== null), Ke = (e, s) => {
-  const n = le(e);
+), ce = (e) => !Array.isArray(e) || e.length === 0 ? [] : e.map((s) => Ze(s)).filter((s) => s !== null), Fe = (e, s) => {
+  const n = ce(e);
   return n.length > 0 ? n : H(s);
 }, $e = (e, s) => s.map((n) => {
-  const a = es(e, Ze(n.tone));
+  const a = ss(e, es(n.tone));
   return a === void 0 ? { ...n } : {
     ...n,
-    value: L(a, n)
+    value: R(a, n)
   };
-}), Fe = (e, s, n) => {
-  const a = s ?? l(e.memberId) ?? l(e.userId) ?? l(e.username) ?? l(e.loginId) ?? Ue(n);
+}), Ue = (e, s, n) => {
+  const a = s ?? l(e.memberId) ?? l(e.userId) ?? l(e.username) ?? l(e.loginId) ?? He(n);
   if (a)
     return `${a}@jejugroup.example`;
-}, Ue = (e) => {
+}, He = (e) => {
   const n = e.trim().toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.+|\.+$/g, "");
   return n.length > 0 ? n : void 0;
-}, He = (e) => [
+}, qe = (e) => [
   "id",
   "memberId",
   "userId",
@@ -344,7 +344,7 @@ const Se = (e, s) => {
   "session",
   "data"
 ].some((n) => n in e), Ye = (e, s, n = !1) => {
-  const a = N(e) ? e : {}, o = Array.isArray(a.tags) ? a.tags.map((r) => l(r)).filter((r) => !!r) : [], i = Y(a.type) ? a.type : s.type;
+  const a = N(e) ? e : {}, o = Array.isArray(a.tags) ? a.tags.map((r) => l(r)).filter((r) => !!r) : [], i = q(a.type) ? a.type : s.type;
   return {
     amount: l(a.amount) ?? (n ? "" : s.amount),
     date: l(a.date) ?? (n ? "" : s.date),
@@ -359,14 +359,14 @@ const Se = (e, s) => {
   };
 }, Ve = (e, s) => {
   const n = N(e) ? e : {}, a = Array.isArray(n.activities) ? n.activities.map(
-    (i, r) => qe(
-      i,
-      s.activities.length > 0 ? s.activities[r % s.activities.length] ?? s.activities[0] : ge
-    )
-  ) : s.activities.map((i) => ({ ...i })), o = Array.isArray(n.companions) ? n.companions.map(
     (i, r) => Ge(
       i,
-      s.companions.length > 0 ? s.companions[r % s.companions.length] ?? s.companions[0] : Z
+      s.activities.length > 0 ? s.activities[r % s.activities.length] ?? s.activities[0] : ve
+    )
+  ) : s.activities.map((i) => ({ ...i })), o = Array.isArray(n.companions) ? n.companions.map(
+    (i, r) => We(
+      i,
+      s.companions.length > 0 ? s.companions[r % s.companions.length] ?? s.companions[0] : ee
     )
   ) : s.companions.map((i) => ({ ...i }));
   return {
@@ -378,33 +378,33 @@ const Se = (e, s) => {
     time: l(n.time) ?? s.time,
     title: l(n.title) ?? s.title
   };
-}, qe = (e, s) => {
+}, Ge = (e, s) => {
   const n = N(e) ? e : {};
   return {
-    checked: typeof n.checked == "boolean" ? n.checked : R(n.status) ? n.status === "used" : s.checked,
+    checked: typeof n.checked == "boolean" ? n.checked : L(n.status) ? n.status === "used" : s.checked,
     id: l(n.id) ?? s.id,
     label: l(n.label) ?? s.label,
     ownerId: l(n.ownerId) ?? s.ownerId,
     ownerName: l(n.ownerName) ?? s.ownerName,
-    status: R(n.status) ? n.status : s.status,
-    type: Y(n.type) ? n.type : s.type
+    status: L(n.status) ? n.status : s.status,
+    type: q(n.type) ? n.type : s.type
   };
-}, Ge = (e, s) => {
+}, We = (e, s) => {
   const n = N(e) ? e : {};
   return {
     id: l(n.id) ?? s.id,
     isMember: typeof n.isMember == "boolean" ? n.isMember : s.isMember,
     name: l(n.name) ?? s.name
   };
-}, We = (e, s) => {
+}, Qe = (e, s) => {
   const n = N(e) ? e : {};
   return {
-    count: Qe(n.count, s.count),
+    count: Je(n.count, s.count),
     href: l(n.href) ?? s.href,
     id: l(n.id) ?? s.id,
     label: l(n.label) ?? s.label
   };
-}, Qe = (e, s) => {
+}, Je = (e, s) => {
   if (e === null)
     return null;
   if (typeof e == "number" && Number.isFinite(e))
@@ -414,14 +414,14 @@ const Se = (e, s) => {
     return s;
   const a = Number(n);
   return Number.isFinite(a) ? a : s;
-}, Je = (e, s) => {
+}, Xe = (e, s) => {
   const n = N(e) ? e : {};
   return {
     id: l(n.id) ?? s.id,
     isMember: typeof n.isMember == "boolean" ? n.isMember : s.isMember,
     name: l(n.name) ?? s.name
   };
-}, Xe = (e) => {
+}, Ze = (e) => {
   const s = N(e) ? e : null;
   if (!s)
     return null;
@@ -434,12 +434,12 @@ const Se = (e, s) => {
     id: n,
     ownerId: y,
     ownerName: h,
-    status: R(s.status) ? s.status : "reserved",
+    status: L(s.status) ? s.status : "reserved",
     time: r,
     title: o,
-    type: Y(s.type) ? s.type : "voucher"
+    type: q(s.type) ? s.type : "voucher"
   };
-}, Ze = (e) => {
+}, es = (e) => {
   switch (e) {
     case "point":
       return ["point", "points", "mileage", "balance"];
@@ -450,7 +450,7 @@ const Se = (e, s) => {
     default:
       return [];
   }
-}, es = (e, s) => {
+}, ss = (e, s) => {
   for (const n of s)
     if (n in e) {
       const a = e[n];
@@ -464,38 +464,38 @@ const Se = (e, s) => {
   }
   if (typeof e == "number" && Number.isFinite(e))
     return String(e);
-}, Y = (e) => e === "air" || e === "rent" || e === "stay" || e === "voucher", R = (e) => e === "reserved" || e === "used" || e === "cancelled" || e === "missed", ss = (e) => e === "air" || e === "coupon" || e === "point" || e === "rent" || e === "stay" || e === "voucher" || e === "wallet", E = ({ children: e, className: s = "" }) => {
+}, q = (e) => e === "air" || e === "rent" || e === "stay" || e === "voucher", L = (e) => e === "reserved" || e === "used" || e === "cancelled" || e === "missed", ts = (e) => e === "air" || e === "coupon" || e === "point" || e === "rent" || e === "stay" || e === "voucher" || e === "wallet", E = ({ children: e, className: s = "" }) => {
   const n = ["bento-box", "soft-radius", s].filter(Boolean).join(" ");
   return /* @__PURE__ */ t.jsx("div", { className: n, children: e });
-}, O = "jeju:mypage-dashboard-mock-updated", ce = "jeju:mypage-dashboard:", ts = ["id", "memberId", "userId", "email", "loginId", "username"], de = ["user", "member", "profile", "data", "session"], w = (e) => e !== null && typeof e == "object" && !Array.isArray(e), ns = (e) => {
+}, O = "jeju:mypage-dashboard-mock-updated", de = "jeju:mypage-dashboard:", ns = ["id", "memberId", "userId", "email", "loginId", "username"], pe = ["user", "member", "profile", "data", "session"], w = (e) => e !== null && typeof e == "object" && !Array.isArray(e), as = (e) => {
   if (typeof e == "string") {
     const s = e.trim();
     return s.length > 0 ? s : null;
   }
   return typeof e == "number" && Number.isFinite(e) ? String(e) : null;
-}, as = (e) => e.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, ".").replace(/^\.+|\.+$/g, ""), is = (e) => {
+}, is = (e) => e.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, ".").replace(/^\.+|\.+$/g, ""), rs = (e) => {
   const s = [];
   if (!w(e))
     return s;
   s.push(e);
-  for (const n of de) {
+  for (const n of pe) {
     const a = e[n];
     w(a) && s.push(a);
   }
   return s;
 }, me = (e) => {
-  const s = is(e);
+  const s = rs(e);
   for (const n of s)
-    for (const a of ts) {
-      const o = ns(n[a]);
+    for (const a of ns) {
+      const o = as(n[a]);
       if (!o)
         continue;
-      const i = as(o);
+      const i = is(o);
       if (i)
         return i;
     }
   return null;
-}, pe = (e) => `${ce}${e}`, rs = (e) => {
+}, ue = (e) => `${de}${e}`, os = (e) => {
   if (!e)
     return null;
   try {
@@ -504,18 +504,18 @@ const Se = (e, s) => {
   } catch {
     return null;
   }
-}, os = (e) => {
+}, ls = (e) => {
   typeof window > "u" || window.dispatchEvent(
     new CustomEvent(O, {
       detail: { accountKey: e }
     })
   );
-}, ue = (e) => {
-  const s = me(e);
-  return s ? he(s) : null;
 }, he = (e) => {
+  const s = me(e);
+  return s ? xe(s) : null;
+}, xe = (e) => {
   try {
-    return rs(localStorage.getItem(pe(e)));
+    return os(localStorage.getItem(ue(e)));
   } catch {
     return null;
   }
@@ -527,7 +527,7 @@ const Se = (e, s) => {
     ...n,
     ...a
   };
-  for (const i of de) {
+  for (const i of pe) {
     const r = n[i], c = a[i];
     (w(r) || w(c)) && (o[i] = {
       ...w(r) ? r : {},
@@ -535,20 +535,20 @@ const Se = (e, s) => {
     });
   }
   return o;
-}, ls = (e, s) => {
+}, cs = (e, s) => {
   const n = me(e);
   if (!n)
     return !1;
   try {
-    return localStorage.setItem(pe(n), JSON.stringify(s)), os(n), !0;
+    return localStorage.setItem(ue(n), JSON.stringify(s)), ls(n), !0;
   } catch {
     return !1;
   }
-}, cs = (e, s) => {
-  const n = P(ue(e), s);
-  return n ? ls(e, n) : !1;
-}, xe = "userSession", G = "jeju:session-updated", ds = "/api/auth/session", ms = () => {
-  const e = ne();
+}, ds = (e, s) => {
+  const n = P(he(e), s);
+  return n ? cs(e, n) : !1;
+}, ye = "userSession", G = "jeju:session-updated", ps = "/api/auth/session", ms = () => {
+  const e = ae();
   return {
     bookings: e.bookings,
     filter: "all",
@@ -559,7 +559,7 @@ const Se = (e, s) => {
     supportItems: e.supportItems,
     travelEvents: e.travelEvents
   };
-}, ps = (e, s) => {
+}, us = (e, s) => {
   switch (s.type) {
     case "HYDRATE_DASHBOARD":
       return {
@@ -603,7 +603,7 @@ const Se = (e, s) => {
     default:
       return e;
   }
-}, ye = u.createContext(null), fe = (e) => {
+}, fe = u.createContext(null), ge = (e) => {
   if (!e)
     return null;
   try {
@@ -612,15 +612,15 @@ const Se = (e, s) => {
   } catch {
     return null;
   }
-}, us = () => {
+}, hs = () => {
   try {
-    return fe(localStorage.getItem(xe));
+    return ge(localStorage.getItem(ye));
   } catch {
     return null;
   }
-}, hs = async () => {
+}, xs = async () => {
   try {
-    const e = await fetch(ds, {
+    const e = await fetch(ps, {
       credentials: "include",
       headers: {
         Accept: "application/json"
@@ -631,10 +631,10 @@ const Se = (e, s) => {
   } catch {
     return null;
   }
-}, xs = async () => {
-  const e = us();
-  return e || await hs();
-}, ys = (e) => ({
+}, ys = async () => {
+  const e = hs();
+  return e || await xs();
+}, fs = (e) => ({
   bookings: e.bookings,
   itinerary: e.itinerary,
   linkedCompanions: e.linkedCompanions,
@@ -642,20 +642,20 @@ const Se = (e, s) => {
   stats: e.stats,
   supportItems: e.supportItems,
   travelEvents: e.travelEvents
-}), fs = (e, s) => ({
+}), gs = (e, s) => ({
   ...e,
   ...s,
   memberships: s.memberships ? [...s.memberships] : [...e.memberships],
   passport: s.passport === void 0 ? e.passport ? { ...e.passport } : void 0 : s.passport ? { ...s.passport } : void 0
-}), gs = (e) => {
-  const s = P(e, ue(e)), n = z(s);
+}), vs = (e) => {
+  const s = P(e, he(e)), n = z(s);
   if (n.linkedCompanions.length === 0)
     return z(s);
   const a = [
     ...n.travelEvents,
     ...n.linkedCompanions.flatMap((o) => {
-      const i = he(o.id);
-      return !i || !("travelEvents" in i) ? [] : le(i.travelEvents).map((r) => ({
+      const i = xe(o.id);
+      return !i || !("travelEvents" in i) ? [] : ce(i.travelEvents).map((r) => ({
         ...r,
         ownerId: r.ownerId || o.id,
         ownerName: r.ownerName || o.name
@@ -668,43 +668,43 @@ const Se = (e, s) => {
       travelEvents: a
     })
   );
-}, vs = ({ children: e }) => {
-  const [s, n] = u.useReducer(ps, void 0, ms), [a, o] = u.useState(!1), [i, r] = u.useState(!1), c = (h) => {
+}, js = ({ children: e }) => {
+  const [s, n] = u.useReducer(us, void 0, ms), [a, o] = u.useState(!1), [i, r] = u.useState(!1), c = (h) => {
     h.type === "HYDRATE_DASHBOARD" ? k(h.payload) : h.type === "PATCH_PROFILE" && k({
       bookings: s.bookings,
       itinerary: s.itinerary,
       linkedCompanions: s.linkedCompanions,
-      profile: fs(s.profile, h.payload),
+      profile: gs(s.profile, h.payload),
       stats: s.stats,
       supportItems: s.supportItems,
       travelEvents: s.travelEvents
     }), n(h);
   };
   u.useEffect(() => {
-    k(ys(s));
+    k(fs(s));
   }, [s.bookings, s.itinerary, s.linkedCompanions, s.profile, s.stats, s.supportItems, s.travelEvents]), u.useEffect(() => {
     let h = !0;
-    const g = async (m) => {
-      const x = m === void 0 ? await xs() : m;
+    const g = async (p) => {
+      const x = p === void 0 ? await ys() : p;
       if (!x) {
         if (!h)
           return;
         r(!1), o(!0);
         return;
       }
-      const f = gs(x);
+      const f = vs(x);
       h && (r(!0), o(!0), k(f), n({ type: "HYDRATE_DASHBOARD", payload: f }));
     };
     g();
-    const j = (m) => {
+    const j = (p) => {
       var x;
-      if (m.key === xe) {
-        g(fe(m.newValue));
+      if (p.key === ye) {
+        g(ge(p.newValue));
         return;
       }
-      (x = m.key) != null && x.startsWith(ce) && g();
-    }, S = (m) => {
-      const x = m instanceof CustomEvent ? m.detail : null;
+      (x = p.key) != null && x.startsWith(de) && g();
+    }, S = (p) => {
+      const x = p instanceof CustomEvent ? p.detail : null;
       g((x == null ? void 0 : x.session) ?? null);
     }, b = () => {
       g();
@@ -736,13 +736,13 @@ const Se = (e, s) => {
       /* @__PURE__ */ t.jsx("circle", { cx: "12", cy: "17.25", r: "1.1", fill: "currentColor" })
     ] }) }),
     /* @__PURE__ */ t.jsx("p", { className: "mypage-auth-empty-text", children: "로그인을 해주세요." })
-  ] }) : /* @__PURE__ */ t.jsx(ye.Provider, { value: y, children: e });
+  ] }) : /* @__PURE__ */ t.jsx(fe.Provider, { value: y, children: e });
 }, A = () => {
-  const e = u.useContext(ye);
+  const e = u.useContext(fe);
   if (!e)
     throw new Error("useDashboardState must be used within DashboardProvider");
   return e;
-}, js = (e) => {
+}, bs = (e) => {
   const s = (e == null ? void 0 : e.toLowerCase()) ?? "";
   return s.includes("diamond") ? "diamond" : s.includes("platinum") ? "platinum" : s.includes("silver") ? "silver" : s.includes("gold") ? "gold" : "neutral";
 }, W = (e) => {
@@ -764,7 +764,7 @@ const Se = (e, s) => {
     default:
       return "circle";
   }
-}, D = (e) => {
+}, _ = (e) => {
   const s = document.querySelector(e);
   if (!s)
     return;
@@ -773,9 +773,9 @@ const Se = (e, s) => {
     top: Math.max(0, i),
     behavior: "smooth"
   });
-}, bs = () => {
+}, Ns = () => {
   var i, r;
-  const { state: e } = A(), s = e.profile ?? C, n = (i = e.stats) != null && i.length ? e.stats : K, a = ((r = s.memberships) == null ? void 0 : r[0]) ?? C.memberships[0], o = js(a);
+  const { state: e } = A(), s = e.profile ?? C, n = (i = e.stats) != null && i.length ? e.stats : K, a = ((r = s.memberships) == null ? void 0 : r[0]) ?? C.memberships[0], o = bs(a);
   return u.useEffect(() => {
     window.lucide && window.lucide.createIcons();
   }, []), /* @__PURE__ */ t.jsxs("section", { className: "meta-section layer-hero dashboard-summary-grid", children: [
@@ -798,15 +798,15 @@ const Se = (e, s) => {
         ] }),
         /* @__PURE__ */ t.jsx("p", { className: "profile-welcome-msg", children: "제주에서 보냈던 소중한 시간들을 다시 이어보세요." }),
         /* @__PURE__ */ t.jsxs("div", { className: "profile-quick-nav", children: [
-          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => D(".layer-full-management"), children: [
+          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => _(".layer-full-management"), children: [
             /* @__PURE__ */ t.jsx("i", { "data-lucide": "calendar-check", className: "lucide-calendar-check" }),
             " 예약 현황"
           ] }),
-          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => D(".layer-itinerary"), children: [
+          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => _(".layer-itinerary"), children: [
             /* @__PURE__ */ t.jsx("i", { "data-lucide": "map", className: "lucide-map" }),
             " 여행 일정"
           ] }),
-          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => D(".layer-account-benefits"), children: [
+          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => _(".layer-account-benefits"), children: [
             /* @__PURE__ */ t.jsx("i", { "data-lucide": "user-cog", className: "lucide-user-cog" }),
             " 정보 및 혜택"
           ] })
@@ -821,7 +821,7 @@ const Se = (e, s) => {
       ] })
     ] }, c.label)) })
   ] });
-}, Ns = {
+}, Ss = {
   air: "brand-air",
   coupon: "brand-coupon",
   point: "brand-point",
@@ -829,10 +829,10 @@ const Se = (e, s) => {
   stay: "brand-stay",
   voucher: "brand-voucher",
   wallet: ""
-}, Ss = ({ tone: e, value: s }) => {
-  const n = Ns[e];
+}, ws = ({ tone: e, value: s }) => {
+  const n = Ss[e];
   return /* @__PURE__ */ t.jsx("span", { className: `pill-shape ${n}`.trim(), children: s });
-}, ws = ["all", "air", "stay", "rent", "voucher"], Is = () => {
+}, Is = ["all", "air", "stay", "rent", "voucher"], Es = () => {
   const { dispatch: e, state: s } = A(), n = s.bookings ?? [];
   u.useEffect(() => {
     window.lucide && window.lucide.createIcons();
@@ -849,7 +849,7 @@ const Se = (e, s) => {
         /* @__PURE__ */ t.jsx("h2", { className: "section-title", children: "나의 예약 현황" }),
         /* @__PURE__ */ t.jsx("p", { className: "section-subtitle", children: "항공, 숙박, 렌터카 및 바우처를 한눈에 관리하세요." })
       ] }),
-      /* @__PURE__ */ t.jsx("div", { className: "booking-filters flex-gap", children: ws.map((i) => /* @__PURE__ */ t.jsx(
+      /* @__PURE__ */ t.jsx("div", { className: "booking-filters flex-gap", children: Is.map((i) => /* @__PURE__ */ t.jsx(
         "button",
         {
           className: `filter-chip pill-shape ${s.filter === i ? "active" : ""}`,
@@ -863,7 +863,7 @@ const Se = (e, s) => {
     /* @__PURE__ */ t.jsx("ul", { className: "full-width-trip-list", children: a.length > 0 ? a.map((i) => /* @__PURE__ */ t.jsxs("li", { className: "inline-trip-card soft-radius", "data-type": i.type, children: [
       /* @__PURE__ */ t.jsxs("div", { className: "trip-core-info", children: [
         /* @__PURE__ */ t.jsxs("div", { className: "trip-head-flex", children: [
-          /* @__PURE__ */ t.jsx(Ss, { tone: i.type, value: i.status }),
+          /* @__PURE__ */ t.jsx(ws, { tone: i.type, value: i.status }),
           /* @__PURE__ */ t.jsx("div", { className: "trip-tags", children: i.tags.map((r) => /* @__PURE__ */ t.jsx("span", { className: "meta-tag pill-shape", children: r }, r)) })
         ] }),
         /* @__PURE__ */ t.jsx("h3", { className: "trip-title", children: i.title }),
@@ -902,23 +902,23 @@ const Se = (e, s) => {
       /* @__PURE__ */ t.jsx("p", { children: "선택하신 카테고리에 해당하는 예약 내역이 없습니다." })
     ] }) })
   ] });
-}, Es = {
+}, Cs = {
   park_jy: { id: "park_jy", name: "박준영" },
   lee_je: { id: "lee_je", name: "이지은" },
   choi_sj: { id: "choi_sj", name: "최수진" }
-}, Cs = (e) => e.trim().toLowerCase(), As = async (e) => {
+}, As = (e) => e.trim().toLowerCase(), ks = async (e) => {
   await new Promise((n) => setTimeout(n, 400));
-  const s = Es[e];
+  const s = Cs[e];
   return s ? {
     ...s,
     isMember: !0
   } : null;
-}, ks = ({
+}, Ms = ({
   initialCompanions: e = [],
-  lookupMemberById: s = As
+  lookupMemberById: s = ks
 } = {}) => {
   const [n, a] = u.useState(e), [o, i] = u.useState(""), [r, c] = u.useState(null), [y, h] = u.useState(!1), [g, j] = u.useState(null), S = u.useCallback(async (f) => {
-    const d = Cs(f);
+    const d = As(f);
     if (!d) {
       j({ message: "검색할 제주그룹 회원 ID를 입력해라" }), c(null);
       return;
@@ -929,8 +929,8 @@ const Se = (e, s) => {
     }
     h(!0), j(null), c(null);
     try {
-      const p = await s(d);
-      p ? c(p) : j({ message: "일치하는 제주그룹 회원 ID를 찾지 못했다" });
+      const m = await s(d);
+      m ? c(m) : j({ message: "일치하는 제주그룹 회원 ID를 찾지 못했다" });
     } catch {
       j({ message: "회원 조회 중 오류가 발생했다. 잠시 후 다시 시도해라" });
     } finally {
@@ -938,10 +938,10 @@ const Se = (e, s) => {
     }
   }, [s]), b = u.useCallback(() => {
     i(""), c(null), j(null);
-  }, []), m = u.useCallback((f) => {
-    a((d) => d.some((p) => p.id === f.id) ? d : [...d, f]), b();
+  }, []), p = u.useCallback((f) => {
+    a((d) => d.some((m) => m.id === f.id) ? d : [...d, f]), b();
   }, [b]), x = u.useCallback((f) => {
-    a((d) => d.filter((p) => p.id !== f));
+    a((d) => d.filter((m) => m.id !== f));
   }, []);
   return {
     companions: n,
@@ -951,11 +951,11 @@ const Se = (e, s) => {
     isSearching: y,
     errorObj: g,
     handleSearch: S,
-    addCompanion: m,
+    addCompanion: p,
     removeCompanion: x,
     clearSearch: b
   };
-}, Ms = ({
+}, Ts = ({
   initialCompanions: e,
   isOpen: s,
   onClose: n,
@@ -972,26 +972,26 @@ const Se = (e, s) => {
     addCompanion: j,
     removeCompanion: S,
     clearSearch: b
-  } = ks({ initialCompanions: e }), m = u.useRef(null), x = c ? o.some((p) => p.id === c.id) : !1;
+  } = Ms({ initialCompanions: e }), p = u.useRef(null), x = c ? o.some((m) => m.id === c.id) : !1;
   if (u.useEffect(() => {
     if (s) {
       b();
-      const p = window.setTimeout(() => {
+      const m = window.setTimeout(() => {
         var I;
-        return (I = m.current) == null ? void 0 : I.focus();
+        return (I = p.current) == null ? void 0 : I.focus();
       }, 100);
-      return () => window.clearTimeout(p);
+      return () => window.clearTimeout(m);
     }
   }, [s, b]), u.useEffect(() => {
-    const p = (I) => {
+    const m = (I) => {
       I.key === "Escape" && s && n();
     };
-    return window.addEventListener("keydown", p), () => window.removeEventListener("keydown", p);
+    return window.addEventListener("keydown", m), () => window.removeEventListener("keydown", m);
   }, [s, n]), u.useEffect(() => {
     s && window.lucide && window.lucide.createIcons();
   }, [s, c, o, h]), !s) return null;
-  const f = (p) => {
-    p.preventDefault(), g(i);
+  const f = (m) => {
+    m.preventDefault(), g(i);
   }, d = () => {
     a(o), n();
   };
@@ -999,7 +999,7 @@ const Se = (e, s) => {
     "div",
     {
       className: "meta-modal-content companion-modal-content soft-radius meta-glass-theme",
-      onClick: (p) => p.stopPropagation(),
+      onClick: (m) => m.stopPropagation(),
       style: { padding: "40px" },
       children: [
         /* @__PURE__ */ t.jsx("header", { className: "modal-header", children: /* @__PURE__ */ t.jsx("div", { className: "header-title-wrap", children: /* @__PURE__ */ t.jsx("h3", { children: "동행자 연동 / 관리" }) }) }),
@@ -1008,12 +1008,12 @@ const Se = (e, s) => {
             /* @__PURE__ */ t.jsx(
               "input",
               {
-                ref: m,
+                ref: p,
                 className: "id-input companion-search-input",
                 type: "text",
                 placeholder: "제주그룹 회원 ID를 입력해라",
                 value: i,
-                onChange: (p) => r(p.target.value),
+                onChange: (m) => r(m.target.value),
                 style: { padding: "18px 24px", fontSize: "16px", borderRadius: "12px" },
                 autoComplete: "off"
               }
@@ -1066,17 +1066,17 @@ const Se = (e, s) => {
               o.length,
               "명)"
             ] }),
-            o.length === 0 ? /* @__PURE__ */ t.jsx("p", { className: "empty-list", style: { padding: "48px 20px", fontSize: "15px" }, children: "아직 연동된 동행자가 없다. 제주그룹 회원 ID를 검색해서 추가해라." }) : /* @__PURE__ */ t.jsx("div", { className: "companion-linked-list companion-list-scroll", style: { gap: "16px", maxHeight: "280px" }, children: o.map((p) => /* @__PURE__ */ t.jsxs("div", { className: "companion-linked-item list-item", style: { padding: "12px 20px", borderRadius: "16px" }, children: [
+            o.length === 0 ? /* @__PURE__ */ t.jsx("p", { className: "empty-list", style: { padding: "48px 20px", fontSize: "15px" }, children: "아직 연동된 동행자가 없다. 제주그룹 회원 ID를 검색해서 추가해라." }) : /* @__PURE__ */ t.jsx("div", { className: "companion-linked-list companion-list-scroll", style: { gap: "16px", maxHeight: "280px" }, children: o.map((m) => /* @__PURE__ */ t.jsxs("div", { className: "companion-linked-item list-item", style: { padding: "12px 20px", borderRadius: "16px" }, children: [
               /* @__PURE__ */ t.jsxs("div", { className: "item-info", children: [
-                /* @__PURE__ */ t.jsxs("div", { className: `companion-avatar soft-radius ${p.isMember ? "is-linked" : ""}`, style: { width: "40px", height: "40px", fontSize: "15px", marginLeft: 0 }, children: [
-                  p.name.charAt(0),
-                  p.isMember && /* @__PURE__ */ t.jsx("i", { "data-lucide": "link", className: "lucide-link linked-indicator", style: { width: "14px", height: "14px" } })
+                /* @__PURE__ */ t.jsxs("div", { className: `companion-avatar soft-radius ${m.isMember ? "is-linked" : ""}`, style: { width: "40px", height: "40px", fontSize: "15px", marginLeft: 0 }, children: [
+                  m.name.charAt(0),
+                  m.isMember && /* @__PURE__ */ t.jsx("i", { "data-lucide": "link", className: "lucide-link linked-indicator", style: { width: "14px", height: "14px" } })
                 ] }),
                 /* @__PURE__ */ t.jsxs("div", { className: "user-info name-meta", children: [
-                  /* @__PURE__ */ t.jsx("strong", { style: { fontSize: "16px" }, children: p.name }),
+                  /* @__PURE__ */ t.jsx("strong", { style: { fontSize: "16px" }, children: m.name }),
                   /* @__PURE__ */ t.jsxs("span", { style: { fontSize: "13px", color: "var(--meta-text-muted)" }, children: [
                     "@",
-                    p.id
+                    m.id
                   ] })
                 ] })
               ] }),
@@ -1084,12 +1084,12 @@ const Se = (e, s) => {
                 "button",
                 {
                   className: "remove-btn companion-remove-btn",
-                  onClick: () => S(p.id),
+                  onClick: () => S(m.id),
                   style: { padding: "10px 24px", fontSize: "14px" },
                   children: "해제"
                 }
               )
-            ] }, p.id)) })
+            ] }, m.id)) })
           ] })
         ] }),
         /* @__PURE__ */ t.jsxs("footer", { className: "modal-footer", style: { marginTop: "40px", gap: "16px" }, children: [
@@ -1099,7 +1099,7 @@ const Se = (e, s) => {
       ]
     }
   ) });
-}, Ts = (e) => {
+}, zs = (e) => {
   switch (e) {
     case "used":
       return {
@@ -1132,7 +1132,7 @@ const Se = (e, s) => {
         style: void 0
       };
   }
-}, zs = () => {
+}, _s = () => {
   const { dispatch: e, state: s } = A(), n = s.itinerary ?? [], a = n.length > 0 ? n : [
     {
       activities: [],
@@ -1147,17 +1147,17 @@ const Se = (e, s) => {
   u.useEffect(() => {
     window.lucide && window.lucide.createIcons();
   }, [r, n, o]), u.useLayoutEffect(() => {
-    const m = a.reduce((x, f) => {
+    const p = a.reduce((x, f) => {
       var d;
       return x[f.id] = ((d = g.current[f.id]) == null ? void 0 : d.scrollHeight) ?? 0, x;
     }, {});
     S((x) => {
-      const f = Object.keys(x), d = Object.keys(m);
-      return f.length === d.length && d.every((p) => x[p] === m[p]) ? x : m;
+      const f = Object.keys(x), d = Object.keys(p);
+      return f.length === d.length && d.every((m) => x[m] === p[m]) ? x : p;
     });
   }, [a, r]);
-  const b = (m) => {
-    e({ type: "SET_LINKED_COMPANIONS", payload: m }), cs(
+  const b = (p) => {
+    e({ type: "SET_LINKED_COMPANIONS", payload: p }), ds(
       {
         id: i.id,
         profile: {
@@ -1167,7 +1167,7 @@ const Se = (e, s) => {
         }
       },
       {
-        linkedCompanions: m
+        linkedCompanions: p
       }
     ), h(null);
   };
@@ -1177,19 +1177,19 @@ const Se = (e, s) => {
       /* @__PURE__ */ t.jsx("p", { className: "section-subtitle", children: "동행자와 함께하는 상세 활동 계획" })
     ] }),
     /* @__PURE__ */ t.jsxs("div", { className: `itinerary-timeline-wrap ${r ? "is-expanded" : ""}`, children: [
-      a.map((m, x) => {
-        const f = x < 2, d = f || r, p = j[m.id] ?? 720, I = m.id === "empty-itinerary";
+      a.map((p, x) => {
+        const f = x < 2, d = f || r, m = j[p.id] ?? 720, I = p.id === "empty-itinerary";
         return /* @__PURE__ */ t.jsxs(
           "div",
           {
             className: "itinerary-day-block",
             ref: (v) => {
-              g.current[m.id] = v;
+              g.current[p.id] = v;
             },
             "aria-hidden": !d,
             style: f ? void 0 : {
               overflow: "hidden",
-              maxHeight: d ? `${p}px` : "0px",
+              maxHeight: d ? `${m}px` : "0px",
               opacity: d ? 1 : 0,
               transform: d ? "translateY(0)" : "translateY(-18px)",
               marginBottom: d ? "40px" : "0px",
@@ -1198,15 +1198,15 @@ const Se = (e, s) => {
             },
             children: [
               /* @__PURE__ */ t.jsxs("div", { className: "day-side-info", children: [
-                /* @__PURE__ */ t.jsx("span", { className: "day-date", children: m.date }),
-                /* @__PURE__ */ t.jsx("span", { className: "day-time", children: m.time }),
+                /* @__PURE__ */ t.jsx("span", { className: "day-date", children: p.date }),
+                /* @__PURE__ */ t.jsx("span", { className: "day-time", children: p.time }),
                 /* @__PURE__ */ t.jsxs("div", { className: "companions-card-wrap soft-radius", children: [
                   /* @__PURE__ */ t.jsxs("div", { className: "comp-head", children: [
                     /* @__PURE__ */ t.jsx("i", { "data-lucide": "users", className: "lucide-users" }),
                     /* @__PURE__ */ t.jsx("span", { className: "small-label", children: "함께하는 동행자" })
                   ] }),
-                  /* @__PURE__ */ t.jsxs("div", { className: `avatar-stack ${m.companions.length === 0 ? "is-empty" : ""}`, children: [
-                    m.companions.map((v) => /* @__PURE__ */ t.jsxs(
+                  /* @__PURE__ */ t.jsxs("div", { className: `avatar-stack ${p.companions.length === 0 ? "is-empty" : ""}`, children: [
+                    p.companions.map((v) => /* @__PURE__ */ t.jsxs(
                       "div",
                       {
                         className: `companion-avatar soft-radius ${v.isMember ? "is-linked" : ""}`,
@@ -1220,11 +1220,11 @@ const Se = (e, s) => {
                     )),
                     /* @__PURE__ */ t.jsxs("span", { className: "comp-count-label", children: [
                       "총 ",
-                      m.companions.length,
+                      p.companions.length,
                       "명"
                     ] })
                   ] }),
-                  /* @__PURE__ */ t.jsxs("button", { className: "link-action-btn pill-shape", type: "button", onClick: () => h(m.id), children: [
+                  /* @__PURE__ */ t.jsxs("button", { className: "link-action-btn pill-shape", type: "button", onClick: () => h(p.id), children: [
                     /* @__PURE__ */ t.jsx("i", { "data-lucide": "user-plus", className: "lucide-user-plus" }),
                     "동행자 연동/관리"
                   ] })
@@ -1232,8 +1232,8 @@ const Se = (e, s) => {
               ] }),
               /* @__PURE__ */ t.jsxs(E, { className: "itinerary-content-card meta-glass-theme", children: [
                 /* @__PURE__ */ t.jsxs("div", { className: "iti-header flex-header", children: [
-                  /* @__PURE__ */ t.jsx("h3", { className: "iti-title", children: m.title }),
-                  m.googleMapUrl ? /* @__PURE__ */ t.jsxs("a", { className: "map-link-btn pill-shape", href: m.googleMapUrl, rel: "noopener noreferrer", target: "_blank", children: [
+                  /* @__PURE__ */ t.jsx("h3", { className: "iti-title", children: p.title }),
+                  p.googleMapUrl ? /* @__PURE__ */ t.jsxs("a", { className: "map-link-btn pill-shape", href: p.googleMapUrl, rel: "noopener noreferrer", target: "_blank", children: [
                     /* @__PURE__ */ t.jsx("i", { "data-lucide": "map-pin", className: "lucide-map-pin" }),
                     "구글 맵 보기"
                   ] }) : /* @__PURE__ */ t.jsxs("span", { className: "map-link-btn pill-shape is-disabled", "aria-disabled": "true", children: [
@@ -1243,12 +1243,12 @@ const Se = (e, s) => {
                 ] }),
                 /* @__PURE__ */ t.jsxs("div", { className: "activity-checklist-wrap", children: [
                   /* @__PURE__ */ t.jsx("p", { className: "small-label", children: "활동(Activity) 체크리스트" }),
-                  /* @__PURE__ */ t.jsx("ul", { className: `checklist-list ${m.activities.length === 0 ? "is-empty" : ""}`, children: m.activities.map((v) => {
-                    const T = Ts(v.status), V = v.status === "used", q = v.status === "cancelled" || v.status === "missed";
+                  /* @__PURE__ */ t.jsx("ul", { className: `checklist-list ${p.activities.length === 0 ? "is-empty" : ""}`, children: p.activities.map((v) => {
+                    const T = zs(v.status), Y = v.status === "used", V = v.status === "cancelled" || v.status === "missed";
                     return /* @__PURE__ */ t.jsx(
                       "li",
                       {
-                        className: `checklist-item ${V ? "checked" : ""} soft-radius`,
+                        className: `checklist-item ${Y ? "checked" : ""} soft-radius`,
                         style: T.style,
                         children: /* @__PURE__ */ t.jsxs("div", { className: "checkbox-control", style: { alignItems: "flex-start" }, children: [
                           /* @__PURE__ */ t.jsx(
@@ -1256,7 +1256,7 @@ const Se = (e, s) => {
                             {
                               "data-lucide": T.icon,
                               style: {
-                                color: V ? "var(--brand-rent)" : q ? "#ef4444" : "var(--meta-text-muted)",
+                                color: Y ? "var(--brand-rent)" : V ? "#ef4444" : "var(--meta-text-muted)",
                                 marginTop: "2px",
                                 width: "18px",
                                 height: "18px",
@@ -1270,7 +1270,7 @@ const Se = (e, s) => {
                               "span",
                               {
                                 style: {
-                                  color: q ? "#ef4444" : "var(--meta-text-muted)",
+                                  color: V ? "#ef4444" : "var(--meta-text-muted)",
                                   fontSize: "12px",
                                   fontWeight: 700
                                 },
@@ -1288,7 +1288,7 @@ const Se = (e, s) => {
               ] })
             ]
           },
-          m.id
+          p.id
         );
       }),
       n.length > 2 && /* @__PURE__ */ t.jsx("div", { className: `timeline-gradient-overlay ${r ? "active" : ""}`, children: /* @__PURE__ */ t.jsx("button", { className: "expand-cta-btn pill-shape", onClick: () => c(!r), children: r ? /* @__PURE__ */ t.jsxs(t.Fragment, { children: [
@@ -1302,7 +1302,7 @@ const Se = (e, s) => {
       ] }) }) })
     ] }),
     y && /* @__PURE__ */ t.jsx(
-      Ms,
+      Ts,
       {
         isOpen: !!y,
         onClose: () => h(null),
@@ -1311,7 +1311,7 @@ const Se = (e, s) => {
       }
     )
   ] });
-}, _ = (e) => ({
+}, D = (e) => ({
   email: e.email,
   name: e.name,
   phone: e.phone
@@ -1319,22 +1319,22 @@ const Se = (e, s) => {
   email: e.email.trim(),
   name: e.name.trim(),
   phone: e.phone.trim()
-}), Q = (e) => e.name.trim().length > 0 && e.email.trim().includes("@") && e.phone.trim().length > 0, _s = (e) => e === "point" ? {
+}), Q = (e) => e.name.trim().length > 0 && e.email.trim().includes("@") && e.phone.trim().length > 0, Rs = (e) => e === "point" ? {
   color: "#1f2937"
 } : void 0, Ls = () => {
   var f;
-  const { dispatch: e, state: s } = A(), n = s.profile ?? C, a = (f = s.stats) != null && f.length ? s.stats : K, o = n.passport, [i, r] = u.useState(() => _(n)), [c, y] = u.useState(() => _(n)), [h, g] = u.useState(!1), j = (c.name.trim().charAt(0) || C.name.trim().charAt(0) || "J").toUpperCase();
+  const { dispatch: e, state: s } = A(), n = s.profile ?? C, a = (f = s.stats) != null && f.length ? s.stats : K, o = n.passport, [i, r] = u.useState(() => D(n)), [c, y] = u.useState(() => D(n)), [h, g] = u.useState(!1), j = (c.name.trim().charAt(0) || C.name.trim().charAt(0) || "J").toUpperCase();
   u.useEffect(() => {
     h && window.lucide && window.lucide.createIcons();
   }, [h]), u.useEffect(() => {
-    const d = _(n);
+    const d = D(n);
     h || (r(d), y(d));
   }, [n, h]);
   const S = () => {
     y(i), g(!0);
   }, b = () => {
     y(i), g(!1);
-  }, m = () => {
+  }, p = () => {
     const d = Ds(c);
     Q(d) && (r(d), y(d), e({ type: "PATCH_PROFILE", payload: d }), g(!1));
   }, x = !Q(c);
@@ -1389,7 +1389,7 @@ const Se = (e, s) => {
           /* @__PURE__ */ t.jsx("div", { className: "box-head", children: /* @__PURE__ */ t.jsx("h3", { children: "나의 포인트 & 쿠폰 내역" }) }),
           /* @__PURE__ */ t.jsx("div", { className: "benefit-tiles", children: a.slice(0, 2).map((d) => /* @__PURE__ */ t.jsxs("div", { className: `benefit-tile tone-${d.tone} soft-radius`, children: [
             /* @__PURE__ */ t.jsx("span", { className: "benefit-label", children: d.label }),
-            /* @__PURE__ */ t.jsx("strong", { className: "benefit-value", style: _s(d.tone), children: d.value }),
+            /* @__PURE__ */ t.jsx("strong", { className: "benefit-value", style: Rs(d.tone), children: d.value }),
             /* @__PURE__ */ t.jsx("button", { className: "history-link", type: "button", children: "상세 내역 확인" })
           ] }, d.label)) })
         ] })
@@ -1422,7 +1422,7 @@ const Se = (e, s) => {
                   className: "id-input",
                   type: "text",
                   value: c.name,
-                  onChange: (d) => y((p) => ({ ...p, name: d.target.value })),
+                  onChange: (d) => y((m) => ({ ...m, name: d.target.value })),
                   style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                 }
               ) })
@@ -1435,7 +1435,7 @@ const Se = (e, s) => {
                   className: "id-input",
                   type: "email",
                   value: c.email,
-                  onChange: (d) => y((p) => ({ ...p, email: d.target.value })),
+                  onChange: (d) => y((m) => ({ ...m, email: d.target.value })),
                   style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                 }
               ) })
@@ -1448,7 +1448,7 @@ const Se = (e, s) => {
                   className: "id-input",
                   type: "tel",
                   value: c.phone,
-                  onChange: (d) => y((p) => ({ ...p, phone: d.target.value })),
+                  onChange: (d) => y((m) => ({ ...m, phone: d.target.value })),
                   style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                 }
               ) })
@@ -1461,7 +1461,7 @@ const Se = (e, s) => {
               {
                 className: "save-btn pill-shape",
                 type: "button",
-                onClick: m,
+                onClick: p,
                 disabled: x,
                 style: { padding: "18px 0", fontSize: "15px" },
                 children: "저장"
@@ -1472,37 +1472,50 @@ const Se = (e, s) => {
       }
     ) }) : null
   ] });
-}, Rs = () => {
-  const { state: e } = A(), s = e.supportItems ?? [];
+}, Os = {
+  qna: ["/pages/mypage/assets/support_qna.png", "/front-mirror/pages/mypage/assets/support_qna.png"],
+  notice: ["/pages/mypage/assets/support_notice.png", "/front-mirror/pages/mypage/assets/support_notice.png"],
+  faq: ["/pages/mypage/assets/support_faq.png", "/front-mirror/pages/mypage/assets/support_faq.png"]
+}, Ps = () => typeof document > "u" ? !1 : Array.from(document.querySelectorAll("link[href], script[src]")).some((e) => (e.getAttribute("href") ?? e.getAttribute("src") ?? "").includes("/front-mirror/")), J = (e, s = !1) => {
+  const n = e === "qna" ? "qna" : e === "notice" ? "notice" : "faq", [a, o] = Os[n];
+  return s ? o : a;
+}, Bs = () => {
+  const { state: e } = A(), s = e.supportItems ?? [], [n] = u.useState(Ps), [a, o] = u.useState({});
   return /* @__PURE__ */ t.jsxs("section", { className: "meta-section layer-support", children: [
     /* @__PURE__ */ t.jsxs("header", { className: "section-header", children: [
       /* @__PURE__ */ t.jsx("h2", { className: "section-title", children: "고객지원" }),
       /* @__PURE__ */ t.jsx("p", { className: "section-subtitle", children: "여행 중 궁금한 점을 전문가와 상담하세요." })
     ] }),
-    /* @__PURE__ */ t.jsx("div", { className: "support-bento-grid bento-grid", children: s.map((n) => /* @__PURE__ */ t.jsxs("a", { className: `support-item-card bento-item meta-glass-theme soft-radius ${n.id}`, href: n.href, children: [
+    /* @__PURE__ */ t.jsx("div", { className: "support-bento-grid bento-grid", children: s.map((i) => /* @__PURE__ */ t.jsxs("a", { className: `support-item-card bento-item meta-glass-theme soft-radius ${i.id}`, href: i.href, children: [
       /* @__PURE__ */ t.jsx("div", { className: "sp-icon", children: /* @__PURE__ */ t.jsx(
         "img",
         {
-          alt: n.label,
-          src: n.id === "qna" ? "/pages/mypage/assets/support_qna.png" : n.id === "notice" ? "/pages/mypage/assets/support_notice.png" : "/pages/mypage/assets/support_faq.png"
+          alt: i.label,
+          onError: (r) => {
+            a[i.id] || n || (o((c) => ({
+              ...c,
+              [i.id]: !0
+            })), r.currentTarget.src = J(i.id, !0));
+          },
+          src: J(i.id, n || a[i.id] === !0)
         }
       ) }),
       /* @__PURE__ */ t.jsxs("div", { className: "sp-text", children: [
-        /* @__PURE__ */ t.jsx("strong", { className: "sp-label", children: n.label }),
-        n.count !== null ? /* @__PURE__ */ t.jsxs("span", { className: `sp-badge pill-shape ${n.count > 0 ? "active" : ""}`, children: [
-          n.count,
+        /* @__PURE__ */ t.jsx("strong", { className: "sp-label", children: i.label }),
+        i.count !== null ? /* @__PURE__ */ t.jsxs("span", { className: `sp-badge pill-shape ${i.count > 0 ? "active" : ""}`, children: [
+          i.count,
           " 건"
         ] }) : /* @__PURE__ */ t.jsx("span", { className: "sp-link-text", children: "상세 보기" })
       ] })
-    ] }, n.id)) })
+    ] }, i.id)) })
   ] });
-}, Os = () => /* @__PURE__ */ t.jsxs("div", { className: "meta-dashboard-layout", children: [
-  /* @__PURE__ */ t.jsx(bs, {}),
-  /* @__PURE__ */ t.jsx(Is, {}),
-  /* @__PURE__ */ t.jsx(zs, {}),
+}, Ks = () => /* @__PURE__ */ t.jsxs("div", { className: "meta-dashboard-layout", children: [
+  /* @__PURE__ */ t.jsx(Ns, {}),
+  /* @__PURE__ */ t.jsx(Es, {}),
+  /* @__PURE__ */ t.jsx(_s, {}),
   /* @__PURE__ */ t.jsx(Ls, {}),
-  /* @__PURE__ */ t.jsx(Rs, {})
-] }), Bs = () => /* @__PURE__ */ t.jsx(vs, { children: /* @__PURE__ */ t.jsx(Os, {}) });
+  /* @__PURE__ */ t.jsx(Bs, {})
+] }), $s = () => /* @__PURE__ */ t.jsx(js, { children: /* @__PURE__ */ t.jsx(Ks, {}) });
 export {
-  Bs as M
+  $s as M
 };

@@ -57,32 +57,33 @@ body.login-page {
 
 /* Auth Footer Overrides - Restore from Transparent Hack in Hotel.css */
 /* Default Footer Style (Main/Stay) */
-.login-page:not([data-mypage-shell="air"]) .footer {
+.login-page:not([data-mypage-shell="air"]) .footer.shell-footer {
   background-color: #f7f9fa;
   border-top: 1px solid #eeeeee;
   padding: 40px 60px;
   display: block;
   opacity: 1;
   visibility: visible;
+  overflow: visible;
 }
 
-.login-page .footer-content,
-.login-page .footer-info p {
+.login-page .footer.shell-footer .footer-content,
+.login-page .footer.shell-footer .footer-info p {
   background-color: transparent;
   color: #666666;
 }
 
-.login-page .footer-info p strong,
-.login-page .footer-copyright p {
+.login-page .footer.shell-footer .footer-info p strong,
+.login-page .footer.shell-footer .footer-copyright p {
   color: #333333;
 }
 
-.login-page .footer-social .social-icon {
+.login-page .footer.shell-footer .footer-social .social-icon {
   background: #e5e5e5;
   color: #666666;
 }
 
-.login-page .footer-social .social-icon:hover {
+.login-page .footer.shell-footer .footer-social .social-icon:hover {
   background: #FF5000;
   color: #ffffff;
 }
@@ -371,12 +372,22 @@ body.login-page {
 
 
 /* ==================== Login Page Footer Overlay ==================== */
-.login-page .footer {
+.login-page .footer.shell-footer {
   background-color: #EEEEEE;
   padding: 60px 40px;
+  overflow: visible;
 }
 
-.login-page .footer-copyright {
+.login-page .footer.shell-footer .footer-right-group {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 20px;
+  overflow: visible;
+}
+
+.login-page .footer.shell-footer .footer-copyright {
   border-top: none;
 }
 
