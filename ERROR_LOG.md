@@ -263,3 +263,25 @@
 - summary: `Spring server came back after resource refresh`
 - details: `After mirroring front changes and running Gradle processResources, http://127.0.0.1:8080/index.html responded with 200 again. The server is up; only the browser automation path was blocked from rechecking the rendered footer live.`
 - status: `resolved`
+
+- time: `2026-03-26 16:05:00 +09:00`
+- location: `local spring runtime restart attempt`
+- summary: `shell command restart attempt was blocked by policy`
+- details: `restarting the existing :8080 Spring process via shell_command was rejected by policy, so the workaround was to refresh jeju-spring/build/resources/main with gradlew processResources and verify the live server then served the updated auth asset containing the localhost:8080 same-origin branch.`
+- status: `resolved`
+# 2026-03-26 16:35:00 +09:00
+- location: `D:\lsh\git\jejugroup`
+- summary: `rg.exe verification command failed with Access is denied`
+- details: `node scripts/spring/sync-front-assets-to-spring.cjs` completed, but the follow-up `rg -n` checks against generated front-mirror paths failed in this shell with Access is denied. Will retry verification with PowerShell-native search commands.`
+- status: `open`
+
+- time: `2026-03-26 16:42:00 +09:00`
+- location: `D:\lsh\git\jejugroup`
+- summary: `rg.exe verification issue resolved with PowerShell-native search`
+- details: `The Access is denied failure only affected rg.exe in this shell; Select-String confirmed detectFrontMirrorRuntime in SupportSection.tsx and support_qna.png in the regenerated mypage runtime/mirror assets.`
+- status: `resolved`
+time: 2026-03-26 16:46:00 +09:00
+location: live mypage support verification on spring:8080
+summary: local Spring server was down during mypage support icon verification
+details: after the front fix, mirror sync, and build resource refresh completed, HTTP requests to http://127.0.0.1:8080/pages/mypage/dashboard.html still failed because no process was listening on port 8080, so live rendering of the repaired mypage support icons could not be rechecked in this turn. On-disk runtime, mirror, and reviewer validation all passed.
+status: open

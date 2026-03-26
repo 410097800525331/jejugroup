@@ -1,5 +1,52 @@
 # MULTI AGENT LOG
 
+- time: `2026-03-26 16:40 +09:00`
+- route: `Route B`
+- task: `Regen mypage Spring mirror assets after SupportSection update`
+- participants: `worker_spring_mypage_mirror`
+- write_sets:
+  - `worker_spring_mypage_mirror`: `derived front/.generated/webapp-overlay/** where the shell build regenerates mypage runtime, derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** where affected by mypage runtime regeneration`
+- verification:
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed
+  - `detectFrontMirrorRuntime` found in `front/components/react/mypage/SupportSection.tsx`
+  - `/front-mirror/pages/mypage/assets/support_qna.png` found in regenerated `front/.generated/webapp-overlay/components/runtime/feature-mypage-B3QUr62F.js` and mirrored `jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-mypage-B3QUr62F.js`
+
+- time: `2026-03-26 15:20 +09:00`
+- route: `Route B`
+- task: `Mirror the completed footer auth-unify front changes into jeju-spring using the existing front-to-thymeleaf sync pipeline`
+- participants: `main`, `worker_seed_mirror (Epicurus)`, `worker_spring_mirror (Averroes)`, `reviewer_spring_mirror (Boole)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_mirror`: `SEED.footer-auth-unify-spring-mirror-v1.yaml`
+  - `worker_spring_mirror`: `derived jeju-spring/src/main/resources/templates/front-mirror/**, derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/static/components/runtime/**`
+  - `reviewer_spring_mirror`: `review only`
+- verification:
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed
+  - `git status --short -- jeju-spring/src/main/resources/templates/front-mirror jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/static/components/runtime` inspected the regenerated spring mirror scope
+  - `git diff --name-only -- jeju-spring/src/main/resources/templates/front-mirror jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/static/components/runtime` inspected changed file boundaries
+  - `git diff --stat -- jeju-spring/src/main/resources/templates/front-mirror jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/static/components/runtime` inspected derived asset churn
+  - `reviewer_spring_mirror` reported `no blocking findings`
+
+- time: `2026-03-26 15:09 +09:00`
+- route: `Route B`
+- task: `Normalize the shared footer to the login/signup proportions, restore the Family Sites widget on auth pages, and align landing/stay pages to the same footer contract`
+- participants: `main`, `worker_seed (Darwin)`, `worker_shared_footer (Heisenberg)`, `worker_auth_footer (Tesla)`, `worker_shell_footer_runtime (Aristotle)`, `worker_shared_footer_followup (Kuhn)`, `reviewer_footer_unify_retry (Dalton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.footer-auth-unify-v1.yaml`
+  - `worker_shared_footer`: `front/components/react/layout/FamilyRadialMenu.tsx, front/components/react/layout/family-radial-menu.css, front/components/react/layout/footer.css`
+  - `worker_auth_footer`: `front/pages/auth/login.css, front/pages/auth/signup.css`
+  - `worker_shell_footer_runtime`: `front/apps/shell/src/runtime/bootstrap.js`
+  - `worker_shared_footer_followup`: `front/components/react/layout/footer.css`
+  - `reviewer_footer_unify_retry`: `review only`
+- verification:
+  - `pnpm run guard:text` passed
+  - `pnpm run check:shell` passed
+  - `node --check front/apps/shell/src/runtime/bootstrap.js` passed
+  - `pnpm run build:front` passed
+  - `git diff --check -- front/apps/shell/src/runtime/bootstrap.js front/components/react/layout/FamilyRadialMenu.tsx front/components/react/layout/family-radial-menu.css front/components/react/layout/footer.css front/pages/auth/login.css front/pages/auth/signup.css SEED.footer-auth-unify-v1.yaml STATE.md` passed
+  - `reviewer_footer_unify_retry` reported `no blocking findings`
+
 - time: `2026-03-22 07:14 +09:00`
 - route: `Route B`
 - task: `Toggle hotel header utils so guests see 비회원 예약확인 and signed-in users see 마이페이지`
@@ -1334,3 +1381,48 @@
   - `jeju-spring/build/resources/main/static/front-mirror/styles/globals.css` was copied from the updated source mirror so the running local spring server can serve the same badge styling
   - `pnpm run check:shell` passed
   - `git diff --check -- front/styles/globals.css` passed
+
+- time: `2026-03-26 16:15 +09:00`
+- route: `Route B`
+- task: `Fix local Spring signup id-check routing so /pages/auth/signup.html uses the active Spring auth APIs and signup completes successfully`
+- participants: `main`, `worker_seed_auth_api (Aquinas)`, `worker_shared_api_config (Cicero)`, `worker_spring_auth_mirror (Kant)`, `worker_spring_build_resources (Goodall)`, `worker_error_log (Avicenna)`, `reviewer_auth_signup_flow (Mill)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_auth_api (Aquinas)`: `SEED.auth-local-api-base-routing-fix-v1.yaml`
+  - `worker_shared_api_config (Cicero)`: `front/core/modules/config/api_config.module.js`
+  - `worker_spring_auth_mirror (Kant)`: `derived front/.generated/webapp-overlay/**, jeju-spring/src/main/resources/templates/front-mirror/**, jeju-spring/src/main/resources/static/front-mirror/**, jeju-spring/src/main/resources/static/components/runtime/** affected by auth runtime regeneration`
+  - `worker_spring_build_resources (Goodall)`: `jeju-spring/build/resources/main/** affected auth runtime resources`
+  - `worker_error_log (Avicenna)`: `ERROR_LOG.md`
+  - `reviewer_auth_signup_flow (Mill)`: `review only`
+- verification:
+  - `SEED.auth-local-api-base-routing-fix-v1.yaml` created to freeze the localhost:8080 same-origin auth routing contract while preserving explicit `?api=local` and `?api=remote` overrides
+  - `front/core/modules/config/api_config.module.js` now returns `""` for local Spring `localhost:8080`, keeping local dev fallback on `http://localhost:9090/jeju-web` for other localhost ports and preserving explicit overrides
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` regenerated the affected front runtime and spring front-mirror assets
+  - `jeju-spring/gradlew.bat processResources` refreshed `jeju-spring/build/resources/main/**` so the already-running local Spring process serves the fixed auth assets instead of stale build resources
+  - `ERROR_LOG.md` received a resolved entry for the blocked shell-based runtime restart attempt and the `processResources` workaround that unblocked live verification
+  - HTTP check against `http://127.0.0.1:8080/front-mirror/core/modules/config/api_config.module.js` returned the new `window.location.port === "8080"` branch
+  - live API verification on `http://127.0.0.1:8080` confirmed `checkId` success for a fresh id, `signup` success for that id, and duplicate response on the immediate re-check after signup
+  - `pnpm -C front/apps/shell check` passed
+  - `reviewer_auth_signup_flow (Mill)` reported `No blocking findings`; residual risk noted only that regenerated mirror/runtime chunks include broader derived churn than the single routing fix
+
+- time: `2026-03-26 16:48 +09:00`
+- route: `Route B`
+- task: `Fix mypage support card icons so customer-support images load correctly on the local Spring runtime`
+- participants: `main`, `worker_seed_mypage_support (Mendel)`, `worker_feature_mypage_support (Epicurus, Newton)`, `worker_spring_mypage_mirror (Hooke, Popper)`, `worker_spring_mypage_build_resources (Banach, Bacon)`, `reviewer_mypage_support_icons (Franklin, Meitner)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_mypage_support (Mendel)`: `SEED.mypage-support-icon-path-fix-v1.yaml`
+  - `worker_feature_mypage_support (Epicurus, Newton)`: `front/components/react/mypage/SupportSection.tsx`
+  - `worker_spring_mypage_mirror (Hooke, Popper)`: `derived front/.generated/webapp-overlay/**, jeju-spring/src/main/resources/static/front-mirror/**, jeju-spring/src/main/resources/templates/front-mirror/** affected by mypage runtime regeneration`
+  - `worker_spring_mypage_build_resources (Banach, Bacon)`: `jeju-spring/build/resources/main/** affected mypage runtime resources`
+  - `reviewer_mypage_support_icons (Franklin, Meitner)`: `review only`
+- verification:
+  - `SEED.mypage-support-icon-path-fix-v1.yaml` created to freeze the no-404 mypage support-icon contract for local Spring host-only runtime
+  - `front/components/react/mypage/SupportSection.tsx` now detects `/front-mirror/` runtime assets from existing `link[href]` / `script[src]` tags and chooses the mirror asset path on first render for Spring host-only pages, while keeping `/pages/mypage/assets/...` for direct front runtime
+  - `pnpm -C front/apps/shell check` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` regenerated the affected `feature-mypage` runtime and Spring front-mirror assets
+  - `./gradlew.bat processResources --rerun-tasks` refreshed `jeju-spring/build/resources/main/**` so the local Spring runtime resources carry the updated mypage asset-path logic
+  - `feature-mypage-B3QUr62F.js` in `front/.generated/webapp-overlay/**` and `jeju-spring/src/main/resources/static/front-mirror/components/runtime/**` contains the `/front-mirror/pages/mypage/assets/support_qna.png` path
+  - `feature-mypage-CqBtx0gg.js` in `jeju-spring/build/resources/main/static/components/runtime/**` contains the support icon source pair including `/front-mirror/pages/mypage/assets/support_qna.png`
+  - `reviewer_mypage_support_icons` first flagged the `onError`-only fallback as insufficient because it still emitted a first-request 404, then re-review reported no blocking findings after runtime detection was added
+  - live HTTP verification against `http://127.0.0.1:8080/pages/mypage/dashboard.html` was blocked because no process was listening on port 8080 during this turn; this gap is logged separately in `ERROR_LOG.md`
