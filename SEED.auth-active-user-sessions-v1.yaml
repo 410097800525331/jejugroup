@@ -1,0 +1,32 @@
+goal: >
+  Track current online users from a dedicated active-session presence table,
+  not the users table, and surface the real active-session count in the admin
+  dashboard while keeping Spring session lifecycle and front heartbeat in sync.
+constraints:
+  - Keep `front` as the source of truth for the auth/runtime behavior, and mirror to `jeju-spring` only through the existing derived sync/processResources flow when needed.
+  - Add a new Flyway migration that creates `active_user_sessions`.
+  - Use `active_user_sessions` as the authoritative presence source for online-user tracking.
+  - Touch presence on authenticated Spring login/session activity and clear it on logout.
+  - Add a front heartbeat so an idle open page still refreshes presence while the session remains active.
+  - Exclude stale sessions outside a 5-minute recent-activity window from online counts.
+  - Keep the scope focused on active-user presence tracking; do not expand unrelated admin CRUD or UI surfaces.
+acceptance_criteria:
+  - A new `active_user_sessions` table exists via Flyway migration.
+  - Spring auth session flows update presence on login, session checks or activity, and logout.
+  - Idle authenticated pages remain counted as online because the front heartbeat refreshes presence.
+  - The admin dashboard `activeUsers` KPI reads the live active-session count from presence data, not from the users table.
+  - Sessions with no activity inside the 5-minute window are excluded from the active-user count.
+  - Front remains the source of truth, with Spring runtime sync only when the updated front runtime must be mirrored.
+verification:
+  - `jeju-spring/gradlew.bat compileJava` or the smallest feasible backend compile-level check covering the touched Spring auth/admin files.
+  - `node --check front/admin/js/dashboard.js`
+  - `node --check front/core/modules/auth/session_manager.module.js`
+  - `pnpm run guard:text`
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat processResources` if the updated front runtime is mirrored into Spring.
+  - Targeted diff/review of the migration, Spring auth/session/logout flow, heartbeat, and admin KPI wiring.
+out_of_scope:
+  - Unrelated admin table or surface refactors.
+  - `jeju-web` changes or deployment changes.
+  - Broad UI redesign or new admin pages.
+  - Using the `users` table as the source of truth for online-user presence.
+  - Non-auth session features, unrelated APIs, or polling/orchestration machinery.

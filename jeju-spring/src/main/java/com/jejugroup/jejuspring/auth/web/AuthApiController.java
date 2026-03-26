@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jejugroup.jejuspring.auth.application.AuthService;
+import com.jejugroup.jejuspring.auth.application.ActiveUserPresenceService;
 import com.jejugroup.jejuspring.auth.model.SessionUser;
 import com.jejugroup.jejuspring.auth.model.SignupRequest;
 
@@ -22,9 +23,11 @@ import com.jejugroup.jejuspring.auth.model.SignupRequest;
 @RequestMapping("/api/auth")
 public class AuthApiController {
     private final AuthService authService;
+    private final ActiveUserPresenceService activeUserPresenceService;
 
-    public AuthApiController(AuthService authService) {
+    public AuthApiController(AuthService authService, ActiveUserPresenceService activeUserPresenceService) {
         this.authService = authService;
+        this.activeUserPresenceService = activeUserPresenceService;
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,6 +44,7 @@ public class AuthApiController {
 
             session.setAttribute("user", user);
             session.setMaxInactiveInterval(60 * 60 * 24 * 7);
+            activeUserPresenceService.touch(session.getId(), user);
             return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "로그인 성공",
@@ -60,6 +64,7 @@ public class AuthApiController {
             return json(HttpStatus.UNAUTHORIZED, false, "유효한 로그인 세션이 없습니다.");
         }
 
+        activeUserPresenceService.touch(session.getId(), user);
         return ResponseEntity.ok(Map.of(
             "success", true,
             "user", user
@@ -68,6 +73,7 @@ public class AuthApiController {
 
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> logout(HttpSession session) {
+        activeUserPresenceService.clear(session.getId());
         session.invalidate();
         return ResponseEntity.ok(Map.of(
             "success", true,

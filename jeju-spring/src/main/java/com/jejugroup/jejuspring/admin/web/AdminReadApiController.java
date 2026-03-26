@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jejugroup.jejuspring.auth.application.ActiveUserPresenceService;
 import com.jejugroup.jejuspring.auth.model.SessionUser;
 import com.jejugroup.jejuspring.config.AppProperties;
 
@@ -137,16 +138,18 @@ public class AdminReadApiController {
 class AdminReadService {
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm", Locale.KOREA);
     private static final Map<String, String> SERVICE_TYPE_BY_DOMAIN = Map.of(
-        "air", "jeju-air",
-        "stay", "jeju-stay",
-        "rent", "jeju-rental"
+        "flight", "jeju-air",
+        "hotel", "jeju-stay",
+        "rentcar", "jeju-rental"
     );
     private static final List<String> RESERVATION_DOMAINS = List.of("air", "stay", "rent", "voucher");
 
     private final AppProperties appProperties;
+    private final ActiveUserPresenceService activeUserPresenceService;
 
-    AdminReadService(AppProperties appProperties) {
+    AdminReadService(AppProperties appProperties, ActiveUserPresenceService activeUserPresenceService) {
         this.appProperties = appProperties;
+        this.activeUserPresenceService = activeUserPresenceService;
     }
 
     Map<String, Object> loadDashboard(String rawDomain) throws SQLException {
@@ -156,17 +159,16 @@ class AdminReadService {
         try (Connection connection = openConnection()) {
             connection.setReadOnly(true);
 
-            long userCount = countAll(connection, "users");
+            long activeUserCount = activeUserPresenceService.countActiveUsers(connection);
             long inquiryCount = countByServiceType(connection, "support_tickets", serviceType);
             long noticeCount = countByServiceType(connection, "notices", serviceType);
-            long faqCount = countByServiceType(connection, "faqs", serviceType);
 
             Map<String, Object> data = new LinkedHashMap<>();
             data.put("kpi", mapOf(
-                "todayReservations", userCount,
+                "todayReservations", countAll(connection, "users"),
                 "revenue", inquiryCount,
                 "cancelRate", noticeCount,
-                "activeUsers", faqCount
+                "activeUsers", activeUserCount
             ));
             data.put("recentActivity", loadRecentActivity(connection, serviceType));
             data.put("ui", mapOf(
@@ -996,7 +998,10 @@ class AdminReadService {
         }
         String normalized = rawDomain.trim().toLowerCase(Locale.ROOT);
         return switch (normalized) {
-            case "air", "stay", "rent", "all" -> normalized;
+            case "all", "flight", "hotel", "rentcar" -> normalized;
+            case "air" -> "flight";
+            case "stay" -> "hotel";
+            case "rent" -> "rentcar";
             default -> "all";
         };
     }

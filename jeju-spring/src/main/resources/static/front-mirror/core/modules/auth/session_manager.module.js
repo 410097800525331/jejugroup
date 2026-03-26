@@ -4,6 +4,10 @@ const SESSION_STORAGE_KEY = "userSession";
 const SESSION_EVENT_NAME = "jeju:session-updated";
 const AUTH_SESSION_ENDPOINT = "/api/auth/session";
 const AUTH_LOGOUT_ENDPOINT = "/api/auth/logout";
+const SESSION_HEARTBEAT_INTERVAL_MS = 2 * 60 * 1000;
+
+let sessionHeartbeatTimerId = null;
+let sessionHeartbeatRequestPromise = null;
 
 const toApiUrl = (path) => `${API_BASE_URL}${path}`;
 
@@ -41,6 +45,54 @@ const emitSessionUpdate = (session) => {
   }
 };
 
+const stopSessionHeartbeat = () => {
+  if (sessionHeartbeatTimerId !== null) {
+    window.clearInterval(sessionHeartbeatTimerId);
+    sessionHeartbeatTimerId = null;
+  }
+
+  sessionHeartbeatRequestPromise = null;
+};
+
+const refreshSessionHeartbeat = async () => {
+  if (sessionHeartbeatRequestPromise) {
+    return sessionHeartbeatRequestPromise;
+  }
+
+  const storedSession = getStoredSession();
+  if (!storedSession) {
+    stopSessionHeartbeat();
+    return null;
+  }
+
+  sessionHeartbeatRequestPromise = (async () => {
+    try {
+      return await fetchSessionFromServer();
+    } catch (error) {
+      console.warn("[SessionManager] Session heartbeat failed:", error);
+      return null;
+    } finally {
+      sessionHeartbeatRequestPromise = null;
+    }
+  })();
+
+  return sessionHeartbeatRequestPromise;
+};
+
+const ensureSessionHeartbeat = () => {
+  if (sessionHeartbeatTimerId !== null) {
+    return;
+  }
+
+  if (typeof window.setInterval !== "function") {
+    return;
+  }
+
+  sessionHeartbeatTimerId = window.setInterval(() => {
+    void refreshSessionHeartbeat();
+  }, SESSION_HEARTBEAT_INTERVAL_MS);
+};
+
 export const getStoredSession = () => {
   try {
     return parseSession(localStorage.getItem(SESSION_STORAGE_KEY));
@@ -60,6 +112,7 @@ export const saveSession = (user) => {
   try {
     const currentRawSession = localStorage.getItem(SESSION_STORAGE_KEY);
     if (serializedNextSession && currentRawSession === serializedNextSession) {
+      ensureSessionHeartbeat();
       return parseSession(currentRawSession) ?? nextSession;
     }
 
@@ -68,17 +121,18 @@ export const saveSession = (user) => {
     console.warn("[SessionManager] Session save failed:", error);
   }
 
+  ensureSessionHeartbeat();
   emitSessionUpdate(nextSession);
   return nextSession;
 };
 
 export const clearSession = () => {
-  try {
-    if (localStorage.getItem(SESSION_STORAGE_KEY) === null) {
-      return;
-    }
+  stopSessionHeartbeat();
 
-    localStorage.removeItem(SESSION_STORAGE_KEY);
+  try {
+    if (localStorage.getItem(SESSION_STORAGE_KEY) !== null) {
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+    }
   } catch (error) {
     console.warn("[SessionManager] Session clear failed:", error);
   }
@@ -106,6 +160,7 @@ export const fetchSessionFromServer = async () => {
 
   const data = await response.json();
   if (!data?.success || !data?.user) {
+    clearSession();
     return null;
   }
 
@@ -122,6 +177,8 @@ export const resolveSession = async () => {
 };
 
 export const logoutSession = async () => {
+  stopSessionHeartbeat();
+
   try {
     await fetch(toApiUrl(AUTH_LOGOUT_ENDPOINT), {
       method: "POST",

@@ -1,0 +1,40 @@
+goal: >
+  관리자 페이지 전면에서 하드코딩된 더미 business data를 제거하고,
+  dashboard, reservations, lodging, members, cms의 현재 UI 레이아웃/탭/필터/액션/테이블 구조는 그대로 유지한 채
+  나중에 DB 데이터가 들어와도 같은 화면 계약으로 hydrate될 수 있도록 seed 계약을 고정한다.
+constraints:
+  - front만 수정 원본으로 취급하고, jeju-spring/**, jeju-web/**, front/.generated/**, front/components/runtime/** 은 out of scope다.
+  - 관리자 dashboard, reservations, lodging, members, cms 전부를 대상으로 한다.
+  - KPI, 차트 샘플, 최근 활동 샘플, 예약/상품/회원/문의/CMS 샘플 row 같은 하드코딩 dummy business data는 제거한다.
+  - 현재 UI 레이아웃, 탭, 필터, 액션, 테이블 구조는 보존한다. 데이터만 비워지거나 외부 source of truth로 대체되어야 한다.
+  - 남는 UI 메타데이터인 컬럼명, 버튼 라벨, empty-state 문구, 필터 정의 등은 front/admin/data/** 쪽 source of truth로 유지한다.
+  - route/constants/auth/sidebar/theme 동작은 변경하지 않는다.
+  - UTF-8과 LF를 유지한다.
+  - 필요할 때만 admin page HTML을 건드리며, empty-state hook 보존을 위해 정말 필요한 경우에만 front/admin/pages/dashboard.html 까지 허용한다.
+acceptance_criteria:
+  - front/admin/js/dashboard.js 에 더미 KPI/차트 샘플/최근 활동성 더미 생성 로직이 남아 있지 않다.
+  - front/admin/js/reservations.js 에 예약/결제/환불/여행자 샘플 row 더미가 남아 있지 않다.
+  - front/admin/js/lodging.js 에 lodging 상품 샘플 row 더미가 남아 있지 않다.
+  - front/admin/js/members.js 에 회원/멤버십/권한 샘플 row 더미가 남아 있지 않다.
+  - front/admin/js/cms.js 에 공지/FAQ/배너 샘플 row 더미가 남아 있지 않다.
+  - 각 화면은 데이터가 비어도 기존 레이아웃, 탭 전환, 필터 반응, 액션 버튼 배치, 테이블 헤더 구조를 유지한다.
+  - UI 메타데이터는 front/admin/data/** 에 남아 있어야 하며, 하드코딩 문자열이 page runtime 쪽에 흩어지지 않는다.
+  - 후속 DB 데이터가 들어오면 기존 구조를 바꾸지 않고도 같은 렌더 경로로 채울 수 있다.
+verification:
+  - node --check front/admin/js/dashboard.js
+  - node --check front/admin/js/reservations.js
+  - node --check front/admin/js/lodging.js
+  - node --check front/admin/js/members.js
+  - node --check front/admin/js/cms.js
+  - pnpm run guard:text
+  - targeted diff check: admin scoped files only
+out_of_scope:
+  - jeju-spring/**
+  - jeju-web/**
+  - front/.generated/**
+  - front/components/runtime/**
+  - front/core/modules/constants/routes.module.js
+  - front/apps/shell/**
+  - admin auth, sidebar, theme, route constant 동작 변경
+  - UI 재설계, 레이아웃 개편, 새로운 인터랙션 추가
+  - 본 seed가 지정하지 않은 다른 front/admin 파일의 임의 수정

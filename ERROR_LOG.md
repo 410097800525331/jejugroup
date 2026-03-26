@@ -12,6 +12,18 @@
 - details: `후속 수정으로 serviceCenterApi/AuthContext/InquiryForm/test blockers를 정리했고, `pnpm -C front/apps/cs check`, `pnpm -C front/apps/cs test`, `pnpm -C front/apps/cs build`가 모두 통과했다.`
 - status: `resolved`
 
+- time: `2026-03-26 16:04:48 +09:00`
+- location: `D:\lsh\git\jejugroup`
+- summary: `rg.exe access denied while scanning admin files`
+- details: `Initial repository scans using rg.exe failed with Access is denied in this workspace, so the investigation switched to PowerShell Select-String / Get-ChildItem for the admin tab structure check.`
+- status: `resolved`
+
+- time: `2026-03-26 16:26:13 +09:00`
+- location: `D:\lsh\git\jejugroup`
+- summary: `rg.exe access denied while checking spring sync paths`
+- details: `Follow-up repository scans using rg.exe failed with Access is denied again, so the seed freeze was finished with Get-ChildItem / Select-String and direct file reads instead.`
+- status: `resolved`
+
 - time: `2026-03-23 17:15:16 +09:00`
 - location: `pnpm -C front/apps/cs check`
 - summary: `cs typecheck is blocked by existing errors outside the approved write set`
@@ -322,8 +334,39 @@ status: open
   details: Repository search was completed with PowerShell fallback commands after rg.exe access denied in this session.
   status: resolved
 
+- time: 2026-03-26 21:05:00 +09:00
+  location: `jeju-spring/gradlew.bat clean processResources`
+  summary: `Gradle processResources failed from the repo root because the build root was wrong`
+  details: `The wrapper was launched from D:\lsh\git\jejugroup, so Gradle could not find a build and aborted before processing resources. The command needs to run from D:\lsh\git\jejugroup\jeju-spring.`
+  status: `open`
+
+- time: 2026-03-26 21:07:00 +09:00
+  location: `jeju-spring/gradlew.bat clean processResources`
+  summary: `Gradle processResources rerun succeeded from the correct root`
+  details: `Running .\gradlew.bat clean processResources inside D:\lsh\git\jejugroup\jeju-spring completed successfully and refreshed the derived spring resources.`
+  status: `resolved`
+
 - time: 2026-03-26 15:24:00 +09:00
   location: parity verification
   summary: hash compare pipeline parse error resolved
   details: A PowerShell pipe syntax mistake interrupted the initial hash comparison, then the file hash parity check was rerun successfully and confirmed matching spring mirror outputs.
   status: resolved
+
+- time: 2026-03-26 16:29:39 +09:00
+  location: D:\lsh\git\jejugroup
+  summary: jeju-spring gradle command started from the wrong working directory
+  details: The first `gradlew.bat clean processResources` attempt ran from the repository root and failed because Gradle could not resolve the spring build root. The command was rerun from `D:\lsh\git\jejugroup\jeju-spring` and completed successfully, so the derived admin mirror/build outputs were regenerated as intended.
+  status: resolved
+# ERROR LOG
+
+- time: `2026-03-26 16:59:20 +09:00`
+- location: `jeju-spring/gradlew.bat processResources`
+- summary: `Gradle build root 경로를 잘못 잡아서 processResources가 실패함`
+- details: `repo root에서 gradlew를 호출해 Gradle build를 찾지 못했다. 실제 실행은 jeju-spring 디렉터리에서 다시 해야 함.`
+- status: `open`
+
+- time: `2026-03-26 17:00:05 +09:00`
+- location: `jeju-spring/gradlew.bat processResources`
+- summary: `경로 수정 후 processResources 재실행 성공`
+- details: `D:\lsh\git\jejugroup\jeju-spring에서 다시 실행해 build/resources/main 갱신을 마쳤다.`
+- status: `resolved`

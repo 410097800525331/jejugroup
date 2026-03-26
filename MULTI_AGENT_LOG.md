@@ -1598,3 +1598,63 @@
 - summary: `Spring membership mirror/build refresh`
 - details: `worker_spring_membership_mirror refreshed the affected membership style mirrors by rerunning node scripts/spring/sync-front-assets-to-spring.cjs and then jeju-spring/gradlew.bat clean processResources sequentially after an initial parallel build race; front/styles/globals.css and front/pages/mypage/styles/_summary.css now match jeju-spring/src/main/resources/static/front-mirror/** and jeju-spring/build/resources/main/static/front-mirror/** by SHA256.`
 - status: `resolved`
+
+- time: `2026-03-26 16:36 +09:00`
+- route: `Route B`
+- task: `Remove all hardcoded dummy business data from the admin page surface while preserving the current UI contract for later DB-backed hydration`
+- participants: `main`, `worker_seed_admin_dehardcode (Dalton)`, `worker_admin_dashboard (Noether)`, `worker_admin_surface_tables (Hilbert)`, `worker_admin_dashboard_followup (Hume)`, `reviewer_admin_dehardcode (Turing, Confucius)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_dehardcode (Dalton)`: `SEED.admin-surface-dehardcode-v1.yaml`
+  - `worker_admin_dashboard (Noether)`: `front/admin/data/dashboard-data.js, front/admin/js/dashboard.js, front/admin/pages/dashboard.html`
+  - `worker_admin_surface_tables (Hilbert)`: `front/admin/data/reservations-config.js, front/admin/data/lodging-config.js, front/admin/data/members-config.js, front/admin/data/cms-config.js, front/admin/js/reservations.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js`
+  - `worker_admin_dashboard_followup (Hume)`: `front/admin/data/dashboard-data.js`
+  - `reviewer_admin_dehardcode (Turing, Confucius)`: `review only`
+- verification:
+  - `SEED.admin-surface-dehardcode-v1.yaml` froze the full admin-surface dehardcode contract with UI-preservation and later DB-hydration compatibility
+  - `front/admin/js/dashboard.js` no longer generates KPI/chart/recent-activity dummy business data and now renders zero-state dashboard content from `front/admin/data/dashboard-data.js` plus optional hydrated payloads
+  - `front/admin/pages/dashboard.html` no longer contains hardcoded recent-activity sample rows
+  - `front/admin/js/reservations.js`, `front/admin/js/lodging.js`, `front/admin/js/members.js`, and `front/admin/js/cms.js` no longer embed sample business rows and now read UI metadata from `front/admin/data/**`
+  - `front/admin/data/reservations-config.js`, `front/admin/data/lodging-config.js`, `front/admin/data/members-config.js`, and `front/admin/data/cms-config.js` hold the remaining tab metadata with empty rows so the current table/layout structure stays intact
+  - reviewer `Turing` caught a dashboard domain-filter metadata key mismatch; follow-up worker `Hume` aligned the data keys and labels to `flight/hotel/rentcar` and the existing dashboard UI copy
+  - `node --check front/admin/js/dashboard.js`, `node --check front/admin/js/reservations.js`, `node --check front/admin/js/lodging.js`, `node --check front/admin/js/members.js`, `node --check front/admin/js/cms.js`, and `node --check front/admin/data/dashboard-data.js` passed
+  - `pnpm run guard:text` passed
+  - final reviewer `Confucius` reported `no blocking findings`, with no seed drift, mirror boundary violation, or write-set violation remaining
+
+- time: `2026-03-26 16:48 +09:00`
+- route: `Route B`
+- task: `Sync the completed admin-surface dehardcode from front into the derived jeju-spring mirror/runtime outputs`
+- participants: `main`, `worker_seed_admin_spring_sync (Russell)`, `worker_spring_admin_sync (Parfit)`, `reviewer_admin_spring_sync (Pascal)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_spring_sync (Russell)`: `SEED.admin-surface-dehardcode-spring-sync-v1.yaml`
+  - `worker_spring_admin_sync (Parfit)`: `derived jeju-spring/src/main/resources/static/front-mirror/admin/**, derived jeju-spring/src/main/resources/templates/front-mirror/admin/pages/**, and matching build/runtime outputs only where the existing sync/processResources pipeline refreshed the already-updated admin front surface`
+  - `reviewer_admin_spring_sync (Pascal)`: `review only`
+- verification:
+  - `SEED.admin-surface-dehardcode-spring-sync-v1.yaml` froze the spring-sync contract for the already-completed admin dehardcode
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` ran successfully and refreshed the admin front-mirror outputs under `jeju-spring/src/main/resources/static/front-mirror/admin/**` plus the mirrored Thymeleaf admin page output
+  - `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat clean processResources` ran successfully from the `jeju-spring` directory and refreshed the corresponding `jeju-spring/build/resources/main/**` admin outputs
+  - targeted spring changes were limited to the derived admin mirror/runtime outputs; `front` source and `jeju-web` were not modified by the sync task
+  - reviewer `Pascal` reported `no blocking findings`, no seed drift, and no boundary spillover; the remaining front-vs-spring HTML byte differences are expected Thymeleaf mirror differences only
+
+- time: `2026-03-26 17:36 +09:00`
+- route: `Route B`
+- task: `Track current online users through active session presence and surface the count in the admin dashboard`
+- participants: `main`, `worker_seed_active_user_presence (Arendt)`, `worker_backend_active_user_presence (Kant, Bernoulli)`, `worker_front_active_user_presence (Boole)`, `worker_spring_active_user_sync (Goodall)`, `reviewer_active_user_presence (Dirac, Newton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_active_user_presence (Arendt)`: `SEED.auth-active-user-sessions-v1.yaml`
+  - `worker_backend_active_user_presence (Kant, Bernoulli)`: `jeju-spring/src/main/resources/db/migration/V22__active_user_sessions.sql, jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java`
+  - `worker_front_active_user_presence (Boole)`: `front/core/modules/auth/session_manager.module.js, front/admin/js/dashboard.js`
+  - `worker_spring_active_user_sync (Goodall)`: `derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshed the updated front runtime`
+  - `reviewer_active_user_presence (Dirac, Newton)`: `review only`
+- verification:
+  - `SEED.auth-active-user-sessions-v1.yaml` froze the active-session presence contract around `active_user_sessions`, Spring touch/clear wiring, front heartbeat, and dashboard KPI hydration
+  - `V22__active_user_sessions.sql` adds the new presence table with `session_id` primary key plus recency indexes for active-session counting
+  - `AuthApiController.java` now touches presence on login and session checks, and clears presence on logout without breaking the main auth flow
+  - `ActiveUserPresenceService.java` counts active presence by `COUNT(DISTINCT session_id)` inside a 5-minute `last_seen_at` window, after a first reviewer pass flagged the earlier `user_id`-based count as undercounting concurrent sessions
+  - `front/core/modules/auth/session_manager.module.js` now runs a 2-minute heartbeat against `/api/auth/session`, stops on logout/invalid session, and keeps idle open pages present while the authenticated session is still alive
+  - `front/admin/js/dashboard.js` now hydrates KPI data from `/api/admin/dashboard` in the background and re-requests on domain changes while keeping the initial zero-state render
+  - `node --check front/core/modules/auth/session_manager.module.js`, `node --check front/admin/js/dashboard.js`, `pnpm run guard:text`, and `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat compileJava` all passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` and `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat processResources` refreshed the derived spring runtime outputs for the updated front modules
+  - final reviewer `Newton` reported `no blocking findings`, no seed drift, and no write-set or mirror-boundary spillover

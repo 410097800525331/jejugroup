@@ -1,62 +1,56 @@
 const lodgingConfig = {
   defaultTab: 'stay',
+  searchButtonLabel: '검색',
   tabs: {
     stay: {
-      searchPlaceholder: 'stay 테이블 또는 역할 검색',
-      primaryAction: '스키마 새로고침',
-      secondaryAction: '현재 DB 기준',
-      emptyMessage: 'stay 상품 스키마가 아직 없습니다.',
-      columns: ['도메인', '기대 테이블', '역할', '현재 상태', '행 수', '근거', '관리'],
+      searchPlaceholder: '숙박 코드나 상품명으로 검색',
+      primaryAction: '숙박 등록',
+      secondaryAction: '상품 일괄 등록',
+      emptyMessage: '숙박 상품 데이터가 없습니다.',
+      columns: ['상품 코드', '도메인', '상품명 / 옵션', '재고 / 수량', '기준가', '상태', '관리'],
       rows: []
     },
-    air: {
-      searchPlaceholder: 'air 테이블 또는 역할 검색',
-      primaryAction: '스키마 새로고침',
-      secondaryAction: '현재 DB 기준',
-      emptyMessage: 'air 상품 스키마가 아직 없습니다.',
-      columns: ['도메인', '기대 테이블', '역할', '현재 상태', '행 수', '근거', '관리'],
+    flight: {
+      searchPlaceholder: '항공 코드나 노선으로 검색',
+      primaryAction: '노선 등록',
+      secondaryAction: '상품 일괄 등록',
+      emptyMessage: '항공 상품 데이터가 없습니다.',
+      columns: ['상품 코드', '도메인', '노선 / 편명', '좌석', '기준가', '상태', '관리'],
       rows: []
     },
-    rent: {
-      searchPlaceholder: 'rent 테이블 또는 역할 검색',
-      primaryAction: '스키마 새로고침',
-      secondaryAction: '현재 DB 기준',
-      emptyMessage: 'rent 상품 스키마가 아직 없습니다.',
-      columns: ['도메인', '기대 테이블', '역할', '현재 상태', '행 수', '근거', '관리'],
+    rentcar: {
+      searchPlaceholder: '렌터카 코드나 차종으로 검색',
+      primaryAction: '차종 등록',
+      secondaryAction: '상품 일괄 등록',
+      emptyMessage: '렌터카 상품 데이터가 없습니다.',
+      columns: ['상품 코드', '도메인', '차종 / 옵션', '보유 대수', '기준가', '상태', '관리'],
       rows: []
     },
     voucher: {
-      searchPlaceholder: 'voucher 테이블 또는 역할 검색',
-      primaryAction: '스키마 새로고침',
-      secondaryAction: '현재 DB 기준',
-      emptyMessage: 'voucher 상품 스키마가 아직 없습니다.',
-      columns: ['도메인', '기대 테이블', '역할', '현재 상태', '행 수', '근거', '관리'],
+      searchPlaceholder: '바우처 코드나 상품명으로 검색',
+      primaryAction: '상품 등록',
+      secondaryAction: '바우처 일괄 등록',
+      emptyMessage: '바우처 상품 데이터가 없습니다.',
+      columns: ['상품 코드', '도메인', '바우처 / 옵션', '보유 수량', '판매가', '상태', '관리'],
       rows: []
     },
     special: {
-      searchPlaceholder: 'special 테이블 또는 역할 검색',
-      primaryAction: '스키마 새로고침',
-      secondaryAction: '현재 DB 기준',
-      emptyMessage: 'special 상품 스키마가 아직 없습니다.',
-      columns: ['도메인', '기대 테이블', '역할', '현재 상태', '행 수', '근거', '관리'],
+      searchPlaceholder: '특가 코드나 상품명으로 검색',
+      primaryAction: '특가 생성',
+      secondaryAction: '선택 항목 확인',
+      emptyMessage: '특가 / 쿠폰 데이터가 없습니다.',
+      columns: ['상품 코드', '도메인', '특가 / 쿠폰', '발행 수량', '금액', '상태', '관리'],
       rows: []
     },
     usim: {
-      searchPlaceholder: 'usim 테이블 또는 역할 검색',
-      primaryAction: '스키마 새로고침',
-      secondaryAction: '현재 DB 기준',
-      emptyMessage: 'usim 상품 스키마가 아직 없습니다.',
-      columns: ['도메인', '기대 테이블', '역할', '현재 상태', '행 수', '근거', '관리'],
+      searchPlaceholder: '유심 코드나 상품명으로 검색',
+      primaryAction: '유심 등록',
+      secondaryAction: '유심 확인',
+      emptyMessage: '유심 상품 데이터가 없습니다.',
+      columns: ['상품 코드', '도메인', '유심 / 기간', '재고', '판매가', '상태', '관리'],
       rows: []
     }
   }
 };
-
-lodgingConfig.stay = lodgingConfig.tabs.stay;
-lodgingConfig.air = lodgingConfig.tabs.air;
-lodgingConfig.rent = lodgingConfig.tabs.rent;
-lodgingConfig.voucher = lodgingConfig.tabs.voucher;
-lodgingConfig.special = lodgingConfig.tabs.special;
-lodgingConfig.usim = lodgingConfig.tabs.usim;
 
 export default lodgingConfig;

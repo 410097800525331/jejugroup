@@ -1,14 +1,16 @@
-const U = "ADMIN", P = (e) => {
+const M = "ADMIN", $ = (e) => {
   if (!e || typeof e != "object")
     return [];
   const t = [];
   return typeof e.role == "string" && e.role.trim() !== "" && t.push(e.role.trim()), Array.isArray(e.roles) && e.roles.forEach((r) => {
     typeof r == "string" && r.trim() !== "" && t.push(r.trim());
   }), t;
-}, he = (e) => P(e).some((t) => t.toUpperCase().includes(U)), C = "https://jejugroup.alwaysdata.net", y = "http://localhost:9090/jeju-web", B = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), G = () => {
+}, ye = (e) => $(e).some((t) => t.toUpperCase().includes(M)), z = "https://jejugroup.alwaysdata.net", R = "http://localhost:9090/jeju-web", k = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), D = () => {
   const t = new URLSearchParams(window.location.search).get("api");
-  return t === "local" ? y : t === "remote" ? C : !B.has(window.location.hostname) || window.location.port === "8080" ? "" : window.location.port !== "9090" ? y : "";
-}, H = G(), h = "userSession", $ = "jeju:session-updated", M = "/api/auth/session", z = "/api/auth/logout", j = (e) => `${H}${e}`, k = (e) => {
+  return t === "local" ? R : t === "remote" ? z : !k.has(window.location.hostname) || window.location.port === "8080" ? "" : window.location.port !== "9090" ? R : "";
+}, K = D(), h = "userSession", V = "jeju:session-updated", Y = "/api/auth/session", Q = "/api/auth/logout", x = 2 * 60 * 1e3;
+let c = null, u = null;
+const I = (e) => `${K}${e}`, _ = (e) => {
   if (!e)
     return null;
   try {
@@ -17,7 +19,7 @@ const U = "ADMIN", P = (e) => {
   } catch {
     return null;
   }
-}, D = (e) => {
+}, F = (e) => {
   if (!e || typeof e != "object")
     return null;
   try {
@@ -25,37 +27,56 @@ const U = "ADMIN", P = (e) => {
   } catch {
     return null;
   }
-}, A = (e) => {
+}, O = (e) => {
   try {
     const t = e ? { session: { ...e } } : { session: null };
-    window.dispatchEvent(new CustomEvent($, { detail: t }));
+    window.dispatchEvent(new CustomEvent(V, { detail: t }));
   } catch (t) {
     console.warn("[SessionManager] Session event dispatch failed:", t);
   }
-}, K = (e) => {
+}, j = () => {
+  c !== null && (window.clearInterval(c), c = null), u = null;
+}, J = async () => u || (q() ? (u = (async () => {
+  try {
+    return await T();
+  } catch (t) {
+    return console.warn("[SessionManager] Session heartbeat failed:", t), null;
+  } finally {
+    u = null;
+  }
+})(), u) : (j(), null)), w = () => {
+  c === null && typeof window.setInterval == "function" && (c = window.setInterval(() => {
+    J();
+  }, x));
+}, q = () => {
+  try {
+    return _(localStorage.getItem(h));
+  } catch {
+    return null;
+  }
+}, W = (e) => {
   if (!e || typeof e != "object")
     return null;
-  const t = { ...e }, r = D(t);
+  const t = { ...e }, r = F(t);
   try {
-    const a = localStorage.getItem(h);
-    if (r && a === r)
-      return k(a) ?? t;
+    const s = localStorage.getItem(h);
+    if (r && s === r)
+      return w(), _(s) ?? t;
     localStorage.setItem(h, r ?? JSON.stringify(t));
-  } catch (a) {
-    console.warn("[SessionManager] Session save failed:", a);
+  } catch (s) {
+    console.warn("[SessionManager] Session save failed:", s);
   }
-  return A(t), t;
-}, R = () => {
+  return w(), O(t), t;
+}, S = () => {
+  j();
   try {
-    if (localStorage.getItem(h) === null)
-      return;
-    localStorage.removeItem(h);
+    localStorage.getItem(h) !== null && localStorage.removeItem(h);
   } catch (e) {
     console.warn("[SessionManager] Session clear failed:", e);
   }
-  A(null);
-}, V = async () => {
-  const e = await fetch(j(M), {
+  O(null);
+}, T = async () => {
+  const e = await fetch(I(Y), {
     method: "GET",
     credentials: "include",
     headers: {
@@ -63,20 +84,21 @@ const U = "ADMIN", P = (e) => {
     }
   });
   if (e.status === 401)
-    return R(), null;
+    return S(), null;
   if (!e.ok)
     throw new Error(`Session fetch failed: ${e.status}`);
   const t = await e.json();
-  return !(t != null && t.success) || !(t != null && t.user) ? null : K(t.user);
-}, me = async () => {
+  return !(t != null && t.success) || !(t != null && t.user) ? (S(), null) : W(t.user);
+}, Ee = async () => {
   try {
-    return await V();
+    return await T();
   } catch (e) {
     return console.warn("[SessionManager] Session resolve failed:", e), null;
   }
-}, pe = async () => {
+}, je = async () => {
+  j();
   try {
-    await fetch(j(z), {
+    await fetch(I(Q), {
       method: "POST",
       credentials: "include",
       headers: {
@@ -86,31 +108,31 @@ const U = "ADMIN", P = (e) => {
   } catch (e) {
     console.warn("[SessionManager] Logout request failed:", e);
   } finally {
-    R();
+    S();
   }
-}, S = (e) => {
+}, A = (e) => {
   if (e === null || typeof e != "object")
     return e;
   const t = Object.getOwnPropertyNames(e);
   for (const r of t) {
-    const a = e[r];
-    a && typeof a == "object" && !Object.isFrozen(a) && S(a);
+    const s = e[r];
+    s && typeof s == "object" && !Object.isFrozen(s) && A(s);
   }
   return Object.freeze(e);
 }, n = (e, t = {}) => Object.freeze({
   kind: "page",
   path: e,
   ...t
-}), d = (e, t, r = {}) => Object.freeze({
+}), f = (e, t, r = {}) => Object.freeze({
   kind: "hash-page",
   path: e,
   hash: t,
   ...r
-}), Y = (e, t = {}) => Object.freeze({
+}), Z = (e, t = {}) => Object.freeze({
   kind: "external",
   url: e,
   ...t
-}), w = (e) => {
+}), N = (e) => {
   if (!e || typeof e != "object")
     return e;
   if ("kind" in e) {
@@ -120,9 +142,9 @@ const U = "ADMIN", P = (e) => {
     return `${e.path}${t}${r}`;
   }
   return Object.fromEntries(
-    Object.entries(e).map(([t, r]) => [t, w(r)])
+    Object.entries(e).map(([t, r]) => [t, N(r)])
   );
-}, b = S({
+}, v = A({
   HOME: n("/index.html"),
   AUTH: {
     LOGIN: n("/pages/auth/login.html", { shellStrategy: "auth-shell" }),
@@ -132,8 +154,8 @@ const U = "ADMIN", P = (e) => {
   },
   CS: {
     CUSTOMER_CENTER: n("/pages/cs/customer_center.html"),
-    NOTICE: d("/pages/cs/customer_center.html", "#/notices"),
-    FAQ: d("/pages/cs/customer_center.html", "#/faqs"),
+    NOTICE: f("/pages/cs/customer_center.html", "#/notices"),
+    FAQ: f("/pages/cs/customer_center.html", "#/faqs"),
     INQUIRY: n("/pages/cs/customer_center.html")
   },
   MYPAGE: {
@@ -149,7 +171,7 @@ const U = "ADMIN", P = (e) => {
     CMS: n("/admin/pages/cms.html")
   },
   SERVICES: {
-    RENT_CAR: Y("https://jejurentcar.netlify.app/"),
+    RENT_CAR: Z("https://jejurentcar.netlify.app/"),
     STAY: {
       MAIN: n("/jejustay/pages/hotel/jejuhotel.html"),
       HOTEL_LIST: n("/jejustay/pages/hotel/hotel-list.html"),
@@ -204,7 +226,7 @@ const U = "ADMIN", P = (e) => {
       },
       CS: {
         CUSTOMER_SERVICE: n("/pages/cs/customer_center.html"),
-        NOTICE: d("/pages/cs/customer_center.html", "#/notices")
+        NOTICE: f("/pages/cs/customer_center.html", "#/notices")
       },
       AUTH: {
         LOGIN: n("/pages/auth/login.html", { shellStrategy: "auth-shell" }),
@@ -216,31 +238,31 @@ const U = "ADMIN", P = (e) => {
       EVENT: n("/jejuair/pages/event/event.html")
     }
   }
-}), de = S(w(b)), Q = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, x = /^[a-z][a-z0-9+.-]*:/i, g = "shell", F = "jeju:mypage-shell", J = /* @__PURE__ */ new Set(["main", "stay", "air"]), q = (e, t) => t.split(".").reduce((r, a) => {
-  if (r && typeof r == "object" && a in r)
-    return r[a];
-}, e), W = (e) => {
+}), Ae = A(N(v)), X = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, ee = /^[a-z][a-z0-9+.-]*:/i, y = "shell", te = "jeju:mypage-shell", re = /* @__PURE__ */ new Set(["main", "stay", "air"]), ne = (e, t) => t.split(".").reduce((r, s) => {
+  if (r && typeof r == "object" && s in r)
+    return r[s];
+}, e), se = (e) => {
   if (!e || typeof e != "object")
     return "";
   if (e.kind === "external")
     return e.url;
   const t = e.defaultQuery ? `?${new URLSearchParams(e.defaultQuery).toString()}` : "", r = e.hash ?? "";
   return `${e.path}${t}${r}`;
-}, Z = (e, t, r) => {
-  const a = new URLSearchParams();
+}, ae = (e, t, r) => {
+  const s = new URLSearchParams();
   for (const [o, i] of Object.entries(t))
     if (!(r.has(o) || i === void 0 || i === null)) {
       if (Array.isArray(i)) {
         i.forEach((l) => {
-          l != null && a.append(o, String(l));
+          l != null && s.append(o, String(l));
         });
         continue;
       }
-      a.append(o, String(i));
+      s.append(o, String(i));
     }
-  const s = a.toString();
-  return s ? `${e}${e.includes("?") ? "&" : "?"}${s}` : e;
-}, X = () => {
+  const a = s.toString();
+  return a ? `${e}${e.includes("?") ? "&" : "?"}${a}` : e;
+}, oe = () => {
   var e;
   if (typeof window < "u") {
     const t = (e = window.__JEJU_ROUTE_NAVIGATOR__) == null ? void 0 : e.appRoot;
@@ -255,75 +277,75 @@ const U = "ADMIN", P = (e) => {
     "../../",
     import.meta.url
   );
-}, ee = () => {
+}, ie = () => {
   var e;
   return typeof window < "u" && typeof ((e = window.location) == null ? void 0 : e.origin) == "string" ? new URL(window.location.origin) : new URL("/", import.meta.url);
-}, te = (e) => x.test(e) ? e : e.startsWith("/") ? new URL(e, ee()).href : new URL(e, X()).href, u = (e) => {
+}, le = (e) => ee.test(e) ? e : e.startsWith("/") ? new URL(e, ie()).href : new URL(e, oe()).href, d = (e) => {
   if (typeof e != "string")
     return null;
   const t = e.trim().toLowerCase();
-  return J.has(t) ? t : null;
-}, re = (e = "") => {
+  return re.has(t) ? t : null;
+}, ue = (e = "") => {
   const t = String(e).toLowerCase();
   return t.includes("/jejuair/") ? "air" : t.includes("/jejustay/") ? "stay" : "main";
-}, ne = () => {
-  var t, r, a;
+}, ce = () => {
+  var t, r, s;
   if (typeof window > "u")
     return "main";
   try {
-    const s = new URLSearchParams(window.location.search), o = u(s.get(g));
+    const a = new URLSearchParams(window.location.search), o = d(a.get(y));
     if (o)
       return o;
   } catch {
   }
   if (typeof document < "u") {
-    const s = u((r = (t = document.body) == null ? void 0 : t.dataset) == null ? void 0 : r.mypageShell);
-    if (s)
-      return s;
+    const a = d((r = (t = document.body) == null ? void 0 : t.dataset) == null ? void 0 : r.mypageShell);
+    if (a)
+      return a;
   }
-  const e = re(window.location.pathname);
+  const e = ue(window.location.pathname);
   if (e)
     return e;
   try {
-    const s = u((a = window.sessionStorage) == null ? void 0 : a.getItem(F));
-    if (s)
-      return s;
+    const a = d((s = window.sessionStorage) == null ? void 0 : s.getItem(te));
+    if (a)
+      return a;
   } catch {
   }
   return "main";
-}, ae = (e, t) => {
+}, he = (e, t) => {
   const r = e.defaultQuery ? {
     ...e.defaultQuery,
     ...t
   } : t;
-  if (!e || e.shellStrategy !== "auth-shell" || u(r == null ? void 0 : r[g]))
+  if (!e || e.shellStrategy !== "auth-shell" || d(r == null ? void 0 : r[y]))
     return r;
-  const a = ne();
+  const s = ce();
   return {
     ...r,
-    [g]: a
+    [y]: s
   };
-}, _ = (e, t = {}) => {
+}, L = (e, t = {}) => {
   if (typeof e != "string" || e.trim() === "")
     throw new TypeError("[RouteResolver] routeKey must be a non-empty string.");
   if (t === null || typeof t != "object" || Array.isArray(t))
     throw new TypeError("[RouteResolver] params must be a plain object.");
-  const r = e.trim(), a = q(b, r);
-  if (!a || typeof a != "object" || !a.kind)
+  const r = e.trim(), s = ne(v, r);
+  if (!s || typeof s != "object" || !s.kind)
     throw new Error(`[RouteResolver] Route key not found: ${e}`);
-  const s = W(a);
-  if (typeof s != "string" || s.trim() === "")
+  const a = se(s);
+  if (typeof a != "string" || a.trim() === "")
     throw new Error(`[RouteResolver] Route template not found: ${e}`);
-  const o = ae(a, t), i = new Set(a.defaultQuery ? Object.keys(a.defaultQuery) : []), l = s.replace(Q, (ue, L, v) => {
-    const m = L || v, p = o[m];
-    if (p == null)
-      throw new Error(`[RouteResolver] Missing route param: ${m} (${e})`);
-    return i.add(m), encodeURIComponent(String(p));
-  }), c = l.indexOf("#"), O = c >= 0 ? l.slice(0, c) : l, T = c >= 0 ? l.slice(c) : "", N = `${te(O)}${T}`;
-  return Z(N, o, i);
+  const o = he(s, t), i = new Set(s.defaultQuery ? Object.keys(s.defaultQuery) : []), l = a.replace(X, (Se, H, G) => {
+    const p = H || G, g = o[p];
+    if (g == null)
+      throw new Error(`[RouteResolver] Missing route param: ${p} (${e})`);
+    return i.add(p), encodeURIComponent(String(g));
+  }), m = l.indexOf("#"), P = m >= 0 ? l.slice(0, m) : l, C = m >= 0 ? l.slice(m) : "", B = `${le(P)}${C}`;
+  return ae(B, o, i);
 };
-let E = !1;
-const se = ["ctrlKey", "metaKey", "shiftKey", "altKey"], oe = (e) => se.some((t) => !!e[t]), I = (e) => {
+let b = !1;
+const me = ["ctrlKey", "metaKey", "shiftKey", "altKey"], de = (e) => me.some((t) => !!e[t]), U = (e) => {
   const t = e.getAttribute("data-route-params");
   if (!t)
     return {};
@@ -333,66 +355,66 @@ const se = ["ctrlKey", "metaKey", "shiftKey", "altKey"], oe = (e) => se.some((t)
   } catch {
     return console.warn("[RouterBinder] Invalid data-route-params JSON:", t), {};
   }
-}, ie = (e) => {
+}, pe = (e) => {
   var r;
   const t = e.getAttribute("data-route");
   if (t)
     try {
-      const a = I(e), s = _(t, a), o = e.getAttribute("data-route-mode") || "assign", i = (r = window.__JEJU_ROUTE_NAVIGATOR__) == null ? void 0 : r.safeNavigate;
+      const s = U(e), a = L(t, s), o = e.getAttribute("data-route-mode") || "assign", i = (r = window.__JEJU_ROUTE_NAVIGATOR__) == null ? void 0 : r.safeNavigate;
       if (i) {
-        i(s, "router-binder", { mode: o });
+        i(a, "router-binder", { mode: o });
         return;
       }
       if (o === "replace") {
-        window.location.replace(s);
+        window.location.replace(a);
         return;
       }
-      window.location.assign(s);
-    } catch (a) {
-      console.warn(`[RouterBinder] Failed to resolve route '${t}':`, a);
+      window.location.assign(a);
+    } catch (s) {
+      console.warn(`[RouterBinder] Failed to resolve route '${t}':`, s);
     }
-}, f = (e) => {
+}, E = (e) => {
   if (!(e instanceof Element))
     return;
   const t = [];
   e.matches("[data-route]") && t.push(e), t.push(...e.querySelectorAll("[data-route]")), t.forEach((r) => {
     if (!(r instanceof HTMLAnchorElement))
       return;
-    const a = r.getAttribute("data-route");
-    if (a)
+    const s = r.getAttribute("data-route");
+    if (s)
       try {
-        const s = I(r), o = _(a, s);
+        const a = U(r), o = L(s, a);
         r.setAttribute("href", o);
-      } catch (s) {
-        r.setAttribute("href", "#"), console.warn(`[RouterBinder] Failed to hydrate href for '${a}':`, s);
+      } catch (a) {
+        r.setAttribute("href", "#"), console.warn(`[RouterBinder] Failed to hydrate href for '${s}':`, a);
       }
   });
-}, le = () => {
+}, ge = () => {
   if (!document.body)
     return;
   new MutationObserver((t) => {
     t.forEach((r) => {
-      r.addedNodes.forEach((a) => {
-        f(a);
+      r.addedNodes.forEach((s) => {
+        E(s);
       });
     });
   }).observe(document.body, {
     childList: !0,
     subtree: !0
   });
-}, ce = (e = document) => {
+}, fe = (e = document) => {
   if (e instanceof Document) {
-    f(e.documentElement);
+    E(e.documentElement);
     return;
   }
-  f(e);
-}, ge = () => {
-  E || (E = !0, ce(document), le(), document.body.addEventListener("click", (e) => {
+  E(e);
+}, Re = () => {
+  b || (b = !0, fe(document), ge(), document.body.addEventListener("click", (e) => {
     const t = e.target.closest("[data-route]");
-    t && (e.defaultPrevented || t.hasAttribute("data-route-animated-nav") || oe(e) || t instanceof HTMLAnchorElement && t.getAttribute("target") && t.getAttribute("target") !== "_self" || (e.preventDefault(), ie(t)));
+    t && (e.defaultPrevented || t.hasAttribute("data-route-animated-nav") || de(e) || t instanceof HTMLAnchorElement && t.getAttribute("target") && t.getAttribute("target") !== "_self" || (e.preventDefault(), pe(t)));
   }));
 };
-function fe(e) {
+function we(e) {
   if (typeof e != "string")
     return e;
   const t = {
@@ -404,18 +426,18 @@ function fe(e) {
   };
   return e.replace(/[&<>"']/g, (r) => t[r]);
 }
-function Se(e) {
+function be(e) {
   return /[<>'";\(\)={}]/.test(e) ? (console.warn("Security Warning: Invalid parameter detected"), !1) : !0;
 }
 export {
-  H as A,
-  de as R,
-  _ as a,
-  K as b,
-  he as h,
-  ge as i,
-  pe as l,
-  me as r,
-  fe as s,
-  Se as v
+  K as A,
+  Ae as R,
+  L as a,
+  W as b,
+  ye as h,
+  Re as i,
+  je as l,
+  Ee as r,
+  we as s,
+  be as v
 };

@@ -1,5 +1,5 @@
 import { j as a, a as i } from "./react-vendor-BoSfm_Te.js";
-import { v as z, s as I, A as C, b as ce, h as oe, a as ee, R as Y } from "./legacy-core-DL6GlcTs.js";
+import { v as z, s as I, A as C, b as ce, h as oe, a as ee, R as Y } from "./legacy-core-Bm-E3BtG.js";
 const le = ({ children: s, className: e = "" }) => /* @__PURE__ */ a.jsx("div", { className: ["user_box", "inner2", "login-card", e].filter(Boolean).join(" "), children: s }), ue = (s) => s === "success" ? "success" : s === "warning" ? "warning" : s === "error" ? "error" : "", P = ({ className: s = "", id: e, message: t, tone: r = "idle" }) => {
   if (!t)
     return null;
