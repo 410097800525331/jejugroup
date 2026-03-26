@@ -1,0 +1,26 @@
+goal: >
+  Unify the shared footer to the login/signup footer proportions and
+  appearance, keep the auth footer look, restore Family Sites widget behavior
+  on auth pages, and align landing/stay pages to the same footer contract.
+constraints:
+  - Front is the only source of truth.
+  - Do not touch jeju-spring or jeju-web.
+  - Do not introduce a broad footer redesign.
+  - Keep Jeju orange as the primary accent.
+  - Preserve the current login/signup footer proportions and overall look.
+  - Limit scope to footer contract and widget interaction.
+  - Make only minimal runtime changes if they are required to preserve the
+    footer contract.
+acceptance_criteria:
+  - The auth footer keeps its current proportions and overall look.
+  - The Family Sites trigger and radial items work on login/signup pages.
+  - Landing and stay pages render the same footer contract as auth.
+  - Any runtime changes stay minimal and only support the footer contract.
+verification:
+  - Repo checks can validate the text and build shape of the footer contract.
+  - Reviewer confirmation covers parity with the auth footer and widget
+    interaction behavior.
+out_of_scope:
+  - Unrelated header changes.
+  - Spring mirror edits.
+  - Redesign beyond footer normalization.

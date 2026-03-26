@@ -212,6 +212,7 @@ const bootRuntime = async () => {
   }
 
   if (hasPageShellHosts()) {
+    ensureRuntimeStyle();
     await mountPageShellBridgeRuntime();
   }
 
