@@ -1,4 +1,5 @@
 import { j as t, a as u } from "./react-vendor-BoSfm_Te.js";
+import { A as ve } from "./legacy-core-DL6GlcTs.js";
 const B = {
   email: "minji.hong@jejugroup.example",
   id: "hong_minji",
@@ -11,11 +12,11 @@ const B = {
   },
   phone: "010-1234-5678",
   tier: "GOLD"
-}, J = [
+}, X = [
   { label: "보유 포인트", tone: "point", value: "0P" },
   { label: "사용 가능한 쿠폰", tone: "coupon", value: "0장" },
   { label: "다가오는 여행", tone: "air", value: "0건" }
-], X = [
+], Z = [
   {
     amount: "324,000원",
     date: "2026.11.20 09:10",
@@ -73,11 +74,11 @@ const B = {
     type: "voucher",
     voucherUrl: "#"
   }
-], Z = {
+], ee = {
   id: "",
   isMember: !1,
   name: ""
-}, ge = {
+}, je = {
   checked: !1,
   id: "",
   label: "",
@@ -85,7 +86,7 @@ const B = {
   ownerName: "",
   status: "reserved",
   type: "voucher"
-}, ve = {
+}, be = {
   activities: [],
   companions: [],
   date: "",
@@ -93,8 +94,8 @@ const B = {
   id: "",
   time: "",
   title: ""
-}, je = [], be = [];
-function ee({
+}, Ne = [], Se = [];
+function se({
   currentAccountId: e,
   linkedCompanions: s,
   travelEvents: n
@@ -106,7 +107,7 @@ function ee({
   for (const r of n) {
     if (o.size > 0 && !o.has(r.ownerId))
       continue;
-    const c = i.get(r.dayId), y = {
+    const d = i.get(r.dayId), x = {
       checked: r.status === "used",
       id: r.id,
       label: r.activityLabel,
@@ -115,15 +116,15 @@ function ee({
       status: r.status,
       type: r.type
     };
-    if (c) {
-      if (c.activities.push(y), r.ownerId !== e && a.has(r.ownerId)) {
-        const h = a.get(r.ownerId);
-        h && !c.companions.some((g) => g.id === h.id) && c.companions.push({ ...h });
+    if (d) {
+      if (d.activities.push(x), r.ownerId !== e && a.has(r.ownerId)) {
+        const m = a.get(r.ownerId);
+        m && !d.companions.some((f) => f.id === m.id) && d.companions.push({ ...m });
       }
       continue;
     }
     i.set(r.dayId, {
-      activities: [y],
+      activities: [x],
       companions: r.ownerId !== e && a.has(r.ownerId) ? [{ ...a.get(r.ownerId) }] : [],
       date: r.date,
       googleMapUrl: r.googleMapUrl,
@@ -133,56 +134,56 @@ function ee({
       title: r.title
     });
   }
-  return Array.from(i.values()).sort((r, c) => r.sortKey.localeCompare(c.sortKey)).map(({ sortKey: r, ...c }) => c);
+  return Array.from(i.values()).sort((r, d) => r.sortKey.localeCompare(d.sortKey)).map(({ sortKey: r, ...d }) => d);
 }
-const C = ae(B), K = M(J), Ne = ie(X), $ = U(je), F = H(be), se = ee({
+const C = ie(B), K = k(X), we = re(Z), F = U(Ne), $ = H(Se), te = se({
   currentAccountId: B.id ?? "",
-  linkedCompanions: $,
-  travelEvents: F
-}), te = [
+  linkedCompanions: F,
+  travelEvents: $
+}), ne = [
   { count: 0, href: "#", id: "qna", label: "1:1 문의 내역" },
   { count: 0, href: "#", id: "notice", label: "운항 및 예약 공지" },
   { count: null, href: "#", id: "faq", label: "자주 묻는 질문" }
-], ne = () => ({
-  bookings: ie(X),
-  itinerary: re(se),
-  linkedCompanions: U($),
-  profile: ae(B),
-  stats: M(J),
-  supportItems: oe(te),
-  travelEvents: H(F)
-}), z = (e) => {
-  const s = ne(), n = Me(e);
-  if (!He(n))
+], ae = () => ({
+  bookings: re(Z),
+  itinerary: oe(te),
+  linkedCompanions: U(F),
+  profile: ie(B),
+  stats: k(X),
+  supportItems: le(ne),
+  travelEvents: H($)
+}), _ = (e) => {
+  const s = ae(), n = Te(e);
+  if (!Ye(n))
     return s;
-  const o = Te(n, s.profile), i = Be(n.linkedCompanions, s.linkedCompanions), r = Ke(n.travelEvents, s.travelEvents), c = n.travelEvents !== void 0 ? ee({
+  const o = _e(n, s.profile), i = Fe(n.linkedCompanions, s.linkedCompanions), r = $e(n.travelEvents, s.travelEvents), d = n.travelEvents !== void 0 ? se({
     currentAccountId: o.id ?? s.profile.id ?? "",
     linkedCompanions: i,
     travelEvents: r
-  }) : Oe(n.itinerary, s.itinerary);
+  }) : Be(n.itinerary, s.itinerary);
   return {
-    bookings: Re(n.bookings, s.bookings),
-    itinerary: c,
+    bookings: Pe(n.bookings, s.bookings),
+    itinerary: d,
     linkedCompanions: i,
     profile: o,
-    stats: _e(n.stats ?? n, s.stats),
-    supportItems: Pe(n.supportItems ?? n.support ?? n.inquiries, s.supportItems),
+    stats: Le(n.stats ?? n, s.stats),
+    supportItems: Ke(n.supportItems ?? n.support ?? n.inquiries, s.supportItems),
     travelEvents: r
   };
-}, k = (e) => {
-  Se(C, e.profile), we(K, e.stats), Ie(Ne, e.bookings), Ee(se, e.itinerary), Ce($, e.linkedCompanions), Ae(te, e.supportItems), ke(F, e.travelEvents);
+}, M = (e) => {
+  Ie(C, e.profile), Ee(K, e.stats), Ce(we, e.bookings), Ae(te, e.itinerary), Me(F, e.linkedCompanions), ke(ne, e.supportItems), De($, e.travelEvents);
 };
-function ae(e) {
+function ie(e) {
   return {
     ...e,
     memberships: [...e.memberships],
     passport: e.passport ? { ...e.passport } : void 0
   };
 }
-function M(e) {
+function k(e) {
   return e.map((s) => ({ ...s }));
 }
-function ie(e) {
+function re(e) {
   return e.map((s) => ({
     ...s,
     tags: [...s.tags]
@@ -191,28 +192,28 @@ function ie(e) {
 function U(e) {
   return e.map((s) => ({ ...s }));
 }
-function re(e) {
+function oe(e) {
   return e.map((s) => ({
     ...s,
     activities: s.activities.map((n) => ({ ...n })),
     companions: s.companions.map((n) => ({ ...n }))
   }));
 }
-function oe(e) {
+function le(e) {
   return e.map((s) => ({ ...s }));
 }
 function H(e) {
   return e.map((s) => ({ ...s }));
 }
-const Se = (e, s) => {
+const Ie = (e, s) => {
   if (e.email = s.email, e.memberships.splice(0, e.memberships.length, ...s.memberships), e.name = s.name, e.phone = s.phone, e.tier = s.tier, e.role = s.role, e.id = s.id, s.passport) {
     e.passport = { ...s.passport };
     return;
   }
   delete e.passport;
-}, we = (e, s) => {
+}, Ee = (e, s) => {
   e.splice(0, e.length, ...s.map((n) => ({ ...n })));
-}, Ie = (e, s) => {
+}, Ce = (e, s) => {
   e.splice(
     0,
     e.length,
@@ -221,7 +222,7 @@ const Se = (e, s) => {
       tags: [...n.tags]
     }))
   );
-}, Ee = (e, s) => {
+}, Ae = (e, s) => {
   e.splice(
     0,
     e.length,
@@ -231,21 +232,21 @@ const Se = (e, s) => {
       companions: n.companions.map((a) => ({ ...a }))
     }))
   );
-}, Ce = (e, s) => {
-  e.splice(0, e.length, ...s.map((n) => ({ ...n })));
-}, Ae = (e, s) => {
+}, Me = (e, s) => {
   e.splice(0, e.length, ...s.map((n) => ({ ...n })));
 }, ke = (e, s) => {
   e.splice(0, e.length, ...s.map((n) => ({ ...n })));
-}, Me = (e) => {
+}, De = (e, s) => {
+  e.splice(0, e.length, ...s.map((n) => ({ ...n })));
+}, Te = (e) => {
   const s = {}, n = (a) => {
-    N(a) && Object.assign(s, a);
+    S(a) && Object.assign(s, a);
   };
-  return n(e), N(e) && (n(e.user), n(e.member), n(e.profile), n(e.data), n(e.session)), s;
-}, Te = (e, s) => {
-  const n = ze(e.memberships, e.tier ?? e.role), a = De(e.passport), o = l(e.tier) ?? l(e.role) ?? n[0], i = l(e.id) ?? l(e.memberId) ?? l(e.userId), r = l(e.name) ?? l(e.displayName) ?? l(e.fullName) ?? l(e.nickname) ?? l(e.id) ?? l(e.memberId) ?? l(e.userId) ?? s.name;
+  return n(e), S(e) && (n(e.user), n(e.member), n(e.profile), n(e.data), n(e.session)), s;
+}, _e = (e, s) => {
+  const n = Re(e.memberships, e.tier ?? e.role), a = ze(e.passport), o = l(e.tier) ?? n[0] ?? l(e.role), i = l(e.id) ?? l(e.memberId) ?? l(e.userId), r = l(e.name) ?? l(e.displayName) ?? l(e.fullName) ?? l(e.nickname) ?? l(e.id) ?? l(e.memberId) ?? l(e.userId) ?? s.name;
   return {
-    email: l(e.email) ?? Fe(e, i, r) ?? s.email,
+    email: l(e.email) ?? He(e, i, r) ?? s.email,
     id: i ?? s.id,
     memberships: n,
     name: r,
@@ -254,14 +255,14 @@ const Se = (e, s) => {
     role: l(e.role),
     tier: o
   };
-}, ze = (e, s) => {
+}, Re = (e, s) => {
   const n = Array.isArray(e) ? e.map((o) => l(o)).filter((o) => !!o) : [];
   if (n.length > 0)
     return n;
   const a = l(s);
   return a ? [a] : [];
-}, De = (e) => {
-  const s = N(e) ? e : null;
+}, ze = (e) => {
+  const s = S(e) ? e : null;
   if (!s)
     return;
   const n = {
@@ -271,8 +272,8 @@ const Se = (e, s) => {
   };
   if (!(!n.expiryDate && !n.issuingCountry && !n.number))
     return n;
-}, _e = (e, s) => Array.isArray(e) && e.length > 0 ? s.map((n, a) => Le(e[a], n, !0)) : Array.isArray(e) && e.length === 0 ? M(s) : N(e) ? $e(e, s) : M(s), Le = (e, s, n = !1) => {
-  const a = N(e) ? e : {}, o = ss(a.tone) ? a.tone : s.tone, i = l(a.label) ?? s.label, r = a.value ?? s.value;
+}, Le = (e, s) => Array.isArray(e) && e.length > 0 ? s.map((n, a) => Oe(e[a], n, !0)) : Array.isArray(e) && e.length === 0 ? k(s) : S(e) ? Ue(e, s) : k(s), Oe = (e, s, n = !1) => {
+  const a = S(e) ? e : {}, o = ns(a.tone) ? a.tone : s.tone, i = l(a.label) ?? s.label, r = a.value ?? s.value;
   return {
     label: i,
     tone: o,
@@ -298,33 +299,33 @@ const Se = (e, s) => {
     default:
       return n;
   }
-}, Re = (e, s) => Array.isArray(e) ? e.length === 0 ? [] : e.map((n, a) => Ye(n, s[a % s.length] ?? s[0], !0)) : [], Oe = (e, s) => !Array.isArray(e) || e.length === 0 ? re(s) : e.map(
-  (n, a) => Ve(
+}, Pe = (e, s) => Array.isArray(e) ? e.length === 0 ? [] : e.map((n, a) => Ve(n, s[a % s.length] ?? s[0], !0)) : [], Be = (e, s) => !Array.isArray(e) || e.length === 0 ? oe(s) : e.map(
+  (n, a) => Ge(
     n,
-    s.length > 0 ? s[a % s.length] ?? s[0] : ve
+    s.length > 0 ? s[a % s.length] ?? s[0] : be
   )
-), Pe = (e, s) => !Array.isArray(e) || e.length === 0 ? oe(s) : e.map((n, a) => We(n, s[a % s.length] ?? s[0])), Be = (e, s) => !Array.isArray(e) || e.length === 0 ? U(s) : e.map(
-  (n, a) => Je(
+), Ke = (e, s) => !Array.isArray(e) || e.length === 0 ? le(s) : e.map((n, a) => Je(n, s[a % s.length] ?? s[0])), Fe = (e, s) => !Array.isArray(e) || e.length === 0 ? U(s) : e.map(
+  (n, a) => Ze(
     n,
-    s.length > 0 ? s[a % s.length] ?? s[0] : Z
+    s.length > 0 ? s[a % s.length] ?? s[0] : ee
   )
-), le = (e) => !Array.isArray(e) || e.length === 0 ? [] : e.map((s) => Xe(s)).filter((s) => s !== null), Ke = (e, s) => {
-  const n = le(e);
+), ce = (e) => !Array.isArray(e) || e.length === 0 ? [] : e.map((s) => es(s)).filter((s) => s !== null), $e = (e, s) => {
+  const n = ce(e);
   return n.length > 0 ? n : H(s);
-}, $e = (e, s) => s.map((n) => {
-  const a = es(e, Ze(n.tone));
+}, Ue = (e, s) => s.map((n) => {
+  const a = ts(e, ss(n.tone));
   return a === void 0 ? { ...n } : {
     ...n,
     value: L(a, n)
   };
-}), Fe = (e, s, n) => {
-  const a = s ?? l(e.memberId) ?? l(e.userId) ?? l(e.username) ?? l(e.loginId) ?? Ue(n);
+}), He = (e, s, n) => {
+  const a = s ?? l(e.memberId) ?? l(e.userId) ?? l(e.username) ?? l(e.loginId) ?? qe(n);
   if (a)
     return `${a}@jejugroup.example`;
-}, Ue = (e) => {
+}, qe = (e) => {
   const n = e.trim().toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.+|\.+$/g, "");
   return n.length > 0 ? n : void 0;
-}, He = (e) => [
+}, Ye = (e) => [
   "id",
   "memberId",
   "userId",
@@ -343,8 +344,8 @@ const Se = (e, s) => {
   "user",
   "session",
   "data"
-].some((n) => n in e), Ye = (e, s, n = !1) => {
-  const a = N(e) ? e : {}, o = Array.isArray(a.tags) ? a.tags.map((r) => l(r)).filter((r) => !!r) : [], i = Y(a.type) ? a.type : s.type;
+].some((n) => n in e), Ve = (e, s, n = !1) => {
+  const a = S(e) ? e : {}, o = Array.isArray(a.tags) ? a.tags.map((r) => l(r)).filter((r) => !!r) : [], i = q(a.type) ? a.type : s.type;
   return {
     amount: l(a.amount) ?? (n ? "" : s.amount),
     date: l(a.date) ?? (n ? "" : s.date),
@@ -357,16 +358,16 @@ const Se = (e, s) => {
     type: i,
     voucherUrl: l(a.voucherUrl) ?? (n ? void 0 : s.voucherUrl)
   };
-}, Ve = (e, s) => {
-  const n = N(e) ? e : {}, a = Array.isArray(n.activities) ? n.activities.map(
-    (i, r) => qe(
+}, Ge = (e, s) => {
+  const n = S(e) ? e : {}, a = Array.isArray(n.activities) ? n.activities.map(
+    (i, r) => We(
       i,
-      s.activities.length > 0 ? s.activities[r % s.activities.length] ?? s.activities[0] : ge
+      s.activities.length > 0 ? s.activities[r % s.activities.length] ?? s.activities[0] : je
     )
   ) : s.activities.map((i) => ({ ...i })), o = Array.isArray(n.companions) ? n.companions.map(
-    (i, r) => Ge(
+    (i, r) => Qe(
       i,
-      s.companions.length > 0 ? s.companions[r % s.companions.length] ?? s.companions[0] : Z
+      s.companions.length > 0 ? s.companions[r % s.companions.length] ?? s.companions[0] : ee
     )
   ) : s.companions.map((i) => ({ ...i }));
   return {
@@ -378,33 +379,33 @@ const Se = (e, s) => {
     time: l(n.time) ?? s.time,
     title: l(n.title) ?? s.title
   };
-}, qe = (e, s) => {
-  const n = N(e) ? e : {};
+}, We = (e, s) => {
+  const n = S(e) ? e : {};
   return {
-    checked: typeof n.checked == "boolean" ? n.checked : R(n.status) ? n.status === "used" : s.checked,
+    checked: typeof n.checked == "boolean" ? n.checked : O(n.status) ? n.status === "used" : s.checked,
     id: l(n.id) ?? s.id,
     label: l(n.label) ?? s.label,
     ownerId: l(n.ownerId) ?? s.ownerId,
     ownerName: l(n.ownerName) ?? s.ownerName,
-    status: R(n.status) ? n.status : s.status,
-    type: Y(n.type) ? n.type : s.type
+    status: O(n.status) ? n.status : s.status,
+    type: q(n.type) ? n.type : s.type
   };
-}, Ge = (e, s) => {
-  const n = N(e) ? e : {};
+}, Qe = (e, s) => {
+  const n = S(e) ? e : {};
   return {
     id: l(n.id) ?? s.id,
     isMember: typeof n.isMember == "boolean" ? n.isMember : s.isMember,
     name: l(n.name) ?? s.name
   };
-}, We = (e, s) => {
-  const n = N(e) ? e : {};
+}, Je = (e, s) => {
+  const n = S(e) ? e : {};
   return {
-    count: Qe(n.count, s.count),
+    count: Xe(n.count, s.count),
     href: l(n.href) ?? s.href,
     id: l(n.id) ?? s.id,
     label: l(n.label) ?? s.label
   };
-}, Qe = (e, s) => {
+}, Xe = (e, s) => {
   if (e === null)
     return null;
   if (typeof e == "number" && Number.isFinite(e))
@@ -414,32 +415,32 @@ const Se = (e, s) => {
     return s;
   const a = Number(n);
   return Number.isFinite(a) ? a : s;
-}, Je = (e, s) => {
-  const n = N(e) ? e : {};
+}, Ze = (e, s) => {
+  const n = S(e) ? e : {};
   return {
     id: l(n.id) ?? s.id,
     isMember: typeof n.isMember == "boolean" ? n.isMember : s.isMember,
     name: l(n.name) ?? s.name
   };
-}, Xe = (e) => {
-  const s = N(e) ? e : null;
+}, es = (e) => {
+  const s = S(e) ? e : null;
   if (!s)
     return null;
-  const n = l(s.id), a = l(s.dayId), o = l(s.title), i = l(s.date), r = l(s.time), c = l(s.activityLabel), y = l(s.ownerId), h = l(s.ownerName), g = l(s.googleMapUrl);
-  return !n || !a || !o || !i || !r || !c || !y || !h || !g ? null : {
-    activityLabel: c,
+  const n = l(s.id), a = l(s.dayId), o = l(s.title), i = l(s.date), r = l(s.time), d = l(s.activityLabel), x = l(s.ownerId), m = l(s.ownerName), f = l(s.googleMapUrl);
+  return !n || !a || !o || !i || !r || !d || !x || !m || !f ? null : {
+    activityLabel: d,
     date: i,
     dayId: a,
-    googleMapUrl: g,
+    googleMapUrl: f,
     id: n,
-    ownerId: y,
-    ownerName: h,
-    status: R(s.status) ? s.status : "reserved",
+    ownerId: x,
+    ownerName: m,
+    status: O(s.status) ? s.status : "reserved",
     time: r,
     title: o,
-    type: Y(s.type) ? s.type : "voucher"
+    type: q(s.type) ? s.type : "voucher"
   };
-}, Ze = (e) => {
+}, ss = (e) => {
   switch (e) {
     case "point":
       return ["point", "points", "mileage", "balance"];
@@ -450,105 +451,105 @@ const Se = (e, s) => {
     default:
       return [];
   }
-}, es = (e, s) => {
+}, ts = (e, s) => {
   for (const n of s)
     if (n in e) {
       const a = e[n];
       if (a != null)
         return Array.isArray(a) ? a.length : a;
     }
-}, N = (e) => e !== null && typeof e == "object" && !Array.isArray(e), l = (e) => {
+}, S = (e) => e !== null && typeof e == "object" && !Array.isArray(e), l = (e) => {
   if (typeof e == "string") {
     const s = e.trim();
     return s.length > 0 ? s : void 0;
   }
   if (typeof e == "number" && Number.isFinite(e))
     return String(e);
-}, Y = (e) => e === "air" || e === "rent" || e === "stay" || e === "voucher", R = (e) => e === "reserved" || e === "used" || e === "cancelled" || e === "missed", ss = (e) => e === "air" || e === "coupon" || e === "point" || e === "rent" || e === "stay" || e === "voucher" || e === "wallet", E = ({ children: e, className: s = "" }) => {
+}, q = (e) => e === "air" || e === "rent" || e === "stay" || e === "voucher", O = (e) => e === "reserved" || e === "used" || e === "cancelled" || e === "missed", ns = (e) => e === "air" || e === "coupon" || e === "point" || e === "rent" || e === "stay" || e === "voucher" || e === "wallet", E = ({ children: e, className: s = "" }) => {
   const n = ["bento-box", "soft-radius", s].filter(Boolean).join(" ");
   return /* @__PURE__ */ t.jsx("div", { className: n, children: e });
-}, O = "jeju:mypage-dashboard-mock-updated", ce = "jeju:mypage-dashboard:", ts = ["id", "memberId", "userId", "email", "loginId", "username"], de = ["user", "member", "profile", "data", "session"], w = (e) => e !== null && typeof e == "object" && !Array.isArray(e), ns = (e) => {
+}, P = "jeju:mypage-dashboard-mock-updated", de = "jeju:mypage-dashboard:", as = ["id", "memberId", "userId", "email", "loginId", "username"], pe = ["user", "member", "profile", "data", "session"], I = (e) => e !== null && typeof e == "object" && !Array.isArray(e), is = (e) => {
   if (typeof e == "string") {
     const s = e.trim();
     return s.length > 0 ? s : null;
   }
   return typeof e == "number" && Number.isFinite(e) ? String(e) : null;
-}, as = (e) => e.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, ".").replace(/^\.+|\.+$/g, ""), is = (e) => {
+}, rs = (e) => e.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, ".").replace(/^\.+|\.+$/g, ""), os = (e) => {
   const s = [];
-  if (!w(e))
+  if (!I(e))
     return s;
   s.push(e);
-  for (const n of de) {
+  for (const n of pe) {
     const a = e[n];
-    w(a) && s.push(a);
+    I(a) && s.push(a);
   }
   return s;
 }, me = (e) => {
-  const s = is(e);
+  const s = os(e);
   for (const n of s)
-    for (const a of ts) {
-      const o = ns(n[a]);
+    for (const a of as) {
+      const o = is(n[a]);
       if (!o)
         continue;
-      const i = as(o);
+      const i = rs(o);
       if (i)
         return i;
     }
   return null;
-}, pe = (e) => `${ce}${e}`, rs = (e) => {
+}, ue = (e) => `${de}${e}`, ls = (e) => {
   if (!e)
     return null;
   try {
     const s = JSON.parse(e);
-    return w(s) ? s : null;
+    return I(s) ? s : null;
   } catch {
     return null;
   }
-}, os = (e) => {
+}, cs = (e) => {
   typeof window > "u" || window.dispatchEvent(
-    new CustomEvent(O, {
+    new CustomEvent(P, {
       detail: { accountKey: e }
     })
   );
-}, ue = (e) => {
-  const s = me(e);
-  return s ? he(s) : null;
 }, he = (e) => {
+  const s = me(e);
+  return s ? xe(s) : null;
+}, xe = (e) => {
   try {
-    return rs(localStorage.getItem(pe(e)));
+    return ls(localStorage.getItem(ue(e)));
   } catch {
     return null;
   }
-}, P = (e, s) => {
-  const n = w(e) ? e : {}, a = w(s) ? s : {};
+}, D = (e, s) => {
+  const n = I(e) ? e : {}, a = I(s) ? s : {};
   if (Object.keys(n).length === 0 && Object.keys(a).length === 0)
     return null;
   const o = {
     ...n,
     ...a
   };
-  for (const i of de) {
-    const r = n[i], c = a[i];
-    (w(r) || w(c)) && (o[i] = {
-      ...w(r) ? r : {},
-      ...w(c) ? c : {}
+  for (const i of pe) {
+    const r = n[i], d = a[i];
+    (I(r) || I(d)) && (o[i] = {
+      ...I(r) ? r : {},
+      ...I(d) ? d : {}
     });
   }
   return o;
-}, ls = (e, s) => {
+}, ds = (e, s) => {
   const n = me(e);
   if (!n)
     return !1;
   try {
-    return localStorage.setItem(pe(n), JSON.stringify(s)), os(n), !0;
+    return localStorage.setItem(ue(n), JSON.stringify(s)), cs(n), !0;
   } catch {
     return !1;
   }
-}, cs = (e, s) => {
-  const n = P(ue(e), s);
-  return n ? ls(e, n) : !1;
-}, xe = "userSession", G = "jeju:session-updated", ds = "/api/auth/session", ms = () => {
-  const e = ne();
+}, ps = (e, s) => {
+  const n = D(he(e), s);
+  return n ? ds(e, n) : !1;
+}, ms = "userSession", G = "jeju:session-updated", us = "/api/auth/session", hs = "/api/mypage/dashboard", xs = () => {
+  const e = ae();
   return {
     bookings: e.bookings,
     filter: "all",
@@ -559,7 +560,7 @@ const Se = (e, s) => {
     supportItems: e.supportItems,
     travelEvents: e.travelEvents
   };
-}, ps = (e, s) => {
+}, ys = (e, s) => {
   switch (s.type) {
     case "HYDRATE_DASHBOARD":
       return {
@@ -603,24 +604,9 @@ const Se = (e, s) => {
     default:
       return e;
   }
-}, ye = u.createContext(null), fe = (e) => {
-  if (!e)
-    return null;
+}, ye = u.createContext(null), fe = (e) => `${ve}${e}`, fs = (e) => e !== null && typeof e == "object" && !Array.isArray(e), gs = async () => {
   try {
-    const s = JSON.parse(e);
-    return s && typeof s == "object" ? s : null;
-  } catch {
-    return null;
-  }
-}, us = () => {
-  try {
-    return fe(localStorage.getItem(xe));
-  } catch {
-    return null;
-  }
-}, hs = async () => {
-  try {
-    const e = await fetch(ds, {
+    const e = await fetch(fe(us), {
       credentials: "include",
       headers: {
         Accept: "application/json"
@@ -631,10 +617,28 @@ const Se = (e, s) => {
   } catch {
     return null;
   }
-}, xs = async () => {
-  const e = us();
-  return e || await hs();
-}, ys = (e) => ({
+}, vs = async () => {
+  try {
+    const e = await fetch(fe(hs), {
+      credentials: "include",
+      headers: {
+        Accept: "application/json"
+      },
+      method: "GET"
+    });
+    if (e.status === 401 || !e.ok)
+      return null;
+    const s = await e.json();
+    return !fs(s) || s.success !== !0 || !("dashboard" in s) ? null : s.dashboard ?? null;
+  } catch {
+    return null;
+  }
+}, js = async () => await gs(), bs = async (e) => {
+  if (!e)
+    return null;
+  const s = await vs();
+  return s ? D(e, s) : e;
+}, Ns = (e) => ({
   bookings: e.bookings,
   itinerary: e.itinerary,
   linkedCompanions: e.linkedCompanions,
@@ -642,83 +646,86 @@ const Se = (e, s) => {
   stats: e.stats,
   supportItems: e.supportItems,
   travelEvents: e.travelEvents
-}), fs = (e, s) => ({
+}), Ss = (e, s) => ({
   ...e,
   ...s,
   memberships: s.memberships ? [...s.memberships] : [...e.memberships],
   passport: s.passport === void 0 ? e.passport ? { ...e.passport } : void 0 : s.passport ? { ...s.passport } : void 0
-}), gs = (e) => {
-  const s = P(e, ue(e)), n = z(s);
+}), ws = (e) => {
+  const s = D(e, he(e)), n = _(s);
   if (n.linkedCompanions.length === 0)
-    return z(s);
+    return _(s);
   const a = [
     ...n.travelEvents,
     ...n.linkedCompanions.flatMap((o) => {
-      const i = he(o.id);
-      return !i || !("travelEvents" in i) ? [] : le(i.travelEvents).map((r) => ({
+      const i = xe(o.id);
+      return !i || !("travelEvents" in i) ? [] : ce(i.travelEvents).map((r) => ({
         ...r,
         ownerId: r.ownerId || o.id,
         ownerName: r.ownerName || o.name
       }));
     })
   ];
-  return z(
-    P(s, {
+  return _(
+    D(s, {
       linkedCompanions: n.linkedCompanions,
       travelEvents: a
     })
   );
-}, vs = ({ children: e }) => {
-  const [s, n] = u.useReducer(ps, void 0, ms), [a, o] = u.useState(!1), [i, r] = u.useState(!1), c = (h) => {
-    h.type === "HYDRATE_DASHBOARD" ? k(h.payload) : h.type === "PATCH_PROFILE" && k({
+}, Is = ({ children: e }) => {
+  const [s, n] = u.useReducer(ys, void 0, xs), [a, o] = u.useState(!1), [i, r] = u.useState(!1), d = (m) => {
+    m.type === "HYDRATE_DASHBOARD" ? M(m.payload) : m.type === "PATCH_PROFILE" && M({
       bookings: s.bookings,
       itinerary: s.itinerary,
       linkedCompanions: s.linkedCompanions,
-      profile: fs(s.profile, h.payload),
+      profile: Ss(s.profile, m.payload),
       stats: s.stats,
       supportItems: s.supportItems,
       travelEvents: s.travelEvents
-    }), n(h);
+    }), n(m);
   };
   u.useEffect(() => {
-    k(ys(s));
+    M(Ns(s));
   }, [s.bookings, s.itinerary, s.linkedCompanions, s.profile, s.stats, s.supportItems, s.travelEvents]), u.useEffect(() => {
-    let h = !0;
-    const g = async (m) => {
-      const x = m === void 0 ? await xs() : m;
-      if (!x) {
-        if (!h)
+    let m = !0, f = !1;
+    const j = async (y) => {
+      const c = await js();
+      if (!c) {
+        if (!m)
           return;
         r(!1), o(!0);
         return;
       }
-      const f = gs(x);
-      h && (r(!0), o(!0), k(f), n({ type: "HYDRATE_DASHBOARD", payload: f }));
+      const p = await bs(c), w = ws(p);
+      m && (r(!0), o(!0), M(w), n({ type: "HYDRATE_DASHBOARD", payload: w }));
+    }, N = (y) => {
+      f || (f = !0, j().finally(() => {
+        f = !1;
+      }));
     };
-    g();
-    const j = (m) => {
-      var x;
-      if (m.key === xe) {
-        g(fe(m.newValue));
+    N();
+    const b = (y) => {
+      var c;
+      if (y.key === ms) {
+        N();
         return;
       }
-      (x = m.key) != null && x.startsWith(ce) && g();
-    }, S = (m) => {
-      const x = m instanceof CustomEvent ? m.detail : null;
-      g((x == null ? void 0 : x.session) ?? null);
-    }, b = () => {
-      g();
+      (c = y.key) != null && c.startsWith(de) && N();
+    }, h = () => {
+      N();
+    }, g = () => {
+      N();
     };
-    return window.addEventListener("storage", j), window.addEventListener(G, S), window.addEventListener(O, b), () => {
-      h = !1, window.removeEventListener("storage", j), window.removeEventListener(G, S), window.removeEventListener(O, b);
+    return window.addEventListener("storage", b), window.addEventListener(G, h), window.addEventListener(P, g), () => {
+      m = !1, window.removeEventListener("storage", b), window.removeEventListener(G, h), window.removeEventListener(P, g);
     };
   }, [n]);
-  const y = u.useMemo(
+  const x = u.useMemo(
     () => ({
-      dispatch: c,
+      dispatch: d,
       state: s
     }),
-    [c, s]
+    [d, s]
   );
   return !a || !i ? /* @__PURE__ */ t.jsxs("div", { className: "mypage-auth-empty-state soft-radius", role: "status", "aria-live": "polite", children: [
     /* @__PURE__ */ t.jsx("div", { className: "mypage-auth-empty-icon", "aria-hidden": "true", children: /* @__PURE__ */ t.jsxs("svg", { viewBox: "0 0 24 24", focusable: "false", "aria-hidden": "true", children: [
@@ -736,15 +743,28 @@ const Se = (e, s) => {
       /* @__PURE__ */ t.jsx("circle", { cx: "12", cy: "17.25", r: "1.1", fill: "currentColor" })
     ] }) }),
     /* @__PURE__ */ t.jsx("p", { className: "mypage-auth-empty-text", children: "로그인을 해주세요." })
-  ] }) : /* @__PURE__ */ t.jsx(ye.Provider, { value: y, children: e });
+  ] }) : /* @__PURE__ */ t.jsx(ye.Provider, { value: x, children: e });
 }, A = () => {
   const e = u.useContext(ye);
   if (!e)
     throw new Error("useDashboardState must be used within DashboardProvider");
   return e;
-}, js = (e) => {
-  const s = (e == null ? void 0 : e.toLowerCase()) ?? "";
-  return s.includes("diamond") ? "diamond" : s.includes("platinum") ? "platinum" : s.includes("silver") ? "silver" : s.includes("gold") ? "gold" : "neutral";
+}, ge = (e) => {
+  const s = (e == null ? void 0 : e.trim().toLowerCase()) ?? "";
+  return s.includes("diamond") || s.includes("다이아") ? "diamond" : s.includes("platinum") || s.includes("플래티넘") ? "platinum" : s.includes("silver") || s.includes("실버") ? "silver" : s.includes("gold") || s.includes("골드") ? "gold" : null;
+}, Es = (e) => ge(e) ?? "neutral", Cs = (e) => {
+  switch (ge(e)) {
+    case "diamond":
+      return "DIAMOND";
+    case "platinum":
+      return "PLATINUM";
+    case "gold":
+      return "GOLD";
+    case "silver":
+      return "SILVER";
+    default:
+      return (e == null ? void 0 : e.trim().toUpperCase()) || "MEMBER";
+  }
 }, W = (e) => {
   switch (e) {
     case "point":
@@ -764,7 +784,7 @@ const Se = (e, s) => {
     default:
       return "circle";
   }
-}, D = (e) => {
+}, R = (e) => {
   const s = document.querySelector(e);
   if (!s)
     return;
@@ -773,9 +793,9 @@ const Se = (e, s) => {
     top: Math.max(0, i),
     behavior: "smooth"
   });
-}, bs = () => {
-  var i, r;
-  const { state: e } = A(), s = e.profile ?? C, n = (i = e.stats) != null && i.length ? e.stats : K, a = ((r = s.memberships) == null ? void 0 : r[0]) ?? C.memberships[0], o = js(a);
+}, As = () => {
+  var d, x;
+  const { state: e } = A(), s = e.profile ?? C, n = (d = e.stats) != null && d.length ? e.stats : K, a = ((x = s.memberships) == null ? void 0 : x[0]) ?? C.memberships[0], o = s.tier ?? a, i = Es(o), r = Cs(o);
   return u.useEffect(() => {
     window.lucide && window.lucide.createIcons();
   }, []), /* @__PURE__ */ t.jsxs("section", { className: "meta-section layer-hero dashboard-summary-grid", children: [
@@ -789,7 +809,7 @@ const Se = (e, s) => {
             src: `https://api.dicebear.com/7.x/notionists/svg?seed=${s.name}&backgroundColor=f8f9fa`
           }
         ),
-        /* @__PURE__ */ t.jsx("div", { className: `membership-grade-chip soft-radius ${o}`, children: /* @__PURE__ */ t.jsx("span", { children: a }) })
+        /* @__PURE__ */ t.jsx("div", { className: `membership-grade-chip soft-radius ${i}`, children: /* @__PURE__ */ t.jsx("span", { children: r }) })
       ] }) }),
       /* @__PURE__ */ t.jsx("div", { className: "profile-right-area", children: /* @__PURE__ */ t.jsxs("div", { className: "profile-info", children: [
         /* @__PURE__ */ t.jsxs("h1", { className: "profile-name", children: [
@@ -798,30 +818,30 @@ const Se = (e, s) => {
         ] }),
         /* @__PURE__ */ t.jsx("p", { className: "profile-welcome-msg", children: "제주에서 보냈던 소중한 시간들을 다시 이어보세요." }),
         /* @__PURE__ */ t.jsxs("div", { className: "profile-quick-nav", children: [
-          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => D(".layer-full-management"), children: [
+          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => R(".layer-full-management"), children: [
             /* @__PURE__ */ t.jsx("i", { "data-lucide": "calendar-check", className: "lucide-calendar-check" }),
             " 예약 현황"
           ] }),
-          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => D(".layer-itinerary"), children: [
+          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => R(".layer-itinerary"), children: [
             /* @__PURE__ */ t.jsx("i", { "data-lucide": "map", className: "lucide-map" }),
             " 여행 일정"
           ] }),
-          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => D(".layer-account-benefits"), children: [
+          /* @__PURE__ */ t.jsxs("button", { className: "nav-btn pill-shape", type: "button", onClick: () => R(".layer-account-benefits"), children: [
             /* @__PURE__ */ t.jsx("i", { "data-lucide": "user-cog", className: "lucide-user-cog" }),
             " 정보 및 혜택"
           ] })
         ] })
       ] }) })
     ] }) }),
-    /* @__PURE__ */ t.jsx("div", { className: "summary-stats-column", children: n.map((c) => /* @__PURE__ */ t.jsxs(E, { className: `stat-card meta-glass-theme tone-${c.tone}`, children: [
-      /* @__PURE__ */ t.jsx("div", { className: "stat-icon-box", children: /* @__PURE__ */ t.jsx("i", { "data-lucide": W(c.tone), className: `lucide-${W(c.tone)}` }) }),
+    /* @__PURE__ */ t.jsx("div", { className: "summary-stats-column", children: n.map((m) => /* @__PURE__ */ t.jsxs(E, { className: `stat-card meta-glass-theme tone-${m.tone}`, children: [
+      /* @__PURE__ */ t.jsx("div", { className: "stat-icon-box", children: /* @__PURE__ */ t.jsx("i", { "data-lucide": W(m.tone), className: `lucide-${W(m.tone)}` }) }),
       /* @__PURE__ */ t.jsxs("div", { className: "stat-content", children: [
-        /* @__PURE__ */ t.jsx("span", { className: "stat-label", children: c.label }),
-        /* @__PURE__ */ t.jsx("strong", { className: "stat-value", children: c.value })
+        /* @__PURE__ */ t.jsx("span", { className: "stat-label", children: m.label }),
+        /* @__PURE__ */ t.jsx("strong", { className: "stat-value", children: m.value })
       ] })
-    ] }, c.label)) })
+    ] }, m.label)) })
   ] });
-}, Ns = {
+}, Ms = {
   air: "brand-air",
   coupon: "brand-coupon",
   point: "brand-point",
@@ -829,10 +849,10 @@ const Se = (e, s) => {
   stay: "brand-stay",
   voucher: "brand-voucher",
   wallet: ""
-}, Ss = ({ tone: e, value: s }) => {
-  const n = Ns[e];
+}, ks = ({ tone: e, value: s }) => {
+  const n = Ms[e];
   return /* @__PURE__ */ t.jsx("span", { className: `pill-shape ${n}`.trim(), children: s });
-}, ws = ["all", "air", "stay", "rent", "voucher"], Is = () => {
+}, Ds = ["all", "air", "stay", "rent", "voucher"], Ts = () => {
   const { dispatch: e, state: s } = A(), n = s.bookings ?? [];
   u.useEffect(() => {
     window.lucide && window.lucide.createIcons();
@@ -849,7 +869,7 @@ const Se = (e, s) => {
         /* @__PURE__ */ t.jsx("h2", { className: "section-title", children: "나의 예약 현황" }),
         /* @__PURE__ */ t.jsx("p", { className: "section-subtitle", children: "항공, 숙박, 렌터카 및 바우처를 한눈에 관리하세요." })
       ] }),
-      /* @__PURE__ */ t.jsx("div", { className: "booking-filters flex-gap", children: ws.map((i) => /* @__PURE__ */ t.jsx(
+      /* @__PURE__ */ t.jsx("div", { className: "booking-filters flex-gap", children: Ds.map((i) => /* @__PURE__ */ t.jsx(
         "button",
         {
           className: `filter-chip pill-shape ${s.filter === i ? "active" : ""}`,
@@ -863,7 +883,7 @@ const Se = (e, s) => {
     /* @__PURE__ */ t.jsx("ul", { className: "full-width-trip-list", children: a.length > 0 ? a.map((i) => /* @__PURE__ */ t.jsxs("li", { className: "inline-trip-card soft-radius", "data-type": i.type, children: [
       /* @__PURE__ */ t.jsxs("div", { className: "trip-core-info", children: [
         /* @__PURE__ */ t.jsxs("div", { className: "trip-head-flex", children: [
-          /* @__PURE__ */ t.jsx(Ss, { tone: i.type, value: i.status }),
+          /* @__PURE__ */ t.jsx(ks, { tone: i.type, value: i.status }),
           /* @__PURE__ */ t.jsx("div", { className: "trip-tags", children: i.tags.map((r) => /* @__PURE__ */ t.jsx("span", { className: "meta-tag pill-shape", children: r }, r)) })
         ] }),
         /* @__PURE__ */ t.jsx("h3", { className: "trip-title", children: i.title }),
@@ -902,60 +922,60 @@ const Se = (e, s) => {
       /* @__PURE__ */ t.jsx("p", { children: "선택하신 카테고리에 해당하는 예약 내역이 없습니다." })
     ] }) })
   ] });
-}, Es = {
+}, _s = {
   park_jy: { id: "park_jy", name: "박준영" },
   lee_je: { id: "lee_je", name: "이지은" },
   choi_sj: { id: "choi_sj", name: "최수진" }
-}, Cs = (e) => e.trim().toLowerCase(), As = async (e) => {
+}, Rs = (e) => e.trim().toLowerCase(), zs = async (e) => {
   await new Promise((n) => setTimeout(n, 400));
-  const s = Es[e];
+  const s = _s[e];
   return s ? {
     ...s,
     isMember: !0
   } : null;
-}, ks = ({
+}, Ls = ({
   initialCompanions: e = [],
-  lookupMemberById: s = As
+  lookupMemberById: s = zs
 } = {}) => {
-  const [n, a] = u.useState(e), [o, i] = u.useState(""), [r, c] = u.useState(null), [y, h] = u.useState(!1), [g, j] = u.useState(null), S = u.useCallback(async (f) => {
-    const d = Cs(f);
-    if (!d) {
-      j({ message: "검색할 제주그룹 회원 ID를 입력해라" }), c(null);
+  const [n, a] = u.useState(e), [o, i] = u.useState(""), [r, d] = u.useState(null), [x, m] = u.useState(!1), [f, j] = u.useState(null), N = u.useCallback(async (y) => {
+    const c = Rs(y);
+    if (!c) {
+      j({ message: "검색할 제주그룹 회원 ID를 입력해라" }), d(null);
       return;
     }
-    if (!/^[a-z0-9._-]{2,30}$/i.test(d)) {
-      j({ message: "회원 ID는 영문, 숫자, 점, 밑줄, 하이픈만 쓸 수 있다" }), c(null);
+    if (!/^[a-z0-9._-]{2,30}$/i.test(c)) {
+      j({ message: "회원 ID는 영문, 숫자, 점, 밑줄, 하이픈만 쓸 수 있다" }), d(null);
       return;
     }
-    h(!0), j(null), c(null);
+    m(!0), j(null), d(null);
     try {
-      const p = await s(d);
-      p ? c(p) : j({ message: "일치하는 제주그룹 회원 ID를 찾지 못했다" });
+      const p = await s(c);
+      p ? d(p) : j({ message: "일치하는 제주그룹 회원 ID를 찾지 못했다" });
     } catch {
       j({ message: "회원 조회 중 오류가 발생했다. 잠시 후 다시 시도해라" });
     } finally {
-      h(!1);
+      m(!1);
     }
   }, [s]), b = u.useCallback(() => {
-    i(""), c(null), j(null);
-  }, []), m = u.useCallback((f) => {
-    a((d) => d.some((p) => p.id === f.id) ? d : [...d, f]), b();
-  }, [b]), x = u.useCallback((f) => {
-    a((d) => d.filter((p) => p.id !== f));
+    i(""), d(null), j(null);
+  }, []), h = u.useCallback((y) => {
+    a((c) => c.some((p) => p.id === y.id) ? c : [...c, y]), b();
+  }, [b]), g = u.useCallback((y) => {
+    a((c) => c.filter((p) => p.id !== y));
   }, []);
   return {
     companions: n,
     searchQuery: o,
     setSearchQuery: i,
     searchResult: r,
-    isSearching: y,
-    errorObj: g,
-    handleSearch: S,
-    addCompanion: m,
-    removeCompanion: x,
+    isSearching: x,
+    errorObj: f,
+    handleSearch: N,
+    addCompanion: h,
+    removeCompanion: g,
     clearSearch: b
   };
-}, Ms = ({
+}, Os = ({
   initialCompanions: e,
   isOpen: s,
   onClose: n,
@@ -965,34 +985,34 @@ const Se = (e, s) => {
     companions: o,
     searchQuery: i,
     setSearchQuery: r,
-    searchResult: c,
-    isSearching: y,
-    errorObj: h,
-    handleSearch: g,
+    searchResult: d,
+    isSearching: x,
+    errorObj: m,
+    handleSearch: f,
     addCompanion: j,
-    removeCompanion: S,
+    removeCompanion: N,
     clearSearch: b
-  } = ks({ initialCompanions: e }), m = u.useRef(null), x = c ? o.some((p) => p.id === c.id) : !1;
+  } = Ls({ initialCompanions: e }), h = u.useRef(null), g = d ? o.some((p) => p.id === d.id) : !1;
   if (u.useEffect(() => {
     if (s) {
       b();
       const p = window.setTimeout(() => {
-        var I;
-        return (I = m.current) == null ? void 0 : I.focus();
+        var w;
+        return (w = h.current) == null ? void 0 : w.focus();
       }, 100);
       return () => window.clearTimeout(p);
     }
   }, [s, b]), u.useEffect(() => {
-    const p = (I) => {
-      I.key === "Escape" && s && n();
+    const p = (w) => {
+      w.key === "Escape" && s && n();
     };
     return window.addEventListener("keydown", p), () => window.removeEventListener("keydown", p);
   }, [s, n]), u.useEffect(() => {
     s && window.lucide && window.lucide.createIcons();
-  }, [s, c, o, h]), !s) return null;
-  const f = (p) => {
-    p.preventDefault(), g(i);
-  }, d = () => {
+  }, [s, d, o, m]), !s) return null;
+  const y = (p) => {
+    p.preventDefault(), f(i);
+  }, c = () => {
     a(o), n();
   };
   return /* @__PURE__ */ t.jsx("div", { className: "meta-modal-overlay companion-manage-modal active", onClick: n, role: "dialog", "aria-modal": "true", children: /* @__PURE__ */ t.jsxs(
@@ -1004,11 +1024,11 @@ const Se = (e, s) => {
       children: [
         /* @__PURE__ */ t.jsx("header", { className: "modal-header", children: /* @__PURE__ */ t.jsx("div", { className: "header-title-wrap", children: /* @__PURE__ */ t.jsx("h3", { children: "동행자 연동 / 관리" }) }) }),
         /* @__PURE__ */ t.jsxs("div", { className: "companion-modal-body", children: [
-          /* @__PURE__ */ t.jsxs("form", { className: "companion-search-form id-search-wrap", onSubmit: f, style: { gap: "16px", marginBottom: "32px" }, children: [
+          /* @__PURE__ */ t.jsxs("form", { className: "companion-search-form id-search-wrap", onSubmit: y, style: { gap: "16px", marginBottom: "32px" }, children: [
             /* @__PURE__ */ t.jsx(
               "input",
               {
-                ref: m,
+                ref: h,
                 className: "id-input companion-search-input",
                 type: "text",
                 placeholder: "제주그룹 회원 ID를 입력해라",
@@ -1023,29 +1043,29 @@ const Se = (e, s) => {
               {
                 type: "submit",
                 className: "add-btn companion-search-submit pill-shape",
-                disabled: y,
+                disabled: x,
                 style: { padding: "0 40px", fontSize: "16px" },
-                children: y ? "검색 중..." : "검색"
+                children: x ? "검색 중..." : "검색"
               }
             )
           ] }),
-          h && /* @__PURE__ */ t.jsxs("div", { className: "error-message", style: { color: "red", fontSize: "13px", marginBottom: "16px", fontWeight: 600 }, children: [
+          m && /* @__PURE__ */ t.jsxs("div", { className: "error-message", style: { color: "red", fontSize: "13px", marginBottom: "16px", fontWeight: 600 }, children: [
             /* @__PURE__ */ t.jsx("i", { "data-lucide": "alert-circle", style: { marginRight: "4px", width: "14px", height: "14px", verticalAlign: "text-bottom" } }),
-            h.message
+            m.message
           ] }),
-          c && /* @__PURE__ */ t.jsxs("div", { className: "search-result-wrap list-item", style: { padding: "20px 24px", marginBottom: "32px", borderRadius: "16px" }, children: [
+          d && /* @__PURE__ */ t.jsxs("div", { className: "search-result-wrap list-item", style: { padding: "20px 24px", marginBottom: "32px", borderRadius: "16px" }, children: [
             /* @__PURE__ */ t.jsxs("div", { className: "companion-result-item item-info", children: [
               /* @__PURE__ */ t.jsxs("div", { className: "companion-avatar soft-radius is-linked", style: { width: "48px", height: "48px", fontSize: "18px", marginLeft: 0 }, children: [
-                c.name.charAt(0),
+                d.name.charAt(0),
                 /* @__PURE__ */ t.jsx("i", { "data-lucide": "link", className: "lucide-link linked-indicator" })
               ] }),
               /* @__PURE__ */ t.jsxs("div", { className: "user-info name-meta", style: { gap: "4px" }, children: [
-                /* @__PURE__ */ t.jsx("strong", { style: { fontSize: "16px" }, children: c.name }),
+                /* @__PURE__ */ t.jsx("strong", { style: { fontSize: "16px" }, children: d.name }),
                 /* @__PURE__ */ t.jsxs("span", { style: { fontSize: "14px" }, children: [
                   "@",
-                  c.id
+                  d.id
                 ] }),
-                /* @__PURE__ */ t.jsx("span", { style: { fontSize: "13px", color: "var(--meta-text-muted)" }, children: x ? "이미 연동된 제주그룹 회원" : "연동 가능한 제주그룹 회원" })
+                /* @__PURE__ */ t.jsx("span", { style: { fontSize: "13px", color: "var(--meta-text-muted)" }, children: g ? "이미 연동된 제주그룹 회원" : "연동 가능한 제주그룹 회원" })
               ] })
             ] }),
             /* @__PURE__ */ t.jsx(
@@ -1053,10 +1073,10 @@ const Se = (e, s) => {
               {
                 className: "add-btn companion-add-btn pill-shape",
                 type: "button",
-                onClick: () => j(c),
-                disabled: x,
+                onClick: () => j(d),
+                disabled: g,
                 style: { padding: "12px 28px", fontSize: "14px" },
-                children: x ? "연동됨" : "추가"
+                children: g ? "연동됨" : "추가"
               }
             )
           ] }),
@@ -1084,7 +1104,7 @@ const Se = (e, s) => {
                 "button",
                 {
                   className: "remove-btn companion-remove-btn",
-                  onClick: () => S(p.id),
+                  onClick: () => N(p.id),
                   style: { padding: "10px 24px", fontSize: "14px" },
                   children: "해제"
                 }
@@ -1094,12 +1114,12 @@ const Se = (e, s) => {
         ] }),
         /* @__PURE__ */ t.jsxs("footer", { className: "modal-footer", style: { marginTop: "40px", gap: "16px" }, children: [
           /* @__PURE__ */ t.jsx("button", { className: "cancel-btn pill-shape", type: "button", onClick: n, style: { padding: "20px 0", fontSize: "16px" }, children: "취소" }),
-          /* @__PURE__ */ t.jsx("button", { className: "save-btn pill-shape", type: "button", onClick: d, style: { padding: "20px 0", fontSize: "16px" }, children: "적용" })
+          /* @__PURE__ */ t.jsx("button", { className: "save-btn pill-shape", type: "button", onClick: c, style: { padding: "20px 0", fontSize: "16px" }, children: "적용" })
         ] })
       ]
     }
   ) });
-}, Ts = (e) => {
+}, Ps = (e) => {
   switch (e) {
     case "used":
       return {
@@ -1132,7 +1152,7 @@ const Se = (e, s) => {
         style: void 0
       };
   }
-}, zs = () => {
+}, Bs = () => {
   const { dispatch: e, state: s } = A(), n = s.itinerary ?? [], a = n.length > 0 ? n : [
     {
       activities: [],
@@ -1143,21 +1163,21 @@ const Se = (e, s) => {
       time: "시간 미정",
       title: "여행 일정 준비 중"
     }
-  ], o = s.linkedCompanions ?? [], i = s.profile, [r, c] = u.useState(!1), [y, h] = u.useState(null), g = u.useRef({}), [j, S] = u.useState({});
+  ], o = s.linkedCompanions ?? [], i = s.profile, [r, d] = u.useState(!1), [x, m] = u.useState(null), f = u.useRef({}), [j, N] = u.useState({});
   u.useEffect(() => {
     window.lucide && window.lucide.createIcons();
   }, [r, n, o]), u.useLayoutEffect(() => {
-    const m = a.reduce((x, f) => {
-      var d;
-      return x[f.id] = ((d = g.current[f.id]) == null ? void 0 : d.scrollHeight) ?? 0, x;
+    const h = a.reduce((g, y) => {
+      var c;
+      return g[y.id] = ((c = f.current[y.id]) == null ? void 0 : c.scrollHeight) ?? 0, g;
     }, {});
-    S((x) => {
-      const f = Object.keys(x), d = Object.keys(m);
-      return f.length === d.length && d.every((p) => x[p] === m[p]) ? x : m;
+    N((g) => {
+      const y = Object.keys(g), c = Object.keys(h);
+      return y.length === c.length && c.every((p) => g[p] === h[p]) ? g : h;
     });
   }, [a, r]);
-  const b = (m) => {
-    e({ type: "SET_LINKED_COMPANIONS", payload: m }), cs(
+  const b = (h) => {
+    e({ type: "SET_LINKED_COMPANIONS", payload: h }), ps(
       {
         id: i.id,
         profile: {
@@ -1167,9 +1187,9 @@ const Se = (e, s) => {
         }
       },
       {
-        linkedCompanions: m
+        linkedCompanions: h
       }
-    ), h(null);
+    ), m(null);
   };
   return /* @__PURE__ */ t.jsxs("section", { className: "meta-section layer-itinerary", children: [
     /* @__PURE__ */ t.jsxs("header", { className: "section-header", children: [
@@ -1177,36 +1197,36 @@ const Se = (e, s) => {
       /* @__PURE__ */ t.jsx("p", { className: "section-subtitle", children: "동행자와 함께하는 상세 활동 계획" })
     ] }),
     /* @__PURE__ */ t.jsxs("div", { className: `itinerary-timeline-wrap ${r ? "is-expanded" : ""}`, children: [
-      a.map((m, x) => {
-        const f = x < 2, d = f || r, p = j[m.id] ?? 720, I = m.id === "empty-itinerary";
+      a.map((h, g) => {
+        const y = g < 2, c = y || r, p = j[h.id] ?? 720, w = h.id === "empty-itinerary";
         return /* @__PURE__ */ t.jsxs(
           "div",
           {
             className: "itinerary-day-block",
             ref: (v) => {
-              g.current[m.id] = v;
+              f.current[h.id] = v;
             },
-            "aria-hidden": !d,
-            style: f ? void 0 : {
+            "aria-hidden": !c,
+            style: y ? void 0 : {
               overflow: "hidden",
-              maxHeight: d ? `${p}px` : "0px",
-              opacity: d ? 1 : 0,
-              transform: d ? "translateY(0)" : "translateY(-18px)",
-              marginBottom: d ? "40px" : "0px",
-              pointerEvents: d ? "auto" : "none",
+              maxHeight: c ? `${p}px` : "0px",
+              opacity: c ? 1 : 0,
+              transform: c ? "translateY(0)" : "translateY(-18px)",
+              marginBottom: c ? "40px" : "0px",
+              pointerEvents: c ? "auto" : "none",
               transition: "max-height 460ms cubic-bezier(0.22, 1, 0.36, 1), opacity 280ms ease, transform 460ms cubic-bezier(0.22, 1, 0.36, 1), margin-bottom 460ms cubic-bezier(0.22, 1, 0.36, 1)"
             },
             children: [
               /* @__PURE__ */ t.jsxs("div", { className: "day-side-info", children: [
-                /* @__PURE__ */ t.jsx("span", { className: "day-date", children: m.date }),
-                /* @__PURE__ */ t.jsx("span", { className: "day-time", children: m.time }),
+                /* @__PURE__ */ t.jsx("span", { className: "day-date", children: h.date }),
+                /* @__PURE__ */ t.jsx("span", { className: "day-time", children: h.time }),
                 /* @__PURE__ */ t.jsxs("div", { className: "companions-card-wrap soft-radius", children: [
                   /* @__PURE__ */ t.jsxs("div", { className: "comp-head", children: [
                     /* @__PURE__ */ t.jsx("i", { "data-lucide": "users", className: "lucide-users" }),
                     /* @__PURE__ */ t.jsx("span", { className: "small-label", children: "함께하는 동행자" })
                   ] }),
-                  /* @__PURE__ */ t.jsxs("div", { className: `avatar-stack ${m.companions.length === 0 ? "is-empty" : ""}`, children: [
-                    m.companions.map((v) => /* @__PURE__ */ t.jsxs(
+                  /* @__PURE__ */ t.jsxs("div", { className: `avatar-stack ${h.companions.length === 0 ? "is-empty" : ""}`, children: [
+                    h.companions.map((v) => /* @__PURE__ */ t.jsxs(
                       "div",
                       {
                         className: `companion-avatar soft-radius ${v.isMember ? "is-linked" : ""}`,
@@ -1220,11 +1240,11 @@ const Se = (e, s) => {
                     )),
                     /* @__PURE__ */ t.jsxs("span", { className: "comp-count-label", children: [
                       "총 ",
-                      m.companions.length,
+                      h.companions.length,
                       "명"
                     ] })
                   ] }),
-                  /* @__PURE__ */ t.jsxs("button", { className: "link-action-btn pill-shape", type: "button", onClick: () => h(m.id), children: [
+                  /* @__PURE__ */ t.jsxs("button", { className: "link-action-btn pill-shape", type: "button", onClick: () => m(h.id), children: [
                     /* @__PURE__ */ t.jsx("i", { "data-lucide": "user-plus", className: "lucide-user-plus" }),
                     "동행자 연동/관리"
                   ] })
@@ -1232,8 +1252,8 @@ const Se = (e, s) => {
               ] }),
               /* @__PURE__ */ t.jsxs(E, { className: "itinerary-content-card meta-glass-theme", children: [
                 /* @__PURE__ */ t.jsxs("div", { className: "iti-header flex-header", children: [
-                  /* @__PURE__ */ t.jsx("h3", { className: "iti-title", children: m.title }),
-                  m.googleMapUrl ? /* @__PURE__ */ t.jsxs("a", { className: "map-link-btn pill-shape", href: m.googleMapUrl, rel: "noopener noreferrer", target: "_blank", children: [
+                  /* @__PURE__ */ t.jsx("h3", { className: "iti-title", children: h.title }),
+                  h.googleMapUrl ? /* @__PURE__ */ t.jsxs("a", { className: "map-link-btn pill-shape", href: h.googleMapUrl, rel: "noopener noreferrer", target: "_blank", children: [
                     /* @__PURE__ */ t.jsx("i", { "data-lucide": "map-pin", className: "lucide-map-pin" }),
                     "구글 맵 보기"
                   ] }) : /* @__PURE__ */ t.jsxs("span", { className: "map-link-btn pill-shape is-disabled", "aria-disabled": "true", children: [
@@ -1243,12 +1263,12 @@ const Se = (e, s) => {
                 ] }),
                 /* @__PURE__ */ t.jsxs("div", { className: "activity-checklist-wrap", children: [
                   /* @__PURE__ */ t.jsx("p", { className: "small-label", children: "활동(Activity) 체크리스트" }),
-                  /* @__PURE__ */ t.jsx("ul", { className: `checklist-list ${m.activities.length === 0 ? "is-empty" : ""}`, children: m.activities.map((v) => {
-                    const T = Ts(v.status), V = v.status === "used", q = v.status === "cancelled" || v.status === "missed";
+                  /* @__PURE__ */ t.jsx("ul", { className: `checklist-list ${h.activities.length === 0 ? "is-empty" : ""}`, children: h.activities.map((v) => {
+                    const T = Ps(v.status), Y = v.status === "used", V = v.status === "cancelled" || v.status === "missed";
                     return /* @__PURE__ */ t.jsx(
                       "li",
                       {
-                        className: `checklist-item ${V ? "checked" : ""} soft-radius`,
+                        className: `checklist-item ${Y ? "checked" : ""} soft-radius`,
                         style: T.style,
                         children: /* @__PURE__ */ t.jsxs("div", { className: "checkbox-control", style: { alignItems: "flex-start" }, children: [
                           /* @__PURE__ */ t.jsx(
@@ -1256,7 +1276,7 @@ const Se = (e, s) => {
                             {
                               "data-lucide": T.icon,
                               style: {
-                                color: V ? "var(--brand-rent)" : q ? "#ef4444" : "var(--meta-text-muted)",
+                                color: Y ? "var(--brand-rent)" : V ? "#ef4444" : "var(--meta-text-muted)",
                                 marginTop: "2px",
                                 width: "18px",
                                 height: "18px",
@@ -1270,7 +1290,7 @@ const Se = (e, s) => {
                               "span",
                               {
                                 style: {
-                                  color: q ? "#ef4444" : "var(--meta-text-muted)",
+                                  color: V ? "#ef4444" : "var(--meta-text-muted)",
                                   fontSize: "12px",
                                   fontWeight: 700
                                 },
@@ -1283,15 +1303,15 @@ const Se = (e, s) => {
                       v.id
                     );
                   }) }),
-                  I ? /* @__PURE__ */ t.jsx("p", { className: "checklist-empty-caption", children: "등록된 활동이 아직 없다." }) : null
+                  w ? /* @__PURE__ */ t.jsx("p", { className: "checklist-empty-caption", children: "등록된 활동이 아직 없다." }) : null
                 ] })
               ] })
             ]
           },
-          m.id
+          h.id
         );
       }),
-      n.length > 2 && /* @__PURE__ */ t.jsx("div", { className: `timeline-gradient-overlay ${r ? "active" : ""}`, children: /* @__PURE__ */ t.jsx("button", { className: "expand-cta-btn pill-shape", onClick: () => c(!r), children: r ? /* @__PURE__ */ t.jsxs(t.Fragment, { children: [
+      n.length > 2 && /* @__PURE__ */ t.jsx("div", { className: `timeline-gradient-overlay ${r ? "active" : ""}`, children: /* @__PURE__ */ t.jsx("button", { className: "expand-cta-btn pill-shape", onClick: () => d(!r), children: r ? /* @__PURE__ */ t.jsxs(t.Fragment, { children: [
         "전체 일정 접기 ",
         /* @__PURE__ */ t.jsx("i", { className: "lucide-chevron-up" })
       ] }) : /* @__PURE__ */ t.jsxs(t.Fragment, { children: [
@@ -1301,43 +1321,43 @@ const Se = (e, s) => {
         /* @__PURE__ */ t.jsx("i", { className: "lucide-chevron-down" })
       ] }) }) })
     ] }),
-    y && /* @__PURE__ */ t.jsx(
-      Ms,
+    x && /* @__PURE__ */ t.jsx(
+      Os,
       {
-        isOpen: !!y,
-        onClose: () => h(null),
+        isOpen: !!x,
+        onClose: () => m(null),
         initialCompanions: o,
         onSave: b
       }
     )
   ] });
-}, _ = (e) => ({
+}, z = (e) => ({
   email: e.email,
   name: e.name,
   phone: e.phone
-}), Ds = (e) => ({
+}), Ks = (e) => ({
   email: e.email.trim(),
   name: e.name.trim(),
   phone: e.phone.trim()
-}), Q = (e) => e.name.trim().length > 0 && e.email.trim().includes("@") && e.phone.trim().length > 0, _s = (e) => e === "point" ? {
+}), Q = (e) => e.name.trim().length > 0 && e.email.trim().includes("@") && e.phone.trim().length > 0, Fs = (e) => e === "point" ? {
   color: "#1f2937"
-} : void 0, Ls = () => {
-  var f;
-  const { dispatch: e, state: s } = A(), n = s.profile ?? C, a = (f = s.stats) != null && f.length ? s.stats : K, o = n.passport, [i, r] = u.useState(() => _(n)), [c, y] = u.useState(() => _(n)), [h, g] = u.useState(!1), j = (c.name.trim().charAt(0) || C.name.trim().charAt(0) || "J").toUpperCase();
+} : void 0, $s = () => {
+  var y;
+  const { dispatch: e, state: s } = A(), n = s.profile ?? C, a = (y = s.stats) != null && y.length ? s.stats : K, o = n.passport, [i, r] = u.useState(() => z(n)), [d, x] = u.useState(() => z(n)), [m, f] = u.useState(!1), j = (d.name.trim().charAt(0) || C.name.trim().charAt(0) || "J").toUpperCase();
   u.useEffect(() => {
-    h && window.lucide && window.lucide.createIcons();
-  }, [h]), u.useEffect(() => {
-    const d = _(n);
-    h || (r(d), y(d));
-  }, [n, h]);
-  const S = () => {
-    y(i), g(!0);
+    m && window.lucide && window.lucide.createIcons();
+  }, [m]), u.useEffect(() => {
+    const c = z(n);
+    m || (r(c), x(c));
+  }, [n, m]);
+  const N = () => {
+    x(i), f(!0);
   }, b = () => {
-    y(i), g(!1);
-  }, m = () => {
-    const d = Ds(c);
-    Q(d) && (r(d), y(d), e({ type: "PATCH_PROFILE", payload: d }), g(!1));
-  }, x = !Q(c);
+    x(i), f(!1);
+  }, h = () => {
+    const c = Ks(d);
+    Q(c) && (r(c), x(c), e({ type: "PATCH_PROFILE", payload: c }), f(!1));
+  }, g = !Q(d);
   return /* @__PURE__ */ t.jsxs(t.Fragment, { children: [
     /* @__PURE__ */ t.jsxs("section", { className: "meta-section layer-account-benefits", children: [
       /* @__PURE__ */ t.jsxs("header", { className: "section-header", children: [
@@ -1348,7 +1368,7 @@ const Se = (e, s) => {
         /* @__PURE__ */ t.jsxs(E, { className: "account-info-box meta-glass-theme", children: [
           /* @__PURE__ */ t.jsxs("div", { className: "box-head flex-header", children: [
             /* @__PURE__ */ t.jsx("h3", { children: "기본 정보" }),
-            /* @__PURE__ */ t.jsx("button", { className: "edit-btn pill-shape", type: "button", onClick: S, children: "내 정보 수정" })
+            /* @__PURE__ */ t.jsx("button", { className: "edit-btn pill-shape", type: "button", onClick: N, children: "내 정보 수정" })
           ] }),
           /* @__PURE__ */ t.jsxs("div", { className: "box-body", children: [
             /* @__PURE__ */ t.jsxs("div", { className: "info-row", children: [
@@ -1387,19 +1407,19 @@ const Se = (e, s) => {
         ] }),
         /* @__PURE__ */ t.jsxs(E, { className: "benefit-history-box meta-glass-theme full-width-bento", children: [
           /* @__PURE__ */ t.jsx("div", { className: "box-head", children: /* @__PURE__ */ t.jsx("h3", { children: "나의 포인트 & 쿠폰 내역" }) }),
-          /* @__PURE__ */ t.jsx("div", { className: "benefit-tiles", children: a.slice(0, 2).map((d) => /* @__PURE__ */ t.jsxs("div", { className: `benefit-tile tone-${d.tone} soft-radius`, children: [
-            /* @__PURE__ */ t.jsx("span", { className: "benefit-label", children: d.label }),
-            /* @__PURE__ */ t.jsx("strong", { className: "benefit-value", style: _s(d.tone), children: d.value }),
+          /* @__PURE__ */ t.jsx("div", { className: "benefit-tiles", children: a.slice(0, 2).map((c) => /* @__PURE__ */ t.jsxs("div", { className: `benefit-tile tone-${c.tone} soft-radius`, children: [
+            /* @__PURE__ */ t.jsx("span", { className: "benefit-label", children: c.label }),
+            /* @__PURE__ */ t.jsx("strong", { className: "benefit-value", style: Fs(c.tone), children: c.value }),
             /* @__PURE__ */ t.jsx("button", { className: "history-link", type: "button", children: "상세 내역 확인" })
-          ] }, d.label)) })
+          ] }, c.label)) })
         ] })
       ] })
     ] }),
-    h ? /* @__PURE__ */ t.jsx("div", { className: "meta-modal-overlay", onClick: b, children: /* @__PURE__ */ t.jsxs(
+    m ? /* @__PURE__ */ t.jsx("div", { className: "meta-modal-overlay", onClick: b, children: /* @__PURE__ */ t.jsxs(
       "div",
       {
         className: "meta-modal-content soft-radius meta-glass-theme",
-        onClick: (d) => d.stopPropagation(),
+        onClick: (c) => c.stopPropagation(),
         style: { padding: "36px" },
         children: [
           /* @__PURE__ */ t.jsx("header", { className: "modal-header", children: /* @__PURE__ */ t.jsx("div", { className: "header-title-wrap", children: /* @__PURE__ */ t.jsx("h3", { children: "개인정보 수정" }) }) }),
@@ -1421,8 +1441,8 @@ const Se = (e, s) => {
                 {
                   className: "id-input",
                   type: "text",
-                  value: c.name,
-                  onChange: (d) => y((p) => ({ ...p, name: d.target.value })),
+                  value: d.name,
+                  onChange: (c) => x((p) => ({ ...p, name: c.target.value })),
                   style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                 }
               ) })
@@ -1434,8 +1454,8 @@ const Se = (e, s) => {
                 {
                   className: "id-input",
                   type: "email",
-                  value: c.email,
-                  onChange: (d) => y((p) => ({ ...p, email: d.target.value })),
+                  value: d.email,
+                  onChange: (c) => x((p) => ({ ...p, email: c.target.value })),
                   style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                 }
               ) })
@@ -1447,8 +1467,8 @@ const Se = (e, s) => {
                 {
                   className: "id-input",
                   type: "tel",
-                  value: c.phone,
-                  onChange: (d) => y((p) => ({ ...p, phone: d.target.value })),
+                  value: d.phone,
+                  onChange: (c) => x((p) => ({ ...p, phone: c.target.value })),
                   style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                 }
               ) })
@@ -1461,8 +1481,8 @@ const Se = (e, s) => {
               {
                 className: "save-btn pill-shape",
                 type: "button",
-                onClick: m,
-                disabled: x,
+                onClick: h,
+                disabled: g,
                 style: { padding: "18px 0", fontSize: "15px" },
                 children: "저장"
               }
@@ -1472,37 +1492,50 @@ const Se = (e, s) => {
       }
     ) }) : null
   ] });
-}, Rs = () => {
-  const { state: e } = A(), s = e.supportItems ?? [];
+}, Us = {
+  qna: ["/pages/mypage/assets/support_qna.png", "/front-mirror/pages/mypage/assets/support_qna.png"],
+  notice: ["/pages/mypage/assets/support_notice.png", "/front-mirror/pages/mypage/assets/support_notice.png"],
+  faq: ["/pages/mypage/assets/support_faq.png", "/front-mirror/pages/mypage/assets/support_faq.png"]
+}, Hs = () => typeof document > "u" ? !1 : Array.from(document.querySelectorAll("link[href], script[src]")).some((e) => (e.getAttribute("href") ?? e.getAttribute("src") ?? "").includes("/front-mirror/")), J = (e, s = !1) => {
+  const n = e === "qna" ? "qna" : e === "notice" ? "notice" : "faq", [a, o] = Us[n];
+  return s ? o : a;
+}, qs = () => {
+  const { state: e } = A(), s = e.supportItems ?? [], [n] = u.useState(Hs), [a, o] = u.useState({});
   return /* @__PURE__ */ t.jsxs("section", { className: "meta-section layer-support", children: [
     /* @__PURE__ */ t.jsxs("header", { className: "section-header", children: [
       /* @__PURE__ */ t.jsx("h2", { className: "section-title", children: "고객지원" }),
       /* @__PURE__ */ t.jsx("p", { className: "section-subtitle", children: "여행 중 궁금한 점을 전문가와 상담하세요." })
     ] }),
-    /* @__PURE__ */ t.jsx("div", { className: "support-bento-grid bento-grid", children: s.map((n) => /* @__PURE__ */ t.jsxs("a", { className: `support-item-card bento-item meta-glass-theme soft-radius ${n.id}`, href: n.href, children: [
+    /* @__PURE__ */ t.jsx("div", { className: "support-bento-grid bento-grid", children: s.map((i) => /* @__PURE__ */ t.jsxs("a", { className: `support-item-card bento-item meta-glass-theme soft-radius ${i.id}`, href: i.href, children: [
       /* @__PURE__ */ t.jsx("div", { className: "sp-icon", children: /* @__PURE__ */ t.jsx(
         "img",
         {
-          alt: n.label,
-          src: n.id === "qna" ? "/pages/mypage/assets/support_qna.png" : n.id === "notice" ? "/pages/mypage/assets/support_notice.png" : "/pages/mypage/assets/support_faq.png"
+          alt: i.label,
+          onError: (r) => {
+            a[i.id] || n || (o((d) => ({
+              ...d,
+              [i.id]: !0
+            })), r.currentTarget.src = J(i.id, !0));
+          },
+          src: J(i.id, n || a[i.id] === !0)
         }
       ) }),
       /* @__PURE__ */ t.jsxs("div", { className: "sp-text", children: [
-        /* @__PURE__ */ t.jsx("strong", { className: "sp-label", children: n.label }),
-        n.count !== null ? /* @__PURE__ */ t.jsxs("span", { className: `sp-badge pill-shape ${n.count > 0 ? "active" : ""}`, children: [
-          n.count,
+        /* @__PURE__ */ t.jsx("strong", { className: "sp-label", children: i.label }),
+        i.count !== null ? /* @__PURE__ */ t.jsxs("span", { className: `sp-badge pill-shape ${i.count > 0 ? "active" : ""}`, children: [
+          i.count,
           " 건"
         ] }) : /* @__PURE__ */ t.jsx("span", { className: "sp-link-text", children: "상세 보기" })
       ] })
-    ] }, n.id)) })
+    ] }, i.id)) })
   ] });
-}, Os = () => /* @__PURE__ */ t.jsxs("div", { className: "meta-dashboard-layout", children: [
-  /* @__PURE__ */ t.jsx(bs, {}),
-  /* @__PURE__ */ t.jsx(Is, {}),
-  /* @__PURE__ */ t.jsx(zs, {}),
-  /* @__PURE__ */ t.jsx(Ls, {}),
-  /* @__PURE__ */ t.jsx(Rs, {})
-] }), Bs = () => /* @__PURE__ */ t.jsx(vs, { children: /* @__PURE__ */ t.jsx(Os, {}) });
+}, Ys = () => /* @__PURE__ */ t.jsxs("div", { className: "meta-dashboard-layout", children: [
+  /* @__PURE__ */ t.jsx(As, {}),
+  /* @__PURE__ */ t.jsx(Ts, {}),
+  /* @__PURE__ */ t.jsx(Bs, {}),
+  /* @__PURE__ */ t.jsx($s, {}),
+  /* @__PURE__ */ t.jsx(qs, {})
+] }), Ws = () => /* @__PURE__ */ t.jsx(Is, { children: /* @__PURE__ */ t.jsx(Ys, {}) });
 export {
-  Bs as M
+  Ws as M
 };

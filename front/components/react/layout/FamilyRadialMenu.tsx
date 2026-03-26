@@ -90,15 +90,28 @@ export default function FamilyRadialMenu({
   const resolvedEndAngle = endAngle ?? 270;
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+    const handlePointerDown = (event: PointerEvent) => {
+      const root = menuRef.current;
+
+      if (!root || root.contains(event.target as Node)) {
+        return;
+      }
+
+      setIsMenuOpen(false);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
         setIsMenuOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
@@ -113,6 +126,8 @@ export default function FamilyRadialMenu({
           className={`family-radial-btn ${isMenuOpen ? "active" : ""}`}
           onClick={() => setIsMenuOpen((prev) => !prev)}
           aria-label={label}
+          aria-expanded={isMenuOpen}
+          aria-haspopup="menu"
           title={label}
         >
           <span className="family-radial-btn__glyph" aria-hidden="true" />
@@ -127,6 +142,7 @@ export default function FamilyRadialMenu({
                 key={item.key}
                 className="family-radial-item"
                 href={item.href}
+                onClick={() => setIsMenuOpen(false)}
                 rel={item.rel}
                 style={createRadialItemStyle(index, items.length, radiusPx, resolvedStartAngle, resolvedEndAngle)}
                 target={item.target}

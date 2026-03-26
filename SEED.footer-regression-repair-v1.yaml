@@ -1,0 +1,32 @@
+goal: >
+  Freeze the landing footer regression repair contract so the Jeju Group
+  footer returns to a stable two-column information layout and the family-site
+  widget works again without broad redesign.
+constraints:
+  - Edit only front source-of-truth files.
+  - Do not touch jeju-web or jeju-spring.
+  - Keep the footer visual direction intact; make only the minimum layout fix
+    needed to restore the broken regression.
+  - Footer info must read as two horizontal columns: the company-name/company-
+    info block and the address/contact block should sit in the same row, not
+    stack vertically.
+  - Restore the family-site widget to its existing position and behavior.
+  - Preserve UTF-8 and LF.
+acceptance_criteria:
+  - The footer info no longer stacks into two vertical paragraphs.
+  - The bold Jeju Group line sits to the left of the lower address/contact
+    block in a stable two-column row layout.
+  - The family-site widget renders in the footer and opens/closes as before.
+  - No broad footer redesign is introduced.
+  - No jeju-web files are edited.
+  - No jeju-spring files are edited.
+verification:
+  - Review the diff to confirm only the minimal front footer files changed.
+  - Verify the footer info renders as a horizontal two-column layout.
+  - Verify the family-site widget still mounts and toggles normally.
+out_of_scope:
+  - Landing membership text fixes.
+  - eSIM fixes.
+  - Mypage fixes.
+  - Footer redesigns beyond the minimal regression repair.
+  - Any mirror regeneration or deployment changes.

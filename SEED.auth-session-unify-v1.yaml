@@ -1,0 +1,39 @@
+goal: >
+  Unify auth and session handling around real Spring-backed sessions by
+  removing the front-only LOCAL_LOGIN_OVERRIDE path, making normal users log
+  in through /api/auth/login and /api/auth/session, preventing stale local
+  admin state, and hydrating mypage membership/tier from
+  /api/mypage/dashboard.
+background: >
+  The current front auth flow still accepts a local override path that can
+  fabricate or preserve session state on the client. That split can leave
+  stale admin surfaces visible after logout or refresh, while mypage still
+  needs to reflect membership and tier from the Spring dashboard response.
+in_scope:
+  - Remove the front-only LOCAL_LOGIN_OVERRIDE login path.
+  - Resolve normal login and session state through Spring /api/auth/login and /api/auth/session.
+  - Treat stale local storage or client session artifacts as non-authoritative when they conflict with server session state.
+  - Keep admin visibility tied to real authenticated admin session data only.
+  - Update mypage to consume /api/mypage/dashboard so membership and tier match the logged-in user.
+out_of_scope:
+  - New auth features, UI redesign, or unrelated shell changes.
+  - Spring endpoint schema changes beyond the existing login, session, and dashboard contracts.
+  - Mirror edits under jeju-spring or jeju-web.
+  - Broad changes to unrelated pages or navigation flows.
+constraints:
+  - Front remains the only human-edited frontend source of truth.
+  - Do not reintroduce any client-side fake login or admin fabrication path.
+  - Do not let stale local state outrank the Spring session.
+  - Preserve the existing hybrid shell and React island architecture.
+  - Keep the change minimal and contract-focused.
+acceptance_criteria:
+  - Normal users authenticate through Spring /api/auth/login and are resolved through /api/auth/session.
+  - LOCAL_LOGIN_OVERRIDE no longer controls login/session behavior in front.
+  - Stale local admin state cannot expose admin surfaces when the Spring session is not admin.
+  - Logout or refresh cannot resurrect a fake local admin session.
+  - MyPage reads /api/mypage/dashboard and shows the logged-in user's membership/tier data.
+verification:
+  - Inspect the auth login and session flow to confirm no front-only LOCAL_LOGIN_OVERRIDE path remains.
+  - Inspect session resolution and admin gating to confirm server session state wins over stale local storage.
+  - Inspect mypage hydration to confirm membership/tier come from /api/mypage/dashboard.
+  - Confirm the change stays within the frozen contract and does not touch mirror paths.

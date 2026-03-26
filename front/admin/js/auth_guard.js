@@ -91,12 +91,12 @@
 
     const runGuard = async () => {
         try {
-            const [{ hasAdminAccess, resolveAdminSession }, { resolveSession }] = await Promise.all([
+            const [{ hasAdminAccess }, { resolveSession }] = await Promise.all([
                 localAdminPromise,
                 sessionManagerPromise
             ]);
             const resolvedSession = await resolveSession();
-            const sessionData = hasAdminAccess(resolvedSession) ? resolvedSession : resolveAdminSession();
+            const sessionData = hasAdminAccess(resolvedSession) ? resolvedSession : null;
 
             if (!sessionData) {
                 redirectByRoute('HOME');

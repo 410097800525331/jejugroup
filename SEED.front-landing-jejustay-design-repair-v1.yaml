@@ -1,0 +1,27 @@
+goal: >
+  Repair the broken design regressions in the main landing page and the
+  Jeju Stay internal page from the front source of truth first, then reflect
+  the resulting changes into the jeju-spring front mirror.
+constraints:
+  - Only edit front source-of-truth files.
+  - Do not edit jeju-web/src/main/webapp/**.
+  - Do not hand-edit jeju-spring; only regenerated mirror output may change there.
+  - Keep the scope limited to landing membership price markup/i18n, shell footer
+    layout, Jeju Stay eSIM card layout, and affected spring mirror output.
+  - Preserve UTF-8 and LF.
+acceptance_criteria:
+  - Landing membership price text still preserves the <span> emphasis after i18n
+    translation.
+  - Landing footer company info, Family Sites, and social icons remain readable
+    and aligned without collapsing into a broken single line.
+  - front/jejustay/pages/travel/esim.html renders the Europe capsule card and the
+    standard country cards in the intended grid/card layout.
+  - The mirrored spring outputs for /index.html and /jejustay/pages/travel/esim.html
+    reflect the front-side fixes.
+verification:
+  - Review the diff for the affected front files only.
+  - Run the smallest relevant targeted repo checks for the changed pages and mirror.
+out_of_scope:
+  - jeju-web mirror edits.
+  - Unrelated copy rewrites.
+  - New product features or layout redesigns beyond the broken regressions.

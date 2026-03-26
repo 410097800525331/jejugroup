@@ -23,6 +23,10 @@ const getApiBaseUrl = () => {
     return "";
   }
 
+  if (window.location.port === "8080") {
+    return "";
+  }
+
   return window.location.port !== "9090" ? LOCAL_API_BASE_URL : "";
 };
 

@@ -1,6 +1,6 @@
 import { initMegaMenu } from "@runtime/layout/megaMenu";
 import { initStaggerNav } from "@runtime/layout/stagger";
-import { canUseAdminSurface } from "@front-core-auth/local_admin.js";
+import { hasAdminAccess } from "@front-core-auth/local_admin.js";
 import { logoutSession, resolveSession } from "@front-core-auth/session_manager.js";
 import { resolveRoute } from "@front-core-utils/path_resolver.js";
 
@@ -300,25 +300,25 @@ const appendIndexAdminLink = (headerUtil: HTMLElement) => {
   headerUtil.prepend(adminLink, divider);
 };
 
+const removeIndexAdminLink = (headerUtil: HTMLElement) => {
+  const adminLink = headerUtil.querySelector<HTMLElement>("#indexAdminBtn");
+  if (!adminLink) {
+    return;
+  }
+
+  const divider = adminLink.nextElementSibling;
+  adminLink.remove();
+
+  if (divider instanceof HTMLElement && divider.classList.contains("util-divider")) {
+    divider.remove();
+  }
+};
+
 const resolveSessionData = async () => {
   try {
     return await resolveSession();
   } catch (_error) {
-  }
-
-  try {
-    const rawSession = localStorage.getItem(SESSION_STORAGE_KEY);
-    return rawSession ? JSON.parse(rawSession) : null;
-  } catch (_error) {
     return null;
-  }
-};
-
-const canOpenAdmin = async () => {
-  try {
-    return canUseAdminSurface();
-  } catch (_error) {
-    return false;
   }
 };
 
@@ -329,8 +329,9 @@ const syncHeaderAuthState = async (attempt = 0) => {
   const indexReservationCheckButton = getIndexReservationCheckButton();
   const indexHeaderUtil = document.getElementById("index-header-util");
 
-  const [sessionData, localAdmin] = await Promise.all([resolveSessionData(), canOpenAdmin()]);
+  const sessionData = await resolveSessionData();
   const isSignedIn = Boolean(sessionData);
+  const canShowAdmin = hasAdminAccess(sessionData);
 
   if (loginButton) {
     if (isSignedIn) {
@@ -353,13 +354,17 @@ const syncHeaderAuthState = async (attempt = 0) => {
     indexReservationCheckDivider.hidden = isSignedIn;
   }
 
-  if (localAdmin && adminButton) {
-    adminButton.style.display = "flex";
+  if (adminButton) {
+    adminButton.style.display = canShowAdmin ? "flex" : "none";
   }
 
-  if (localAdmin && indexHeaderUtil) {
-    appendIndexAdminLink(indexHeaderUtil);
-  } else if (localAdmin && loginButton?.id === "indexLoginBtn" && attempt < 5) {
+  if (indexHeaderUtil) {
+    if (canShowAdmin) {
+      appendIndexAdminLink(indexHeaderUtil);
+    } else {
+      removeIndexAdminLink(indexHeaderUtil);
+    }
+  } else if (canShowAdmin && loginButton?.id === "indexLoginBtn" && attempt < 5) {
     queueHeaderAuthSync(attempt + 1);
     return;
   }

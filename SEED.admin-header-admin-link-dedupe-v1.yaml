@@ -1,0 +1,34 @@
+goal: >
+  Freeze a deterministic contract to dedupe the admin header link so a logged-in
+  admin sees exactly one admin page entry point in the main header.
+background: >
+  A page-local admin link is being injected in addition to the shared header
+  runtime auth logic, which causes duplicate admin navigation for admin sessions.
+in_scope:
+  - "Remove the page-local duplicate admin link injection."
+  - "Keep the shared header runtime permission/auth logic intact."
+  - "Keep front as the source of truth for the landing/header behavior."
+  - "Preserve the main header contract so a logged-in admin sees exactly one admin page link."
+out_of_scope:
+  - "Changing shared header runtime permission rules beyond preserving existing behavior."
+  - "Redesigning the header, login flow, or any unrelated navigation copy."
+  - "Touching jeju-web directly."
+  - "Adding new admin navigation targets or extra admin-only header variants."
+constraints:
+  - "The contract is limited to the admin header link dedupe fix."
+  - "Only one admin page link may appear in the main header for a logged-in admin."
+  - "The page-local duplicate injection must be removed rather than masked by runtime hacks."
+  - "Shared header runtime auth logic must remain the source of admin link eligibility."
+  - "front remains the only human-edited source of truth for this change."
+  - "jeju-web must not be edited directly."
+acceptance_criteria:
+  - "When an admin is logged in, the main header renders exactly one admin page link."
+  - "The duplicate admin link caused by page-local injection is gone."
+  - "Non-admin behavior remains unchanged."
+  - "Shared header runtime permission logic still governs whether the admin link is shown."
+  - "No direct edits are made to jeju-web."
+verification:
+  - "Inspect the header render path to confirm the page-local admin link injection is removed."
+  - "Verify an admin session shows exactly one admin page link in the main header."
+  - "Verify a non-admin session still behaves as before."
+  - "Confirm the shared header runtime auth logic remains the gate for admin link visibility."

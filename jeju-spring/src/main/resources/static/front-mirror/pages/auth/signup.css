@@ -92,13 +92,23 @@ body.signup-page .lang-toggle {
   color: #333333;
 }
 
-body.signup-page .footer {
+body.signup-page .footer.shell-footer {
   background-color: #EEEEEE;
   padding: 60px 40px;
   display: block;
+  overflow: visible;
 }
 
-body.signup-page .footer-copyright {
+body.signup-page .footer.shell-footer .footer-right-group {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 20px;
+  overflow: visible;
+}
+
+body.signup-page .footer.shell-footer .footer-copyright {
   border-top: none;
 }
 

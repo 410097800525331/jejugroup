@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState, type Dispatch, type ReactNode } from "react";
 import { applyDashboardSnapshot, createDashboardFallbackSnapshot, normalizeDashboardSnapshot } from "@front-components/mypage/data";
 import type { BookingItem, BookingType, DashboardSnapshot, ItineraryCompanion, ItineraryItem, StatItem, SupportItem, TravelEvent, UserProfile } from "./types";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { API_BASE_URL } from "../../../core/modules/config/api_config.module.js";
 import {
   MYPAGE_DASHBOARD_MOCK_EVENT_NAME,
   MYPAGE_DASHBOARD_MOCK_STORAGE_PREFIX,
@@ -32,6 +34,7 @@ type DashboardAction =
 const SESSION_STORAGE_KEY = "userSession";
 const SESSION_EVENT_NAME = "jeju:session-updated";
 const SESSION_ENDPOINT = "/api/auth/session";
+const DASHBOARD_ENDPOINT = "/api/mypage/dashboard";
 
 const initialState = (): DashboardState => {
   const snapshot = createDashboardFallbackSnapshot();
@@ -108,30 +111,13 @@ interface DashboardContextValue {
 
 const DashboardContext = createContext<DashboardContextValue | null>(null);
 
-const parseSessionPayload = (rawValue: string | null): unknown | null => {
-  if (!rawValue) {
-    return null;
-  }
+const toApiUrl = (path: string) => `${API_BASE_URL}${path}`;
 
-  try {
-    const parsed = JSON.parse(rawValue);
-    return parsed && typeof parsed === "object" ? parsed : null;
-  } catch {
-    return null;
-  }
-};
-
-const readStoredSession = (): unknown | null => {
-  try {
-    return parseSessionPayload(localStorage.getItem(SESSION_STORAGE_KEY));
-  } catch {
-    return null;
-  }
-};
+const isRecord = (value: unknown): value is Record<string, unknown> => value !== null && typeof value === "object" && !Array.isArray(value);
 
 const fetchSessionFromServer = async (): Promise<unknown | null> => {
   try {
-    const response = await fetch(SESSION_ENDPOINT, {
+    const response = await fetch(toApiUrl(SESSION_ENDPOINT), {
       credentials: "include",
       headers: {
         Accept: "application/json",
@@ -149,13 +135,46 @@ const fetchSessionFromServer = async (): Promise<unknown | null> => {
   }
 };
 
+const fetchDashboardFromServer = async (): Promise<unknown | null> => {
+  try {
+    const response = await fetch(toApiUrl(DASHBOARD_ENDPOINT), {
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+      method: "GET",
+    });
+
+    if (response.status === 401 || !response.ok) {
+      return null;
+    }
+
+    const payload = await response.json();
+    if (!isRecord(payload) || payload.success !== true || !("dashboard" in payload)) {
+      return null;
+    }
+
+    return payload.dashboard ?? null;
+  } catch {
+    return null;
+  }
+};
+
 const resolveSession = async (): Promise<unknown | null> => {
-  const storedSession = readStoredSession();
-  if (storedSession) {
-    return storedSession;
+  return await fetchSessionFromServer();
+};
+
+const resolveDashboardSource = async (session: unknown | null): Promise<unknown | null> => {
+  if (!session) {
+    return null;
   }
 
-  return await fetchSessionFromServer();
+  const dashboard = await fetchDashboardFromServer();
+  if (!dashboard) {
+    return session;
+  }
+
+  return mergeDashboardSources(session, dashboard);
 };
 
 const snapshotFromState = (state: DashboardState): DashboardSnapshot => ({
@@ -242,6 +261,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let active = true;
+    let sessionHydrationInFlight = false;
 
     const hydrate = async (source?: unknown | null) => {
       const resolvedSession = source === undefined ? await resolveSession() : source;
@@ -255,7 +275,8 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      const snapshot = mergeTravelEventSources(resolvedSession);
+      const dashboardSource = await resolveDashboardSource(resolvedSession);
+      const snapshot = mergeTravelEventSources(dashboardSource);
 
       if (!active) {
         return;
@@ -267,11 +288,22 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: "HYDRATE_DASHBOARD", payload: snapshot });
     };
 
-    void hydrate();
+    const queueHydrate = (source?: unknown | null) => {
+      if (sessionHydrationInFlight) {
+        return;
+      }
+
+      sessionHydrationInFlight = true;
+      void hydrate(source).finally(() => {
+        sessionHydrationInFlight = false;
+      });
+    };
+
+    queueHydrate();
 
     const handleStorage = (event: StorageEvent) => {
       if (event.key === SESSION_STORAGE_KEY) {
-        void hydrate(parseSessionPayload(event.newValue));
+        queueHydrate();
         return;
       }
 
@@ -279,16 +311,15 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      void hydrate();
+      queueHydrate();
     };
 
-    const handleSessionUpdate = (event: Event) => {
-      const detail = event instanceof CustomEvent ? (event.detail as { session?: unknown | null } | null) : null;
-      void hydrate(detail?.session ?? null);
+    const handleSessionUpdate = () => {
+      queueHydrate();
     };
 
     const handleMockDashboardUpdate = () => {
-      void hydrate();
+      queueHydrate();
     };
 
     window.addEventListener("storage", handleStorage);

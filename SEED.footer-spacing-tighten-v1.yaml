@@ -1,0 +1,25 @@
+goal: Tighten the landing footer vertical spacing by 20px in front first, then mirror the same footer height reduction into jeju-spring.
+constraints:
+  - Edit only the front footer spacing source of truth first.
+  - Reduce the footer vertical padding by exactly 20px total without changing footer text alignment.
+  - Keep the existing 2-column footer info layout intact.
+  - Keep the Family Sites widget position, behavior, and toggle layout intact.
+  - Do not introduce a broad footer redesign.
+  - Mirror the same result into jeju-spring after the front fix is confirmed.
+acceptance_criteria:
+  - The footer appears 20px shorter vertically than before.
+  - The footer info still renders as the same 2-column layout.
+  - The Family Sites widget still opens and closes normally.
+  - No footer text content, ordering, or alignment regressions are introduced.
+  - The spring mirror matches the front footer spacing change.
+verification:
+  - Inspect the front footer render and confirm the vertical spacing is reduced by 20px.
+  - Run the relevant repository verification command(s).
+  - Mirror the front change into jeju-spring.
+  - Confirm the mirrored spring output matches the front footer spacing.
+out_of_scope:
+  - Footer redesigns beyond the 20px spacing reduction.
+  - Footer text copy changes.
+  - Footer alignment changes.
+  - Family Sites widget logic changes.
+  - Any non-footer landing changes.

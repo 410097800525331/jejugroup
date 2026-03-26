@@ -1,0 +1,27 @@
+goal: "Freeze the mypage support icon path fix as a deterministic contract so the local Spring host-only dashboard renders support icons without 404s."
+background: "The current local Spring host-only mypage dashboard can request support icon assets from a path that is not being served, causing broken-image placeholders. `front` remains the source of truth, `jeju-web` must not be edited directly, and only the derived mypage assets needed for this fix may be regenerated."
+constraints:
+  - "Keep `front` as the only human-edited frontend source of truth."
+  - "Do not edit `jeju-web/src/main/webapp/**` directly."
+  - "Limit the change to the mypage support icon asset-path contract and the minimum derived mypage assets required to make local Spring serve them."
+  - "Do not widen the scope into unrelated mypage layout, copy, session, or navigation changes."
+  - "Preserve the current host-only Spring delivery model for `/pages/mypage/dashboard.html`."
+  - "Keep the contract deterministic for `ooo run` and `ooo evaluate`."
+in_scope:
+  - "Adjust the mypage dashboard support icon path in `front` so the rendered icons resolve to an existing served asset path."
+  - "Regenerate only the derived mypage assets needed for the local Spring runtime to serve the corrected icon paths."
+  - "Verify the host-only Spring dashboard entrypoint and its support icons together."
+out_of_scope:
+  - "Direct edits to `jeju-web/src/main/webapp/**`."
+  - "Unrelated mypage UI redesign, copy changes, or behavior changes."
+  - "Route constant changes, shell runtime changes, or broad mirror refactors."
+  - "Adding new support assets beyond what the fix requires."
+acceptance_criteria:
+  - "On local Spring `http://localhost:8080/pages/mypage/dashboard.html`, the support icons render normally and do not show broken-image placeholders."
+  - "The support icon requests resolve to an existing asset path and do not return 404."
+  - "The fix is rooted in `front` as the source of truth, with only the necessary derived mypage assets regenerated."
+  - "No direct `jeju-web` source edits are required or allowed for this fix."
+verification:
+  - "Load `http://localhost:8080/pages/mypage/dashboard.html` on local Spring and confirm the support icons render."
+  - "Confirm the support icon asset requests return success instead of 404."
+  - "Check that only the intended derived mypage assets were regenerated from `front`."

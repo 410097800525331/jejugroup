@@ -1,0 +1,47 @@
+goal: >
+  Freeze a narrow follow-up contract that reverts the over-broad landing and
+  footer design edits, keeps only the landing membership text fix that prevents
+  literal <span> text from rendering, restores the footer close to its original
+  design with only the minimum layout repair, and restores the intended Jeju
+  Stay eSIM card layout with the FAB mounting again from its missing stylesheet
+  dependency.
+constraints:
+  - Edit only the front source of truth; do not touch jeju-web.
+  - Do not hand-edit jeju-spring; mirror output may be regenerated later only.
+  - Keep the landing membership fix limited to escaping or preserving the span
+    markup so literal <span> text never appears, without redesigning the cards.
+  - Restore the footer to the original visual structure as closely as possible
+    and apply only the smallest layout fix needed for the broken regression.
+  - Preserve the intended Jeju Stay eSIM card layout and re-enable FAB mounting
+    by restoring the missing ../../../components/react/ui/FAB/fab.css import path.
+  - Do not add mypage code changes unless an authenticated-front/spring
+    reproduction proves they are strictly necessary.
+  - Preserve UTF-8 and LF.
+acceptance_criteria:
+  - The landing membership area no longer shows literal <span> text in the UI.
+  - The landing membership cards keep their existing structure and are not
+    redesigned beyond the text rendering fix.
+  - The footer renders close to the original design and no longer exhibits the
+    broken layout regression.
+  - The Jeju Stay eSIM page keeps the intended card grid/layout and the FAB
+    mounts and displays again.
+  - No jeju-web files are edited.
+  - No direct jeju-spring file edits are made.
+  - No mypage code changes are introduced unless absolutely required by proof.
+verification:
+  - Review the diff to confirm only the minimal landing, footer, and Jeju Stay
+    front source changes are present.
+  - Verify the landing membership text fix removes literal <span> rendering
+    without changing the card design.
+  - Verify the footer regression is restored with the smallest viable layout
+    adjustment.
+  - Verify the Jeju Stay eSIM page includes the fab.css dependency so FAB
+    bootstrap mounts again.
+  - Re-check authenticated front/spring mypage reproduction before allowing any
+    mypage change.
+out_of_scope:
+  - jeju-web mirror edits.
+  - Hand-edited jeju-spring files.
+  - Landing card redesigns or footer redesigns beyond the minimal repair.
+  - Any new mypage feature work or speculative mypage fixes.
+  - Broader shell/runtime refactors unrelated to the regressions described here.

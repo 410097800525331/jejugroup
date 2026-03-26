@@ -382,7 +382,7 @@ const flattenSessionSource = (session: unknown): Record<string, unknown> => {
 const normalizeProfile = (source: Record<string, unknown>, fallback: UserProfile): UserProfile => {
   const memberships = normalizeMemberships(source.memberships, source.tier ?? source.role);
   const passport = normalizePassport(source.passport);
-  const tier = toText(source.tier) ?? toText(source.role) ?? memberships[0];
+  const tier = toText(source.tier) ?? memberships[0] ?? toText(source.role);
   const id = toText(source.id) ?? toText(source.memberId) ?? toText(source.userId);
   const displayName =
     toText(source.name) ??

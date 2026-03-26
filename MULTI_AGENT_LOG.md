@@ -1,5 +1,52 @@
 # MULTI AGENT LOG
 
+- time: `2026-03-26 16:40 +09:00`
+- route: `Route B`
+- task: `Regen mypage Spring mirror assets after SupportSection update`
+- participants: `worker_spring_mypage_mirror`
+- write_sets:
+  - `worker_spring_mypage_mirror`: `derived front/.generated/webapp-overlay/** where the shell build regenerates mypage runtime, derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** where affected by mypage runtime regeneration`
+- verification:
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed
+  - `detectFrontMirrorRuntime` found in `front/components/react/mypage/SupportSection.tsx`
+  - `/front-mirror/pages/mypage/assets/support_qna.png` found in regenerated `front/.generated/webapp-overlay/components/runtime/feature-mypage-B3QUr62F.js` and mirrored `jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-mypage-B3QUr62F.js`
+
+- time: `2026-03-26 15:20 +09:00`
+- route: `Route B`
+- task: `Mirror the completed footer auth-unify front changes into jeju-spring using the existing front-to-thymeleaf sync pipeline`
+- participants: `main`, `worker_seed_mirror (Epicurus)`, `worker_spring_mirror (Averroes)`, `reviewer_spring_mirror (Boole)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_mirror`: `SEED.footer-auth-unify-spring-mirror-v1.yaml`
+  - `worker_spring_mirror`: `derived jeju-spring/src/main/resources/templates/front-mirror/**, derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/static/components/runtime/**`
+  - `reviewer_spring_mirror`: `review only`
+- verification:
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed
+  - `git status --short -- jeju-spring/src/main/resources/templates/front-mirror jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/static/components/runtime` inspected the regenerated spring mirror scope
+  - `git diff --name-only -- jeju-spring/src/main/resources/templates/front-mirror jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/static/components/runtime` inspected changed file boundaries
+  - `git diff --stat -- jeju-spring/src/main/resources/templates/front-mirror jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/static/components/runtime` inspected derived asset churn
+  - `reviewer_spring_mirror` reported `no blocking findings`
+
+- time: `2026-03-26 15:09 +09:00`
+- route: `Route B`
+- task: `Normalize the shared footer to the login/signup proportions, restore the Family Sites widget on auth pages, and align landing/stay pages to the same footer contract`
+- participants: `main`, `worker_seed (Darwin)`, `worker_shared_footer (Heisenberg)`, `worker_auth_footer (Tesla)`, `worker_shell_footer_runtime (Aristotle)`, `worker_shared_footer_followup (Kuhn)`, `reviewer_footer_unify_retry (Dalton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed`: `SEED.footer-auth-unify-v1.yaml`
+  - `worker_shared_footer`: `front/components/react/layout/FamilyRadialMenu.tsx, front/components/react/layout/family-radial-menu.css, front/components/react/layout/footer.css`
+  - `worker_auth_footer`: `front/pages/auth/login.css, front/pages/auth/signup.css`
+  - `worker_shell_footer_runtime`: `front/apps/shell/src/runtime/bootstrap.js`
+  - `worker_shared_footer_followup`: `front/components/react/layout/footer.css`
+  - `reviewer_footer_unify_retry`: `review only`
+- verification:
+  - `pnpm run guard:text` passed
+  - `pnpm run check:shell` passed
+  - `node --check front/apps/shell/src/runtime/bootstrap.js` passed
+  - `pnpm run build:front` passed
+  - `git diff --check -- front/apps/shell/src/runtime/bootstrap.js front/components/react/layout/FamilyRadialMenu.tsx front/components/react/layout/family-radial-menu.css front/components/react/layout/footer.css front/pages/auth/login.css front/pages/auth/signup.css SEED.footer-auth-unify-v1.yaml STATE.md` passed
+  - `reviewer_footer_unify_retry` reported `no blocking findings`
+
 - time: `2026-03-22 07:14 +09:00`
 - route: `Route B`
 - task: `Toggle hotel header utils so guests see 비회원 예약확인 and signed-in users see 마이페이지`
@@ -1150,3 +1197,303 @@
   - `git diff --check -- STATE.md MULTI_AGENT_LOG.md jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java jeju-spring/src/main/resources/templates/index.html` passed with one pre-existing CRLF normalization warning on the controller file
   - targeted content checks confirmed `FrontMirrorHostController` now resolves `/` through `toFrontMirrorViewName(path)` and no longer special-cases the root to the wrapper template
   - targeted content checks confirmed `templates/index.html` no longer contains the iframe wrapper and now only performs a direct `/index.html` redirect fallback
+
+- time: `2026-03-25 17:24 +09:00`
+- route: `Route B`
+- task: `Repair broken main landing and Jeju Stay internal design regressions from front first, then propagate only the affected outputs into jeju-spring`
+- participants: `main`, `worker_seed (Leibniz)`, `worker_feature_landing (Huygens)`, `worker_shared_layout (Rawls)`, `worker_feature_jejustay (Socrates)`, `worker_shared_mirror (Bohr)`, `reviewer_landing_jejustay_design (Chandrasekhar)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Leibniz)`: `SEED.front-landing-jejustay-design-repair-v1.yaml`
+  - `worker_feature_landing (Huygens)`: `front/index.html, front/core/pages/landing/main.js, front/styles/globals.css`
+  - `worker_shared_layout (Rawls)`: `front/components/react/layout/footer.css`
+  - `worker_feature_jejustay (Socrates)`: `front/jejustay/pages/travel/esim.html, front/jejustay/pages/travel/esim.css`
+  - `worker_shared_mirror (Bohr)`: `regenerated jeju-spring/src/main/resources/templates/front-mirror/index.html, regenerated jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, regenerated jeju-spring/src/main/resources/static/front-mirror/** affected assets`
+  - `reviewer_landing_jejustay_design (Chandrasekhar)`: `review only`
+- verification:
+  - `node --check front/core/pages/landing/main.js` passed
+  - `pnpm run build:front` passed
+  - `pnpm run guard:text` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` completed and regenerated the affected spring front-mirror outputs
+  - Spring `bootRun` was restarted so the regenerated resources were served by the live runtime again
+  - browser verification on `front:3001` confirmed the landing membership prices no longer render literal `<span>` text, footer content stays separated/readable, and the Jeju Stay eSIM Europe card now uses the same image/content card skeleton as the other cards
+  - browser verification on `spring:8080` confirmed `.membership-tier .tier-price` now keeps nested `span` nodes (`hasSpan=true` for all three tiers), `Family Sites` footer label remains intact, and the Europe eSIM card keeps `.card-image-wrap + .card-content`
+  - `reviewer_landing_jejustay_design (Chandrasekhar)` reported one non-blocking finding about the temporary `Price` HTML fallback widening the innerHTML surface; that follow-up was fixed by removing the fallback and keeping explicit `data-lang-html="true"` only
+  - user explicitly chose to leave the accidental `jeju-web` dirty changes unreverted; they remain outside this task's source-of-truth edits
+
+- time: `2026-03-25 17:52 +09:00`
+- route: `Route B`
+- task: `Revert the over-broad landing/footer design edits, keep only the membership text/span fix, restore the intended footer layout, recover the eSIM FAB mount, and re-check the mypage support-image symptom before mirroring the true fixes into jeju-spring`
+- participants: `main`, `worker_seed (Averroes)`, `worker_landing_revert (Ptolemy)`, `worker_shared_footer (Plato)`, `worker_jejustay_feature (Gibbs)`, `worker_shared_mirror (Harvey)`, `reviewer_regression_followup (Sartre)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Averroes)`: `SEED.front-regression-repair-followup-v1.yaml`
+  - `worker_landing_revert (Ptolemy)`: `front/index.html, front/styles/globals.css`
+  - `worker_shared_footer (Plato)`: `front/components/react/layout/footer.css`
+  - `worker_jejustay_feature (Gibbs)`: `front/jejustay/pages/travel/esim.html, front/jejustay/pages/travel/esim.css if strictly required`
+  - `worker_shared_mirror (Harvey)`: `regenerated jeju-spring/src/main/resources/templates/front-mirror/index.html, regenerated jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, regenerated jeju-spring/src/main/resources/static/front-mirror/** affected assets only`
+  - `reviewer_regression_followup (Sartre)`: `review only`
+- verification:
+  - new contract frozen in `SEED.front-regression-repair-followup-v1.yaml`
+  - landing was narrowed to the three `data-lang-html="true"` membership price nodes only; broader membership/footer overrides were removed
+  - footer root cause was traced to `front/styles/globals.css` where `.footer-info p` still rendered as `inline-block`; the live fix was reduced to `display: block`
+  - eSIM FAB root cause was confirmed as the missing `../../../components/react/ui/FAB/fab.css` link; adding it restored `#jeju-fab-root` and `.fab-wrapper` on both front and spring
+  - authenticated browser checks on `front:3001` and `spring:8080` confirmed mypage support images still render, so no mypage source changes were made
+  - `pnpm run build:front` passed
+  - `pnpm run guard:text` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` completed after the footer minimal fix so runtime bundles and mirror assets were rebuilt from the latest front source
+  - live browser verification on `spring:8080/index.html` confirmed membership prices keep nested `span` nodes and the computed footer paragraph display is now `block`
+  - live browser verification on `spring:8080/jejustay/pages/travel/esim.html` confirmed `fab.css` is present and FAB mounts again (`fabRoot=true`, `fabSystem=true`)
+  - `reviewer_regression_followup (Sartre)` reported no blocking findings; residual note only mentioned a stale mirror-drift suspicion that was cleared after the final rebuild + restart path
+
+- time: `2026-03-25 18:55 +09:00`
+- route: `Route B`
+- task: `Regenerate the affected jeju-spring mirror outputs from the current front sources`
+- participants: `worker_shared_mirror (gogi)`
+- write_sets:
+  - `worker_shared_mirror`: `jeju-spring/src/main/resources/templates/front-mirror/index.html, jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, jeju-spring/src/main/resources/static/front-mirror/** affected assets`
+- verification:
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs` passed
+  - spring mirror outputs were regenerated from current `front` sources without touching `jeju-web`
+
+- time: `2026-03-25 19:08 +09:00`
+- route: `Route B`
+- task: `Regenerate the spring mirror again after the one-line globals.css footer-info display tweak`
+- participants: `worker_shared_mirror (gogi)`
+- write_sets:
+  - `worker_shared_mirror`: `jeju-spring/src/main/resources/templates/front-mirror/index.html, jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, jeju-spring/src/main/resources/static/front-mirror/** affected assets only`
+- verification:
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs` passed
+  - `jeju-web` was not touched
+
+- time: `2026-03-25 23:07 +09:00`
+- route: `Route B`
+- task: `Make the front footer fix actually load, verify the footer layout in front, and mirror the result into jeju-spring`
+- participants: `main`, `worker_shared_footer (Ampere)`, `worker_shared_mirror (Ohm)`, `reviewer_footer_regression (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shared_footer (Ampere)`: `front/components/react/layout/MainFooterTemplate.tsx, front/components/react/layout/footer.css`
+  - `worker_shared_mirror (Ohm)`: `jeju-spring/src/main/resources/static/front-mirror/** affected assets, jeju-spring/build/resources/main/static/front-mirror/** affected assets`
+  - `reviewer_footer_regression (Athena)`: `review only`
+- verification:
+  - `front` root cause was confirmed as missing `import "./footer.css"` in `MainFooterTemplate.tsx`, so the footer CSS never loaded in the source runtime
+  - `front:3001/index.html` verified `footer-info` as `display:grid`, two `footer-info-group` blocks on the same row, and `Family Sites` toggle opening 4 radial items
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs` regenerated `jeju-spring/src/main/resources/static/front-mirror/**`
+  - `node scripts/spring/run-jeju-spring-gradle.cjs processResources` was blocked by missing `gradle-wrapper.jar`; fallback copy refreshed `jeju-spring/build/resources/main/**` and both `shell-runtime.js` files now point to `runtime-layout-Bj_DwnxM.js`
+  - `git diff --check` passed for the touched task files
+  - `reviewer_footer_regression (Athena)` reported `발견 없음`
+  - final live `spring:8080` verification was blocked by `ERR_CONNECTION_REFUSED` and logged in `ERROR_LOG.md`
+
+- time: `2026-03-25 23:19 +09:00`
+- route: `Route B`
+- task: `Load production shell runtime CSS so the mirrored spring footer uses the same horizontal footer layout as front`
+- participants: `main`, `worker_shared_footer (Franklin)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_shared_footer (Franklin)`: `front/apps/shell/src/runtime/bootstrap.js, regenerated front/.generated runtime outputs, regenerated jeju-spring front-mirror runtime outputs`
+- verification:
+  - `front/apps/shell/src/runtime/bootstrap.js` now injects `components/runtime/style.css` for main/hotel shell entry
+  - `pnpm run build:shell` regenerated runtime outputs including `style.css` and `bootstrap.js`
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs --skip-build-shell` refreshed spring front-mirror runtime outputs
+  - live `spring:8080/index.html?fresh=2` verified stylesheet link `/front-mirror/components/runtime/style.css`
+  - live `spring:8080` verified `footer-info` computed `display:grid`, two groups on the same row, and `Family Sites` active menu with 4 visible radial items
+
+- time: `2026-03-25 23:34 +09:00`
+- route: `Route B`
+- task: `Restore the metallic finish on the landing membership tier badges and mirror it into jeju-spring`
+- participants: `main`, `worker_seed (Descartes)`, `worker_feature_landing (Pauli)`, `reviewer_membership_badge (Steward the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Descartes)`: `SEED.membership-badge-metal-finish-v1.yaml`
+  - `worker_feature_landing (Pauli)`: `front/styles/globals.css, regenerated jeju-spring/src/main/resources/static/front-mirror/styles/globals.css`
+  - `reviewer_membership_badge (Steward the 2nd)`: `review only`
+- verification:
+  - `SEED.membership-badge-metal-finish-v1.yaml` created to freeze the badge-only contract
+  - `front/styles/globals.css` now applies layered metallic gradients, radial highlights, inset shadows, and text shadows to `.tier-badge.silver`, `.tier-badge.gold`, and `.tier-badge.platinum`
+  - mirrored `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` matches the front source diff
+  - live `spring:8080/index.html?badgecheck=2#section-5` verified updated `backgroundImage`, `boxShadow`, and `textShadow` values for all three tier badges
+  - `pnpm run check:shell` passed
+  - `git diff --check` passed
+  - `reviewer_membership_badge (Steward the 2nd)` reported `발견 없음`
+
+- time: `2026-03-25 23:45 +09:00`
+- route: `Route B`
+- task: `Tighten the landing footer vertical spacing by 20px and mirror the same shorter footer into jeju-spring`
+- participants: `main`, `worker_seed (Ptolemy the 2nd)`, `worker_shared_footer (Confucius the 2nd)`, `worker_shared_mirror (Faraday the 2nd)`, `reviewer_footer_spacing (Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Ptolemy the 2nd)`: `SEED.footer-spacing-tighten-v1.yaml`
+  - `worker_shared_footer (Confucius the 2nd)`: `front/components/react/layout/footer.css`
+  - `worker_shared_mirror (Faraday the 2nd)`: `jeju-spring/src/main/resources/static/front-mirror/components/react/layout/footer.css, jeju-spring/src/main/resources/static/front-mirror/components/runtime/style.css, jeju-spring/build/resources/main/static/front-mirror/** affected assets`
+  - `reviewer_footer_spacing (Athena the 2nd)`: `review only`
+- verification:
+  - `SEED.footer-spacing-tighten-v1.yaml` created to freeze the footer-spacing-only contract
+  - `front/components/react/layout/footer.css` reduced `footer.shell-footer.section` `padding-top` and `padding-bottom` from `60px` to `50px`
+  - mirrored `jeju-spring/src/main/resources/static/front-mirror/components/react/layout/footer.css` matches the front source change
+  - live `spring:8080/index.html?footerspacing=1` verified `paddingTop` and `paddingBottom` both compute to `50px`
+  - live `spring:8080` also verified footer info remains `display:grid`, same-row 2-column layout is intact, and `Family Sites` still opens 4 radial items
+  - `reviewer_footer_spacing (Athena the 2nd)` reported `발견 없음`
+
+- time: `2026-03-25 23:40 +09:00`
+- route: `Route B`
+- task: `Tighten the landing footer vertical spacing by 20px and mirror the footer height reduction into jeju-spring`
+- participants: `main`, `worker_seed (Ptolemy the 2nd)`, `worker_shared_footer (Confucius the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Ptolemy the 2nd)`: `SEED.footer-spacing-tighten-v1.yaml`
+  - `worker_shared_footer (Confucius the 2nd)`: `front/components/react/layout/footer.css`
+- verification:
+  - `front/components/react/layout/footer.css` changed only `footer.shell-footer.section` padding from `60px` to `50px` on top and bottom, reducing footer height by `20px`
+  - `pnpm run build:shell` regenerated runtime `style.css`
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs --skip-build-shell` refreshed spring mirror assets
+  - `jeju-spring/build/resources/main/static/front-mirror/components/react/layout/footer.css` and `.../components/runtime/style.css` were updated for the running local spring server
+  - HTTP check against `http://127.0.0.1:8080/front-mirror/components/react/layout/footer.css` returned the new `padding-top: 50px` / `padding-bottom: 50px` values
+
+- time: `2026-03-25 22:57 +09:00`
+- route: `Route B`
+- task: `Repair the landing footer regression so the info blocks align horizontally again and the family-site widget stops collapsing`
+- participants: `main`, `worker_seed (Hypatia)`, `worker_shared_footer (Linnaeus)`, `worker_footer_widget (Hume)`, `reviewer_footer_regression (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed (Hypatia)`: `SEED.footer-regression-repair-v1.yaml`
+  - `worker_shared_footer (Linnaeus)`: `front/components/react/layout/footer.css`
+  - `worker_footer_widget (Hume)`: `front/components/react/layout/MainFooterTemplate.tsx`
+  - `reviewer_footer_regression (Steward)`: `review only`
+- verification:
+  - `SEED.footer-regression-repair-v1.yaml` created to freeze the footer-only contract
+  - `front/components/react/layout/MainFooterTemplate.tsx` now separates company info and address/contact into explicit footer info groups
+  - `front/components/react/layout/footer.css` now lays those groups out as a 2-column grid and keeps `footer-right-group` from shrinking
+  - `pnpm run check:shell` passed
+  - `git diff --check -- STATE.md SEED.footer-regression-repair-v1.yaml front/components/react/layout/MainFooterTemplate.tsx front/components/react/layout/footer.css` passed
+  - `reviewer_footer_regression (Steward)` reported `발견 없음`
+  - browser rendering was not rechecked in this turn
+
+- time: `2026-03-25 23:32 +09:00`
+- route: `Route B`
+- task: `Restore the landing membership badge metallic finish in front and mirror it to spring`
+- participants: `main`, `worker_feature_landing`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_feature_landing`: `front/styles/globals.css, front/index.html if strictly required`
+- verification:
+  - `front/styles/globals.css` now gives silver/gold/platinum badges layered metallic gradients, highlight sweeps, and inset sheen without changing card layout
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` rebuilt front and mirrored the updated stylesheet into `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css`
+  - `jeju-spring/build/resources/main/static/front-mirror/styles/globals.css` was copied from the updated source mirror so the running local spring server can serve the same badge styling
+  - `pnpm run check:shell` passed
+  - `git diff --check -- front/styles/globals.css` passed
+
+- time: `2026-03-26 16:15 +09:00`
+- route: `Route B`
+- task: `Fix local Spring signup id-check routing so /pages/auth/signup.html uses the active Spring auth APIs and signup completes successfully`
+- participants: `main`, `worker_seed_auth_api (Aquinas)`, `worker_shared_api_config (Cicero)`, `worker_spring_auth_mirror (Kant)`, `worker_spring_build_resources (Goodall)`, `worker_error_log (Avicenna)`, `reviewer_auth_signup_flow (Mill)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_auth_api (Aquinas)`: `SEED.auth-local-api-base-routing-fix-v1.yaml`
+  - `worker_shared_api_config (Cicero)`: `front/core/modules/config/api_config.module.js`
+  - `worker_spring_auth_mirror (Kant)`: `derived front/.generated/webapp-overlay/**, jeju-spring/src/main/resources/templates/front-mirror/**, jeju-spring/src/main/resources/static/front-mirror/**, jeju-spring/src/main/resources/static/components/runtime/** affected by auth runtime regeneration`
+  - `worker_spring_build_resources (Goodall)`: `jeju-spring/build/resources/main/** affected auth runtime resources`
+  - `worker_error_log (Avicenna)`: `ERROR_LOG.md`
+  - `reviewer_auth_signup_flow (Mill)`: `review only`
+- verification:
+  - `SEED.auth-local-api-base-routing-fix-v1.yaml` created to freeze the localhost:8080 same-origin auth routing contract while preserving explicit `?api=local` and `?api=remote` overrides
+  - `front/core/modules/config/api_config.module.js` now returns `""` for local Spring `localhost:8080`, keeping local dev fallback on `http://localhost:9090/jeju-web` for other localhost ports and preserving explicit overrides
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` regenerated the affected front runtime and spring front-mirror assets
+  - `jeju-spring/gradlew.bat processResources` refreshed `jeju-spring/build/resources/main/**` so the already-running local Spring process serves the fixed auth assets instead of stale build resources
+  - `ERROR_LOG.md` received a resolved entry for the blocked shell-based runtime restart attempt and the `processResources` workaround that unblocked live verification
+  - HTTP check against `http://127.0.0.1:8080/front-mirror/core/modules/config/api_config.module.js` returned the new `window.location.port === "8080"` branch
+  - live API verification on `http://127.0.0.1:8080` confirmed `checkId` success for a fresh id, `signup` success for that id, and duplicate response on the immediate re-check after signup
+  - `pnpm -C front/apps/shell check` passed
+  - `reviewer_auth_signup_flow (Mill)` reported `No blocking findings`; residual risk noted only that regenerated mirror/runtime chunks include broader derived churn than the single routing fix
+
+- time: `2026-03-26 16:48 +09:00`
+- route: `Route B`
+- task: `Fix mypage support card icons so customer-support images load correctly on the local Spring runtime`
+- participants: `main`, `worker_seed_mypage_support (Mendel)`, `worker_feature_mypage_support (Epicurus, Newton)`, `worker_spring_mypage_mirror (Hooke, Popper)`, `worker_spring_mypage_build_resources (Banach, Bacon)`, `reviewer_mypage_support_icons (Franklin, Meitner)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_mypage_support (Mendel)`: `SEED.mypage-support-icon-path-fix-v1.yaml`
+  - `worker_feature_mypage_support (Epicurus, Newton)`: `front/components/react/mypage/SupportSection.tsx`
+  - `worker_spring_mypage_mirror (Hooke, Popper)`: `derived front/.generated/webapp-overlay/**, jeju-spring/src/main/resources/static/front-mirror/**, jeju-spring/src/main/resources/templates/front-mirror/** affected by mypage runtime regeneration`
+  - `worker_spring_mypage_build_resources (Banach, Bacon)`: `jeju-spring/build/resources/main/** affected mypage runtime resources`
+  - `reviewer_mypage_support_icons (Franklin, Meitner)`: `review only`
+- verification:
+  - `SEED.mypage-support-icon-path-fix-v1.yaml` created to freeze the no-404 mypage support-icon contract for local Spring host-only runtime
+  - `front/components/react/mypage/SupportSection.tsx` now detects `/front-mirror/` runtime assets from existing `link[href]` / `script[src]` tags and chooses the mirror asset path on first render for Spring host-only pages, while keeping `/pages/mypage/assets/...` for direct front runtime
+  - `pnpm -C front/apps/shell check` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` regenerated the affected `feature-mypage` runtime and Spring front-mirror assets
+  - `./gradlew.bat processResources --rerun-tasks` refreshed `jeju-spring/build/resources/main/**` so the local Spring runtime resources carry the updated mypage asset-path logic
+  - `feature-mypage-B3QUr62F.js` in `front/.generated/webapp-overlay/**` and `jeju-spring/src/main/resources/static/front-mirror/components/runtime/**` contains the `/front-mirror/pages/mypage/assets/support_qna.png` path
+  - `feature-mypage-CqBtx0gg.js` in `jeju-spring/build/resources/main/static/components/runtime/**` contains the support icon source pair including `/front-mirror/pages/mypage/assets/support_qna.png`
+  - `reviewer_mypage_support_icons` first flagged the `onError`-only fallback as insufficient because it still emitted a first-request 404, then re-review reported no blocking findings after runtime detection was added
+  - live HTTP verification against `http://127.0.0.1:8080/pages/mypage/dashboard.html` was blocked because no process was listening on port 8080 during this turn; this gap is logged separately in `ERROR_LOG.md`
+
+- time: `2026-03-26 17:58 +09:00`
+- route: `Route B`
+- task: `Remove duplicate admin-page link injection so logged-in admins see a single admin entry point in the front header`
+- participants: `main`, `worker_seed_admin_header (Dirac)`, `worker_feature_index_admin (Maxwell)`, `worker_spring_index_mirror (Nash)`, `reviewer_admin_header (McClintock)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_header (Dirac)`: `SEED.admin-header-admin-link-dedupe-v1.yaml`
+  - `worker_feature_index_admin (Maxwell)`: `front/index.html`
+  - `worker_spring_index_mirror (Nash)`: `derived jeju-spring/src/main/resources/templates/front-mirror/index.html and derived jeju-spring/build/resources/main/** where the served index assets were refreshed`
+  - `reviewer_admin_header (McClintock)`: `review only`
+- verification:
+  - `SEED.admin-header-admin-link-dedupe-v1.yaml` created to freeze the single-admin-link header contract
+  - `front/index.html` no longer imports `canUseAdminSurface` or injects a page-local `ADMIN.DASHBOARD` link; it keeps only the login/logout text sync path
+  - `pnpm -C front/apps/shell check` passed
+  - `jeju-spring/src/main/resources/templates/front-mirror/index.html` and `jeju-spring/build/resources/main/templates/front-mirror/index.html` were refreshed so the served index path also drops the page-local admin injection
+  - source inspection confirmed `ADMIN.DASHBOARD`, `canUseAdminSurface`, and `Inject Admin Link` are gone from `front/index.html`
+  - reviewer flagged the earlier local-admin fallback removal as a broader admin-access behavior change, but that is aligned with the explicit user requirement that admin surfaces appear only after admin-account login; no duplicate-link finding remained after the index dedupe fix
+
+- time: `2026-03-26 18:52 +09:00`
+- route: `Route B`
+- task: `Unify front login/session handling around real Spring auth sessions by removing the local test-login override and stale-session regressions`
+- participants: `main`, `worker_seed_auth_session (Copernicus)`, `worker_auth_session_source (Kant)`, `worker_auth_session_runtime (Boole)`, `reviewer_auth_session (Lagrange)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_auth_session (Copernicus)`: `SEED.auth-session-unify-v1.yaml`
+  - `worker_auth_session_source (Kant)`: `front/components/react/auth/services/loginService.ts, front/core/modules/auth/session_manager.module.js, front/core/modules/auth/local_admin.module.js, front/admin/js/auth_guard.js, front/components/react/mypage/state.tsx, front/components/react/mypage/data.ts, front/apps/shell/src/runtime/layout/header.ts`
+  - `worker_auth_session_runtime (Boole)`: `derived front/.generated/webapp-overlay/** and derived jeju-spring runtime assets only where the existing sync/build pipeline refreshed affected auth and mypage runtime files`
+  - `reviewer_auth_session (Lagrange)`: `review only`
+- verification:
+  - `SEED.auth-session-unify-v1.yaml` created to freeze removal of the front-only login override and adoption of Spring-backed auth/session resolution
+  - `front/components/react/auth/services/loginService.ts` no longer contains `LOCAL_TEST_LOGIN_ID`, `LOCAL_TEST_PASSWORD`, or `LOCAL_LOGIN_OVERRIDE`
+  - `front/core/modules/auth/session_manager.module.js` now resolves session state from server `/api/auth/session` only and clears stale local state on `401`
+  - `front/core/modules/auth/local_admin.module.js` and `front/admin/js/auth_guard.js` now admit admin surfaces only when the resolved real session is admin
+  - `front/components/react/mypage/state.tsx` now hydrates authenticated mypage state through `/api/mypage/dashboard`, and `front/components/react/mypage/data.ts` now prioritizes `tier ?? memberships[0] ?? role` for profile styling
+  - `pnpm -C front/apps/shell check` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` regenerated the affected front/spring runtime artifacts
+  - regenerated `feature-auth-tnJ9jRKY.js` contains no `LOCAL_TEST_*` or `LOCAL_LOGIN_OVERRIDE`, and regenerated `feature-mypage-CktpJWZ4.js` contains `/api/mypage/dashboard`
+  - `reviewer_auth_session (Lagrange)` reported no blocking findings; residual note only that `front/index.html` inline login/logout text sync still reads localStorage and could cause a brief visual mismatch against server-session truth
+
+- time: `2026-03-26 19:34 +09:00`
+- route: `Route B`
+- task: `Deepen the platinum membership styling slightly so it feels more premium while preserving the new silver/platinum contrast, then mirror it to jeju-spring`
+- participants: `main`, `worker_seed_membership_tier (Newton)`, `worker_front_membership_styles (Faraday)`, `worker_spring_membership_mirror (Banach)`, `reviewer_membership_tier (Fermat, Harvey)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_membership_tier (Newton)`: `SEED.membership-tier-platinum-polish-v1.yaml`
+  - `worker_front_membership_styles (Faraday)`: `front/styles/globals.css, front/pages/mypage/styles/_summary.css`
+  - `worker_spring_membership_mirror (Banach)`: `derived jeju-spring mirror/build assets only where the existing front-to-spring pipeline refreshed the affected membership styles`
+  - `reviewer_membership_tier (Fermat, Harvey)`: `review only`
+- verification:
+  - `SEED.membership-tier-platinum-polish-v1.yaml` created to freeze a platinum-only premium polish while keeping silver unchanged
+  - `front/styles/globals.css` keeps silver as the neutral baseline and deepens only `tier-badge.platinum`
+  - `front/pages/mypage/styles/_summary.css` keeps silver unchanged and deepens only the platinum chip/avatar variables
+  - the first review pass caught spring mirror parity drift; spring mirror/build outputs were then re-run until `[jeju-spring/src/main/resources/static/front-mirror/styles/globals.css]` and `[jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css]` matched the updated front values
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` completed successfully on the final pass
+  - final mirror verification confirmed updated platinum values in both `src/main/resources/static/front-mirror/**` and `build/resources/main/static/front-mirror/**`
+
+- time: `2026-03-26 12:18 +09:00`
+- route: `Route B`
+- task: `Regenerate auth/session/mypage runtime artifacts and spring processResources outputs after the latest front auth-session fixes`
+- participants: `worker_auth_session_runtime (gogi)`
+- write_sets:
+  - `worker_auth_session_runtime`: `derived front/.generated/webapp-overlay/**, derived jeju-spring runtime assets only where the existing sync/build pipeline refreshes affected auth and mypage runtime files`
+- verification:
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed
+  - `jeju-spring/gradlew.bat clean processResources` passed
+  - regenerated `feature-auth-tnJ9jRKY.js` contains no `LOCAL_TEST_` or `LOCAL_LOGIN_OVERRIDE`
+  - regenerated `feature-mypage-CktpJWZ4.js` contains `/api/mypage/dashboard`
+  - `jeju-spring/build/resources/main/static/front-mirror/components/runtime` and `jeju-spring/build/resources/main/static/components/runtime` both picked up the new runtime hash set
+  - mirrored `jeju-spring/build/resources/main/static/front-mirror/admin/js/auth_guard.js` keeps admin access gated through `resolveSession()` and `hasAdminAccess()`

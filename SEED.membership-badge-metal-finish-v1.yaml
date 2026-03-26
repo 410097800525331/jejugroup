@@ -1,0 +1,24 @@
+goal: Restore the metallic finish on the landing membership tier badges for silver, gold, and platinum.
+constraints:
+  - Edit only the landing membership badge visuals in front first.
+  - Keep the card layout, copy, buttons, and prices unchanged.
+  - Preserve the existing orange-accent landing design.
+  - Do not introduce a broad landing redesign.
+  - Mirror the same result into jeju-spring after the front fix is confirmed.
+acceptance_criteria:
+  - Silver, gold, and platinum badges show a metallic-looking finish again.
+  - The badges have visible highlight, gloss, or sheen effects.
+  - No membership card text, spacing, button, or price content changes.
+  - The landing page still renders with the same overall structure.
+  - The same badge styling is reflected in the spring mirror output.
+verification:
+  - Inspect the front landing render and confirm the badge finish is visibly metallic.
+  - Run the relevant front verification command(s) available in the repo.
+  - Mirror the front change into jeju-spring.
+  - Confirm the mirrored spring output matches the front badge styling.
+out_of_scope:
+  - Any landing card redesign.
+  - Membership copy changes.
+  - Button or price changes.
+  - Footer changes.
+  - Shell runtime changes unrelated to the badge visuals.
