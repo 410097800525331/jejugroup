@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상품 / 스키마 관리 - 제주여행 관리자</title>
+    <title>상품 관리 허브 - 제주여행 관리자</title>
 
     <script th:src="@{/front-mirror/admin/js/auth_guard.js}" src="/front-mirror/admin/js/auth_guard.js"></script>
 
@@ -130,28 +130,29 @@
 
         <main class="admin-main">
             <div class="admin-page-header">
-                <h1 class="admin-page-title">상품 / 스키마 관리</h1>
-            </div>
-
-            <div class="admin-reservations-quick-actions">
-                <button class="admin-btn admin-btn-outline">현재 DB 기준</button>
-                <button class="admin-btn admin-btn-primary">스키마 새로고침</button>
+                <h1 class="admin-page-title">상품 관리 허브</h1>
+                <div style="display: flex; gap: var(--admin-space-md); align-items: center;">
+                    <div class="admin-segment-control" id="admin-domain-filters">
+                        <button class="segment-btn active" data-domain="stay">호텔</button>
+                        <button class="segment-btn" data-domain="flight">항공</button>
+                        <button class="segment-btn" data-domain="rentcar">렌터카</button>
+                        <button class="segment-btn" data-domain="voucher">바우처</button>
+                    <button class="segment-btn" data-domain="usim">유심</button>
+                    <button class="segment-btn" data-domain="special">특가</button>
+                    </div>
+                </div>
             </div>
 
             <div class="admin-table-actions"
-                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center; gap: var(--admin-space-md); flex-wrap: wrap;">
+                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:8px;">
-                    <input type="text" placeholder="테이블 또는 역할 검색..."
+                    <input type="text" placeholder="상품명 또는 코드 검색..."
                         style="padding: 8px 12px; border-radius:6px; border:1px solid var(--admin-border); background:var(--admin-surface); color:var(--admin-text-primary); outline:none;">
                     <button class="admin-btn admin-btn-outline">검색</button>
                 </div>
-                <div class="admin-segment-control" id="admin-domain-filters">
-                    <button class="segment-btn active" data-domain="stay">STAY</button>
-                    <button class="segment-btn" data-domain="air">AIR</button>
-                    <button class="segment-btn" data-domain="rent">RENT</button>
-                    <button class="segment-btn" data-domain="voucher">VOUCHER</button>
-                    <button class="segment-btn" data-domain="usim">USIM</button>
-                    <button class="segment-btn" data-domain="special">SPECIAL</button>
+                <div style="display:flex; gap:8px;">
+                    <button class="admin-btn admin-btn-outline">재고 동기화</button>
+                    <button class="admin-btn admin-btn-primary">신규 상품 등록</button>
                 </div>
             </div>
 
@@ -159,12 +160,12 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th>상품 코드</th>
                             <th>도메인</th>
-                            <th>기대 테이블</th>
-                            <th>역할</th>
-                            <th>현재 상태</th>
-                            <th>행 수</th>
-                            <th>근거</th>
+                            <th>상품명 / 옵션</th>
+                            <th>재고 / 수량</th>
+                            <th>기준가</th>
+                            <th>상태</th>
                             <th>관리</th>
                         </tr>
                     </thead>
@@ -182,7 +183,11 @@
     </div>
 
     <!-- Scripts -->
-    <script th:src="@{/front-mirror/admin/js/admin_shell.js}" src="/front-mirror/admin/js/admin_shell.js"></script>
+    <script th:src="@{/front-mirror/admin/js/rbac_config.js}" src="/front-mirror/admin/js/rbac_config.js"></script>
+    <script th:src="@{/front-mirror/admin/js/sidebar_ui.js}" src="/front-mirror/admin/js/sidebar_ui.js"></script>
+    <script th:src="@{/front-mirror/admin/js/store.js}" src="/front-mirror/admin/js/store.js"></script>
+    <script th:src="@{/front-mirror/admin/js/portal_nav.js}" src="/front-mirror/admin/js/portal_nav.js"></script>
+    <script th:src="@{/front-mirror/admin/js/lodging.js}" src="/front-mirror/admin/js/lodging.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.lucide) lucide.createIcons();

@@ -1,5 +1,64 @@
 # MULTI AGENT LOG
 
+- time: `2026-03-26 15:08:18 +09:00`
+- route: `Route B`
+- task: `Roll back the entire admin page surface to the earlier pre-schema/admin-shell state, then restore spring mirror parity from front`
+- participants: `main`, `worker_seed_admin_full_rollback (Ampere)`, `worker_front_admin_pages (Carver)`, `worker_front_admin_logic (Maxwell)`, `worker_spring_admin_full_mirror (Raman)`, `reviewer_admin_full_rollback (Euler)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_full_rollback (Ampere)`: `SEED.admin-full-surface-rollback-v1.yaml`
+  - `worker_front_admin_pages (Carver)`: `front/admin/pages/dashboard.html, front/admin/pages/reservations.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html`
+  - `worker_front_admin_logic (Maxwell)`: `front/admin/js/dashboard.js, front/admin/js/reservations.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/rbac_config.js`
+  - `worker_spring_admin_full_mirror (Raman)`: `derived jeju-spring/src/main/resources/static/front-mirror/admin/** and derived jeju-spring/src/main/resources/templates/front-mirror/admin/pages/** only where the existing front-to-spring pipeline refreshed the rolled-back admin runtime`
+  - `reviewer_admin_full_rollback (Euler)`: `review only`
+- verification:
+  - `SEED.admin-full-surface-rollback-v1.yaml` created to freeze the full admin-surface rollback contract
+  - `front/admin/pages/dashboard.html`, `front/admin/pages/reservations.html`, `front/admin/pages/lodging.html`, `front/admin/pages/members.html`, and `front/admin/pages/cms.html` were restored to the earlier pre-schema/admin-shell baseline with `git diff 15d675e -- front/admin/pages/*.html` confirming no remaining differences
+  - `front/admin/js/dashboard.js`, `front/admin/js/reservations.js`, `front/admin/js/lodging.js`, `front/admin/js/members.js`, `front/admin/js/cms.js`, and `front/admin/js/rbac_config.js` were restored to the earlier baseline with targeted `node --check` passing for all six files
+  - `git diff --check -- front/admin/pages/dashboard.html front/admin/pages/reservations.html front/admin/pages/lodging.html front/admin/pages/members.html front/admin/pages/cms.html front/admin/js/dashboard.js front/admin/js/reservations.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/rbac_config.js` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed and refreshed the affected spring admin mirror pages/js
+  - spring mirror parity checks reported `MATCH` for the rolled-back admin JS and `MATCH` for the transformed admin HTML against the rolled-back front baseline
+  - `reviewer_admin_full_rollback (Euler)` reported `블로킹 findings 없음`; residual note only that browser-render verification was not run and admin-external derived spring files also refreshed through the sync pipeline
+
+- time: `2026-03-26 15:08:18 +09:00`
+- route: `Route B`
+- task: `Repair the remaining admin dashboard icon regression along with the earlier admin menu/tab repairs, then restore spring mirror parity from front`
+- participants: `main`, `worker_seed_admin_shell_v2 (James)`, `worker_front_admin_dashboard (Nash)`, `worker_spring_admin_mirror_v2 (Halley)`, `reviewer_admin_shell_v2 (Averroes)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_shell_v2 (James)`: `SEED.admin-shell-icon-tab-repair-v2.yaml`
+  - `worker_front_admin_dashboard (Nash)`: `front/admin/js/dashboard.js`
+  - `worker_spring_admin_mirror_v2 (Halley)`: `derived jeju-spring/src/main/resources/static/front-mirror/admin/** and derived jeju-spring/src/main/resources/templates/front-mirror/admin/pages/** only where the existing front-to-spring pipeline refreshed the repaired admin runtime`
+  - `reviewer_admin_shell_v2 (Averroes)`: `review only`
+- verification:
+  - `SEED.admin-shell-icon-tab-repair-v2.yaml` created to freeze the expanded admin regression contract including dashboard KPI icon repair
+  - `front/admin/js/dashboard.js` restored the readable KPI icon mapping from the pre-refactor readable state: `todayReservations=📝`, `revenue=💰`, `cancelRate=📉`, `activeUsers=🟢`
+  - `node --check front/admin/js/dashboard.js` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed and refreshed the affected spring admin mirror files
+  - SHA256 parity checks confirmed `front/admin/js/dashboard.js` matches `jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js`
+  - `git diff --check -- STATE.md SEED.admin-shell-icon-tab-repair-v2.yaml front/admin/js/dashboard.js jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js` passed
+  - `reviewer_admin_shell_v2 (Averroes)` reported `블로킹 finding 없음`; residual note only that emoji icon rendering can vary slightly by OS/font and browser real-render validation was not run in this turn
+
+- time: `2026-03-26 15:08:18 +09:00`
+- route: `Route B`
+- task: `Repair the admin page regression where sidebar menu icons look wrong and admin tabs no longer respond, then restore spring mirror parity from front`
+- participants: `main`, `worker_seed_admin_shell (Meitner)`, `worker_front_admin_shell (Dewey)`, `worker_spring_admin_mirror (Boole)`, `reviewer_admin_shell (Copernicus)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_shell (Meitner)`: `SEED.admin-shell-icon-tab-repair-v1.yaml`
+  - `worker_front_admin_shell (Dewey)`: `front/admin/js/rbac_config.js, front/admin/js/reservations.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js`
+  - `worker_spring_admin_mirror (Boole)`: `derived jeju-spring/src/main/resources/static/front-mirror/admin/** and derived jeju-spring/src/main/resources/templates/front-mirror/admin/pages/** only where the existing front-to-spring pipeline refreshed the repaired admin runtime`
+  - `reviewer_admin_shell (Copernicus)`: `review only`
+- verification:
+  - `SEED.admin-shell-icon-tab-repair-v1.yaml` created to freeze the admin icon/tab regression repair contract
+  - `front/admin/js/rbac_config.js` restored readable sidebar icons while keeping RBAC behavior unchanged
+  - `front/admin/js/reservations.js`, `front/admin/js/lodging.js`, `front/admin/js/members.js`, and `front/admin/js/cms.js` now return `window.AdminShell` from `ensureRuntime()`, cache config imports separately, and register/boot sections through the real shell path again
+  - `node --check front/admin/js/rbac_config.js front/admin/js/reservations.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js` passed via targeted per-file checks
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed and refreshed the affected spring admin mirror files
+  - SHA256 parity checks confirmed the 5 affected `front/admin/js/*.js` files match `jeju-spring/src/main/resources/static/front-mirror/admin/js/*.js`
+  - `git diff --check -- STATE.md SEED.admin-shell-icon-tab-repair-v1.yaml front/admin/js/rbac_config.js front/admin/js/reservations.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js jeju-spring/src/main/resources/static/front-mirror/admin/js/rbac_config.js jeju-spring/src/main/resources/static/front-mirror/admin/js/reservations.js jeju-spring/src/main/resources/static/front-mirror/admin/js/lodging.js jeju-spring/src/main/resources/static/front-mirror/admin/js/members.js jeju-spring/src/main/resources/static/front-mirror/admin/js/cms.js` passed
+  - `reviewer_admin_shell (Copernicus)` reported `블로킹 finding 없음`; residual note only that emoji icon rendering can vary slightly by OS/font and the sync pipeline also refreshed unrelated derived mypage style mirrors outside the admin scope
+
 - time: `2026-03-26 16:40 +09:00`
 - route: `Route B`
 - task: `Regen mypage Spring mirror assets after SupportSection update`
@@ -1484,6 +1543,42 @@
   - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` completed successfully on the final pass
   - final mirror verification confirmed updated platinum values in both `src/main/resources/static/front-mirror/**` and `build/resources/main/static/front-mirror/**`
 
+- time: `2026-03-26 20:28 +09:00`
+- route: `Route B`
+- task: `Darken the platinum membership styling further while keeping the blue-white premium identity, then mirror it to jeju-spring`
+- participants: `main`, `worker_seed_membership_tier (Beauvoir)`, `worker_front_membership_styles (Kuhn)`, `worker_spring_membership_mirror (Peirce)`, `reviewer_membership_tier (Hume)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_membership_tier (Beauvoir)`: `SEED.membership-tier-platinum-deepen-v1.yaml`
+  - `worker_front_membership_styles (Kuhn)`: `front/styles/globals.css, front/pages/mypage/styles/_summary.css`
+  - `worker_spring_membership_mirror (Peirce)`: `derived jeju-spring mirror/build assets only where the existing front-to-spring pipeline refreshed the affected landing/mypage membership styles`
+  - `reviewer_membership_tier (Hume)`: `review only`
+- verification:
+  - `SEED.membership-tier-platinum-deepen-v1.yaml` created to freeze a darker platinum-only follow-up while keeping silver untouched
+  - `front/styles/globals.css` darkened only `tier-badge.platinum` by reducing highlight intensity and deepening the mid/low metallic tones
+  - `front/pages/mypage/styles/_summary.css` darkened only the platinum chip/avatar variables in the same visual direction
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` reran the spring mirror/build pipeline
+  - worker parity check confirmed matching SHA256 across front source, `jeju-spring/src/main/resources/static/front-mirror/**`, and `jeju-spring/build/resources/main/static/front-mirror/**` for the affected membership style files
+  - `reviewer_membership_tier (Hume)` reported no blocking findings; silver remained unchanged and platinum stayed blue-white while reading deeper/premium
+
+- time: `2026-03-26 21:02 +09:00`
+- route: `Route B`
+- task: `Retune platinum membership styling back around #a0b2c6, but slightly darker and richer than before, then mirror it to jeju-spring`
+- participants: `main`, `worker_seed_membership_tier (Kierkegaard)`, `worker_front_membership_styles (Hubble)`, `worker_spring_membership_mirror (Archimedes)`, `reviewer_membership_tier (Halley)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_membership_tier (Kierkegaard)`: `SEED.membership-tier-platinum-a0b2c6-dark-v1.yaml`
+  - `worker_front_membership_styles (Hubble)`: `front/styles/globals.css, front/pages/mypage/styles/_summary.css`
+  - `worker_spring_membership_mirror (Archimedes)`: `derived jeju-spring mirror/build assets only where the existing front-to-spring pipeline refreshed the affected membership styles`
+  - `reviewer_membership_tier (Halley)`: `review only`
+- verification:
+  - `SEED.membership-tier-platinum-a0b2c6-dark-v1.yaml` created to freeze the rollback to #a0b2c6 with slightly darker weight
+  - `front/styles/globals.css` retuned only `tier-badge.platinum` to an #a0b2c6-centered metallic gradient with darker lower stops and unchanged silver
+  - `front/pages/mypage/styles/_summary.css` retuned only the platinum avatar ring/chip variables to the same #a0b2c6-centered palette
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` refreshed the spring mirror/build outputs
+  - worker parity check confirmed the affected front files match `jeju-spring/src/main/resources/static/front-mirror/**` and `jeju-spring/build/resources/main/static/front-mirror/**`
+  - `reviewer_membership_tier (Halley)` reported no blocking findings; silver remained unchanged and platinum returned to #a0b2c6 while reading slightly darker/richer
+
 - time: `2026-03-26 12:18 +09:00`
 - route: `Route B`
 - task: `Regenerate auth/session/mypage runtime artifacts and spring processResources outputs after the latest front auth-session fixes`
@@ -1497,3 +1592,9 @@
   - regenerated `feature-mypage-CktpJWZ4.js` contains `/api/mypage/dashboard`
   - `jeju-spring/build/resources/main/static/front-mirror/components/runtime` and `jeju-spring/build/resources/main/static/components/runtime` both picked up the new runtime hash set
   - mirrored `jeju-spring/build/resources/main/static/front-mirror/admin/js/auth_guard.js` keeps admin access gated through `resolveSession()` and `hasAdminAccess()`
+
+- time: `2026-03-26 14:48:53 +09:00`
+- location: `D:\lsh\git\jejugroup`
+- summary: `Spring membership mirror/build refresh`
+- details: `worker_spring_membership_mirror refreshed the affected membership style mirrors by rerunning node scripts/spring/sync-front-assets-to-spring.cjs and then jeju-spring/gradlew.bat clean processResources sequentially after an initial parallel build race; front/styles/globals.css and front/pages/mypage/styles/_summary.css now match jeju-spring/src/main/resources/static/front-mirror/** and jeju-spring/build/resources/main/static/front-mirror/** by SHA256.`
+- status: `resolved`

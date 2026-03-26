@@ -1,0 +1,21 @@
+goal: Roll back the entire admin page surface to the earlier pre-schema/admin-shell state, then restore spring mirror parity from front.
+constraints:
+  - front is the only human-edited source of truth.
+  - do not edit jeju-web.
+  - rollback is scoped to admin entry pages and the page-local/shared page logic needed to match that earlier state.
+  - do not broaden into auth/session changes outside what is strictly required by the earlier admin page surface.
+  - spring changes must stay derived from front.
+acceptance_criteria:
+  - dashboard, reservations, lodging, members, and cms admin pages no longer present the later schema/admin-shell page surface.
+  - those admin entry pages and their page-local/shared page logic match the earlier visible/admin UX baseline from front.
+  - the rollback stays inside the admin surface scope and does not touch jeju-web.
+  - jeju-spring front-mirror admin page/js assets are refreshed to match the rolled-back front files.
+verification:
+  - inspect rolled-back front admin pages/scripts against the earlier baseline.
+  - run targeted syntax checks on edited admin scripts.
+  - run the existing front-to-spring sync for affected admin assets and inspect changed mirror paths.
+  - reviewer pass for full admin-surface rollback fidelity and mirror boundary compliance.
+out_of_scope:
+  - redesigning the admin UI beyond the rollback target.
+  - touching non-admin pages.
+  - changing jeju-web/src/main/webapp.

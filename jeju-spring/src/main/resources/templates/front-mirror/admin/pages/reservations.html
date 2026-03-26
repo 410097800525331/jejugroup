@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예약 / 결제 스키마 현황 - 제주여행 관리자</title>
+    <title>예약/결제/환불 관리 - 제주여행 관리자</title>
 
     <!-- Security Protocol: Immediate route guard first -->
     <script th:src="@{/front-mirror/admin/js/auth_guard.js}" src="/front-mirror/admin/js/auth_guard.js"></script>
@@ -141,27 +141,27 @@
         <!-- Main Content (Reservations) -->
         <main class="admin-main">
             <div class="admin-page-header">
-                <h1 class="admin-page-title">예약 / 결제 스키마 현황</h1>
+                <h1 class="admin-page-title">예약/결제/환불 관리</h1>
             </div>
 
             <div class="admin-reservations-quick-actions">
-                <button class="admin-btn admin-btn-outline">현재 DB 기준</button>
-                <button class="admin-btn admin-btn-primary">스키마 새로고침</button>
+                <button class="admin-btn admin-btn-outline">환불 일괄 처리</button>
+                <button class="admin-btn admin-btn-primary">수기 등록</button>
             </div>
 
             <!-- Action Bar -->
             <div class="admin-table-actions admin-reservations-toolbar">
                 <div class="admin-reservations-toolbar-left">
                     <div class="admin-reservations-search-group">
-                        <input type="text" placeholder="테이블 또는 도메인 검색...">
+                        <input type="text" placeholder="예약번호 또는 고객명 검색...">
                         <button class="admin-btn admin-btn-outline">검색</button>
                     </div>
                     <div class="admin-subfilter-control" id="reservation-domain-filters">
                         <button class="subfilter-btn active" data-domain-key="all">전체</button>
-                        <button class="subfilter-btn" data-domain-key="air">AIR</button>
-                        <button class="subfilter-btn" data-domain-key="stay">STAY</button>
-                        <button class="subfilter-btn" data-domain-key="rent">RENT</button>
-                        <button class="subfilter-btn" data-domain-key="voucher">VOUCHER</button>
+                        <button class="subfilter-btn" data-domain-key="flight">항공권</button>
+                        <button class="subfilter-btn" data-domain-key="hotel">호텔</button>
+                        <button class="subfilter-btn" data-domain-key="rentcar">렌터카</button>
+                        <button class="subfilter-btn" data-domain-key="voucher">바우처</button>
                     </div>
                 </div>
                 <div class="admin-segment-control" id="admin-domain-filters">
@@ -177,12 +177,13 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th>번호</th>
                             <th>도메인</th>
-                            <th>기대 테이블</th>
-                            <th>역할</th>
-                            <th>현재 상태</th>
-                            <th>행 수</th>
-                            <th>근거</th>
+                            <th>예약 / 결제 정보</th>
+                            <th>고객 / 연락처</th>
+                            <th>금액</th>
+                            <th>일시</th>
+                            <th>상태</th>
                             <th>관리</th>
                         </tr>
                     </thead>
@@ -202,7 +203,11 @@
     </div>
 
     <!-- Scripts -->
-    <script th:src="@{/front-mirror/admin/js/admin_shell.js}" src="/front-mirror/admin/js/admin_shell.js"></script>
+    <script th:src="@{/front-mirror/admin/js/rbac_config.js}" src="/front-mirror/admin/js/rbac_config.js"></script>
+    <script th:src="@{/front-mirror/admin/js/sidebar_ui.js}" src="/front-mirror/admin/js/sidebar_ui.js"></script>
+    <script th:src="@{/front-mirror/admin/js/store.js}" src="/front-mirror/admin/js/store.js"></script>
+    <script th:src="@{/front-mirror/admin/js/portal_nav.js}" src="/front-mirror/admin/js/portal_nav.js"></script>
+    <script th:src="@{/front-mirror/admin/js/reservations.js}" src="/front-mirror/admin/js/reservations.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.lucide) lucide.createIcons();

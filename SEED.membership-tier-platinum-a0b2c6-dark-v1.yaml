@@ -1,0 +1,34 @@
+goal: Roll platinum back to the #a0b2c6 axis, but make it slightly darker and richer than the earlier version while silver stays unchanged.
+background: >
+  This is the frozen front-authored contract for the landing and mypage
+  membership surfaces. Silver remains the baseline tier. Platinum should return
+  to the #a0b2c6 family, but with a deeper, richer premium finish than the
+  earlier lighter version. Front is the source of truth, and jeju-spring may
+  only reflect derived mirror output from the front change.
+in_scope:
+  - Landing membership visuals in front source
+  - Mypage membership/profile visuals in front source
+  - Derived jeju-spring mirror output produced from the front change
+out_of_scope:
+  - Direct edits to jeju-web/src/main/webapp/**
+  - Direct hand edits to jeju-spring/**
+  - Silver tier styling changes
+  - Layout, copy, behavior, or data-flow changes unrelated to the platinum retune
+constraints:
+  - Keep silver exactly as the neutral comparison tier.
+  - Center platinum on #a0b2c6.
+  - Make platinum slightly darker and richer than the earlier version, not brighter or warmer.
+  - Touch only front source files for landing and mypage.
+  - Do not edit jeju-web directly.
+  - Do not hand-edit jeju-spring; only derived mirror updates may change there.
+acceptance_criteria:
+  - Silver looks unchanged relative to the current baseline.
+  - Platinum reads as a #a0b2c6-centered tier with a subtly darker, richer premium feel.
+  - Landing and mypage share the same platinum-only retune language.
+  - No unrelated layout, copy, or interaction regressions are introduced.
+  - The jeju-spring mirror reflects the same front-authored styling.
+verification:
+  - Review the diff for the affected front membership style changes.
+  - Run the relevant repo checks for the changed front styles and pages.
+  - Confirm silver remains visually stable while platinum centers on #a0b2c6.
+  - Confirm the derived spring output matches the front-authored styling.

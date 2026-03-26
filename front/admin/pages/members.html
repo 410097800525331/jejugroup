@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원 / 권한 / 문의 관리 - 제주여행 관리자</title>
+    <title>회원/문의 관리 - 제주여행 관리자</title>
 
     <script src="../js/auth_guard.js"></script>
 
@@ -128,26 +128,27 @@
 
         <main class="admin-main">
             <div class="admin-page-header">
-                <h1 class="admin-page-title">회원 / 권한 / 문의 관리</h1>
-            </div>
-
-            <div class="admin-reservations-quick-actions">
-                <button class="admin-btn admin-btn-outline">새로고침</button>
-                <button class="admin-btn admin-btn-primary">DB 보기</button>
+                <h1 class="admin-page-title">회원/문의 관리</h1>
+                <div style="display: flex; gap: var(--admin-space-md); align-items: center;">
+                    <div class="admin-segment-control" id="admin-domain-filters">
+                        <button class="segment-btn active" data-domain="member">회원</button>
+                        <button class="segment-btn" data-domain="membership">멤버십</button>
+                        <button class="segment-btn" data-domain="permissions">권한</button>
+                        <button class="segment-btn" data-domain="inquiries">문의사항</button>
+                    </div>
+                </div>
             </div>
 
             <div class="admin-table-actions"
-                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center; gap: var(--admin-space-md); flex-wrap: wrap;">
+                style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:8px;">
                     <input type="text" placeholder="회원명 또는 ID 검색..."
                         style="padding: 8px 12px; border-radius:6px; border:1px solid var(--admin-border); background:var(--admin-surface); color:var(--admin-text-primary); outline:none;">
                     <button class="admin-btn admin-btn-outline">검색</button>
                 </div>
-                <div class="admin-segment-control" id="admin-domain-filters">
-                    <button class="segment-btn active" data-domain="member">회원</button>
-                    <button class="segment-btn" data-domain="accounts">연동 계정</button>
-                    <button class="segment-btn" data-domain="permissions">권한</button>
-                    <button class="segment-btn" data-domain="inquiries">문의사항</button>
+                <div style="display:flex; gap:8px;">
+                    <button class="admin-btn admin-btn-outline">권한 점검</button>
+                    <button class="admin-btn admin-btn-primary">문의 상태 관리</button>
                 </div>
             </div>
 
@@ -155,11 +156,11 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>식별자</th>
-                            <th>구분</th>
+                            <th>대상</th>
+                            <th>도메인</th>
                             <th>세부 정보</th>
                             <th>기준 일시</th>
-                            <th>상태 / 권한</th>
+                            <th>상태 / 등급</th>
                             <th>관리</th>
                         </tr>
                     </thead>
@@ -176,7 +177,11 @@
         </main>
     </div>
 
-    <script src="../js/admin_shell.js"></script>
+    <script src="../js/rbac_config.js"></script>
+    <script src="../js/sidebar_ui.js"></script>
+    <script src="../js/store.js"></script>
+    <script src="../js/portal_nav.js"></script>
+    <script src="../js/members.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.lucide) lucide.createIcons();

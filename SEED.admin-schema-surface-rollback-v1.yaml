@@ -1,0 +1,22 @@
+goal: Roll back the reservations and lodging admin pages to the pre-schema-surface state before the 기대 테이블 UI appeared, then restore spring mirror parity from front.
+constraints:
+  - front is the only human-edited source of truth.
+  - do not edit jeju-web.
+  - keep the recent sidebar/dashboard icon fixes intact.
+  - touch only reservations and lodging admin pages and their scripts plus derived spring mirror outputs needed for parity.
+  - do not broaden into other admin pages or auth/session changes.
+acceptance_criteria:
+  - reservations and lodging no longer show the schema-surface UX centered on 기대 테이블, current state, 행 수, and 근거.
+  - reservations and lodging page markup and runtime behavior match the earlier pre-schema-surface experience from front.
+  - other admin pages and the recent icon fixes remain untouched.
+  - jeju-spring front-mirror admin page and js assets are refreshed to match the rolled-back front files.
+verification:
+  - inspect rolled-back front pages and scripts against the intended pre-schema-surface state.
+  - run targeted syntax checks on the edited reservations and lodging scripts.
+  - run the existing front-to-spring sync for affected admin assets and inspect changed mirror paths.
+  - reviewer pass for rollback fidelity and mirror boundary compliance.
+out_of_scope:
+  - redesigning reservations and lodging beyond the rollback target.
+  - touching other admin pages.
+  - changing auth, session, or RBAC behavior.
+  - touching jeju-web/src/main/webapp.

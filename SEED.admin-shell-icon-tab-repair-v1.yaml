@@ -1,0 +1,21 @@
+goal: Repair the admin page regression where sidebar menu icons look wrong and admin tabs no longer respond, then restore spring mirror parity from front.
+constraints:
+  - front is the only human-edited source of truth.
+  - Do not edit jeju-web.
+  - Keep auth/session/RBAC behavior unchanged.
+  - Touch only the admin runtime files needed for icon readability and section boot/tab interaction recovery.
+  - Spring changes must stay derived from front.
+acceptance_criteria:
+  - Admin sidebar menu icons render as readable, intentional icons again rather than odd placeholder glyphs.
+  - Reservations, lodging, members, and cms sections successfully boot/register under AdminShell so their tab controls can bind and respond again.
+  - The fix does not broaden into auth/session/RBAC behavior changes.
+  - The repaired behavior can be mirrored into jeju-spring admin front-mirror assets without touching forbidden legacy paths.
+verification:
+  - Inspect the repaired front admin files for icon definitions and working boot/register flow.
+  - Run targeted syntax checks on repaired admin scripts.
+  - Run the existing front-to-spring sync for affected admin assets and inspect changed mirror paths.
+  - Run a reviewer pass for menu icon readability, tab interaction path, and mirror boundary compliance.
+out_of_scope:
+  - Redesigning the admin UI beyond the regression repair.
+  - Changing admin auth/session policy.
+  - Touching jeju-web/src/main/webapp.

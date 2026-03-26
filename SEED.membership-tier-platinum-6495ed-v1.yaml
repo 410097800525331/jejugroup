@@ -1,0 +1,33 @@
+goal: Retune the platinum membership tier around #6495ED while keeping silver unchanged.
+background: >
+  This is a frozen front-authored visual contract for the membership tier
+  retune. Silver stays the baseline comparison tier. Platinum must center on
+  #6495ED and keep its premium identity. Only landing and mypage front source
+  files may change, and jeju-spring may receive only derived mirror output from
+  those front changes.
+in_scope:
+  - Landing membership visuals in front source
+  - Mypage membership/profile visuals in front source
+  - Derived jeju-spring mirror output produced from the front change
+out_of_scope:
+  - Direct edits to jeju-web/src/main/webapp/**
+  - Direct hand edits to jeju-spring/**
+  - Silver tier styling changes
+  - Layout, copy, behavior, or data-flow changes unrelated to the platinum retune
+constraints:
+  - Keep silver exactly as the neutral baseline tier.
+  - Make platinum center on #6495ED and keep it clearly premium.
+  - Touch only landing and mypage front source files.
+  - Do not edit jeju-web directly.
+  - Do not hand-edit jeju-spring; only derived mirror updates may change there.
+acceptance_criteria:
+  - Silver remains visually unchanged relative to the current baseline.
+  - Platinum reads as a #6495ED-centered premium tier and stays distinct from silver.
+  - Landing and mypage share the same platinum retune language.
+  - No unrelated layout, copy, or interaction regressions are introduced.
+  - The jeju-spring mirror reflects the same front-authored styling.
+verification:
+  - Review the diff for the affected front membership style changes.
+  - Run the relevant repo checks for the changed front styles and pages.
+  - Confirm silver remains stable while platinum centers on #6495ED.
+  - Confirm the derived spring output matches the front-authored styling.

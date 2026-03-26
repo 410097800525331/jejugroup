@@ -300,3 +300,30 @@ status: open
   summary: Re-run succeeded from the correct Gradle root
   details: `processResources` completed successfully under `D:\lsh\git\jejugroup\jeju-spring`, refreshing the served index assets.
   status: resolved
+# ERROR_LOG append
+- time: 2026-03-26 20:55:00 +09:00
+  location: commentary search step
+  summary: rg.exe access denied during repository inspection
+  details: Attempted to use rg for membership mirror discovery, but the shell returned Access is denied for rg.exe. Switched to PowerShell-native search commands.
+  status: open
+- time: 2026-03-26 20:55:00 +09:00
+  location: commentary search step
+  summary: rg.exe access denied during repository inspection
+  details: Resolved by switching to PowerShell-native search commands and completing the spring mirror regeneration and verification flow.
+  status: resolved
+- time: 2026-03-26 15:18:00 +09:00
+  location: sync discovery
+  summary: rg.exe access denied during repo search
+  details: Initial repository search commands using rg.exe failed with Access is denied in this PowerShell session, so fallback discovery will use Get-ChildItem and Select-String.
+  status: open
+- time: 2026-03-26 15:24:00 +09:00
+  location: sync discovery
+  summary: rg.exe access denied workaround resolved
+  details: Repository search was completed with PowerShell fallback commands after rg.exe access denied in this session.
+  status: resolved
+
+- time: 2026-03-26 15:24:00 +09:00
+  location: parity verification
+  summary: hash compare pipeline parse error resolved
+  details: A PowerShell pipe syntax mistake interrupted the initial hash comparison, then the file hash parity check was rerun successfully and confirmed matching spring mirror outputs.
+  status: resolved
