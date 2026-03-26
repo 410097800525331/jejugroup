@@ -231,7 +231,6 @@
             isAuthSyncInitialized = true;
 
             const rawSession = localStorage.getItem('userSession');
-            const { canUseAdminSurface } = await import('/front-mirror/core/auth/local_admin.js');
 
             try {
                 const sessionData = rawSession ? JSON.parse(rawSession) : null;
@@ -247,25 +246,6 @@
                         localStorage.removeItem('userSession');
                         window.location.reload();
                     });
-                }
-
-                // 2. Inject Admin Link if applicable
-                if (canUseAdminSurface()) {
-                    const adminLink = document.createElement('a');
-                    adminLink.href = '#';
-                    adminLink.setAttribute('data-route', 'ADMIN.DASHBOARD');
-                    adminLink.className = 'util-link route-link';
-                    adminLink.style.color = '#FF5000';
-                    adminLink.style.fontWeight = 'bold';
-                    adminLink.textContent = '관리자 페이지';
-
-                    const divider = document.createElement('span');
-                    divider.className = 'util-divider';
-                    divider.textContent = '|';
-
-                    // Insert at front
-                    headerUtil.insertBefore(divider, headerUtil.firstChild);
-                    headerUtil.insertBefore(adminLink, divider);
                 }
             } catch (e) {
                 console.error('Session parse exception', e);

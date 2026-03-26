@@ -285,3 +285,13 @@ location: live mypage support verification on spring:8080
 summary: local Spring server was down during mypage support icon verification
 details: after the front fix, mirror sync, and build resource refresh completed, HTTP requests to http://127.0.0.1:8080/pages/mypage/dashboard.html still failed because no process was listening on port 8080, so live rendering of the repaired mypage support icons could not be rechecked in this turn. On-disk runtime, mirror, and reviewer validation all passed.
 status: open
+- time: 2026-03-26 17:55:00 +09:00
+  location: `jeju-spring/gradlew.bat processResources --rerun-tasks` from repo root
+  summary: Gradle processResources failed because the working directory was wrong
+  details: Gradle looked for build files in `D:\lsh\git\jejugroup` instead of `D:\lsh\git\jejugroup\jeju-spring`, so the wrapper could not resolve the build root.
+  status: open
+- time: 2026-03-26 18:00:00 +09:00
+  location: `jeju-spring/gradlew.bat processResources --rerun-tasks` from repo root
+  summary: Re-run succeeded from the correct Gradle root
+  details: `processResources` completed successfully under `D:\lsh\git\jejugroup\jeju-spring`, refreshing the served index assets.
+  status: resolved

@@ -1426,3 +1426,21 @@
   - `feature-mypage-CqBtx0gg.js` in `jeju-spring/build/resources/main/static/components/runtime/**` contains the support icon source pair including `/front-mirror/pages/mypage/assets/support_qna.png`
   - `reviewer_mypage_support_icons` first flagged the `onError`-only fallback as insufficient because it still emitted a first-request 404, then re-review reported no blocking findings after runtime detection was added
   - live HTTP verification against `http://127.0.0.1:8080/pages/mypage/dashboard.html` was blocked because no process was listening on port 8080 during this turn; this gap is logged separately in `ERROR_LOG.md`
+
+- time: `2026-03-26 17:58 +09:00`
+- route: `Route B`
+- task: `Remove duplicate admin-page link injection so logged-in admins see a single admin entry point in the front header`
+- participants: `main`, `worker_seed_admin_header (Dirac)`, `worker_feature_index_admin (Maxwell)`, `worker_spring_index_mirror (Nash)`, `reviewer_admin_header (McClintock)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_header (Dirac)`: `SEED.admin-header-admin-link-dedupe-v1.yaml`
+  - `worker_feature_index_admin (Maxwell)`: `front/index.html`
+  - `worker_spring_index_mirror (Nash)`: `derived jeju-spring/src/main/resources/templates/front-mirror/index.html and derived jeju-spring/build/resources/main/** where the served index assets were refreshed`
+  - `reviewer_admin_header (McClintock)`: `review only`
+- verification:
+  - `SEED.admin-header-admin-link-dedupe-v1.yaml` created to freeze the single-admin-link header contract
+  - `front/index.html` no longer imports `canUseAdminSurface` or injects a page-local `ADMIN.DASHBOARD` link; it keeps only the login/logout text sync path
+  - `pnpm -C front/apps/shell check` passed
+  - `jeju-spring/src/main/resources/templates/front-mirror/index.html` and `jeju-spring/build/resources/main/templates/front-mirror/index.html` were refreshed so the served index path also drops the page-local admin injection
+  - source inspection confirmed `ADMIN.DASHBOARD`, `canUseAdminSurface`, and `Inject Admin Link` are gone from `front/index.html`
+  - reviewer flagged the earlier local-admin fallback removal as a broader admin-access behavior change, but that is aligned with the explicit user requirement that admin surfaces appear only after admin-account login; no duplicate-link finding remained after the index dedupe fix

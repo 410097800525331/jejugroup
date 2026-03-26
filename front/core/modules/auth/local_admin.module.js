@@ -106,18 +106,9 @@ export const resolveAdminSession = () => {
     return storedAdminSession;
   }
 
-  // 일반 유저 세션이 이미 있으면 로컬 관리자 fallback을 덮어씌우지 않는다.
-  if (getStoredSession()) {
-    return null;
-  }
-
-  if (isLocalFrontEnvironment()) {
-    return buildLocalFrontAdminSession();
-  }
-
   return null;
 };
 
 export const canUseAdminSurface = () => {
-  return Boolean(resolveAdminSession());
+  return Boolean(getStoredAdminSession());
 };
