@@ -1,18 +1,16 @@
-// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
-import { hasAdminAccess, isLocalFrontEnvironment } from "../../../../core/modules/auth/local_admin.module.js";
-// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+// @ts-ignore JS 모듈 호환
+import { hasAdminAccess } from "../../../../core/modules/auth/local_admin.module.js";
+// @ts-ignore JS 모듈 호환
 import { saveSession } from "../../../../core/modules/auth/session_manager.module.js";
-// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+// @ts-ignore JS 모듈 호환
 import { API_BASE_URL } from "../../../../core/modules/config/api_config.module.js";
-// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+// @ts-ignore JS 모듈 호환
 import { ROUTES } from "../../../../core/modules/constants/routes.module.js";
-// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+// @ts-ignore JS 모듈 호환
 import { resolveRoute } from "../../../../core/modules/utils/path_resolver.module.js";
-// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+// @ts-ignore JS 모듈 호환
 import { sanitizeHTML, validateParam } from "../../../../core/modules/utils/sanitizer.module.js";
 
-const LOCAL_TEST_LOGIN_ID = "test";
-const LOCAL_TEST_PASSWORD = "1234";
 const AUTH_PATH_SEGMENT = "/pages/auth/";
 
 const resolveSafeLoginReturnUrl = (rawUrl: string | null) => {
@@ -46,26 +44,9 @@ const resolveSafeLoginReturnUrl = (rawUrl: string | null) => {
   }
 };
 
-const createLocalTestSession = (loginId: string) =>
-  Object.freeze({
-    id: "local-test-user",
-    loginId,
-    name: "테스트 사용자",
-    email: "test@local.jejugroup",
-    role: "USER",
-    roles: ["USER"],
-    authSource: "LOCAL_LOGIN_OVERRIDE",
-    isLocalTestAccount: true,
-  });
-
 export const loginWithCredentials = async (loginId: string, password: string) => {
   if (!validateParam(loginId) || !validateParam(password)) {
-    throw new Error("잘못된 입력 형식이 포함된 상태");
-  }
-
-  // 로컬 개발 서버에서만 테스트 계정을 우회 허용한다.
-  if (isLocalFrontEnvironment() && loginId === LOCAL_TEST_LOGIN_ID && password === LOCAL_TEST_PASSWORD) {
-    return saveSession(createLocalTestSession(loginId));
+    throw new Error("\uB85C\uADF8\uC778 \uC785\uB825\uAC12 \uAC80\uC99D \uC2E4\uD328 \uC0C1\uD0DC");
   }
 
   const params = new URLSearchParams();
@@ -82,13 +63,13 @@ export const loginWithCredentials = async (loginId: string, password: string) =>
   });
 
   if (!response.ok) {
-    let message = "로그인에 실패한 상태";
+    let message = "\uB85C\uADF8\uC778 \uCC98\uB9AC \uC2E4\uD328 \uC0C1\uD0DC";
 
     try {
       const payload = await response.json();
       message = typeof payload.message === "string" && payload.message ? payload.message : message;
     } catch (_error) {
-      // 응답 메시지가 비정상이면 기본 문구 유지 목적
+      // Keep the fallback message when the response body is malformed.
     }
 
     throw new Error(message);

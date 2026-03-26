@@ -2,42 +2,42 @@
 
 ## Current Task
 
-- task: `Remove duplicate admin-page link injection so logged-in admins see a single admin entry point in the front header`
-- phase: `completed`
-- scope: `STATE.md, MULTI_AGENT_LOG.md, SEED.admin-header-admin-link-dedupe-v1.yaml, front/index.html, derived jeju-spring/src/main/resources/templates/front-mirror/index.html, and derived jeju-spring/build/resources/main/** only where the sync/build pipeline refreshes the served index assets`
-- verification_target: `When logged in as an admin, the main header must show exactly one 관리자 페이지 link instead of two on front and local Spring runtime`
+- task: `Fix mojibake in the front auth login error messaging and regenerate affected runtime artifacts so text-integrity checks pass`
+- phase: `implementation`
+- scope: `STATE.md, MULTI_AGENT_LOG.md, SEED.mojibake-auth-login-message-fix-v1.yaml, front/components/react/auth/services/loginService.ts, derived front/.generated/webapp-overlay/**, and derived jeju-spring runtime assets only where the existing sync/build pipeline refreshes the affected auth runtime files`
+- verification_target: `The mojibake in loginService and regenerated auth runtime artifacts must be removed so text-integrity checks no longer flag the affected files`
 
 ## Route
 
 - route: `Route B`
-- reason: `the source fix is in front/index.html but the default runtime also depends on regenerated jeju-spring mirror/build outputs, so this task crosses front source plus spring-derived artifacts and requires planner-only Route B with worker/reviewer delegation`
+- reason: `the fix starts in a single front source file but the failing text-integrity check also hits regenerated auth runtime artifacts in front and jeju-spring, so the task spans source plus derived outputs and requires planner-only Route B with delegated implementation/review.`
 
 ## Writer Slot
 
 - owner: `main (planner-only)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_header`: `SEED.admin-header-admin-link-dedupe-v1.yaml`
-  - `worker_feature_index_admin`: `front/index.html`
-  - `worker_spring_index_mirror`: `derived jeju-spring/src/main/resources/templates/front-mirror/index.html and derived jeju-spring/build/resources/main/** only where the sync/build pipeline refreshes the served index assets`
-  - `reviewer_admin_header`: `review only`
-- note: `the fix removes duplicate admin-link injection from the front source and then refreshes the spring-served derived index artifacts in a separate worker lane`
+  - `worker_seed_mojibake_auth`: `SEED.mojibake-auth-login-message-fix-v1.yaml`
+  - `worker_auth_text_source`: `front/components/react/auth/services/loginService.ts`
+  - `worker_auth_text_runtime`: `derived front/.generated/webapp-overlay/** and derived jeju-spring runtime assets only where the existing sync/build pipeline refreshes the affected auth runtime files`
+  - `reviewer_mojibake_auth`: `review only`
+- note: `Route B planner-only lane. The source text fix and regenerated runtime outputs are split so the mojibake repair can be reviewed separately from pipeline churn.`
 
 ## Contract Freeze
 
-- contract_freeze: `Remove only the extra index-page admin-link injection so admin header UI is owned by the shared runtime/header logic and logged-in admins see a single 관리자 페이지 link. Keep the rest of the login/logout sync behavior intact, keep front as source of truth, avoid unrelated auth/header redesign, and regenerate only the spring-derived index assets needed to reflect the source fix.`
+- contract_freeze: `Touch only the mojibake-affected login error text in front auth source, keep the message semantics intact in Korean, preserve unrelated auth behavior, keep front as source of truth, and regenerate only the affected auth runtime artifacts needed for front and jeju-spring so text-integrity checks stop flagging the broken text.`
 - status: `frozen`
-- path: `SEED.admin-header-admin-link-dedupe-v1.yaml`
+- path: `SEED.mojibake-auth-login-message-fix-v1.yaml`
 - revision: `v1`
-- note: `Investigation found that front/index.html still injects an admin link manually while the shared header runtime also appends the same ADMIN.DASHBOARD entry for admin sessions. The duplicate is therefore caused by two independent link insertions, and this slice is limited to removing the page-local one.`
+- note: `Text-integrity guard currently flags mojibake in front/components/react/auth/services/loginService.ts and the derived feature-auth runtime chunk generated from it. The smallest safe slice is to repair the source Korean string/comment and then regenerate only the affected auth runtime outputs.`
 
 ## Reviewer
 
-- reviewer: `reviewer_admin_header`
-- reviewer_target: `single admin-link behavior, index/runtime ownership, and mirror boundary correctness`
-- reviewer_focus: `duplicate 관리자 페이지 link removal, auth sync regression risk, spring mirror scope`
+- reviewer: `reviewer_mojibake_auth`
+- reviewer_target: `mojibake removal in source and derived auth runtime artifacts`
+- reviewer_focus: `Korean text integrity, unchanged auth semantics, derived runtime parity`
 
 ## Last Update
 
-- timestamp: `2026-03-26 17:58:00 +09:00`
-- note: `Removed the page-local admin link injection from front/index.html, refreshed the spring-served index mirror/build outputs, and verified that only the shared header runtime remains responsible for showing the single 관리자 페이지 entry. Shell typecheck passed and the reviewer found no duplicate-link issue in the updated front/spring index path.`
+- timestamp: `2026-03-26 19:47:00 +09:00`
+- note: `Reclassified to a new Route B text-integrity hotfix after confirming the current commit blocker is mojibake in loginService.ts that has already propagated into regenerated auth runtime artifacts. The frozen slice is limited to repairing that source text and refreshing the affected derived runtimes.`

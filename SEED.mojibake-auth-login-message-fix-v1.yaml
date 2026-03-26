@@ -1,0 +1,28 @@
+goal: "Fix mojibake in auth login messaging by restoring only the broken Korean error text and comments in loginService, then regenerate only the affected auth runtime derivatives."
+background: "This is a text-integrity hotfix. The auth flow is already correct; only the corrupted Korean copy propagated into derived runtime artifacts."
+in_scope:
+  - "front/components/react/auth/services/loginService.ts"
+  - "Restore the mojibake-affected Korean error message text and adjacent comments only"
+  - "Regenerate only the auth runtime artifacts that are directly affected by the source text change"
+out_of_scope:
+  - "Any auth behavior, control flow, API, or session logic changes"
+  - "Any text changes outside the mojibake-affected loginService Korean copy and comments"
+  - "Any unrelated frontend pages, shared shell code, or legacy mirror edits"
+  - "Direct edits to jeju-web/src/main/webapp/**"
+constraints:
+  - "front remains the only human-edited source of truth"
+  - "Preserve auth semantics exactly; do not change error handling behavior"
+  - "Keep the fix limited to the broken Korean loginService text and comments"
+  - "Recreate only the affected auth runtime derivatives through the existing sync/build pipeline"
+  - "Do not introduce new routes, features, or copy changes beyond the mojibake repair"
+acceptance_criteria:
+  - "The broken Korean loginService error message and comments are restored to valid Korean text"
+  - "Auth behavior remains unchanged for login failure, success, and related flows"
+  - "No unrelated auth files or frontend sections are modified for copy reasons"
+  - "Any affected generated auth runtime artifacts are refreshed and no longer contain the mojibake text"
+  - "front continues to be the source of truth for the repaired text"
+verification:
+  - "Inspect loginService to confirm only the mojibake text/comments changed"
+  - "Check the regenerated auth runtime artifacts for the repaired Korean copy"
+  - "Confirm no auth API, flow, or session behavior changed"
+  - "Confirm no unrelated mirror or frontend files were edited"

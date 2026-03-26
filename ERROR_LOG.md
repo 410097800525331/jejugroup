@@ -165,7 +165,12 @@
   location: SEED.auth-legacy-template-cleanup-v1.yaml verification
   summary: ConvertFrom-Yaml was unavailable in PowerShell during YAML validation
   details: The seed file itself was written successfully, but the initial local parse check failed because the cmdlet is not installed in this shell.
-  status: resolved
+status: resolved
+- time: `2026-03-26 19:57:00 +09:00`
+  location: `jeju-spring/gradlew.bat clean processResources`
+  summary: `Gradle wrapper was invoked with the wrong PowerShell syntax`
+  details: `Running `jeju-spring\gradlew.bat` from inside `D:\lsh\git\jejugroup\jeju-spring` was treated as a PowerShell module path. The correct form is `.\gradlew.bat` from the Gradle root.`
+  status: `resolved`
 - time: `2026-03-25 10:40:00 +09:00`
 - location: `SEED.auth-legacy-template-cleanup-v1.yaml verification`
 - summary: `local YAML parse tooling was unavailable in this workspace`

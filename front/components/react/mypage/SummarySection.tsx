@@ -17,26 +17,45 @@ type DashboardStateSlice = {
   stats?: StatItem[];
 };
 
-const getMembershipTone = (membership?: string) => {
-  const normalized = membership?.toLowerCase() ?? "";
+const resolveCanonicalMembershipTier = (membership?: string) => {
+  const normalized = membership?.trim().toLowerCase() ?? "";
 
-  if (normalized.includes("diamond")) {
+  if (normalized.includes("diamond") || normalized.includes("다이아")) {
     return "diamond";
   }
 
-  if (normalized.includes("platinum")) {
+  if (normalized.includes("platinum") || normalized.includes("플래티넘")) {
     return "platinum";
   }
 
-  if (normalized.includes("silver")) {
+  if (normalized.includes("silver") || normalized.includes("실버")) {
     return "silver";
   }
 
-  if (normalized.includes("gold")) {
+  if (normalized.includes("gold") || normalized.includes("골드")) {
     return "gold";
   }
 
-  return "neutral";
+  return null;
+};
+
+const getMembershipTone = (membership?: string) => {
+  return resolveCanonicalMembershipTier(membership) ?? "neutral";
+};
+
+const formatMembershipLabel = (membership?: string) => {
+  switch (resolveCanonicalMembershipTier(membership)) {
+    case "diamond":
+      return "DIAMOND";
+    case "platinum":
+      return "PLATINUM";
+    case "gold":
+      return "GOLD";
+    case "silver":
+      return "SILVER";
+    default:
+      return membership?.trim().toUpperCase() || "MEMBER";
+  }
 };
 
 const getStatIconName = (tone: StatItem["tone"]) => {
@@ -84,7 +103,9 @@ export const SummarySection = () => {
   const profile = state.profile ?? PROFILE;
   const stats = state.stats?.length ? state.stats : STATS;
   const membershipLabel = profile.memberships?.[0] ?? PROFILE.memberships[0];
-  const membershipTone = getMembershipTone(membershipLabel);
+  const membershipDisplaySource = profile.tier ?? membershipLabel;
+  const membershipTone = getMembershipTone(membershipDisplaySource);
+  const membershipDisplayLabel = formatMembershipLabel(membershipDisplaySource);
 
   useEffect(() => {
     if (window.lucide) {
@@ -104,7 +125,7 @@ export const SummarySection = () => {
                 src={`https://api.dicebear.com/7.x/notionists/svg?seed=${profile.name}&backgroundColor=f8f9fa`}
               />
               <div className={`membership-grade-chip soft-radius ${membershipTone}`}>
-                <span>{membershipLabel}</span>
+                <span>{membershipDisplayLabel}</span>
               </div>
             </div>
           </div>

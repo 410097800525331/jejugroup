@@ -1,8 +1,3 @@
-/**
- * 로컬 관리자 접근 규칙과 관리자 권한 세션 판별 모듈
- */
-
-const LOCAL_ADMIN_SOURCE = "LOCAL_FRONT_ADMIN";
 const SESSION_STORAGE_KEY = "userSession";
 const ADMIN_ROLE_KEYWORD = "ADMIN";
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "0.0.0.0"]);
@@ -66,20 +61,12 @@ export const isLocalFrontEnvironment = () => {
   return window.location.protocol === "file:" || isPrivateNetworkHost(window.location.hostname);
 };
 
-export const buildLocalFrontAdminSession = () => {
-  return Object.freeze({
-    id: "local-admin",
-    name: "로컬 관리자",
-    email: "admin@local.jejugroup",
-    role: "ADMIN",
-    roles: ["ADMIN", "SUPER_ADMIN"],
-    authSource: LOCAL_ADMIN_SOURCE,
-    isLocalAdmin: true,
-  });
-};
-
 export const hasAdminAccess = (sessionData) => {
   return toRoleList(sessionData).some((role) => role.toUpperCase().includes(ADMIN_ROLE_KEYWORD));
+};
+
+export const buildLocalFrontAdminSession = () => {
+  return getStoredAdminSession();
 };
 
 export const getStoredAdminSession = () => {
@@ -101,12 +88,7 @@ export const getStoredSession = () => {
 };
 
 export const resolveAdminSession = () => {
-  const storedAdminSession = getStoredAdminSession();
-  if (storedAdminSession) {
-    return storedAdminSession;
-  }
-
-  return null;
+  return getStoredAdminSession();
 };
 
 export const canUseAdminSurface = () => {

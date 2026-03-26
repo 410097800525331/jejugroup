@@ -1444,3 +1444,56 @@
   - `jeju-spring/src/main/resources/templates/front-mirror/index.html` and `jeju-spring/build/resources/main/templates/front-mirror/index.html` were refreshed so the served index path also drops the page-local admin injection
   - source inspection confirmed `ADMIN.DASHBOARD`, `canUseAdminSurface`, and `Inject Admin Link` are gone from `front/index.html`
   - reviewer flagged the earlier local-admin fallback removal as a broader admin-access behavior change, but that is aligned with the explicit user requirement that admin surfaces appear only after admin-account login; no duplicate-link finding remained after the index dedupe fix
+
+- time: `2026-03-26 18:52 +09:00`
+- route: `Route B`
+- task: `Unify front login/session handling around real Spring auth sessions by removing the local test-login override and stale-session regressions`
+- participants: `main`, `worker_seed_auth_session (Copernicus)`, `worker_auth_session_source (Kant)`, `worker_auth_session_runtime (Boole)`, `reviewer_auth_session (Lagrange)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_auth_session (Copernicus)`: `SEED.auth-session-unify-v1.yaml`
+  - `worker_auth_session_source (Kant)`: `front/components/react/auth/services/loginService.ts, front/core/modules/auth/session_manager.module.js, front/core/modules/auth/local_admin.module.js, front/admin/js/auth_guard.js, front/components/react/mypage/state.tsx, front/components/react/mypage/data.ts, front/apps/shell/src/runtime/layout/header.ts`
+  - `worker_auth_session_runtime (Boole)`: `derived front/.generated/webapp-overlay/** and derived jeju-spring runtime assets only where the existing sync/build pipeline refreshed affected auth and mypage runtime files`
+  - `reviewer_auth_session (Lagrange)`: `review only`
+- verification:
+  - `SEED.auth-session-unify-v1.yaml` created to freeze removal of the front-only login override and adoption of Spring-backed auth/session resolution
+  - `front/components/react/auth/services/loginService.ts` no longer contains `LOCAL_TEST_LOGIN_ID`, `LOCAL_TEST_PASSWORD`, or `LOCAL_LOGIN_OVERRIDE`
+  - `front/core/modules/auth/session_manager.module.js` now resolves session state from server `/api/auth/session` only and clears stale local state on `401`
+  - `front/core/modules/auth/local_admin.module.js` and `front/admin/js/auth_guard.js` now admit admin surfaces only when the resolved real session is admin
+  - `front/components/react/mypage/state.tsx` now hydrates authenticated mypage state through `/api/mypage/dashboard`, and `front/components/react/mypage/data.ts` now prioritizes `tier ?? memberships[0] ?? role` for profile styling
+  - `pnpm -C front/apps/shell check` passed
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` regenerated the affected front/spring runtime artifacts
+  - regenerated `feature-auth-tnJ9jRKY.js` contains no `LOCAL_TEST_*` or `LOCAL_LOGIN_OVERRIDE`, and regenerated `feature-mypage-CktpJWZ4.js` contains `/api/mypage/dashboard`
+  - `reviewer_auth_session (Lagrange)` reported no blocking findings; residual note only that `front/index.html` inline login/logout text sync still reads localStorage and could cause a brief visual mismatch against server-session truth
+
+- time: `2026-03-26 19:34 +09:00`
+- route: `Route B`
+- task: `Deepen the platinum membership styling slightly so it feels more premium while preserving the new silver/platinum contrast, then mirror it to jeju-spring`
+- participants: `main`, `worker_seed_membership_tier (Newton)`, `worker_front_membership_styles (Faraday)`, `worker_spring_membership_mirror (Banach)`, `reviewer_membership_tier (Fermat, Harvey)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_membership_tier (Newton)`: `SEED.membership-tier-platinum-polish-v1.yaml`
+  - `worker_front_membership_styles (Faraday)`: `front/styles/globals.css, front/pages/mypage/styles/_summary.css`
+  - `worker_spring_membership_mirror (Banach)`: `derived jeju-spring mirror/build assets only where the existing front-to-spring pipeline refreshed the affected membership styles`
+  - `reviewer_membership_tier (Fermat, Harvey)`: `review only`
+- verification:
+  - `SEED.membership-tier-platinum-polish-v1.yaml` created to freeze a platinum-only premium polish while keeping silver unchanged
+  - `front/styles/globals.css` keeps silver as the neutral baseline and deepens only `tier-badge.platinum`
+  - `front/pages/mypage/styles/_summary.css` keeps silver unchanged and deepens only the platinum chip/avatar variables
+  - the first review pass caught spring mirror parity drift; spring mirror/build outputs were then re-run until `[jeju-spring/src/main/resources/static/front-mirror/styles/globals.css]` and `[jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css]` matched the updated front values
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` completed successfully on the final pass
+  - final mirror verification confirmed updated platinum values in both `src/main/resources/static/front-mirror/**` and `build/resources/main/static/front-mirror/**`
+
+- time: `2026-03-26 12:18 +09:00`
+- route: `Route B`
+- task: `Regenerate auth/session/mypage runtime artifacts and spring processResources outputs after the latest front auth-session fixes`
+- participants: `worker_auth_session_runtime (gogi)`
+- write_sets:
+  - `worker_auth_session_runtime`: `derived front/.generated/webapp-overlay/**, derived jeju-spring runtime assets only where the existing sync/build pipeline refreshes affected auth and mypage runtime files`
+- verification:
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` passed
+  - `jeju-spring/gradlew.bat clean processResources` passed
+  - regenerated `feature-auth-tnJ9jRKY.js` contains no `LOCAL_TEST_` or `LOCAL_LOGIN_OVERRIDE`
+  - regenerated `feature-mypage-CktpJWZ4.js` contains `/api/mypage/dashboard`
+  - `jeju-spring/build/resources/main/static/front-mirror/components/runtime` and `jeju-spring/build/resources/main/static/components/runtime` both picked up the new runtime hash set
+  - mirrored `jeju-spring/build/resources/main/static/front-mirror/admin/js/auth_guard.js` keeps admin access gated through `resolveSession()` and `hasAdminAccess()`

@@ -447,15 +447,17 @@ body {
 }
 .tier-badge.platinum {
     background:
-        radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.18) 12%, rgba(255, 255, 255, 0) 34%),
-        linear-gradient(135deg, #f0f0f0 0%, #a7a7a7 12%, #4a4a4a 44%, #151515 72%, #606060 100%);
+        radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.96) 0%, rgba(246, 250, 255, 0.32) 12%, rgba(255, 255, 255, 0) 34%),
+        linear-gradient(135deg, #fcfeff 0%, #dce8f2 14%, #b1c2d4 33%, #6f8499 55%, #e7eff6 77%, #8ea2b6 100%);
     background-repeat: no-repeat;
-    color: #ffffff; /* 흰색 텍스트로 대비 강조 */
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+    color: #f9fbff; /* 차가운 메탈 톤만 유지 */
+    text-shadow: 0 1px 0 rgba(18, 31, 48, 0.38);
     box-shadow:
-        inset 0 1px 1px rgba(255, 255, 255, 0.28),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.42),
-        0 2px 4px rgba(0, 0, 0, 0.14);
+        inset 0 1px 1px rgba(255, 255, 255, 0.48),
+        inset 0 -2px 5px rgba(42, 61, 84, 0.28),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+        0 2px 5px rgba(0, 0, 0, 0.13),
+        0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 .tier-popular {
     position: absolute;

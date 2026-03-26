@@ -20,6 +20,18 @@ const parseSession = (rawValue) => {
   }
 };
 
+const serializeSession = (session) => {
+  if (!session || typeof session !== "object") {
+    return null;
+  }
+
+  try {
+    return JSON.stringify(session);
+  } catch (_error) {
+    return null;
+  }
+};
+
 const emitSessionUpdate = (session) => {
   try {
     const detail = session ? { session: { ...session } } : { session: null };
@@ -43,9 +55,15 @@ export const saveSession = (user) => {
   }
 
   const nextSession = { ...user };
+  const serializedNextSession = serializeSession(nextSession);
 
   try {
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextSession));
+    const currentRawSession = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (serializedNextSession && currentRawSession === serializedNextSession) {
+      return parseSession(currentRawSession) ?? nextSession;
+    }
+
+    localStorage.setItem(SESSION_STORAGE_KEY, serializedNextSession ?? JSON.stringify(nextSession));
   } catch (error) {
     console.warn("[SessionManager] Session save failed:", error);
   }
@@ -56,6 +74,10 @@ export const saveSession = (user) => {
 
 export const clearSession = () => {
   try {
+    if (localStorage.getItem(SESSION_STORAGE_KEY) === null) {
+      return;
+    }
+
     localStorage.removeItem(SESSION_STORAGE_KEY);
   } catch (error) {
     console.warn("[SessionManager] Session clear failed:", error);
@@ -91,11 +113,6 @@ export const fetchSessionFromServer = async () => {
 };
 
 export const resolveSession = async () => {
-  const localSession = getStoredSession();
-  if (localSession) {
-    return localSession;
-  }
-
   try {
     return await fetchSessionFromServer();
   } catch (error) {

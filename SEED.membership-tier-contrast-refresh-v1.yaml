@@ -1,0 +1,30 @@
+goal: Refresh the silver/platinum membership contrast so silver stays a neutral metal and platinum reads as a cooler blue-white metallic tier.
+background: >
+  This is a front-authored visual refinement for the landing and mypage
+  membership surfaces. Front remains the source of truth, jeju-web must not be
+  edited directly, and any jeju-spring update must come only from derived mirror
+  output.
+in_scope:
+  - Landing membership visuals in front source
+  - Mypage membership/profile visuals in front source
+  - Derived jeju-spring mirror output produced from the front change
+out_of_scope:
+  - Direct edits to jeju-web/src/main/webapp/**
+  - Direct hand edits to jeju-spring/**
+  - Layout, copy, behavior, or data-flow changes unrelated to tier contrast
+constraints:
+  - Keep silver visually neutral and metallic.
+  - Make platinum clearly cooler, blue-white, and more reflective than silver.
+  - Touch only front source files for the landing and mypage membership surfaces.
+  - Do not edit jeju-web directly.
+  - Do not hand-edit jeju-spring; only derived mirror updates may change there.
+acceptance_criteria:
+  - Silver remains a neutral metallic tier with no blue-white drift.
+  - Platinum reads as a cooler blue-white metallic tier and is visibly distinct from silver.
+  - Landing and mypage membership surfaces share the refreshed contrast language.
+  - No unrelated layout, copy, or interaction regressions are introduced.
+  - The jeju-spring mirror reflects the same front-authored membership styling.
+verification:
+  - Review the diff for the affected front membership style changes.
+  - Run the relevant repo checks for the changed front styles and pages.
+  - Confirm the derived jeju-spring output matches the front-authored styling.
