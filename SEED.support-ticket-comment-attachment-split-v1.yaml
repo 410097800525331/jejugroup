@@ -1,0 +1,29 @@
+goal: >
+  Freeze the next track_support_cms slice by keeping the public
+  /api/customer-center/support/** contract stable while splitting ticket,
+  comment, and attachment CRUD plus the shared ticket access policy and DB
+  helper responsibilities behind the existing API.
+constraints:
+  - Preserve the existing `/api/customer-center/support/categories`, `/api/customer-center/support/tickets`, `/api/customer-center/support/tickets/{ticketId}`, `/api/customer-center/support/tickets/{ticketId}/comments*`, and `/api/customer-center/support/tickets/{ticketId}/attachments*` paths.
+  - Preserve the current top-level JSON envelope, including `success`, `data`, and `message` where they already exist.
+  - Keep `categories` public and unchanged in behavior for this slice.
+  - Keep `tickets`, `comments`, and `attachments` authenticated through the existing session-based user path.
+  - Keep admin access to all tickets and preserve the rule that non-admin users can only access their own tickets.
+  - Split shared ticket access checks and DB helper behavior out of the monolithic support source into internal support-service helpers.
+  - Limit the slice to `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/**`.
+  - Do not change customer-center cms behavior, front sources, `jeju-web`, spring mirror/runtime outputs, or routing in this slice.
+  - Keep the recent auth/session work intact, including `active_user_sessions`, auth session heartbeat, and admin dashboard `activeUsers` KPI behavior.
+acceptance_criteria:
+  - `/api/customer-center/support/categories` still responds successfully with the same public contract and no new auth requirement.
+  - `/api/customer-center/support/tickets` and `/api/customer-center/support/tickets/{ticketId}` still enforce authenticated access with admin/full-access and user-own-ticket access preserved.
+  - Comment and attachment CRUD endpoints still behave compatibly on the same external paths and envelope.
+  - Shared ticket access policy and DB helper code are extracted so ticket/comment/attachment logic is no longer one monolithic support implementation.
+  - The support surface remains compatible with the current front callers and no customer-center cms or auth/session behavior changes are introduced.
+verification:
+  - `D:\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Refactoring customer-center cms notice/faq APIs.
+  - Refactoring admin read APIs or admin dashboard behavior.
+  - Front UI changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.
+  - Routing changes.
