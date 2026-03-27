@@ -14,7 +14,9 @@ import com.jejugroup.jejuspring.stay.view.StayHotelListSearchSummaryView;
 
 @Service
 public class StayHotelListFactory {
-    public StayHotelListPageView build(String shell, StayHotelListQuery query) {
+    public StayHotelListPageView build(StayHotelListPageRequest request) {
+        String shell = request.shell();
+        StayHotelListQuery query = request.query();
         RegionProfile profile = resolveRegionProfile(query);
         Set<String> selectedFilters = normalizeFilters(query.filters());
         List<StayHotelListItemView> filteredHotels = filterHotels(profile.hotels(), selectedFilters, profile);

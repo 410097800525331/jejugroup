@@ -1,7 +1,6 @@
 package com.jejugroup.jejuspring.stay.web;
 
 import java.util.List;
-import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -9,16 +8,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.jejugroup.jejuspring.stay.application.StayHotelListFactory;
-import com.jejugroup.jejuspring.stay.application.StayHotelListQuery;
+import com.jejugroup.jejuspring.stay.application.StayHotelListQueryService;
+import com.jejugroup.jejuspring.stay.application.StayHotelListPageRequest;
 import com.jejugroup.jejuspring.stay.view.StayHotelListPageView;
 
 @Controller
 public class StayController {
-    private static final Set<String> SUPPORTED_SHELLS = Set.of("main", "stay", "air");
-
+    private final StayHotelListQueryService stayHotelListQueryService;
     private final StayHotelListFactory stayHotelListFactory;
 
-    public StayController(StayHotelListFactory stayHotelListFactory) {
+    public StayController(StayHotelListQueryService stayHotelListQueryService, StayHotelListFactory stayHotelListFactory) {
+        this.stayHotelListQueryService = stayHotelListQueryService;
         this.stayHotelListFactory = stayHotelListFactory;
     }
 
@@ -38,10 +38,18 @@ public class StayController {
         int rooms,
         List<String> filters
     ) {
-        return stayHotelListFactory.build(
-            normalizeShell(shell),
-            new StayHotelListQuery(region, keyword, checkIn, checkOut, Math.max(1, adults), Math.max(0, children), Math.max(1, rooms), filters)
+        StayHotelListPageRequest request = stayHotelListQueryService.normalize(
+            shell,
+            region,
+            keyword,
+            checkIn,
+            checkOut,
+            adults,
+            children,
+            rooms,
+            filters
         );
+        return stayHotelListFactory.build(request);
     }
 
     private String redirectToCanonical(HttpServletRequest request, String canonicalPath) {
@@ -51,14 +59,5 @@ public class StayController {
         }
 
         return "redirect:%s?%s".formatted(canonicalPath, queryString);
-    }
-
-    private String normalizeShell(String shell) {
-        if (shell == null) {
-            return "stay";
-        }
-
-        String normalized = shell.trim().toLowerCase();
-        return SUPPORTED_SHELLS.contains(normalized) ? normalized : "stay";
     }
 }

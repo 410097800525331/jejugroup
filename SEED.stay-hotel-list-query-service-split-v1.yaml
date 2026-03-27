@@ -1,0 +1,89 @@
+goal: >
+  Freeze the stay hotel-list stabilization slice that separates query
+  normalization/service boundaries from page assembly boundaries while keeping
+  the external GET /api/stay/hotel-list contract stable.
+constraints:
+  - >
+    Keep the external GET /api/stay/hotel-list contract stable for existing
+    callers.
+  - >
+    Preserve the meaning of the request params shell, region, keyword,
+    checkIn, checkOut, adults, children, rooms, and filter.
+  - >
+    Preserve shell normalization semantics: main, stay, and air remain the
+    accepted shell values, and null/blank/unknown input still falls back to
+    stay.
+  - >
+    Preserve guest-count clamping semantics: adults must remain at least 1,
+    children at least 0, and rooms at least 1.
+  - >
+    Preserve filter selection semantics, including list handling, trimming, and
+    checked-option behavior in the rendered page view.
+  - >
+    Preserve region/keyword profile resolution semantics used by the current
+    stay hotel-list page.
+  - >
+    Preserve the exact StayHotelListPageView payload shape and nested view
+    records:
+    StayHotelListSearchSummaryView(destinationLabel, dateLabel, guestLabel),
+    StayHotelListFilterSectionView(id, title, options),
+    StayHotelListFilterOptionView(id, label, count, description, checked), and
+    StayHotelListItemView(id, title, stars, location, locationId,
+    propertyTypeId, reviewScore, reviewLabel, originalPrice, currentPrice,
+    imageUrl, badge, filterIds, tags).
+  - >
+    Keep the implementation scope inside
+    jeju-spring/src/main/java/com/jejugroup/jejuspring/stay/**.
+  - >
+    Treat the existing /stay/hotel-list redirect as out of scope unless it is
+    directly needed for adapter wiring.
+  - >
+    Do not change frontend code, mirror paths, or non-stay backend packages in
+    this slice.
+  - >
+    Do not change the observable page assembly semantics while moving logic
+    into a query normalization/service boundary plus a separate page assembly
+    boundary.
+acceptance_criteria:
+  - >
+    GET /api/stay/hotel-list still returns the same externally visible page
+    contract for equivalent inputs.
+  - >
+    Query normalization is split from page assembly inside the stay package,
+    with the controller/adaptor layer no longer owning both concerns in a
+    single step.
+  - >
+    Shell normalization, guest-count clamping, filter selection, and
+    region/keyword profile resolution behave the same as the current
+    implementation.
+  - >
+    The page view still exposes the same StayHotelListPageView shape and the
+    same nested view records expected by downstream callers.
+  - >
+    The existing /stay/hotel-list redirect behavior remains unchanged unless
+    a minimal adapter wiring change is required to keep the canonical flow
+    working.
+  - >
+    No edits are required outside
+    jeju-spring/src/main/java/com/jejugroup/jejuspring/stay/** for this
+    stabilization slice.
+verification:
+  - >
+    D:\lsh\git\jejugroup\jeju-spring\gradlew.bat compileJava
+  - >
+    git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/stay
+out_of_scope:
+  - >
+    Any change to the external GET /api/stay/hotel-list route, parameter set,
+    or payload envelope.
+  - >
+    Any change to the StayHotelListPageView or nested view record field shape.
+  - >
+    Any change to front, jeju-web, jeju-spring mirror/runtime outputs outside
+    the stay package, or other backend packages.
+  - >
+    Any broad rewrite of hotel-list behavior beyond the targeted split between
+    query normalization/service responsibility and page assembly responsibility.
+  - >
+    Any redirect or route cleanup work on /stay/hotel-list unless it is
+    strictly required for adapter wiring.
