@@ -1,0 +1,76 @@
+goal: >
+  Keep the external `/api/mypage/dashboard` contract stable while extracting the
+  remaining mypage dashboard trip-related responsibilities from
+  `MyPageDashboardRepository` into dedicated query/service layers inside
+  `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`.
+  The extracted responsibilities are companion-links loading, travel-events
+  loading, and itinerary assembly.
+constraints:
+  - >
+    Preserve the `/api/mypage/dashboard` path, success envelope, and existing
+    session-gated authentication behavior.
+  - >
+    Keep the dashboard snapshot payload shape unchanged for downstream
+    consumers.
+  - >
+    Preserve the meaning and ordering of `travelEvents`, `itinerary`, and
+    `linkedCompanions`.
+  - >
+    Preserve booking list meaning and behavior as-is.
+  - >
+    Keep the scope strictly within
+    `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`.
+  - >
+    Do not modify `front`, `admin`, `support`, `customer-center`, or `booking`
+    packages.
+  - >
+    Do not regress the recent auth/session work.
+  - >
+    Keep profile, membership, stats, and support split status intact.
+  - >
+    Treat `MyPageDashboardRepository` as the existing external orchestrator
+    boundary unless a minimal internal refactor is required to delegate the new
+    query/service responsibilities.
+acceptance_criteria:
+  - >
+    `MyPageDashboardRepository` no longer owns the companion-links query,
+    travel-events query, or itinerary assembly logic directly; those
+    responsibilities live in dedicated query/service classes under the mypage
+    package.
+  - >
+    The `/api/mypage/dashboard` response remains backward compatible in route,
+    envelope, auth gating, and snapshot payload shape.
+  - >
+    `travelEvents`, `itinerary`, and `linkedCompanions` preserve their existing
+    semantics, grouping rules, and sort order.
+  - >
+    Booking list generation remains semantically equivalent to the current
+    behavior.
+  - >
+    Profile, membership, stats, and support behavior remain unchanged from the
+    already split state.
+  - >
+    No files outside `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+    are modified.
+verification:
+  - >
+    Run `D:\\lsh\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat
+    compileJava`
+  - >
+    Run `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage`
+out_of_scope:
+  - >
+    Any changes to the `/api/mypage/dashboard` route, response envelope, or
+    session-gated auth rules.
+  - >
+    Any payload schema change that breaks existing dashboard consumers.
+  - >
+    Any change to the meaning or ordering of booking, travel event, itinerary,
+    or linked companion data.
+  - >
+    Any edits outside `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`.
+  - >
+    Any modifications to `front`, `admin`, `support`, `customer-center`, or
+    `booking` packages.
+  - >
+    Any follow-up migration, mirror update, or deployment packaging work.

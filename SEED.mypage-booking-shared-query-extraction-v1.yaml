@@ -1,0 +1,30 @@
+goal: >
+  Freeze the first track_mypage_booking slice by keeping the external
+  /api/mypage/dashboard, /api/booking/me, and /api/booking/users/{userId}
+  contracts stable while extracting duplicated booking read logic into a shared
+  query layer or repository that both mypage snapshot and booking read use.
+constraints:
+  - Preserve the existing `/api/mypage/dashboard`, `/api/booking/me`, and `/api/booking/users/{userId}` paths.
+  - Preserve the current top-level JSON envelope and do not change the payload shape callers already expect.
+  - Keep `/api/mypage/dashboard` authenticated with the existing session requirement.
+  - Keep `/api/booking/me` bound to the current user's session identity.
+  - Keep `/api/booking/users/{userId}` on the existing admin-or-self access rule.
+  - Extract duplicated booking read logic into a shared query layer or repository that is reused by both mypage snapshot and booking read code.
+  - Limit this slice to `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**` and `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**`.
+  - Do not change support, customer-center, admin, front, jeju-web, mirror/runtime, or routing behavior in this slice.
+  - Keep the recent auth/session work intact, including `active_user_sessions`, auth session heartbeat, and admin dashboard `activeUsers` KPI behavior.
+acceptance_criteria:
+  - `/api/mypage/dashboard` still responds with the same external contract and authenticated access behavior.
+  - `/api/booking/me` still returns the current user's bookings with the same visible response shape.
+  - `/api/booking/users/{userId}` still applies the existing admin-or-self rule and returns the same visible response shape.
+  - The duplicated booking read path is centralized into a shared query layer or repository instead of being implemented separately in both consumers.
+  - Mypage snapshot and booking read both consume the shared booking query path without changing their external payloads.
+  - No regressions are introduced to the recent auth/session work or to unrelated admin/support/customer-center surfaces.
+verification:
+  - `D:\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Any edits outside `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**` and `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**`.
+  - Changing frontend source, mirrors, deployment runtime, or routing.
+  - Altering the top-level JSON envelope or caller-visible payload shape.
+  - Refactoring support, customer-center, or admin dashboard behavior beyond the explicitly preserved auth/session work.
+  - Adding new external API endpoints.

@@ -25,6 +25,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.jejugroup.jejuspring.auth.model.SessionUser;
+import com.jejugroup.jejuspring.booking.application.BookingQueryRepository;
 import com.jejugroup.jejuspring.config.AppProperties;
 import com.jejugroup.jejuspring.mypage.view.MyPageBookingView;
 import com.jejugroup.jejuspring.mypage.view.MyPageStatView;
@@ -38,9 +39,35 @@ public class MyPageDashboardRepository {
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,###");
 
     private final AppProperties appProperties;
+    private final BookingQueryRepository bookingQueryRepository;
+    private final MyPageProfileQueryService profileQueryService;
+    private final MyPageMembershipQueryService membershipQueryService;
+    private final MyPageStatsQueryService statsQueryService;
+    private final MyPageSupportQueryService supportQueryService;
+    private final MyPageCompanionQueryService companionQueryService;
+    private final MyPageTravelEventQueryService travelEventQueryService;
+    private final MyPageItineraryService itineraryService;
 
-    public MyPageDashboardRepository(AppProperties appProperties) {
+    public MyPageDashboardRepository(
+        AppProperties appProperties,
+        BookingQueryRepository bookingQueryRepository,
+        MyPageProfileQueryService profileQueryService,
+        MyPageMembershipQueryService membershipQueryService,
+        MyPageStatsQueryService statsQueryService,
+        MyPageSupportQueryService supportQueryService,
+        MyPageCompanionQueryService companionQueryService,
+        MyPageTravelEventQueryService travelEventQueryService,
+        MyPageItineraryService itineraryService
+    ) {
         this.appProperties = appProperties;
+        this.bookingQueryRepository = bookingQueryRepository;
+        this.profileQueryService = profileQueryService;
+        this.membershipQueryService = membershipQueryService;
+        this.statsQueryService = statsQueryService;
+        this.supportQueryService = supportQueryService;
+        this.companionQueryService = companionQueryService;
+        this.travelEventQueryService = travelEventQueryService;
+        this.itineraryService = itineraryService;
     }
 
     public MyPageDashboardSnapshot load(String userId) throws SQLException {
@@ -51,15 +78,16 @@ public class MyPageDashboardRepository {
         try (Connection connection = openConnection()) {
             connection.setReadOnly(true);
 
-            MyPageProfileSnapshot profile = loadProfile(connection, userId);
-            List<MyPageItineraryCompanionSnapshot> linkedCompanions = loadCompanionLinks(connection, userId);
+            MyPageMembershipQueryService.MyPageMembershipSnapshot membershipSnapshot = membershipQueryService.loadMemberships(connection, userId);
+            MyPageProfileSnapshot profile = profileQueryService.loadProfile(connection, userId, membershipSnapshot.tierLabel());
+            List<MyPageItineraryCompanionSnapshot> linkedCompanions = companionQueryService.loadCompanionLinks(connection, userId);
             List<String> travelEventScopeUserIds = buildTravelEventScopeUserIds(userId, linkedCompanions);
-            List<String> memberships = loadMemberships(connection, userId);
+            List<String> memberships = membershipSnapshot.memberships();
             List<MyPageBookingView> bookings = loadBookings(connection, userId);
-            List<MyPageStatView> stats = loadStats(connection, userId);
-            List<MyPageSupportView> supportItems = loadSupportItems(connection, userId);
-            List<MyPageTravelEventSnapshot> travelEvents = loadTravelEvents(connection, travelEventScopeUserIds);
-            List<MyPageItinerarySnapshot> itinerary = buildItinerary(userId, travelEvents);
+            List<MyPageStatView> stats = statsQueryService.loadStats(connection, userId);
+            List<MyPageSupportView> supportItems = supportQueryService.loadSupportItems(connection, userId);
+            List<MyPageTravelEventSnapshot> travelEvents = travelEventQueryService.loadTravelEvents(connection, travelEventScopeUserIds);
+            List<MyPageItinerarySnapshot> itinerary = itineraryService.buildItinerary(userId, travelEvents);
 
             return new MyPageDashboardSnapshot(
                 profile,
@@ -257,46 +285,22 @@ public class MyPageDashboardRepository {
     }
 
     private List<MyPageBookingView> loadBookings(Connection connection, String userId) throws SQLException {
-        String query = """
-            SELECT
-                b.id,
-                b.booking_no,
-                b.booking_type,
-                b.status,
-                b.payment_status,
-                b.currency,
-                b.total_amount,
-                b.paid_amount,
-                b.booked_at,
-                b.cancelled_at
-            FROM bookings b
-            WHERE b.user_id = ?
-            ORDER BY COALESCE(b.booked_at, b.created_at) DESC, b.id DESC
-            """;
-
         List<MyPageBookingView> bookings = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, userId);
+        for (BookingQueryRepository.BookingRow booking : bookingQueryRepository.loadBookingsForDashboard(connection, userId)) {
+            BookingQueryRepository.BookingItemSummary itemSummary = bookingQueryRepository.loadBookingItemSummary(connection, booking.id());
+            String bookingType = normalizeBookingType(booking.bookingType());
+            String paymentMethod = bookingQueryRepository.loadLatestPaymentMethod(connection, booking.id());
+            int passengerCount = bookingQueryRepository.loadPassengerCount(connection, booking.id());
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    long bookingId = resultSet.getLong("id");
-                    String bookingType = normalizeBookingType(resultSet.getString("booking_type"));
-                    BookingItemSummary itemSummary = loadBookingItemSummary(connection, bookingId);
-                    String paymentMethod = loadLatestPaymentMethod(connection, bookingId);
-                    int passengerCount = loadPassengerCount(connection, bookingId);
-
-                    bookings.add(new MyPageBookingView(
-                        nullToEmpty(resultSet.getString("booking_no")),
-                        bookingType,
-                        buildBookingTitle(bookingType, itemSummary, resultSet.getString("booking_no")),
-                        buildBookingStatus(bookingType, resultSet.getString("status"), resultSet.getString("payment_status"), resultSet.getTimestamp("cancelled_at")),
-                        buildBookingDateLabel(bookingType, resultSet.getTimestamp("booked_at"), itemSummary),
-                        formatMoney(resultSet.getBigDecimal("paid_amount"), resultSet.getBigDecimal("total_amount"), resultSet.getString("currency")),
-                        buildBookingTags(bookingType, itemSummary, paymentMethod, passengerCount, resultSet.getString("payment_status"))
-                    ));
-                }
-            }
+            bookings.add(new MyPageBookingView(
+                nullToEmpty(booking.bookingNo()),
+                bookingType,
+                buildBookingTitle(bookingType, itemSummary, booking.bookingNo()),
+                buildBookingStatus(bookingType, booking.status(), booking.paymentStatus(), booking.cancelledAt() == null ? null : java.sql.Timestamp.valueOf(booking.cancelledAt())),
+                buildBookingDateLabel(bookingType, booking.bookedAt() == null ? null : java.sql.Timestamp.valueOf(booking.bookedAt()), itemSummary),
+                formatMoney(booking.paidAmount(), booking.totalAmount(), booking.currency()),
+                buildBookingTags(bookingType, itemSummary, paymentMethod, passengerCount, booking.paymentStatus())
+            ));
         }
 
         return bookings;
@@ -629,7 +633,7 @@ public class MyPageDashboardRepository {
     ) {
     }
 
-    private String buildBookingTitle(String bookingType, BookingItemSummary itemSummary, String bookingNo) {
+    private String buildBookingTitle(String bookingType, BookingQueryRepository.BookingItemSummary itemSummary, String bookingNo) {
         if (StringUtils.hasText(itemSummary.itemName())) {
             return itemSummary.itemName();
         }
@@ -667,7 +671,7 @@ public class MyPageDashboardRepository {
         };
     }
 
-    private String buildBookingDateLabel(String bookingType, java.sql.Timestamp bookedAt, BookingItemSummary itemSummary) {
+    private String buildBookingDateLabel(String bookingType, java.sql.Timestamp bookedAt, BookingQueryRepository.BookingItemSummary itemSummary) {
         if ("stay".equals(normalizeBookingType(bookingType)) && itemSummary.serviceStartDate() != null) {
             return formatStayDateRange(itemSummary.serviceStartDate(), itemSummary.serviceEndDate());
         }
@@ -686,7 +690,7 @@ public class MyPageDashboardRepository {
 
     private List<String> buildBookingTags(
         String bookingType,
-        BookingItemSummary itemSummary,
+        BookingQueryRepository.BookingItemSummary itemSummary,
         String paymentMethod,
         int passengerCount,
         String paymentStatus

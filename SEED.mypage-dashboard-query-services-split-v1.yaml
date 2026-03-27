@@ -1,0 +1,73 @@
+goal: >-
+  Split the query responsibilities that are currently concentrated inside
+  MyPageDashboardRepository into dedicated query services for profile,
+  membership, stats, and support, while keeping the external
+  /api/mypage/dashboard contract unchanged for the next track_mypage_booking
+  slice.
+constraints:
+  - >-
+    Preserve the external /api/mypage/dashboard path, success envelope, and
+    authentication/session-gated access rules exactly as they are today.
+  - >-
+    Preserve the current dashboard snapshot payload shape consumed by the
+    frontend state layer, including bookings, itinerary, linkedCompanions,
+    profile, stats, supportItems, and travelEvents.
+  - >-
+    Do not touch booking read APIs under /api/booking/*.
+  - >-
+    Keep the implementation scope as narrow as possible inside
+    jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**.
+  - >-
+    Do not regress the recent auth/session work; login state and session-user
+    resolution must continue to behave as before.
+  - >-
+    Do not modify front, admin, support, customer-center, or booking packages
+    for this slice.
+  - >-
+    Keep booking, travelEvents, and itinerary meaning intact; this slice only
+    redistributes query responsibility, not the observable semantics.
+  - >-
+    Prefer small orchestration in MyPageDashboardRepository and move read logic
+    into dedicated query services without changing the response envelope.
+acceptance_criteria:
+  - >-
+    MyPageDashboardRepository no longer owns the profile, membership, stats, or
+    support SQL/query logic directly and instead delegates each concern to a
+    dedicated query service within the mypage package.
+  - >-
+    The /api/mypage/dashboard response still returns success=true with the same
+    dashboard payload shape expected by the current frontend snapshot model.
+  - >-
+    Existing session-gated access behavior remains unchanged: unauthenticated
+    requests still receive the same unauthorized response behavior, and
+    authenticated requests still hydrate the dashboard as before.
+  - >-
+    Booking, travelEvents, and itinerary behavior remain semantically
+    equivalent to the current implementation, including the existing
+    track_mypage_booking flows.
+  - >-
+    No changes are introduced in /api/booking/*, front, admin, support,
+    customer-center, or booking packages.
+  - >-
+    The refactor stays confined to jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**
+    except for unavoidable type wiring inside the same mypage area.
+verification:
+  - >-
+    D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava
+  - >-
+    git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage
+out_of_scope:
+  - >-
+    Any change to the external /api/mypage/dashboard route, response envelope,
+    or authentication rules.
+  - >-
+    Any change to booking read APIs under /api/booking/*.
+  - >-
+    Any change to front/components/react/mypage/state.tsx or
+    front/components/react/mypage/types.ts in this slice.
+  - >-
+    Any change to front, admin, support, customer-center, or booking packages
+    outside the mypage backend package.
+  - >-
+    Any broad architectural rewrite, new polling loop, or cross-package
+    refactor beyond the targeted query-service extraction.
