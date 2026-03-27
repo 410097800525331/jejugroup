@@ -1871,3 +1871,17 @@
   - `worker_log_mojibake_repair (Ramanujan)` repaired the staged mojibake blocking lines in `MULTI_AGENT_LOG.md`, including the hotel-header task wording, the runtime-closure `제외` wording, and the JejuAir parity verification text.
   - A reviewer then found three remaining admin-shell log lines still carrying mojibake; `main` corrected those final lines to readable text and emoji without widening the cleanup scope.
   - `pnpm run guard:text:staged` passed with `[guard:text] 점검 완료 상태 (113 files)`.
+
+- time: `2026-03-27 15:36:00 +09:00`
+- route: `Route B`
+- task: `Sync the recent front changes into the derived jeju-spring mirror/runtime outputs`
+- participants: `main`, `worker_spring_sync_recent_front (Kierkegaard)`, `reviewer_spring_sync_recent_front (Beauvoir)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_sync_recent_front (Kierkegaard)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the recent front changes`
+  - `reviewer_spring_sync_recent_front (Beauvoir)`: `review only`
+- verification:
+  - `worker_spring_sync_recent_front (Kierkegaard)` completed the existing spring packaging pipeline so the recent front dashboard auto-refresh change landed in `jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js`, `jeju-spring/build/resources/main/static/front-mirror/admin/js/dashboard.js`, and `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war`.
+  - `pnpm run spring:war-package` succeeded.
+  - Direct checks confirmed the `DASHBOARD_REFRESH_INTERVAL_MS`, `visibilitychange`, and `beforeunload` lines exist in both the front source and the derived spring src/build mirror files.
+  - `reviewer_spring_sync_recent_front (Beauvoir)` reported `블로킹 findings 없음` after confirming SHA256 parity across the front source and derived spring outputs and verifying the WAR contains `WEB-INF/classes/static/front-mirror/admin/js/dashboard.js`.
