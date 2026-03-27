@@ -1,0 +1,32 @@
+goal: >
+  /api/auth/login, /api/auth/session, /api/auth/logout 외부 계약은 그대로 유지하면서
+  jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/** 안에서
+  AuthApiController와 AuthService에 몰린 login/session/logout 책임을 분리한다.
+  최근 active_user_sessions 동작과 session heartbeat 기대 동작은 회귀 없이 유지한다.
+constraints:
+  - "/api/auth/login, /api/auth/session, /api/auth/logout의 경로, HTTP method, form-urlencoded/json contract, session semantics를 유지한다."
+  - "session set/invalidate behavior를 유지한다."
+  - "activeUserPresenceService.touch/clear 호출 타이밍을 유지한다."
+  - "verify/signup 흐름은 이번 slice에서 다루지 않는다."
+  - "scope는 jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/** 안으로만 제한한다."
+  - "front/admin/mypage/stay/customer-center/booking 패키지는 수정하지 않는다."
+  - "최근 auth/session heartbeat 기대 동작과 active_user_sessions 회귀를 허용하지 않는다."
+  - "외부에서 관찰되는 응답 의미, 세션 유지, presence 갱신 의미를 바꾸지 않는다."
+acceptance_criteria:
+  - "POST /api/auth/login은 기존과 동일하게 동작하고, 성공 시 세션에 user를 set하며 activeUserPresenceService.touch(sessionId, user)를 유지한다."
+  - "GET /api/auth/session은 기존과 동일하게 동작하고, 세션 user가 있으면 activeUserPresenceService.touch(sessionId, user)를 유지한다."
+  - "POST /api/auth/logout은 기존과 동일하게 동작하고, activeUserPresenceService.clear(sessionId) 이후 session.invalidate() 순서를 유지한다."
+  - "AuthApiController와 AuthService 안에 있던 login/session/logout 책임이 분리되어, 각 책임이 더 작은 auth 서비스/유스케이스 단위로 나뉜다."
+  - "active_user_sessions의 최근 presence 갱신과 session heartbeat 기대 동작이 회귀하지 않는다."
+  - "verify/signup 관련 엔드포인트와 동작은 이번 변경으로 영향받지 않는다."
+verification:
+  - "D:\\lsh\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava"
+  - "git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/auth"
+out_of_scope:
+  - "verify/signup 흐름 변경"
+  - "jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/** 밖의 변경"
+  - "front/admin/mypage/stay/customer-center/booking 패키지 수정"
+  - "API 경로, HTTP method, form-urlencoded/json contract, session semantics 변경"
+  - "session set/invalidate behavior 변경"
+  - "activeUserPresenceService.touch/clear 타이밍 변경"
+  - "active_user_sessions 테이블 의미 또는 session heartbeat 기대 동작 변경"

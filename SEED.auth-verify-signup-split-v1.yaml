@@ -1,0 +1,64 @@
+goal: >
+  Stabilize the auth verify/signup slice under `jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**`
+  without changing the external HTTP contract for `/api/auth/verify` and `/api/auth/signup`.
+  Keep login/session/logout out of scope and preserve the already-split AuthSessionService boundary.
+scope:
+  include:
+    - "GET /api/auth/verify"
+    - "POST /api/auth/verify with action=checkId/checkPhone/verifyRecaptcha"
+    - "POST /api/auth/signup"
+    - "AuthApiController"
+    - "AuthService and auth model types that support verify/signup"
+  exclude:
+    - "POST /api/auth/login"
+    - "GET /api/auth/session"
+    - "POST /api/auth/logout"
+    - "AuthSessionService"
+    - "session lifecycle, presence, or heartbeat logic"
+    - "any non-auth package path"
+contract:
+  transport:
+    - "All three endpoints remain form-urlencoded on input where they already are form-urlencoded."
+    - "No route path, HTTP method, or content-type contract changes."
+    - "Response shape stays JSON with the existing success/message/siteKey meaning."
+  verify_get:
+    - "GET /api/auth/verify returns success=true and siteKey from the server-side reCAPTCHA site key resolver."
+    - "The siteKey field remains the public value needed by the client and does not leak the secret key."
+  verify_post:
+    - "POST /api/auth/verify reads action from form-urlencoded input and routes only checkId, checkPhone, and verifyRecaptcha."
+    - "checkId performs duplicate ID lookup and returns conflict semantics when the ID already exists."
+    - "checkPhone performs duplicate phone lookup and returns conflict semantics when the phone already exists."
+    - "verifyRecaptcha performs server-side token verification and returns validation failure when the token is missing or invalid."
+    - "Unknown actions return a client error without changing the public response contract."
+  signup_post:
+    - "POST /api/auth/signup keeps the existing form-urlencoded field contract: phone, name, id, pw, provider, email, birthDate, rrnBackFirstDigit."
+    - "Signup keeps using the existing success/message JSON contract and HTTP status mapping for bad input and conflicts."
+    - "Signup command assembly is separated from validation so the controller only delegates and the service owns business checks."
+requirements:
+  - "Preserve external API compatibility for existing front auth callers."
+  - "Keep ID/phone duplicate checks and reCAPTCHA verification inside the verify slice only."
+  - "Separate signup command creation from validation rules and DB existence checks."
+  - "Maintain security and validation boundaries at the auth package edge: validate untrusted form input early, use parameterized DB access, and keep recaptcha verification server-side."
+  - "Do not alter login/session/logout behavior or contracts in this slice."
+target_design:
+  - "A verify action router in AuthApiController that dispatches by action and delegates the actual checks to focused auth services."
+  - "A signup command/validation split so the request parsing, validation, and persistence responsibilities are not coupled in one method."
+  - "A minimal auth package service boundary that keeps verify and signup responsibilities separate from session management."
+acceptance_criteria:
+  - "GET /api/auth/verify still returns JSON with success and siteKey, and the siteKey is the public reCAPTCHA site key value."
+  - "POST /api/auth/verify still accepts form-urlencoded action routing for checkId, checkPhone, and verifyRecaptcha."
+  - "ID and phone duplicate checks still return the same externally visible success/message semantics and conflict behavior."
+  - "reCAPTCHA verification still happens server-side and missing or invalid tokens fail validation."
+  - "POST /api/auth/signup still accepts the same form-urlencoded inputs and returns the same success/message-style JSON contract."
+  - "Signup validation and command construction are separated so the controller does not own business rules."
+  - "login/session/logout remain unchanged and explicitly out of scope."
+  - "No auth package change leaks into the session flow or broader runtime contracts."
+verification:
+  - "D:\\lsh\\git\\jejugroup\\jeju-spring\\gradlew.bat compileJava"
+  - "git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/auth"
+out_of_scope:
+  - "login/session/logout behavioral changes"
+  - "AuthSessionService edits"
+  - "Any route, method, or content-type changes for /api/auth/verify or /api/auth/signup"
+  - "Any front runtime changes"
+  - "Any non-auth package refactor"

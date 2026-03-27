@@ -14,20 +14,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jejugroup.jejuspring.auth.application.AuthService;
-import com.jejugroup.jejuspring.auth.application.ActiveUserPresenceService;
+import com.jejugroup.jejuspring.auth.application.AuthSessionService;
+import com.jejugroup.jejuspring.auth.application.AuthSignupService;
+import com.jejugroup.jejuspring.auth.application.AuthVerificationService;
 import com.jejugroup.jejuspring.auth.model.SessionUser;
 import com.jejugroup.jejuspring.auth.model.SignupRequest;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthApiController {
-    private final AuthService authService;
-    private final ActiveUserPresenceService activeUserPresenceService;
+    private final AuthVerificationService authVerificationService;
+    private final AuthSignupService authSignupService;
+    private final AuthSessionService authSessionService;
 
-    public AuthApiController(AuthService authService, ActiveUserPresenceService activeUserPresenceService) {
-        this.authService = authService;
-        this.activeUserPresenceService = activeUserPresenceService;
+    public AuthApiController(
+        AuthVerificationService authVerificationService,
+        AuthSignupService authSignupService,
+        AuthSessionService authSessionService
+    ) {
+        this.authVerificationService = authVerificationService;
+        this.authSignupService = authSignupService;
+        this.authSessionService = authSessionService;
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,14 +44,11 @@ public class AuthApiController {
         HttpSession session
     ) {
         try {
-            SessionUser user = authService.login(id, pw);
+            SessionUser user = authSessionService.login(id, pw, session);
             if (user == null) {
                 return json(HttpStatus.UNAUTHORIZED, false, "아이디 또는 비밀번호가 일치하지 않습니다.");
             }
 
-            session.setAttribute("user", user);
-            session.setMaxInactiveInterval(60 * 60 * 24 * 7);
-            activeUserPresenceService.touch(session.getId(), user);
             return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "로그인 성공",
@@ -59,12 +63,11 @@ public class AuthApiController {
 
     @GetMapping(value = "/session", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> session(HttpSession session) {
-        Object sessionUser = session.getAttribute("user");
-        if (!(sessionUser instanceof SessionUser user)) {
+        SessionUser user = authSessionService.resolveSessionUser(session);
+        if (user == null) {
             return json(HttpStatus.UNAUTHORIZED, false, "유효한 로그인 세션이 없습니다.");
         }
 
-        activeUserPresenceService.touch(session.getId(), user);
         return ResponseEntity.ok(Map.of(
             "success", true,
             "user", user
@@ -73,8 +76,7 @@ public class AuthApiController {
 
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> logout(HttpSession session) {
-        activeUserPresenceService.clear(session.getId());
-        session.invalidate();
+        authSessionService.logout(session);
         return ResponseEntity.ok(Map.of(
             "success", true,
             "message", "로그아웃 완료"
@@ -85,7 +87,7 @@ public class AuthApiController {
     public ResponseEntity<?> verifySiteKey() {
         return ResponseEntity.ok(Map.of(
             "success", true,
-            "siteKey", authService.resolveRecaptchaSiteKey()
+            "siteKey", authVerificationService.resolveRecaptchaSiteKey()
         ));
     }
 
@@ -101,6 +103,8 @@ public class AuthApiController {
                 case "verifyRecaptcha" -> handleVerifyRecaptcha(form.get("token"));
                 default -> json(HttpStatus.BAD_REQUEST, false, "잘못된 요청입니다.");
             };
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, exception.getMessage());
         } catch (SQLException exception) {
             return json(HttpStatus.SERVICE_UNAVAILABLE, false, "Spring auth DB configuration is missing");
         }
@@ -109,16 +113,7 @@ public class AuthApiController {
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signup(@RequestParam Map<String, String> form) {
         try {
-            authService.signup(new SignupRequest(
-                form.get("phone"),
-                form.get("name"),
-                form.get("id"),
-                form.get("pw"),
-                form.get("provider"),
-                form.get("email"),
-                form.get("birthDate"),
-                form.get("rrnBackFirstDigit")
-            ));
+            authSignupService.signup(SignupRequest.fromForm(form));
 
             return ResponseEntity.ok(Map.of(
                 "success", true,
@@ -134,11 +129,7 @@ public class AuthApiController {
     }
 
     private ResponseEntity<?> handleCheckId(String id) throws SQLException {
-        if (id == null || id.trim().isEmpty()) {
-            return json(HttpStatus.BAD_REQUEST, false, "아이디를 입력해주세요.");
-        }
-
-        if (authService.checkIdExists(id.trim())) {
+        if (authVerificationService.checkIdExists(id)) {
             return json(HttpStatus.CONFLICT, false, "이미 존재하는 아이디입니다.");
         }
 
@@ -146,11 +137,7 @@ public class AuthApiController {
     }
 
     private ResponseEntity<?> handleCheckPhone(String phone) throws SQLException {
-        if (phone == null || phone.trim().isEmpty()) {
-            return json(HttpStatus.BAD_REQUEST, false, "휴대폰 번호를 입력해주세요.");
-        }
-
-        if (authService.checkPhoneExists(phone.trim())) {
+        if (authVerificationService.checkPhoneExists(phone)) {
             return json(HttpStatus.CONFLICT, false, "이미 해당 번호로 가입된 계정이 존재합니다.");
         }
 
@@ -158,11 +145,7 @@ public class AuthApiController {
     }
 
     private ResponseEntity<?> handleVerifyRecaptcha(String token) {
-        if (token == null || token.trim().isEmpty()) {
-            return json(HttpStatus.BAD_REQUEST, false, "토큰이 누락되었습니다.");
-        }
-
-        if (authService.verifyRecaptcha(token.trim())) {
+        if (authVerificationService.verifyRecaptcha(token)) {
             return json(HttpStatus.OK, true, "reCAPTCHA 인증 성공");
         }
 
