@@ -23,7 +23,7 @@ ooo seed
    - `verification`
    - `out_of_scope`
 3. If any required section is still fuzzy, stop and return to `ooo interview` instead of inventing details.
-4. Default the seed artifact path to `SEED.yaml` in the workspace root unless the user already pinned a different path.
+4. Default the seed artifact path to `docs/seeds/SEED.yaml` unless the user already pinned a different path.
 5. Write the seed in a deterministic YAML shape that later phases can consume without reinterpretation.
 6. Record the active seed path in `STATE.md` while keeping the task in a pre-implementation phase.
 7. Hand off to `ooo run` only after the seed is fully frozen.

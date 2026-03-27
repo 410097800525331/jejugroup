@@ -1,5 +1,33 @@
+﻿- time: `2026-03-27 14:34:00 +09:00`
+- route: `Route A`
+- task: `Add 30-second auto-refresh to the admin dashboard live payload hydration`
+- participants: `main`
+- write_sets:
+  - `main`: `front/admin/js/dashboard.js, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/admin/js/dashboard.js` now starts a 30-second polling timer after the first live dashboard payload request and reuses the existing queued `requestDashboardPayload(...)` flow instead of adding a second fetch path.
+  - Hidden tabs now skip the interval tick, and returning to a visible tab triggers an immediate dashboard refresh for the current domain.
+  - The auto-refresh timer is cleared on `beforeunload`, `pagehide`, and `401` session responses so the page stops background polling once the admin session is gone.
+  - `node --check front/admin/js/dashboard.js` passed.
+
 # MULTI AGENT LOG
 
+- time: `2026-03-27 13:07:29 +09:00`
+- route: `Route B`
+- task: `Move seed artifacts under docs/seeds and make that the default seed path convention`
+- participants: `main`, `worker_seed_seed_storage_layout (Heisenberg)`, `worker_seed_storage_layout (Archimedes)`, `reviewer_seed_storage_layout (Boole)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_seed_storage_layout (Heisenberg)`: `docs/seeds/SEED.seed-storage-layout-v1.yaml`
+  - `worker_seed_storage_layout (Archimedes)`: `docs/seeds/**, existing SEED*.yaml artifacts, AGENTS.md and any direct seed-path references outside STATE/MULTI_AGENT_LOG`
+  - `reviewer_seed_storage_layout (Boole)`: `review only`
+- verification:
+  - `docs/seeds/SEED.seed-storage-layout-v1.yaml` froze the seed-storage-layout contract around moving every root `SEED*.yaml` artifact under `docs/seeds/` while keeping basenames unchanged.
+  - Root seed artifacts were relocated under `docs/seeds/`, and the repository root no longer contains `SEED*.yaml` files.
+  - `AGENTS.md` and `docs/seeds/README.md` now document `docs/seeds/` as the default seed generation path for future work.
+  - `STATE.md`, `MULTI_AGENT_LOG.md`, `NEXT_AGENT_START.md`, `docs/mypage-handoff.md`, and the direct seed-path references under `docs/**` were updated to point at `docs/seeds/...`.
+  - `git diff --check` passed with only pre-existing CRLF normalization warnings on tracked text files.
+  - `reviewer_seed_storage_layout (Boole)` reported `블로킹 findings 없음` after the broken absolute-path links and the last root `SEED.yaml` log reference were fixed.
 - time: `2026-03-27 12:39:13 +09:00`
 - route: `Route A`
 - task: `Run local runtime smoke and split commits for the completed backend API rewrite slices`
@@ -21,11 +49,11 @@
 - participants: `main`, `worker_seed_stay_hotel_list_split (Darwin)`, `worker_stay_hotel_list_split (Carver)`, `reviewer_stay_hotel_list_split (Banach)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_stay_hotel_list_split (Darwin)`: `SEED.stay-hotel-list-query-service-split-v1.yaml`
+  - `worker_seed_stay_hotel_list_split (Darwin)`: `docs/seeds/SEED.stay-hotel-list-query-service-split-v1.yaml`
   - `worker_stay_hotel_list_split (Carver)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/stay/**`
   - `reviewer_stay_hotel_list_split (Banach)`: `review only`
 - verification:
-  - `SEED.stay-hotel-list-query-service-split-v1.yaml` froze the final stabilization contract around keeping `GET /api/stay/hotel-list` stable while splitting query normalization from page assembly inside the stay package.
+  - `docs/seeds/SEED.stay-hotel-list-query-service-split-v1.yaml` froze the final stabilization contract around keeping `GET /api/stay/hotel-list` stable while splitting query normalization from page assembly inside the stay package.
   - `StayController.java` now delegates raw hotel-list inputs to `StayHotelListQueryService.java` instead of directly normalizing shell and guest counts inline.
   - `StayHotelListQueryService.java` now owns shell normalization plus adults/children/rooms clamping and produces `StayHotelListPageRequest.java` so the assembly path receives a normalized request object.
   - `StayHotelListFactory.java` now consumes the normalized page request and keeps region profile resolution, filter handling, and `StayHotelListPageView` assembly together without changing the downstream payload shape.
@@ -39,11 +67,11 @@
 - participants: `main`, `worker_seed_auth_verify_signup_split (Peirce)`, `worker_auth_verify_signup_split (Linnaeus)`, `reviewer_auth_verify_signup_split (Planck)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_auth_verify_signup_split (Peirce)`: `SEED.auth-verify-signup-split-v1.yaml`
+  - `worker_seed_auth_verify_signup_split (Peirce)`: `docs/seeds/SEED.auth-verify-signup-split-v1.yaml`
   - `worker_auth_verify_signup_split (Linnaeus)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**`
   - `reviewer_auth_verify_signup_split (Planck)`: `review only`
 - verification:
-  - `SEED.auth-verify-signup-split-v1.yaml` froze the remaining auth stabilization contract around `/api/auth/verify` and `/api/auth/signup` while keeping the already-split session flow out of scope.
+  - `docs/seeds/SEED.auth-verify-signup-split-v1.yaml` froze the remaining auth stabilization contract around `/api/auth/verify` and `/api/auth/signup` while keeping the already-split session flow out of scope.
   - `AuthApiController.java` now keeps the verify action switch and HTTP response mapping thin while delegating verify work to `AuthVerificationService.java` and signup work to `AuthSignupService.java`.
   - `AuthVerificationService.java` now owns ID duplicate checks, phone duplicate checks, and reCAPTCHA token validation plus site-key resolution without changing the existing `/api/auth/verify` route contract.
   - `AuthSignupService.java` now owns signup validation, duplicate checks, birth-date and rrn normalization rules, plus user insert persistence, while `SignupRequest.java` gained `fromForm(...)` so controller-side form parsing stays lightweight.
@@ -58,11 +86,11 @@
 - participants: `main`, `worker_seed_auth_session_split (Franklin)`, `worker_auth_session_split (Aquinas)`, `reviewer_auth_session_split (Dalton)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_auth_session_split (Franklin)`: `SEED.auth-login-session-logout-split-v1.yaml`
+  - `worker_seed_auth_session_split (Franklin)`: `docs/seeds/SEED.auth-login-session-logout-split-v1.yaml`
   - `worker_auth_session_split (Aquinas)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**`
   - `reviewer_auth_session_split (Dalton)`: `review only`
 - verification:
-  - `SEED.auth-login-session-logout-split-v1.yaml` froze the auth stabilization contract around moving only `/api/auth/login`, `/api/auth/session`, and `/api/auth/logout` session handling out of the monolithic auth flow while leaving verify/signup/reCAPTCHA out of scope.
+  - `docs/seeds/SEED.auth-login-session-logout-split-v1.yaml` froze the auth stabilization contract around moving only `/api/auth/login`, `/api/auth/session`, and `/api/auth/logout` session handling out of the monolithic auth flow while leaving verify/signup/reCAPTCHA out of scope.
   - `AuthApiController.java` now delegates the login/session/logout endpoints to `AuthSessionService.java`, while `AuthService.java` keeps the remaining verify/signup/reCAPTCHA responsibilities.
   - `AuthSessionService.java` preserves the existing login/session/logout semantics, including `session.setAttribute("user", user) -> session.setMaxInactiveInterval(...) -> activeUserPresenceService.touch(...)` on login and `activeUserPresenceService.clear(...) -> session.invalidate()` on logout.
   - `/api/auth/login`, `/api/auth/session`, and `/api/auth/logout` kept the existing paths, request handling shape, success envelope, session gating behavior, and null-on-bad-credentials flow.
@@ -76,11 +104,11 @@
 - participants: `main`, `worker_seed_mypage_dashboard_trip_split (Arendt)`, `worker_mypage_dashboard_trip_split (Avicenna)`, `reviewer_mypage_dashboard_trip_split (Noether)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_mypage_dashboard_trip_split (Arendt)`: `SEED.mypage-dashboard-trip-query-split-v1.yaml`
+  - `worker_seed_mypage_dashboard_trip_split (Arendt)`: `docs/seeds/SEED.mypage-dashboard-trip-query-split-v1.yaml`
   - `worker_mypage_dashboard_trip_split (Avicenna)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
   - `reviewer_mypage_dashboard_trip_split (Noether)`: `review only`
 - verification:
-  - `SEED.mypage-dashboard-trip-query-split-v1.yaml` froze the next `track_mypage_booking` contract around splitting companion-links, travel-events, and itinerary assembly out of the remaining dashboard repository while keeping `/api/mypage/dashboard` stable.
+  - `docs/seeds/SEED.mypage-dashboard-trip-query-split-v1.yaml` froze the next `track_mypage_booking` contract around splitting companion-links, travel-events, and itinerary assembly out of the remaining dashboard repository while keeping `/api/mypage/dashboard` stable.
   - `MyPageDashboardRepository.java` now keeps dashboard orchestration plus the already-split profile/membership/stats/support and booking wiring, while `MyPageCompanionQueryService.java`, `MyPageTravelEventQueryService.java`, and `MyPageItineraryService.java` own the extracted trip-related responsibilities inside the mypage package.
   - The first worker pass regressed prior split state by collapsing already-extracted services back into the repository; that regression was fixed before close so the final state preserves the earlier shared-booking and profile/membership/stats/support splits while only moving trip-related responsibilities in this slice.
   - `/api/mypage/dashboard` kept the existing path, `success=true` envelope, session-gated access behavior, and dashboard snapshot semantics for `linkedCompanions`, `travelEvents`, and `itinerary`.
@@ -94,11 +122,11 @@
 - participants: `main`, `worker_seed_mypage_dashboard_query_split (Lovelace)`, `worker_mypage_dashboard_query_split (Bacon)`, `reviewer_mypage_dashboard_query_split (Nash)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_mypage_dashboard_query_split (Lovelace)`: `SEED.mypage-dashboard-query-services-split-v1.yaml`
+  - `worker_seed_mypage_dashboard_query_split (Lovelace)`: `docs/seeds/SEED.mypage-dashboard-query-services-split-v1.yaml`
   - `worker_mypage_dashboard_query_split (Bacon)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
   - `reviewer_mypage_dashboard_query_split (Nash)`: `review only`
 - verification:
-  - `SEED.mypage-dashboard-query-services-split-v1.yaml` froze the next `track_mypage_booking` contract around splitting profile, membership, stats, and support queries out of the monolithic dashboard repository while keeping `/api/mypage/dashboard` stable.
+  - `docs/seeds/SEED.mypage-dashboard-query-services-split-v1.yaml` froze the next `track_mypage_booking` contract around splitting profile, membership, stats, and support queries out of the monolithic dashboard repository while keeping `/api/mypage/dashboard` stable.
   - `MyPageDashboardRepository.java` now keeps connection orchestration plus booking/travel/itinerary assembly, while `MyPageProfileQueryService.java`, `MyPageMembershipQueryService.java`, `MyPageStatsQueryService.java`, and `MyPageSupportQueryService.java` own the extracted query responsibilities inside the mypage package.
   - `/api/mypage/dashboard` kept the existing path, `success=true` envelope, session-gated access behavior, and frontend-consumed dashboard snapshot shape.
   - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
@@ -111,11 +139,11 @@
 - participants: `main`, `worker_seed_mypage_booking_shared_query (Faraday)`, `worker_mypage_booking_shared_query (James)`, `reviewer_mypage_booking_shared_query (Mencius)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_mypage_booking_shared_query (Faraday)`: `SEED.mypage-booking-shared-query-extraction-v1.yaml`
+  - `worker_seed_mypage_booking_shared_query (Faraday)`: `docs/seeds/SEED.mypage-booking-shared-query-extraction-v1.yaml`
   - `worker_mypage_booking_shared_query (James)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**`
   - `reviewer_mypage_booking_shared_query (Mencius)`: `review only`
 - verification:
-  - `SEED.mypage-booking-shared-query-extraction-v1.yaml` froze the first `track_mypage_booking` contract around shared booking query extraction while keeping `/api/mypage/dashboard`, `/api/booking/me`, and `/api/booking/users/{userId}` stable.
+  - `docs/seeds/SEED.mypage-booking-shared-query-extraction-v1.yaml` froze the first `track_mypage_booking` contract around shared booking query extraction while keeping `/api/mypage/dashboard`, `/api/booking/me`, and `/api/booking/users/{userId}` stable.
   - `BookingQueryRepository.java` now centralizes the shared booking read queries, `BookingReadService.java` reads user/bookings/items/payment attempts through that shared layer, and `MyPageDashboardRepository.java` reuses the same shared booking query support for dashboard booking cards.
   - The first reviewer pass caught a nullable `booked_at` ordering regression on `/api/mypage/dashboard`; the worker fixed it by restoring the dashboard path to `COALESCE(booked_at, created_at) DESC, id DESC` through `loadBookingsForDashboard()` while keeping the booking API on the existing `loadBookings()` ordering.
   - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
@@ -128,7 +156,7 @@
 - participants: `main`, `worker_seed_customercenter_cms_split (Chandrasekhar)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_customercenter_cms_split (Chandrasekhar)`: `SEED.customer-center-cms-read-write-split-v1.yaml`
+  - `worker_seed_customercenter_cms_split (Chandrasekhar)`: `docs/seeds/SEED.customer-center-cms-read-write-split-v1.yaml`
 - verification:
   - `D:\\lsh\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava` passed in `D:\\lsh\\git\\jejugroup\\jeju-spring`
   - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms` passed
@@ -140,13 +168,13 @@
 - participants: `main`, `worker_seed_admin_full_rollback (Ampere)`, `worker_front_admin_pages (Carver)`, `worker_front_admin_logic (Maxwell)`, `worker_spring_admin_full_mirror (Raman)`, `reviewer_admin_full_rollback (Euler)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_full_rollback (Ampere)`: `SEED.admin-full-surface-rollback-v1.yaml`
+  - `worker_seed_admin_full_rollback (Ampere)`: `docs/seeds/SEED.admin-full-surface-rollback-v1.yaml`
   - `worker_front_admin_pages (Carver)`: `front/admin/pages/dashboard.html, front/admin/pages/reservations.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html`
   - `worker_front_admin_logic (Maxwell)`: `front/admin/js/dashboard.js, front/admin/js/reservations.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/rbac_config.js`
   - `worker_spring_admin_full_mirror (Raman)`: `derived jeju-spring/src/main/resources/static/front-mirror/admin/** and derived jeju-spring/src/main/resources/templates/front-mirror/admin/pages/** only where the existing front-to-spring pipeline refreshed the rolled-back admin runtime`
   - `reviewer_admin_full_rollback (Euler)`: `review only`
 - verification:
-  - `SEED.admin-full-surface-rollback-v1.yaml` created to freeze the full admin-surface rollback contract
+  - `docs/seeds/SEED.admin-full-surface-rollback-v1.yaml` created to freeze the full admin-surface rollback contract
   - `front/admin/pages/dashboard.html`, `front/admin/pages/reservations.html`, `front/admin/pages/lodging.html`, `front/admin/pages/members.html`, and `front/admin/pages/cms.html` were restored to the earlier pre-schema/admin-shell baseline with `git diff 15d675e -- front/admin/pages/*.html` confirming no remaining differences
   - `front/admin/js/dashboard.js`, `front/admin/js/reservations.js`, `front/admin/js/lodging.js`, `front/admin/js/members.js`, `front/admin/js/cms.js`, and `front/admin/js/rbac_config.js` were restored to the earlier baseline with targeted `node --check` passing for all six files
   - `git diff --check -- front/admin/pages/dashboard.html front/admin/pages/reservations.html front/admin/pages/lodging.html front/admin/pages/members.html front/admin/pages/cms.html front/admin/js/dashboard.js front/admin/js/reservations.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/rbac_config.js` passed
@@ -160,17 +188,17 @@
 - participants: `main`, `worker_seed_admin_shell_v2 (James)`, `worker_front_admin_dashboard (Nash)`, `worker_spring_admin_mirror_v2 (Halley)`, `reviewer_admin_shell_v2 (Averroes)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_shell_v2 (James)`: `SEED.admin-shell-icon-tab-repair-v2.yaml`
+  - `worker_seed_admin_shell_v2 (James)`: `docs/seeds/SEED.admin-shell-icon-tab-repair-v2.yaml`
   - `worker_front_admin_dashboard (Nash)`: `front/admin/js/dashboard.js`
   - `worker_spring_admin_mirror_v2 (Halley)`: `derived jeju-spring/src/main/resources/static/front-mirror/admin/** and derived jeju-spring/src/main/resources/templates/front-mirror/admin/pages/** only where the existing front-to-spring pipeline refreshed the repaired admin runtime`
   - `reviewer_admin_shell_v2 (Averroes)`: `review only`
 - verification:
-  - `SEED.admin-shell-icon-tab-repair-v2.yaml` created to freeze the expanded admin regression contract including dashboard KPI icon repair
+  - `docs/seeds/SEED.admin-shell-icon-tab-repair-v2.yaml` created to freeze the expanded admin regression contract including dashboard KPI icon repair
   - `front/admin/js/dashboard.js` restored the readable KPI icon mapping from the pre-refactor readable state: `todayReservations=📝`, `revenue=💰`, `cancelRate=📉`, `activeUsers=🟢`
   - `node --check front/admin/js/dashboard.js` passed
   - `node scripts/spring/sync-front-assets-to-spring.cjs` passed and refreshed the affected spring admin mirror files
   - SHA256 parity checks confirmed `front/admin/js/dashboard.js` matches `jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js`
-  - `git diff --check -- STATE.md SEED.admin-shell-icon-tab-repair-v2.yaml front/admin/js/dashboard.js jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js` passed
+  - `git diff --check -- STATE.md docs/seeds/SEED.admin-shell-icon-tab-repair-v2.yaml front/admin/js/dashboard.js jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js` passed
   - `reviewer_admin_shell_v2 (Averroes)` reported `블로킹 finding 없음`; residual note only that emoji icon rendering can vary slightly by OS/font and browser real-render validation was not run in this turn
 
 - time: `2026-03-26 15:08:18 +09:00`
@@ -179,18 +207,18 @@
 - participants: `main`, `worker_seed_admin_shell (Meitner)`, `worker_front_admin_shell (Dewey)`, `worker_spring_admin_mirror (Boole)`, `reviewer_admin_shell (Copernicus)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_shell (Meitner)`: `SEED.admin-shell-icon-tab-repair-v1.yaml`
+  - `worker_seed_admin_shell (Meitner)`: `docs/seeds/SEED.admin-shell-icon-tab-repair-v1.yaml`
   - `worker_front_admin_shell (Dewey)`: `front/admin/js/rbac_config.js, front/admin/js/reservations.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js`
   - `worker_spring_admin_mirror (Boole)`: `derived jeju-spring/src/main/resources/static/front-mirror/admin/** and derived jeju-spring/src/main/resources/templates/front-mirror/admin/pages/** only where the existing front-to-spring pipeline refreshed the repaired admin runtime`
   - `reviewer_admin_shell (Copernicus)`: `review only`
 - verification:
-  - `SEED.admin-shell-icon-tab-repair-v1.yaml` created to freeze the admin icon/tab regression repair contract
+  - `docs/seeds/SEED.admin-shell-icon-tab-repair-v1.yaml` created to freeze the admin icon/tab regression repair contract
   - `front/admin/js/rbac_config.js` restored readable sidebar icons while keeping RBAC behavior unchanged
   - `front/admin/js/reservations.js`, `front/admin/js/lodging.js`, `front/admin/js/members.js`, and `front/admin/js/cms.js` now return `window.AdminShell` from `ensureRuntime()`, cache config imports separately, and register/boot sections through the real shell path again
   - `node --check front/admin/js/rbac_config.js front/admin/js/reservations.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js` passed via targeted per-file checks
   - `node scripts/spring/sync-front-assets-to-spring.cjs` passed and refreshed the affected spring admin mirror files
   - SHA256 parity checks confirmed the 5 affected `front/admin/js/*.js` files match `jeju-spring/src/main/resources/static/front-mirror/admin/js/*.js`
-  - `git diff --check -- STATE.md SEED.admin-shell-icon-tab-repair-v1.yaml front/admin/js/rbac_config.js front/admin/js/reservations.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js jeju-spring/src/main/resources/static/front-mirror/admin/js/rbac_config.js jeju-spring/src/main/resources/static/front-mirror/admin/js/reservations.js jeju-spring/src/main/resources/static/front-mirror/admin/js/lodging.js jeju-spring/src/main/resources/static/front-mirror/admin/js/members.js jeju-spring/src/main/resources/static/front-mirror/admin/js/cms.js` passed
+  - `git diff --check -- STATE.md docs/seeds/SEED.admin-shell-icon-tab-repair-v1.yaml front/admin/js/rbac_config.js front/admin/js/reservations.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js jeju-spring/src/main/resources/static/front-mirror/admin/js/rbac_config.js jeju-spring/src/main/resources/static/front-mirror/admin/js/reservations.js jeju-spring/src/main/resources/static/front-mirror/admin/js/lodging.js jeju-spring/src/main/resources/static/front-mirror/admin/js/members.js jeju-spring/src/main/resources/static/front-mirror/admin/js/cms.js` passed
   - `reviewer_admin_shell (Copernicus)` reported `블로킹 finding 없음`; residual note only that emoji icon rendering can vary slightly by OS/font and the sync pipeline also refreshed unrelated derived mypage style mirrors outside the admin scope
 
 - time: `2026-03-26 16:40 +09:00`
@@ -210,7 +238,7 @@
 - participants: `main`, `worker_seed_mirror (Epicurus)`, `worker_spring_mirror (Averroes)`, `reviewer_spring_mirror (Boole)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_mirror`: `SEED.footer-auth-unify-spring-mirror-v1.yaml`
+  - `worker_seed_mirror`: `docs/seeds/SEED.footer-auth-unify-spring-mirror-v1.yaml`
   - `worker_spring_mirror`: `derived jeju-spring/src/main/resources/templates/front-mirror/**, derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/static/components/runtime/**`
   - `reviewer_spring_mirror`: `review only`
 - verification:
@@ -226,7 +254,7 @@
 - participants: `main`, `worker_seed (Darwin)`, `worker_shared_footer (Heisenberg)`, `worker_auth_footer (Tesla)`, `worker_shell_footer_runtime (Aristotle)`, `worker_shared_footer_followup (Kuhn)`, `reviewer_footer_unify_retry (Dalton)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.footer-auth-unify-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.footer-auth-unify-v1.yaml`
   - `worker_shared_footer`: `front/components/react/layout/FamilyRadialMenu.tsx, front/components/react/layout/family-radial-menu.css, front/components/react/layout/footer.css`
   - `worker_auth_footer`: `front/pages/auth/login.css, front/pages/auth/signup.css`
   - `worker_shell_footer_runtime`: `front/apps/shell/src/runtime/bootstrap.js`
@@ -237,7 +265,7 @@
   - `pnpm run check:shell` passed
   - `node --check front/apps/shell/src/runtime/bootstrap.js` passed
   - `pnpm run build:front` passed
-  - `git diff --check -- front/apps/shell/src/runtime/bootstrap.js front/components/react/layout/FamilyRadialMenu.tsx front/components/react/layout/family-radial-menu.css front/components/react/layout/footer.css front/pages/auth/login.css front/pages/auth/signup.css SEED.footer-auth-unify-v1.yaml STATE.md` passed
+  - `git diff --check -- front/apps/shell/src/runtime/bootstrap.js front/components/react/layout/FamilyRadialMenu.tsx front/components/react/layout/family-radial-menu.css front/components/react/layout/footer.css front/pages/auth/login.css front/pages/auth/signup.css docs/seeds/SEED.footer-auth-unify-v1.yaml STATE.md` passed
   - `reviewer_footer_unify_retry` reported `no blocking findings`
 
 - time: `2026-03-22 07:14 +09:00`
@@ -250,7 +278,7 @@
   - `reviewer_header_auth`: `review only`
 - verification:
   - `pnpm run build:front` passed after worker fixes
-  - `reviewer_header_auth` final pass reported `발견 없음`
+  - `reviewer_header_auth` final pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-22 08:40 +09:00`
 - route: `Route B`
@@ -270,34 +298,34 @@
 - task: `Polish the mypage modal, CTA, support icons, summary nav, gold chip, and default header state`
 - participants: `main`, `worker_mypage_components (Rawls)`, `worker_mypage_styles (Hume)`, `reviewer_mypage_polish (Athena)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.yaml`
   - `worker_mypage_components`: `front/components/react/mypage/SummarySection.tsx`
   - `worker_mypage_styles`: `front/pages/mypage/styles/_modal.css, front/pages/mypage/styles/_support.css, front/pages/mypage/styles/_trip-card.css, front/pages/mypage/styles/_summary.css, front/pages/mypage/styles/_layout.css`
   - `reviewer_mypage_polish`: `review only`
 - verification:
   - `pnpm run guard:text` passed
   - `pnpm run build:front` passed
-  - `reviewer_mypage_polish` reported one header-override mismatch and passed after the fix with `발견 없음`
+  - `reviewer_mypage_polish` reported one header-override mismatch and passed after the fix with `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-22 09:34 +09:00`
 - route: `Route B`
 - task: `Refine the mypage default header, profile avatar border, and support icon scale`
 - participants: `main`, `worker_mypage_followup_styles (Parfit)`, `reviewer_mypage_followup (Steward the 2nd)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.mypage-polish-v2.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.mypage-polish-v2.yaml`
   - `worker_mypage_followup_styles`: `front/pages/mypage/styles/_layout.css, front/pages/mypage/styles/_summary.css, front/pages/mypage/styles/_support.css`
   - `reviewer_mypage_followup`: `review only`
 - verification:
   - `pnpm run guard:text` passed
   - `pnpm run build:front` passed
-  - `reviewer_mypage_followup` reported one reset-scope issue in `_layout.css` and passed after the fix with `발견 없음`
+  - `reviewer_mypage_followup` reported one reset-scope issue in `_layout.css` and passed after the fix with `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-22 21:29 +09:00`
 - route: `Route B`
 - task: `Hydrate the mypage dashboard from the logged-in session instead of fixed mock member data`
 - participants: `main`, `worker_mypage_session_state (Fermat the 2nd)`, `worker_mypage_session_views (Leibniz the 2nd)`, `worker_mypage_session_styles (Aristotle the 2nd)`, `reviewer_mypage_session (Athena the 2nd)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.mypage-session-hydration.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.mypage-session-hydration.yaml`
   - `worker_mypage_session_state`: `front/components/react/mypage/data.ts, front/components/react/mypage/state.tsx, front/components/react/mypage/types.ts`
   - `worker_mypage_session_views`: `front/components/react/mypage/SummarySection.tsx, front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/BookingSection.tsx`
   - `worker_mypage_session_styles`: `front/pages/mypage/styles/_summary.css`
@@ -305,7 +333,7 @@
 - verification:
   - `pnpm run guard:text` passed
   - `pnpm run build:front` passed
-  - `reviewer_mypage_session` reported two session-hydration issues and passed after the follow-up fix with `발견 없음`
+  - `reviewer_mypage_session` reported two session-hydration issues and passed after the follow-up fix with `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-22 21:41 +09:00`
 - route: `Route B`
@@ -331,7 +359,7 @@
 - verification:
   - `worker_mypage_companion_delete` deleted the unused modal component and removed dedicated popup styles
   - `pnpm run build:front` passed
-  - `reviewer_mypage_companion_delete` reported `발견 없음`
+  - `reviewer_mypage_companion_delete` reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-23 15:08 +09:00`
 - route: `Route B`
@@ -346,7 +374,7 @@
   - `node --check scripts/spring/run-jeju-spring-maven.cjs` passed
   - `node -e "const pkg=require('./package.json'); ..."` package script check passed
   - Spring landing static mirror existence check passed
-  - reviewer final pass reported `발견 없음`
+  - reviewer final pass reported `諛쒓껄 ?놁쓬`
   - Maven package verification stayed blocked because `java`/`JAVA_HOME` is not installed in this workspace and the open failure was logged to `ERROR_LOG.md`
 
 - time: `2026-03-23 18:18 +09:00`
@@ -364,14 +392,14 @@
   - `pnpm -C front/apps/cs check` passed
   - `pnpm -C front/apps/cs test` passed
   - `git diff --check -- front/components/react/hotel/HotelFilterSidebar.tsx front/components/react/mypage/data.ts front/apps/cs/pnpm-lock.yaml` passed
-  - `reviewer_front_component_test_fix` reported `발견 없음`
+  - `reviewer_front_component_test_fix` reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-23 09:49 +09:00`
 - route: `Route B`
 - task: `Migrate jeju-spring from Maven to Gradle while preserving the JDK 21 + external Tomcat 10.1 WAR workflow`
 - participants: `main`, `reviewer_gradle_migration (Confucius)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-gradle-migration.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.jeju-spring-gradle-migration.yaml`
   - `worker_gradle_build`: `jeju-spring/build.gradle, jeju-spring/settings.gradle, jeju-spring/gradle/wrapper/**, jeju-spring/gradlew, jeju-spring/gradlew.bat, jeju-spring/pom.xml, jeju-spring/mvnw, jeju-spring/mvnw.cmd, jeju-spring/.mvn/**, jeju-spring/.gitattributes, jeju-spring/.gitignore`
   - `worker_gradle_scripts_docs`: `scripts/spring/run-jeju-spring-gradle.cjs, package.json, jeju-spring/README.md, jeju-spring/HELP.md, docs/jeju-spring-bootstrap-2026-03-18.md`
   - `reviewer_gradle_migration`: `review only`
@@ -388,7 +416,7 @@
 - task: `Delete the remaining jeju-spring Maven source/script/doc leftovers after the Gradle migration`
 - participants: `main`, `worker_maven_cleanup (Popper)`, `worker_maven_docs (Hume)`, `reviewer_maven_cleanup (Pascal)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-maven-cleanup.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.jeju-spring-maven-cleanup.yaml`
   - `worker_maven_cleanup`: `scripts/spring/run-jeju-spring-maven.cjs, jeju-spring/target/**`
   - `worker_maven_docs`: `docs/hotel-list-page-islandization-2026-03-19.md`
   - `reviewer_maven_cleanup`: `review only`
@@ -404,7 +432,7 @@
 - task: `Set up the first local jeju-spring DB baseline with Flyway and the initial auth/support schema`
 - participants: `main`, `worker_db_runtime (Parfit/Zeno/Ohm)`, `worker_db_schema_finalize (Huygens/Leibniz/Beauvoir/Boole/Gauss/James)`, `reviewer_db_baseline (Dalton)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-db-baseline-v1.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.jeju-spring-db-baseline-v1.yaml`
   - `worker_db_runtime`: `jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml, jeju-spring/src/main/java/com/jejugroup/jejuspring/JejuSpringApplication.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java, jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java, .gitignore`
   - `worker_db_schema_finalize`: `jeju-spring/src/main/resources/db/migration/V1__jeju_spring_db_baseline.sql, V2__patch_support_ticket_and_primary_role_constraints.sql, V3__preserve_support_attachments_and_lock_primary_role_values.sql, V4__support_attachments_comment_link_and_candidate_key.sql, V5__support_attachments_comment_ticket_alignment_check.sql, V6__finalize_ticket_scoped_support_attachments_and_table_comments.sql`
   - `reviewer_db_baseline`: `review only`
@@ -422,7 +450,7 @@
 - task: `Extend the local jeju-spring DB baseline with the second schema slice for bookings, payments, mypage source data, products, inventory, CMS, banners, and admin operations`
 - participants: `main`, `worker_db_slice_booking (Ptolemy/Volta/Pasteur/Aristotle)`, `worker_db_slice_catalog (Mencius/Anscombe)`, `reviewer_db_slice2 (Ampere)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-db-slice2.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.jeju-spring-db-slice2.yaml`
   - `worker_db_slice_booking`: `jeju-spring/src/main/resources/db/migration/V8__booking_payment_mypage_source.sql, V10__booking_tree_integrity_and_payment_external_id_uniqueness.sql`
   - `worker_db_slice_catalog`: `jeju-spring/src/main/resources/db/migration/V9__product_inventory_cms_admin_ops.sql, V11__price_policies_room_type_ownership_integrity.sql`
   - `reviewer_db_slice2`: `review only`
@@ -440,7 +468,7 @@
 - task: `Add the first read-only booking/payment/mypage APIs on top of the local DB baseline`
 - participants: `main`, `worker_read_api_booking (Einstein/Halley)`, `worker_read_api_mypage (Hubble/Godel/Wegener/Sartre/Aquinas)`, `worker_read_api_schema_patch (Darwin/Fermat)`, `reviewer_read_api_v1 (Hypatia/Euclid/Newton)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-read-api-v1.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.jeju-spring-read-api-v1.yaml`
   - `worker_read_api_booking`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**`
   - `worker_read_api_mypage`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
   - `worker_read_api_schema_patch`: `jeju-spring/src/main/resources/db/migration/V12__user_membership_links.sql, jeju-spring/src/main/resources/db/migration/V13__member_only_companion_links.sql`
@@ -459,7 +487,7 @@
 - task: `Strip Maven metadata directories from the packaged jeju-spring WAR artifacts`
 - participants: `main`, `worker_war_sanitize (Poincare)`, `reviewer_war_sanitize (Banach)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.jeju-spring-war-sanitize.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.jeju-spring-war-sanitize.yaml`
   - `worker_war_sanitize`: `jeju-spring/build.gradle`
   - `reviewer_war_sanitize`: `review only`
 - verification:
@@ -473,7 +501,7 @@
 - task: `Add a mypage CTA to the main landing header and lock mypage shell chrome to the main landing shell`
 - participants: `main`, `worker_layout_header_mypage (Lagrange)`, `worker_shell_mypage_default (Pauli)`, `worker_dashboard_weather_style (Sagan)`, `reviewer_mypage_header_shell (Meitner)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.mypage-header-main-shell.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.mypage-header-main-shell.yaml`
   - `worker_layout_header_mypage`: `front/components/react/layout/MainHeaderTemplate.tsx, front/components/react/layout/header.css`
   - `worker_shell_mypage_default`: `front/apps/shell/src/runtime/pages/pageShell.ts, front/pages/mypage/dashboard.html`
   - `worker_dashboard_weather_style`: `front/pages/mypage/dashboard.html`
@@ -481,7 +509,7 @@
 - verification:
   - `pnpm run check:shell` passed
   - `pnpm run guard:text` passed
-  - `git diff --check -- front/components/react/layout/MainHeaderTemplate.tsx front/components/react/layout/header.css front/apps/shell/src/runtime/pages/pageShell.ts front/pages/mypage/dashboard.html STATE.md SEED.mypage-header-main-shell.yaml` passed
+  - `git diff --check -- front/components/react/layout/MainHeaderTemplate.tsx front/components/react/layout/header.css front/apps/shell/src/runtime/pages/pageShell.ts front/pages/mypage/dashboard.html STATE.md docs/seeds/SEED.mypage-header-main-shell.yaml` passed
   - `reviewer_mypage_header_shell` reported no blocking findings after the follow-up weather.css include on the mypage dashboard page
 
 - time: `2026-03-23 17:45 +09:00`
@@ -490,7 +518,7 @@
 - participants: `main`, `worker_seed (Aquinas)`, `worker_support_crud (Mencius)`, `worker_cms_crud (Ampere)`, `worker_customercenter_tests (Poincare)`, `reviewer_customer_center (Ramanujan)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.customer-center-spring-crud-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.customer-center-spring-crud-v1.yaml`
   - `worker_support_crud`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/**`
   - `worker_cms_crud`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/**`
   - `worker_customercenter_tests`: `jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/**`
@@ -505,7 +533,7 @@
 - participants: `main`, `worker_seed (Socrates)`, `worker_admin_data (Galileo)`, `worker_admin_pages (Gauss)`, `reviewer_admin_dehardcode (Sartre)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.admin-page-dehardcode-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.admin-page-dehardcode-v1.yaml`
   - `worker_admin_data`: `front/admin/data/**, front/admin/js/store.js`
   - `worker_admin_pages`: `front/admin/js/cms.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/reservations.js`
   - `reviewer_admin_dehardcode`: `review only`
@@ -522,7 +550,7 @@
   - `node --check front/admin/data/reservations-config.js` passed
   - `pnpm run guard:text` passed
   - targeted ESM shape checks confirmed config aliases (`tabs.*` and top-level tab keys), dashboard chart label maps, and store seed import/hydrate wiring
-  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.admin-page-dehardcode-v1.yaml front/admin/data/store-seed.js front/admin/data/dashboard-data.js front/admin/data/cms-config.js front/admin/data/lodging-config.js front/admin/data/members-config.js front/admin/data/reservations-config.js front/admin/js/store.js front/admin/js/cms.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/reservations.js` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md docs/seeds/SEED.admin-page-dehardcode-v1.yaml front/admin/data/store-seed.js front/admin/data/dashboard-data.js front/admin/data/cms-config.js front/admin/data/lodging-config.js front/admin/data/members-config.js front/admin/data/reservations-config.js front/admin/js/store.js front/admin/js/cms.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/reservations.js` passed
   - `reviewer_admin_dehardcode` reported no blocking findings after follow-up shape fixes
 
 - time: `2026-03-23 20:36 +09:00`
@@ -542,7 +570,7 @@
 - participants: `main`, `worker_seed (Linnaeus)`, `worker_cs_shared_api (Halley/Franklin)`, `worker_cs_cms_admin (Harvey/Bacon)`, `worker_cs_support_detail (Feynman/Bernoulli)`, `worker_backend_hardening (Pascal/Averroes)`, `worker_cs_tests (Banach/Peirce/Volta)`, `reviewer_customer_center_productization (Kierkegaard/Huygens)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.customer-center-productization-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.customer-center-productization-v1.yaml`
   - `worker_cs_shared_api`: `front/apps/cs/client/src/lib/**, front/apps/cs/client/src/types/service-center.ts, front/apps/cs/client/src/contexts/AuthContext.tsx`
   - `worker_cs_cms_admin`: `front/apps/cs/client/src/pages/Notices.tsx, front/apps/cs/client/src/pages/FAQs.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeCard.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx, front/apps/cs/client/src/components/serviceCenter/FAQItem.tsx`
   - `worker_cs_support_detail`: `front/apps/cs/client/src/pages/Inquiries.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryListItem.tsx, front/apps/cs/client/src/components/serviceCenter/InquirySupportComments.tsx, front/apps/cs/client/src/components/serviceCenter/InquirySupportAttachments.tsx, front/apps/cs/client/src/data/mockInquiries.ts`
@@ -563,7 +591,7 @@
 - participants: `main`, `worker_seed (Harvey)`, `worker_core_data (Singer)`, `worker_i18n_bridge (Franklin)`, `reviewer_i18n_bridge (Heisenberg)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.front-shared-i18n-bridge-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.front-shared-i18n-bridge-v1.yaml`
   - `worker_core_data`: `front/core/constants/lang_data.js, front/core/constants/front-ko-en-copy-map.js`
   - `worker_i18n_bridge`: `front/core/constants/front-i18n.js`
   - `reviewer_i18n_bridge`: `review only`
@@ -573,9 +601,9 @@
   - `node --check front/core/constants/front-i18n.js` passed
   - `pnpm run guard:text` passed
   - targeted runtime smoke confirmed `JSON.stringify(require(...))` works for `lang_data.js` and the copy map, `resolveCurrentLang()` prefers `jeju_lang` over `jeju_fab_lang`, copy-map fallback translation works, and `setCurrentLang()` syncs `jeju_lang`, `front.lang`, and `jeju_fab_lang`
-  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.front-shared-i18n-bridge-v1.yaml front/core/constants/lang_data.js front/core/constants/front-ko-en-copy-map.js front/core/constants/front-i18n.js` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md docs/seeds/SEED.front-shared-i18n-bridge-v1.yaml front/core/constants/lang_data.js front/core/constants/front-ko-en-copy-map.js front/core/constants/front-i18n.js` passed
   - `reviewer_i18n_bridge` reported no blocking findings after follow-up fixes
-  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/SupportApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/application/CustomerCenterCmsService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/web/CustomerCenterCmsApiController.java jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java SEED.customer-center-spring-crud-v1.yaml STATE.md` passed
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/SupportApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/application/CustomerCenterCmsService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/web/CustomerCenterCmsApiController.java jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java docs/seeds/SEED.customer-center-spring-crud-v1.yaml STATE.md` passed
   - `reviewer_customer_center` reported no blocking findings
 
 - time: `2026-03-23 16:24 +09:00`
@@ -594,7 +622,7 @@
 - participants: `main`, `worker_seed (Volta)`, `worker_shared_motion (Confucius)`, `worker_feature_stay (Poincare)`, `reviewer_hero_reveal_consistency (Plato)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.jejustay-hero-reveal-consistency-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.jejustay-hero-reveal-consistency-v1.yaml`
   - `worker_shared_motion`: `front/components/react/hotel/HotelSearchWidgetIsland.tsx, front/components/react/life/LifeSearchWidgetIsland.tsx, front/jejustay/pages/hotel/modules/interactions/premiumAnimations.js`
   - `worker_feature_stay`: `front/jejustay/pages/hotel/hotel.js, front/jejustay/pages/stay/jejustay_life.js, front/jejustay/pages/stay/private_stay.js, front/jejustay/pages/hotel/styles/hero-section.css, front/jejustay/pages/stay/jejustay_life.css`
   - `reviewer_hero_reveal_consistency`: `review only`
@@ -605,7 +633,7 @@
   - `node --check front/jejustay/pages/hotel/hotel.js` passed
   - `node --check front/jejustay/pages/stay/jejustay_life.js` passed
   - `node --check front/jejustay/pages/stay/private_stay.js` passed
-  - `git diff --check -- STATE.md SEED.jejustay-hero-reveal-consistency-v1.yaml front/components/react/hotel/HotelSearchWidgetIsland.tsx front/components/react/life/LifeSearchWidgetIsland.tsx front/jejustay/pages/hotel/modules/interactions/premiumAnimations.js front/jejustay/pages/hotel/hotel.js front/jejustay/pages/stay/private_stay.js front/jejustay/pages/stay/jejustay_life.js front/jejustay/pages/hotel/styles/hero-section.css front/jejustay/pages/stay/jejustay_life.css` passed
+  - `git diff --check -- STATE.md docs/seeds/SEED.jejustay-hero-reveal-consistency-v1.yaml front/components/react/hotel/HotelSearchWidgetIsland.tsx front/components/react/life/LifeSearchWidgetIsland.tsx front/jejustay/pages/hotel/modules/interactions/premiumAnimations.js front/jejustay/pages/hotel/hotel.js front/jejustay/pages/stay/private_stay.js front/jejustay/pages/stay/jejustay_life.js front/jejustay/pages/hotel/styles/hero-section.css front/jejustay/pages/stay/jejustay_life.css` passed
   - `reviewer_hero_reveal_consistency` reported no blocking findings
 
 - time: `2026-03-23 19:18 +09:00`
@@ -614,7 +642,7 @@
 - participants: `main`, `worker_seed (Nash)`, `worker_cs_shared (Hegel/Schrodinger/Beauvoir/Ptolemy)`, `worker_cs_read_pages (Maxwell)`, `worker_cs_inquiries (Euclid/Goodall/Epicurus)`, `worker_cs_tests (Darwin/Hilbert/Arendt)`, `reviewer_cs_api_integration (Bohr/Carver)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.cs-customer-center-api-integration-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.cs-customer-center-api-integration-v1.yaml`
   - `worker_cs_shared`: `front/apps/cs/client/src/lib/**, front/apps/cs/client/src/types/service-center.ts, front/apps/cs/client/src/data/inquiryOptions.ts, front/apps/cs/client/src/contexts/AuthContext.tsx`
   - `worker_cs_read_pages`: `front/apps/cs/client/src/pages/Home.tsx, front/apps/cs/client/src/pages/Notices.tsx, front/apps/cs/client/src/pages/FAQs.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeCard.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx, front/apps/cs/client/src/components/serviceCenter/FAQItem.tsx`
   - `worker_cs_inquiries`: `front/apps/cs/client/src/pages/Inquiries.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryListItem.tsx, front/apps/cs/client/src/data/mockInquiries.ts`
@@ -624,7 +652,7 @@
   - `pnpm -C front/apps/cs check` passed
   - `pnpm -C front/apps/cs test` passed
   - `pnpm -C front/apps/cs build` passed
-  - `git diff --check -- front/apps/cs/client/src/lib/serviceCenterApi.ts front/apps/cs/client/src/types/service-center.ts front/apps/cs/client/src/contexts/AuthContext.tsx front/apps/cs/client/src/pages/Home.tsx front/apps/cs/client/src/pages/Notices.tsx front/apps/cs/client/src/pages/FAQs.tsx front/apps/cs/client/src/pages/Inquiries.tsx front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx front/apps/cs/client/src/components/serviceCenter/InquiryListItem.tsx front/apps/cs/client/src/components/serviceCenter/NoticeCard.tsx front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx front/apps/cs/client/src/components/serviceCenter/FAQItem.tsx front/apps/cs/client/src/test/InquiryForm.test.tsx front/apps/cs/client/src/test/AuthContext.test.tsx front/apps/cs/client/src/test/serviceCenterApi.test.ts SEED.cs-customer-center-api-integration-v1.yaml STATE.md` passed
+  - `git diff --check -- front/apps/cs/client/src/lib/serviceCenterApi.ts front/apps/cs/client/src/types/service-center.ts front/apps/cs/client/src/contexts/AuthContext.tsx front/apps/cs/client/src/pages/Home.tsx front/apps/cs/client/src/pages/Notices.tsx front/apps/cs/client/src/pages/FAQs.tsx front/apps/cs/client/src/pages/Inquiries.tsx front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx front/apps/cs/client/src/components/serviceCenter/InquiryListItem.tsx front/apps/cs/client/src/components/serviceCenter/NoticeCard.tsx front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx front/apps/cs/client/src/components/serviceCenter/FAQItem.tsx front/apps/cs/client/src/test/InquiryForm.test.tsx front/apps/cs/client/src/test/AuthContext.test.tsx front/apps/cs/client/src/test/serviceCenterApi.test.ts docs/seeds/SEED.cs-customer-center-api-integration-v1.yaml STATE.md` passed
   - `reviewer_cs_api_integration` reported no blocking findings
 
 - time: `2026-03-23 21:15 +09:00`
@@ -643,7 +671,7 @@
 - participants: `main`, `worker_seed (Banach)`, `worker_shared_i18n (Wegener)`, `worker_feature_landing (Dalton)`, `worker_shell_runtime (Ohm)`, `reviewer_front_language_state (Steward)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.front-language-state-unification-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.front-language-state-unification-v1.yaml`
   - `worker_shared_i18n`: `front/core/constants/front-i18n.js (audit only; no code change needed)`
   - `worker_feature_landing`: `front/index.html, front/core/pages/landing/main.js`
   - `worker_shell_runtime`: `front/apps/shell/src/runtime/context/ShellStateContext.tsx, front/apps/shell/src/runtime/ui/fab.tsx, front/apps/shell/src/runtime/widget/chatbot.tsx`
@@ -653,8 +681,8 @@
   - `node --check front/core/pages/landing/main.js` passed
   - `pnpm run check:shell` passed
   - `pnpm run guard:text` passed
-  - `git diff --check -- front/index.html front/core/pages/landing/main.js front/apps/shell/src/runtime/context/ShellStateContext.tsx front/apps/shell/src/runtime/ui/fab.tsx front/apps/shell/src/runtime/widget/chatbot.tsx SEED.front-language-state-unification-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed
-  - `reviewer_front_language_state` first reported two landing fallback/init regressions, those follow-up fixes landed, and the final reviewer pass reported `발견 없음`
+  - `git diff --check -- front/index.html front/core/pages/landing/main.js front/apps/shell/src/runtime/context/ShellStateContext.tsx front/apps/shell/src/runtime/ui/fab.tsx front/apps/shell/src/runtime/widget/chatbot.tsx docs/seeds/SEED.front-language-state-unification-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed
+  - `reviewer_front_language_state` first reported two landing fallback/init regressions, those follow-up fixes landed, and the final reviewer pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-23 21:15 +09:00`
 - route: `Route B`
@@ -672,7 +700,7 @@
   - `pnpm run guard:text` passed
   - custom Playwright landing language smoke passed after confirming the landing DOM stays mounted, persisted language stays `en`, and hotel FAB/chatbot pick up English state
   - official `main landing smoke` Playwright check passed again after the bugfix
-  - `reviewer_front_language_state` first reported one stale residue risk, the follow-up guard landed, and the final reviewer pass reported `발견 없음`
+  - `reviewer_front_language_state` first reported one stale residue risk, the follow-up guard landed, and the final reviewer pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-23 23:15 +09:00`
 - route: `Route B`
@@ -680,7 +708,7 @@
 - participants: `main`, `worker_seed (Huygens the 2nd)`, `worker_seed_batch (Feynman the 2nd)`, `reviewer_seed_batch (Steward the 3rd)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.local-db-seed-batch-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.local-db-seed-batch-v1.yaml`
   - `worker_seed_batch`: `jeju-spring/src/main/resources/db/migration/V16__seed_property_catalog_data.sql, jeju-spring/src/main/resources/db/migration/V17__seed_cms_and_banner_data.sql, jeju-spring/src/main/resources/db/migration/V18__seed_booking_membership_and_voucher_data.sql, jeju-spring/src/main/resources/db/migration/V19__seed_flight_and_rental_inventory_data.sql`
   - `reviewer_seed_batch`: `review only`
 - verification:
@@ -691,7 +719,7 @@
     - `cms_pages=5`, `cms_blocks=5`, `content_items=5`, `banner_slots=1`, `banners=1`, `exposure_rules=2`
     - `users=1`, `user_profiles=1`, `bookings=5`, `booking_items=5`, `coupons=4`, `voucher_products=2`, `voucher_product_benefits=6`
     - `flight_routes=3`, `flight_schedules=0`, `flight_fare_policies=0`, `flight_seat_inventories=0`, `rental_locations=1`, `rental_vehicle_classes=2`, `rental_vehicles=2`, `rental_rate_policies=2`, `rental_vehicle_inventories=2`
-  - reviewer first reported three source-fit/idempotency issues, follow-up fixes landed, and the final reviewer pass reported `발견 없음`
+  - reviewer first reported three source-fit/idempotency issues, follow-up fixes landed, and the final reviewer pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-24 00:05 +09:00`
 - route: `Route B`
@@ -699,7 +727,7 @@
 - participants: `main`, `worker_seed (Turing the 3rd)`, `worker_admin_batch (Carver the 3rd)`, `reviewer_admin_frontend (Steward the 4th)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.admin-frontend-db-management-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.admin-frontend-db-management-v1.yaml`
   - `worker_admin_batch`: `front/admin/js/rbac_config.js, front/admin/css/components.css, front/admin/pages/lodging.html, front/admin/js/lodging.js, front/admin/pages/members.html, front/admin/js/members.js, front/admin/pages/reservations.html, front/admin/js/reservations.js, front/admin/pages/cms.html, front/admin/js/cms.js`
   - `reviewer_admin_frontend`: `review only`
 - verification:
@@ -718,13 +746,13 @@
 - participants: `main`, `worker_seed (Avicenna)`, `worker_inventory_schema (Wegener)`, `reviewer_customer_center_followup (Athena the 2nd)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.flight-rentcar-inventory-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.flight-rentcar-inventory-v1.yaml`
   - `worker_inventory_schema`: `jeju-spring/src/main/resources/db/migration/V15__add_flight_and_rental_inventory_tables.sql`
   - `reviewer_customer_center_followup`: `review only`
 - verification:
   - local DB was updated directly from `V15__add_flight_and_rental_inventory_tables.sql`
   - confirmed table creation for `flight_routes`, `flight_schedules`, `flight_fare_policies`, `flight_seat_inventories`, `rental_locations`, `rental_vehicle_classes`, `rental_vehicles`, `rental_rate_policies`, `rental_vehicle_inventories`
-  - reviewer first reported one flight fare policy route/schedule integrity gap, the migration was tightened with a composite FK and `ON DELETE RESTRICT`, and the final reviewer pass reported `발견 없음`
+  - reviewer first reported one flight fare policy route/schedule integrity gap, the migration was tightened with a composite FK and `ON DELETE RESTRICT`, and the final reviewer pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-23 22:30 +09:00`
 - route: `Route B`
@@ -732,14 +760,14 @@
 - participants: `main`, `worker_seed (Socrates)`, `worker_customer_center_seed (Banach)`, `worker_customer_center_seed_tests (Anscombe)`, `reviewer_customer_center_followup (Athena)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.customer-center-existing-table-seed-phase1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.customer-center-existing-table-seed-phase1.yaml`
   - `worker_customer_center_seed`: `jeju-spring/src/main/resources/db/migration/V14__seed_customer_center_master_data.sql`
   - `worker_customer_center_seed_tests`: `jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java`
   - `reviewer_customer_center_followup`: `review only`
 - verification:
   - local DB was seeded manually from `V14__seed_customer_center_master_data.sql`
   - local row counts confirmed `support_categories=24`, `notices=6`, `faqs=75`
-  - reviewer reported `발견 없음`
+  - reviewer reported `諛쒓껄 ?놁쓬`
   - `pnpm run spring:test` and `pnpm run spring:war-package` were both blocked by missing `jeju-spring/gradle/wrapper/gradle-wrapper.jar`, and that gap was appended to `ERROR_LOG.md`
 
 - time: `2026-03-23 23:03 +09:00`
@@ -799,7 +827,7 @@
   - `node --check front/admin/js/reservations.js` passed
   - `pnpm run guard:text` passed
   - `git diff --check -- front/admin/js/rbac_config.js front/admin/js/lodging.js front/admin/js/cms.js front/admin/js/reservations.js front/admin/pages/lodging.html front/admin/pages/cms.html front/admin/pages/reservations.html front/admin/css/components.css` passed
-  - reviewer confirmed the banner placement affordance and reservations domain filter behavior, then flagged lingering lodging taxonomy residue; the follow-up cleanup landed and local re-read of the final files confirmed `호텔 / 항공 / 렌터카 / 바우처 / 유심 / 특가`, `공지사항 / FAQ / 배너`, and the reservations domain subfilter state
+  - reviewer confirmed the banner placement affordance and reservations domain filter behavior, then flagged lingering lodging taxonomy residue; the follow-up cleanup landed and local re-read of the final files confirmed `?명뀛 / ??났 / ?뚰꽣移?/ 諛붿슦泥?/ ?좎떖 / ?밴?`, `怨듭??ы빆 / FAQ / 諛곕꼫`, and the reservations domain subfilter state
 
 - time: `2026-03-24 01:40 +09:00`
 - route: `Route B`
@@ -862,7 +890,7 @@
 - participants: `main`, `worker_seed (Dalton)`, `worker_admin_data (Aristotle)`, `worker_admin_dashboard (Laplace)`, `reviewer_admin_no_dummy (Euclid)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.admin-page-dehardcode-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.admin-page-dehardcode-v1.yaml`
   - `worker_admin_data`: `front/admin/data/**, front/admin/js/store.js`
   - `worker_admin_dashboard`: `front/admin/js/dashboard.js, front/admin/pages/dashboard.html`
   - `reviewer_admin_no_dummy`: `review only`
@@ -871,7 +899,7 @@
   - `node --check front/admin/js/store.js` passed
   - `node --check front/admin/js/dashboard.js` passed
   - `pnpm run guard:text` passed
-  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.admin-page-dehardcode-v1.yaml front/admin/data/store-seed.js front/admin/data/dashboard-data.js front/admin/data/cms-config.js front/admin/data/lodging-config.js front/admin/data/members-config.js front/admin/data/reservations-config.js front/admin/js/store.js front/admin/js/dashboard.js front/admin/pages/dashboard.html` passed
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md docs/seeds/SEED.admin-page-dehardcode-v1.yaml front/admin/data/store-seed.js front/admin/data/dashboard-data.js front/admin/data/cms-config.js front/admin/data/lodging-config.js front/admin/data/members-config.js front/admin/data/reservations-config.js front/admin/js/store.js front/admin/js/dashboard.js front/admin/pages/dashboard.html` passed
   - `reviewer_admin_no_dummy` reported no blocking findings; residual gap is browser-level smoke for async store-seed import timing and empty Chart.js rendering
 
 - time: `2026-03-24 11:09 +09:00`
@@ -890,7 +918,7 @@
 - task: `Finish the Spring runtime cutover so root build/deploy, healthcheck, page hosting, and source-of-truth rules are aligned on jeju-spring`
 - participants: `main`, `worker_pipeline_cutover (Darwin)`, `worker_spring_entrypoints (Dewey)`, `reviewer_spring_cutover (Sartre)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-final-runtime-cutover-v1.yaml, ERROR_LOG.md`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.spring-final-runtime-cutover-v1.yaml, ERROR_LOG.md`
   - `worker_pipeline_cutover`: `package.json, scripts/pipelines/build-war.js, scripts/pipelines/deploy.js, scripts/spring/mirror-front-to-thymeleaf.cjs, scripts/spring/sync-front-assets-to-spring.cjs`
   - `worker_spring_entrypoints`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java`
   - `reviewer_spring_cutover`: `review only`
@@ -903,7 +931,7 @@
   - `node --check scripts/spring/sync-front-assets-to-spring.cjs` passed
   - generated `jeju-spring/src/main/resources/templates/front-mirror/pages/cs/customer_center.html` now points at `/front-mirror/pages/cs/assets/**`
   - `pnpm run spring:test` still failed before app tests on the pre-existing alwaysdata Flyway DB access-denied environment issue, and that gap was appended to `ERROR_LOG.md`
-  - `reviewer_spring_cutover` first flagged the customer-center asset-path mismatch, the follow-up fix landed, and the final reviewer pass reported `발견 없음`
+  - `reviewer_spring_cutover` first flagged the customer-center asset-path mismatch, the follow-up fix landed, and the final reviewer pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-24 14:46 +09:00`
 - route: `Route B`
@@ -921,15 +949,15 @@
   - `worker_runtime_contract_docs` updated `AGENTS.md`, `WORKSPACE_CONTEXT.toml`, `PLAN.md`, and `docs/hybrid-execution-checklist.md` so the active baseline is `jeju-spring final runtime baseline` while `jeju-web/.env` remains the current env source
   - `pnpm run build` passed and produced `jeju-spring/build/jeju-spring.war`
   - `pnpm run guard:text` passed
-  - `git diff --check -- AGENTS.md PLAN.md SEED.spring-final-runtime-cutover-v1.yaml STATE.md WORKSPACE_CONTEXT.toml docs/hybrid-execution-checklist.md` passed apart from the existing `AGENTS.md` CRLF->LF warning
+  - `git diff --check -- AGENTS.md PLAN.md docs/seeds/SEED.spring-final-runtime-cutover-v1.yaml STATE.md WORKSPACE_CONTEXT.toml docs/hybrid-execution-checklist.md` passed apart from the existing `AGENTS.md` CRLF->LF warning
   - `pnpm run spring:test` still failed before app tests could execute because Flyway could not connect to the configured alwaysdata MySQL host: `Access denied for user 'jejugroup'@'123.142.12.196' (using password: YES)`
-  - `reviewer_spring_cutover (Hegel)` first flagged `WORKSPACE_CONTEXT.toml` for stale `repository_root` and `Java 17` baseline text; after the follow-up patch the final reviewer pass reported `발견 없음`
+  - `reviewer_spring_cutover (Hegel)` first flagged `WORKSPACE_CONTEXT.toml` for stale `repository_root` and `Java 17` baseline text; after the follow-up patch the final reviewer pass reported `諛쒓껄 ?놁쓬`
 - time: `2026-03-24 15:02 +09:00`
 - route: `Route B`
 - task: `Isolate spring:test from alwaysdata by forcing test-only DB precedence with a localhost fallback`
 - participants: `main`, `worker_test_db_isolation (Kierkegaard)`, `reviewer_test_db_isolation (Newton)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-local-db-isolation-v1.yaml, ERROR_LOG.md`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.spring-test-local-db-isolation-v1.yaml, ERROR_LOG.md`
   - `worker_test_db_isolation`: `jeju-spring/src/test/**, jeju-spring/build.gradle, jeju-spring/src/main/resources/application.yml`
   - `reviewer_test_db_isolation`: `review only`
 - verification:
@@ -938,30 +966,30 @@
   - the helper was then corrected to read `jeju-spring/.env` with last-value-wins precedence for duplicate keys
   - final `pnpm run spring:test` passed against localhost MySQL
   - `pnpm run guard:text` passed
-  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md SEED.spring-test-local-db-isolation-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java jeju-spring/src/test/resources/application.yml` passed
-  - `reviewer_test_db_isolation (Newton)` reported `발견 없음` and confirmed production `jeju-spring/src/main/resources/application.yml` was unchanged
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md docs/seeds/SEED.spring-test-local-db-isolation-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java jeju-spring/src/test/resources/application.yml` passed
+  - `reviewer_test_db_isolation (Newton)` reported `諛쒓껄 ?놁쓬` and confirmed production `jeju-spring/src/main/resources/application.yml` was unchanged
 
 - time: `2026-03-24 15:14 +09:00`
 - route: `Route B`
 - task: `Add a regression guard so spring:test fails if the resolved test datasource/flyway path drifts back to alwaysdata`
 - participants: `main`, `worker_test_regression_guard (Schrodinger)`, `reviewer_test_regression_guard (Helmholtz)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-test-alwaysdata-regression-guard-v1.yaml`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.spring-test-alwaysdata-regression-guard-v1.yaml`
   - `worker_test_regression_guard`: `jeju-spring/src/test/**`
   - `reviewer_test_regression_guard`: `review only`
 - verification:
   - `worker_test_regression_guard` updated `jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java` with a runtime-resolved guard over `spring.datasource.url`, `spring.flyway.url`, and the live datasource metadata URL
   - `pnpm run spring:test` passed
-  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.spring-test-alwaysdata-regression-guard-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java` passed apart from the existing `MULTI_AGENT_LOG.md` CRLF normalization warning
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md docs/seeds/SEED.spring-test-alwaysdata-regression-guard-v1.yaml jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java` passed apart from the existing `MULTI_AGENT_LOG.md` CRLF normalization warning
   - the new regression test makes an `alwaysdata` drift fail on the actual runtime-resolved path rather than a static grep
-  - `reviewer_test_regression_guard (Helmholtz)` reported `발견 없음` and confirmed datasource/flyway symmetry plus no production/runtime file drift
+  - `reviewer_test_regression_guard (Helmholtz)` reported `諛쒓껄 ?놁쓬` and confirmed datasource/flyway symmetry plus no production/runtime file drift
 
 - time: `2026-03-24 15:37 +09:00`
 - route: `Route B`
 - task: `Cut the remaining jeju-web/.env runtime dependency by making jeju-spring/.env the default env source for Spring runtime and deploy scripts`
 - participants: `main`, `worker_runtime_env_cutover (Faraday)`, `worker_env_contract_docs (Godel)`, `reviewer_runtime_env_cutover (Feynman)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-runtime-env-source-cutover-v1.yaml, ERROR_LOG.md`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.spring-runtime-env-source-cutover-v1.yaml, ERROR_LOG.md`
   - `worker_runtime_env_cutover`: `scripts/utils/env.js, scripts/utils/checkPath.js, jeju-spring/src/main/resources/application.yml, jeju-spring/.env.example`
   - `worker_env_contract_docs`: `AGENTS.md, WORKSPACE_CONTEXT.toml`
   - `reviewer_runtime_env_cutover`: `review only`
@@ -970,15 +998,15 @@
   - `worker_env_contract_docs` updated `AGENTS.md` and `WORKSPACE_CONTEXT.toml` so `jeju-spring/.env` is the documented default env source and `jeju-web/.env` is legacy-only historical reference
   - `pnpm run build` passed and produced `jeju-spring/build/jeju-spring.war`
   - `pnpm run spring:test` passed
-  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md SEED.spring-runtime-env-source-cutover-v1.yaml scripts/utils/env.js jeju-spring/src/main/resources/application.yml AGENTS.md WORKSPACE_CONTEXT.toml` passed apart from existing CRLF normalization warnings on tracked text files
-  - `reviewer_runtime_env_cutover (Feynman)` first flagged missing admin/API key contract alignment between `env.js` and `.env.example`; after the follow-up patch the final reviewer pass reported `발견 없음`
+  - `git diff --check -- STATE.md MULTI_AGENT_LOG.md docs/seeds/SEED.spring-runtime-env-source-cutover-v1.yaml scripts/utils/env.js jeju-spring/src/main/resources/application.yml AGENTS.md WORKSPACE_CONTEXT.toml` passed apart from existing CRLF normalization warnings on tracked text files
+  - `reviewer_runtime_env_cutover (Feynman)` first flagged missing admin/API key contract alignment between `env.js` and `.env.example`; after the follow-up patch the final reviewer pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-24 15:52 +09:00`
 - route: `Route B`
 - task: `Finalize the Spring final-runtime closure policy and re-run the core verification commands`
 - participants: `main`, `worker_runtime_closure_policy (Nash)`, `reviewer_runtime_closure (Hooke)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-final-runtime-closure-v2.yaml, ERROR_LOG.md`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.spring-final-runtime-closure-v2.yaml, ERROR_LOG.md`
   - `worker_runtime_closure_policy`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/application.yml`
   - `reviewer_runtime_closure`: `review only`
 - verification:
@@ -995,7 +1023,7 @@
 - task: `Repair the remaining local smoke blockers for admin, mypage, and customer-center`
 - participants: `main`, `worker_smoke_repair (Lorentz)`, `reviewer_smoke_repair (Epicurus)`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, SEED.spring-local-smoke-repair-v1.yaml, ERROR_LOG.md`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, docs/seeds/SEED.spring-local-smoke-repair-v1.yaml, ERROR_LOG.md`
   - `worker_smoke_repair`: `scripts/smoke/**`
   - `reviewer_smoke_repair`: `review only`
 - verification:
@@ -1003,7 +1031,7 @@
   - `pnpm run smoke:front` passed with 11/11 green
   - `pnpm run smoke:cs` passed with 4/4 green
   - `git diff --check -- scripts/smoke/helpers/smoke-fixtures.cjs scripts/smoke/front-entrypoints.runtime.spec.cjs scripts/smoke/cs-customer-center.smoke.spec.cjs` passed
-  - `reviewer_smoke_repair (Epicurus)` first flagged overly weak chatbot/FAQ assertions; after the follow-up patch the final reviewer pass reported `발견 없음`
+  - `reviewer_smoke_repair (Epicurus)` first flagged overly weak chatbot/FAQ assertions; after the follow-up patch the final reviewer pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-24 18:58 +09:00`
 - route: `Route B`
@@ -1011,22 +1039,22 @@
 - participants: `main`, `worker_seed_admin_latency (Carver)`, `worker_seed_scope_refresh (Peirce)`, `worker_admin_front_latency (Dirac)`, `worker_admin_front_followup (Darwin)`, `worker_admin_page_shell_latency (Plato)`, `reviewer_admin_latency (Fermat)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_latency`: `SEED.admin-menu-latency-v1.yaml`
-  - `worker_seed_scope_refresh`: `SEED.admin-menu-latency-v1.yaml`
+  - `worker_seed_admin_latency`: `docs/seeds/SEED.admin-menu-latency-v1.yaml`
+  - `worker_seed_scope_refresh`: `docs/seeds/SEED.admin-menu-latency-v1.yaml`
   - `worker_admin_front_latency`: `front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
   - `worker_admin_front_followup`: `front/admin/js/auth_guard.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
   - `worker_admin_page_shell_latency`: `front/admin/pages/dashboard.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html, front/admin/pages/reservations.html`
   - `reviewer_admin_latency`: `review only`
 - verification:
-  - `worker_seed_admin_latency (Carver)` first froze `SEED.admin-menu-latency-v1.yaml`, then `worker_seed_scope_refresh (Peirce)` narrowed the contract to the allowed `front/admin` slice after the repository do-not-touch review ruled out `jeju-spring/**`
+  - `worker_seed_admin_latency (Carver)` first froze `docs/seeds/SEED.admin-menu-latency-v1.yaml`, then `worker_seed_scope_refresh (Peirce)` narrowed the contract to the allowed `front/admin` slice after the repository do-not-touch review ruled out `jeju-spring/**`
   - `worker_admin_front_latency (Dirac)` removed the whole-document `display:none` auth stall, introduced `fetchAdminPayloadInBackground`, rendered dashboard/config-backed pages from fallback data first, and moved live hydration to the background without changing payload shape expectations
   - `reviewer_admin_latency (Fermat)` first flagged three issues: protected admin UI flash before redirect, stale dashboard seed overwrite risk, and live `defaultTab` not winning on untouched first render
   - `worker_admin_front_followup (Darwin)` fixed those findings by adding an auth readiness gate that hides only the protected admin shell before session resolution, adding request-token plus current-domain guards to dashboard background hydration, and making live `defaultTab` win until the user explicitly changes tabs on the config-backed pages
   - `worker_admin_page_shell_latency (Plato)` deferred the blocking `lucide` CDN script on all five admin HTML pages and deferred the blocking `chart.js` CDN script on the dashboard page while keeping `auth_guard.js` early and preserving the existing `DOMContentLoaded` icon bootstrap
-  - `git diff --check -- front/admin/js/auth_guard.js front/admin/js/api_client.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js SEED.admin-menu-latency-v1.yaml STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md` passed apart from an existing CRLF normalization warning on `front/admin/js/auth_guard.js`
+  - `git diff --check -- front/admin/js/auth_guard.js front/admin/js/api_client.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js docs/seeds/SEED.admin-menu-latency-v1.yaml STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md` passed apart from an existing CRLF normalization warning on `front/admin/js/auth_guard.js`
   - touched admin JS files passed `esbuild.transformSync` syntax parsing
   - `pnpm run guard:text` passed
-  - final `reviewer_admin_latency (Fermat)` pass reported `블로킹 찾지 못했어`
+  - final `reviewer_admin_latency (Fermat)` pass reported `釉붾줈??李얠? 紐삵뻽??
   - `git diff --check -- front/admin/pages/dashboard.html front/admin/pages/lodging.html front/admin/pages/members.html front/admin/pages/cms.html front/admin/pages/reservations.html` passed
 
 - time: `2026-03-24 20:52 +09:00`
@@ -1035,11 +1063,11 @@
 - participants: `main`, `worker_seed_admin_shell (Kuhn)`, `worker_admin_shell_pages (Hume)`, `worker_admin_shell_js (Galileo)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md, optional ERROR_LOG.md append-only`
-  - `worker_seed_admin_shell`: `SEED.admin-shell-single-load-v1.yaml`
+  - `worker_seed_admin_shell`: `docs/seeds/SEED.admin-shell-single-load-v1.yaml`
   - `worker_admin_shell_pages`: `front/admin/pages/dashboard.html, front/admin/pages/lodging.html, front/admin/pages/members.html, front/admin/pages/cms.html, front/admin/pages/reservations.html`
   - `worker_admin_shell_js`: `front/admin/js/auth_guard.js, front/admin/js/api_client.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js, front/admin/js/rbac_config.js, front/admin/js/sidebar_ui.js, front/admin/js/portal_nav.js, front/admin/js/admin_shell.js`
 - verification:
-  - `worker_seed_admin_shell (Kuhn)` froze `SEED.admin-shell-single-load-v1.yaml` for the front/admin-only single-load shell contract
+  - `worker_seed_admin_shell (Kuhn)` froze `docs/seeds/SEED.admin-shell-single-load-v1.yaml` for the front/admin-only single-load shell contract
   - `worker_admin_shell_pages (Hume)` rewired all five admin HTML entrypoints to load the shared `front/admin/js/admin_shell.js` bootstrap while keeping `auth_guard.js` early and preserving dashboard `chart.js`
   - observed workspace state now includes a new `front/admin/js/admin_shell.js` runtime that defines shared shell state, registers sections, fetches and swaps `.admin-main` content, and updates history/popstate without touching route constants
   - `node --check front/admin/js/admin_shell.js` passed locally
@@ -1081,11 +1109,11 @@
 - participants: `main`, `worker_seed_admin_shell_state (Hypatia the 2nd)`, `worker_admin_shell_state (Euler the 2nd/Boyle the 3rd/Fermat the 3rd/Lagrange the 4th)`, `reviewer_admin_latency (Athena the 3rd/Steward the 3rd/Athena the 4th/Athena the 5th)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_shell_state`: `SEED.admin-shell-ui-state-rollback-v1.yaml`
+  - `worker_seed_admin_shell_state`: `docs/seeds/SEED.admin-shell-ui-state-rollback-v1.yaml`
   - `worker_admin_shell_state`: `front/admin/js/admin_shell.js, front/admin/js/dashboard.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js, front/admin/js/reservations.js`
   - `reviewer_admin_latency`: `review only`
 - verification:
-  - `worker_seed_admin_shell_state` froze `SEED.admin-shell-ui-state-rollback-v1.yaml` for rollback-only transient UI state restoration across admin shell failures
+  - `worker_seed_admin_shell_state` froze `docs/seeds/SEED.admin-shell-ui-state-rollback-v1.yaml` for rollback-only transient UI state restoration across admin shell failures
   - `worker_admin_shell_state` added section-level `getState()` snapshots, rollback-only sectionState injection, dashboard domain/range restore handling, async stale-callback invalidation, latest-state recapture before rollback when the previous DOM is still present, and restored direct-entry store-domain tab selection in the config-backed admin sections
   - `node --check front/admin/js/admin_shell.js` passed
   - `node --check front/admin/js/dashboard.js` passed
@@ -1093,9 +1121,9 @@
   - `node --check front/admin/js/members.js` passed
   - `node --check front/admin/js/cms.js` passed
   - `node --check front/admin/js/reservations.js` passed
-  - `git diff --check -- front/admin/js/admin_shell.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js SEED.admin-shell-ui-state-rollback-v1.yaml STATE.md` passed
+  - `git diff --check -- front/admin/js/admin_shell.js front/admin/js/dashboard.js front/admin/js/lodging.js front/admin/js/members.js front/admin/js/cms.js front/admin/js/reservations.js docs/seeds/SEED.admin-shell-ui-state-rollback-v1.yaml STATE.md` passed
   - `pnpm run lint` passed
-  - final reviewer pass reported `발견 없음`
+  - final reviewer pass reported `諛쒓껄 ?놁쓬`
   - browser automation and smoke verification were intentionally not run because the current workspace rules forbid browser-based final checks unless the user explicitly asks for them
 
 - time: `2026-03-24 20:02 +09:00`
@@ -1115,7 +1143,7 @@
   - `node --check scripts/smoke/helpers/smoke-fixtures.cjs` passed
   - `git diff --check -- scripts/smoke/front-entrypoints.runtime.spec.cjs scripts/smoke/helpers/smoke-fixtures.cjs` passed
   - `pnpm run smoke:front` passed with `17 passed`
-  - final reviewer pass reported `발견 없음`
+  - final reviewer pass reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-25 10:18 +09:00`
 - route: `Route B`
@@ -1123,20 +1151,20 @@
 - participants: `main`, `worker_seed (Helmholtz)`, `worker_about_smoke (Kant)`, `worker_about_host_runtime (Chandrasekhar -> handoff, Feynman)`, `reviewer_jejuair_about_host_only (Averroes)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.jejuair-about-host-only-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.jejuair-about-host-only-v1.yaml`
   - `worker_about_host_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
   - `worker_about_smoke`: `scripts/smoke/front-entrypoints.runtime.spec.cjs`
   - `reviewer_jejuair_about_host_only`: `review only`
 - verification:
-  - `worker_seed (Helmholtz)` froze `SEED.jejuair-about-host-only-v1.yaml` so only `/jejuair/pages/about/about.html`, `/career.html`, `/ccm.html` enter the host-only baseline and the rest of `/jejuair/pages/**` stays excluded
+  - `worker_seed (Helmholtz)` froze `docs/seeds/SEED.jejuair-about-host-only-v1.yaml` so only `/jejuair/pages/about/about.html`, `/career.html`, `/ccm.html` enter the host-only baseline and the rest of `/jejuair/pages/**` stays excluded
   - `worker_about_host_runtime (Chandrasekhar -> handoff, Feynman)` updated `FrontMirrorHostController` plus the two runtime inventory docs so those three paths appear in the host-only boundary and the exclusion language stays narrow
   - `worker_about_smoke (Kant)` added a representative direct-entry smoke for `/jejuair/pages/about/about.html`
   - `Select-String` confirmed the three about paths are present in `FrontMirrorHostController`, `docs/front-entrypoint-inventory.md`, and `docs/transition-architecture.md`
   - `pnpm run guard:text` passed
   - `pnpm run smoke:front` passed with `18 passed`
   - `pnpm run spring:test` passed; Vite emitted a non-blocking existing-style runtime warning about `new URL('/', import.meta.url)` staying unresolved until runtime
-  - `git diff --check -- STATE.md SEED.jejuair-about-host-only-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java docs/front-entrypoint-inventory.md docs/transition-architecture.md scripts/smoke/front-entrypoints.runtime.spec.cjs` passed apart from existing CRLF-to-LF normalization warnings on tracked text files
-  - `reviewer_jejuair_about_host_only (Averroes)` reported `발견 없음`; residual note only mentioned that `career.html` and `ccm.html` are not individually smoke-covered, which stays acceptable under the frozen representative-smoke contract
+  - `git diff --check -- STATE.md docs/seeds/SEED.jejuair-about-host-only-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java docs/front-entrypoint-inventory.md docs/transition-architecture.md scripts/smoke/front-entrypoints.runtime.spec.cjs` passed apart from existing CRLF-to-LF normalization warnings on tracked text files
+  - `reviewer_jejuair_about_host_only (Averroes)` reported `諛쒓껄 ?놁쓬`; residual note only mentioned that `career.html` and `ccm.html` are not individually smoke-covered, which stays acceptable under the frozen representative-smoke contract
 
 - time: `2026-03-25 10:29 +09:00`
 - route: `Route B`
@@ -1144,20 +1172,20 @@
 - participants: `main`, `worker_seed (Hilbert)`, `worker_full_host_runtime (Ampere)`, `worker_full_host_verification (Carson)`, `reviewer_full_page_runtime (Boole)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.spring-final-runtime-full-page-coverage-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.spring-final-runtime-full-page-coverage-v1.yaml`
   - `worker_full_host_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
   - `worker_full_host_verification`: `scripts/smoke/front-entrypoints.runtime.spec.cjs`
   - `reviewer_full_page_runtime`: `review only`
 - verification:
-  - `worker_seed (Hilbert)` froze `SEED.spring-final-runtime-full-page-coverage-v1.yaml` so the remaining 19 `jejuair/pages/...` entrypoints plus `/pages/auth/oauth_callback.html` became the exact full-coverage expansion target while existing covered routes stayed unchanged
+  - `worker_seed (Hilbert)` froze `docs/seeds/SEED.spring-final-runtime-full-page-coverage-v1.yaml` so the remaining 19 `jejuair/pages/...` entrypoints plus `/pages/auth/oauth_callback.html` became the exact full-coverage expansion target while existing covered routes stayed unchanged
   - `worker_full_host_runtime (Ampere)` added those remaining paths to `FrontMirrorHostController` and aligned `docs/front-entrypoint-inventory.md` plus `docs/transition-architecture.md` to the now-full runtime coverage baseline
   - `worker_full_host_verification (Carson)` expanded `scripts/smoke/front-entrypoints.runtime.spec.cjs` with direct-entry smoke coverage for the remaining jejuair groups and `/pages/auth/oauth_callback.html`
   - representative `Select-String` checks confirmed the new baggage, boarding, booking, event, jmembers, pet, and oauth callback paths are present in controller/docs/smoke
   - `pnpm run guard:text` passed
   - `pnpm run smoke:front` passed with `37 passed`
   - `pnpm run spring:test` passed; the build pipeline regenerated `jeju-spring/src/main/resources/static/front-mirror/**` assets and emitted the same non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved
-  - `git diff --check -- STATE.md SEED.spring-final-runtime-full-page-coverage-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java docs/front-entrypoint-inventory.md docs/transition-architecture.md scripts/smoke/front-entrypoints.runtime.spec.cjs` passed apart from existing CRLF-to-LF normalization warnings on tracked text files
-  - `reviewer_full_page_runtime (Boole)` reported `발견 없음` and confirmed the generated `jeju-spring/src/main/resources/static/front-mirror/**` changes look like expected build-output regeneration rather than scope drift
+  - `git diff --check -- STATE.md docs/seeds/SEED.spring-final-runtime-full-page-coverage-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java docs/front-entrypoint-inventory.md docs/transition-architecture.md scripts/smoke/front-entrypoints.runtime.spec.cjs` passed apart from existing CRLF-to-LF normalization warnings on tracked text files
+  - `reviewer_full_page_runtime (Boole)` reported `諛쒓껄 ?놁쓬` and confirmed the generated `jeju-spring/src/main/resources/static/front-mirror/**` changes look like expected build-output regeneration rather than scope drift
 
 - time: `2026-03-25 10:42 +09:00`
 - route: `Route B`
@@ -1165,19 +1193,19 @@
 - participants: `main`, `worker_seed (Kepler)`, `worker_auth_cleanup (Laplace)`, `worker_readme_followup (Einstein)`, `reviewer_auth_cleanup (Nietzsche)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.auth-legacy-template-cleanup-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.auth-legacy-template-cleanup-v1.yaml`
   - `worker_auth_cleanup`: `jeju-spring/src/main/resources/templates/auth/**, jeju-spring/src/main/resources/static/assets/css/auth/**, jeju-spring/src/main/resources/static/assets/js/auth/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java`
   - `worker_readme_followup`: `jeju-spring/README.md`
   - `reviewer_auth_cleanup`: `review only`
 - verification:
-  - `worker_seed (Kepler)` froze `SEED.auth-legacy-template-cleanup-v1.yaml` so canonical auth runtime ownership remains on `/pages/auth/*.html` front-mirror pages, `/auth/*` stays redirect-only, and only the obsolete Spring auth stack is in cleanup scope
+  - `worker_seed (Kepler)` froze `docs/seeds/SEED.auth-legacy-template-cleanup-v1.yaml` so canonical auth runtime ownership remains on `/pages/auth/*.html` front-mirror pages, `/auth/*` stays redirect-only, and only the obsolete Spring auth stack is in cleanup scope
   - `worker_auth_cleanup (Laplace)` deleted `jeju-spring/src/main/resources/templates/auth/*`, `jeju-spring/src/main/resources/static/assets/css/auth/*`, and `jeju-spring/src/main/resources/static/assets/js/auth/*`, and updated `MigrationDashboardFactory` so auth route descriptions match the redirect-alias plus canonical front-mirror model
   - `worker_readme_followup (Einstein)` removed stale `templates/auth` and auth-helper references from `jeju-spring/README.md`
   - runtime-source `git grep` for `templates/auth`, `assets/js/auth/`, and `assets/css/auth/` over `jeju-spring/src/main` plus `jeju-spring/README.md` returned no matches
   - `pnpm run guard:text` passed
   - `pnpm run spring:test` passed; as before, the build pipeline regenerated `jeju-spring/src/main/resources/static/front-mirror/**` outputs and emitted the same non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved
-  - `git diff --check -- STATE.md SEED.auth-legacy-template-cleanup-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java jeju-spring/README.md jeju-spring/src/main/resources/templates/auth jeju-spring/src/main/resources/static/assets/css/auth jeju-spring/src/main/resources/static/assets/js/auth` passed
-  - `reviewer_auth_cleanup (Nietzsche)` reported `발견 없음` and confirmed the old Spring auth stack no longer reads like an active runtime path while generated asset churn remains unrelated build output
+  - `git diff --check -- STATE.md docs/seeds/SEED.auth-legacy-template-cleanup-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java jeju-spring/README.md jeju-spring/src/main/resources/templates/auth jeju-spring/src/main/resources/static/assets/css/auth jeju-spring/src/main/resources/static/assets/js/auth` passed
+  - `reviewer_auth_cleanup (Nietzsche)` reported `諛쒓껄 ?놁쓬` and confirmed the old Spring auth stack no longer reads like an active runtime path while generated asset churn remains unrelated build output
 
 - time: `2026-03-25 13:03 +09:00`
 - route: `Route B`
@@ -1185,19 +1213,19 @@
 - participants: `main`, `worker_seed (Dalton)`, `worker_mypage_runtime (Franklin)`, `worker_mypage_tests (Hubble)`, `reviewer_mypage_cutover (Schrodinger)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.mypage-front-mirror-cutover-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.mypage-front-mirror-cutover-v1.yaml`
   - `worker_mypage_runtime`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageController.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/templates/mypage/dashboard.html, docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
   - `worker_mypage_tests`: `jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java, scripts/smoke/front-entrypoints.runtime.spec.cjs`
   - `reviewer_mypage_cutover`: `review only`
 - verification:
-  - `worker_seed (Dalton)` froze `SEED.mypage-front-mirror-cutover-v1.yaml` so `front/pages/mypage/dashboard.html` stays the canonical source, `/pages/mypage/dashboard.html` becomes the canonical front-mirror page, and `/mypage/dashboard` is alias-only
+  - `worker_seed (Dalton)` froze `docs/seeds/SEED.mypage-front-mirror-cutover-v1.yaml` so `front/pages/mypage/dashboard.html` stays the canonical source, `/pages/mypage/dashboard.html` becomes the canonical front-mirror page, and `/mypage/dashboard` is alias-only
   - `worker_mypage_runtime (Franklin)` moved canonical mypage delivery into `FrontMirrorHostController`, reduced `MyPageController` to redirect-only alias handling, deleted `templates/mypage/dashboard.html`, and aligned docs to the canonical host-only model
   - `worker_mypage_tests (Hubble)` updated Spring integration tests and smoke so canonical mypage expects front-mirror DOM markers while `/mypage/dashboard` expects redirect alias behavior
   - `pnpm run smoke:front` passed
   - `pnpm run spring:test` passed after the BOM cleanup follow-up on `FrontMirrorHostController.java`
   - live verification confirmed `GET /pages/mypage/dashboard.html` returns `200` and contains `jeju-page-shell-header`, `mypage-dashboard-root`, and `jeju-page-shell-footer`
   - live verification confirmed `GET /mypage/dashboard` returns `302` to `/pages/mypage/dashboard.html?shell=main&filter=all`
-  - `reviewer_mypage_cutover (Schrodinger)` reported `발견 없음`; residual risk only noted the usual browser-side JS wiring depth beyond DOM-marker checks
+  - `reviewer_mypage_cutover (Schrodinger)` reported `諛쒓껄 ?놁쓬`; residual risk only noted the usual browser-side JS wiring depth beyond DOM-marker checks
 
 - time: `2026-03-25 12:01 +09:00`
 - route: `Route B`
@@ -1205,17 +1233,17 @@
 - participants: `main`, `worker_seed (Aquinas)`, `worker_front_mirror_recovery (Gauss)`, `reviewer_front_mirror_recovery (Hume)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.spring-front-mirror-parity-recovery-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.spring-front-mirror-parity-recovery-v1.yaml`
   - `worker_front_mirror_recovery`: `scripts/spring/mirror-front-to-thymeleaf.cjs, regenerated jeju-spring/src/main/resources/templates/front-mirror/**, regenerated jeju-spring/src/main/resources/static/front-mirror/**`
   - `reviewer_front_mirror_recovery`: `review only`
 - verification:
-  - `worker_seed (Aquinas)` froze `SEED.spring-front-mirror-parity-recovery-v1.yaml` so `front/**` remains the only human-edited source and `front-mirror/**` is treated as regenerated mirror output only
+  - `worker_seed (Aquinas)` froze `docs/seeds/SEED.spring-front-mirror-parity-recovery-v1.yaml` so `front/**` remains the only human-edited source and `front-mirror/**` is treated as regenerated mirror output only
   - `worker_front_mirror_recovery (Gauss)` updated `scripts/spring/mirror-front-to-thymeleaf.cjs` so relative asset rewriting now respects source `<base href>` semantics before prefixing `/front-mirror/...`
   - regenerated representative templates now point at the expected asset families, including `/front-mirror/jejuair/css/main.css`, `/front-mirror/jejuair/css/about.css`, `/front-mirror/jejuair/css/ccm_baggage_pet.css`, `/front-mirror/jejuair/css/route.css`, and the matching `/front-mirror/jejuair/js/*.js` assets
   - `node --check scripts/spring/mirror-front-to-thymeleaf.cjs` passed
   - `pnpm run spring:test` passed after regeneration; the existing non-blocking Vite warning about `new URL('/', import.meta.url)` remained unchanged
   - a live Spring response check for `/jejuair/pages/about/about.html` confirmed the page now references `/front-mirror/jejuair/css/main.css`
-  - `reviewer_front_mirror_recovery (Hume)` reported `발견 없음`; residual note only mentioned that `customer_center` remains a separate `.generated` overlay axis outside this front-only parity slice
+  - `reviewer_front_mirror_recovery (Hume)` reported `諛쒓껄 ?놁쓬`; residual note only mentioned that `customer_center` remains a separate `.generated` overlay axis outside this front-only parity slice
 
 - time: `2026-03-25 09:34 +09:00`
 - route: `Route B`
@@ -1232,7 +1260,7 @@
   - `pnpm run guard:text` passed
   - `pnpm run smoke:front` passed with `17 passed`
   - `git diff --check -- front/core/utils/path_resolver.js STATE.md` passed
-  - `reviewer_auth_public_routes (McClintock)` reported `발견 없음`; residual note only mentioned that the non-browser fallback path was not directly exercised by the targeted browser-context verification
+  - `reviewer_auth_public_routes (McClintock)` reported `諛쒓껄 ?놁쓬`; residual note only mentioned that the non-browser fallback path was not directly exercised by the targeted browser-context verification
 - time: `2026-03-25 12:47 +09:00`
 - route: `Route B`
 - task: `Add representative smoke coverage for front-mirror-backed JEJU STAY activities, hotel-list, and deals entrypoints`
@@ -1250,17 +1278,17 @@
 - participants: `main`, `worker_seed (Pascal)`, `worker_parity_report (Poincare)`, `reviewer_parity_census (Lovelace)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.front-parity-census-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.front-parity-census-v1.yaml`
   - `worker_parity_report`: `docs/front-parity-census-2026-03-25.md`
   - `reviewer_parity_census`: `review only`
 - verification:
-  - `worker_seed (Pascal)` froze `SEED.front-parity-census-v1.yaml` so the census contract covers every current front-backed canonical host-only route plus the known redirect aliases while excluding dedicated non-front parity pages like `/migration`
+  - `worker_seed (Pascal)` froze `docs/seeds/SEED.front-parity-census-v1.yaml` so the census contract covers every current front-backed canonical host-only route plus the known redirect aliases while excluding dedicated non-front parity pages like `/migration`
   - main ran a fresh Playwright census outside the shared browser session and checked all 47 canonical host-only routes between `front:3001` and `spring:8080` using final URL, title hash, normalized body-text hash, body class, and structural counts for headings/links/buttons/images
   - main separately checked all 12 documented alias redirects against `spring:8080` final redirect outcomes
   - census result: canonical exact matches `29/47`, canonical mismatches `18`, alias redirect outcomes matched `9/12`, alias redirect outcomes differed `3` and those three were the documented auth aliases that intentionally append `?shell=main`
   - mismatch groups were classified into root wrapper divergence (`/`), cosmetic text drift (`/index.html`, `/pages/mypage/dashboard.html`), auth runtime divergence, JEJU STAY header utility divergence, and admin dashboard divergence
   - `worker_parity_report (Poincare)` wrote `docs/front-parity-census-2026-03-25.md` with scope, method, grouped findings, customer-center-in-scope confirmation, alias wording corrected to redirect-outcome language, and close-out order
-  - `git diff --check -- STATE.md SEED.front-parity-census-v1.yaml docs/front-parity-census-2026-03-25.md MULTI_AGENT_LOG.md` passed
+  - `git diff --check -- STATE.md docs/seeds/SEED.front-parity-census-v1.yaml docs/front-parity-census-2026-03-25.md MULTI_AGENT_LOG.md` passed
   - `reviewer_parity_census (Lovelace)` first caught over-strong alias wording and missing explicit `pages/cs` mention; the report was corrected and the reviewer found no remaining blocking process issue beyond the documented residual risk that the review itself was documentation-focused rather than a second independent browser replay
 
 - time: `2026-03-25 16:03 +09:00`
@@ -1269,11 +1297,11 @@
 - participants: `main`, `worker_seed (Sartre)`, `worker_shell_header_parity (Mendel)`, `reviewer_shell_header_parity (Boole)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.auth-header-shell-parity-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.auth-header-shell-parity-v1.yaml`
   - `worker_shell_header_parity`: `front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx`
   - `reviewer_shell_header_parity`: `review only`
 - verification:
-  - `worker_seed (Sartre)` froze `SEED.auth-header-shell-parity-v1.yaml` so the slice stays limited to shared shell header auth-sync timing and main-vs-stay login-route correctness
+  - `worker_seed (Sartre)` froze `docs/seeds/SEED.auth-header-shell-parity-v1.yaml` so the slice stays limited to shared shell header auth-sync timing and main-vs-stay login-route correctness
   - `worker_shell_header_parity (Mendel)` updated `front/apps/shell/src/runtime/layout/header.ts` to preserve existing per-button `data-route-params` when resetting login buttons and to retry bounded header auth sync when the main header utility area mounts late
   - `worker_shell_header_parity (Mendel)` updated `front/apps/shell/src/runtime/layout/shellMount.tsx` to trigger one delayed `initHeader()` resync after main/hotel shell mount completion so late-mounted auth pages converge without page-specific hacks
   - `pnpm --dir front/apps/shell check` passed
@@ -1288,11 +1316,11 @@
 - participants: `main`, `worker_seed (Kant)`, `worker_shell_header_parity_refine (Maxwell)`, `reviewer_shell_header_parity_refine (Copernicus)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.auth-header-shell-parity-v2.yaml`
+  - `worker_seed`: `docs/seeds/SEED.auth-header-shell-parity-v2.yaml`
   - `worker_shell_header_parity_refine`: `front/apps/shell/src/runtime/layout/header.ts, front/apps/shell/src/runtime/layout/shellMount.tsx`
   - `reviewer_shell_header_parity_refine`: `review only`
 - verification:
-  - `worker_seed (Kant)` froze `SEED.auth-header-shell-parity-v2.yaml` so the refinement explicitly removes the broad post-mount `initHeader` replay and preserves parity via a narrower auth-only resync path
+  - `worker_seed (Kant)` froze `docs/seeds/SEED.auth-header-shell-parity-v2.yaml` so the refinement explicitly removes the broad post-mount `initHeader` replay and preserves parity via a narrower auth-only resync path
   - `worker_shell_header_parity_refine (Maxwell)` extracted `bindHeaderStructure()` in `front/apps/shell/src/runtime/layout/header.ts`, kept `initHeader()` as a thin wrapper over structure binding plus auth sync, and exported `queueHeaderAuthSync()` for direct reuse
   - `worker_shell_header_parity_refine (Maxwell)` changed `front/apps/shell/src/runtime/layout/shellMount.tsx` so shell mount no longer calls `initHeader()` directly; it now runs `bindHeaderStructure()` during mount and `queueHeaderAuthSync()` after mount completion
   - `pnpm -C front/apps/shell check` passed
@@ -1306,13 +1334,13 @@
 - participants: `main`, `worker_seed (Avicenna)`, `worker_root_wrapper (McClintock)`, `worker_admin_dashboard (Hubble)`, `worker_census_report (Anscombe)`, `reviewer_remaining_parity (Volta)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.remaining-parity-closeout-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.remaining-parity-closeout-v1.yaml`
   - `worker_root_wrapper`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/frontmirror/web/FrontMirrorHostController.java, jeju-spring/src/main/resources/templates/index.html`
   - `worker_admin_dashboard`: `front/admin/js/admin_shell.js, front/admin/js/dashboard.js, jeju-spring/src/main/resources/static/front-mirror/admin/js/admin_shell.js, jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js`
   - `worker_census_report`: `docs/front-parity-census-2026-03-25.md`
   - `reviewer_remaining_parity`: `review only`
 - verification:
-  - `worker_seed (Avicenna)` froze `SEED.remaining-parity-closeout-v1.yaml` so the remaining slice stayed limited to root normalization, admin dashboard parity, JEJU STAY dynamic-text remeasurement, and a refreshed browser census/report
+  - `worker_seed (Avicenna)` froze `docs/seeds/SEED.remaining-parity-closeout-v1.yaml` so the remaining slice stayed limited to root normalization, admin dashboard parity, JEJU STAY dynamic-text remeasurement, and a refreshed browser census/report
   - `worker_root_wrapper (McClintock)` changed `FrontMirrorHostController` so `/` no longer special-cases to the wrapper template and instead resolves through the same `front-mirror/index` runtime as `/index.html`; `templates/index.html` was reduced to a thin fallback redirect shell
   - `worker_admin_dashboard (Hubble)` changed `front/admin/js/admin_shell.js` and `front/admin/js/dashboard.js` to resolve sibling runtime scripts from the current script URL instead of `window.location.href`, and the derived spring mirror admin JS outputs were refreshed to match
   - `node scripts/spring/sync-front-assets-to-spring.cjs` refreshed the mirrored runtime after the root/admin changes
@@ -1344,7 +1372,7 @@
 - participants: `main`, `worker_seed (Banach)`, `worker_jejuair_report (Schrodinger)`, `reviewer_jejuair_parity (Cicero)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed (Banach)`: `SEED.jejuair-front-parity-census-v1.yaml`
+  - `worker_seed (Banach)`: `docs/seeds/SEED.jejuair-front-parity-census-v1.yaml`
   - `worker_jejuair_report (Schrodinger)`: `docs/jejuair-front-parity-census-2026-03-25.md`
   - `reviewer_jejuair_parity (Cicero)`: `review only`
 - verification:
@@ -1354,8 +1382,8 @@
   - dynamic noise was limited to `/jejuair/index.html` YouTube telemetry abort request variance, which did not change DOM/body/hash parity
   - no source changes were required because no substantive parity gap remained to fix without violating the canonical front-source contract
   - `pnpm run guard:text` passed
-  - `git diff --check -- STATE.md SEED.jejuair-front-parity-census-v1.yaml docs/jejuair-front-parity-census-2026-03-25.md MULTI_AGENT_LOG.md` passed
-  - `reviewer_jejuair_parity (Cicero)` reported `발견 없음`; residual risk only noted that future Vite injection or mirror rewrite changes would need the same census rerun
+  - `git diff --check -- STATE.md docs/seeds/SEED.jejuair-front-parity-census-v1.yaml docs/jejuair-front-parity-census-2026-03-25.md MULTI_AGENT_LOG.md` passed
+  - `reviewer_jejuair_parity (Cicero)` reported `諛쒓껄 ?놁쓬`; residual risk only noted that future Vite injection or mirror rewrite changes would need the same census rerun
 
 - time: `2026-03-25 14:24 +09:00`
 - route: `Route B`
@@ -1363,13 +1391,13 @@
 - participants: `main`, `worker_seed (Nash)`, `worker_customer_center_mirror (Dirac)`, `worker_customer_center_docs (Feynman)`, `worker_customer_center_devproxy (Noether)`, `reviewer_customer_center_parity (Schrodinger)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed`: `SEED.customer-center-front-mirror-parity-v1.yaml`
+  - `worker_seed`: `docs/seeds/SEED.customer-center-front-mirror-parity-v1.yaml`
   - `worker_customer_center_mirror`: `scripts/spring/mirror-front-to-thymeleaf.cjs, jeju-spring/src/main/resources/templates/front-mirror/apps/cs/**, jeju-spring/src/main/resources/static/front-mirror/apps/cs/**`
   - `worker_customer_center_docs`: `docs/front-entrypoint-inventory.md, docs/transition-architecture.md`
   - `worker_customer_center_devproxy`: `vite.front.config.mjs`
   - `reviewer_customer_center_parity`: `review only`
 - verification:
-  - `worker_seed (Nash)` froze `SEED.customer-center-front-mirror-parity-v1.yaml` so customer_center stays on the single chain `front/apps/cs -> front/.generated/webapp-overlay/pages/cs -> jeju-spring front-mirror`
+  - `worker_seed (Nash)` froze `docs/seeds/SEED.customer-center-front-mirror-parity-v1.yaml` so customer_center stays on the single chain `front/apps/cs -> front/.generated/webapp-overlay/pages/cs -> jeju-spring front-mirror`
   - `worker_customer_center_mirror (Dirac)` changed `scripts/spring/mirror-front-to-thymeleaf.cjs` so generic spring mirroring excludes raw `front/apps/cs/**` and customer_center delivery comes only from the generated overlay; stale `jeju-spring/src/main/resources/templates/front-mirror/apps/cs/**` and `static/front-mirror/apps/cs/**` outputs were removed
   - `worker_customer_center_docs (Feynman)` aligned `docs/front-entrypoint-inventory.md` and `docs/transition-architecture.md` to the canonical runtime artifact path `front/.generated/webapp-overlay/pages/cs/customer_center.html` and removed the accidental BOM follow-up
   - `worker_customer_center_devproxy (Noether)` added unified front dev proxies for `/api/customer-center` and `/api/auth/session` in `vite.front.config.mjs` so `front:3001` customer_center resolves the same backend data boundary as `spring:8080`
@@ -1377,7 +1405,7 @@
   - `pnpm run guard:text` passed
   - `pnpm run smoke:front` passed with `40 passed`
   - `pnpm run spring:test` passed; the existing non-blocking Vite warning about `new URL('/', import.meta.url)` remaining runtime-resolved stayed unchanged
-  - `git diff --check -- STATE.md SEED.customer-center-front-mirror-parity-v1.yaml vite.front.config.mjs scripts/spring/mirror-front-to-thymeleaf.cjs docs/transition-architecture.md docs/front-entrypoint-inventory.md` passed
+  - `git diff --check -- STATE.md docs/seeds/SEED.customer-center-front-mirror-parity-v1.yaml vite.front.config.mjs scripts/spring/mirror-front-to-thymeleaf.cjs docs/transition-architecture.md docs/front-entrypoint-inventory.md` passed
   - `reviewer_customer_center_parity (Schrodinger)` reported no blocking findings; residual risk only noted that future new customer_center backend paths would need to be added to the dev proxy set if the page starts using them
 
 - time: `2026-03-25 16:27 +09:00`
@@ -1397,7 +1425,7 @@
 - participants: `main`, `worker_seed (Leibniz)`, `worker_feature_landing (Huygens)`, `worker_shared_layout (Rawls)`, `worker_feature_jejustay (Socrates)`, `worker_shared_mirror (Bohr)`, `reviewer_landing_jejustay_design (Chandrasekhar)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed (Leibniz)`: `SEED.front-landing-jejustay-design-repair-v1.yaml`
+  - `worker_seed (Leibniz)`: `docs/seeds/SEED.front-landing-jejustay-design-repair-v1.yaml`
   - `worker_feature_landing (Huygens)`: `front/index.html, front/core/pages/landing/main.js, front/styles/globals.css`
   - `worker_shared_layout (Rawls)`: `front/components/react/layout/footer.css`
   - `worker_feature_jejustay (Socrates)`: `front/jejustay/pages/travel/esim.html, front/jejustay/pages/travel/esim.css`
@@ -1420,14 +1448,14 @@
 - participants: `main`, `worker_seed (Averroes)`, `worker_landing_revert (Ptolemy)`, `worker_shared_footer (Plato)`, `worker_jejustay_feature (Gibbs)`, `worker_shared_mirror (Harvey)`, `reviewer_regression_followup (Sartre)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed (Averroes)`: `SEED.front-regression-repair-followup-v1.yaml`
+  - `worker_seed (Averroes)`: `docs/seeds/SEED.front-regression-repair-followup-v1.yaml`
   - `worker_landing_revert (Ptolemy)`: `front/index.html, front/styles/globals.css`
   - `worker_shared_footer (Plato)`: `front/components/react/layout/footer.css`
   - `worker_jejustay_feature (Gibbs)`: `front/jejustay/pages/travel/esim.html, front/jejustay/pages/travel/esim.css if strictly required`
   - `worker_shared_mirror (Harvey)`: `regenerated jeju-spring/src/main/resources/templates/front-mirror/index.html, regenerated jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/travel/esim.html, regenerated jeju-spring/src/main/resources/static/front-mirror/** affected assets only`
   - `reviewer_regression_followup (Sartre)`: `review only`
 - verification:
-  - new contract frozen in `SEED.front-regression-repair-followup-v1.yaml`
+  - new contract frozen in `docs/seeds/SEED.front-regression-repair-followup-v1.yaml`
   - landing was narrowed to the three `data-lang-html="true"` membership price nodes only; broader membership/footer overrides were removed
   - footer root cause was traced to `front/styles/globals.css` where `.footer-info p` still rendered as `inline-block`; the live fix was reduced to `display: block`
   - eSIM FAB root cause was confirmed as the missing `../../../components/react/ui/FAB/fab.css` link; adding it restored `#jeju-fab-root` and `.fab-wrapper` on both front and spring
@@ -1474,7 +1502,7 @@
   - `node scripts/spring/mirror-front-to-thymeleaf.cjs` regenerated `jeju-spring/src/main/resources/static/front-mirror/**`
   - `node scripts/spring/run-jeju-spring-gradle.cjs processResources` was blocked by missing `gradle-wrapper.jar`; fallback copy refreshed `jeju-spring/build/resources/main/**` and both `shell-runtime.js` files now point to `runtime-layout-Bj_DwnxM.js`
   - `git diff --check` passed for the touched task files
-  - `reviewer_footer_regression (Athena)` reported `발견 없음`
+  - `reviewer_footer_regression (Athena)` reported `諛쒓껄 ?놁쓬`
   - final live `spring:8080` verification was blocked by `ERR_CONNECTION_REFUSED` and logged in `ERROR_LOG.md`
 
 - time: `2026-03-25 23:19 +09:00`
@@ -1497,17 +1525,17 @@
 - participants: `main`, `worker_seed (Descartes)`, `worker_feature_landing (Pauli)`, `reviewer_membership_badge (Steward the 2nd)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed (Descartes)`: `SEED.membership-badge-metal-finish-v1.yaml`
+  - `worker_seed (Descartes)`: `docs/seeds/SEED.membership-badge-metal-finish-v1.yaml`
   - `worker_feature_landing (Pauli)`: `front/styles/globals.css, regenerated jeju-spring/src/main/resources/static/front-mirror/styles/globals.css`
   - `reviewer_membership_badge (Steward the 2nd)`: `review only`
 - verification:
-  - `SEED.membership-badge-metal-finish-v1.yaml` created to freeze the badge-only contract
+  - `docs/seeds/SEED.membership-badge-metal-finish-v1.yaml` created to freeze the badge-only contract
   - `front/styles/globals.css` now applies layered metallic gradients, radial highlights, inset shadows, and text shadows to `.tier-badge.silver`, `.tier-badge.gold`, and `.tier-badge.platinum`
   - mirrored `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` matches the front source diff
   - live `spring:8080/index.html?badgecheck=2#section-5` verified updated `backgroundImage`, `boxShadow`, and `textShadow` values for all three tier badges
   - `pnpm run check:shell` passed
   - `git diff --check` passed
-  - `reviewer_membership_badge (Steward the 2nd)` reported `발견 없음`
+  - `reviewer_membership_badge (Steward the 2nd)` reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-25 23:45 +09:00`
 - route: `Route B`
@@ -1515,17 +1543,17 @@
 - participants: `main`, `worker_seed (Ptolemy the 2nd)`, `worker_shared_footer (Confucius the 2nd)`, `worker_shared_mirror (Faraday the 2nd)`, `reviewer_footer_spacing (Athena the 2nd)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed (Ptolemy the 2nd)`: `SEED.footer-spacing-tighten-v1.yaml`
+  - `worker_seed (Ptolemy the 2nd)`: `docs/seeds/SEED.footer-spacing-tighten-v1.yaml`
   - `worker_shared_footer (Confucius the 2nd)`: `front/components/react/layout/footer.css`
   - `worker_shared_mirror (Faraday the 2nd)`: `jeju-spring/src/main/resources/static/front-mirror/components/react/layout/footer.css, jeju-spring/src/main/resources/static/front-mirror/components/runtime/style.css, jeju-spring/build/resources/main/static/front-mirror/** affected assets`
   - `reviewer_footer_spacing (Athena the 2nd)`: `review only`
 - verification:
-  - `SEED.footer-spacing-tighten-v1.yaml` created to freeze the footer-spacing-only contract
+  - `docs/seeds/SEED.footer-spacing-tighten-v1.yaml` created to freeze the footer-spacing-only contract
   - `front/components/react/layout/footer.css` reduced `footer.shell-footer.section` `padding-top` and `padding-bottom` from `60px` to `50px`
   - mirrored `jeju-spring/src/main/resources/static/front-mirror/components/react/layout/footer.css` matches the front source change
   - live `spring:8080/index.html?footerspacing=1` verified `paddingTop` and `paddingBottom` both compute to `50px`
   - live `spring:8080` also verified footer info remains `display:grid`, same-row 2-column layout is intact, and `Family Sites` still opens 4 radial items
-  - `reviewer_footer_spacing (Athena the 2nd)` reported `발견 없음`
+  - `reviewer_footer_spacing (Athena the 2nd)` reported `諛쒓껄 ?놁쓬`
 
 - time: `2026-03-25 23:40 +09:00`
 - route: `Route B`
@@ -1533,7 +1561,7 @@
 - participants: `main`, `worker_seed (Ptolemy the 2nd)`, `worker_shared_footer (Confucius the 2nd)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed (Ptolemy the 2nd)`: `SEED.footer-spacing-tighten-v1.yaml`
+  - `worker_seed (Ptolemy the 2nd)`: `docs/seeds/SEED.footer-spacing-tighten-v1.yaml`
   - `worker_shared_footer (Confucius the 2nd)`: `front/components/react/layout/footer.css`
 - verification:
   - `front/components/react/layout/footer.css` changed only `footer.shell-footer.section` padding from `60px` to `50px` on top and bottom, reducing footer height by `20px`
@@ -1548,17 +1576,17 @@
 - participants: `main`, `worker_seed (Hypatia)`, `worker_shared_footer (Linnaeus)`, `worker_footer_widget (Hume)`, `reviewer_footer_regression (Steward)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed (Hypatia)`: `SEED.footer-regression-repair-v1.yaml`
+  - `worker_seed (Hypatia)`: `docs/seeds/SEED.footer-regression-repair-v1.yaml`
   - `worker_shared_footer (Linnaeus)`: `front/components/react/layout/footer.css`
   - `worker_footer_widget (Hume)`: `front/components/react/layout/MainFooterTemplate.tsx`
   - `reviewer_footer_regression (Steward)`: `review only`
 - verification:
-  - `SEED.footer-regression-repair-v1.yaml` created to freeze the footer-only contract
+  - `docs/seeds/SEED.footer-regression-repair-v1.yaml` created to freeze the footer-only contract
   - `front/components/react/layout/MainFooterTemplate.tsx` now separates company info and address/contact into explicit footer info groups
   - `front/components/react/layout/footer.css` now lays those groups out as a 2-column grid and keeps `footer-right-group` from shrinking
   - `pnpm run check:shell` passed
-  - `git diff --check -- STATE.md SEED.footer-regression-repair-v1.yaml front/components/react/layout/MainFooterTemplate.tsx front/components/react/layout/footer.css` passed
-  - `reviewer_footer_regression (Steward)` reported `발견 없음`
+  - `git diff --check -- STATE.md docs/seeds/SEED.footer-regression-repair-v1.yaml front/components/react/layout/MainFooterTemplate.tsx front/components/react/layout/footer.css` passed
+  - `reviewer_footer_regression (Steward)` reported `諛쒓껄 ?놁쓬`
   - browser rendering was not rechecked in this turn
 
 - time: `2026-03-25 23:32 +09:00`
@@ -1581,14 +1609,14 @@
 - participants: `main`, `worker_seed_auth_api (Aquinas)`, `worker_shared_api_config (Cicero)`, `worker_spring_auth_mirror (Kant)`, `worker_spring_build_resources (Goodall)`, `worker_error_log (Avicenna)`, `reviewer_auth_signup_flow (Mill)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_auth_api (Aquinas)`: `SEED.auth-local-api-base-routing-fix-v1.yaml`
+  - `worker_seed_auth_api (Aquinas)`: `docs/seeds/SEED.auth-local-api-base-routing-fix-v1.yaml`
   - `worker_shared_api_config (Cicero)`: `front/core/modules/config/api_config.module.js`
   - `worker_spring_auth_mirror (Kant)`: `derived front/.generated/webapp-overlay/**, jeju-spring/src/main/resources/templates/front-mirror/**, jeju-spring/src/main/resources/static/front-mirror/**, jeju-spring/src/main/resources/static/components/runtime/** affected by auth runtime regeneration`
   - `worker_spring_build_resources (Goodall)`: `jeju-spring/build/resources/main/** affected auth runtime resources`
   - `worker_error_log (Avicenna)`: `ERROR_LOG.md`
   - `reviewer_auth_signup_flow (Mill)`: `review only`
 - verification:
-  - `SEED.auth-local-api-base-routing-fix-v1.yaml` created to freeze the localhost:8080 same-origin auth routing contract while preserving explicit `?api=local` and `?api=remote` overrides
+  - `docs/seeds/SEED.auth-local-api-base-routing-fix-v1.yaml` created to freeze the localhost:8080 same-origin auth routing contract while preserving explicit `?api=local` and `?api=remote` overrides
   - `front/core/modules/config/api_config.module.js` now returns `""` for local Spring `localhost:8080`, keeping local dev fallback on `http://localhost:9090/jeju-web` for other localhost ports and preserving explicit overrides
   - `node scripts/spring/sync-front-assets-to-spring.cjs` regenerated the affected front runtime and spring front-mirror assets
   - `jeju-spring/gradlew.bat processResources` refreshed `jeju-spring/build/resources/main/**` so the already-running local Spring process serves the fixed auth assets instead of stale build resources
@@ -1604,13 +1632,13 @@
 - participants: `main`, `worker_seed_mypage_support (Mendel)`, `worker_feature_mypage_support (Epicurus, Newton)`, `worker_spring_mypage_mirror (Hooke, Popper)`, `worker_spring_mypage_build_resources (Banach, Bacon)`, `reviewer_mypage_support_icons (Franklin, Meitner)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_mypage_support (Mendel)`: `SEED.mypage-support-icon-path-fix-v1.yaml`
+  - `worker_seed_mypage_support (Mendel)`: `docs/seeds/SEED.mypage-support-icon-path-fix-v1.yaml`
   - `worker_feature_mypage_support (Epicurus, Newton)`: `front/components/react/mypage/SupportSection.tsx`
   - `worker_spring_mypage_mirror (Hooke, Popper)`: `derived front/.generated/webapp-overlay/**, jeju-spring/src/main/resources/static/front-mirror/**, jeju-spring/src/main/resources/templates/front-mirror/** affected by mypage runtime regeneration`
   - `worker_spring_mypage_build_resources (Banach, Bacon)`: `jeju-spring/build/resources/main/** affected mypage runtime resources`
   - `reviewer_mypage_support_icons (Franklin, Meitner)`: `review only`
 - verification:
-  - `SEED.mypage-support-icon-path-fix-v1.yaml` created to freeze the no-404 mypage support-icon contract for local Spring host-only runtime
+  - `docs/seeds/SEED.mypage-support-icon-path-fix-v1.yaml` created to freeze the no-404 mypage support-icon contract for local Spring host-only runtime
   - `front/components/react/mypage/SupportSection.tsx` now detects `/front-mirror/` runtime assets from existing `link[href]` / `script[src]` tags and chooses the mirror asset path on first render for Spring host-only pages, while keeping `/pages/mypage/assets/...` for direct front runtime
   - `pnpm -C front/apps/shell check` passed
   - `node scripts/spring/sync-front-assets-to-spring.cjs` regenerated the affected `feature-mypage` runtime and Spring front-mirror assets
@@ -1626,12 +1654,12 @@
 - participants: `main`, `worker_seed_admin_header (Dirac)`, `worker_feature_index_admin (Maxwell)`, `worker_spring_index_mirror (Nash)`, `reviewer_admin_header (McClintock)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_header (Dirac)`: `SEED.admin-header-admin-link-dedupe-v1.yaml`
+  - `worker_seed_admin_header (Dirac)`: `docs/seeds/SEED.admin-header-admin-link-dedupe-v1.yaml`
   - `worker_feature_index_admin (Maxwell)`: `front/index.html`
   - `worker_spring_index_mirror (Nash)`: `derived jeju-spring/src/main/resources/templates/front-mirror/index.html and derived jeju-spring/build/resources/main/** where the served index assets were refreshed`
   - `reviewer_admin_header (McClintock)`: `review only`
 - verification:
-  - `SEED.admin-header-admin-link-dedupe-v1.yaml` created to freeze the single-admin-link header contract
+  - `docs/seeds/SEED.admin-header-admin-link-dedupe-v1.yaml` created to freeze the single-admin-link header contract
   - `front/index.html` no longer imports `canUseAdminSurface` or injects a page-local `ADMIN.DASHBOARD` link; it keeps only the login/logout text sync path
   - `pnpm -C front/apps/shell check` passed
   - `jeju-spring/src/main/resources/templates/front-mirror/index.html` and `jeju-spring/build/resources/main/templates/front-mirror/index.html` were refreshed so the served index path also drops the page-local admin injection
@@ -1644,12 +1672,12 @@
 - participants: `main`, `worker_seed_auth_session (Copernicus)`, `worker_auth_session_source (Kant)`, `worker_auth_session_runtime (Boole)`, `reviewer_auth_session (Lagrange)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_auth_session (Copernicus)`: `SEED.auth-session-unify-v1.yaml`
+  - `worker_seed_auth_session (Copernicus)`: `docs/seeds/SEED.auth-session-unify-v1.yaml`
   - `worker_auth_session_source (Kant)`: `front/components/react/auth/services/loginService.ts, front/core/modules/auth/session_manager.module.js, front/core/modules/auth/local_admin.module.js, front/admin/js/auth_guard.js, front/components/react/mypage/state.tsx, front/components/react/mypage/data.ts, front/apps/shell/src/runtime/layout/header.ts`
   - `worker_auth_session_runtime (Boole)`: `derived front/.generated/webapp-overlay/** and derived jeju-spring runtime assets only where the existing sync/build pipeline refreshed affected auth and mypage runtime files`
   - `reviewer_auth_session (Lagrange)`: `review only`
 - verification:
-  - `SEED.auth-session-unify-v1.yaml` created to freeze removal of the front-only login override and adoption of Spring-backed auth/session resolution
+  - `docs/seeds/SEED.auth-session-unify-v1.yaml` created to freeze removal of the front-only login override and adoption of Spring-backed auth/session resolution
   - `front/components/react/auth/services/loginService.ts` no longer contains `LOCAL_TEST_LOGIN_ID`, `LOCAL_TEST_PASSWORD`, or `LOCAL_LOGIN_OVERRIDE`
   - `front/core/modules/auth/session_manager.module.js` now resolves session state from server `/api/auth/session` only and clears stale local state on `401`
   - `front/core/modules/auth/local_admin.module.js` and `front/admin/js/auth_guard.js` now admit admin surfaces only when the resolved real session is admin
@@ -1665,12 +1693,12 @@
 - participants: `main`, `worker_seed_membership_tier (Newton)`, `worker_front_membership_styles (Faraday)`, `worker_spring_membership_mirror (Banach)`, `reviewer_membership_tier (Fermat, Harvey)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_membership_tier (Newton)`: `SEED.membership-tier-platinum-polish-v1.yaml`
+  - `worker_seed_membership_tier (Newton)`: `docs/seeds/SEED.membership-tier-platinum-polish-v1.yaml`
   - `worker_front_membership_styles (Faraday)`: `front/styles/globals.css, front/pages/mypage/styles/_summary.css`
   - `worker_spring_membership_mirror (Banach)`: `derived jeju-spring mirror/build assets only where the existing front-to-spring pipeline refreshed the affected membership styles`
   - `reviewer_membership_tier (Fermat, Harvey)`: `review only`
 - verification:
-  - `SEED.membership-tier-platinum-polish-v1.yaml` created to freeze a platinum-only premium polish while keeping silver unchanged
+  - `docs/seeds/SEED.membership-tier-platinum-polish-v1.yaml` created to freeze a platinum-only premium polish while keeping silver unchanged
   - `front/styles/globals.css` keeps silver as the neutral baseline and deepens only `tier-badge.platinum`
   - `front/pages/mypage/styles/_summary.css` keeps silver unchanged and deepens only the platinum chip/avatar variables
   - the first review pass caught spring mirror parity drift; spring mirror/build outputs were then re-run until `[jeju-spring/src/main/resources/static/front-mirror/styles/globals.css]` and `[jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css]` matched the updated front values
@@ -1683,12 +1711,12 @@
 - participants: `main`, `worker_seed_membership_tier (Beauvoir)`, `worker_front_membership_styles (Kuhn)`, `worker_spring_membership_mirror (Peirce)`, `reviewer_membership_tier (Hume)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_membership_tier (Beauvoir)`: `SEED.membership-tier-platinum-deepen-v1.yaml`
+  - `worker_seed_membership_tier (Beauvoir)`: `docs/seeds/SEED.membership-tier-platinum-deepen-v1.yaml`
   - `worker_front_membership_styles (Kuhn)`: `front/styles/globals.css, front/pages/mypage/styles/_summary.css`
   - `worker_spring_membership_mirror (Peirce)`: `derived jeju-spring mirror/build assets only where the existing front-to-spring pipeline refreshed the affected landing/mypage membership styles`
   - `reviewer_membership_tier (Hume)`: `review only`
 - verification:
-  - `SEED.membership-tier-platinum-deepen-v1.yaml` created to freeze a darker platinum-only follow-up while keeping silver untouched
+  - `docs/seeds/SEED.membership-tier-platinum-deepen-v1.yaml` created to freeze a darker platinum-only follow-up while keeping silver untouched
   - `front/styles/globals.css` darkened only `tier-badge.platinum` by reducing highlight intensity and deepening the mid/low metallic tones
   - `front/pages/mypage/styles/_summary.css` darkened only the platinum chip/avatar variables in the same visual direction
   - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` reran the spring mirror/build pipeline
@@ -1701,12 +1729,12 @@
 - participants: `main`, `worker_seed_membership_tier (Kierkegaard)`, `worker_front_membership_styles (Hubble)`, `worker_spring_membership_mirror (Archimedes)`, `reviewer_membership_tier (Halley)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_membership_tier (Kierkegaard)`: `SEED.membership-tier-platinum-a0b2c6-dark-v1.yaml`
+  - `worker_seed_membership_tier (Kierkegaard)`: `docs/seeds/SEED.membership-tier-platinum-a0b2c6-dark-v1.yaml`
   - `worker_front_membership_styles (Hubble)`: `front/styles/globals.css, front/pages/mypage/styles/_summary.css`
   - `worker_spring_membership_mirror (Archimedes)`: `derived jeju-spring mirror/build assets only where the existing front-to-spring pipeline refreshed the affected membership styles`
   - `reviewer_membership_tier (Halley)`: `review only`
 - verification:
-  - `SEED.membership-tier-platinum-a0b2c6-dark-v1.yaml` created to freeze the rollback to #a0b2c6 with slightly darker weight
+  - `docs/seeds/SEED.membership-tier-platinum-a0b2c6-dark-v1.yaml` created to freeze the rollback to #a0b2c6 with slightly darker weight
   - `front/styles/globals.css` retuned only `tier-badge.platinum` to an #a0b2c6-centered metallic gradient with darker lower stops and unchanged silver
   - `front/pages/mypage/styles/_summary.css` retuned only the platinum avatar ring/chip variables to the same #a0b2c6-centered palette
   - `node scripts/spring/sync-front-assets-to-spring.cjs` and `jeju-spring/gradlew.bat clean processResources` refreshed the spring mirror/build outputs
@@ -1739,13 +1767,13 @@
 - participants: `main`, `worker_seed_admin_dehardcode (Dalton)`, `worker_admin_dashboard (Noether)`, `worker_admin_surface_tables (Hilbert)`, `worker_admin_dashboard_followup (Hume)`, `reviewer_admin_dehardcode (Turing, Confucius)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_dehardcode (Dalton)`: `SEED.admin-surface-dehardcode-v1.yaml`
+  - `worker_seed_admin_dehardcode (Dalton)`: `docs/seeds/SEED.admin-surface-dehardcode-v1.yaml`
   - `worker_admin_dashboard (Noether)`: `front/admin/data/dashboard-data.js, front/admin/js/dashboard.js, front/admin/pages/dashboard.html`
   - `worker_admin_surface_tables (Hilbert)`: `front/admin/data/reservations-config.js, front/admin/data/lodging-config.js, front/admin/data/members-config.js, front/admin/data/cms-config.js, front/admin/js/reservations.js, front/admin/js/lodging.js, front/admin/js/members.js, front/admin/js/cms.js`
   - `worker_admin_dashboard_followup (Hume)`: `front/admin/data/dashboard-data.js`
   - `reviewer_admin_dehardcode (Turing, Confucius)`: `review only`
 - verification:
-  - `SEED.admin-surface-dehardcode-v1.yaml` froze the full admin-surface dehardcode contract with UI-preservation and later DB-hydration compatibility
+  - `docs/seeds/SEED.admin-surface-dehardcode-v1.yaml` froze the full admin-surface dehardcode contract with UI-preservation and later DB-hydration compatibility
   - `front/admin/js/dashboard.js` no longer generates KPI/chart/recent-activity dummy business data and now renders zero-state dashboard content from `front/admin/data/dashboard-data.js` plus optional hydrated payloads
   - `front/admin/pages/dashboard.html` no longer contains hardcoded recent-activity sample rows
   - `front/admin/js/reservations.js`, `front/admin/js/lodging.js`, `front/admin/js/members.js`, and `front/admin/js/cms.js` no longer embed sample business rows and now read UI metadata from `front/admin/data/**`
@@ -1761,11 +1789,11 @@
 - participants: `main`, `worker_seed_admin_spring_sync (Russell)`, `worker_spring_admin_sync (Parfit)`, `reviewer_admin_spring_sync (Pascal)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_admin_spring_sync (Russell)`: `SEED.admin-surface-dehardcode-spring-sync-v1.yaml`
+  - `worker_seed_admin_spring_sync (Russell)`: `docs/seeds/SEED.admin-surface-dehardcode-spring-sync-v1.yaml`
   - `worker_spring_admin_sync (Parfit)`: `derived jeju-spring/src/main/resources/static/front-mirror/admin/**, derived jeju-spring/src/main/resources/templates/front-mirror/admin/pages/**, and matching build/runtime outputs only where the existing sync/processResources pipeline refreshed the already-updated admin front surface`
   - `reviewer_admin_spring_sync (Pascal)`: `review only`
 - verification:
-  - `SEED.admin-surface-dehardcode-spring-sync-v1.yaml` froze the spring-sync contract for the already-completed admin dehardcode
+  - `docs/seeds/SEED.admin-surface-dehardcode-spring-sync-v1.yaml` froze the spring-sync contract for the already-completed admin dehardcode
   - `node scripts/spring/sync-front-assets-to-spring.cjs` ran successfully and refreshed the admin front-mirror outputs under `jeju-spring/src/main/resources/static/front-mirror/admin/**` plus the mirrored Thymeleaf admin page output
   - `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat clean processResources` ran successfully from the `jeju-spring` directory and refreshed the corresponding `jeju-spring/build/resources/main/**` admin outputs
   - targeted spring changes were limited to the derived admin mirror/runtime outputs; `front` source and `jeju-web` were not modified by the sync task
@@ -1777,13 +1805,13 @@
 - participants: `main`, `worker_seed_active_user_presence (Arendt)`, `worker_backend_active_user_presence (Kant, Bernoulli)`, `worker_front_active_user_presence (Boole)`, `worker_spring_active_user_sync (Goodall)`, `reviewer_active_user_presence (Dirac, Newton)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_active_user_presence (Arendt)`: `SEED.auth-active-user-sessions-v1.yaml`
+  - `worker_seed_active_user_presence (Arendt)`: `docs/seeds/SEED.auth-active-user-sessions-v1.yaml`
   - `worker_backend_active_user_presence (Kant, Bernoulli)`: `jeju-spring/src/main/resources/db/migration/V22__active_user_sessions.sql, jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java`
   - `worker_front_active_user_presence (Boole)`: `front/core/modules/auth/session_manager.module.js, front/admin/js/dashboard.js`
   - `worker_spring_active_user_sync (Goodall)`: `derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshed the updated front runtime`
   - `reviewer_active_user_presence (Dirac, Newton)`: `review only`
 - verification:
-  - `SEED.auth-active-user-sessions-v1.yaml` froze the active-session presence contract around `active_user_sessions`, Spring touch/clear wiring, front heartbeat, and dashboard KPI hydration
+  - `docs/seeds/SEED.auth-active-user-sessions-v1.yaml` froze the active-session presence contract around `active_user_sessions`, Spring touch/clear wiring, front heartbeat, and dashboard KPI hydration
   - `V22__active_user_sessions.sql` adds the new presence table with `session_id` primary key plus recency indexes for active-session counting
   - `AuthApiController.java` now touches presence on login and session checks, and clears presence on logout without breaking the main auth flow
   - `ActiveUserPresenceService.java` counts active presence by `COUNT(DISTINCT session_id)` inside a 5-minute `last_seen_at` window, after a first reviewer pass flagged the earlier `user_id`-based count as undercounting concurrent sessions
@@ -1799,11 +1827,11 @@
 - participants: `main`, `worker_seed_support_split (Kant)`, `worker_support_split (Averroes)`, `reviewer_support_split (Leibniz)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_support_split (Kant)`: `SEED.support-ticket-comment-attachment-split-v1.yaml`
+  - `worker_seed_support_split (Kant)`: `docs/seeds/SEED.support-ticket-comment-attachment-split-v1.yaml`
   - `worker_support_split (Averroes)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/**`
   - `reviewer_support_split (Leibniz)`: `review only`
 - verification:
-  - `SEED.support-ticket-comment-attachment-split-v1.yaml` froze the support ticket/comment/attachment split contract.
+  - `docs/seeds/SEED.support-ticket-comment-attachment-split-v1.yaml` froze the support ticket/comment/attachment split contract.
   - `SupportApiController.java` now delegates to a thin top-level `SupportService.java`, while `SupportCategoryService.java`, `SupportTicketService.java`, `SupportCommentService.java`, and `SupportAttachmentService.java` split the previously monolithic support implementation by responsibility.
   - `SupportAccessPolicy.java` now owns the shared authenticated/admin/own-ticket access rule, and `SupportDatabaseSupport.java` centralizes the shared DB helpers.
   - A reviewer found a mixed-case `serviceType` compatibility regression in `SupportDatabaseSupport.java`; it was fixed by restoring lowercase normalization for optional and required support service-type inputs before final close.
@@ -1817,13 +1845,29 @@
 - participants: `main`, `worker_seed_customercenter_cms_split (Chandrasekhar)`, `worker_customercenter_cms_split (Gibbs)`, `reviewer_customercenter_cms_split (Pasteur)`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_seed_customercenter_cms_split (Chandrasekhar)`: `SEED.customer-center-cms-read-write-split-v1.yaml`
+  - `worker_seed_customercenter_cms_split (Chandrasekhar)`: `docs/seeds/SEED.customer-center-cms-read-write-split-v1.yaml`
   - `worker_customercenter_cms_split (Gibbs)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/**`
   - `reviewer_customercenter_cms_split (Pasteur)`: `review only`
 - verification:
-  - `SEED.customer-center-cms-read-write-split-v1.yaml` froze the customer-center CMS read/write split contract.
+  - `docs/seeds/SEED.customer-center-cms-read-write-split-v1.yaml` froze the customer-center CMS read/write split contract.
   - `CustomerCenterCmsService.java` now acts as a thin facade while `CustomerCenterCmsReadService.java` and `CustomerCenterCmsWriteService.java` separate public read and admin-gated write responsibilities behind the existing notice/faq API.
   - `CustomerCenterCmsDatabaseSupport.java` centralizes the shared DB connection and service-type normalization helpers for the split services.
   - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
   - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms` passed.
   - `reviewer_customercenter_cms_split (Pasteur)` reported `블로킹 findings 없음`; residual risk only that dedicated runtime coverage for `401/403/404` mappings and public-read/admin-write boundaries was not executed in this turn.
+﻿# MULTI AGENT LOG
+
+- time: `2026-03-27 15:24:00 +09:00`
+- route: `Route B`
+- task: `Repair staged mojibake in handoff and log documents so guard:text:staged passes again`
+- participants: `main`, `worker_docs_mojibake_repair (Tesla)`, `worker_log_mojibake_repair (Ramanujan)`, `reviewer_mojibake_repair (Rawls)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_docs_mojibake_repair (Tesla)`: `NEXT_AGENT_START.md, docs/mypage-handoff.md`
+  - `worker_log_mojibake_repair (Ramanujan)`: `MULTI_AGENT_LOG.md`
+  - `reviewer_mojibake_repair (Rawls)`: `review only`
+- verification:
+  - `worker_docs_mojibake_repair (Tesla)` restored readable Korean in `NEXT_AGENT_START.md` and `docs/mypage-handoff.md` from the last readable git baseline while preserving the intended `D:\lsh\git\jejugroup\...` absolute paths and `docs/seeds/...` seed links.
+  - `worker_log_mojibake_repair (Ramanujan)` repaired the staged mojibake blocking lines in `MULTI_AGENT_LOG.md`, including the hotel-header task wording, the runtime-closure `제외` wording, and the JejuAir parity verification text.
+  - A reviewer then found three remaining admin-shell log lines still carrying mojibake; `main` corrected those final lines to readable text and emoji without widening the cleanup scope.
+  - `pnpm run guard:text:staged` passed with `[guard:text] 점검 완료 상태 (113 files)`.

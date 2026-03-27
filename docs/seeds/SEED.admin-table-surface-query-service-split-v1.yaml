@@ -1,0 +1,37 @@
+goal: >
+  Take the next track_admin slice by keeping `/api/admin/tables/{surface}` externally stable
+  while splitting the current monolithic admin table-surface read logic into
+  surface-specific query-service boundaries.
+constraints:
+  - Preserve the existing `/api/admin/tables/{surface}` route and the current top-level JSON response shape with `defaultTab` and `tabs`.
+  - Keep the current front-facing surface keys and tab contracts intact for `members`, `cms`, `lodging`, and `reservations`.
+  - Treat the current controller/entrypoint boundary as stable for now; the refactor target is the internal service structure behind it.
+  - Extract surface-specific query service ownership for the current surface branches now living under `AdminReadService.loadTableSurface(...)`.
+  - Minimum target split is:
+    `AdminMembersQueryService`,
+    `AdminCmsQueryService`,
+    `AdminProductQueryService`,
+    `AdminReservationQueryService`.
+  - The split must preserve the already-completed real-query behavior for:
+    members `membership`,
+    cms `banner`,
+    reservations `booking/payment/refund/traveler`,
+    lodging `stay/flight/rentcar/voucher/usim/special`.
+  - Do not regress `active_user_sessions`, auth heartbeat, or admin dashboard `activeUsers` KPI behavior.
+  - Do not change front files, mirror outputs, route constants, or deployment paths in this pass.
+acceptance_criteria:
+  - A follow-up implementation can move the current `members`, `cms`, `lodging`, and `reservations` surface assembly out of the monolithic admin read service without changing the external `/api/admin/tables/{surface}` contract.
+  - The contract explicitly names the target service boundaries and keeps the current surface ownership unambiguous.
+  - The split plan keeps dashboard work out of scope for this slice and limits itself to table-surface read composition.
+  - The contract preserves the already-finished DB-backed admin surface behavior as non-regression requirements.
+verification:
+  - review `STATE.md`
+  - review `SEED.admin-table-surface-query-service-split-v1.yaml`
+  - confirm the seed still follows `NEXT_AGENT_START.md` ordering
+out_of_scope:
+  - immediate implementation of the service split in this seed-only slice
+  - dashboard service extraction
+  - support/cms customer-center track work
+  - mypage/booking track work
+  - front admin UI changes
+  - spring mirror regeneration, deployment, or `jeju-web` edits

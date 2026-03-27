@@ -25,15 +25,15 @@
 
 ### 현재 seed
 
-- [SEED.mypage-step1.yaml](/D:/git/jejugroup/SEED.mypage-step1.yaml)
-- [SEED.mypage-step2.yaml](/D:/git/jejugroup/SEED.mypage-step2.yaml)
-- [SEED.mypage-step3.yaml](/D:/git/jejugroup/SEED.mypage-step3.yaml)
+- [SEED.mypage-step1.yaml](/D:/lsh/git/jejugroup/docs/seeds/SEED.mypage-step1.yaml)
+- [SEED.mypage-step2.yaml](/D:/lsh/git/jejugroup/docs/seeds/SEED.mypage-step2.yaml)
+- [SEED.mypage-step3.yaml](/D:/lsh/git/jejugroup/docs/seeds/SEED.mypage-step3.yaml)
 
 ## 현재 구조
 
 ### 마이페이지 공통 상태
 
-- [state.tsx](/D:/git/jejugroup/front/components/react/mypage/state.tsx)
+- [state.tsx](/D:/lsh/git/jejugroup/front/components/react/mypage/state.tsx)
 - 현재 dashboard state 는 아래를 가진다.
   - `bookings`
   - `stats`
@@ -45,21 +45,21 @@
 
 ### mock 저장소 seam
 
-- [mockAccountDashboardStore.ts](/D:/git/jejugroup/front/components/react/mypage/mockAccountDashboardStore.ts)
+- [mockAccountDashboardStore.ts](/D:/lsh/git/jejugroup/front/components/react/mypage/mockAccountDashboardStore.ts)
 - 계정별 key 로 local storage 버킷을 분리한다.
 - 현재 계정 mock 데이터와 session 데이터를 merge 한 뒤 마이페이지가 hydrate 한다.
 - linked companion 이 있으면 그 companion 계정 버킷의 `travelEvents` 도 읽어서 집계한다.
 
 ### itinerary 원칙
 
-- [data.ts](/D:/git/jejugroup/front/components/react/mypage/data.ts)
+- [data.ts](/D:/lsh/git/jejugroup/front/components/react/mypage/data.ts)
 - `itinerary` 는 직접 저장하는 진짜 원천 데이터가 아니다.
 - 현재 기준 원천은 `travelEvents + linkedCompanions + currentAccountId` 다.
 - `itinerary` 는 위 데이터에서 파생된다.
 
 ### status 모델
 
-- [types.ts](/D:/git/jejugroup/front/components/react/mypage/types.ts)
+- [types.ts](/D:/lsh/git/jejugroup/front/components/react/mypage/types.ts)
 - `TravelEventStatus`
   - `reserved`
   - `used`
@@ -138,11 +138,11 @@
 ## 빠른 재시작 포인트
 
 - 구조 먼저 볼 파일
-  - [types.ts](/D:/git/jejugroup/front/components/react/mypage/types.ts)
-  - [data.ts](/D:/git/jejugroup/front/components/react/mypage/data.ts)
-  - [state.tsx](/D:/git/jejugroup/front/components/react/mypage/state.tsx)
-  - [mockAccountDashboardStore.ts](/D:/git/jejugroup/front/components/react/mypage/mockAccountDashboardStore.ts)
-  - [ItinerarySection.tsx](/D:/git/jejugroup/front/components/react/mypage/ItinerarySection.tsx)
+  - [types.ts](/D:/lsh/git/jejugroup/front/components/react/mypage/types.ts)
+  - [data.ts](/D:/lsh/git/jejugroup/front/components/react/mypage/data.ts)
+  - [state.tsx](/D:/lsh/git/jejugroup/front/components/react/mypage/state.tsx)
+  - [mockAccountDashboardStore.ts](/D:/lsh/git/jejugroup/front/components/react/mypage/mockAccountDashboardStore.ts)
+  - [ItinerarySection.tsx](/D:/lsh/git/jejugroup/front/components/react/mypage/ItinerarySection.tsx)
 
 - 이어서 볼 작업
   - 서비스 페이지에서 공용 writer 로 `bookings`, `travelEvents` 생성 연결

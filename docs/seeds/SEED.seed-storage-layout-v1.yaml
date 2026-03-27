@@ -1,0 +1,26 @@
+goal: >
+  Move all seed artifacts out of the repository root into docs/seeds, update
+  direct references to seed paths in workflow docs and instructions, and make
+  docs/seeds the default seed generation convention for future work.
+constraints:
+  - Preserve existing seed basenames; only the directory location changes.
+  - Relocate every root `SEED*.yaml` artifact into `docs/seeds/` and do not rename files.
+  - Update direct references in `STATE.md`, `MULTI_AGENT_LOG.md`, `AGENTS.md`, and any docs under `docs/**` that point at root seed paths.
+  - Keep unrelated dirty worktree changes untouched.
+  - Do not split active/in-progress versus completed seed subfolders in this slice.
+  - Do not change runtime, frontend, backend, or deployment files outside the seed artifacts and path-reference docs.
+acceptance_criteria:
+  - `docs/seeds/SEED.seed-storage-layout-v1.yaml` exists and is the frozen contract for this slice.
+  - Every root `SEED*.yaml` artifact now exists under `docs/seeds/` with the same basename, and no root-level `SEED*.yaml` remains.
+  - `STATE.md`, `MULTI_AGENT_LOG.md`, `AGENTS.md`, and other direct documentation references point to `docs/seeds/...` instead of root seed paths.
+  - The documentation explicitly states that future seed artifacts default to `docs/seeds/` rather than the workspace root.
+  - No unrelated admin or runtime files are modified as part of this task.
+verification:
+  - Confirm `docs/seeds/` exists and contains the relocated seed files.
+  - Search the repository for root `SEED*.yaml` references and confirm they resolve to `docs/seeds/`.
+  - Run `git diff --check`.
+  - Confirm the only intentional path changes are seed relocation and direct reference updates.
+out_of_scope:
+  - Splitting `docs/seeds/` into active/in-progress versus completed subfolders.
+  - Editing unrelated dirty admin work.
+  - Changing seed basenames.

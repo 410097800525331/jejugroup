@@ -153,7 +153,7 @@
 - time: `2026-03-24 20:52 +09:00`
 - location: `Route B admin shell handoff`
 - summary: `Single-load admin shell refactor paused before reviewer and browser verification`
-- details: `The workspace has a frozen seed at SEED.admin-shell-single-load-v1.yaml, a new front/admin/js/admin_shell.js bootstrap, and five admin HTML entrypoints rewired to that shared shell. The task was intentionally paused for cross-environment continuation before reviewer pass, direct-entry checks, same-document section-switch checks, and history/popstate verification were completed.`
+- details: `The workspace has a frozen seed at docs/seeds/SEED.admin-shell-single-load-v1.yaml, a new front/admin/js/admin_shell.js bootstrap, and five admin HTML entrypoints rewired to that shared shell. The task was intentionally paused for cross-environment continuation before reviewer pass, direct-entry checks, same-document section-switch checks, and history/popstate verification were completed.`
 - status: `deferred`
 
 - time: `2026-03-24 21:32 +09:00`
@@ -169,12 +169,12 @@
 - status: `open`
 
 - time: `2026-03-25 10:36 +09:00`
-- location: `seed verification for SEED.spring-final-runtime-full-page-coverage-v1.yaml`
+- location: `seed verification for docs/seeds/SEED.spring-final-runtime-full-page-coverage-v1.yaml`
 - summary: `automatic YAML parse verification was blocked by missing local YAML parser packages`
 - details: `ruby was not installed, python resolved to the Microsoft Store stub, and node could not load the yaml module in this workspace. The seed file itself was written successfully and git diff --check passed, but full machine parsing could not be completed without adding tools outside the allowed write set.`
 - status: `deferred`
 - time: 2026-03-25 10:29:38 +09:00
-  location: SEED.auth-legacy-template-cleanup-v1.yaml verification
+  location: docs/seeds/SEED.auth-legacy-template-cleanup-v1.yaml verification
   summary: ConvertFrom-Yaml was unavailable in PowerShell during YAML validation
   details: The seed file itself was written successfully, but the initial local parse check failed because the cmdlet is not installed in this shell.
 status: resolved
@@ -184,7 +184,7 @@ status: resolved
   details: `Running `jeju-spring\gradlew.bat` from inside `D:\lsh\git\jejugroup\jeju-spring` was treated as a PowerShell module path. The correct form is `.\gradlew.bat` from the Gradle root.`
   status: `resolved`
 - time: `2026-03-25 10:40:00 +09:00`
-- location: `SEED.auth-legacy-template-cleanup-v1.yaml verification`
+- location: `docs/seeds/SEED.auth-legacy-template-cleanup-v1.yaml verification`
 - summary: `local YAML parse tooling was unavailable in this workspace`
 - details: `PowerShell lacks ConvertFrom-Yaml, python resolves to the Microsoft Store stub, and no YAML module/parser is installed. The seed file was still written and inspected directly.`
 - status: `deferred`
@@ -381,4 +381,10 @@ status: open
 - location: `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava`
 - summary: `로컬 Gradle 바이너리로 backend compile 검증 우회 성공`
 - details: `사용자가 알려준 .codex-temp Gradle 설치본을 사용해 jeju-spring 작업 디렉터리에서 \`compileJava\`를 재실행했고 정상 통과했다. wrapper jar 누락 이슈는 남아 있지만, 이번 admin dashboard KPI slice의 compile-level verification 자체는 완료됐다.`
+- status: `resolved`
+
+- time: `2026-03-27 11:42:31 +09:00`
+- location: `D:\lsh\git\jejugroup`
+- summary: `Gradle compileJava was invoked from the repo root instead of jeju-spring`
+- details: `The requested verification command pointed at the Gradle wrapper binary, but the workspace root is not a Gradle build. Rerunning from D:\lsh\git\jejugroup\jeju-spring is required.`
 - status: `resolved`

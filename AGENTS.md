@@ -9,6 +9,7 @@ Global multi-agent defaults remain in effect unless this file narrows them.
 
 - Package manager: pnpm
 - Landing source of truth: front/**
+- Default seed artifact path: docs/seeds/
 - Deployment mirrors: jeju-spring/**, jeju-web/src/main/webapp/** (legacy mirror)
 - Display name: Jeju Group Landing Page
 - Page kind: hybrid-static-shell
@@ -84,6 +85,7 @@ Global multi-agent defaults remain in effect unless this file narrows them.
 
 - Role caps inherited from global defaults stay fixed
   `explorer 3`, `reviewer 2`, `worker up to 4 on Route B`
+- New seed artifacts should be created under `docs/seeds/` with the same basename convention.
 - Keep `STATE.md` updated with exact `route`, concrete `reason`, `writer_slot`, `contract_freeze`, and `write_sets` when Route B is active
 - If multiple roles are used, append real participation to `MULTI_AGENT_LOG.md` before reporting that they ran
 - Add repository-specific worker ownership, hard triggers, and approval zones here as they become clear

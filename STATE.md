@@ -2,38 +2,41 @@
 
 ## Current Task
 
-- task: `Run local runtime smoke and split commits for the completed backend API rewrite slices`
+- task: `Repair staged mojibake in handoff and log documents so guard:text:staged passes again`
 - phase: `completed`
-- scope: `git commit boundaries, STATE.md, MULTI_AGENT_LOG.md, local runtime verification commands`
-- verification_target: `Confirm the completed backend slices still boot and answer local endpoint smoke requests, then commit each finished slice in the same split boundaries used during implementation`
+- scope: `MULTI_AGENT_LOG.md, NEXT_AGENT_START.md, docs/mypage-handoff.md, STATE.md, MULTI_AGENT_LOG.md`
+- verification_target: `The currently staged mojibake in NEXT_AGENT_START.md, docs/mypage-handoff.md, and MULTI_AGENT_LOG.md is restored to readable Korean or safe ASCII so pnpm run guard:text:staged no longer blocks commit`
 
 ## Route
 
-- route: `Route A`
-- reason: `The user requested local runtime smoke verification plus split commit cleanup for already-completed slices. This is now a verification-and-git pass without new multi-file implementation work, so a single-lane Route A closeout is appropriate.`
+- route: `Route B`
+- reason: `The new request expands beyond the completed tiny log cleanup into three implementation files plus staged-guard verification, so Route A no longer fits and the work cleanly splits into disjoint document and log repair slices.`
 
 ## Writer Slot
 
-- owner: `main`
+- owner: `planner-only main`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-- note: `This closeout slice is limited to local runtime verification, staging, and split commits for already-finished work.`
+  - `worker_docs_mojibake_repair`: `NEXT_AGENT_START.md, docs/mypage-handoff.md`
+  - `worker_log_mojibake_repair`: `MULTI_AGENT_LOG.md`
+  - `reviewer_mojibake_repair`: `review only`
+- note: `Freeze the cleanup to the currently staged mojibake lines only; do not broaden into unrelated text rewrites.`
 
 ## Contract Freeze
 
-- contract_freeze: `not required`
-- status: `n/a`
+- contract_freeze: `frozen`
+- status: `frozen`
 - path: `n/a`
 - revision: `n/a`
-- note: `This slice verifies and commits already-completed work; no new implementation contract is being frozen.`
+- note: `Repair only the staged mojibake that blocks guard:text:staged in NEXT_AGENT_START.md, docs/mypage-handoff.md, and MULTI_AGENT_LOG.md. Prefer restoring from the last readable git version plus the intentional docs/seeds path updates; do not edit runtime code or broaden the historical log cleanup beyond the flagged staged lines.`
 
 ## Reviewer
 
-- reviewer: `n/a`
-- reviewer_target: `n/a`
-- reviewer_focus: `n/a`
+- reviewer: `reviewer_mojibake_repair`
+- reviewer_target: `staged mojibake cleanup correctness and guard:text:staged pass`
+- reviewer_focus: `Check that the repaired files are readable, keep intended docs/seeds path updates, and remove the staged mojibake findings without introducing unrelated drift.`
 
 ## Last Update
 
-- timestamp: `2026-03-27 12:39:13 +09:00`
-- note: `Local runtime smoke passed for the completed backend slices and the finished rewrite work was split into slice-aligned commits during the Route A closeout pass.`
+- timestamp: `2026-03-27 15:24:00 +09:00`
+- note: `Recovered the staged mojibake in NEXT_AGENT_START.md, docs/mypage-handoff.md, and MULTI_AGENT_LOG.md; pnpm run guard:text:staged now passes again.`

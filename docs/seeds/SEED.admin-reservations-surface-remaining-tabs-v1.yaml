@@ -1,0 +1,25 @@
+goal: >
+  Continue the admin.table-surface rewrite by keeping `/api/admin/tables/reservations`
+  externally stable while turning the remaining `payment`, `refund`, and `traveler`
+  tabs from schema-status rows into real DB-backed rows.
+constraints:
+  - Preserve the existing `/api/admin/tables/{surface}` path and the current top-level JSON response shape with `defaultTab` and `tabs`.
+  - Limit this slice to the `reservations` surface inside the existing Spring admin read source file.
+  - Keep the already-finished `booking` tab behavior intact.
+  - Replace only the `payment`, `refund`, and `traveler` tab contents with rows backed by the current booking/payment/passenger/event tables when those tables exist.
+  - Keep emitted row objects compatible with the current reservations table contract, including `searchText`, `cells`, and `domainKey`.
+  - Preserve domain-filter compatibility for `flight`, `hotel`, `rentcar`, and `voucher`.
+  - Do not touch dashboard work, lodging work, members work, cms work, auth heartbeat behavior, active_user_sessions handling, front files, or mirror outputs in this pass.
+acceptance_criteria:
+  - `/api/admin/tables/reservations` still returns a successful payload with the same top-level structure expected by the current admin surface contract.
+  - The `payment` tab rows are sourced from payment attempt/transaction data when the required tables exist.
+  - The `refund` tab rows are sourced from refund-related tables when the required tables exist.
+  - The `traveler` tab rows are sourced from booking passenger and travel-event data when the required tables exist.
+  - The existing `booking` tab remains structurally compatible and untouched in behavior.
+verification:
+  - `D:\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Refactoring `/api/admin/tables/lodging` in this pass.
+  - Splitting `/api/admin/tables/{surface}` into separate query services in this pass.
+  - Front admin UI changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.

@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const DASHBOARD_API_PATH = '/api/admin/dashboard';
+    const DASHBOARD_REFRESH_INTERVAL_MS = 30 * 1000;
     const DASHBOARD_DOMAIN_BY_UI_DOMAIN = {
         flight: 'air',
         hotel: 'stay',
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let dashboardPayloadRequestPromise = null;
     let dashboardPayloadQueuedDomain = null;
     let dashboardPayloadLastDomain = null;
+    let dashboardRefreshIntervalId = null;
 
     const normalizeDashboardDomain = (domain) => {
         const normalizedDomain = String(domain ?? '').trim().toLowerCase();
@@ -53,6 +55,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         window.AdminDashboardHydrate?.(payload);
+    };
+
+    const stopDashboardAutoRefresh = () => {
+        if (dashboardRefreshIntervalId === null) {
+            return;
+        }
+
+        window.clearInterval(dashboardRefreshIntervalId);
+        dashboardRefreshIntervalId = null;
+    };
+
+    const requestActiveDashboardDomain = () => {
+        const activeDomain = normalizeDashboardDomain(AdminStore.getState()?.ui?.domain);
+        return requestDashboardPayload(activeDomain);
+    };
+
+    const startDashboardAutoRefresh = () => {
+        stopDashboardAutoRefresh();
+
+        dashboardRefreshIntervalId = window.setInterval(() => {
+            if (document.visibilityState === 'hidden') {
+                return;
+            }
+
+            void requestActiveDashboardDomain();
+        }, DASHBOARD_REFRESH_INTERVAL_MS);
     };
 
     const requestDashboardPayload = (domain) => {
@@ -78,6 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
 
                     if (response.status === 401) {
+                        stopDashboardAutoRefresh();
                         return null;
                     }
 
@@ -539,6 +568,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let lastRequestedDashboardDomain = normalizeDashboardDomain(AdminStore.getState().ui.domain);
     void requestDashboardPayload(lastRequestedDashboardDomain);
+    startDashboardAutoRefresh();
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible') {
+            return;
+        }
+
+        void requestActiveDashboardDomain();
+    });
+
+    window.addEventListener('beforeunload', stopDashboardAutoRefresh);
+    window.addEventListener('pagehide', stopDashboardAutoRefresh);
 
     domainFilters.forEach((button) => {
         button.addEventListener('click', (event) => {

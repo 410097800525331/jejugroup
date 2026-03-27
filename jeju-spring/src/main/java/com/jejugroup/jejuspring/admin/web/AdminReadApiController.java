@@ -156,10 +156,17 @@ class AdminReadService {
 
     private final AppProperties appProperties;
     private final ActiveUserPresenceService activeUserPresenceService;
+    private final Map<String, AdminTableSurfaceQueryService> tableSurfaceQueryServices;
 
     AdminReadService(AppProperties appProperties, ActiveUserPresenceService activeUserPresenceService) {
         this.appProperties = appProperties;
         this.activeUserPresenceService = activeUserPresenceService;
+        this.tableSurfaceQueryServices = Map.of(
+            "members", new AdminMembersQueryService(),
+            "cms", new AdminCmsQueryService(),
+            "lodging", new AdminProductQueryService(),
+            "reservations", new AdminReservationQueryService()
+        );
     }
 
     Map<String, Object> loadDashboard(String rawDomain) throws SQLException {
@@ -184,18 +191,14 @@ class AdminReadService {
 
     Map<String, Object> loadTableSurface(String rawSurface) throws SQLException {
         String surface = normalizeSurface(rawSurface);
+        AdminTableSurfaceQueryService tableSurfaceQueryService = tableSurfaceQueryServices.get(surface);
+        if (tableSurfaceQueryService == null) {
+            throw new IllegalArgumentException("지원하지 않는 관리자 surface입니다.");
+        }
+
         try (Connection connection = openConnection()) {
             connection.setReadOnly(true);
-            Set<String> existingTables = loadExistingTables(connection);
-            boolean schemaBlocked = hasFlywayFailure(connection);
-
-            return switch (surface) {
-                case "members" -> buildMembersConfig(connection);
-                case "cms" -> buildCmsConfig(connection);
-                case "lodging" -> buildLodgingSchemaConfig(connection, existingTables, schemaBlocked);
-                case "reservations" -> buildReservationSchemaConfig(connection, existingTables, schemaBlocked);
-                default -> throw new IllegalArgumentException("지원하지 않는 관리자 surface입니다.");
-            };
+            return tableSurfaceQueryService.load(connection);
         }
     }
 
@@ -267,137 +270,584 @@ class AdminReadService {
         return tableSurfaceConfig("notices", tabs);
     }
 
-    private Map<String, Object> buildLodgingSchemaConfig(
-        Connection connection,
-        Set<String> existingTables,
-        boolean schemaBlocked
-    ) throws SQLException {
+    private Map<String, Object> buildLodgingConfig(Connection connection) throws SQLException {
         Map<String, Object> tabs = new LinkedHashMap<>();
-        tabs.put("stay", schemaTabConfig(
-            "stay 테이블 또는 역할 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "stay 상품 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildSchemaRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                "stay",
-                List.of(
-                    new SchemaExpectation("hotel_properties", "properties", "숙소 마스터", "V9/V20"),
-                    new SchemaExpectation("hotel_room_types", "property_room_types", "객실 타입", "V9/V20"),
-                    new SchemaExpectation("hotel_benefits", "property_benefits", "숙소 혜택", "V9/V20"),
-                    new SchemaExpectation("hotel_tags", "property_tags", "숙소 태그", "V9/V20"),
-                    new SchemaExpectation("hotel_display_overrides", "property_display_overrides", "노출 덮어쓰기", "V9/V20"),
-                    new SchemaExpectation("hotel_inventory_stocks", "inventory_stocks", "재고", "V9/V20"),
-                    new SchemaExpectation("hotel_inventory_adjustments", "inventory_adjustments", "재고 조정", "V9/V20"),
-                    new SchemaExpectation("hotel_price_policies", "price_policies", "가격 정책", "V9/V20")
-                )
-            )
+        tabs.put("stay", tabConfig(
+            "숙박 코드나 상품명으로 검색",
+            "상품 일괄 등록",
+            "숙박 등록",
+            "숙박 상품 데이터가 없습니다.",
+            List.of("상품 코드", "도메인", "상품명 / 옵션", "재고 / 수량", "기준가", "상태", "관리"),
+            loadLodgingStayRows(connection)
         ));
-        tabs.put("air", schemaTabConfig(
-            "air 테이블 또는 역할 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "air 상품 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildSchemaRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                "air",
-                List.of(
-                    new SchemaExpectation("flight_routes", null, "노선 마스터", "V15"),
-                    new SchemaExpectation("flight_schedules", null, "운항 일정", "V15"),
-                    new SchemaExpectation("flight_fare_policies", null, "운임 정책", "V15"),
-                    new SchemaExpectation("flight_products", null, "판매 상품", "V20"),
-                    new SchemaExpectation("flight_inventory_stocks", "flight_seat_inventories", "재고", "V15/V20")
-                )
-            )
+        tabs.put("flight", tabConfig(
+            "항공 코드나 노선으로 검색",
+            "상품 일괄 등록",
+            "노선 등록",
+            "항공 상품 데이터가 없습니다.",
+            List.of("상품 코드", "도메인", "노선 / 편명", "좌석", "기준가", "상태", "관리"),
+            loadLodgingFlightRows(connection)
         ));
-        tabs.put("rent", schemaTabConfig(
-            "rent 테이블 또는 역할 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "rent 상품 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildSchemaRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                "rent",
-                List.of(
-                    new SchemaExpectation("rentcar_branches", "rental_locations", "지점", "V15/V20"),
-                    new SchemaExpectation("rentcar_vehicle_models", "rental_vehicle_classes", "차량 모델", "V15/V20"),
-                    new SchemaExpectation("rentcar_products", "rental_vehicles", "판매 상품", "V15/V20"),
-                    new SchemaExpectation("rentcar_rate_policies", "rental_rate_policies", "요금 정책", "V15/V20"),
-                    new SchemaExpectation("rentcar_inventory_stocks", "rental_vehicle_inventories", "재고", "V15/V20")
-                )
-            )
+        tabs.put("rentcar", tabConfig(
+            "렌터카 코드나 차종으로 검색",
+            "상품 일괄 등록",
+            "차종 등록",
+            "렌터카 상품 데이터가 없습니다.",
+            List.of("상품 코드", "도메인", "차종 / 옵션", "보유 대수", "기준가", "상태", "관리"),
+            loadLodgingRentcarRows(connection)
         ));
-        tabs.put("voucher", schemaTabConfig(
-            "voucher 테이블 또는 역할 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "voucher 상품 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildSchemaRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                "voucher",
-                List.of(
-                    new SchemaExpectation("voucher_products", null, "바우처 상품", "V9"),
-                    new SchemaExpectation("voucher_product_benefits", null, "바우처 혜택", "V9"),
-                    new SchemaExpectation("coupons", null, "쿠폰 마스터", "V8"),
-                    new SchemaExpectation("user_coupons", null, "사용자 쿠폰", "V8")
-                )
-            )
+        tabs.put("voucher", tabConfig(
+            "바우처 코드나 상품명으로 검색",
+            "바우처 일괄 등록",
+            "상품 등록",
+            "바우처 상품 데이터가 없습니다.",
+            List.of("상품 코드", "도메인", "바우처 / 옵션", "보유 수량", "판매가", "상태", "관리"),
+            loadLodgingVoucherRows(connection)
         ));
-        tabs.put("usim", schemaTabConfig(
-            "usim 테이블 또는 역할 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "usim 상품 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildSchemaRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                "usim",
-                List.of(
-                    new SchemaExpectation("usim_products", null, "유심 상품", "V20"),
-                    new SchemaExpectation("usim_inventory_stocks", null, "유심 재고", "V20")
-                )
-            )
+        tabs.put("usim", tabConfig(
+            "유심 코드나 상품명으로 검색",
+            "유심 확인",
+            "유심 등록",
+            "유심 상품 데이터가 없습니다.",
+            List.of("상품 코드", "도메인", "유심 / 기간", "재고", "판매가", "상태", "관리"),
+            loadLodgingUsimRows(connection)
         ));
-        tabs.put("special", schemaTabConfig(
-            "special 테이블 또는 역할 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "special 상품 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildSchemaRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                "special",
-                List.of(
-                    new SchemaExpectation("special_products", null, "특가 상품", "V20"),
-                    new SchemaExpectation("special_inventory_stocks", null, "특가 재고", "V20")
-                )
-            )
+        tabs.put("special", tabConfig(
+            "특가 코드나 상품명으로 검색",
+            "선택 항목 확인",
+            "특가 생성",
+            "특가 / 쿠폰 데이터가 없습니다.",
+            List.of("상품 코드", "도메인", "특가 / 쿠폰", "발행 수량", "금액", "상태", "관리"),
+            loadLodgingSpecialRows(connection)
         ));
 
         return tableSurfaceConfig("stay", tabs);
     }
 
-    private Map<String, Object> buildReservationSchemaConfig(
-        Connection connection,
-        Set<String> existingTables,
-        boolean schemaBlocked
-    ) throws SQLException {
+    private List<Map<String, Object>> loadLodgingStayRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "hotel_properties") || !tableExists(connection, "hotel_room_types")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                hp.property_code,
+                hp.name AS property_name,
+                hp.region_name,
+                hp.is_active AS property_active,
+                hrt.room_type_code,
+                hrt.name AS room_type_name,
+                hrt.base_price,
+                hrt.max_occupancy,
+                hrt.is_active AS room_type_active,
+                (
+                    SELECT his.available_quantity
+                    FROM hotel_inventory_stocks his
+                    WHERE his.hotel_room_type_id = hrt.id
+                    ORDER BY his.stock_date DESC, his.id DESC
+                    LIMIT 1
+                ) AS available_quantity,
+                (
+                    SELECT his.total_quantity
+                    FROM hotel_inventory_stocks his
+                    WHERE his.hotel_room_type_id = hrt.id
+                    ORDER BY his.stock_date DESC, his.id DESC
+                    LIMIT 1
+                ) AS total_quantity,
+                (
+                    SELECT his.status
+                    FROM hotel_inventory_stocks his
+                    WHERE his.hotel_room_type_id = hrt.id
+                    ORDER BY his.stock_date DESC, his.id DESC
+                    LIMIT 1
+                ) AS inventory_status
+            FROM hotel_properties hp
+            INNER JOIN hotel_room_types hrt ON hrt.hotel_property_id = hp.id
+            ORDER BY hp.is_active DESC, hrt.is_active DESC, hp.name ASC, hrt.name ASC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Integer availableQuantity = nullableInteger(resultSet, "available_quantity");
+                Integer totalQuantity = nullableInteger(resultSet, "total_quantity");
+                boolean active = resultSet.getInt("property_active") == 1 && resultSet.getInt("room_type_active") == 1;
+
+                rows.add(row(
+                    searchable(
+                        resultSet.getString("property_code"),
+                        resultSet.getString("room_type_code"),
+                        resultSet.getString("property_name"),
+                        resultSet.getString("room_type_name"),
+                        resultSet.getString("region_name")
+                    ),
+                    List.of(
+                        joinCode(resultSet.getString("property_code"), resultSet.getString("room_type_code")),
+                        "숙박",
+                        joinPlain(
+                            " / ",
+                            text(resultSet.getString("property_name")),
+                            text(resultSet.getString("room_type_name")),
+                            resultSet.getInt("max_occupancy") > 0 ? "정원 " + resultSet.getInt("max_occupancy") + "인" : ""
+                        ),
+                        formatQuantity(availableQuantity, totalQuantity, "실", "재고 미집계"),
+                        formatAmount(resultSet.getBigDecimal("base_price"), "KRW"),
+                        buildCatalogStatusLabel(active, resultSet.getString("inventory_status"), availableQuantity),
+                        "읽기 전용"
+                    )
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadLodgingFlightRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "flight_products") || !tableExists(connection, "flight_routes")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                fp.product_code,
+                fp.product_name,
+                fp.flight_no,
+                fp.cabin_class,
+                fp.fare_class,
+                fp.is_active AS product_active,
+                fr.route_name,
+                fr.departure_airport_code,
+                fr.arrival_airport_code,
+                fr.is_active AS route_active,
+                (
+                    SELECT fis.available_seats
+                    FROM flight_inventory_stocks fis
+                    INNER JOIN flight_schedules fs ON fs.id = fis.flight_schedule_id
+                    WHERE fs.flight_route_id = fp.flight_route_id
+                      AND (fp.flight_no IS NULL OR fs.flight_no = fp.flight_no)
+                    ORDER BY fis.inventory_date DESC, fis.id DESC
+                    LIMIT 1
+                ) AS available_seats,
+                (
+                    SELECT fis.total_seats
+                    FROM flight_inventory_stocks fis
+                    INNER JOIN flight_schedules fs ON fs.id = fis.flight_schedule_id
+                    WHERE fs.flight_route_id = fp.flight_route_id
+                      AND (fp.flight_no IS NULL OR fs.flight_no = fp.flight_no)
+                    ORDER BY fis.inventory_date DESC, fis.id DESC
+                    LIMIT 1
+                ) AS total_seats,
+                (
+                    SELECT fis.status
+                    FROM flight_inventory_stocks fis
+                    INNER JOIN flight_schedules fs ON fs.id = fis.flight_schedule_id
+                    WHERE fs.flight_route_id = fp.flight_route_id
+                      AND (fp.flight_no IS NULL OR fs.flight_no = fp.flight_no)
+                    ORDER BY fis.inventory_date DESC, fis.id DESC
+                    LIMIT 1
+                ) AS inventory_status,
+                (
+                    SELECT ffp.base_fare
+                    FROM flight_fare_policies ffp
+                    WHERE ffp.flight_route_id = fp.flight_route_id
+                      AND (ffp.fare_class = fp.fare_class OR ffp.fare_class IS NULL)
+                    ORDER BY ffp.is_active DESC, ffp.priority ASC, ffp.id ASC
+                    LIMIT 1
+                ) AS base_fare
+            FROM flight_products fp
+            INNER JOIN flight_routes fr ON fr.id = fp.flight_route_id
+            ORDER BY fp.is_active DESC, fr.route_name ASC, fp.flight_no ASC, fp.product_code ASC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Integer availableSeats = nullableInteger(resultSet, "available_seats");
+                Integer totalSeats = nullableInteger(resultSet, "total_seats");
+                boolean active = resultSet.getInt("product_active") == 1 && resultSet.getInt("route_active") == 1;
+
+                rows.add(row(
+                    searchable(
+                        resultSet.getString("product_code"),
+                        resultSet.getString("product_name"),
+                        resultSet.getString("route_name"),
+                        resultSet.getString("flight_no"),
+                        resultSet.getString("departure_airport_code"),
+                        resultSet.getString("arrival_airport_code")
+                    ),
+                    List.of(
+                        text(resultSet.getString("product_code")),
+                        "항공",
+                        joinPlain(
+                            " / ",
+                            text(resultSet.getString("route_name")),
+                            text(resultSet.getString("flight_no")),
+                            joinPlain(" ", normalizeCabinClassLabel(resultSet.getString("cabin_class")), normalizeFareClassLabel(resultSet.getString("fare_class")))
+                        ),
+                        formatQuantity(availableSeats, totalSeats, "석", "좌석 미집계"),
+                        formatAmount(resultSet.getBigDecimal("base_fare"), "KRW"),
+                        buildCatalogStatusLabel(active, resultSet.getString("inventory_status"), availableSeats),
+                        "읽기 전용"
+                    )
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadLodgingRentcarRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "rentcar_products")
+            || !tableExists(connection, "rentcar_branches")
+            || !tableExists(connection, "rentcar_vehicle_models")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                rp.vehicle_code,
+                rp.vehicle_name,
+                rp.manufacturer,
+                rp.model_name,
+                rp.status AS product_status,
+                rp.is_active AS product_active,
+                rb.location_name,
+                rvm.class_name,
+                rvm.vehicle_category,
+                (
+                    SELECT ris.is_rentable
+                    FROM rentcar_inventory_stocks ris
+                    WHERE ris.rentcar_product_id = rp.id
+                    ORDER BY ris.inventory_date DESC, ris.id DESC
+                    LIMIT 1
+                ) AS is_rentable,
+                (
+                    SELECT ris.inventory_status
+                    FROM rentcar_inventory_stocks ris
+                    WHERE ris.rentcar_product_id = rp.id
+                    ORDER BY ris.inventory_date DESC, ris.id DESC
+                    LIMIT 1
+                ) AS inventory_status,
+                (
+                    SELECT rrp.daily_rate
+                    FROM rentcar_rate_policies rrp
+                    WHERE rrp.rentcar_branch_id = rp.rentcar_branch_id
+                      AND rrp.rentcar_vehicle_model_id = rp.rentcar_vehicle_model_id
+                    ORDER BY rrp.is_active DESC, rrp.priority ASC, rrp.id ASC
+                    LIMIT 1
+                ) AS daily_rate
+            FROM rentcar_products rp
+            INNER JOIN rentcar_branches rb ON rb.id = rp.rentcar_branch_id
+            INNER JOIN rentcar_vehicle_models rvm ON rvm.id = rp.rentcar_vehicle_model_id
+            ORDER BY rp.is_active DESC, rvm.class_name ASC, rp.vehicle_name ASC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Integer rentable = nullableInteger(resultSet, "is_rentable");
+                Integer availableQuantity = rentable == null ? null : (rentable == 1 ? 1 : 0);
+
+                rows.add(row(
+                    searchable(
+                        resultSet.getString("vehicle_code"),
+                        resultSet.getString("vehicle_name"),
+                        resultSet.getString("manufacturer"),
+                        resultSet.getString("model_name"),
+                        resultSet.getString("class_name"),
+                        resultSet.getString("location_name")
+                    ),
+                    List.of(
+                        text(resultSet.getString("vehicle_code")),
+                        "렌터카",
+                        joinPlain(
+                            " / ",
+                            text(resultSet.getString("vehicle_name")),
+                            text(resultSet.getString("class_name")),
+                            text(resultSet.getString("location_name"))
+                        ),
+                        formatQuantity(availableQuantity, 1, "대", "보유량 미집계"),
+                        formatAmount(resultSet.getBigDecimal("daily_rate"), "KRW"),
+                        buildRentcarStatusLabel(
+                            resultSet.getInt("product_active") == 1,
+                            resultSet.getString("product_status"),
+                            resultSet.getString("inventory_status"),
+                            rentable
+                        ),
+                        "읽기 전용"
+                    )
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadLodgingVoucherRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "voucher_products")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                vp.voucher_code,
+                vp.product_name,
+                vp.voucher_type,
+                vp.sale_price,
+                vp.valid_days,
+                vp.is_active,
+                hp.name AS property_name,
+                (
+                    SELECT COUNT(*)
+                    FROM voucher_product_benefits vpb
+                    WHERE vpb.voucher_product_id = vp.id
+                      AND vpb.is_active = 1
+                ) AS benefit_count
+            FROM voucher_products vp
+            LEFT JOIN hotel_properties hp ON hp.id = vp.property_id
+            ORDER BY vp.is_active DESC, vp.product_name ASC, vp.voucher_code ASC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Integer benefitCount = nullableInteger(resultSet, "benefit_count");
+
+                rows.add(row(
+                    searchable(
+                        resultSet.getString("voucher_code"),
+                        resultSet.getString("product_name"),
+                        resultSet.getString("voucher_type"),
+                        resultSet.getString("property_name")
+                    ),
+                    List.of(
+                        text(resultSet.getString("voucher_code")),
+                        "바우처",
+                        joinPlain(
+                            " / ",
+                            text(resultSet.getString("product_name")),
+                            normalizeVoucherTypeLabel(resultSet.getString("voucher_type")),
+                            text(resultSet.getString("property_name"))
+                        ),
+                        benefitCount == null ? "제한 없음" : "혜택 " + benefitCount + "개",
+                        formatAmount(resultSet.getBigDecimal("sale_price"), "KRW"),
+                        resultSet.getInt("is_active") == 1 ? "판매 중" : "비활성",
+                        "읽기 전용"
+                    )
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadLodgingUsimRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "usim_products")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                up.product_code,
+                up.product_name,
+                up.carrier_name,
+                up.plan_type,
+                up.valid_days,
+                up.sale_price,
+                up.is_active,
+                (
+                    SELECT uis.available_quantity
+                    FROM usim_inventory_stocks uis
+                    WHERE uis.usim_product_id = up.id
+                    ORDER BY uis.inventory_date DESC, uis.id DESC
+                    LIMIT 1
+                ) AS available_quantity,
+                (
+                    SELECT uis.total_quantity
+                    FROM usim_inventory_stocks uis
+                    WHERE uis.usim_product_id = up.id
+                    ORDER BY uis.inventory_date DESC, uis.id DESC
+                    LIMIT 1
+                ) AS total_quantity,
+                (
+                    SELECT uis.status
+                    FROM usim_inventory_stocks uis
+                    WHERE uis.usim_product_id = up.id
+                    ORDER BY uis.inventory_date DESC, uis.id DESC
+                    LIMIT 1
+                ) AS inventory_status
+            FROM usim_products up
+            ORDER BY up.is_active DESC, up.product_name ASC, up.product_code ASC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Integer availableQuantity = nullableInteger(resultSet, "available_quantity");
+                Integer totalQuantity = nullableInteger(resultSet, "total_quantity");
+
+                rows.add(row(
+                    searchable(
+                        resultSet.getString("product_code"),
+                        resultSet.getString("product_name"),
+                        resultSet.getString("carrier_name"),
+                        resultSet.getString("plan_type")
+                    ),
+                    List.of(
+                        text(resultSet.getString("product_code")),
+                        "유심",
+                        joinPlain(
+                            " / ",
+                            text(resultSet.getString("product_name")),
+                            normalizeUsimPlanLabel(resultSet.getString("plan_type")),
+                            resultSet.getInt("valid_days") > 0 ? resultSet.getInt("valid_days") + "일" : ""
+                        ),
+                        formatQuantity(availableQuantity, totalQuantity, "개", "재고 미집계"),
+                        formatAmount(resultSet.getBigDecimal("sale_price"), "KRW"),
+                        buildCatalogStatusLabel(resultSet.getInt("is_active") == 1, resultSet.getString("inventory_status"), availableQuantity),
+                        "읽기 전용"
+                    )
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadLodgingSpecialRows(Connection connection) throws SQLException {
+        List<Map<String, Object>> rows = new ArrayList<>();
+        rows.addAll(loadSpecialProductRows(connection));
+        rows.addAll(loadCouponRows(connection));
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadSpecialProductRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "special_products")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                sp.product_code,
+                sp.product_name,
+                sp.product_type,
+                sp.channel_code,
+                sp.is_active,
+                (
+                    SELECT sis.available_quantity
+                    FROM special_inventory_stocks sis
+                    WHERE sis.special_product_id = sp.id
+                    ORDER BY sis.inventory_date DESC, sis.id DESC
+                    LIMIT 1
+                ) AS available_quantity,
+                (
+                    SELECT sis.total_quantity
+                    FROM special_inventory_stocks sis
+                    WHERE sis.special_product_id = sp.id
+                    ORDER BY sis.inventory_date DESC, sis.id DESC
+                    LIMIT 1
+                ) AS total_quantity,
+                (
+                    SELECT sis.status
+                    FROM special_inventory_stocks sis
+                    WHERE sis.special_product_id = sp.id
+                    ORDER BY sis.inventory_date DESC, sis.id DESC
+                    LIMIT 1
+                ) AS inventory_status
+            FROM special_products sp
+            ORDER BY sp.is_active DESC, sp.product_name ASC, sp.product_code ASC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Integer availableQuantity = nullableInteger(resultSet, "available_quantity");
+                Integer totalQuantity = nullableInteger(resultSet, "total_quantity");
+
+                rows.add(row(
+                    searchable(
+                        resultSet.getString("product_code"),
+                        resultSet.getString("product_name"),
+                        resultSet.getString("product_type"),
+                        resultSet.getString("channel_code")
+                    ),
+                    List.of(
+                        text(resultSet.getString("product_code")),
+                        "특가",
+                        joinPlain(
+                            " / ",
+                            text(resultSet.getString("product_name")),
+                            normalizeSpecialTypeLabel(resultSet.getString("product_type")),
+                            text(resultSet.getString("channel_code"))
+                        ),
+                        formatQuantity(availableQuantity, totalQuantity, "개", "발행량 미집계"),
+                        "-",
+                        buildCatalogStatusLabel(resultSet.getInt("is_active") == 1, resultSet.getString("inventory_status"), availableQuantity),
+                        "읽기 전용"
+                    )
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadCouponRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "coupons")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                c.coupon_code,
+                c.coupon_name,
+                c.coupon_type,
+                c.discount_value,
+                c.issue_limit,
+                c.is_active
+            FROM coupons c
+            ORDER BY c.is_active DESC, c.coupon_name ASC, c.coupon_code ASC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Integer issueLimit = nullableInteger(resultSet, "issue_limit");
+
+                rows.add(row(
+                    searchable(
+                        resultSet.getString("coupon_code"),
+                        resultSet.getString("coupon_name"),
+                        resultSet.getString("coupon_type")
+                    ),
+                    List.of(
+                        text(resultSet.getString("coupon_code")),
+                        "쿠폰",
+                        joinPlain(
+                            " / ",
+                            text(resultSet.getString("coupon_name")),
+                            normalizeCouponTypeLabel(resultSet.getString("coupon_type"))
+                        ),
+                        issueLimit == null ? "제한 없음" : issueLimit + "개",
+                        formatAmount(resultSet.getBigDecimal("discount_value"), "KRW"),
+                        resultSet.getInt("is_active") == 1 ? "발행 중" : "비활성",
+                        "읽기 전용"
+                    )
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private Map<String, Object> buildReservationConfig(Connection connection) throws SQLException {
         Map<String, Object> tabs = new LinkedHashMap<>();
         tabs.put("booking", tabConfig(
             "예약번호나 고객명으로 검색",
@@ -408,54 +858,63 @@ class AdminReadService {
             loadReservationBookingRows(connection)
         ));
         tabs.put("payment", schemaTabConfig(
-            "결제 테이블 또는 도메인 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "결제 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildReservationRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                List.of(
-                    new SchemaExpectation("payment_attempts", null, "결제 시도", "V8"),
-                    new SchemaExpectation("payment_transactions", null, "결제 거래", "V8")
-                )
-            )
+            "결제번호나 주문명으로 검색",
+            "정산 내역 보기",
+            "결제 등록",
+            "결제 데이터가 없습니다.",
+            List.of("번호", "도메인", "결제 수단 / 주문", "고객 / 연락처", "확인 금액", "확인 시각", "상태", "관리"),
+            loadReservationPaymentRows(connection)
         ));
         tabs.put("refund", schemaTabConfig(
-            "환불 테이블 또는 도메인 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "환불 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildReservationRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                List.of(
-                    new SchemaExpectation("payment_refunds", null, "환불 이력", "V8")
-                )
-            )
+            "환불번호나 사유로 검색",
+            "승인 대기 보기",
+            "환불 승인",
+            "환불 데이터가 없습니다.",
+            List.of("번호", "도메인", "환불 / 사유", "고객 / 연락처", "환불액", "처리 시각", "상태", "관리"),
+            loadReservationRefundRows(connection)
         ));
         tabs.put("traveler", schemaTabConfig(
-            "이용자 테이블 또는 도메인 검색",
-            "현재 DB 기준",
-            "스키마 새로고침",
-            "탑승객 / 이용자 스키마가 아직 없습니다.",
-            List.of("도메인", "기대 테이블", "역할", "현재 상태", "행 수", "근거", "관리"),
-            buildReservationRows(
-                connection,
-                existingTables,
-                schemaBlocked,
-                List.of(
-                    new SchemaExpectation("booking_passengers", null, "탑승객 / 이용자", "V8"),
-                    new SchemaExpectation("travel_events", null, "일정 / 이용 이벤트", "V8")
-                )
-            )
+            "이용자나 탑승객 정보로 검색",
+            "이용자 확인",
+            "명단 등록",
+            "탑승객 / 이용자 데이터가 없습니다.",
+            List.of("번호", "도메인", "예약 / 이용 상품", "이용자", "체크인 / 이용", "상태", "관리"),
+            loadReservationTravelerRows(connection)
         ));
 
         return tableSurfaceConfig("booking", tabs);
+    }
+
+    private interface AdminTableSurfaceQueryService {
+        Map<String, Object> load(Connection connection) throws SQLException;
+    }
+
+    private final class AdminMembersQueryService implements AdminTableSurfaceQueryService {
+        @Override
+        public Map<String, Object> load(Connection connection) throws SQLException {
+            return buildMembersConfig(connection);
+        }
+    }
+
+    private final class AdminCmsQueryService implements AdminTableSurfaceQueryService {
+        @Override
+        public Map<String, Object> load(Connection connection) throws SQLException {
+            return buildCmsConfig(connection);
+        }
+    }
+
+    private final class AdminProductQueryService implements AdminTableSurfaceQueryService {
+        @Override
+        public Map<String, Object> load(Connection connection) throws SQLException {
+            return buildLodgingConfig(connection);
+        }
+    }
+
+    private final class AdminReservationQueryService implements AdminTableSurfaceQueryService {
+        @Override
+        public Map<String, Object> load(Connection connection) throws SQLException {
+            return buildReservationConfig(connection);
+        }
     }
 
     private List<Map<String, Object>> loadMemberRows(Connection connection) throws SQLException {
@@ -563,6 +1022,285 @@ class AdminReadService {
                         formatReservationAmount(resultSet.getBigDecimal("paid_amount"), resultSet.getBigDecimal("total_amount"), resultSet.getString("currency")),
                         formatTimestamp(coalesce(resultSet.getTimestamp("booked_at"), resultSet.getTimestamp("created_at"))),
                         bookingStatus,
+                        "읽기 전용"
+                    ),
+                    domainKey
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadReservationPaymentRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "payment_transactions")
+            || !tableExists(connection, "payment_attempts")
+            || !tableExists(connection, "bookings")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                pt.transaction_no,
+                pt.status AS transaction_status,
+                pt.amount,
+                pt.currency,
+                pt.approved_at,
+                pt.processed_at,
+                pt.created_at AS transaction_created_at,
+                pa.payment_provider,
+                pa.payment_method,
+                pa.status AS attempt_status,
+                pa.requested_at,
+                pa.completed_at,
+                pa.requested_amount,
+                pa.approved_amount,
+                b.booking_no,
+                b.booking_type,
+                COALESCE(NULLIF(TRIM(up.display_name), ''), u.name, b.user_id) AS display_name,
+                u.email,
+                u.phone
+            FROM payment_transactions pt
+            INNER JOIN payment_attempts pa ON pa.id = pt.payment_attempt_id
+            INNER JOIN bookings b ON b.id = pa.booking_id
+            LEFT JOIN users u ON u.id = b.user_id
+            LEFT JOIN user_profiles up ON up.user_id = b.user_id
+            ORDER BY COALESCE(pt.approved_at, pt.processed_at, pa.completed_at, pa.requested_at, pt.created_at) DESC, pt.id DESC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                String bookingType = text(resultSet.getString("booking_type"));
+                String domainKey = toReservationDomainKey(bookingType);
+                String paymentStatus = text(resultSet.getString("transaction_status"));
+                if (paymentStatus.isBlank()) {
+                    paymentStatus = text(resultSet.getString("attempt_status"));
+                }
+                String paymentStatusLabel = normalizePaymentStatusLabel(paymentStatus);
+                String paymentMethodLabel = normalizePaymentMethodLabel(resultSet.getString("payment_method"));
+
+                rows.add(domainRow(
+                    searchable(
+                        resultSet.getString("transaction_no"),
+                        resultSet.getString("booking_no"),
+                        resultSet.getString("display_name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("phone"),
+                        resultSet.getString("payment_provider"),
+                        resultSet.getString("payment_method"),
+                        paymentStatusLabel
+                    ),
+                    List.of(
+                        text(resultSet.getString("transaction_no")),
+                        displayBookingType(bookingType),
+                        joinPlain(" / ", paymentMethodLabel, text(resultSet.getString("booking_no"))),
+                        joinPlain(" / ", text(resultSet.getString("display_name")), text(resultSet.getString("email")), text(resultSet.getString("phone"))),
+                        formatAmount(
+                            firstNonNullAmount(
+                                resultSet.getBigDecimal("amount"),
+                                resultSet.getBigDecimal("approved_amount"),
+                                resultSet.getBigDecimal("requested_amount")
+                            ),
+                            resultSet.getString("currency")
+                        ),
+                        formatTimestamp(firstNonNull(
+                            resultSet.getTimestamp("approved_at"),
+                            resultSet.getTimestamp("processed_at"),
+                            resultSet.getTimestamp("completed_at"),
+                            resultSet.getTimestamp("requested_at"),
+                            resultSet.getTimestamp("transaction_created_at")
+                        )),
+                        paymentStatusLabel,
+                        "읽기 전용"
+                    ),
+                    domainKey
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadReservationRefundRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "payment_refunds")
+            || !tableExists(connection, "payment_transactions")
+            || !tableExists(connection, "payment_attempts")
+            || !tableExists(connection, "bookings")) {
+            return List.of();
+        }
+
+        String query = """
+            SELECT
+                pr.refund_no,
+                pr.status,
+                pr.refund_amount,
+                pr.currency,
+                pr.reason,
+                pr.requested_at,
+                pr.completed_at,
+                pr.created_at,
+                b.booking_no,
+                b.booking_type,
+                COALESCE(NULLIF(TRIM(up.display_name), ''), u.name, b.user_id) AS display_name,
+                u.email,
+                u.phone
+            FROM payment_refunds pr
+            INNER JOIN payment_transactions pt ON pt.id = pr.payment_transaction_id
+            INNER JOIN payment_attempts pa ON pa.id = pt.payment_attempt_id
+            INNER JOIN bookings b ON b.id = pa.booking_id
+            LEFT JOIN users u ON u.id = b.user_id
+            LEFT JOIN user_profiles up ON up.user_id = b.user_id
+            ORDER BY COALESCE(pr.completed_at, pr.requested_at, pr.created_at) DESC, pr.id DESC
+            """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                String bookingType = text(resultSet.getString("booking_type"));
+                String domainKey = toReservationDomainKey(bookingType);
+                String refundStatusLabel = resolveRefundStatusLabel(resultSet.getString("status"));
+                String refundReason = text(resultSet.getString("reason"));
+                if (refundReason.isBlank()) {
+                    refundReason = "사유 미입력";
+                }
+
+                rows.add(domainRow(
+                    searchable(
+                        resultSet.getString("refund_no"),
+                        resultSet.getString("booking_no"),
+                        refundReason,
+                        resultSet.getString("display_name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("phone"),
+                        refundStatusLabel
+                    ),
+                    List.of(
+                        text(resultSet.getString("refund_no")),
+                        displayBookingType(bookingType),
+                        joinPlain(" / ", text(resultSet.getString("booking_no")), refundReason),
+                        joinPlain(" / ", text(resultSet.getString("display_name")), text(resultSet.getString("email")), text(resultSet.getString("phone"))),
+                        formatAmount(resultSet.getBigDecimal("refund_amount"), resultSet.getString("currency")),
+                        formatTimestamp(firstNonNull(
+                            resultSet.getTimestamp("completed_at"),
+                            resultSet.getTimestamp("requested_at"),
+                            resultSet.getTimestamp("created_at")
+                        )),
+                        refundStatusLabel,
+                        "읽기 전용"
+                    ),
+                    domainKey
+                ));
+            }
+        }
+
+        return rows;
+    }
+
+    private List<Map<String, Object>> loadReservationTravelerRows(Connection connection) throws SQLException {
+        if (!tableExists(connection, "booking_passengers") || !tableExists(connection, "bookings")) {
+            return List.of();
+        }
+
+        boolean hasTravelEvents = tableExists(connection, "travel_events");
+        String query = hasTravelEvents
+            ? """
+                SELECT
+                    b.booking_no,
+                    b.booking_type,
+                    b.status AS booking_status,
+                    b.payment_status,
+                    b.cancelled_at,
+                    bp.passenger_no,
+                    COALESCE(NULLIF(TRIM(bp.passenger_name), ''), NULLIF(TRIM(up.display_name), ''), u.name, b.user_id) AS traveler_name,
+                    COALESCE(NULLIF(TRIM(bp.phone), ''), u.phone) AS traveler_phone,
+                    COALESCE(NULLIF(TRIM(bp.email), ''), u.email) AS traveler_email,
+                    DATE_FORMAT(te.event_date, '%Y.%m.%d') AS event_date_label,
+                    DATE_FORMAT(te.event_time, '%H:%i') AS event_time_label,
+                    COALESCE(NULLIF(TRIM(te.activity_label), ''), te.title) AS activity_label,
+                    te.status AS event_status
+                FROM booking_passengers bp
+                INNER JOIN bookings b ON b.id = bp.booking_id
+                LEFT JOIN users u ON u.id = COALESCE(bp.user_id, b.user_id)
+                LEFT JOIN user_profiles up ON up.user_id = COALESCE(bp.user_id, b.user_id)
+                LEFT JOIN travel_events te
+                    ON te.id = (
+                        SELECT te2.id
+                        FROM travel_events te2
+                        WHERE te2.booking_id = bp.booking_id
+                          AND (te2.booking_passenger_id = bp.id OR te2.booking_passenger_id IS NULL)
+                        ORDER BY te2.event_date DESC, te2.event_time DESC, te2.id DESC
+                        LIMIT 1
+                    )
+                ORDER BY COALESCE(te.event_date, DATE(COALESCE(b.booked_at, b.created_at))) DESC, bp.booking_id DESC, bp.passenger_no ASC
+                """
+            : """
+                SELECT
+                    b.booking_no,
+                    b.booking_type,
+                    b.status AS booking_status,
+                    b.payment_status,
+                    b.cancelled_at,
+                    bp.passenger_no,
+                    COALESCE(NULLIF(TRIM(bp.passenger_name), ''), NULLIF(TRIM(up.display_name), ''), u.name, b.user_id) AS traveler_name,
+                    COALESCE(NULLIF(TRIM(bp.phone), ''), u.phone) AS traveler_phone,
+                    COALESCE(NULLIF(TRIM(bp.email), ''), u.email) AS traveler_email,
+                    NULL AS event_date_label,
+                    NULL AS event_time_label,
+                    NULL AS activity_label,
+                    NULL AS event_status
+                FROM booking_passengers bp
+                INNER JOIN bookings b ON b.id = bp.booking_id
+                LEFT JOIN users u ON u.id = COALESCE(bp.user_id, b.user_id)
+                LEFT JOIN user_profiles up ON up.user_id = COALESCE(bp.user_id, b.user_id)
+                ORDER BY COALESCE(b.booked_at, b.created_at) DESC, bp.booking_id DESC, bp.passenger_no ASC
+                """;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                String bookingType = text(resultSet.getString("booking_type"));
+                String domainKey = toReservationDomainKey(bookingType);
+                String travelerStatus = buildTravelerStatus(
+                    resultSet.getString("event_status"),
+                    resultSet.getString("booking_status"),
+                    resultSet.getString("payment_status"),
+                    resultSet.getTimestamp("cancelled_at")
+                );
+                String activityLabel = text(resultSet.getString("activity_label"));
+                if (activityLabel.isBlank()) {
+                    activityLabel = displayBookingType(bookingType) + " 일정";
+                }
+
+                String travelerNo = joinPlain("-", text(resultSet.getString("booking_no")), "P" + resultSet.getInt("passenger_no"));
+                String travelerName = text(resultSet.getString("traveler_name"));
+                String travelerPhone = text(resultSet.getString("traveler_phone"));
+                String travelerEmail = text(resultSet.getString("traveler_email"));
+
+                rows.add(domainRow(
+                    searchable(
+                        travelerNo,
+                        resultSet.getString("booking_no"),
+                        travelerName,
+                        travelerPhone,
+                        travelerEmail,
+                        activityLabel,
+                        travelerStatus
+                    ),
+                    List.of(
+                        travelerNo,
+                        displayBookingType(bookingType),
+                        joinPlain(" / ", text(resultSet.getString("booking_no")), activityLabel),
+                        joinPlain(" / ", travelerName, travelerPhone, travelerEmail),
+                        buildTravelerScheduleLabel(
+                            resultSet.getString("event_date_label"),
+                            resultSet.getString("event_time_label"),
+                            activityLabel
+                        ),
+                        travelerStatus,
                         "읽기 전용"
                     ),
                     domainKey
@@ -1963,6 +2701,99 @@ class AdminReadService {
         };
     }
 
+    private String normalizePaymentMethodLabel(String rawMethod) {
+        if (!StringUtils.hasText(rawMethod)) {
+            return "결제수단 미확인";
+        }
+
+        return switch (rawMethod.trim().toLowerCase(Locale.ROOT)) {
+            case "card", "credit_card" -> "카드";
+            case "bank_transfer", "transfer", "account_transfer" -> "계좌이체";
+            case "simple", "simple_pay", "easy_pay", "kakao_pay", "naver_pay", "toss_pay" -> "간편결제";
+            case "cash" -> "현금";
+            default -> rawMethod.trim();
+        };
+    }
+
+    private String normalizeCabinClassLabel(String rawCabinClass) {
+        if (!StringUtils.hasText(rawCabinClass)) {
+            return "";
+        }
+
+        return switch (rawCabinClass.trim().toLowerCase(Locale.ROOT)) {
+            case "economy" -> "이코노미";
+            case "premium_economy" -> "프리미엄 이코노미";
+            case "business" -> "비즈니스";
+            case "first" -> "퍼스트";
+            default -> rawCabinClass.trim();
+        };
+    }
+
+    private String normalizeFareClassLabel(String rawFareClass) {
+        if (!StringUtils.hasText(rawFareClass)) {
+            return "";
+        }
+
+        return switch (rawFareClass.trim().toLowerCase(Locale.ROOT)) {
+            case "standard" -> "스탠다드";
+            case "flex" -> "플렉스";
+            case "sale" -> "특가";
+            default -> rawFareClass.trim();
+        };
+    }
+
+    private String normalizeVoucherTypeLabel(String rawVoucherType) {
+        if (!StringUtils.hasText(rawVoucherType)) {
+            return "";
+        }
+
+        return switch (rawVoucherType.trim().toLowerCase(Locale.ROOT)) {
+            case "discount" -> "할인권";
+            case "package" -> "패키지";
+            case "gift" -> "기프트";
+            default -> rawVoucherType.trim();
+        };
+    }
+
+    private String normalizeUsimPlanLabel(String rawPlanType) {
+        if (!StringUtils.hasText(rawPlanType)) {
+            return "";
+        }
+
+        return switch (rawPlanType.trim().toLowerCase(Locale.ROOT)) {
+            case "daily" -> "일간형";
+            case "unlimited" -> "무제한";
+            case "fixed" -> "정액형";
+            default -> rawPlanType.trim();
+        };
+    }
+
+    private String normalizeSpecialTypeLabel(String rawProductType) {
+        if (!StringUtils.hasText(rawProductType)) {
+            return "";
+        }
+
+        return switch (rawProductType.trim().toLowerCase(Locale.ROOT)) {
+            case "special" -> "특가";
+            case "promotion" -> "프로모션";
+            case "flash_sale" -> "타임세일";
+            default -> rawProductType.trim();
+        };
+    }
+
+    private String normalizeCouponTypeLabel(String rawCouponType) {
+        if (!StringUtils.hasText(rawCouponType)) {
+            return "";
+        }
+
+        return switch (rawCouponType.trim().toLowerCase(Locale.ROOT)) {
+            case "amount" -> "정액 할인";
+            case "rate", "percent" -> "정률 할인";
+            case "special" -> "특가 쿠폰";
+            default -> rawCouponType.trim();
+        };
+    }
+
     private String buildReservationBookingStatus(String bookingStatus, String paymentStatus, Timestamp cancelledAt) {
         if (cancelledAt != null || "cancelled".equalsIgnoreCase(text(bookingStatus))) {
             return "취소 완료";
@@ -1976,6 +2807,29 @@ class AdminReadService {
         return "처리 대기";
     }
 
+    private String buildTravelerStatus(String eventStatus, String bookingStatus, String paymentStatus, Timestamp cancelledAt) {
+        if (StringUtils.hasText(eventStatus)) {
+            return normalizeTravelerStatusLabel(eventStatus);
+        }
+        return buildReservationBookingStatus(bookingStatus, paymentStatus, cancelledAt);
+    }
+
+    private String normalizeTravelerStatusLabel(String rawStatus) {
+        if (!StringUtils.hasText(rawStatus)) {
+            return "이용 상태 미확인";
+        }
+
+        return switch (rawStatus.trim().toLowerCase(Locale.ROOT)) {
+            case "reserved", "scheduled" -> "이용 예정";
+            case "checked_in" -> "체크인 완료";
+            case "boarded" -> "탑승 완료";
+            case "in_progress", "active" -> "이용 중";
+            case "completed" -> "이용 완료";
+            case "cancelled" -> "이용 취소";
+            default -> rawStatus.trim();
+        };
+    }
+
     private String formatReservationAmount(BigDecimal paidAmount, BigDecimal totalAmount, String currency) {
         BigDecimal amount = paidAmount != null && paidAmount.compareTo(BigDecimal.ZERO) > 0 ? paidAmount : totalAmount;
         if (amount == null) {
@@ -1983,6 +2837,83 @@ class AdminReadService {
         }
         String suffix = !StringUtils.hasText(currency) || "KRW".equalsIgnoreCase(currency) ? "원" : " " + currency;
         return amount.setScale(0, RoundingMode.HALF_UP).toPlainString() + suffix;
+    }
+
+    private String formatAmount(BigDecimal amount, String currency) {
+        BigDecimal safeAmount = amount == null ? BigDecimal.ZERO : amount;
+        String suffix = !StringUtils.hasText(currency) || "KRW".equalsIgnoreCase(currency) ? "원" : " " + currency;
+        return safeAmount.setScale(0, RoundingMode.HALF_UP).toPlainString() + suffix;
+    }
+
+    private String formatQuantity(Integer availableQuantity, Integer totalQuantity, String unit, String emptyLabel) {
+        if (availableQuantity == null && totalQuantity == null) {
+            return emptyLabel;
+        }
+        if (totalQuantity == null) {
+            return availableQuantity + unit;
+        }
+        int safeAvailableQuantity = availableQuantity == null ? 0 : availableQuantity;
+        return safeAvailableQuantity + unit + " / " + totalQuantity + unit;
+    }
+
+    private String joinCode(String firstCode, String secondCode) {
+        String normalizedFirstCode = text(firstCode);
+        String normalizedSecondCode = text(secondCode);
+        if (normalizedFirstCode.isBlank()) {
+            return normalizedSecondCode;
+        }
+        if (normalizedSecondCode.isBlank()) {
+            return normalizedFirstCode;
+        }
+        return normalizedFirstCode + "-" + normalizedSecondCode;
+    }
+
+    private String buildTravelerScheduleLabel(String dateLabel, String timeLabel, String activityLabel) {
+        String when = joinPlain(" ", text(dateLabel), text(timeLabel));
+        String schedule = joinPlain(" / ", "-".equals(when) ? "" : when, text(activityLabel));
+        return "-".equals(schedule) ? "일정 미확정" : schedule;
+    }
+
+    private String buildCatalogStatusLabel(boolean active, String rawInventoryStatus, Integer availableQuantity) {
+        if (!active) {
+            return "비활성";
+        }
+        if (availableQuantity != null && availableQuantity <= 0) {
+            return "품절";
+        }
+
+        String normalized = text(rawInventoryStatus).toLowerCase(Locale.ROOT);
+        return switch (normalized) {
+            case "", "open", "available", "active" -> "판매 중";
+            case "blocked", "maintenance", "inactive" -> "운영 중지";
+            case "sold_out", "closed", "full" -> "품절";
+            default -> rawInventoryStatus == null ? "판매 중" : rawInventoryStatus.trim();
+        };
+    }
+
+    private String buildRentcarStatusLabel(boolean active, String productStatus, String inventoryStatus, Integer rentable) {
+        if (!active) {
+            return "비활성";
+        }
+        if (rentable != null && rentable == 0) {
+            return "대여 불가";
+        }
+
+        String normalizedProductStatus = text(productStatus).toLowerCase(Locale.ROOT);
+        if ("maintenance".equals(normalizedProductStatus) || "repair".equals(normalizedProductStatus)) {
+            return "정비 중";
+        }
+        if ("reserved".equals(normalizedProductStatus) || "rented".equals(normalizedProductStatus)) {
+            return "대여 중";
+        }
+
+        String normalizedInventoryStatus = text(inventoryStatus).toLowerCase(Locale.ROOT);
+        return switch (normalizedInventoryStatus) {
+            case "", "available", "open" -> "대여 가능";
+            case "reserved", "booked" -> "예약 중";
+            case "blocked", "maintenance", "inactive" -> "운영 중지";
+            default -> normalizedProductStatus.isBlank() ? "대여 가능" : productStatus.trim();
+        };
     }
 
     private String toReservationDomainKey(String bookingType) {
@@ -2039,6 +2970,35 @@ class AdminReadService {
             return "-";
         }
         return DATE_TIME_FORMAT.format(timestamp.toLocalDateTime());
+    }
+
+    private Timestamp firstNonNull(Timestamp... values) {
+        for (Timestamp value : values) {
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private BigDecimal firstNonNullAmount(BigDecimal... values) {
+        for (BigDecimal value : values) {
+            if (value != null && value.compareTo(BigDecimal.ZERO) > 0) {
+                return value;
+            }
+        }
+
+        for (BigDecimal value : values) {
+            if (value != null) {
+                return value;
+            }
+        }
+        return BigDecimal.ZERO;
+    }
+
+    private Integer nullableInteger(ResultSet resultSet, String columnLabel) throws SQLException {
+        int value = resultSet.getInt(columnLabel);
+        return resultSet.wasNull() ? null : value;
     }
 
     private Timestamp coalesce(Timestamp first, Timestamp second) {

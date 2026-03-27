@@ -1,0 +1,23 @@
+goal: >
+  Continue the admin.table-surface rewrite by keeping `/api/admin/tables/lodging`
+  externally stable while turning the lodging surface from schema-status rows into
+  real DB-backed product/query rows for each current tab.
+constraints:
+  - Preserve the existing `/api/admin/tables/{surface}` path and the current top-level JSON response shape with `defaultTab` and `tabs`.
+  - Limit this slice to the `lodging` surface inside the existing Spring admin read source file.
+  - Replace the current schema-status tabs with DB-backed row payloads for `stay`, `flight`, `rentcar`, `voucher`, `usim`, and `special`.
+  - Align lodging tab keys with the current front lodging page contract (`flight`, `rentcar`) instead of the older backend-only labels (`air`, `rent`).
+  - Keep emitted row objects compatible with the current lodging table contract, including `searchText` and `cells`.
+  - Preserve recent work around `active_user_sessions`, auth heartbeat, and the admin dashboard `activeUsers` KPI.
+  - Do not touch reservations, dashboard, members, cms, front files, mirror outputs, or routing in this pass.
+acceptance_criteria:
+  - `/api/admin/tables/lodging` still returns a successful payload with the same top-level structure expected by the current admin surface contract.
+  - The `stay`, `flight`, `rentcar`, `voucher`, `usim`, and `special` tabs now return DB-backed rows instead of schema-status rows when the required tables exist.
+  - The lodging payload tab keys match the current front lodging page tab keys.
+  - The default tab remains valid and the response stays compatible with the current front lodging table columns.
+verification:
+  - `D:\\lsh\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Refactoring `/api/admin/tables/{surface}` into separate query services in this pass.
+  - Front admin UI changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.
