@@ -1,5 +1,139 @@
 # MULTI AGENT LOG
 
+- time: `2026-03-27 12:39:13 +09:00`
+- route: `Route A`
+- task: `Run local runtime smoke and split commits for the completed backend API rewrite slices`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat bootRun` was started locally and answered runtime smoke requests before shutdown.
+  - `GET /actuator/health` returned `200`.
+  - `GET /api/auth/verify` returned `200`, and `GET /api/auth/session` returned the expected `401` unauthenticated response.
+  - `GET /api/customer-center/notices` returned `200`, and `GET /api/customer-center/support/categories` returned `200`.
+  - `GET /api/booking/me` and `GET /api/mypage/dashboard` returned the expected `401` unauthenticated responses.
+  - `GET /api/stay/hotel-list?shell=stay&region=jeju&adults=2&children=1&rooms=1&filter=pool` returned `200`.
+  - Completed backend rewrite work was then committed in slice-aligned groups for customer-center CMS, support, mypage+booking, auth, stay, and this closeout log/state update.
+
+- time: `2026-03-27 12:36:45 +09:00`
+- route: `Route B`
+- task: `Finish stabilization with the stay hotel-list query-service split`
+- participants: `main`, `worker_seed_stay_hotel_list_split (Darwin)`, `worker_stay_hotel_list_split (Carver)`, `reviewer_stay_hotel_list_split (Banach)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_stay_hotel_list_split (Darwin)`: `SEED.stay-hotel-list-query-service-split-v1.yaml`
+  - `worker_stay_hotel_list_split (Carver)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/stay/**`
+  - `reviewer_stay_hotel_list_split (Banach)`: `review only`
+- verification:
+  - `SEED.stay-hotel-list-query-service-split-v1.yaml` froze the final stabilization contract around keeping `GET /api/stay/hotel-list` stable while splitting query normalization from page assembly inside the stay package.
+  - `StayController.java` now delegates raw hotel-list inputs to `StayHotelListQueryService.java` instead of directly normalizing shell and guest counts inline.
+  - `StayHotelListQueryService.java` now owns shell normalization plus adults/children/rooms clamping and produces `StayHotelListPageRequest.java` so the assembly path receives a normalized request object.
+  - `StayHotelListFactory.java` now consumes the normalized page request and keeps region profile resolution, filter handling, and `StayHotelListPageView` assembly together without changing the downstream payload shape.
+  - `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/stay` passed.
+  - `reviewer_stay_hotel_list_split (Banach)` reported `블로킹 findings 없음`; residual note only that no live endpoint JSON smoke call was executed in this turn.
+
+- time: `2026-03-27 12:30:39 +09:00`
+- route: `Route B`
+- task: `Continue stabilization with the auth verify-signup service split`
+- participants: `main`, `worker_seed_auth_verify_signup_split (Peirce)`, `worker_auth_verify_signup_split (Linnaeus)`, `reviewer_auth_verify_signup_split (Planck)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_auth_verify_signup_split (Peirce)`: `SEED.auth-verify-signup-split-v1.yaml`
+  - `worker_auth_verify_signup_split (Linnaeus)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**`
+  - `reviewer_auth_verify_signup_split (Planck)`: `review only`
+- verification:
+  - `SEED.auth-verify-signup-split-v1.yaml` froze the remaining auth stabilization contract around `/api/auth/verify` and `/api/auth/signup` while keeping the already-split session flow out of scope.
+  - `AuthApiController.java` now keeps the verify action switch and HTTP response mapping thin while delegating verify work to `AuthVerificationService.java` and signup work to `AuthSignupService.java`.
+  - `AuthVerificationService.java` now owns ID duplicate checks, phone duplicate checks, and reCAPTCHA token validation plus site-key resolution without changing the existing `/api/auth/verify` route contract.
+  - `AuthSignupService.java` now owns signup validation, duplicate checks, birth-date and rrn normalization rules, plus user insert persistence, while `SignupRequest.java` gained `fromForm(...)` so controller-side form parsing stays lightweight.
+  - `AuthService.java` was reduced to shared auth DB/reCAPTCHA support used by the focused verify/signup services, and `AuthSessionService.java` plus login/session/logout behavior stayed untouched in this slice.
+  - `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/auth` passed.
+  - `reviewer_auth_verify_signup_split (Planck)` reported `블로킹 findings 없음`; residual note only that the pre-existing string-contains reCAPTCHA response check remains somewhat brittle if Google changes response formatting.
+
+- time: `2026-03-27 12:15:19 +09:00`
+- route: `Route B`
+- task: `Start stabilization with the auth login-session-logout service split`
+- participants: `main`, `worker_seed_auth_session_split (Franklin)`, `worker_auth_session_split (Aquinas)`, `reviewer_auth_session_split (Dalton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_auth_session_split (Franklin)`: `SEED.auth-login-session-logout-split-v1.yaml`
+  - `worker_auth_session_split (Aquinas)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**`
+  - `reviewer_auth_session_split (Dalton)`: `review only`
+- verification:
+  - `SEED.auth-login-session-logout-split-v1.yaml` froze the auth stabilization contract around moving only `/api/auth/login`, `/api/auth/session`, and `/api/auth/logout` session handling out of the monolithic auth flow while leaving verify/signup/reCAPTCHA out of scope.
+  - `AuthApiController.java` now delegates the login/session/logout endpoints to `AuthSessionService.java`, while `AuthService.java` keeps the remaining verify/signup/reCAPTCHA responsibilities.
+  - `AuthSessionService.java` preserves the existing login/session/logout semantics, including `session.setAttribute("user", user) -> session.setMaxInactiveInterval(...) -> activeUserPresenceService.touch(...)` on login and `activeUserPresenceService.clear(...) -> session.invalidate()` on logout.
+  - `/api/auth/login`, `/api/auth/session`, and `/api/auth/logout` kept the existing paths, request handling shape, success envelope, session gating behavior, and null-on-bad-credentials flow.
+  - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/auth` passed.
+  - `reviewer_auth_session_split (Dalton)` reported `블로킹 findings 없음`; residual note only that `ActiveUserPresenceService` still treats DB write failures as non-fatal operational noise rather than surfacing them to the auth flow.
+
+- time: `2026-03-27 11:59:17 +09:00`
+- route: `Route B`
+- task: `Continue track_mypage_booking with the mypage dashboard travel-events and itinerary split`
+- participants: `main`, `worker_seed_mypage_dashboard_trip_split (Arendt)`, `worker_mypage_dashboard_trip_split (Avicenna)`, `reviewer_mypage_dashboard_trip_split (Noether)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_mypage_dashboard_trip_split (Arendt)`: `SEED.mypage-dashboard-trip-query-split-v1.yaml`
+  - `worker_mypage_dashboard_trip_split (Avicenna)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+  - `reviewer_mypage_dashboard_trip_split (Noether)`: `review only`
+- verification:
+  - `SEED.mypage-dashboard-trip-query-split-v1.yaml` froze the next `track_mypage_booking` contract around splitting companion-links, travel-events, and itinerary assembly out of the remaining dashboard repository while keeping `/api/mypage/dashboard` stable.
+  - `MyPageDashboardRepository.java` now keeps dashboard orchestration plus the already-split profile/membership/stats/support and booking wiring, while `MyPageCompanionQueryService.java`, `MyPageTravelEventQueryService.java`, and `MyPageItineraryService.java` own the extracted trip-related responsibilities inside the mypage package.
+  - The first worker pass regressed prior split state by collapsing already-extracted services back into the repository; that regression was fixed before close so the final state preserves the earlier shared-booking and profile/membership/stats/support splits while only moving trip-related responsibilities in this slice.
+  - `/api/mypage/dashboard` kept the existing path, `success=true` envelope, session-gated access behavior, and dashboard snapshot semantics for `linkedCompanions`, `travelEvents`, and `itinerary`.
+  - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage` passed.
+  - `reviewer_mypage_dashboard_trip_split (Noether)` reported `블로킹 findings 없음` on the final pass after confirming that booking-package dirty files belonged to the earlier completed slice rather than this active write set.
+
+- time: `2026-03-27 11:35:18 +09:00`
+- route: `Route B`
+- task: `Continue track_mypage_booking with the mypage dashboard profile-benefit-support query split`
+- participants: `main`, `worker_seed_mypage_dashboard_query_split (Lovelace)`, `worker_mypage_dashboard_query_split (Bacon)`, `reviewer_mypage_dashboard_query_split (Nash)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_mypage_dashboard_query_split (Lovelace)`: `SEED.mypage-dashboard-query-services-split-v1.yaml`
+  - `worker_mypage_dashboard_query_split (Bacon)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+  - `reviewer_mypage_dashboard_query_split (Nash)`: `review only`
+- verification:
+  - `SEED.mypage-dashboard-query-services-split-v1.yaml` froze the next `track_mypage_booking` contract around splitting profile, membership, stats, and support queries out of the monolithic dashboard repository while keeping `/api/mypage/dashboard` stable.
+  - `MyPageDashboardRepository.java` now keeps connection orchestration plus booking/travel/itinerary assembly, while `MyPageProfileQueryService.java`, `MyPageMembershipQueryService.java`, `MyPageStatsQueryService.java`, and `MyPageSupportQueryService.java` own the extracted query responsibilities inside the mypage package.
+  - `/api/mypage/dashboard` kept the existing path, `success=true` envelope, session-gated access behavior, and frontend-consumed dashboard snapshot shape.
+  - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage` passed.
+  - `reviewer_mypage_dashboard_query_split (Nash)` reported `블로킹 findings 없음` with no payload, auth/session, or booking/travel/itinerary semantic regression found.
+
+- time: `2026-03-27 11:25:32 +09:00`
+- route: `Route B`
+- task: `Start track_mypage_booking with the shared booking query extraction slice`
+- participants: `main`, `worker_seed_mypage_booking_shared_query (Faraday)`, `worker_mypage_booking_shared_query (James)`, `reviewer_mypage_booking_shared_query (Mencius)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_mypage_booking_shared_query (Faraday)`: `SEED.mypage-booking-shared-query-extraction-v1.yaml`
+  - `worker_mypage_booking_shared_query (James)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**`
+  - `reviewer_mypage_booking_shared_query (Mencius)`: `review only`
+- verification:
+  - `SEED.mypage-booking-shared-query-extraction-v1.yaml` froze the first `track_mypage_booking` contract around shared booking query extraction while keeping `/api/mypage/dashboard`, `/api/booking/me`, and `/api/booking/users/{userId}` stable.
+  - `BookingQueryRepository.java` now centralizes the shared booking read queries, `BookingReadService.java` reads user/bookings/items/payment attempts through that shared layer, and `MyPageDashboardRepository.java` reuses the same shared booking query support for dashboard booking cards.
+  - The first reviewer pass caught a nullable `booked_at` ordering regression on `/api/mypage/dashboard`; the worker fixed it by restoring the dashboard path to `COALESCE(booked_at, created_at) DESC, id DESC` through `loadBookingsForDashboard()` while keeping the booking API on the existing `loadBookings()` ordering.
+  - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage jeju-spring/src/main/java/com/jejugroup/jejuspring/booking` passed.
+  - `reviewer_mypage_booking_shared_query (Mencius)` reported `블로킹 findings 없음` on the final pass; residual note only that `BookingReadService.java` still contains some non-blocking dead private query helpers.
+
+- time: `2026-03-27 12:34 +09:00`
+- route: `Route B`
+- task: `Implement the customer-center CMS read/write split while preserving the public notice/faq API contract`
+- participants: `main`, `worker_seed_customercenter_cms_split (Chandrasekhar)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_customercenter_cms_split (Chandrasekhar)`: `SEED.customer-center-cms-read-write-split-v1.yaml`
+- verification:
+  - `D:\\lsh\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava` passed in `D:\\lsh\\git\\jejugroup\\jeju-spring`
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms` passed
+  - `CustomerCenterCmsService` is now a thin facade delegating to separate read/write services inside the same package, while the external `/api/customer-center/notices*` and `/api/customer-center/faqs*` paths remain unchanged
+
 - time: `2026-03-26 15:08:18 +09:00`
 - route: `Route B`
 - task: `Roll back the entire admin page surface to the earlier pre-schema/admin-shell state, then restore spring mirror parity from front`
@@ -1658,3 +1792,38 @@
   - `node --check front/core/modules/auth/session_manager.module.js`, `node --check front/admin/js/dashboard.js`, `pnpm run guard:text`, and `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat compileJava` all passed
   - `node scripts/spring/sync-front-assets-to-spring.cjs` and `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat processResources` refreshed the derived spring runtime outputs for the updated front modules
   - final reviewer `Newton` reported `no blocking findings`, no seed drift, and no write-set or mirror-boundary spillover
+
+- time: `2026-03-27 11:09:56 +09:00`
+- route: `Route B`
+- task: `Continue track_support_cms with the support ticket/comment/attachment split`
+- participants: `main`, `worker_seed_support_split (Kant)`, `worker_support_split (Averroes)`, `reviewer_support_split (Leibniz)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_support_split (Kant)`: `SEED.support-ticket-comment-attachment-split-v1.yaml`
+  - `worker_support_split (Averroes)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/**`
+  - `reviewer_support_split (Leibniz)`: `review only`
+- verification:
+  - `SEED.support-ticket-comment-attachment-split-v1.yaml` froze the support ticket/comment/attachment split contract.
+  - `SupportApiController.java` now delegates to a thin top-level `SupportService.java`, while `SupportCategoryService.java`, `SupportTicketService.java`, `SupportCommentService.java`, and `SupportAttachmentService.java` split the previously monolithic support implementation by responsibility.
+  - `SupportAccessPolicy.java` now owns the shared authenticated/admin/own-ticket access rule, and `SupportDatabaseSupport.java` centralizes the shared DB helpers.
+  - A reviewer found a mixed-case `serviceType` compatibility regression in `SupportDatabaseSupport.java`; it was fixed by restoring lowercase normalization for optional and required support service-type inputs before final close.
+  - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support` passed.
+  - `reviewer_support_split (Leibniz)` reported `블로킹 findings 없음` on the final pass.
+
+- time: `2026-03-27 10:53:29 +09:00`
+- route: `Route B`
+- task: `Start track_support_cms with the customer-center CMS internal read/write split`
+- participants: `main`, `worker_seed_customercenter_cms_split (Chandrasekhar)`, `worker_customercenter_cms_split (Gibbs)`, `reviewer_customercenter_cms_split (Pasteur)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_customercenter_cms_split (Chandrasekhar)`: `SEED.customer-center-cms-read-write-split-v1.yaml`
+  - `worker_customercenter_cms_split (Gibbs)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/**`
+  - `reviewer_customercenter_cms_split (Pasteur)`: `review only`
+- verification:
+  - `SEED.customer-center-cms-read-write-split-v1.yaml` froze the customer-center CMS read/write split contract.
+  - `CustomerCenterCmsService.java` now acts as a thin facade while `CustomerCenterCmsReadService.java` and `CustomerCenterCmsWriteService.java` separate public read and admin-gated write responsibilities behind the existing notice/faq API.
+  - `CustomerCenterCmsDatabaseSupport.java` centralizes the shared DB connection and service-type normalization helpers for the split services.
+  - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed from `D:\lsh\git\jejugroup\jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms` passed.
+  - `reviewer_customercenter_cms_split (Pasteur)` reported `블로킹 findings 없음`; residual risk only that dedicated runtime coverage for `401/403/404` mappings and public-read/admin-write boundaries was not executed in this turn.

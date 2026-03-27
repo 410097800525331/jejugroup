@@ -2,22 +2,22 @@
 
 ## Current Task
 
-- task: `Prepare a clean handoff so the remaining API rewrite work can continue from another workspace without re-discovery`
-- phase: `implementation`
-- scope: `STATE.md, NEXT_AGENT_START.md`
-- verification_target: `A new workspace can read NEXT_AGENT_START.md and immediately understand what is already done, what remains in track_admin, and which seeds/files/verification command to use next`
+- task: `Run local runtime smoke and split commits for the completed backend API rewrite slices`
+- phase: `completed`
+- scope: `git commit boundaries, STATE.md, MULTI_AGENT_LOG.md, local runtime verification commands`
+- verification_target: `Confirm the completed backend slices still boot and answer local endpoint smoke requests, then commit each finished slice in the same split boundaries used during implementation`
 
 ## Route
 
 - route: `Route A`
-- reason: `the user explicitly asked for a cross-workspace handoff. The write scope is limited to task-state and start instructions only, so this remains a documentation-only Route A slice.`
+- reason: `The user requested local runtime smoke verification plus split commit cleanup for already-completed slices. This is now a verification-and-git pass without new multi-file implementation work, so a single-lane Route A closeout is appropriate.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md, NEXT_AGENT_START.md`
-- note: `Documentation-only handoff slice.`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- note: `This closeout slice is limited to local runtime verification, staging, and split commits for already-finished work.`
 
 ## Contract Freeze
 
@@ -25,7 +25,7 @@
 - status: `n/a`
 - path: `n/a`
 - revision: `n/a`
-- note: `This slice only refreshes the cross-workspace handoff instructions.`
+- note: `This slice verifies and commits already-completed work; no new implementation contract is being frozen.`
 
 ## Reviewer
 
@@ -35,5 +35,5 @@
 
 ## Last Update
 
-- timestamp: `2026-03-26 19:35:00 +09:00`
-- note: `Implementation slices are paused at a stable checkpoint and the workspace is switching into handoff mode. NEXT_AGENT_START.md is being refreshed so another workspace can continue without re-discovering the admin progress or remaining route order.`
+- timestamp: `2026-03-27 12:39:13 +09:00`
+- note: `Local runtime smoke passed for the completed backend slices and the finished rewrite work was split into slice-aligned commits during the Route A closeout pass.`
