@@ -1,0 +1,21 @@
+goal: Persist authenticated mypage profile edits from the info-edit tab into the database and make the refreshed dashboard payload return the saved values.
+constraints:
+  - Only support writes for the authenticated user's own profile data.
+  - Validate and persist name, email, and phone from the mypage info-edit flow.
+  - Keep the front source of truth in `front/**` and do not touch mirror-only paths.
+  - Reject unauthenticated or unauthorized update attempts.
+  - Prevent local-only UI drift by reloading persisted values after save.
+acceptance_criteria:
+  - Saving name, email, and phone in the info-edit modal updates the authenticated user's stored profile rows.
+  - The next dashboard/profile payload reflects the persisted values from the database.
+  - Invalid input and duplicate-conflict cases are handled without exposing internal details.
+  - The save flow works without writing to `jeju-spring/**` mirror paths or `jeju-web/**` legacy mirror paths from the seed scope.
+verification:
+  - Run the repository tests covering mypage profile update and dashboard refresh behavior.
+  - Verify authenticated update, validation failure, and duplicate-conflict cases in the mypage profile path.
+  - Confirm the saved values survive a refetch or page refresh from the persisted source.
+out_of_scope:
+  - Password, avatar, address, and other non-profile-edit fields.
+  - UI redesigns unrelated to profile persistence.
+  - Deployment or mirror-path changes.
+  - Background polling or new orchestration loops.

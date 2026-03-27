@@ -106,6 +106,7 @@ const reducer = (state: DashboardState, action: DashboardAction): DashboardState
 
 interface DashboardContextValue {
   dispatch: Dispatch<DashboardAction>;
+  refreshDashboard: () => Promise<boolean>;
   state: DashboardState;
 }
 
@@ -177,6 +178,16 @@ const resolveDashboardSource = async (session: unknown | null): Promise<unknown 
   return mergeDashboardSources(session, dashboard);
 };
 
+const fetchHydratedDashboardSnapshot = async (): Promise<DashboardSnapshot | null> => {
+  const resolvedSession = await resolveSession();
+  if (!resolvedSession) {
+    return null;
+  }
+
+  const dashboardSource = await resolveDashboardSource(resolvedSession);
+  return mergeTravelEventSources(dashboardSource);
+};
+
 const snapshotFromState = (state: DashboardState): DashboardSnapshot => ({
   bookings: state.bookings,
   itinerary: state.itinerary,
@@ -237,6 +248,10 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
   const [authResolved, setAuthResolved] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const commitHydratedSnapshot = (snapshot: DashboardSnapshot) => {
+    applyDashboardSnapshot(snapshot);
+    dispatch({ type: "HYDRATE_DASHBOARD", payload: snapshot });
+  };
   const handleDispatch = (action: DashboardAction) => {
     if (action.type === "HYDRATE_DASHBOARD") {
       applyDashboardSnapshot(action.payload);
@@ -254,6 +269,15 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
     dispatch(action);
   };
+  const refreshDashboard = async () => {
+    const snapshot = await fetchHydratedDashboardSnapshot();
+    if (!snapshot) {
+      return false;
+    }
+
+    commitHydratedSnapshot(snapshot);
+    return true;
+  };
 
   useEffect(() => {
     applyDashboardSnapshot(snapshotFromState(state));
@@ -263,9 +287,9 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     let active = true;
     let sessionHydrationInFlight = false;
 
-    const hydrate = async (source?: unknown | null) => {
-      const resolvedSession = source === undefined ? await resolveSession() : source;
-      if (!resolvedSession) {
+    const hydrate = async () => {
+      const snapshot = await fetchHydratedDashboardSnapshot();
+      if (!snapshot) {
         if (!active) {
           return;
         }
@@ -275,26 +299,22 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      const dashboardSource = await resolveDashboardSource(resolvedSession);
-      const snapshot = mergeTravelEventSources(dashboardSource);
-
       if (!active) {
         return;
       }
 
       setIsAuthenticated(true);
       setAuthResolved(true);
-      applyDashboardSnapshot(snapshot);
-      dispatch({ type: "HYDRATE_DASHBOARD", payload: snapshot });
+      commitHydratedSnapshot(snapshot);
     };
 
-    const queueHydrate = (source?: unknown | null) => {
+    const queueHydrate = () => {
       if (sessionHydrationInFlight) {
         return;
       }
 
       sessionHydrationInFlight = true;
-      void hydrate(source).finally(() => {
+      void hydrate().finally(() => {
         sessionHydrationInFlight = false;
       });
     };
@@ -337,9 +357,10 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const value = useMemo(
     () => ({
       dispatch: handleDispatch,
+      refreshDashboard,
       state,
     }),
-    [handleDispatch, state],
+    [handleDispatch, refreshDashboard, state],
   );
 
   if (!authResolved || !isAuthenticated) {

@@ -394,3 +394,9 @@ status: open
 - summary: `콘솔 파이프 인코딩 때문에 한글 더미 사용자 이름/프로필이 물음표로 저장됨`
 - details: `가짜 users 데이터를 JShell로 넣는 과정에서 PowerShell 파이프 입력이 한글을 보존하지 못해 users.name, user_profiles.display_name, nickname, bio가 '?'로 저장됐다. DB 문자셋은 utf8mb4로 정상이라 저장값만 유니코드 이스케이프 기반 업데이트로 복구한다.`
 - status: `resolved`
+
+- time: `2026-03-27 17:21:00 +09:00`
+- location: `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat test --tests "com.jejugroup.jejuspring.JejuSpringApplicationTests"`
+- summary: `전체 JejuSpringApplicationTests 검증이 기존 landing root 테스트 실패로 막힘`
+- details: `마이페이지 프로필 persistence 대상 테스트들은 통과했지만, 전체 JejuSpringApplicationTests 재실행에서는 JejuSpringApplicationTests.java:92의 landingPageLoadsAtRoot()가 여전히 실패했다. 이번 mypage write slice와 직접 연결된 실패 증거는 없어서 별도 기존 불안정성으로 남긴다.`
+- status: `open`

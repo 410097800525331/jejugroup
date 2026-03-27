@@ -3,6 +3,8 @@ import { PROFILE, STATS } from "./data";
 import { SectionCard } from "./SectionCard";
 import { useDashboardState } from "./state";
 import type { UserProfile } from "./types";
+// @ts-ignore ?덇굅??JS 紐⑤뱢 ??댄븨 遺???덉슜
+import { API_BASE_URL } from "../../../core/modules/config/api_config.module.js";
 
 declare global {
   interface Window {
@@ -17,7 +19,10 @@ type DashboardStateSlice = {
   profile?: UserProfile;
   stats?: typeof STATS;
 };
-type DashboardDispatch = (action: { type: string; payload?: unknown }) => void;
+type DashboardContextSlice = {
+  refreshDashboard: () => Promise<boolean>;
+  state: DashboardStateSlice;
+};
 
 const createEditableProfile = (profile: UserProfile): EditableProfile => ({
   email: profile.email,
@@ -34,6 +39,8 @@ const normalizeProfile = (profile: EditableProfile): EditableProfile => ({
 const isEditableProfileValid = (profile: EditableProfile) =>
   profile.name.trim().length > 0 && profile.email.trim().includes("@") && profile.phone.trim().length > 0;
 
+const toApiUrl = (path: string) => `${API_BASE_URL}${path}`;
+
 const getBenefitValueStyle = (tone: (typeof STATS)[number]["tone"]) =>
   tone === "point"
     ? {
@@ -42,16 +49,15 @@ const getBenefitValueStyle = (tone: (typeof STATS)[number]["tone"]) =>
     : undefined;
 
 export const AccountBenefitSection = () => {
-  const { dispatch, state } = useDashboardState() as {
-    dispatch: DashboardDispatch;
-    state: DashboardStateSlice;
-  };
+  const { refreshDashboard, state } = useDashboardState() as DashboardContextSlice;
   const dashboardProfile = state.profile ?? PROFILE;
   const dashboardStats = state.stats?.length ? state.stats : STATS;
   const passport = dashboardProfile.passport;
   const [profile, setProfile] = useState<EditableProfile>(() => createEditableProfile(dashboardProfile));
   const [draftProfile, setDraftProfile] = useState<EditableProfile>(() => createEditableProfile(dashboardProfile));
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const profileBadgeInitial = (draftProfile.name.trim().charAt(0) || PROFILE.name.trim().charAt(0) || "J").toUpperCase();
 
   useEffect(() => {
@@ -71,27 +77,59 @@ export const AccountBenefitSection = () => {
 
   const openEditModal = () => {
     setDraftProfile(profile);
+    setSaveError(null);
     setIsEditModalOpen(true);
   };
 
   const closeEditModal = () => {
     setDraftProfile(profile);
+    setSaveError(null);
     setIsEditModalOpen(false);
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     const nextProfile = normalizeProfile(draftProfile);
     if (!isEditableProfileValid(nextProfile)) {
+      setSaveError("이름, 이메일, 전화번호를 확인해라");
       return;
     }
 
-    setProfile(nextProfile);
-    setDraftProfile(nextProfile);
-    dispatch({ type: "PATCH_PROFILE", payload: nextProfile });
-    setIsEditModalOpen(false);
+    setIsSaving(true);
+    setSaveError(null);
+
+    try {
+      const response = await fetch(toApiUrl("/api/mypage/profile"), {
+        body: JSON.stringify(nextProfile),
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+      });
+
+      if (response.status === 401) {
+        throw new Error("로그인이 만료됐다. 다시 로그인해라");
+      }
+
+      if (!response.ok) {
+        throw new Error("프로필 저장에 실패했다. 잠시 후 다시 시도해라");
+      }
+
+      const refreshed = await refreshDashboard();
+      if (!refreshed) {
+        throw new Error("저장은 됐지만 최신 정보를 다시 불러오지 못했다");
+      }
+
+      setIsEditModalOpen(false);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "프로필 저장에 실패했다. 잠시 후 다시 시도해라");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const isSaveDisabled = !isEditableProfileValid(draftProfile);
+  const isSaveDisabled = isSaving || !isEditableProfileValid(draftProfile);
 
   return (
     <>
@@ -231,6 +269,18 @@ export const AccountBenefitSection = () => {
                 </div>
               </div>
             </div>
+
+            {saveError ? (
+              <div className="error-message" role="status" aria-live="polite" style={{ color: "#d92d20", fontSize: "13px", fontWeight: 600, marginTop: "8px" }}>
+                {saveError}
+              </div>
+            ) : null}
+
+            {isSaving ? (
+              <div aria-live="polite" role="status" style={{ color: "#4b5563", fontSize: "13px", fontWeight: 600, marginTop: "8px" }}>
+                저장 중...
+              </div>
+            ) : null}
 
             <footer className="modal-footer" style={{ marginTop: "34px", gap: "14px" }}>
               <button className="cancel-btn pill-shape" type="button" onClick={closeEditModal} style={{ padding: "18px 0", fontSize: "15px" }}>

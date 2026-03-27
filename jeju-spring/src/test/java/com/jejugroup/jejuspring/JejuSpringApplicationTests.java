@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.time.LocalDate;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,9 +16,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jejugroup.jejuspring.auth.model.SessionUser;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,6 +29,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
+	private static final String MYPAGE_PROFILE_OWNER_ID = "mypage-profile-owner";
+	private static final String MYPAGE_PROFILE_OWNER_NAME = "Mypage Original";
+	private static final String MYPAGE_PROFILE_OWNER_EMAIL = "mypage.original@example.com";
+	private static final String MYPAGE_PROFILE_OWNER_PHONE = "010-1010-1010";
+	private static final String MYPAGE_PROFILE_CONFLICT_ID = "mypage-profile-conflict";
+	private static final String MYPAGE_PROFILE_CONFLICT_NAME = "Mypage Conflict";
+	private static final String MYPAGE_PROFILE_CONFLICT_EMAIL = "mypage.conflict@example.com";
+	private static final String MYPAGE_PROFILE_CONFLICT_PHONE = "010-2020-2020";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -34,6 +46,22 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 
 	@Autowired
 	private Environment environment;
+
+	@AfterEach
+	void cleanupMypageFixtures() {
+		jdbcTemplate.update(
+			"DELETE FROM user_profiles WHERE user_id IN (?, ?, ?)",
+			MYPAGE_PROFILE_OWNER_ID,
+			MYPAGE_PROFILE_CONFLICT_ID,
+			"minji"
+		);
+		jdbcTemplate.update(
+			"DELETE FROM users WHERE id IN (?, ?, ?)",
+			MYPAGE_PROFILE_OWNER_ID,
+			MYPAGE_PROFILE_CONFLICT_ID,
+			"minji"
+		);
+	}
 
 	@Test
 	void contextLoads() {
@@ -163,7 +191,96 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 			.andExpect(content().string(containsString("minji.db@jejugroup.example")));
 	}
 
+	@Test
+	void mypageProfileUpdateRequiresAuthentication() throws Exception {
+		mockMvc.perform(put("/api/mypage/profile")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(profileUpdateJson("New Name", "new@example.com", "010-3030-3030")))
+			.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void mypageProfileUpdatePersistsFieldsAndDashboardRefreshReadsSavedValues() throws Exception {
+		seedUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, MYPAGE_PROFILE_OWNER_EMAIL, MYPAGE_PROFILE_OWNER_PHONE);
+
+		mockMvc.perform(put("/api/mypage/profile")
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(profileUpdateJson("Mypage Saved", "mypage.saved@example.com", "010-4040-4040")))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.message").value("프로필이 저장되었습니다."));
+
+		assertThat(jdbcTemplate.queryForObject(
+			"SELECT name FROM users WHERE id = ?",
+			String.class,
+			MYPAGE_PROFILE_OWNER_ID
+		)).isEqualTo("Mypage Saved");
+		assertThat(jdbcTemplate.queryForObject(
+			"SELECT email FROM users WHERE id = ?",
+			String.class,
+			MYPAGE_PROFILE_OWNER_ID
+		)).isEqualTo("mypage.saved@example.com");
+		assertThat(jdbcTemplate.queryForObject(
+			"SELECT phone FROM users WHERE id = ?",
+			String.class,
+			MYPAGE_PROFILE_OWNER_ID
+		)).isEqualTo("010-4040-4040");
+		assertThat(jdbcTemplate.queryForObject(
+			"SELECT display_name FROM user_profiles WHERE user_id = ?",
+			String.class,
+			MYPAGE_PROFILE_OWNER_ID
+		)).isEqualTo("Mypage Saved");
+
+		mockMvc.perform(get("/api/mypage/dashboard")
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER")))
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.dashboard.profile.name").value("Mypage Saved"))
+			.andExpect(jsonPath("$.dashboard.profile.email").value("mypage.saved@example.com"))
+			.andExpect(jsonPath("$.dashboard.profile.phone").value("010-4040-4040"));
+	}
+
+	@Test
+	void mypageProfileUpdateRejectsValidationFailures() throws Exception {
+		seedUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, MYPAGE_PROFILE_OWNER_EMAIL, MYPAGE_PROFILE_OWNER_PHONE);
+
+		mockMvc.perform(put("/api/mypage/profile")
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(profileUpdateJson("   ", "not-an-email", "010-5050-5050")))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false));
+	}
+
+	@Test
+	void mypageProfileUpdateRejectsDuplicateEmailAndPhoneConflicts() throws Exception {
+		seedUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, MYPAGE_PROFILE_OWNER_EMAIL, MYPAGE_PROFILE_OWNER_PHONE);
+		seedUser(MYPAGE_PROFILE_CONFLICT_ID, MYPAGE_PROFILE_CONFLICT_NAME, MYPAGE_PROFILE_CONFLICT_EMAIL, MYPAGE_PROFILE_CONFLICT_PHONE);
+
+		mockMvc.perform(put("/api/mypage/profile")
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(profileUpdateJson("Mypage Saved", MYPAGE_PROFILE_CONFLICT_EMAIL, "010-6060-6060")))
+			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.message").value("이미 사용 중인 이메일 또는 전화번호입니다."));
+
+		mockMvc.perform(put("/api/mypage/profile")
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(profileUpdateJson("Mypage Saved", "mypage.saved2@example.com", MYPAGE_PROFILE_CONFLICT_PHONE)))
+			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.message").value("이미 사용 중인 이메일 또는 전화번호입니다."));
+	}
+
 	private void seedUser(String userId, String name, String email) {
+		seedUser(userId, name, email, "010-0000-0000");
+	}
+
+	private void seedUser(String userId, String name, String email, String phone) {
 		jdbcTemplate.update(
 			"""
 			INSERT INTO users (id, pw, name, phone, email, birth_date, gender, provider, role)
@@ -181,13 +298,34 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 			userId,
 			"encoded-password",
 			name,
-			"010-0000-0000",
+			phone,
 			email,
 			Date.valueOf(LocalDate.of(1990, 1, 1)),
 			"M",
 			"PASS",
 			"USER"
 		);
+
+		jdbcTemplate.update(
+			"""
+			INSERT INTO user_profiles (user_id, display_name)
+			VALUES (?, ?)
+			ON DUPLICATE KEY UPDATE
+				display_name = VALUES(display_name)
+			""",
+			userId,
+			name
+		);
+	}
+
+	private String profileUpdateJson(String name, String email, String phone) {
+		return """
+			{
+			  "name": "%s",
+			  "email": "%s",
+			  "phone": "%s"
+			}
+			""".formatted(name, email, phone);
 	}
 
 	@Test

@@ -2019,6 +2019,41 @@
   - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-layout-t5Px-pwN.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-pages-CYOtPQeK.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-ui-D5qQBMsF.js` passed.
   - Reviewer `Cicero` reported `블로킹 findings 없음` after confirming the latest admin icon/flicker-reduction header behavior is reflected in the refreshed spring runtime outputs, the sync stayed within derived `front-mirror` paths, and the new chunk references are internally consistent.
 
+- time: `2026-03-27 17:41:00 +09:00`
+- route: `Route B`
+- task: `Persist mypage profile edits from the info-edit tab into the DB`
+- participants: `main`, `worker_seed_mypage_profile_persistence (Rawls)`, `worker_mypage_profile_front (Ampere)`, `worker_mypage_profile_backend (Beauvoir)`, `reviewer_mypage_profile_persistence (Volta)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_mypage_profile_persistence (Rawls)`: `docs/seeds/SEED.mypage-profile-persistence-v1.yaml`
+  - `worker_mypage_profile_front (Ampere)`: `front/components/react/mypage/**`
+  - `worker_mypage_profile_backend (Beauvoir)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/**`
+  - `reviewer_mypage_profile_persistence (Volta)`: `review only`
+- verification:
+  - `worker_seed_mypage_profile_persistence (Rawls)` froze the contract at `docs/seeds/SEED.mypage-profile-persistence-v1.yaml` with authenticated `name/email/phone` persistence, persisted refetch, validation/conflict handling, and mirror-boundary exclusions.
+  - `worker_mypage_profile_front (Ampere)` updated `front/components/react/mypage/AccountBenefitSection.tsx` and `front/components/react/mypage/state.tsx` so the info-edit modal saves through `PUT /api/mypage/profile`, surfaces save-state feedback, and refetches `/api/mypage/dashboard` after success instead of relying on a local-only profile patch.
+  - `worker_mypage_profile_backend (Beauvoir)` added `MyPageProfileUpdateService.java`, `MyPageProfileUpdateRequest.java`, and the `PUT /api/mypage/profile` handler in `MyPageApiController.java`, persisting `users.name/email/phone` plus `user_profiles.display_name` for the authenticated session user while returning `401/400/409/404` envelopes as appropriate.
+  - `jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java` now covers unauthenticated rejection, successful persistence plus dashboard refetch visibility, validation failure, and duplicate email/phone conflict handling for the mypage profile path.
+  - `pnpm -C front/apps/shell check` passed.
+  - `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat test --tests "com.jejugroup.jejuspring.JejuSpringApplicationTests.mypage*"` passed.
+  - `git diff --check -- front/components/react/mypage/AccountBenefitSection.tsx front/components/react/mypage/state.tsx jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageProfileUpdateService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/model/MyPageProfileUpdateRequest.java jeju-spring/src/test/java/com/jejugroup/jejuspring/JejuSpringApplicationTests.java docs/seeds/SEED.mypage-profile-persistence-v1.yaml STATE.md` passed.
+  - `reviewer_mypage_profile_persistence (Volta)` reported `블로킹 findings 없음`; residual risk only that the broader `JejuSpringApplicationTests` suite still has the pre-existing `landingPageLoadsAtRoot()` failure at `JejuSpringApplicationTests.java:92`, which reproduced outside this mypage slice.
+
+- time: `2026-03-27 17:52:00 +09:00`
+- route: `Route B`
+- task: `Sync the latest mypage profile persistence changes into derived jeju-spring outputs`
+- participants: `main`, `worker_spring_sync_mypage_profile_persistence (Meitner)`, `reviewer_spring_sync_mypage_profile_persistence (McClintock)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_sync_mypage_profile_persistence (Meitner)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/build pipeline refreshes the latest mypage profile persistence changes`
+  - `reviewer_spring_sync_mypage_profile_persistence (McClintock)`: `review only`
+- verification:
+  - `worker_spring_sync_mypage_profile_persistence (Meitner)` ran `pnpm run spring:package` and `pnpm run build`, refreshing the generated front runtime outputs plus the derived jeju-spring runtime chunk set and WAR artifacts for the latest mypage profile persistence changes.
+  - The derived runtime chunk set replaced the old `feature-mypage-Dp_yWVEl.js` and `runtime-pages-CYOtPQeK.js` files with `feature-mypage-D8zINF4I.js` and `runtime-pages-r7Y7dyPr.js`, while `jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js` was updated to point at the refreshed chunk names.
+  - Generated/git-ignored front outputs under `front/.generated/webapp-overlay/components/runtime/**`, spring generated outputs under `jeju-spring/build/generated/front-resources/static/components/runtime/**`, and packaged artifacts `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war` plus `jeju-spring/build/jeju-spring.war` were regenerated successfully.
+  - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-mypage-D8zINF4I.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-pages-r7Y7dyPr.js` passed.
+  - Reviewer `McClintock` reported `블로킹 findings 없음` after confirming the refreshed chunk chain is internally consistent, no stale references to the replaced chunk names remain in the derived outputs, and the sync stayed within the expected derived-output boundary.
+
 - time: `2026-03-27 16:56:30 +09:00`
 - route: `Route B`
 - task: `Use the shield icon for admin header entries and reduce signed-in header flicker during refresh`
