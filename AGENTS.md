@@ -87,6 +87,7 @@ Global multi-agent defaults remain in effect unless this file narrows them.
   `explorer 3`, `reviewer 2`, `worker up to 4 on Route B`
 - New seed artifacts should be created under `docs/seeds/` with the same basename convention.
 - Keep `STATE.md` updated with exact `route`, concrete `reason`, `writer_slot`, `contract_freeze`, and `write_sets` when Route B is active
+- On `Route B`, `worker` and `reviewer` roles must treat `STATE.md`, `MULTI_AGENT_LOG.md`, and `NEXT_AGENT_START.md` as read-only; only `main` may edit them
 - If multiple roles are used, append real participation to `MULTI_AGENT_LOG.md` before reporting that they ran
 - Add repository-specific worker ownership, hard triggers, and approval zones here as they become clear
 - Let this repository narrow Route A/B behavior further only when it truly needs stricter local rules

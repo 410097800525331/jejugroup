@@ -1,6 +1,6 @@
 import { j as e, a as g } from "./react-vendor-BoSfm_Te.js";
-import { U as E, a as b, S, b as I, c as R, P as k, d as v, e as w, M as A, f as C, g as L, L as T, h as y, H as M, i as x, j as V, k as H, G as O, C as P, l as _, m as D, n as G, o as U, p as $, q as B, B as N, r as q, s as Y, t as F } from "./icon-vendor-Dpra3II6.js";
-import { a as W } from "./legacy-core-Bm-E3BtG.js";
+import { U as E, a as b, S, b as I, c as k, P as R, d as x, e as A, M as w, f as C, g as L, L as T, h as y, H as M, i as v, j as V, k as H, G as P, C as O, l as _, m as D, n as G, o as U, p as $, q as B, B as N, r as q, s as Y, t as F } from "./icon-vendor-Dpra3II6.js";
+import { r as W } from "./legacy-core-BoI547nw.js";
 const J = {
   "book-open": q,
   "building-2": N,
@@ -10,21 +10,21 @@ const J = {
   "check-circle": G,
   "clipboard-list": D,
   compass: _,
-  "credit-card": P,
-  gift: O,
+  "credit-card": O,
+  gift: P,
   headphones: H,
   heart: V,
-  home: x,
+  home: v,
   hotel: M,
   lightbulb: y,
   "log-out": T,
   map: L,
   menu: C,
-  minus: A,
-  percent: w,
-  plane: v,
-  plus: k,
-  search: R,
+  minus: w,
+  percent: A,
+  plane: x,
+  plus: R,
+  search: k,
   "shield-check": I,
   smartphone: S,
   user: b,
@@ -215,7 +215,8 @@ const J = {
           children: [
             /* @__PURE__ */ e.jsxs("span", { className: "hotel-shell-util-icon", "aria-hidden": "true", children: [
               /* @__PURE__ */ e.jsx("span", { "data-auth-icon": "guest", children: /* @__PURE__ */ e.jsx(i, { name: "clipboard-list", className: "hotel-shell-util-icon" }) }),
-              /* @__PURE__ */ e.jsx("span", { "data-auth-icon": "member", hidden: !0, children: /* @__PURE__ */ e.jsx(i, { name: "user", className: "hotel-shell-util-icon" }) })
+              /* @__PURE__ */ e.jsx("span", { "data-auth-icon": "member", hidden: !0, children: /* @__PURE__ */ e.jsx(i, { name: "user", className: "hotel-shell-util-icon" }) }),
+              /* @__PURE__ */ e.jsx("span", { "data-auth-icon": "admin", hidden: !0, children: /* @__PURE__ */ e.jsx(i, { name: "shield-check", className: "hotel-shell-util-icon" }) })
             ] }),
             /* @__PURE__ */ e.jsx(
               "span",
@@ -225,6 +226,8 @@ const J = {
                 "data-auth-label-en": "Guest Reservation Check",
                 "data-auth-member-label-ko": "마이페이지",
                 "data-auth-member-label-en": "My Page",
+                "data-auth-admin-label-ko": "관리자 페이지",
+                "data-auth-admin-label-en": "Admin Page",
                 children: "비회원 예약확인"
               }
             )
@@ -267,13 +270,13 @@ const J = {
 ] }), X = [
   {
     href: "/index.html",
-    icon: x,
+    icon: v,
     key: "main",
     title: "제주그룹 메인"
   },
   {
     href: "/jejuair/index.html",
-    icon: v,
+    icon: x,
     key: "air",
     title: "제주에어"
   },
@@ -469,29 +472,56 @@ const re = () => /* @__PURE__ */ e.jsxs("footer", { className: "footer section s
           {
             href: a("MYPAGE.DASHBOARD", { shell: "main" }),
             className: "weather-header-btn mypage-cta route-link",
+            "data-auth-entry": "mypage",
             "data-route": "MYPAGE.DASHBOARD",
             "data-route-params": '{"shell":"main"}',
+            "data-auth-label-ko": "마이페이지",
+            "data-auth-label-en": "My Page",
+            "data-auth-admin-label-ko": "관리자 페이지",
+            "data-auth-admin-label-en": "Admin Page",
             "aria-label": "마이페이지",
-            children: /* @__PURE__ */ e.jsx("span", { className: "mypage-cta-icon", "aria-hidden": "true", children: /* @__PURE__ */ e.jsxs("svg", { viewBox: "0 0 24 24", focusable: "false", "aria-hidden": "true", children: [
-              /* @__PURE__ */ e.jsx(
-                "path",
-                {
-                  d: "M4 11.5 12 4l8 7.5v7.5a1 1 0 0 1-1 1h-4.5v-5.2H9.5V20H5a1 1 0 0 1-1-1z",
-                  fill: "currentColor"
-                }
-              ),
-              /* @__PURE__ */ e.jsx(
-                "path",
-                {
-                  d: "M11 20v-4.2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V20",
-                  fill: "none",
-                  stroke: "currentColor",
-                  strokeWidth: "1.6",
-                  strokeLinecap: "round",
-                  strokeLinejoin: "round"
-                }
-              )
-            ] }) })
+            children: /* @__PURE__ */ e.jsxs("span", { className: "mypage-cta-icon", "aria-hidden": "true", children: [
+              /* @__PURE__ */ e.jsx("span", { "data-auth-icon": "member", children: /* @__PURE__ */ e.jsxs("svg", { viewBox: "0 0 24 24", focusable: "false", "aria-hidden": "true", children: [
+                /* @__PURE__ */ e.jsx(
+                  "path",
+                  {
+                    d: "M4 11.5 12 4l8 7.5v7.5a1 1 0 0 1-1 1h-4.5v-5.2H9.5V20H5a1 1 0 0 1-1-1z",
+                    fill: "currentColor"
+                  }
+                ),
+                /* @__PURE__ */ e.jsx(
+                  "path",
+                  {
+                    d: "M11 20v-4.2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V20",
+                    fill: "none",
+                    stroke: "currentColor",
+                    strokeWidth: "1.6",
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                  }
+                )
+              ] }) }),
+              /* @__PURE__ */ e.jsx("span", { "data-auth-icon": "admin", hidden: !0, children: /* @__PURE__ */ e.jsxs("svg", { viewBox: "0 0 24 24", focusable: "false", "aria-hidden": "true", children: [
+                /* @__PURE__ */ e.jsx(
+                  "path",
+                  {
+                    d: "M12 3.75 5.5 6.5v5.05c0 4.05 2.7 7.76 6.5 8.7 3.8-.94 6.5-4.65 6.5-8.7V6.5z",
+                    fill: "currentColor"
+                  }
+                ),
+                /* @__PURE__ */ e.jsx(
+                  "path",
+                  {
+                    d: "m9.8 12.25 1.55 1.55 3.4-3.4",
+                    fill: "none",
+                    stroke: "#fff",
+                    strokeWidth: "1.7",
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                  }
+                )
+              ] }) })
+            ] })
           }
         )
       ] })

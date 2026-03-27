@@ -388,3 +388,9 @@ status: open
 - summary: `Gradle compileJava was invoked from the repo root instead of jeju-spring`
 - details: `The requested verification command pointed at the Gradle wrapper binary, but the workspace root is not a Gradle build. Rerunning from D:\lsh\git\jejugroup\jeju-spring is required.`
 - status: `resolved`
+
+- time: `2026-03-27 15:36:00 +09:00`
+- location: `D:\lsh\git\jejugroup local MySQL seed via JShell`
+- summary: `콘솔 파이프 인코딩 때문에 한글 더미 사용자 이름/프로필이 물음표로 저장됨`
+- details: `가짜 users 데이터를 JShell로 넣는 과정에서 PowerShell 파이프 입력이 한글을 보존하지 못해 users.name, user_profiles.display_name, nickname, bio가 '?'로 저장됐다. DB 문자셋은 utf8mb4로 정상이라 저장값만 유니코드 이스케이프 기반 업데이트로 복구한다.`
+- status: `resolved`

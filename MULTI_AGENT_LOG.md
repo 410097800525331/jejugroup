@@ -1872,6 +1872,38 @@
   - A reviewer then found three remaining admin-shell log lines still carrying mojibake; `main` corrected those final lines to readable text and emoji without widening the cleanup scope.
   - `pnpm run guard:text:staged` passed with `[guard:text] 점검 완료 상태 (113 files)`.
 
+- time: `2026-03-27 15:55:00 +09:00`
+- route: `Route B`
+- task: `Deepen the platinum membership metal finish in front and sync the result into jeju-spring`
+- participants: `main`, `worker_shared_membership_platinum (Aristotle)`, `worker_mypage_membership_platinum (Raman)`, `worker_spring_sync_membership_platinum (McClintock)`, `reviewer_membership_platinum_sync (Kuhn)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shared_membership_platinum (Aristotle)`: `front/styles/globals.css`
+  - `worker_mypage_membership_platinum (Raman)`: `front/pages/mypage/styles/_summary.css`
+  - `worker_spring_sync_membership_platinum (McClintock)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the updated membership styles`
+  - `reviewer_membership_platinum_sync (Kuhn)`: `review only`
+- verification:
+  - `worker_shared_membership_platinum (Aristotle)` tuned only the two `.tier-badge.platinum` blocks in `front/styles/globals.css` to add a stronger sheen layer, slightly richer steel-blue midtones, and tighter polished-metal inset shadowing without touching silver/gold/diamond selectors.
+  - `worker_mypage_membership_platinum (Raman)` tuned only the platinum-specific variables in `front/pages/mypage/styles/_summary.css`, deepening the ring/chip metallic gradient and highlight treatment while keeping the silver block unchanged.
+  - `worker_spring_sync_membership_platinum (McClintock)` ran `node scripts/spring/sync-front-assets-to-spring.cjs` and `node scripts/spring/run-jeju-spring-gradle.cjs processResources`, updating the derived spring mirror/build outputs for `styles/globals.css` and `pages/mypage/styles/_summary.css`.
+  - Reviewer `Kuhn` reported `블로킹 findings 없음` after confirming only platinum selectors changed in the front source, silver stayed untouched, the front and spring mirror/build outputs matched by SHA256, and the relevant `git diff --check`/sync verification passed.
+
+- time: `2026-03-27 16:18:00 +09:00`
+- route: `Route B`
+- task: `Align platinum gloss treatment with silver/gold and sync the result into jeju-spring`
+- participants: `main`, `worker_shared_membership_platinum_gloss_align (Singer)`, `worker_mypage_membership_platinum_gloss_align (Turing)`, `worker_spring_sync_membership_platinum_gloss_align (Laplace)`, `reviewer_membership_platinum_gloss_align (Parfit)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shared_membership_platinum_gloss_align (Singer)`: `front/styles/globals.css`
+  - `worker_mypage_membership_platinum_gloss_align (Turing)`: `front/pages/mypage/styles/_summary.css`
+  - `worker_spring_sync_membership_platinum_gloss_align (Laplace)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the updated membership styles`
+  - `reviewer_membership_platinum_gloss_align (Parfit)`: `review only`
+- verification:
+  - `worker_shared_membership_platinum_gloss_align (Singer)` simplified the two `.tier-badge.platinum` blocks in `front/styles/globals.css` so they now follow the same gloss structure as silver/gold: one radial highlight plus the main metallic gradient, with tuned platinum-specific shadows instead of a separate sheen layer.
+  - `worker_mypage_membership_platinum_gloss_align (Turing)` simplified the platinum-only mypage chip treatment in `front/pages/mypage/styles/_summary.css`, toning down the extra gloss and aligning the highlight vocabulary with the silver/gold pattern while keeping a slightly deeper platinum finish.
+  - `worker_spring_sync_membership_platinum_gloss_align (Laplace)` ran `pnpm run spring:war-package`, refreshing the derived spring mirror/build outputs and WAR packaging for the updated membership styles.
+  - Reviewer `Parfit` reported `블로킹 findings 없음` after confirming only platinum selectors changed, silver stayed untouched, `git diff --check` was clean, and the front/spring mirror/build files matched by SHA256.
+
 - time: `2026-03-27 15:36:00 +09:00`
 - route: `Route B`
 - task: `Sync the recent front changes into the derived jeju-spring mirror/runtime outputs`
@@ -1884,4 +1916,158 @@
   - `worker_spring_sync_recent_front (Kierkegaard)` completed the existing spring packaging pipeline so the recent front dashboard auto-refresh change landed in `jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js`, `jeju-spring/build/resources/main/static/front-mirror/admin/js/dashboard.js`, and `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war`.
   - `pnpm run spring:war-package` succeeded.
   - Direct checks confirmed the `DASHBOARD_REFRESH_INTERVAL_MS`, `visibilitychange`, and `beforeunload` lines exist in both the front source and the derived spring src/build mirror files.
-  - `reviewer_spring_sync_recent_front (Beauvoir)` reported `블로킹 findings 없음` after confirming SHA256 parity across the front source and derived spring outputs and verifying the WAR contains `WEB-INF/classes/static/front-mirror/admin/js/dashboard.js`.
+- `reviewer_spring_sync_recent_front (Beauvoir)` reported `블로킹 findings 없음` after confirming SHA256 parity across the front source and derived spring outputs and verifying the WAR contains `WEB-INF/classes/static/front-mirror/admin/js/dashboard.js`.
+
+- time: `2026-03-27 15:12:55 +09:00`
+- route: `Route B`
+- task: `Add platinum text outlining for readability, trim redundant mypage effects, and sync the result into jeju-spring`
+- participants: `main`, `worker_shared_membership_platinum_outline (Dewey)`, `worker_mypage_membership_platinum_cleanup (Bohr)`, `worker_spring_sync_membership_platinum_outline (Harvey)`, `reviewer_membership_platinum_outline (Wegener)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shared_membership_platinum_outline (Dewey)`: `front/styles/globals.css`
+  - `worker_mypage_membership_platinum_cleanup (Bohr)`: `front/pages/mypage/styles/_summary.css`
+  - `worker_spring_sync_membership_platinum_outline (Harvey)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the updated membership styles`
+  - `reviewer_membership_platinum_outline (Wegener)`: `review only`
+- verification:
+  - `worker_shared_membership_platinum_outline (Dewey)` updated only the two `.tier-badge.platinum` blocks in `front/styles/globals.css`, adding a subtle outline-style text treatment with `-webkit-text-stroke` plus restrained multi-direction shadows so the platinum copy stays readable on the metallic gradient.
+  - `worker_mypage_membership_platinum_cleanup (Bohr)` updated only the platinum block in `front/pages/mypage/styles/_summary.css`, reducing redundant glow/border/sheen intensity while keeping the metallic finish intact.
+  - `worker_mypage_membership_platinum_cleanup (Bohr)` also wrote outside its ownership into `STATE.md`; `main` restored the Route B state record before continuing.
+  - `worker_spring_sync_membership_platinum_outline (Harvey)` ran `node scripts/spring/sync-front-assets-to-spring.cjs` and `pnpm run spring:war-package`, refreshing the derived spring mirror outputs and packaging `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war`.
+  - Derived tracked updates were limited to `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` and `jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css`.
+  - `git diff --check -- front/styles/globals.css front/pages/mypage/styles/_summary.css jeju-spring/src/main/resources/static/front-mirror/styles/globals.css jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css` passed.
+  - Reviewer `Wegener` reported `블로킹 findings 없음` after confirming only platinum selectors changed, silver/gold/diamond remained untouched, and the derived spring mirror files matched the front source.
+
+- time: `2026-03-27 14:44:54 +09:00`
+- route: `Route B`
+- task: `Sync the updated platinum membership styles from front into derived jeju-spring outputs`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `node scripts/spring/sync-front-assets-to-spring.cjs` succeeded and regenerated the front build/runtime overlay plus `jeju-spring/src/main/resources/static/front-mirror/**`.
+  - `node scripts/spring/run-jeju-spring-gradle.cjs processResources` succeeded and refreshed `jeju-spring/build/resources/main/**`.
+  - SHA256 matched for `front/styles/globals.css` -> `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` -> `jeju-spring/build/resources/main/static/front-mirror/styles/globals.css`.
+  - SHA256 matched for `front/pages/mypage/styles/_summary.css` -> `jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css` -> `jeju-spring/build/resources/main/static/front-mirror/pages/mypage/styles/_summary.css`.
+  - SHA256 matched for `front/.generated/webapp-overlay/components/runtime/style.css` -> `jeju-spring/build/resources/main/static/components/runtime/style.css`.
+  - SHA256 matched for `front/.generated/webapp-overlay/components/runtime/shell-runtime.js` -> `jeju-spring/build/resources/main/static/components/runtime/shell-runtime.js`.
+  - No human-authored `jeju-spring` source files were edited; only derived mirror/build outputs changed.
+
+- time: `2026-03-27 15:43:55 +09:00`
+- route: `Route B`
+- task: `Add a natural text outline to the mypage platinum membership chip and sync the result into jeju-spring`
+- participants: `main`, `worker_mypage_membership_platinum_text_outline (Euclid)`, `worker_spring_sync_mypage_membership_platinum_text_outline (Mill)`, `reviewer_mypage_membership_platinum_text_outline (Huygens)`, `reviewer_mypage_membership_platinum_text_outline_recheck (Einstein)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_mypage_membership_platinum_text_outline (Euclid)`: `front/pages/mypage/styles/_summary.css`
+  - `worker_spring_sync_mypage_membership_platinum_text_outline (Mill)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the updated mypage membership styles`
+  - `reviewer_mypage_membership_platinum_text_outline (Huygens)`: `review only`
+  - `reviewer_mypage_membership_platinum_text_outline_recheck (Einstein)`: `review only`
+- verification:
+  - `worker_mypage_membership_platinum_text_outline (Euclid)` updated only the platinum block in `front/pages/mypage/styles/_summary.css`, replacing the single drop shadow with a restrained multi-direction outline-style `--mypage-grade-chip-text-shadow` so the text reads more clearly without a harsh black border.
+  - `worker_mypage_membership_platinum_text_outline (Euclid)` also wrote outside its ownership into `STATE.md`; `main` restored the Route B state record before continuing.
+  - `git diff --check -- front/pages/mypage/styles/_summary.css` passed after the front edit.
+  - `worker_spring_sync_mypage_membership_platinum_text_outline (Mill)` refreshed the derived spring outputs through the existing pipeline, updating `jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css` and rebuilding the spring runtime artifacts.
+  - `pnpm run build` succeeded and refreshed the build/runtime outputs including `jeju-spring/build/resources/main/static/front-mirror/pages/mypage/styles/_summary.css`, `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war`, and `jeju-spring/build/jeju-spring.war`.
+  - Initial reviewer `Huygens` flagged a scope issue because the working tree already contained pre-existing platinum dirty-state changes beyond the new text-shadow update.
+  - Follow-up reviewer `Einstein` rechecked against that existing local baseline and reported `블로킹 findings 없음`, confirming the platinum-only text-outline change, unchanged silver/gold/diamond, and front/spring mirror parity.
+  - `git diff --check -- front/pages/mypage/styles/_summary.css jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css` passed.
+
+- time: `2026-03-27 15:51:52 +09:00`
+- route: `Route B`
+- task: `Sync the latest mypage membership tier text-color updates into derived jeju-spring outputs`
+- participants: `main`, `worker_spring_sync_mypage_membership_text_colors (Jason)`, `reviewer_spring_sync_mypage_membership_text_colors (Pascal)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_sync_mypage_membership_text_colors (Jason)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the latest mypage membership styles`
+  - `reviewer_spring_sync_mypage_membership_text_colors (Pascal)`: `review only`
+- verification:
+  - `worker_spring_sync_mypage_membership_text_colors (Jason)` ran `pnpm run build`, refreshing the derived spring mirror/build outputs for the latest mypage membership text-color changes.
+  - Tracked derived updates included `jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css` and `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css`.
+  - `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war` was regenerated successfully.
+  - The worker confirmed hash parity for `front/pages/mypage/styles/_summary.css` -> spring mirror, `front/styles/globals.css` -> spring mirror, and the generated `feature-mypage-BVPwGNOg.js` asset against its spring mirror copy.
+  - `git diff --check -- front/pages/mypage/styles/_summary.css jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` passed.
+  - Reviewer `Pascal` reported `블로킹 findings 없음` after confirming the mypage gold text color `#583e02` and silver text color `#454545` match the membership section values and are reflected correctly in the derived spring mirror outputs.
+
+- time: `2026-03-27 16:34:55 +09:00`
+- route: `Route B`
+- task: `Sync the shared-header admin-entry replacement changes into derived jeju-spring outputs`
+- participants: `main`, `worker_spring_sync_admin_entry_swap (Erdos)`, `reviewer_spring_sync_admin_entry_swap (Newton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_sync_admin_entry_swap (Erdos)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the latest shared-header changes`
+  - `reviewer_spring_sync_admin_entry_swap (Newton)`: `review only`
+- verification:
+  - `worker_spring_sync_admin_entry_swap (Erdos)` ran `pnpm run build`, refreshing the derived spring mirror/build outputs for the latest shared-header admin-entry replacement changes.
+  - Tracked derived updates included the `jeju-spring/src/main/resources/static/front-mirror/components/runtime/**` runtime chunks plus `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` and `jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css`.
+  - Old hashed runtime files were replaced by the new chunk set, and both `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war` and `jeju-spring/build/jeju-spring.war` were regenerated successfully.
+  - The worker confirmed that `ADMIN.DASHBOARD`, `MYPAGE.DASHBOARD`, `authAdminLabel`, and `mypage-cta` markers appear in the refreshed runtime outputs, matching the latest front header behavior.
+  - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-layout-Bpod13HL.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-auth-Dq8ians4.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-hotel-C-_9-1dG.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-layout-Bquw4l6l.js` passed.
+  - Reviewer `Newton` reported `블로킹 findings 없음` after confirming the latest header behavior is reflected in the derived spring outputs, the sync stayed within derived `front-mirror` paths, and no new regression signal appeared in the refreshed runtime chunk references.
+
+- time: `2026-03-27 17:04:14 +09:00`
+- route: `Route B`
+- task: `Sync the latest shared-header admin icon and flicker-reduction changes into derived jeju-spring outputs`
+- participants: `main`, `worker_spring_sync_admin_icon_and_flicker_fix (Pauli)`, `reviewer_spring_sync_admin_icon_and_flicker_fix (Cicero)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_sync_admin_icon_and_flicker_fix (Pauli)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the latest shared-header changes`
+  - `reviewer_spring_sync_admin_icon_and_flicker_fix (Cicero)`: `review only`
+- verification:
+  - `worker_spring_sync_admin_icon_and_flicker_fix (Pauli)` ran `pnpm run spring:war-package`, refreshing the derived spring mirror/build outputs for the latest shared-header admin icon and flicker-reduction changes.
+  - Tracked derived updates included `jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js`, the refreshed `jeju-spring/src/main/resources/static/front-mirror/components/runtime/**` chunk set, plus `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` and `jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css`.
+  - The previous hashed runtime files were replaced by the new chunk set, and `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war` was regenerated successfully.
+  - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-layout-t5Px-pwN.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-pages-CYOtPQeK.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-ui-D5qQBMsF.js` passed.
+  - Reviewer `Cicero` reported `블로킹 findings 없음` after confirming the latest admin icon/flicker-reduction header behavior is reflected in the refreshed spring runtime outputs, the sync stayed within derived `front-mirror` paths, and the new chunk references are internally consistent.
+
+- time: `2026-03-27 16:56:30 +09:00`
+- route: `Route B`
+- task: `Use the shield icon for admin header entries and reduce signed-in header flicker during refresh`
+- participants: `main`, `worker_layout_admin_icon_swap (Herschel)`, `worker_shell_admin_icon_and_flicker_fix (Hilbert)`, `reviewer_admin_icon_and_flicker_fix (Anscombe)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_layout_admin_icon_swap (Herschel)`: `front/components/react/layout/MainHeaderTemplate.tsx, front/components/react/layout/HotelHeaderTemplate.tsx`
+  - `worker_shell_admin_icon_and_flicker_fix (Hilbert)`: `front/apps/shell/src/runtime/layout/header.ts`
+  - `reviewer_admin_icon_and_flicker_fix (Anscombe)`: `review only`
+- verification:
+  - `worker_layout_admin_icon_swap (Herschel)` added reusable icon slots to the shared account-entry markup so main/header surfaces can switch between member and admin shield icons without introducing a second shortcut slot.
+  - `worker_shell_admin_icon_and_flicker_fix (Hilbert)` imported `getStoredSession()` into `front/apps/shell/src/runtime/layout/header.ts`, applies an optimistic stored-session header state before awaiting `resolveSession()`, switches reused admin account slots to the shield/admin icon for admin sessions, and preserves the existing guest/member fallback behavior for non-admin and signed-out states.
+  - `pnpm -C front/apps/shell check` passed after the runtime changes.
+  - `git diff --check -- front/components/react/layout/MainHeaderTemplate.tsx front/components/react/layout/HotelHeaderTemplate.tsx front/apps/shell/src/runtime/layout/header.ts` passed.
+  - Reviewer `Anscombe` reported `블로킹 findings 없음` after confirming the shield icon now appears for admin sessions, the non-admin/signed-out icon-label flows remain intact, and the optimistic stored-session apply should reduce the refresh-time guest-label flicker without introducing internal inconsistencies in the 3-file slice.
+
+- time: `2026-03-27 15:23:43 +09:00`
+- route: `Route B`
+- task: `Thicken platinum text outlining, align mypage platinum gloss with gold, and sync the result into jeju-spring`
+- participants: `main`, `worker_shared_membership_platinum_outline_thicken (Carson)`, `worker_mypage_membership_platinum_gloss_align_gold (Schrodinger)`, `worker_spring_sync_membership_platinum_outline_thicken (Mendel)`, `reviewer_membership_platinum_outline_thicken (Ohm)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shared_membership_platinum_outline_thicken (Carson)`: `front/styles/globals.css`
+  - `worker_mypage_membership_platinum_gloss_align_gold (Schrodinger)`: `front/pages/mypage/styles/_summary.css`
+  - `worker_spring_sync_membership_platinum_outline_thicken (Mendel)`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing sync/processResources pipeline refreshes the updated membership styles`
+  - `reviewer_membership_platinum_outline_thicken (Ohm)`: `review only`
+- verification:
+  - `worker_shared_membership_platinum_outline_thicken (Carson)` increased the platinum text outline strength in the two `.tier-badge.platinum` blocks in `front/styles/globals.css`, moving `-webkit-text-stroke` from `0.35px` to `0.5px` and slightly increasing the dark edge density in the multi-direction `text-shadow`.
+  - `worker_mypage_membership_platinum_gloss_align_gold (Schrodinger)` updated only the platinum block in `front/pages/mypage/styles/_summary.css`, aligning the platinum chip with the same gloss/highlight structure used by gold while keeping the platinum color palette and avoiding redundant overlapping shine.
+  - `worker_mypage_membership_platinum_gloss_align_gold (Schrodinger)` also wrote outside its ownership into `STATE.md`; `main` restored the Route B state record before a later unrelated task update replaced `STATE.md`.
+  - `worker_spring_sync_membership_platinum_outline_thicken (Mendel)` ran `pnpm run spring:war-package`, refreshing the derived spring mirror outputs and repackaging `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war`.
+  - Derived tracked updates were limited to `jeju-spring/src/main/resources/static/front-mirror/styles/globals.css` and `jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css`.
+  - `git diff --check -- front/styles/globals.css front/pages/mypage/styles/_summary.css jeju-spring/src/main/resources/static/front-mirror/styles/globals.css jeju-spring/src/main/resources/static/front-mirror/pages/mypage/styles/_summary.css` passed.
+  - Reviewer `Ohm` reported `블로킹 findings 없음` after confirming only platinum selectors changed, the outline is visibly stronger, the mypage platinum block follows the gold gloss structure without redundant duplication, and the derived spring mirror files match the front source.
+
+- time: `2026-03-27 16:16:43 +09:00`
+- route: `Route B`
+- task: `Replace mypage entry with admin-page entry for admin sessions in the shared header surfaces`
+- participants: `main`, `worker_layout_admin_entry_swap (Hubble)`, `worker_shell_admin_entry_swap (Ptolemy)`, `reviewer_admin_entry_swap_initial (Fermat)`, `reviewer_admin_entry_swap_recheck (Russell)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_layout_admin_entry_swap (Hubble)`: `front/components/react/layout/MainHeaderTemplate.tsx, front/components/react/layout/HotelHeaderTemplate.tsx`
+  - `worker_shell_admin_entry_swap (Ptolemy)`: `front/apps/shell/src/runtime/layout/header.ts`
+  - `reviewer_admin_entry_swap_initial (Fermat)`: `review only`
+  - `reviewer_admin_entry_swap_recheck (Russell)`: `review only`
+- verification:
+  - `worker_layout_admin_entry_swap (Hubble)` added stable auth-entry/admin-label data attributes to `front/components/react/layout/MainHeaderTemplate.tsx` and `front/components/react/layout/HotelHeaderTemplate.tsx` so the shared header runtime can reuse the existing mypage/account slot for admin labels instead of relying on a separate admin shortcut.
+  - `worker_shell_admin_entry_swap (Ptolemy)` updated `front/apps/shell/src/runtime/layout/header.ts` so the main header `.mypage-cta` switches between `MYPAGE.DASHBOARD` and `ADMIN.DASHBOARD`, the hotel `#headerAuthActionBtn` switches between mypage and admin dashboard based on `hasAdminAccess(sessionData)`, the hotel dedicated `#headerAdminBtn` stays hidden to prevent duplicate admin entry exposure, and the old `indexAdminBtn` append flow is removed in favor of reusing the existing slot.
+  - `pnpm -C front/apps/shell check` passed after the shell runtime changes.
+  - `git diff --check -- front/components/react/layout/MainHeaderTemplate.tsx front/components/react/layout/HotelHeaderTemplate.tsx front/apps/shell/src/runtime/layout/header.ts` passed.
+  - Initial reviewer `Fermat` flagged unrelated existing dirty files in the working tree as out-of-scope noise, but the functional review already confirmed the requested header behavior.
+  - Follow-up reviewer `Russell` rechecked against the actual slice scope and reported `블로킹 findings 없음`, confirming that admin signed-in sessions replace the existing mypage/account entry with an admin-page entry, non-admin signed-in and signed-out behavior remain unchanged, and the 3-file implementation is internally consistent.

@@ -1,5 +1,5 @@
 import { j as t, a as u } from "./react-vendor-BoSfm_Te.js";
-import { A as ve } from "./legacy-core-Bm-E3BtG.js";
+import { A as ve } from "./legacy-core-BoI547nw.js";
 const B = {
   email: "minji.hong@jejugroup.example",
   id: "hong_minji",
