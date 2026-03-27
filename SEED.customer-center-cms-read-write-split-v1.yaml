@@ -1,0 +1,27 @@
+goal: >
+  Freeze the first track_support_cms slice by keeping the customer-center CMS
+  public read and admin-gated write routes externally stable while splitting
+  notice/faq internal read and write responsibilities behind the existing API.
+constraints:
+  - Preserve the existing `/api/customer-center/notices`, `/api/customer-center/notices/{noticeId}`, `/api/customer-center/faqs`, and `/api/customer-center/faqs/{faqId}` paths.
+  - Preserve the current top-level JSON response shape, including `success`, `data`, and `message` keys where they already exist.
+  - Keep notice and faq read operations public.
+  - Keep notice and faq write operations behind the existing admin session gate.
+  - Limit this slice to `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/**`.
+  - Do not change support ticket, comment, or attachment behavior in this slice.
+  - Keep the recent auth/session work intact, including `active_user_sessions`, auth session heartbeat, and admin dashboard `activeUsers` KPI behavior.
+  - Do not touch front sources, `jeju-web`, Spring mirror/runtime outputs, or routing in this slice.
+acceptance_criteria:
+  - The four customer-center CMS notice/faq endpoints still respond successfully with the same external paths and compatible JSON envelope.
+  - Notice and faq read methods remain publicly accessible without requiring an admin session.
+  - Notice and faq write methods continue to require the existing admin session gate.
+  - The internal code path is separated so that notice/faq read logic and write logic are no longer coupled in a single monolithic implementation.
+  - Support ticket/comment/attachment APIs and behavior remain unchanged.
+verification:
+  - `D:\\git\\jejugroup\\.codex-temp\\gradle-8.14.4\\bin\\gradle.bat compileJava`
+out_of_scope:
+  - Refactoring support ticket, comment, or attachment APIs.
+  - Refactoring other customer-center or admin API surfaces.
+  - Front admin UI changes.
+  - Spring mirror regeneration, deployment, or `jeju-web` edits.
+  - Routing changes.
