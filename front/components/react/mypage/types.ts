@@ -122,6 +122,7 @@ export interface UserProfile {
   email: string;
   memberships: string[];
   id?: string;
+  avatarUrl?: string;
   name: string;
   passport?: PassportInfo;
   role?: string;

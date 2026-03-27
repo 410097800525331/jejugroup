@@ -19,6 +19,7 @@ public class MyPageProfileQueryService {
             SELECT
                 u.id,
                 COALESCE(NULLIF(TRIM(up.display_name), ''), u.name) AS display_name,
+                up.avatar_url,
                 u.email,
                 u.phone,
                 u.role
@@ -38,6 +39,7 @@ public class MyPageProfileQueryService {
                 return new MyPageDashboardRepository.MyPageProfileSnapshot(
                     nullToEmpty(resultSet.getString("id")),
                     nullToEmpty(resultSet.getString("display_name")),
+                    nullToEmpty(resultSet.getString("avatar_url")),
                     nullToEmpty(resultSet.getString("email")),
                     nullToEmpty(resultSet.getString("phone")),
                     nullToEmpty(resultSet.getString("role")),

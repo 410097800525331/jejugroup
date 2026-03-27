@@ -205,7 +205,7 @@ export const HotelFilterSidebar = ({
       const nextState = {
         active: stickyShouldActivate,
         left: shouldAnchorToBoundary ? 0 : sidebarRect.left,
-        mode: shouldAnchorToBoundary ? "absolute" : "fixed",
+        mode: (shouldAnchorToBoundary ? "absolute" : "fixed") as StickyOverlayMode,
         top: shouldAnchorToBoundary ? anchoredTop : topOffset,
         width: sidebarRect.width
       };

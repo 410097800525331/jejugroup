@@ -9,7 +9,8 @@ public record AppProperties(
     Migration migration,
     Alwaysdata alwaysdata,
     External external,
-    Social social
+    Social social,
+    MyPage mypage
 ) {
     public AppProperties {
         migration = migration == null
@@ -21,6 +22,7 @@ public record AppProperties(
         alwaysdata = alwaysdata == null ? new Alwaysdata("", "", "", "", "", "", "", "", "") : alwaysdata;
         external = external == null ? new External("", "") : external;
         social = social == null ? new Social("", "", "") : social;
+        mypage = mypage == null ? new MyPage("./.tmp/mypage-avatars") : mypage;
     }
 
     public record Migration(String sharedEnvPath, List<String> notes) {
@@ -66,6 +68,12 @@ public record AppProperties(
             naverClientId = normalize(naverClientId);
             naverClientSecret = normalize(naverClientSecret);
             kakaoJsKey = normalize(kakaoJsKey);
+        }
+    }
+
+    public record MyPage(String avatarUploadRoot) {
+        public MyPage {
+            avatarUploadRoot = normalize(avatarUploadRoot);
         }
     }
 

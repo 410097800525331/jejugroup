@@ -894,3 +894,11 @@
         lifeTaxServiceIncl: "Tax & Service Charge Included"
     }
 };
+
+if (typeof globalThis !== "undefined") {
+    globalThis.langData = langData;
+}
+
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = langData;
+}

@@ -12,9 +12,64 @@ if (tasks.length === 0) {
 }
 
 const cwd = path.resolve(__dirname, '../../jeju-spring');
-const command = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
 const env = {
   ...process.env
+};
+const gradleBinaryName = process.platform === 'win32' ? 'gradle.bat' : 'gradle';
+const wrapperCommand = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
+const wrapperPath = path.join(cwd, process.platform === 'win32' ? 'gradlew.bat' : 'gradlew');
+const wrapperJarPath = path.join(cwd, 'gradle', 'wrapper', 'gradle-wrapper.jar');
+
+const resolveCodexTempGradleCommand = () => {
+  const codexTempRoot = path.resolve(__dirname, '../../.codex-temp');
+
+  if (!fs.existsSync(codexTempRoot)) {
+    return null;
+  }
+
+  const candidates = [];
+
+  for (const entry of fs.readdirSync(codexTempRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory() || !entry.name.startsWith('gradle-')) {
+      continue;
+    }
+
+    const gradleRoot = path.join(codexTempRoot, entry.name);
+    candidates.push(path.join(gradleRoot, 'bin', gradleBinaryName));
+    candidates.push(path.join(gradleRoot, entry.name, 'bin', gradleBinaryName));
+  }
+
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? null;
+};
+
+const resolveGradleLaunch = () => {
+  if (fs.existsSync(wrapperPath) && fs.existsSync(wrapperJarPath)) {
+    return {
+      command: wrapperCommand,
+      args: tasks
+    };
+  }
+
+  const fallbackCommand = resolveCodexTempGradleCommand();
+  if (fallbackCommand) {
+    const wrapperProblem = !fs.existsSync(wrapperPath)
+      ? 'wrapper 스크립트가 없습니다'
+      : 'gradle-wrapper.jar가 없습니다';
+    console.warn(`[jeju-spring] ${wrapperProblem}. .codex-temp Gradle로 검증을 계속합니다.`);
+
+    return {
+      command: fallbackCommand,
+      args: ['-p', cwd, ...tasks]
+    };
+  }
+
+  if (!fs.existsSync(wrapperPath)) {
+    console.error('[jeju-spring] Gradle wrapper 스크립트가 없고 .codex-temp Gradle도 찾지 못했습니다.');
+    process.exit(1);
+  }
+
+  console.error('[jeju-spring] gradle-wrapper.jar가 없고 .codex-temp Gradle도 찾지 못했습니다.');
+  process.exit(1);
 };
 
 const getJavaBinaryName = () => (process.platform === 'win32' ? 'java.exe' : 'java');
@@ -159,7 +214,8 @@ const run = async () => {
     process.exit(1);
   }
 
-  const result = spawnSync(command, tasks, {
+  const gradleLaunch = resolveGradleLaunch();
+  const result = spawnSync(gradleLaunch.command, gradleLaunch.args, {
     cwd,
     env,
     stdio: 'inherit',

@@ -208,13 +208,14 @@ const updateMainMypageCta = (canShowAdmin: boolean) => {
   const routeName = canShowAdmin ? "ADMIN.DASHBOARD" : "MYPAGE.DASHBOARD";
   const routeParams = canShowAdmin ? undefined : { shell: "main" };
 
-  const mypageIcon = mypageCta.querySelector<HTMLElement>(".mypage-cta-icon");
-  if (mypageIcon) {
-    if (canShowAdmin) {
-      setIconMarkup(mypageIcon, getShieldIconMarkup());
-    } else {
-      restoreIconMarkup(mypageIcon);
-    }
+  const memberIcon = mypageCta.querySelector<HTMLElement>('[data-auth-icon="member"]');
+  const adminIcon = mypageCta.querySelector<HTMLElement>('[data-auth-icon="admin"]');
+  if (memberIcon) {
+    memberIcon.hidden = canShowAdmin;
+  }
+
+  if (adminIcon) {
+    adminIcon.hidden = !canShowAdmin;
   }
 
   mypageCta.setAttribute("data-route", routeName);

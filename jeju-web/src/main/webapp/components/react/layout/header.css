@@ -24,6 +24,7 @@
 
 .header.scrolled:not(.hotel-shell-header) .gnb-link,
 .header.scrolled:not(.hotel-shell-header) .mypage-btn,
+.header.scrolled:not(.hotel-shell-header) .mypage-cta,
 .header.scrolled:not(.hotel-shell-header) .lang-toggle,
 .header.scrolled:not(.hotel-shell-header) .util-link {
     color: #ffffff;
@@ -31,6 +32,7 @@
 
 .header.scrolled .gnb-link:hover,
 .header.scrolled .mypage-btn:hover,
+.header.scrolled .mypage-cta:hover,
 .header.scrolled .util-link:hover {
     color: #FF5000;
 }
@@ -38,6 +40,12 @@
 .header.scrolled .lang-toggle {
     color: #ffffff;
     border-color: rgba(255, 255, 255, 0.5);
+}
+
+.header.scrolled .mypage-cta {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.5);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .header.scrolled .gnb-link,
@@ -94,6 +102,17 @@
     color: #FF5000;
 }
 
+.header.section1-header .mypage-cta {
+    color: #f2f2f2;
+    border-color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header.section1-header .mypage-cta:hover {
+    color: #FF5000;
+    border-color: #FF5000;
+}
+
 .header.section1-header .util-link {
     color: #e0e0e0;
 }
@@ -135,6 +154,14 @@
     color: #FF5000;
 }
 
+.header.section2plus-header .mypage-cta {
+    color: #f2f2f2;
+}
+
+.header.section2plus-header .mypage-cta:hover {
+    color: #FF5000;
+}
+
 /* Footer Header (When over footer) */
 .header.footer-header {
     background-color: rgba(255, 255, 255, 1);
@@ -150,9 +177,20 @@
     text-shadow: none;
 }
 
+.header.footer-header .mypage-cta {
+    color: #333333;
+    border-color: #ddd;
+    text-shadow: none;
+}
+
 .header.footer-header .gnb-link:hover,
 .header.footer-header .mypage-btn:hover {
     color: #FF5000;
+}
+
+.header.footer-header .mypage-cta:hover {
+    color: #FF5000;
+    border-color: #FF5000;
 }
 
 .header.footer-header .lang-toggle {
@@ -238,7 +276,51 @@
 .main-header .header-right-controls {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
+}
+
+.mypage-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 40px;
+    width: 40px;
+    padding: 0;
+    color: #f2f2f2;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        border-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        background-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.mypage-cta:hover {
+    border-color: #FF5000;
+    color: #FF5000;
+    transform: translateY(-1px);
+}
+
+.mypage-cta:focus-visible {
+    outline: 2px solid rgba(255, 80, 0, 0.35);
+    outline-offset: 2px;
+    border-color: #FF5000;
+}
+
+.mypage-cta-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.mypage-cta-icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
 }
 
 /* 호텔 헤더 내부 레이아웃 - 3단 그리드로 완벽한 중앙 정렬 보장 */
@@ -652,6 +734,18 @@
 
 .mypage-btn:hover {
     color: #FF5000;
+}
+
+@media (max-width: 1024px) {
+    .main-header .header-right-controls {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-header .header-right-controls {
+        gap: 10px;
+    }
 }
 
 /* ==================== 메인 컨텐츠 ==================== */

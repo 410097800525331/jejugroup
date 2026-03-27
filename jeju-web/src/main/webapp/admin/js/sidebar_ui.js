@@ -1,10 +1,15 @@
-/**
- * @file sidebar_ui.js
- * @description 관리자 사이드바 표시 흐름과 저장값을 한 군데서 맞춘다
- */
-
 (() => {
     'use strict';
+
+    const currentScript = document.currentScript;
+    if (currentScript && !currentScript.dataset.adminRuntime) {
+        currentScript.dataset.adminRuntime = new URL(currentScript.getAttribute('src') || '', window.location.href).href;
+        currentScript.dataset.adminLoaded = 'true';
+    }
+
+    if (window.AdminSidebarUI) {
+        return;
+    }
 
     const SIDEBAR_STORAGE_KEY = 'adminSidebarOpen';
     const DESKTOP_MIN_WIDTH = 1024;
@@ -32,7 +37,9 @@
     };
 
     const applySidebarUI = ({ layout, sidebar, isOpen }) => {
-        if (!layout || !sidebar) return;
+        if (!layout || !sidebar) {
+            return;
+        }
 
         if (isDesktopViewport()) {
             layout.classList.toggle('sidebar-collapsed', !isOpen);

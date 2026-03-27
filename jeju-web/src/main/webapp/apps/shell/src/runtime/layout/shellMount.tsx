@@ -3,7 +3,7 @@ import { createRoot, Root } from "react-dom/client";
 import { flushSync } from "react-dom";
 import { HotelHeaderTemplate, MainFooterTemplate, MainHeaderTemplate } from "@front-components/layout";
 import { initFooter } from "@runtime/layout/footer";
-import { initHeader } from "@runtime/layout/header";
+import { bindHeaderStructure, queueHeaderAuthSync } from "@runtime/layout/header";
 import { markRuntimeReady } from "@runtime/lifecycle";
 import { getAppRoot } from "@runtime/utils/appRoot";
 
@@ -61,7 +61,7 @@ export const mountMainShell = async () => {
 
   await Promise.all([
     renderComponent("main-header-placeholder", <MainHeaderTemplate basePath={basePath} />, async () => {
-      initHeader();
+      bindHeaderStructure();
       ensureLucideIcons();
       markRuntimeReady("main-header");
     }),
@@ -73,6 +73,7 @@ export const mountMainShell = async () => {
   ]);
 
   markRuntimeReady("main-shell");
+  queueHeaderAuthSync();
 };
 
 export const mountHotelShell = async () => {
@@ -80,7 +81,7 @@ export const mountHotelShell = async () => {
 
   await Promise.all([
     renderComponent("hotel-header-placeholder", <HotelHeaderTemplate basePath={basePath} />, async () => {
-      initHeader();
+      bindHeaderStructure();
       ensureLucideIcons();
       markRuntimeReady("hotel-header");
       markRuntimeReady("main-header");
@@ -94,4 +95,5 @@ export const mountHotelShell = async () => {
   ]);
 
   markRuntimeReady("hotel-shell");
+  queueHeaderAuthSync();
 };

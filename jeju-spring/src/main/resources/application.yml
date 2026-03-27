@@ -11,6 +11,10 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
   thymeleaf:
     cache: false
 
@@ -58,3 +62,5 @@ app:
     naver-client-id: ${NAVER_CLIENT_ID:}
     naver-client-secret: ${NAVER_CLIENT_SECRET:}
     kakao-js-key: ${KAKAO_JS_KEY:}
+  mypage:
+    avatar-upload-root: ${MYPAGE_AVATAR_UPLOAD_ROOT:./.tmp/mypage-avatars}

@@ -117,6 +117,7 @@ public class MyPageDashboardRepository {
     public record MyPageProfileSnapshot(
         String id,
         String name,
+        String avatarUrl,
         String email,
         String phone,
         String role,
@@ -173,6 +174,7 @@ public class MyPageDashboardRepository {
             SELECT
                 u.id,
                 COALESCE(NULLIF(TRIM(up.display_name), ''), u.name) AS display_name,
+                up.avatar_url,
                 u.email,
                 u.phone,
                 u.role
@@ -192,6 +194,7 @@ public class MyPageDashboardRepository {
                 return new MyPageProfileSnapshot(
                     nullToEmpty(resultSet.getString("id")),
                     nullToEmpty(resultSet.getString("display_name")),
+                    nullToEmpty(resultSet.getString("avatar_url")),
                     nullToEmpty(resultSet.getString("email")),
                     nullToEmpty(resultSet.getString("phone")),
                     nullToEmpty(resultSet.getString("role")),
@@ -864,6 +867,7 @@ public class MyPageDashboardRepository {
         MyPageProfileSnapshot profile = new MyPageProfileSnapshot(
             sessionUser.id(),
             sessionUser.name(),
+            "",
             sessionUser.id() + "@jejugroup.example",
             "",
             sessionUser.role(),

@@ -1,8 +1,10 @@
-import { ChevronRight } from "lucide-react";
+﻿import { ChevronRight } from "lucide-react";
 
 import { getServiceLabel } from "@/data/serviceCenterData";
 import type { InquiryStatus, ServiceType } from "@/types/service-center";
 import "@/styles/bbs.css";
+
+const COMPLETED_STATUS_KEYWORDS = ["answered", "resolved", "closed", "completed", "done", "complete", "close"];
 
 interface InquiryListItemProps {
   id: number;
@@ -10,11 +12,29 @@ interface InquiryListItemProps {
   date: string;
   status: InquiryStatus;
   service: ServiceType;
+  onClick?: () => void;
+  isSelected?: boolean;
 }
 
-export default function InquiryListItem({ title, date, status, service }: InquiryListItemProps) {
+export default function InquiryListItem({ title, date, status, service, onClick, isSelected = false }: InquiryListItemProps) {
+  const isCompletedStatus = COMPLETED_STATUS_KEYWORDS.some((keyword) => status.toLowerCase().includes(keyword));
+
   return (
-    <div className="bbs-item">
+    <button
+      type="button"
+      className="bbs-item"
+      onClick={onClick}
+      aria-pressed={isSelected}
+      style={{
+        width: "100%",
+        textAlign: "left",
+        background: isSelected ? "#fff7ed" : "none",
+        border: "none",
+        padding: "24px 0",
+        color: "inherit",
+        font: "inherit",
+      }}
+    >
       <div className="bbs-item-content">
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
           <span
@@ -37,14 +57,14 @@ export default function InquiryListItem({ title, date, status, service }: Inquir
             style={{
               fontSize: "0.85rem",
               fontWeight: 700,
-              color: status === "completed" ? "#10b981" : "#94a3b8",
+              color: isCompletedStatus ? "#10b981" : "#94a3b8",
             }}
           >
-            • {status === "completed" ? "답변완료" : "답변대기"}
+            {isCompletedStatus ? "답변완료" : "답변대기"}
           </span>
         </div>
       </div>
       <ChevronRight size={20} className="bbs-item-chevron" />
-    </div>
+    </button>
   );
 }

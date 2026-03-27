@@ -1,19 +1,13 @@
 .res-drawer-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(15, 15, 18, 0.6);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    inset: 0;
+    background: rgba(15, 15, 18, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 9998;
     opacity: 0;
-    transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .res-drawer-backdrop.active {
@@ -21,128 +15,132 @@
     pointer-events: all;
 }
 
-/* Premium Centered Modal */
+/* Premium Glassmorphism Side Drawer */
 .res-drawer-panel {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 90%;
-    max-width: 420px;
-    background: #ffffff;
-    border-radius: 28px;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 480px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(32px) saturate(200%);
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    border-left: 1px solid rgba(255, 255, 255, 0.6);
     z-index: 9999;
-    transform: translate(-50%, -40%) scale(0.95);
-    transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-    will-change: transform, opacity;
-    box-shadow: 
-        0 24px 48px rgba(0, 0, 0, 0.12),
-        0 8px 16px rgba(0, 0, 0, 0.08),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    transform: translateX(100%);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    opacity: 0;
+    box-shadow: -30px 0 80px rgba(0, 0, 0, 0.1);
+    will-change: transform;
 }
 
 .res-drawer-panel.active {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
+    transform: translateX(0);
 }
 
-/* Close Button (Absolute Top Right) */
+/* Close Button Floating */
 .res-drawer-close {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.4);
-    font-size: 20px;
-    cursor: pointer;
-    color: #fff;
+    top: 32px;
+    right: 32px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+    color: #111;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .res-drawer-close:hover {
     background: #FF5000;
     color: #fff;
     border-color: #FF5000;
-    transform: rotate(90deg) scale(1.1);
+    transform: rotate(90deg) scale(1.05);
+    box-shadow: 0 8px 24px rgba(255, 80, 0, 0.3);
 }
 
-/* Visual Header Area */
+/* Visual Header Typography Focus */
 .res-drawer-visual {
-    position: relative;
-    padding: 60px 40px 40px;
-    /* 제주도 오름/비행기 감성의 메쉬 그라디언트 + 은은한 이미지 */
-    background: linear-gradient(135deg, rgba(255,80,0,0.9) 0%, rgba(255,140,0,0.85) 100%), 
-                url('https://images.unsplash.com/photo-1618773928121-c32242e63f39') center/cover no-repeat;
-    color: white;
-    text-align: center;
-}
-
-.res-drawer-visual::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40px;
-    background: linear-gradient(to top, #ffffff, transparent);
+    padding: 80px 48px 40px;
 }
 
 .res-drawer-title {
-    font-size: 26px;
+    font-size: 34px;
     font-weight: 800;
-    letter-spacing: -0.5px;
-    margin: 0 0 12px 0;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    letter-spacing: -0.04em;
+    color: #111;
+    margin: 0 0 16px;
+    line-height: 1.3;
+}
+
+.res-drawer-title span {
+    color: #FF5000;
 }
 
 .res-drawer-desc {
-    color: rgba(255,255,255,0.9);
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: -0.2px;
+    font-size: 15px;
+    color: #666;
+    line-height: 1.6;
+    letter-spacing: -0.02em;
     margin: 0;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
 /* Body Area */
 .res-drawer-body {
-    padding: 10px 40px 40px;
+    padding: 0 48px 48px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.res-drawer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-top: 10px;
 }
 
 .res-drawer-form .input-group {
-    margin-bottom: 20px;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Floating Label & Minimalist Input */
+.res-drawer-form label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+}
+
+/* Neumorphic / Glassmorphic Inputs */
 .res-drawer-form input {
     width: 100%;
     padding: 18px 20px;
-    background: #f8f8fa;
-    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 16px;
-    font-size: 15px;
+    font-size: 16px;
     color: #111;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     outline: none;
-    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-    font-family: inherit;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
     box-sizing: border-box;
+    font-family: inherit;
 }
 
 .res-drawer-form input::placeholder {
-    color: #9999a1;
+    color: #bcc1c8;
     transition: opacity 0.3s;
 }
 
@@ -151,69 +149,75 @@
 }
 
 .res-drawer-form input:focus {
-    background: #ffffff;
+    background: #fff;
     border-color: #FF5000;
-    box-shadow: 0 8px 20px rgba(255, 80, 0, 0.1);
+    box-shadow: 0 0 0 4px rgba(255, 80, 0, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.01);
     transform: translateY(-2px);
 }
 
-/* Submit Button: Premium Orange */
+/* Premium Dark to Orange Action Button */
 .res-drawer-btn {
+    margin-top: 40px;
     width: 100%;
-    padding: 20px;
-    background: #FF5000;
+    padding: 22px;
+    background: #111;
     color: #fff;
     border: none;
     border-radius: 16px;
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    font-size: 17px;
+    font-weight: 700;
     cursor: pointer;
-    margin-top: 12px;
-    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-    box-shadow: 0 4px 12px rgba(255, 80, 0, 0.3);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+    letter-spacing: -0.01em;
 }
 
-.res-drawer-btn::after {
+.res-drawer-btn::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
-    width: 50%;
+    left: 0;
+    width: 100%;
     height: 100%;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
-    transform: skewX(-20deg);
-    transition: left 0.6s ease;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%) skewX(-15deg);
+    transition: transform 0.6s ease;
 }
 
 .res-drawer-btn:hover {
-    background: #e64500;
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px rgba(255, 80, 0, 0.4);
+    background: #FF5000;
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(255, 80, 0, 0.3);
 }
 
-.res-drawer-btn:hover::after {
-    left: 150%;
+.res-drawer-btn:hover::before {
+    transform: translateX(100%) skewX(-15deg);
 }
 
+/* Footer Section */
 .res-drawer-footer {
+    margin-top: auto;
+    padding-top: 40px;
     text-align: center;
-    margin-top: 32px;
     font-size: 14px;
-    color: #71717a;
+    color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 }
 
 .res-drawer-footer a {
-    color: #FF5000;
-    text-decoration: none;
+    color: #111;
     font-weight: 800;
-    margin-left: 6px;
-    transition: color 0.3s;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding-bottom: 2px;
+    border-bottom: 2px solid transparent;
 }
 
 .res-drawer-footer a:hover {
-    color: #cc4000;
-    text-decoration: underline;
+    color: #FF5000;
+    border-bottom-color: #FF5000;
 }

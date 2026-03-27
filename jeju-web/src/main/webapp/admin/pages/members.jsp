@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원/CS 관리 - 제주여행 관리자</title>
+    <title>회원/문의 관리 - 제주여행 관리자</title>
 
     <script src="../js/auth_guard.js"></script>
 
@@ -129,14 +129,13 @@
 
         <main class="admin-main">
             <div class="admin-page-header">
-                <h1 class="admin-page-title">회원 및 CS 관리</h1>
+                <h1 class="admin-page-title">회원/문의 관리</h1>
                 <div style="display: flex; gap: var(--admin-space-md); align-items: center;">
                     <div class="admin-segment-control" id="admin-domain-filters">
-                        <button class="segment-btn active" data-domain="all">전체 문의</button>
-                        <button class="segment-btn" data-domain="general">공통 문의</button>
-                        <button class="segment-btn" data-domain="flight">항공 문의</button>
-                        <button class="segment-btn" data-domain="hotel">숙박 문의</button>
-                        <button class="segment-btn" data-domain="rentcar">렌터카 문의</button>
+                        <button class="segment-btn active" data-domain="member">회원</button>
+                        <button class="segment-btn" data-domain="membership">멤버십</button>
+                        <button class="segment-btn" data-domain="permissions">권한</button>
+                        <button class="segment-btn" data-domain="inquiries">문의사항</button>
                     </div>
                 </div>
             </div>
@@ -144,13 +143,13 @@
             <div class="admin-table-actions"
                 style="margin-bottom: var(--admin-space-lg); display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:8px;">
-                    <input type="text" placeholder="이름 또는 메일 검색..."
+                    <input type="text" placeholder="회원명 또는 ID 검색..."
                         style="padding: 8px 12px; border-radius:6px; border:1px solid var(--admin-border); background:var(--admin-surface); color:var(--admin-text-primary); outline:none;">
-                    <button class="admin-btn admin-btn-outline">회원 검색</button>
+                    <button class="admin-btn admin-btn-outline">검색</button>
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <button class="admin-btn admin-btn-outline">블랙리스트 관리</button>
-                    <button class="admin-btn admin-btn-primary">QnA 일괄 답변</button>
+                    <button class="admin-btn admin-btn-outline">권한 점검</button>
+                    <button class="admin-btn admin-btn-primary">문의 상태 관리</button>
                 </div>
             </div>
 
@@ -158,12 +157,11 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>회원명 (ID)</th>
-                            <th>분류</th>
-                            <th>등급</th>
-                            <th>최근 문의 요약</th>
-                            <th>등록 일시</th>
-                            <th>처리 상태</th>
+                            <th>대상</th>
+                            <th>도메인</th>
+                            <th>세부 정보</th>
+                            <th>기준 일시</th>
+                            <th>상태 / 등급</th>
                             <th>관리</th>
                         </tr>
                     </thead>
@@ -175,7 +173,6 @@
             <div style="display:flex; justify-content:center; margin-top:20px; gap:8px;">
                 <button class="admin-btn admin-btn-outline" disabled>&lt;</button>
                 <button class="admin-btn admin-btn-primary">1</button>
-                <button class="admin-btn admin-btn-outline">2</button>
                 <button class="admin-btn admin-btn-outline">&gt;</button>
             </div>
         </main>

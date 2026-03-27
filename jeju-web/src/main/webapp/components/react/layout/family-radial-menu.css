@@ -2,44 +2,62 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.9rem;
+  gap: 0.75rem;
+}
+
+.family-radial-shell--center {
+  align-items: center;
 }
 
 .family-radial-label {
-  margin: 0;
   color: #9ca3af;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.28em;
+  margin: 0;
   text-transform: uppercase;
 }
 
 .family-radial-menu {
+  --family-radial-trigger-size: 3.1rem;
+  --family-radial-item-size: 2.85rem;
+  --family-radial-item-anchor-offset: calc((var(--family-radial-trigger-size) - var(--family-radial-item-size)) / 2);
   position: relative;
   width: 9.3rem;
   height: 9.3rem;
 }
 
 .family-radial-btn {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 3.15rem;
-  height: 3.15rem;
+  align-items: center;
+  background: linear-gradient(135deg, #fb923c, #f97316);
   border: none;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #fb923c, #f97316);
-  color: #fff;
-  font-size: 1.55rem;
-  font-weight: 800;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  bottom: 0;
   box-shadow: 0 18px 35px rgba(249, 115, 22, 0.28);
-  transition: box-shadow 0.24s ease, background-color 0.24s ease;
+  color: #fff;
   cursor: pointer;
+  display: flex;
+  height: var(--family-radial-trigger-size);
+  justify-content: center;
+  position: absolute;
+  right: 0;
+  transition:
+    background-color 0.24s ease,
+    box-shadow 0.24s ease,
+    transform 0.24s ease;
+  width: var(--family-radial-trigger-size);
   z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.family-radial-btn:hover {
+  transform: scale(1.05);
+}
+
+.family-radial-btn:focus-visible {
+  outline: 2px solid rgba(249, 115, 22, 0.35);
+  outline-offset: 4px;
 }
 
 .family-radial-btn.active {
@@ -48,30 +66,30 @@
 }
 
 .family-radial-btn__glyph {
-  position: relative;
-  width: 1.05rem;
-  height: 1.05rem;
   display: block;
-  transition: transform 0.24s ease;
+  height: 1.05rem;
+  position: relative;
   transform-origin: center center;
+  transition: transform 0.24s ease;
+  width: 1.05rem;
 }
 
 .family-radial-btn__glyph::before,
 .family-radial-btn__glyph::after {
+  background: currentColor;
+  border-radius: 9999px;
   content: "";
+  height: 2px;
+  left: 50%;
   position: absolute;
   top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 2px;
-  border-radius: 9999px;
-  background: currentColor;
   transform: translate(-50%, -50%);
+  width: 100%;
 }
 
 .family-radial-btn__glyph::after {
-  width: 2px;
   height: 100%;
+  width: 2px;
 }
 
 .family-radial-btn.active .family-radial-btn__glyph {
@@ -81,44 +99,40 @@
 .family-radial-menu--center .family-radial-btn {
   left: 50%;
   right: auto;
+  transform: translateX(-50%);
 }
 
 .family-radial-items {
-  position: absolute;
   inset: 0;
   pointer-events: none;
+  position: absolute;
 }
 
 .family-radial-item {
-  position: absolute;
-  right: 0.2rem;
-  bottom: 0.2rem;
-  width: 2.85rem;
-  height: 2.85rem;
-  border-radius: 9999px;
+  align-items: center;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(203, 213, 225, 0.72);
+  border-radius: 9999px;
+  bottom: var(--family-radial-item-anchor-offset);
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
   color: #334155;
   display: flex;
-  align-items: center;
+  height: var(--family-radial-item-size);
   justify-content: center;
   opacity: 0;
-  visibility: hidden;
   pointer-events: none;
+  position: absolute;
+  right: var(--family-radial-item-anchor-offset);
   text-decoration: none;
   transform: translate(0, 0) scale(0.72);
   transition:
-    opacity 0.24s ease,
-    visibility 0.24s ease,
-    transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1.15),
     background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.family-radial-menu--center .family-radial-item {
-  left: calc(50% - 1.425rem);
-  right: auto;
+    color 0.2s ease,
+    opacity 0.24s ease,
+    transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1.15),
+    visibility 0.24s ease;
+  visibility: hidden;
+  width: var(--family-radial-item-size);
 }
 
 .family-radial-item:hover {
@@ -126,13 +140,53 @@
   color: #fff;
 }
 
+.family-radial-item:focus-visible {
+  outline: 2px solid rgba(249, 115, 22, 0.3);
+  outline-offset: 3px;
+}
+
+.family-radial-menu--center .family-radial-item {
+  left: calc(50% - 1.425rem);
+  right: auto;
+}
+
 .family-radial-menu.active .family-radial-item {
   opacity: 1;
-  visibility: visible;
   pointer-events: auto;
   transform: translate(var(--tx), var(--ty)) scale(1);
+  visibility: visible;
 }
 
 .family-radial-menu.active .family-radial-item:hover {
   transform: translate(var(--tx), var(--ty)) scale(1.08);
+}
+
+.family-radial-menu.active .family-radial-item:focus-visible {
+  transform: translate(var(--tx), var(--ty)) scale(1.04);
+}
+
+@media (max-width: 768px) {
+  .family-radial-shell {
+    gap: 0.6rem;
+  }
+
+  .family-radial-menu {
+    --family-radial-trigger-size: 3rem;
+    --family-radial-item-size: 2.7rem;
+    height: 8.8rem;
+    width: 8.8rem;
+  }
+
+  .family-radial-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .family-radial-btn,
+  .family-radial-btn__glyph,
+  .family-radial-item {
+    transition: none;
+  }
 }

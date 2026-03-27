@@ -1,13 +1,13 @@
-/**
- * @file portal_nav.js
- * @description Binds admin portal navigation buttons to route resolver links.
- */
-
-document.addEventListener('DOMContentLoaded', () => {
+(() => {
     'use strict';
 
-    const routeLinks = document.querySelectorAll('.admin-portal-nav .route-link[data-route]');
-    if (routeLinks.length === 0) {
+    const currentScript = document.currentScript;
+    if (currentScript && !currentScript.dataset.adminRuntime) {
+        currentScript.dataset.adminRuntime = new URL(currentScript.getAttribute('src') || '', window.location.href).href;
+        currentScript.dataset.adminLoaded = 'true';
+    }
+
+    if (window.AdminPortalNav) {
         return;
     }
 
@@ -36,16 +36,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     };
 
-    routeLinks.forEach((link) => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
+    const bindPortalNav = () => {
+        const routeLinks = document.querySelectorAll('.admin-portal-nav .route-link[data-route]');
+        if (!routeLinks.length) {
+            return;
+        }
 
-            const routeKey = link.dataset.route;
-            if (!routeKey) {
-                return;
-            }
+        routeLinks.forEach((link) => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const routeKey = link.dataset.route;
+                if (!routeKey) {
+                    return;
+                }
 
-            navigateByRoute(routeKey);
+                navigateByRoute(routeKey);
+            });
         });
+    };
+
+    bindPortalNav();
+
+    window.AdminPortalNav = Object.freeze({
+        bindPortalNav,
+        navigateByRoute
     });
-});
+})();

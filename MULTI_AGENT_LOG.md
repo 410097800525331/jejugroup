@@ -2106,3 +2106,177 @@
   - `git diff --check -- front/components/react/layout/MainHeaderTemplate.tsx front/components/react/layout/HotelHeaderTemplate.tsx front/apps/shell/src/runtime/layout/header.ts` passed.
   - Initial reviewer `Fermat` flagged unrelated existing dirty files in the working tree as out-of-scope noise, but the functional review already confirmed the requested header behavior.
   - Follow-up reviewer `Russell` rechecked against the actual slice scope and reported `블로킹 findings 없음`, confirming that admin signed-in sessions replace the existing mypage/account entry with an admin-page entry, non-admin signed-in and signed-out behavior remain unchanged, and the 3-file implementation is internally consistent.
+- time: `2026-03-27 21:39:14 +09:00`
+- route: `Route A`
+- task: `Remove the weather-prefixed class name from the main landing mypage CTA`
+- participants: `main`
+- write_sets:
+  - `main`: `front/components/react/layout/MainHeaderTemplate.tsx, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/components/react/layout/MainHeaderTemplate.tsx` now keeps the shared account CTA as `mypage-cta route-link` without the `weather-header-btn` class, while preserving the existing member/admin icon slots and admin shield SVG markup.
+  - `pnpm -C front/apps/shell check` passed.
+- time: `2026-03-27 22:06:00 +09:00`
+- route: `Route B`
+- task: `Verify the main-header CTA-only rename and sync the refreshed derived spring outputs`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_sync_main_header_cta_class_cleanup`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing front build plus spring packaging flow refreshes the CTA-only header change`
+  - `reviewer_spring_sync_main_header_cta_class_cleanup`: `review only`
+- verification:
+  - `front/components/react/layout/MainHeaderTemplate.tsx` was rechecked to confirm the real weather button still uses `weather-header-btn` while the mypage/admin CTA alone uses `mypage-cta route-link`.
+  - Regenerated front runtime output `front/.generated/webapp-overlay/components/runtime/feature-layout-DNx_77cb.js` now keeps `className: "weather-header-btn"` for the weather button and `className: "mypage-cta route-link"` for the CTA.
+  - Synced spring mirror runtime output `jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-layout-DNx_77cb.js` reflects the same split, and `jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js` was refreshed with the new chunk references.
+  - `pnpm -C front/apps/shell check` passed.
+  - `pnpm run build` initially failed because `front/apps/cs` hit a transient output-directory `EPERM` lock, and `pnpm run spring:package` then failed because `jeju-spring/gradle/wrapper/gradle-wrapper.jar` is missing.
+  - Re-running the sync path succeeded far enough to refresh the spring mirror outputs, and fallback packaging with `.codex-temp/gradle-8.14.4/bin/gradle.bat -p jeju-spring bootWar` completed successfully, producing `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war`.
+  - `git diff --check -- front/components/react/layout/MainHeaderTemplate.tsx jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-layout-DNx_77cb.js jeju-spring/src/main/resources/templates/front-mirror/pages/cs/customer_center.html` passed.
+- time: `2026-03-27 22:32:00 +09:00`
+- route: `Route B`
+- task: `Restore the main-header CTA visibility after the CTA-only rename`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_spring_sync_main_header_cta_class_cleanup`: `derived front build/runtime outputs and derived jeju-spring mirror/build outputs only where the existing shell build plus spring mirror/package flow refreshes the CTA visibility fix`
+  - `reviewer_spring_sync_main_header_cta_class_cleanup`: `review only`
+- verification:
+  - `front/components/react/layout/MainHeaderTemplate.tsx` now gives the mypage/admin CTA `header-utility-btn mypage-cta route-link`, keeping the weather button on `weather-header-btn` only.
+  - `front/components/react/widget/weather.css` now aliases the shared button chrome onto `.header-utility-btn` so the CTA keeps the same visible header-button styling without reintroducing the weather-prefixed class.
+  - `pnpm -C front/apps/shell check` passed.
+  - `pnpm -C front/apps/shell build` regenerated the active front runtime chain to `feature-layout-Y4UHQunU.js` / `runtime-layout-5cxF252f.js`.
+  - `node scripts/spring/mirror-front-to-thymeleaf.cjs --skip-build-shell` followed by `.codex-temp/gradle-8.14.4/bin/gradle.bat -p jeju-spring bootWar` refreshed the active spring mirror/runtime chain to the same `feature-layout-Y4UHQunU.js` import path and rebuilt `jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war`.
+  - Generated front output and spring mirror output both now show `className: "weather-header-btn"` for the real weather button and `className: "header-utility-btn mypage-cta route-link"` for the mypage/admin CTA.
+  - `git diff --check -- front/components/react/layout/MainHeaderTemplate.tsx front/components/react/widget/weather.css jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js` passed.
+- time: `2026-03-27 22:55:00 +09:00`
+- route: `Route A`
+- task: `Repair mojibake in local MySQL user/profile display fields`
+- participants: `main`
+- write_sets:
+  - `main`: `local MySQL users/user_profiles data, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification:
+  - Local MySQL inspection found 10 broken `users.name` rows, 10 broken `user_profiles.display_name` rows, and 8 broken `nickname`/`bio` rows where Korean text had been stored as question marks.
+  - The first direct-Hangul update attempt reproduced the PowerShell stdin encoding issue, so the final repair used ASCII-only Unicode escape strings to update the affected `users.name`, `user_profiles.display_name`, `user_profiles.nickname`, and `user_profiles.bio` fields.
+  - Post-repair verification reported `broken_user_names = 0`, `broken_display_names = 0`, `broken_nicknames = 0`, and `broken_bios = 0`.
+  - HEX verification showed non-`3F` UTF-8 byte sequences for repaired names, and spot checks read back `관리자`, `테스트 사용자`, `가은`, `현우`, `지훈`, `지민`, `민수`, `서연`, `수아`, and `유진` correctly from the local DB.
+- time: `2026-03-27 23:01:00 +09:00`
+- route: `Route A`
+- task: `Re-import the local jejugroup dump into the local MySQL database`
+- participants: `main`
+- write_sets:
+  - `main`: `D:\git\jejugroup_local.sql, local MySQL jejugroup_local database, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification:
+  - Dump inspection showed `D:\git\jejugroup_local.sql` already contains the correct Korean values in the `INSERT INTO users` rows for `admin`, `gaeun96`, `hyeonu97`, `jihun95`, `jimin93`, `minsu92`, `seoyeon88`, `sua98`, `test`, and `yujin90`.
+  - A rollback backup was created at `D:\git\jejugroup_local_pre_reimport_20260327_2301.sql` using `mysqldump.exe --default-character-set=utf8mb4 --no-tablespaces`.
+  - Re-import succeeded via `mysql.exe --default-character-set=utf8mb4 jejugroup_local --execute="source D:/git/jejugroup_local.sql"`.
+  - Post-import verification read back the expected Korean names/profile fields, including `관리자`, `윤가은`, `정현우`, `박지훈`, `한지민`, `김민수`, `이서연`, `임수아`, `테토남`, and `최유진`.
+  - Post-import row counts read `users_count = 10` and `user_profiles_count = 10`.
+
+- time: `2026-03-27 23:37:00 +09:00`
+- route: `Route B`
+- task: `Sync the current front-side edits into derived jeju-spring mirror outputs`
+- participants: `main`, `worker_spring_sync_current_front_edits (Raman)`, `reviewer_spring_sync_current_front_edits (Hubble)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_spring_sync_current_front_edits (Raman)`: `derived front build/runtime outputs and derived jeju-spring front-mirror/runtime outputs only where the existing build/sync/package pipeline refreshed the current front changes`
+  - `reviewer_spring_sync_current_front_edits (Hubble)`: `review only`
+- verification:
+  - `worker_spring_sync_current_front_edits (Raman)` refreshed the generated front runtime chain and the derived `jeju-spring/src/main/resources/**/front-mirror/**` outputs through the existing build/sync pipeline, including the active mypage runtime chunk move from `feature-mypage-D8zINF4I.js` to `feature-mypage-C53AAy10.js`, the matching `runtime-pages-5QwQ6UaG.js` chain, the shared header/weather mirror updates, and the customer-center hashed asset/template refresh.
+  - `git diff --check -- front/.generated jeju-spring/src/main/resources jeju-spring/build` passed aside from pre-existing CRLF normalization warnings on tracked mypage mirror CSS files.
+  - `reviewer_spring_sync_current_front_edits (Hubble)` reported `블로킹 findings 없음` after confirming `jeju-spring/src/main/resources/static/front-mirror/components/runtime/shell-runtime.js` now points at `runtime-pages-5QwQ6UaG.js`, that runtime file imports `feature-mypage-C53AAy10.js`, the old `feature-mypage-D8zINF4I.js` and `runtime-pages-r7Y7dyPr.js` references are gone from the refreshed runtime chain, and the matching generated front and spring mirror files have identical SHA256 hashes.
+  - The reviewer also confirmed `jeju-spring/src/main/resources/templates/front-mirror/pages/cs/customer_center.html` references the refreshed `vendor-Bo_w-dz1.js`, `app-context-DTn1UhpI.js`, `app-components-DVEly4D4.js`, and `app-pages-C2SlqrEv.js` assets that now exist under `jeju-spring/src/main/resources/static/front-mirror/pages/cs/assets/`, with no stale customer-center asset references or mirror-boundary violations found.
+  - `pnpm run spring:package` still failed at the packaging step because `jeju-spring/gradle/wrapper/gradle-wrapper.jar` is missing in the workspace, so this Route B close records mirror/runtime sync completion with WAR packaging still environment-blocked.
+
+- time: `2026-03-28 00:10:00 +09:00`
+- route: `Route A`
+- task: `Finish jeju-spring WAR packaging with the local .codex-temp Gradle install`
+- participants: `main`
+- write_sets:
+  - `main`: `jeju-spring/build/**, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification:
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring bootWar` passed with `BUILD SUCCESSFUL in 16s`.
+  - The packaged artifact now exists at `D:\git\jejugroup\jeju-spring\build\libs\jeju-spring-0.0.1-SNAPSHOT.war` with size `180508546` bytes and a fresh `2026-03-27 22:29:04` timestamp in the current workspace view.
+  - `D:\git\jejugroup\jeju-spring\build\jeju-spring.war` was not created in this direct-Gradle path, which is expected because the fixed alias copy is provided by the repository helper script rather than `bootWar` itself.
+
+- time: `2026-03-28 01:08:00 +09:00`
+- route: `Route B`
+- task: `Replace slider-based mypage avatar editing with click-to-upload react-image-crop flow`
+- participants: `main`, `worker_mypage_crop_dependency (Laplace)`, `worker_mypage_crop_ui (Bacon)`, `reviewer_mypage_crop_react_image_crop (Ramanujan)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_mypage_crop_dependency (Laplace)`: `front/components/react/package.json, pnpm-lock.yaml`
+  - `worker_mypage_crop_ui (Bacon)`: `front/components/react/mypage/AccountBenefitSection.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_mypage_crop_react_image_crop (Ramanujan)`: `review only`
+- verification:
+  - `worker_mypage_crop_dependency (Laplace)` added `react-image-crop@11.0.10` to `front/components/react/package.json` and refreshed `pnpm-lock.yaml`.
+  - `worker_mypage_crop_ui (Bacon)` removed the slider-based zoom/x/y avatar editor state from `front/components/react/mypage/AccountBenefitSection.tsx`, kept the existing `profile-link-preview soft-radius` block structure intact, switched the same modal into an in-place avatar editor view, and wired `profile-avatar-editor-empty` as the file-picker trigger with `react-image-crop` square crop plus canvas apply.
+  - `front/pages/mypage/styles/_modal.css` now styles the crop stage, empty-click frame, and responsive avatar editor layout without changing the existing profile-link-preview shell.
+  - `pnpm -C front/apps/shell check` passed.
+  - `pnpm run guard:text` passed.
+  - `reviewer_mypage_crop_react_image_crop (Ramanujan)` reported `블로킹 findings 없음` after confirming the unchanged profile-link-preview structure, empty-frame click-to-upload flow, square crop/apply logic, and removal of stale slider-based state.
+
+- time: `2026-03-28 01:55:00 +09:00`
+- route: `Route B`
+- task: `Align mypage avatar crop circle with the final profile preview circle`
+- participants: `main`, `worker_avatar_logic (Aristotle)`, `worker_avatar_style (Kepler)`, `reviewer_avatar_circle_alignment (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_avatar_logic (Aristotle)`: `front/components/react/mypage/AccountBenefitSection.tsx`
+  - `worker_avatar_style (Kepler)`: `front/pages/mypage/styles/_modal.css`
+  - `reviewer_avatar_circle_alignment (Steward)`: `review only`
+- verification:
+  - `worker_avatar_logic (Aristotle)` kept the existing `profile-link-preview soft-radius` shell, rendered the preview image through an internal circular frame, and kept the applied avatar generation on the existing circular canvas clip path in `front/components/react/mypage/AccountBenefitSection.tsx`.
+  - `worker_avatar_style (Kepler)` aligned the editor stage and crop wrapper to a circular frame in `front/pages/mypage/styles/_modal.css`, then adjusted the preview-side clipping so the square image cannot bleed while the existing external `linked-indicator` remains visible.
+  - `pnpm -C front/apps/shell check` passed after the merged TSX/CSS changes.
+  - `pnpm run guard:text` passed after the merged TSX/CSS changes.
+  - `reviewer_avatar_circle_alignment (Steward)` reported `No blocking findings` on the final state, with only a non-blocking note that the editor still has duplicate circular guide layers that could be simplified later.
+
+- time: `2026-03-28 02:26:00 +09:00`
+- route: `Route B`
+- task: `Show the full avatar image in the editor while keeping a circular applied-area guide`
+- participants: `main`, `worker_avatar_logic (Aquinas)`, `worker_avatar_style (Huygens)`, `reviewer_avatar_full_image_circle_guide (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_avatar_logic (Aquinas)`: `front/components/react/mypage/AccountBenefitSection.tsx`
+  - `worker_avatar_style (Huygens)`: `front/pages/mypage/styles/_modal.css`
+  - `reviewer_avatar_full_image_circle_guide (Athena)`: `review only`
+- verification:
+  - `worker_avatar_logic (Aquinas)` kept the existing `profile-link-preview` shell, restored the editor to a rounded-rect stage, and adjusted the `ReactCrop` render path in `front/components/react/mypage/AccountBenefitSection.tsx` so the visible circular selection remains the actual applied crop while the image itself stays fully visible.
+  - `worker_avatar_style (Huygens)` removed the duplicate fixed circle overlay from `front/pages/mypage/styles/_modal.css`, preserved the preview-side circular clipping fix, and then adjusted the `ReactCrop`/image sizing rules so the selection is constrained by the real visible image bounds rather than the stage letterbox.
+  - `pnpm -C front/apps/shell check` passed after the final TSX/CSS adjustments.
+  - `pnpm run guard:text` passed after the final TSX/CSS adjustments.
+  - `reviewer_avatar_full_image_circle_guide (Athena)` reported `No blocking findings` on the final state, with only a residual-risk note that the editor still depends on coordinated inline sizing plus ReactCrop-specific CSS and could drift again if those rules change later.
+
+- time: `2026-03-28 03:18:00 +09:00`
+- route: `Route B`
+- task: `Replace the avatar editor crop UX with a fixed circle plus image pan-and-zoom flow`
+- participants: `main`, `worker_avatar_logic (Carver)`, `worker_avatar_style (Goodall)`, `reviewer_avatar_pan_zoom_fixed_circle (Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_avatar_logic (Carver)`: `front/components/react/mypage/AccountBenefitSection.tsx`
+  - `worker_avatar_style (Goodall)`: `front/pages/mypage/styles/_modal.css`
+  - `reviewer_avatar_pan_zoom_fixed_circle (Athena the 2nd)`: `review only`
+- verification:
+  - `worker_avatar_logic (Carver)` replaced the old crop-selection flow in `front/components/react/mypage/AccountBenefitSection.tsx` with a fixed-circle pan/zoom editor that measures the stage, clamps drag/zoom against the applied circle, supports wheel zoom, keeps reopen-empty behavior, and renders the final preview from the fixed-circle transform.
+  - `worker_avatar_style (Goodall)` first aligned the editor styling to the new fixed-circle pan/zoom model, then trimmed stale avatar-editor crop chrome from `front/pages/mypage/styles/_modal.css` so only the preview-shell clip fix, editor container, preview wrapper, and empty-state styles remain.
+  - `pnpm -C front/apps/shell check` passed after the final TSX/CSS changes.
+  - `pnpm run guard:text` passed after the final TSX/CSS changes.
+  - `reviewer_avatar_pan_zoom_fixed_circle (Athena the 2nd)` reported `No blocking findings`, with only residual-risk notes about future drift if the inline sizing model or hand-rolled pan/zoom bounds are changed later.
+
+- time: `2026-03-28 04:46:00 +09:00`
+- route: `Route B`
+- task: `Persist mypage avatar uploads through jeju-spring local file storage and user_profiles.avatar_url`
+- participants: `main`, `worker_backend_avatar_upload (Einstein the 2nd)`, `worker_front_avatar_persist (Sagan the 2nd)`, `reviewer_avatar_upload_persist (Faraday the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_avatar_upload (Einstein the 2nd)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java, jeju-spring/src/main/resources/application.yml, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+  - `worker_front_avatar_persist (Sagan the 2nd)`: `front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/SummarySection.tsx, front/components/react/mypage/data.ts, front/components/react/mypage/types.ts`
+  - `reviewer_avatar_upload_persist (Faraday the 2nd)`: `review only`
+- verification:
+  - `worker_backend_avatar_upload (Einstein the 2nd)` added configurable local-temp avatar storage through `app.mypage.avatar-upload-root`, created `MyPageAvatarService`, added authenticated `POST /api/mypage/avatar`, added avatar file serving under `GET /api/mypage/avatar/{userId}/{fileName}`, and threaded `avatarUrl` through the mypage dashboard profile query/records using the existing `user_profiles.avatar_url` column.
+  - `worker_front_avatar_persist (Sagan the 2nd)` replaced the front-only avatar preview apply flow with a real multipart upload from the existing editor, normalized and consumed `avatarUrl` in mypage profile state, and switched the summary hero avatar to prefer the saved avatar over Dicebear.
+  - The first reviewer pass found a blocking URL-resolution bug for split-origin/path-prefix setups; `worker_front_avatar_persist (Sagan the 2nd)` then patched `resolveAvatarUrl()` so relative avatar paths compose with `API_BASE_URL` without dropping any configured base path.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `pnpm run guard:text` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/AccountBenefitSection.tsx front/components/react/mypage/SummarySection.tsx front/components/react/mypage/data.ts front/components/react/mypage/types.ts jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java jeju-spring/src/main/resources/application.yml jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage` passed.
+  - `reviewer_avatar_upload_persist (Faraday the 2nd)` reported `이제 blocking findings는 없다.`

@@ -400,3 +400,57 @@ status: open
 - summary: `전체 JejuSpringApplicationTests 검증이 기존 landing root 테스트 실패로 막힘`
 - details: `마이페이지 프로필 persistence 대상 테스트들은 통과했지만, 전체 JejuSpringApplicationTests 재실행에서는 JejuSpringApplicationTests.java:92의 landingPageLoadsAtRoot()가 여전히 실패했다. 이번 mypage write slice와 직접 연결된 실패 증거는 없어서 별도 기존 불안정성으로 남긴다.`
 - status: `open`
+
+- time: `2026-03-27 21:10:00 +09:00`
+- location: `D:\git\jejugroup local MySQL verification query`
+- summary: `존재하지 않는 reservations 테이블로 검증 쿼리를 실행함`
+- details: `로컬 DB 덤프 반영 뒤 예약 데이터 확인을 위해 reservations 테이블을 조회했지만, 현재 스키마는 bookings와 booking_items를 사용한다. import 자체는 정상 완료됐고 검증 쿼리를 실제 테이블 기준으로 다시 실행해 64개 테이블 로드 상태를 확인했다.`
+- status: `resolved`
+
+- time: `2026-03-27 22:06:00 +09:00`
+- location: `D:\git\jejugroup build/spring packaging pipeline`
+- summary: `기존 패키징 흐름이 출력 디렉터리 잠금과 누락된 gradle wrapper jar 때문에 한 번 막힘`
+- details: `pnpm run build 첫 시도에서는 front/apps/cs build가 front/.generated/webapp-overlay/pages/cs/assets 잠금 때문에 EPERM으로 실패했다. 재시도에서는 front 미러 동기화까지 통과했지만, pnpm run spring:package 단계가 jeju-spring/gradle/wrapper/gradle-wrapper.jar 부재로 실패했다. 이후 로컬 대체 Gradle 배포본 .codex-temp/gradle-8.14.4/bin/gradle.bat -p jeju-spring bootWar로 WAR 패키징을 완료했고, CTA-only 클래스 변경이 생성물과 spring mirror에 반영된 것을 확인했다.`
+- status: `resolved`
+
+- time: `2026-03-27 22:32:00 +09:00`
+- location: `D:\git\jejugroup shell build -> spring mirror sync sequencing`
+- summary: `병렬 실행 때문에 spring mirror가 한 번 이전 runtime chunk를 잡음`
+- details: `CTA 가시성 복구 후 shell build, spring mirror sync, bootWar를 병렬로 돌리면서 spring src mirror가 build 완료 전 runtime chunk를 한 번 복사했다. 이후 mirror-front-to-thymeleaf를 build 완료 뒤에 다시 직렬로 실행하고 fallback Gradle bootWar를 재실행해서 활성 chunk를 feature-layout-Y4UHQunU.js 체인으로 바로잡았다.`
+- status: `resolved`
+
+- time: `2026-03-27 22:55:00 +09:00`
+- location: `D:\git\jejugroup local MySQL user/profile text repair`
+- summary: `PowerShell stdin으로 직접 넣은 한글 복구값이 다시 물음표로 저장됨`
+- details: `users.name, user_profiles.display_name/nickname/bio를 한글 문자열 그대로 Node stdin 경유 업데이트했더니 PowerShell 인코딩 경로에서 다시 '?'로 저장됐다. 이후 ASCII-only 유니코드 이스케이프 문자열로 재실행해 broken count 4종을 모두 0으로 만들고, HEX 검증으로 실제 UTF-8 한글 바이트가 저장된 것을 확인했다.`
+- status: `resolved`
+
+- time: `2026-03-27 23:34:00 +09:00`
+- location: `pnpm run spring:package`
+- summary: `front -> jeju-spring sync 후 WAR 패키징이 gradle wrapper jar 누락으로 막힘`
+- details: `이번 sync에서는 generated front runtime과 jeju-spring front-mirror refresh 자체는 완료됐지만, 마지막 WAR 패키징 단계에서 jeju-spring/gradle/wrapper/gradle-wrapper.jar 부재 때문에 wrapper가 뜨지 못했다. mirror/runtime 산출물은 최신 front 변경을 반영했고 reviewer도 chunk/asset 정합성 문제는 없다고 확인했다.`
+- status: `open`
+
+- time: `2026-03-28 00:10:00 +09:00`
+- location: `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring bootWar`
+- summary: `wrapper 누락으로 막혔던 WAR 패키징을 로컬 .codex-temp Gradle로 우회 완료`
+- details: `사용자가 지정한 로컬 Gradle 설치본으로 bootWar를 직접 실행해 jeju-spring/build/libs/jeju-spring-0.0.1-SNAPSHOT.war 생성까지 마쳤다. 이번 경로는 repository helper의 alias copy를 거치지 않아 build/jeju-spring.war는 만들지 않았지만, 실제 패키징 blocker 자체는 해소됐다.`
+- status: `resolved`
+
+- time: `2026-03-28 00:46:00 +09:00`
+- location: `pnpm run sync`
+- summary: `레거시 jeju-web sync를 잘못 실행함`
+- details: `사용자 요청 "싱크해"를 현재 저장소 정책보다 package script 이름으로 먼저 해석해서 legacy pipeline인 scripts/pipelines/sync-front.js를 실행했다. 이 스크립트는 jeju-web/src/main/webapp를 덮어쓰며, AGENTS와 repo override가 말하는 default runtime mirror인 jeju-spring 대상 sync가 아니었다. 후속으로 jeju-web 파생 변경을 어떻게 처리할지 사용자 확인이 필요하다.`
+- status: `open`
+
+- time: `2026-03-28 00:53:00 +09:00`
+- location: `pnpm run sync / scripts/pipelines/sync-front.js`
+- summary: `올바른 jeju-spring sync로 교정하고 legacy jeju-web sync 진입을 차단함`
+- details: `사용자 지시대로 기존 jeju-web 변경은 그대로 두고 node scripts/spring/sync-front-assets-to-spring.cjs 및 갱신된 pnpm run sync로 jeju-spring front-mirror 재동기화를 완료했다. 이후 package.json의 sync 기본 진입을 spring 쪽으로 바꾸고 scripts/pipelines/sync-front.js는 즉시 실패하도록 바꿔 legacy jeju-web sync가 다시 실행되지 않게 막았다.`
+- status: `resolved`
+
+- time: `2026-03-28 05:08:00 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\application\MyPageAvatarService.java`
+- summary: `프로필 행이 없는 계정의 아바타 업로드가 user_profiles.display_name NOT NULL 제약으로 실패함`
+- details: `새 아바타 저장 로직이 user_profiles에 avatar_url만 insert/upsert하고 있어, 아직 user_profiles row가 없는 계정에서는 display_name NOT NULL 제약 위반으로 POST /api/mypage/avatar가 SQLException으로 실패했다. users.name을 잠근 상태로 읽어 display_name까지 같이 넣는 hotfix를 적용했고, compileJava와 diff check로 수정 상태를 검증했다.`
+- status: `resolved`

@@ -1,42 +1,61 @@
 import { ServiceType } from "@/types/service-center";
 
 export interface InquiryType {
+  code: string;
   value: string;
   label: string;
 }
 
+const createInquiryType = (code: string, label: string): InquiryType => ({
+  code,
+  value: code,
+  label,
+});
+
+const createServiceOption = (code: ServiceType, label: string) => ({
+  code,
+  value: code,
+  label,
+});
+
 export const INQUIRY_TYPES: Record<ServiceType, InquiryType[]> = {
-  "common": [
-    { value: "general", label: "일반 문의" },
-    { value: "partnership", label: "제휴 및 사업 제안" },
-    { value: "praise", label: "칭찬/제안" },
-    { value: "complaint", label: "불만 접수" },
-    { value: "other", label: "기타" },
+  common: [
+    createInquiryType("general", "일반/내용"),
+    createInquiryType("cancel-refund", "취소/환불"),
+    createInquiryType("account", "회원/로그인"),
+    createInquiryType("partnership", "제휴/사업 제안"),
+    createInquiryType("other", "기타"),
   ],
   "jeju-air": [
-    { value: "reservation", label: "예약/결제" },
-    { value: "baggage", label: "수하물" },
-    { value: "checkin", label: "체크인/탑승" },
-    { value: "point", label: "리프레시 포인트" },
-    { value: "other", label: "기타 문의" },
+    createInquiryType("reservation", "예약"),
+    createInquiryType("cancel", "취소"),
+    createInquiryType("refund", "환불"),
+    createInquiryType("baggage", "수하물"),
+    createInquiryType("checkin", "체크인/탑승"),
+    createInquiryType("point", "리프레시 포인트"),
+    createInquiryType("other", "기타"),
   ],
   "jeju-stay": [
-    { value: "booking", label: "숙소 예약" },
-    { value: "cancel", label: "취소/환불" },
-    { value: "checkin", label: "숙소 이용 안내" },
-    { value: "other", label: "기타 문의" },
+    createInquiryType("booking", "예약"),
+    createInquiryType("cancel", "취소"),
+    createInquiryType("refund", "환불"),
+    createInquiryType("checkin", "체크인/이용"),
+    createInquiryType("facility", "객실/부대시설"),
+    createInquiryType("other", "기타"),
   ],
   "jeju-rental": [
-    { value: "car-booking", label: "차량 예약" },
-    { value: "insurance", label: "보험/면책" },
-    { value: "pickup", label: "인수/반납" },
-    { value: "other", label: "기타 문의" },
+    createInquiryType("car-booking", "예약"),
+    createInquiryType("cancel", "취소"),
+    createInquiryType("refund", "환불"),
+    createInquiryType("insurance", "보험/면책"),
+    createInquiryType("pickup", "인수/반납"),
+    createInquiryType("other", "기타"),
   ],
 };
 
 export const SERVICE_OPTIONS = [
-  { value: "common", label: "공통" },
-  { value: "jeju-air", label: "제주항공" },
-  { value: "jeju-stay", label: "제주스테이" },
-  { value: "jeju-rental", label: "제주렌터카" },
+  createServiceOption("common", "공통"),
+  createServiceOption("jeju-air", "제주항공"),
+  createServiceOption("jeju-stay", "제주스테이"),
+  createServiceOption("jeju-rental", "제주렌터카"),
 ];

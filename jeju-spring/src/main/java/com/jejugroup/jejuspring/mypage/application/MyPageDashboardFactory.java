@@ -34,6 +34,7 @@ public class MyPageDashboardFactory {
             fallbackValue(sessionUser.name(), snapshot.profile().name()),
             fallbackValue(sessionUser.id(), snapshot.profile().id()),
             fallbackValue(sessionUser.role(), snapshot.profile().role()),
+            fallbackValue(snapshot.profile().avatarUrl(), ""),
             fallbackValue(snapshot.profile().email(), "%s@jejugroup.example".formatted(sessionUser.id())),
             fallbackValue(snapshot.profile().tier(), snapshot.memberships().isEmpty() ? "멤버십 없음" : snapshot.memberships().getFirst()),
             loginPath,

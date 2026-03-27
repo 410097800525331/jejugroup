@@ -2,6 +2,7 @@ import "./family-radial-menu.css";
 
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
+import { Building2, Car, Home, Plane } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface FamilyRadialMenuItem {
@@ -21,6 +22,37 @@ interface FamilyRadialMenuProps {
   startAngle?: number;
   endAngle?: number;
 }
+
+type SharedFamilyRadialMenuProps = Omit<FamilyRadialMenuProps, "items" | "originX" | "radiusPx">;
+
+export const JEJU_GROUP_FAMILY_RADIAL_ITEMS: FamilyRadialMenuItem[] = [
+  {
+    href: "/index.html",
+    icon: Home,
+    key: "main",
+    title: "제주그룹 메인",
+  },
+  {
+    href: "/jejuair/index.html",
+    icon: Plane,
+    key: "air",
+    title: "제주에어",
+  },
+  {
+    href: "/jejustay/pages/hotel/jejuhotel.html",
+    icon: Building2,
+    key: "stay",
+    title: "제주스테이",
+  },
+  {
+    href: "https://jejurentcar.netlify.app/",
+    icon: Car,
+    key: "rentcar",
+    rel: "noreferrer",
+    target: "_blank",
+    title: "제주렌터카",
+  },
+];
 
 const toRadians = (degree: number) => (degree * Math.PI) / 180;
 
@@ -49,27 +81,42 @@ export default function FamilyRadialMenu({
   label = "Family Sites",
   originX = "right",
   radiusPx = 98,
-  startAngle = 180,
-  endAngle = 270,
+  startAngle,
+  endAngle,
 }: FamilyRadialMenuProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const resolvedStartAngle = startAngle ?? 180;
+  const resolvedEndAngle = endAngle ?? 270;
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+    const handlePointerDown = (event: PointerEvent) => {
+      const root = menuRef.current;
+
+      if (!root || root.contains(event.target as Node)) {
+        return;
+      }
+
+      setIsMenuOpen(false);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
         setIsMenuOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
   return (
-    <div className="family-radial-shell">
+    <div className={`family-radial-shell family-radial-shell--${originX}`}>
       <div
         className={`family-radial-menu family-radial-menu--${originX} ${isMenuOpen ? "active" : ""}`}
         ref={menuRef}
@@ -79,6 +126,8 @@ export default function FamilyRadialMenu({
           className={`family-radial-btn ${isMenuOpen ? "active" : ""}`}
           onClick={() => setIsMenuOpen((prev) => !prev)}
           aria-label={label}
+          aria-expanded={isMenuOpen}
+          aria-haspopup="menu"
           title={label}
         >
           <span className="family-radial-btn__glyph" aria-hidden="true" />
@@ -93,8 +142,9 @@ export default function FamilyRadialMenu({
                 key={item.key}
                 className="family-radial-item"
                 href={item.href}
+                onClick={() => setIsMenuOpen(false)}
                 rel={item.rel}
-                style={createRadialItemStyle(index, items.length, radiusPx, startAngle, endAngle)}
+                style={createRadialItemStyle(index, items.length, radiusPx, resolvedStartAngle, resolvedEndAngle)}
                 target={item.target}
                 title={item.title}
               >
@@ -108,4 +158,8 @@ export default function FamilyRadialMenu({
       {label ? <p className="family-radial-label">{label}</p> : null}
     </div>
   );
+}
+
+export function JejuGroupFamilyRadialMenu(props: SharedFamilyRadialMenuProps) {
+  return <FamilyRadialMenu items={JEJU_GROUP_FAMILY_RADIAL_ITEMS} originX="center" radiusPx={98} {...props} />;
 }

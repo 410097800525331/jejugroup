@@ -12,10 +12,11 @@
   <link rel="stylesheet" href="../../components/react/layout/header.css">
   <link rel="stylesheet" href="../../components/react/layout/mega-menu.css">
   <link rel="stylesheet" href="../../components/react/layout/footer.css">
+  <link rel="stylesheet" href="../../components/react/widget/weather.css">
   <link rel="stylesheet" href="./mypage.css">
 </head>
 
-<body class="mypage-dashboard-page">
+<body class="mypage-dashboard-page" data-shell-default="main">
   <div id="jeju-page-shell-header"></div>
   <main id="mypage-dashboard-root" aria-live="polite">
     <!-- 초기 로딩 중에도 레이아웃 점프를 막기 위한 스켈레톤 -->
@@ -33,5 +34,3 @@
 </body>
 
 </html>
-
-

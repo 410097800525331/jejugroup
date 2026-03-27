@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="./esim.css">
     <link rel="stylesheet" href="../../../components/react/layout/header.css">
     <link rel="stylesheet" href="../../../components/react/layout/footer.css">
+    <link rel="stylesheet" href="../../../components/react/ui/FAB/fab.css">
 </head>
 
 <body>
@@ -116,18 +117,16 @@
 
                 <!-- Europe -->
                 <a href="#" class="country-card">
-                    <img src="../../images/eu.png"
-                        class="card-bg-image" alt="Europe">
-                    <div class="card-capsule">
-                        <div class="capsule-left">
-                            <span class="capsule-flag">🇪🇺</span>
-                            <div class="capsule-info">
-                                <span class="capsule-country">유럽</span>
-                                <span class="capsule-price">시작 가격 ₩24,000</span>
-                            </div>
-                        </div>
-                        <div class="capsule-arrow">
-                            <i data-lucide="chevron-right"></i>
+                    <div class="card-image-wrap">
+                        <img src="../../images/eu.png"
+                            class="card-bg-image" alt="Europe" loading="lazy">
+                        <span class="flag-icon">🇪🇺</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-country">유럽</h3>
+                        <div class="card-price-block">
+                            <span class="price-label">시작 가격</span>
+                            <span class="price-amount">₩24,000</span>
                         </div>
                     </div>
                 </a>

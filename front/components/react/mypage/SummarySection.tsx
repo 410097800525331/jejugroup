@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { PROFILE, STATS } from "./data";
+import { PROFILE, STATS, resolveAvatarUrl } from "./data";
 import { SectionCard } from "./SectionCard";
 import { useDashboardState } from "./state";
 import type { StatItem, UserProfile } from "./types";
@@ -106,6 +106,9 @@ export const SummarySection = () => {
   const membershipDisplaySource = profile.tier ?? membershipLabel;
   const membershipTone = getMembershipTone(membershipDisplaySource);
   const membershipDisplayLabel = formatMembershipLabel(membershipDisplaySource);
+  const avatarUrl =
+    resolveAvatarUrl(profile.avatarUrl) ??
+    `https://api.dicebear.com/7.x/notionists/svg?seed=${profile.name}&backgroundColor=f8f9fa`;
 
   useEffect(() => {
     if (window.lucide) {
@@ -122,7 +125,7 @@ export const SummarySection = () => {
               <img
                 alt="profile"
                 className="profile-avatar"
-                src={`https://api.dicebear.com/7.x/notionists/svg?seed=${profile.name}&backgroundColor=f8f9fa`}
+                src={avatarUrl}
               />
               <div className={`membership-grade-chip soft-radius ${membershipTone}`}>
                 <span>{membershipDisplayLabel}</span>

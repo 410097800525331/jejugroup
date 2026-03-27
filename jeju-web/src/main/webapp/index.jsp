@@ -131,7 +131,7 @@
                         <div class="membership-tier">
                             <div class="tier-badge silver">SILVER</div>
                             <h3 data-lang="silverTitle">실버 멤버</h3>
-                            <p class="tier-price" data-lang="silverPrice">월 <span>29,900</span>원</p>
+                            <p class="tier-price" data-lang="silverPrice" data-lang-html="true">월 <span>29,900</span>원</p>
                             <button class="tier-btn" data-lang="joinButton">가입하기</button>
                             <ul class="tier-benefits">
                                 <li data-lang="silverBenefit1">✓ 항공권 5% 할인</li>
@@ -145,7 +145,7 @@
                             <div class="tier-badge gold">GOLD</div>
                             <div class="tier-popular" data-lang="popular">인기</div>
                             <h3 data-lang="goldTitle">골드 멤버</h3>
-                            <p class="tier-price" data-lang="goldPrice">월 <span>49,900</span>원</p>
+                            <p class="tier-price" data-lang="goldPrice" data-lang-html="true">월 <span>49,900</span>원</p>
                             <button class="tier-btn gold-btn" data-lang="joinButton">가입하기</button>
                             <ul class="tier-benefits">
                                 <li data-lang="goldBenefit1">✓ 항공권 10% 할인</li>
@@ -159,7 +159,7 @@
                         <div class="membership-tier">
                             <div class="tier-badge platinum">PLATINUM</div>
                             <h3 data-lang="platinumTitle">플래티넘 멤버</h3>
-                            <p class="tier-price" data-lang="platinumPrice">월 <span>79,900</span>원</p>
+                            <p class="tier-price" data-lang="platinumPrice" data-lang-html="true">월 <span>79,900</span>원</p>
                             <button class="tier-btn" data-lang="joinButton">가입하기</button>
                             <ul class="tier-benefits">
                                 <li data-lang="platinumBenefit1">✓ 항공권 15% 할인</li>
@@ -174,7 +174,7 @@
                 </div>
                 <div class="plan-sub">
                     <p data-lang="membershipNotice1">모든 멤버십은 언제든지 취소할 수 있습니다.</p>
-                    <p data-lang="membershipNotice2">추가 혜택과 이벤트는 <strong data-lang="appStrong">제주 그룹 앱</strong>에서 확인하세요.</p>
+                    <p data-lang="membershipNotice2" data-lang-html="true">추가 혜택과 이벤트는 <strong data-lang="appStrong">제주 그룹 앱</strong>에서 확인하세요.</p>
                     </p>
                 </div>
             </div>
@@ -216,6 +216,7 @@
     </div>
 
     <script src="core/constants/lang_data.js"></script>
+    <script src="core/constants/front-i18n.js"></script>
     <script src="core/pages/landing/main.js"></script>
 <!-- Component Loader for index.html -->
 <!-- UI State Reconciliation -> Sync Global Auth State -->
@@ -231,7 +232,6 @@
             isAuthSyncInitialized = true;
 
             const rawSession = localStorage.getItem('userSession');
-            const { canUseAdminSurface } = await import('./core/auth/local_admin.js');
 
             try {
                 const sessionData = rawSession ? JSON.parse(rawSession) : null;
@@ -247,25 +247,6 @@
                         localStorage.removeItem('userSession');
                         window.location.reload();
                     });
-                }
-
-                // 2. Inject Admin Link if applicable
-                if (canUseAdminSurface()) {
-                    const adminLink = document.createElement('a');
-                    adminLink.href = '#';
-                    adminLink.setAttribute('data-route', 'ADMIN.DASHBOARD');
-                    adminLink.className = 'util-link route-link';
-                    adminLink.style.color = '#FF5000';
-                    adminLink.style.fontWeight = 'bold';
-                    adminLink.textContent = '관리자 페이지';
-
-                    const divider = document.createElement('span');
-                    divider.className = 'util-divider';
-                    divider.textContent = '|';
-
-                    // Insert at front
-                    headerUtil.insertBefore(divider, headerUtil.firstChild);
-                    headerUtil.insertBefore(adminLink, divider);
                 }
             } catch (e) {
                 console.error('Session parse exception', e);

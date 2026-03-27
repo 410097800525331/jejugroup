@@ -1,4 +1,9 @@
 const CTA_SELECTOR = ".cta-bounce-target, .search-btn-pill, .search-btn-v2";
+const SEARCH_WIDGET_MOUNTED_EVENT = "jeju:search-widget-mounted";
+const HERO_REVEAL_PENDING_CLASS = "hero-reveal-pending";
+const HERO_REVEAL_PLAYED_KEY = "premiumHeroRevealPlayed";
+const HERO_REVEAL_BOUND_KEY = "premiumHeroRevealBound";
+const HERO_WIDGET_HOST_SELECTOR = "#hotel-search-widget-root, #life-search-widget-root";
 
 const markOnce = (element, key) => {
   if (!element || element.dataset[key] === "true") {
@@ -12,56 +17,107 @@ const markOnce = (element, key) => {
 const prefersReducedMotion = () =>
   Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
 
+const getHeroRevealTargets = () => ({
+  heroSubtitle: document.querySelector(".hero-subtitle-top"),
+  searchWidgetHost: document.querySelector(HERO_WIDGET_HOST_SELECTOR)
+});
+
+const isHeroWidgetReady = (host) =>
+  Boolean(host && (host.childElementCount > 0 || host.dataset.searchWidgetState === "ready"));
+
 const finalizeRevealState = (gsap, targets) => {
   const elements = (Array.isArray(targets) ? targets : [targets]).filter(Boolean);
   if (elements.length === 0) {
+    document.documentElement.classList.remove(HERO_REVEAL_PENDING_CLASS);
     return;
   }
 
   gsap.killTweensOf(elements);
   gsap.set(elements, { clearProps: "opacity,transform" });
+  document.documentElement.classList.remove(HERO_REVEAL_PENDING_CLASS);
 };
 
-const animateHeroSubtitle = (gsap) => {
-  const heroSubtitle = document.querySelector(".hero-subtitle-top");
-  if (!markOnce(heroSubtitle, "premiumReveal")) {
-    return;
+const playHeroReveal = (gsap) => {
+  const body = document.body;
+  if (!body || body.dataset[HERO_REVEAL_PLAYED_KEY] === "true") {
+    document.documentElement.classList.remove(HERO_REVEAL_PENDING_CLASS);
+    return true;
   }
+
+  const { heroSubtitle, searchWidgetHost } = getHeroRevealTargets();
+  if (!heroSubtitle || !isHeroWidgetReady(searchWidgetHost)) {
+    return false;
+  }
+
+  body.dataset[HERO_REVEAL_PLAYED_KEY] = "true";
 
   if (prefersReducedMotion()) {
-    finalizeRevealState(gsap, heroSubtitle);
-    return;
+    finalizeRevealState(gsap, [heroSubtitle, searchWidgetHost]);
+    return true;
   }
 
-  gsap.from(heroSubtitle, {
-    y: 30,
-    opacity: 0,
-    duration: 1.2,
-    ease: "power3.out",
-    delay: 0.2,
-    clearProps: "opacity,transform"
+  const timeline = gsap.timeline({
+    defaults: {
+      ease: "power3.out"
+    }
   });
+
+  timeline
+    .to(heroSubtitle, {
+      y: 0,
+      opacity: 1,
+      duration: 1.2,
+      delay: 0.2,
+      clearProps: "opacity,transform"
+    })
+    .to(
+      searchWidgetHost,
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
+        delay: 0.35,
+        clearProps: "opacity,transform"
+      },
+      0.12
+    );
+
+  timeline.eventCallback("onComplete", () => {
+    finalizeRevealState(gsap, [heroSubtitle, searchWidgetHost]);
+  });
+
+  return true;
 };
 
-const animateSearchWidget = (gsap) => {
-  const searchWidget = document.querySelector(".search-widget-large");
-  if (!markOnce(searchWidget, "premiumReveal")) {
+const bindHeroReveal = (gsap) => {
+  const body = document.body;
+  if (!body || body.dataset[HERO_REVEAL_BOUND_KEY] === "true") {
     return;
   }
 
-  if (prefersReducedMotion()) {
-    finalizeRevealState(gsap, searchWidget);
+  body.dataset[HERO_REVEAL_BOUND_KEY] = "true";
+  document.documentElement.classList.add(HERO_REVEAL_PENDING_CLASS);
+
+  if (playHeroReveal(gsap)) {
     return;
   }
 
-  gsap.from(searchWidget, {
-    y: 30,
-    opacity: 0,
-    duration: 1.2,
-    ease: "power3.out",
-    delay: 0.35,
-    clearProps: "opacity,transform"
+  const observer = new MutationObserver(() => {
+    if (playHeroReveal(gsap)) {
+      observer.disconnect();
+    }
   });
+
+  observer.observe(body, { childList: true, subtree: true });
+
+  const onMounted = () => {
+    if (playHeroReveal(gsap)) {
+      observer.disconnect();
+    }
+  };
+
+  document.addEventListener(SEARCH_WIDGET_MOUNTED_EVENT, onMounted, { once: true });
+  window.setTimeout(() => observer.disconnect(), 6000);
 };
 
 const animateDestinationCards = (gsap, ScrollTrigger) => {
@@ -222,7 +278,7 @@ const watchDynamicTargets = (gsap, ScrollTrigger) => {
   body.dataset.premiumObserverBound = "true";
 
   const observer = new MutationObserver(() => {
-    animateSearchWidget(gsap);
+    bindHeroReveal(gsap);
     animatePromoCards(gsap, ScrollTrigger);
     connectCtaBounce(gsap);
   });
@@ -241,8 +297,7 @@ export const initPremiumAnimations = () => {
     gsap.registerPlugin(ScrollTrigger);
   }
 
-  animateHeroSubtitle(gsap);
-  animateSearchWidget(gsap);
+  bindHeroReveal(gsap);
   animateDestinationCards(gsap, ScrollTrigger);
   animatePromoCards(gsap, ScrollTrigger);
   connectCtaBounce(gsap);

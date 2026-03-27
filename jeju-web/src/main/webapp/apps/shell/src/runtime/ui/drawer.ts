@@ -10,6 +10,45 @@ class ReservationDrawer {
   private backdrop: HTMLElement | null = null;
   private panel: HTMLElement | null = null;
   private closeButton: HTMLElement | null = null;
+  private cssReady: Promise<void> | null = null;
+
+  private waitForNextFrame() {
+    return new Promise<void>((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
+  }
+
+  private ensureCss(cssHref: string) {
+    if (this.cssReady) {
+      return this.cssReady;
+    }
+
+    this.cssReady = new Promise<void>((resolve) => {
+      const existingLink = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')).find(
+        (link) => link.href === cssHref,
+      );
+
+      if (existingLink) {
+        if (existingLink.sheet) {
+          resolve();
+          return;
+        }
+
+        existingLink.addEventListener("load", () => resolve(), { once: true });
+        existingLink.addEventListener("error", () => resolve(), { once: true });
+        return;
+      }
+
+      const cssLink = document.createElement("link");
+      cssLink.rel = "stylesheet";
+      cssLink.href = cssHref;
+      cssLink.addEventListener("load", () => resolve(), { once: true });
+      cssLink.addEventListener("error", () => resolve(), { once: true });
+      document.head.appendChild(cssLink);
+    });
+
+    return this.cssReady;
+  }
 
   private async ensureMarkup() {
     if (this.isInitialized) {
@@ -17,13 +56,7 @@ class ReservationDrawer {
     }
 
     const cssHref = new URL("components/react/ui/reservationDrawer/drawer.css", resolveFromAppRoot("./")).href;
-    const styleExists = Array.from(document.querySelectorAll("link")).some((link) => link.href === cssHref);
-    if (!styleExists) {
-      const cssLink = document.createElement("link");
-      cssLink.rel = "stylesheet";
-      cssLink.href = cssHref;
-      document.head.appendChild(cssLink);
-    }
+    await this.ensureCss(cssHref);
 
     let container = document.getElementById("reservation-drawer-container");
     if (!container) {
@@ -37,9 +70,8 @@ class ReservationDrawer {
     }
 
     this.root.render(createElement(ReservationDrawerMarkup));
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
+    await this.waitForNextFrame();
+    await this.waitForNextFrame();
 
     this.backdrop = document.getElementById("resDrawerBackdrop");
     this.panel = document.getElementById("resDrawerPanel");

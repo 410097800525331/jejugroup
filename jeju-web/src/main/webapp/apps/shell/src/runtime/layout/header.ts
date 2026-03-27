@@ -1,7 +1,7 @@
 import { initMegaMenu } from "@runtime/layout/megaMenu";
 import { initStaggerNav } from "@runtime/layout/stagger";
-import { canUseAdminSurface } from "@front-core-auth/local_admin.js";
-import { logoutSession, resolveSession } from "@front-core-auth/session_manager.js";
+import { hasAdminAccess } from "@front-core-auth/local_admin.js";
+import { getStoredSession, logoutSession, resolveSession } from "@front-core-auth/session_manager.js";
 import { resolveRoute } from "@front-core-utils/path_resolver.js";
 
 const SESSION_STORAGE_KEY = "userSession";
@@ -92,8 +92,38 @@ const getLoginButton = () => {
   return document.getElementById("headerLoginBtn") || document.getElementById("indexLoginBtn");
 };
 
+const resolveLoginRouteParams = (loginButton: HTMLElement) => {
+  const rawRouteParams = loginButton.getAttribute("data-route-params");
+  if (rawRouteParams) {
+    try {
+      const parsedRouteParams = JSON.parse(rawRouteParams) as { shell?: unknown };
+      if (typeof parsedRouteParams.shell === "string" && parsedRouteParams.shell.trim() !== "") {
+        return { shell: parsedRouteParams.shell.trim() };
+      }
+    } catch (_error) {
+    }
+  }
+
+  return {
+    shell: loginButton.id === "headerLoginBtn" ? "stay" : "main",
+  };
+};
+
 const getHotelAuthUtilityButton = () => {
   return document.getElementById("headerAuthActionBtn");
+};
+
+const getIndexReservationCheckButton = () => {
+  return document.getElementById("indexReservationCheckBtn");
+};
+
+const getIndexReservationCheckDivider = () => {
+  const reservationButton = getIndexReservationCheckButton();
+  const divider = reservationButton?.previousElementSibling;
+
+  return divider instanceof HTMLElement && divider.classList.contains("util-divider")
+    ? divider
+    : null;
 };
 
 const getDocumentLanguage = () => {
@@ -128,6 +158,79 @@ const getLocalizedHotelAuthLabel = (utilityButton: HTMLElement, isSignedIn: bool
   }
 
   return label.dataset.authLabelKo || label.dataset.authLabelEn || "비회원 예약확인";
+};
+
+const getLocalizedHotelAdminLabel = (utilityButton: HTMLElement) => {
+  const label = utilityButton.querySelector<HTMLElement>("[data-auth-label]");
+  if (!label) {
+    return null;
+  }
+
+  const lang = getDocumentLanguage();
+  const isKorean = lang.startsWith("ko");
+
+  if (!isKorean) {
+    return label.dataset.authAdminLabelEn || label.dataset.authAdminLabelKo || "Admin Page";
+  }
+
+  return label.dataset.authAdminLabelKo || label.dataset.authAdminLabelEn || "관리자 페이지";
+};
+
+const getShieldIconMarkup = (className?: string) => {
+  const classAttribute = className ? ` class="${className}"` : "";
+  return `<i data-lucide="shield-check"${classAttribute} aria-hidden="true"></i>`;
+};
+
+const preserveOriginalIconMarkup = (iconSlot: HTMLElement) => {
+  if (!iconSlot.hasAttribute("data-original-icon-html")) {
+    iconSlot.setAttribute("data-original-icon-html", iconSlot.innerHTML);
+  }
+};
+
+const setIconMarkup = (iconSlot: HTMLElement, iconMarkup: string) => {
+  preserveOriginalIconMarkup(iconSlot);
+  iconSlot.innerHTML = iconMarkup;
+};
+
+const restoreIconMarkup = (iconSlot: HTMLElement) => {
+  const originalIconMarkup = iconSlot.getAttribute("data-original-icon-html");
+  if (originalIconMarkup !== null) {
+    iconSlot.innerHTML = originalIconMarkup;
+  }
+};
+
+const updateMainMypageCta = (canShowAdmin: boolean) => {
+  const mypageCta = document.querySelector<HTMLElement>(".mypage-cta");
+  if (!mypageCta) {
+    return;
+  }
+
+  const routeName = canShowAdmin ? "ADMIN.DASHBOARD" : "MYPAGE.DASHBOARD";
+  const routeParams = canShowAdmin ? undefined : { shell: "main" };
+
+  const memberIcon = mypageCta.querySelector<HTMLElement>('[data-auth-icon="member"]');
+  const adminIcon = mypageCta.querySelector<HTMLElement>('[data-auth-icon="admin"]');
+  if (memberIcon) {
+    memberIcon.hidden = canShowAdmin;
+  }
+
+  if (adminIcon) {
+    adminIcon.hidden = !canShowAdmin;
+  }
+
+  mypageCta.setAttribute("data-route", routeName);
+
+  if (routeParams) {
+    mypageCta.setAttribute("data-route-params", JSON.stringify(routeParams));
+  } else {
+    mypageCta.removeAttribute("data-route-params");
+  }
+
+  if ("href" in mypageCta) {
+    mypageCta.href = canShowAdmin ? resolveRoute(routeName) : resolveRoute(routeName, routeParams);
+  }
+
+  mypageCta.setAttribute("aria-label", canShowAdmin ? "관리자 페이지" : "마이페이지");
 };
 
 const hydrateLucideIcons = (attempt = 0) => {
@@ -194,33 +297,52 @@ const updateLoginButtonAsLogin = (loginButton: HTMLElement & { href?: string }) 
     loginButton.textContent = "로그인";
   }
 
+  const loginRouteParams = resolveLoginRouteParams(loginButton);
+
   if ("href" in loginButton) {
-    loginButton.href = resolveRoute("AUTH.LOGIN", { shell: "stay" });
+    loginButton.href = resolveRoute("AUTH.LOGIN", loginRouteParams);
   }
 
   loginButton.setAttribute("data-route", "AUTH.LOGIN");
-  loginButton.setAttribute("data-route-params", '{"shell":"stay"}');
+  loginButton.setAttribute("data-route-params", JSON.stringify(loginRouteParams));
   loginButton.removeAttribute("data-logout-bound");
 };
 
-const updateHotelAuthUtilityButton = (utilityButton: HTMLElement, isSignedIn: boolean) => {
+const updateHotelAuthUtilityButton = (utilityButton: HTMLElement, isSignedIn: boolean, canShowAdmin: boolean) => {
   const guestIcon = utilityButton.querySelector<HTMLElement>('[data-auth-icon="guest"]');
   const memberIcon = utilityButton.querySelector<HTMLElement>('[data-auth-icon="member"]');
   const label = utilityButton.querySelector<HTMLElement>("[data-auth-label]");
-  const localizedLabel = getLocalizedHotelAuthLabel(utilityButton, isSignedIn);
+  const localizedLabel = canShowAdmin
+    ? getLocalizedHotelAdminLabel(utilityButton)
+    : getLocalizedHotelAuthLabel(utilityButton, isSignedIn);
 
   if (isSignedIn) {
     utilityButton.removeAttribute("data-action");
-    utilityButton.setAttribute("data-route", "MYPAGE.DASHBOARD");
-    utilityButton.removeAttribute("data-route-params");
-    utilityButton.setAttribute("href", resolveRoute("MYPAGE.DASHBOARD"));
+    const routeName = canShowAdmin ? "ADMIN.DASHBOARD" : "MYPAGE.DASHBOARD";
+    const routeParams = canShowAdmin ? undefined : { shell: "stay" };
+
+    utilityButton.setAttribute("data-route", routeName);
+
+    if (routeParams) {
+      utilityButton.setAttribute("data-route-params", JSON.stringify(routeParams));
+    } else {
+      utilityButton.removeAttribute("data-route-params");
+    }
+
+    utilityButton.setAttribute("href", canShowAdmin ? resolveRoute(routeName) : resolveRoute(routeName, routeParams));
 
     if (guestIcon) {
       guestIcon.hidden = true;
+      restoreIconMarkup(guestIcon);
     }
 
     if (memberIcon) {
       memberIcon.hidden = false;
+      if (canShowAdmin) {
+        setIconMarkup(memberIcon, getShieldIconMarkup("hotel-shell-util-icon"));
+      } else {
+        restoreIconMarkup(memberIcon);
+      }
     }
 
     if (label) {
@@ -236,10 +358,12 @@ const updateHotelAuthUtilityButton = (utilityButton: HTMLElement, isSignedIn: bo
 
   if (guestIcon) {
     guestIcon.hidden = false;
+    restoreIconMarkup(guestIcon);
   }
 
   if (memberIcon) {
     memberIcon.hidden = true;
+    restoreIconMarkup(memberIcon);
   }
 
   if (label) {
@@ -268,78 +392,99 @@ const appendIndexAdminLink = (headerUtil: HTMLElement) => {
   headerUtil.prepend(adminLink, divider);
 };
 
+const removeIndexAdminLink = (headerUtil: HTMLElement) => {
+  const adminLink = headerUtil.querySelector<HTMLElement>("#indexAdminBtn");
+  if (!adminLink) {
+    return;
+  }
+
+  const divider = adminLink.nextElementSibling;
+  adminLink.remove();
+
+  if (divider instanceof HTMLElement && divider.classList.contains("util-divider")) {
+    divider.remove();
+  }
+};
+
 const resolveSessionData = async () => {
   try {
     return await resolveSession();
-  } catch (_error) {
-  }
-
-  try {
-    const rawSession = localStorage.getItem(SESSION_STORAGE_KEY);
-    return rawSession ? JSON.parse(rawSession) : null;
   } catch (_error) {
     return null;
   }
 };
 
-const canOpenAdmin = async () => {
-  try {
-    return canUseAdminSurface();
-  } catch (_error) {
-    return false;
-  }
-};
-
-const syncHeaderAuthState = async () => {
+const applyHeaderAuthState = (sessionData: Record<string, unknown> | null | undefined) => {
   const adminButton = document.getElementById("headerAdminBtn");
   const loginButton = getLoginButton() as (HTMLElement & { href?: string }) | null;
   const utilityButton = getHotelAuthUtilityButton();
+  const indexReservationCheckButton = getIndexReservationCheckButton();
   const indexHeaderUtil = document.getElementById("index-header-util");
 
-  const [sessionData, localAdmin] = await Promise.all([resolveSessionData(), canOpenAdmin()]);
   const isSignedIn = Boolean(sessionData);
+  const canShowAdmin = hasAdminAccess(sessionData);
+
+  updateMainMypageCta(canShowAdmin);
 
   if (loginButton) {
     if (isSignedIn) {
-      await updateLoginButtonAsLogout(loginButton);
+      void updateLoginButtonAsLogout(loginButton);
     } else {
       updateLoginButtonAsLogin(loginButton);
     }
   }
 
   if (utilityButton) {
-    updateHotelAuthUtilityButton(utilityButton, isSignedIn);
+    updateHotelAuthUtilityButton(utilityButton, isSignedIn, canShowAdmin);
   }
 
-  if (localAdmin && adminButton) {
-    adminButton.style.display = "flex";
+  if (indexReservationCheckButton) {
+    indexReservationCheckButton.hidden = isSignedIn;
   }
 
-  if (localAdmin && indexHeaderUtil) {
-    appendIndexAdminLink(indexHeaderUtil);
+  const indexReservationCheckDivider = getIndexReservationCheckDivider();
+  if (indexReservationCheckDivider) {
+    indexReservationCheckDivider.hidden = isSignedIn;
+  }
+
+  if (adminButton) {
+    adminButton.style.display = "none";
+    adminButton.setAttribute("aria-hidden", "true");
+    adminButton.setAttribute("tabindex", "-1");
+    adminButton.removeAttribute("data-route");
+  }
+
+  if (indexHeaderUtil) {
+    removeIndexAdminLink(indexHeaderUtil);
   }
 
   hydrateLucideIcons();
 };
 
-const queueHeaderAuthSync = () => {
+const syncHeaderAuthState = async () => {
+  const sessionData = await resolveSessionData();
+  applyHeaderAuthState(sessionData);
+};
+
+export const queueHeaderAuthSync = (attempt = 0) => {
   if (headerAuthSyncQueued) {
     return;
   }
 
   headerAuthSyncQueued = true;
+  applyHeaderAuthState(getStoredSession());
   setTimeout(async () => {
     headerAuthSyncQueued = false;
     await syncHeaderAuthState();
   }, 0);
 };
 
-export const initHeader = (attempt = 0) => {
+export const bindHeaderStructure = (attempt = 0) => {
   const header = getCurrentHeader();
   if (!header) {
     if (attempt < 20) {
       window.setTimeout(() => {
-        initHeader(attempt + 1);
+        bindHeaderStructure(attempt + 1);
       }, 50);
     }
     return;
@@ -350,6 +495,10 @@ export const initHeader = (attempt = 0) => {
   bindMobileMenuToggle();
   initMegaMenu();
   initStaggerNav();
+};
+
+export const initHeader = (attempt = 0) => {
+  bindHeaderStructure(attempt);
   queueHeaderAuthSync();
 };
 

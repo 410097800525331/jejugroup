@@ -1,21 +1,27 @@
-import { useCallback, useMemo } from "react";
-import { BOOKINGS } from "./data";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDashboardState } from "./state";
 import { StatusPill } from "./StatusPill";
 import type { BookingType } from "./types";
 
-const FILTERS: Array<"all" | BookingType> = ["all", "air", "stay", "rent"];
+const FILTERS: Array<"all" | BookingType> = ["all", "air", "stay", "rent", "voucher"];
 
 export const BookingSection = () => {
   const { dispatch, state } = useDashboardState();
+  const bookings = state.bookings ?? [];
+
+  useEffect(() => {
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }, [bookings, state.filter]);
 
   const filteredBookings = useMemo(() => {
     if (state.filter === "all") {
-      return state.bookings;
+      return bookings;
     }
 
-    return state.bookings.filter((booking) => booking.type === state.filter);
-  }, [state.bookings, state.filter]);
+    return bookings.filter((booking) => booking.type === state.filter);
+  }, [bookings, state.filter]);
 
   const handleFilter = useCallback(
     (filter: "all" | BookingType) => {
@@ -29,7 +35,7 @@ export const BookingSection = () => {
       <header className="section-header flex-header">
         <div className="title-group">
           <h2 className="section-title">나의 예약 현황</h2>
-          <p className="section-subtitle">항공, 숙박, 렌터카 예약을 한눈에 관리하세요.</p>
+          <p className="section-subtitle">항공, 숙박, 렌터카 및 바우처를 한눈에 관리하세요.</p>
         </div>
         <div className="booking-filters flex-gap">
           {FILTERS.map((filter) => (
@@ -39,7 +45,7 @@ export const BookingSection = () => {
               onClick={() => handleFilter(filter)}
               type="button"
             >
-              {filter === "all" ? "전체" : filter === "air" ? "항공" : filter === "stay" ? "숙박" : "렌터카"}
+              {filter === "all" ? "전체" : filter === "air" ? "항공" : filter === "stay" ? "숙박" : filter === "rent" ? "렌터카" : "바우처"}
             </button>
           ))}
         </div>
@@ -63,12 +69,12 @@ export const BookingSection = () => {
                 <h3 className="trip-title">{booking.title}</h3>
                 <div className="trip-meta-grid">
                   <div className="meta-item">
-                    <i className="lucide-calendar" />
+                    <i data-lucide="calendar" className="lucide-calendar" />
                     <span>{booking.date}</span>
                     {booking.duration ? <strong className="duration-label">({booking.duration})</strong> : null}
                   </div>
                   <div className="meta-item">
-                    <i className="lucide-wallet" />
+                    <i data-lucide="wallet" className="lucide-wallet" />
                     <strong>{booking.amount}</strong>
                     {booking.paymentMethod ? (
                       <span className="method-label"> / {booking.paymentMethod}</span>
@@ -81,7 +87,7 @@ export const BookingSection = () => {
                 <div className="action-group">
                   {booking.voucherUrl ? (
                     <button className="inline-btn primary pill-shape" type="button">
-                      <i className="lucide-download" />
+                      <i data-lucide="download" className="lucide-download" />
                       e-티켓 / 바우처
                     </button>
                   ) : (
@@ -101,7 +107,7 @@ export const BookingSection = () => {
           ))
         ) : (
           <div className="empty-state-placeholder soft-radius">
-            <i className="lucide-alert-circle" />
+            <i data-lucide="alert-circle" className="lucide-alert-circle" />
             <p>선택하신 카테고리에 해당하는 예약 내역이 없습니다.</p>
           </div>
         )}

@@ -1,7 +1,8 @@
 @charset "UTF-8";
 
 /* ==================== 헤더 버튼 스타일 (Minimalist) ==================== */
-.weather-header-btn {
+.weather-header-btn,
+.header-utility-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -20,37 +21,43 @@
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.weather-header-btn:hover {
+.weather-header-btn:hover,
+.header-utility-btn:hover {
     border-color: #FF5000;
     color: #FF5000;
 }
 
 /* 섹션 1(비주얼영역)에서의 테두리 대응 */
-.header.section1-header .weather-header-btn {
+.header.section1-header .weather-header-btn,
+.header.section1-header .header-utility-btn {
     border-color: rgba(255, 255, 255, 0.8);
     color: #ffffff;
 }
 
 /* 스크롤된 상태(흰배경)에서의 테두리 대응 */
-.header.scrolled .weather-header-btn {
+.header.scrolled .weather-header-btn,
+.header.scrolled .header-utility-btn {
     border-color: rgba(255, 255, 255, 0.5);
     color: #ffffff;
 }
 
 
-.weather-header-btn img {
+.weather-header-btn img,
+.header-utility-btn img {
     width: 24px;
     height: 24px;
     margin: -4px 0;
 }
 
 /* 섹션 이동에 따른 헤더 버튼 색상 대응 */
-.header.footer-header .weather-header-btn {
+.header.footer-header .weather-header-btn,
+.header.footer-header .header-utility-btn {
     border-color: #ddd;
     color: #333;
 }
 
-.header.footer-header .weather-header-btn:hover {
+.header.footer-header .weather-header-btn:hover,
+.header.footer-header .header-utility-btn:hover {
     border-color: #FF5000;
     color: #FF5000;
 }
@@ -398,4 +405,3 @@
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-

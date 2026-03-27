@@ -103,7 +103,7 @@ export const MainHeaderTemplate = ({ basePath }: MainHeaderTemplateProps) => {
           </div>
           <a
             href={resolveRouteHref("MYPAGE.DASHBOARD", { shell: "main" })}
-            className="weather-header-btn mypage-cta route-link"
+            className="header-utility-btn mypage-cta route-link"
             data-auth-entry="mypage"
             data-route="MYPAGE.DASHBOARD"
             data-route-params='{"shell":"main"}'

@@ -1,5 +1,92 @@
-import { createContext, Dispatch, ReactNode, useContext, useMemo, useReducer } from "react";
+import { createContext, Dispatch, ReactNode, useContext, useEffect, useMemo, useReducer } from "react";
 import { ShellAction, ShellState, WishlistItem } from "@runtime/types";
+
+type ShellLanguage = ShellState["language"];
+
+interface FrontI18nBridge {
+  getCurrentLang?: () => ShellLanguage;
+  resolveCurrentLang?: () => ShellLanguage;
+  subscribeLanguageChange?: (
+    listener: (payload: {
+      lang?: string;
+      previousLang?: string;
+      source?: string;
+      external?: boolean;
+    }) => void
+  ) => () => void;
+}
+
+const getFrontI18nBridge = (): FrontI18nBridge | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return (window as Window & { frontI18n?: FrontI18nBridge }).frontI18n ?? null;
+};
+
+const normalizeLanguage = (value: unknown): ShellLanguage | null => {
+  return value === "en" || value === "ko" ? value : null;
+};
+
+const readFallbackLanguage = (): ShellLanguage => {
+  try {
+    const raw = localStorage.getItem("jeju_fab_lang");
+    return raw === "en" ? "en" : "ko";
+  } catch (_error) {
+    return "ko";
+  }
+};
+
+const resolveLanguage = (): ShellLanguage => {
+  const bridge = getFrontI18nBridge();
+  const bridgeLanguage = normalizeLanguage(bridge?.getCurrentLang?.() ?? bridge?.resolveCurrentLang?.());
+
+  return bridgeLanguage ?? readFallbackLanguage();
+};
+
+const subscribeLanguage = (listener: (language: ShellLanguage) => void) => {
+  const bridge = getFrontI18nBridge();
+  if (bridge?.subscribeLanguageChange) {
+    return bridge.subscribeLanguageChange((payload) => {
+      const nextLanguage = normalizeLanguage(payload.lang);
+      if (nextLanguage) {
+        listener(nextLanguage);
+      }
+    });
+  }
+
+  if (typeof document === "undefined") {
+    return () => {};
+  }
+
+  const handleLanguageChange = (event: Event) => {
+    const customEvent = event as CustomEvent<unknown>;
+    const detail = customEvent.detail;
+    const nextLanguage = normalizeLanguage(
+      typeof detail === "string"
+        ? detail
+        : typeof detail === "object" && detail
+          ? (detail as { lang?: unknown; currentLang?: unknown; value?: unknown }).lang ??
+            (detail as { lang?: unknown; currentLang?: unknown; value?: unknown }).currentLang ??
+            (detail as { lang?: unknown; currentLang?: unknown; value?: unknown }).value
+          : null
+    );
+
+    if (nextLanguage) {
+      listener(nextLanguage);
+    }
+  };
+
+  document.addEventListener("languageChanged", handleLanguageChange);
+  document.addEventListener("fabLanguageChanged", handleLanguageChange);
+  document.addEventListener("front:i18n-change", handleLanguageChange);
+
+  return () => {
+    document.removeEventListener("languageChanged", handleLanguageChange);
+    document.removeEventListener("fabLanguageChanged", handleLanguageChange);
+    document.removeEventListener("front:i18n-change", handleLanguageChange);
+  };
+};
 
 const parseWishlist = (): WishlistItem[] => {
   try {
@@ -17,8 +104,7 @@ const parseCurrency = (): ShellState["currency"] => {
 };
 
 const parseLanguage = (): ShellState["language"] => {
-  const raw = localStorage.getItem("jeju_fab_lang");
-  return raw === "en" ? "en" : "ko";
+  return resolveLanguage();
 };
 
 const initialState = (): ShellState => ({
@@ -72,6 +158,21 @@ interface ShellStateProviderProps {
 
 export const ShellStateProvider = ({ children }: ShellStateProviderProps) => {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
+
+  useEffect(() => {
+    const unsubscribe = subscribeLanguage((language) => {
+      if (language !== state.language) {
+        dispatch({ type: "SET_LANGUAGE", payload: language });
+      }
+    });
+
+    const currentLanguage = resolveLanguage();
+    if (currentLanguage !== state.language) {
+      dispatch({ type: "SET_LANGUAGE", payload: currentLanguage });
+    }
+
+    return unsubscribe;
+  }, [dispatch, state.language]);
 
   const value = useMemo(
     () => ({

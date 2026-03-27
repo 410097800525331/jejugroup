@@ -47,6 +47,9 @@ export const HotelHeaderTemplate = ({ basePath }: HotelHeaderTemplateProps) => {
               <span data-auth-icon="member" hidden>
                 <HotelShellIcon name="user" className="hotel-shell-util-icon" />
               </span>
+              <span data-auth-icon="admin" hidden>
+                <HotelShellIcon name="shield-check" className="hotel-shell-util-icon" />
+              </span>
             </span>
             <span
               data-auth-label
@@ -54,6 +57,8 @@ export const HotelHeaderTemplate = ({ basePath }: HotelHeaderTemplateProps) => {
               data-auth-label-en="Guest Reservation Check"
               data-auth-member-label-ko="마이페이지"
               data-auth-member-label-en="My Page"
+              data-auth-admin-label-ko="관리자 페이지"
+              data-auth-admin-label-en="Admin Page"
             >
               비회원 예약확인
             </span>

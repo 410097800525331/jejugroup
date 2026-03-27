@@ -42,7 +42,13 @@ export const MainHeaderTemplate = ({ basePath }: MainHeaderTemplateProps) => {
           회원가입
         </a>
         <span className="util-divider">|</span>
-        <a href="#" className="util-link route-link" data-action="OPEN_RESERVATION_DRAWER" data-lang="reservationCheck">
+        <a
+          href="#"
+          className="util-link route-link"
+          data-action="OPEN_RESERVATION_DRAWER"
+          data-lang="reservationCheck"
+          id="indexReservationCheckBtn"
+        >
           예약 확인
         </a>
         <span className="util-divider">|</span>
@@ -95,6 +101,53 @@ export const MainHeaderTemplate = ({ basePath }: MainHeaderTemplateProps) => {
               <i className="fa-solid fa-spinner fa-spin" />
             </button>
           </div>
+          <a
+            href={resolveRouteHref("MYPAGE.DASHBOARD", { shell: "main" })}
+            className="header-utility-btn mypage-cta route-link"
+            data-auth-entry="mypage"
+            data-route="MYPAGE.DASHBOARD"
+            data-route-params='{"shell":"main"}'
+            data-auth-label-ko="마이페이지"
+            data-auth-label-en="My Page"
+            data-auth-admin-label-ko="관리자 페이지"
+            data-auth-admin-label-en="Admin Page"
+            aria-label="마이페이지"
+          >
+            <span className="mypage-cta-icon" aria-hidden="true">
+              <span data-auth-icon="member">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path
+                    d="M4 11.5 12 4l8 7.5v7.5a1 1 0 0 1-1 1h-4.5v-5.2H9.5V20H5a1 1 0 0 1-1-1z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M11 20v-4.2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              <span data-auth-icon="admin" hidden>
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path
+                    d="M12 3.75 5.5 6.5v5.05c0 4.05 2.7 7.76 6.5 8.7 3.8-.94 6.5-4.65 6.5-8.7V6.5z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="m9.8 12.25 1.55 1.55 3.4-3.4"
+                    fill="none"
+                    stroke="#fff"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </span>
+          </a>
         </div>
       </div>
     </header>

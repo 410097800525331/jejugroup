@@ -10,6 +10,10 @@ import type {
   TravelEvent,
   UserProfile,
 } from "./types";
+// @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
+import { API_BASE_URL } from "../../../core/modules/config/api_config.module.js";
+
+const ABSOLUTE_URL_PATTERN = /^[a-zA-Z][a-zA-Z\d+\-.]*:/;
 
 const FALLBACK_PROFILE: UserProfile = {
   email: "minji.hong@jejugroup.example",
@@ -119,6 +123,19 @@ const EMPTY_ITINERARY_FALLBACK: ItineraryItem = {
 
 const FALLBACK_LINKED_COMPANIONS: ItineraryCompanion[] = [];
 const FALLBACK_TRAVEL_EVENTS: TravelEvent[] = [];
+
+export const resolveAvatarUrl = (value: unknown): string | undefined => {
+  const text = toText(value);
+  if (!text) {
+    return undefined;
+  }
+
+  if (text.startsWith("data:") || text.startsWith("blob:") || text.startsWith("//") || ABSOLUTE_URL_PATTERN.test(text)) {
+    return text;
+  }
+
+  return `${API_BASE_URL}${text}`;
+};
 
 function buildItineraryFromTravelEvents({
   currentAccountId,
@@ -266,6 +283,7 @@ export const applyDashboardSnapshot = (snapshot: DashboardSnapshot) => {
 
 function cloneProfile(profile: UserProfile): UserProfile {
   return {
+    avatarUrl: profile.avatarUrl,
     ...profile,
     memberships: [...profile.memberships],
     passport: profile.passport ? { ...profile.passport } : undefined,
@@ -304,6 +322,7 @@ function cloneTravelEvents(events: TravelEvent[]): TravelEvent[] {
 }
 
 const syncProfile = (target: UserProfile, source: UserProfile) => {
+  target.avatarUrl = source.avatarUrl;
   target.email = source.email;
   target.memberships.splice(0, target.memberships.length, ...source.memberships);
   target.name = source.name;
@@ -395,6 +414,7 @@ const normalizeProfile = (source: Record<string, unknown>, fallback: UserProfile
     fallback.name;
 
   return {
+    avatarUrl: resolveAvatarUrl(source.avatarUrl),
     email: toText(source.email) ?? deriveSessionEmail(source, id, displayName) ?? fallback.email,
     id: id ?? fallback.id,
     memberships,
@@ -601,6 +621,7 @@ const slugifyEmailLocalPart = (value: string): string | undefined => {
 
 const hasSessionPayload = (source: Record<string, unknown>): boolean => {
   const meaningfulKeys = [
+    "avatarUrl",
     "id",
     "memberId",
     "userId",

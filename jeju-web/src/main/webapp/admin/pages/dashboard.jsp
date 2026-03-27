@@ -195,27 +195,7 @@
                             <th>상태</th>
                         </tr>
                     </thead>
-                    <tbody id="admin-recent-activity">
-                        <!-- Example Static Rows -->
-                        <tr>
-                            <td><span class="admin-badge success">RESERVATION</span></td>
-                            <td>신라호텔 2박 예약 완료 (결제 완료)</td>
-                            <td>10분 전</td>
-                            <td><span class="admin-badge success">승인</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="admin-badge danger">CANCEL</span></td>
-                            <td>대한항공 편도 취소 처리</td>
-                            <td>25분 전</td>
-                            <td><span class="admin-badge danger">환불</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="admin-badge warning">INQUIRY</span></td>
-                            <td>결제 오류 문의 (VIP 고객)</td>
-                            <td>1시간 전</td>
-                            <td><span class="admin-badge warning">대기중</span></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="admin-recent-activity"></tbody>
                 </table>
             </div>
         </main>

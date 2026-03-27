@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>숙소/상품 관리 - 제주여행 관리자</title>
+    <title>상품 관리 허브 - 제주여행 관리자</title>
 
     <script src="../js/auth_guard.js"></script>
 
@@ -131,13 +131,15 @@
 
         <main class="admin-main">
             <div class="admin-page-header">
-                <h1 class="admin-page-title">재고 및 상품 관리</h1>
+                <h1 class="admin-page-title">상품 관리 허브</h1>
                 <div style="display: flex; gap: var(--admin-space-md); align-items: center;">
                     <div class="admin-segment-control" id="admin-domain-filters">
-                        <button class="segment-btn active" data-domain="all">전체 (통합)</button>
-                        <button class="segment-btn" data-domain="flight">항공편 상세</button>
-                        <button class="segment-btn" data-domain="hotel">숙박 상세</button>
-                        <button class="segment-btn" data-domain="rentcar">렌터카 상세</button>
+                        <button class="segment-btn active" data-domain="stay">호텔</button>
+                        <button class="segment-btn" data-domain="flight">항공</button>
+                        <button class="segment-btn" data-domain="rentcar">렌터카</button>
+                        <button class="segment-btn" data-domain="voucher">바우처</button>
+                    <button class="segment-btn" data-domain="usim">유심</button>
+                    <button class="segment-btn" data-domain="special">특가</button>
                     </div>
                 </div>
             </div>
@@ -150,7 +152,7 @@
                     <button class="admin-btn admin-btn-outline">검색</button>
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <button class="admin-btn admin-btn-outline">재고 일괄 수정</button>
+                    <button class="admin-btn admin-btn-outline">재고 동기화</button>
                     <button class="admin-btn admin-btn-primary">신규 상품 등록</button>
                 </div>
             </div>
@@ -160,15 +162,15 @@
                     <thead>
                         <tr>
                             <th>상품 코드</th>
-                            <th>분류</th>
-                            <th>상품명 (옵션)</th>
-                            <th>단가 (기준 요금)</th>
-                            <th>잔여 재고/좌석</th>
+                            <th>도메인</th>
+                            <th>상품명 / 옵션</th>
+                            <th>재고 / 수량</th>
+                            <th>기준가</th>
                             <th>상태</th>
                             <th>관리</th>
                         </tr>
                     </thead>
-                    <tbody id="inventory-table-body">
+                    <tbody id="lodging-table-body">
                     </tbody>
                 </table>
             </div>
@@ -178,88 +180,6 @@
                 <button class="admin-btn admin-btn-primary">1</button>
                 <button class="admin-btn admin-btn-outline">&gt;</button>
             </div>
-
-            <section class="admin-card hotel-offer-admin-section">
-                <div class="admin-card-header hotel-offer-section-header">
-                    <div>
-                        <h2 class="hotel-offer-section-title">호텔 리스트 혜택/가격 노출 관리</h2>
-                        <p class="hotel-offer-section-copy">
-                            호텔 카드 이미지 위 혜택 문구와 카드 가격을 여기서 수정한다.
-                            저장값은 현재 관리자 브라우저에 보관되고 호텔 리스트에서 바로 반영된다.
-                        </p>
-                    </div>
-                    <span class="admin-badge neutral">호텔 리스트 연동</span>
-                </div>
-
-                <div class="hotel-offer-toolbar">
-                    <input class="hotel-offer-search-input" id="hotel-offer-search-input" type="search"
-                        placeholder="호텔명 또는 호텔 ID 검색">
-                    <button class="admin-btn admin-btn-outline" id="hotel-offer-reset-all-btn" type="button">전체 초기화</button>
-                </div>
-
-                <div class="hotel-offer-admin-grid">
-                    <div class="admin-table-container">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>호텔 ID</th>
-                                    <th>호텔명</th>
-                                    <th>혜택 문구</th>
-                                    <th>정상가</th>
-                                    <th>판매가</th>
-                                    <th>상태</th>
-                                    <th>관리</th>
-                                </tr>
-                            </thead>
-                            <tbody id="hotel-offer-table-body">
-                                <tr>
-                                    <td colspan="7" style="text-align:center; padding: 40px;">호텔 리스트 오퍼 데이터를 불러오는 중...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <aside class="hotel-offer-editor-card">
-                        <div class="hotel-offer-editor-head">
-                            <h3 class="hotel-offer-editor-title">선택한 호텔 수정</h3>
-                            <p class="hotel-offer-editor-copy" id="hotel-offer-editor-copy">왼쪽 목록에서 수정할 호텔을 골라라.</p>
-                        </div>
-
-                        <form class="hotel-offer-form" id="hotel-offer-form">
-                            <label class="hotel-offer-field">
-                                <span>호텔명</span>
-                                <input id="hotel-offer-title" readonly type="text">
-                            </label>
-
-                            <label class="hotel-offer-field">
-                                <span>혜택 문구</span>
-                                <input id="hotel-offer-badge" maxlength="40" placeholder="예: 무료 업그레이드" type="text">
-                            </label>
-
-                            <label class="hotel-offer-field">
-                                <span>정상가</span>
-                                <input id="hotel-offer-original-price" inputmode="numeric" min="0" placeholder="250000" step="1000"
-                                    type="number">
-                            </label>
-
-                            <label class="hotel-offer-field">
-                                <span>판매가</span>
-                                <input id="hotel-offer-current-price" inputmode="numeric" min="0" placeholder="189000" step="1000"
-                                    type="number">
-                            </label>
-
-                            <div class="hotel-offer-preview" id="hotel-offer-preview">
-                                아직 선택된 호텔이 없다.
-                            </div>
-
-                            <div class="hotel-offer-form-actions">
-                                <button class="admin-btn admin-btn-primary" type="submit">저장</button>
-                                <button class="admin-btn admin-btn-outline" id="hotel-offer-reset-btn" type="button">선택 초기화</button>
-                            </div>
-                        </form>
-                    </aside>
-                </div>
-            </section>
         </main>
     </div>
 

@@ -3,6 +3,66 @@
  * hotel.js 기반, 장기 체류 로직을 위해 확장됨
  */
 
+if (window.gsap) {
+    document.documentElement.classList.add("hero-reveal-pending");
+}
+
+let heroRevealFallbackTimeoutId = null;
+const scheduleHeroRevealFallback = () => {
+    if (heroRevealFallbackTimeoutId !== null) {
+        window.clearTimeout(heroRevealFallbackTimeoutId);
+    }
+
+    heroRevealFallbackTimeoutId = window.setTimeout(() => {
+        document.documentElement.classList.remove("hero-reveal-pending");
+        heroRevealFallbackTimeoutId = null;
+    }, 4000);
+};
+
+scheduleHeroRevealFallback();
+
+const HERO_SEARCH_WIDGET_STATE_ATTR = "data-search-widget-state";
+const HERO_SEARCH_WIDGET_PENDING = "pending";
+const HERO_SEARCH_WIDGET_READY = "ready";
+
+const initHeroSearchWidgetStability = (hostId) => {
+    const host = document.getElementById(hostId);
+    if (!host) {
+        return;
+    }
+
+    let resolved = false;
+
+    const markReady = () => {
+        if (resolved) {
+            return;
+        }
+
+        resolved = true;
+        host.setAttribute(HERO_SEARCH_WIDGET_STATE_ATTR, HERO_SEARCH_WIDGET_READY);
+        host.setAttribute("aria-busy", "false");
+    };
+
+    host.setAttribute(HERO_SEARCH_WIDGET_STATE_ATTR, HERO_SEARCH_WIDGET_PENDING);
+    host.setAttribute("aria-busy", "true");
+
+    if (host.childElementCount > 0) {
+        markReady();
+        return;
+    }
+
+    const observer = new MutationObserver(() => {
+        if (host.childElementCount > 0) {
+            markReady();
+            observer.disconnect();
+        }
+    });
+
+    observer.observe(host, { childList: true });
+};
+
+initHeroSearchWidgetStability("life-search-widget-root");
+
 document.addEventListener('DOMContentLoaded', function() {
     // 아이콘 초기화
     if (window.lucide) {

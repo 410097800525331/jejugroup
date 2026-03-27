@@ -31,7 +31,7 @@
         </div>
         <div class="form_row form_input">
           <label><b>탑승일자</b></label>
-          <input type="text" placeholder="YYYY.MM.DD">
+          <input type="text" id="flight_date" placeholder="YYYY.MM.DD">
         </div>
         <div class="passenger_box">
           <h4>탑승객 정보 입력</h4>

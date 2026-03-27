@@ -7,6 +7,7 @@ public record MyPageDashboardView(
     String userName,
     String userId,
     String userRole,
+    String avatarUrl,
     String email,
     String tier,
     String redirectLoginPath,
