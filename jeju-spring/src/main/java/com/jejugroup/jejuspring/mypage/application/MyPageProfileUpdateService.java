@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Types;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,8 @@ public class MyPageProfileUpdateService {
     private static final Pattern NAME_PATTERN = Pattern.compile("^[^\\p{Cntrl}<>]{1,100}$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9+()\\-]{7,30}$");
+    private static final int NICKNAME_MIN_LENGTH = 2;
+    private static final int BIO_MAX_LENGTH = 20;
 
     private final AppProperties appProperties;
 
@@ -38,7 +41,7 @@ public class MyPageProfileUpdateService {
                 ensureUserExists(connection, normalizedUserId);
                 ensureNoDuplicateContact(connection, normalizedUserId, profile.email(), profile.phone());
                 updateUsersTable(connection, normalizedUserId, profile);
-                upsertUserProfile(connection, normalizedUserId, profile.name());
+                upsertUserProfile(connection, normalizedUserId, profile.name(), profile.nickname(), profile.bio());
                 connection.commit();
             } catch (SQLException exception) {
                 rollbackQuietly(connection);
@@ -117,17 +120,31 @@ public class MyPageProfileUpdateService {
         }
     }
 
-    private void upsertUserProfile(Connection connection, String userId, String displayName) throws SQLException {
+    private void upsertUserProfile(
+        Connection connection,
+        String userId,
+        String displayName,
+        String nickname,
+        String bio
+    ) throws SQLException {
         String query = """
-            INSERT INTO user_profiles (user_id, display_name)
-            VALUES (?, ?)
+            INSERT INTO user_profiles (user_id, display_name, nickname, bio)
+            VALUES (?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
-                display_name = VALUES(display_name)
+                display_name = VALUES(display_name),
+                nickname = VALUES(nickname),
+                bio = VALUES(bio)
             """;
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, userId);
             statement.setString(2, displayName);
+            if (StringUtils.hasText(nickname)) {
+                statement.setString(3, nickname);
+            } else {
+                statement.setNull(3, Types.VARCHAR);
+            }
+            statement.setString(4, bio);
             statement.executeUpdate();
         }
     }
@@ -138,14 +155,20 @@ public class MyPageProfileUpdateService {
         }
 
         String name = normalizeName(request.name());
+        String nickname = normalizeNickname(request.nickname());
         String email = normalizeEmail(request.email());
         String phone = normalizePhone(request.phone());
+        String bio = normalizeBio(request.bio());
 
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("이름을 입력해주세요.");
         }
         if (!NAME_PATTERN.matcher(name).matches()) {
             throw new IllegalArgumentException("이름 형식이 올바르지 않습니다.");
+        }
+
+        if (StringUtils.hasText(nickname) && characterLength(nickname) < NICKNAME_MIN_LENGTH) {
+            throw new IllegalArgumentException("닉네임은 2자 이상부터 가능합니다");
         }
 
         if (!StringUtils.hasText(email)) {
@@ -162,7 +185,11 @@ public class MyPageProfileUpdateService {
             throw new IllegalArgumentException("전화번호 형식이 올바르지 않습니다.");
         }
 
-        return new NormalizedProfile(name, email, phone);
+        if (characterLength(bio) > BIO_MAX_LENGTH) {
+            throw new IllegalArgumentException("소개는 20자 이내로 입력해주세요.");
+        }
+
+        return new NormalizedProfile(name, nickname, email, phone, bio);
     }
 
     private String normalizeUserId(String userId) {
@@ -186,11 +213,32 @@ public class MyPageProfileUpdateService {
         return value.trim();
     }
 
+    private String normalizeNickname(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.trim();
+    }
+
     private String normalizePhone(String value) {
         if (value == null) {
             return "";
         }
         return value.trim().replaceAll("\\s+", "");
+    }
+
+    private String normalizeBio(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.trim();
+    }
+
+    private int characterLength(String value) {
+        if (value == null || value.isEmpty()) {
+            return 0;
+        }
+        return value.codePointCount(0, value.length());
     }
 
     private boolean isDuplicateConstraintViolation(SQLException exception) {
@@ -233,8 +281,10 @@ public class MyPageProfileUpdateService {
 
     private record NormalizedProfile(
         String name,
+        String nickname,
         String email,
-        String phone
+        String phone,
+        String bio
     ) {
     }
 

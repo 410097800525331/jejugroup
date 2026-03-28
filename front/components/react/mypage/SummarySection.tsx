@@ -106,6 +106,7 @@ export const SummarySection = () => {
   const membershipDisplaySource = profile.tier ?? membershipLabel;
   const membershipTone = getMembershipTone(membershipDisplaySource);
   const membershipDisplayLabel = formatMembershipLabel(membershipDisplaySource);
+  const profileDisplayName = profile.nickname?.trim() || profile.name.trim();
   const avatarUrl =
     resolveAvatarUrl(profile.avatarUrl) ??
     `https://api.dicebear.com/7.x/notionists/svg?seed=${profile.name}&backgroundColor=f8f9fa`;
@@ -135,9 +136,9 @@ export const SummarySection = () => {
           <div className="profile-right-area">
             <div className="profile-info">
               <h1 className="profile-name">
-                <strong className="highlight">{profile.name}</strong> 님 어서오세요!
+                <strong className="highlight">{profileDisplayName}</strong> 님 어서오세요!
               </h1>
-              <p className="profile-welcome-msg">제주에서 보냈던 소중한 시간들을 다시 이어보세요.</p>
+              <p className="profile-welcome-msg">{profile.bio?.trim() ?? ""}</p>
               
               <div className="profile-quick-nav">
                 <button className="nav-btn pill-shape" type="button" onClick={() => scrollToSectionTitle(".layer-full-management")}>

@@ -117,11 +117,13 @@ public class MyPageDashboardRepository {
     public record MyPageProfileSnapshot(
         String id,
         String name,
+        String nickname,
         String avatarUrl,
         String email,
         String phone,
         String role,
-        String tier
+        String tier,
+        String bio
     ) {
     }
 
@@ -174,10 +176,12 @@ public class MyPageDashboardRepository {
             SELECT
                 u.id,
                 COALESCE(NULLIF(TRIM(up.display_name), ''), u.name) AS display_name,
+                NULLIF(TRIM(up.nickname), '') AS nickname,
                 up.avatar_url,
                 u.email,
                 u.phone,
-                u.role
+                u.role,
+                COALESCE(NULLIF(TRIM(up.bio), ''), '') AS bio
             FROM users u
             LEFT JOIN user_profiles up ON up.user_id = u.id
             WHERE u.id = ?
@@ -194,11 +198,13 @@ public class MyPageDashboardRepository {
                 return new MyPageProfileSnapshot(
                     nullToEmpty(resultSet.getString("id")),
                     nullToEmpty(resultSet.getString("display_name")),
+                    resultSet.getString("nickname"),
                     nullToEmpty(resultSet.getString("avatar_url")),
                     nullToEmpty(resultSet.getString("email")),
                     nullToEmpty(resultSet.getString("phone")),
                     nullToEmpty(resultSet.getString("role")),
-                    loadTierLabel(connection, userId)
+                    loadTierLabel(connection, userId),
+                    nullToEmpty(resultSet.getString("bio"))
                 );
             }
         }
@@ -384,8 +390,8 @@ public class MyPageDashboardRepository {
         int stayTripCount = loadUpcomingTripCount(connection, userId, "stay");
 
         return List.of(
-            new MyPageStatView("보유 포인트", "wallet", formatPointBalance(pointBalance)),
-            new MyPageStatView("사용 가능한 쿠폰", "wallet", couponCount + "장"),
+            new MyPageStatView("보유 포인트", "point", formatPointBalance(pointBalance)),
+            new MyPageStatView("사용 가능한 쿠폰", "coupon", couponCount + "장"),
             new MyPageStatView("예정된 항공 일정", "air", airTripCount + "건"),
             new MyPageStatView("예정된 숙소 일정", "stay", stayTripCount + "건")
         );
@@ -868,9 +874,11 @@ public class MyPageDashboardRepository {
             sessionUser.id(),
             sessionUser.name(),
             "",
+            "",
             sessionUser.id() + "@jejugroup.example",
             "",
             sessionUser.role(),
+            "",
             ""
         );
 
@@ -879,8 +887,8 @@ public class MyPageDashboardRepository {
             List.of(),
             List.of(),
             List.of(
-                new MyPageStatView("보유 포인트", "wallet", "0P"),
-                new MyPageStatView("사용 가능한 쿠폰", "wallet", "0장"),
+                new MyPageStatView("보유 포인트", "point", "0P"),
+                new MyPageStatView("사용 가능한 쿠폰", "coupon", "0장"),
                 new MyPageStatView("예정된 항공 일정", "air", "0건"),
                 new MyPageStatView("예정된 숙소 일정", "stay", "0건")
             ),

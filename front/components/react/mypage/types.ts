@@ -123,7 +123,9 @@ export interface UserProfile {
   memberships: string[];
   id?: string;
   avatarUrl?: string;
+  bio?: string;
   name: string;
+  nickname?: string;
   passport?: PassportInfo;
   role?: string;
   phone: string;
@@ -165,6 +167,7 @@ export interface DashboardPassportInput {
 export interface DashboardSessionInput {
   bookings?: DashboardBookingInput[];
   data?: unknown;
+  bio?: string;
   email?: string;
   id?: string;
   inquiries?: DashboardSupportInput[] | null;
@@ -173,6 +176,7 @@ export interface DashboardSessionInput {
   member?: unknown;
   memberships?: Array<string | null | undefined>;
   name?: string;
+  nickname?: string;
   passport?: DashboardPassportInput | null;
   phone?: string;
   profile?: unknown;
@@ -183,6 +187,7 @@ export interface DashboardSessionInput {
   supportItems?: DashboardSupportInput[] | null;
   tier?: string;
   travelEvents?: DashboardTravelEventInput[] | null;
+  intro?: string;
   user?: unknown;
 }
 

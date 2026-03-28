@@ -19,10 +19,12 @@ public class MyPageProfileQueryService {
             SELECT
                 u.id,
                 COALESCE(NULLIF(TRIM(up.display_name), ''), u.name) AS display_name,
+                NULLIF(TRIM(up.nickname), '') AS nickname,
                 up.avatar_url,
                 u.email,
                 u.phone,
-                u.role
+                u.role,
+                COALESCE(NULLIF(TRIM(up.bio), ''), '') AS bio
             FROM users u
             LEFT JOIN user_profiles up ON up.user_id = u.id
             WHERE u.id = ?
@@ -39,11 +41,13 @@ public class MyPageProfileQueryService {
                 return new MyPageDashboardRepository.MyPageProfileSnapshot(
                     nullToEmpty(resultSet.getString("id")),
                     nullToEmpty(resultSet.getString("display_name")),
+                    resultSet.getString("nickname"),
                     nullToEmpty(resultSet.getString("avatar_url")),
                     nullToEmpty(resultSet.getString("email")),
                     nullToEmpty(resultSet.getString("phone")),
                     nullToEmpty(resultSet.getString("role")),
-                    nullToEmpty(tierLabel)
+                    nullToEmpty(tierLabel),
+                    nullToEmpty(resultSet.getString("bio"))
                 );
             }
         }

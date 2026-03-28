@@ -2,38 +2,38 @@
 
 ## Current Task
 
-- task: `Raise Spring multipart limits to match the avatar upload 5MB contract`
+- task: `Restore point and coupon stat tones so the hero cards regain their colored icon boxes`
 - phase: `implementation`
-- scope: `jeju-spring/src/main/resources/application.yml, STATE.md`
-- verification_target: `POST /api/mypage/avatar no longer fails at the Spring multipart layer for payloads within the intended 5MB limit`
+- scope: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageStatsQueryService.java, STATE.md, MULTI_AGENT_LOG.md`
+- verification_target: `보유 포인트 and 사용 가능한 쿠폰 stats are emitted with point/coupon tones again so the existing hero card icon color+border styles apply`
 
 ## Route
 
 - route: `Route A`
-- reason: `The user reported a concrete 413 multipart limit mismatch, and the fix is a tight one-file Spring config hotfix that stays within a single write lane.`
+- reason: `The user reported a concrete visual regression caused by the stats tone payload, and the fix is a single-file backend hotfix in MyPageStatsQueryService that restores point/coupon tones without widening scope.`
 
 ## Writer Slot
 
 - owner: `main`
 - write_sets:
-  - `main`: `STATE.md, jeju-spring/src/main/resources/application.yml`
-- note: `Keep the fix to Spring multipart sizing only and avoid unrelated source or mirror edits in this slice.`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageStatsQueryService.java`
+- note: `Keep the fix tightly scoped to the stats tone emitter so the existing point/coupon hero styles start applying again without touching frontend CSS or other mypage query paths.`
 
 ## Contract Freeze
 
 - contract_freeze: `frozen`
 - status: `frozen`
 - path: `in-state`
-- revision: `avatar-multipart-limit-hotfix-v1`
-- note: `Set Spring servlet multipart max-file-size and max-request-size to 5MB so the backend transport limit matches the existing avatar validation contract without changing the frontend editor or upload API shape.`
+- revision: `mypage-stat-tone-restore-v1`
+- note: `Restore the first two mypage stat items to tone point/coupon instead of wallet so the existing icon background, color, and border styles come back without changing the card structure or label/value text.`
 
 ## Reviewer
 
-- reviewer: `n/a`
+- reviewer: `assigned`
 - reviewer_target: `n/a`
-- reviewer_focus: `Route A self-review only; confirm the new multipart limits match the intended 5MB avatar policy and do not change unrelated runtime behavior.`
+- reviewer_focus: `Route A self-review only; confirm the emitted stat tones are point/coupon again and the backend still compiles.`
 
 ## Last Update
 
-- timestamp: `2026-03-28 05:14:00 +09:00`
-- note: `Reclassified from the completed sync slice to a one-file Route A Spring multipart limit hotfix for avatar uploads.`
+- timestamp: `2026-03-28 12:31:30 +09:00`
+- note: `Reclassified to a single-file Route A backend hotfix after tracing the missing icon color/border styling to wallet tones still emitted by MyPageStatsQueryService.`

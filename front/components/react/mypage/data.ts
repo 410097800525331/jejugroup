@@ -20,6 +20,7 @@ const FALLBACK_PROFILE: UserProfile = {
   id: "hong_minji",
   memberships: ["GOLD"],
   name: "홍민지",
+  nickname: undefined,
   passport: {
     expiryDate: "2032.12.31",
     issuingCountry: "Republic of Korea",
@@ -323,9 +324,11 @@ function cloneTravelEvents(events: TravelEvent[]): TravelEvent[] {
 
 const syncProfile = (target: UserProfile, source: UserProfile) => {
   target.avatarUrl = source.avatarUrl;
+  target.bio = source.bio;
   target.email = source.email;
   target.memberships.splice(0, target.memberships.length, ...source.memberships);
   target.name = source.name;
+  target.nickname = source.nickname;
   target.phone = source.phone;
   target.tier = source.tier;
   target.role = source.role;
@@ -412,13 +415,29 @@ const normalizeProfile = (source: Record<string, unknown>, fallback: UserProfile
     toText(source.memberId) ??
     toText(source.userId) ??
     fallback.name;
+  const nickname = toText(source.nickname);
+  const bio = normalizeBio(
+    readNestedText(source, "bio") ??
+      readNestedText(source, "intro") ??
+      readNestedText(source.profile, "bio") ??
+      readNestedText(source.profile, "intro") ??
+      readNestedText(source.user, "bio") ??
+      readNestedText(source.user, "intro") ??
+      readNestedText(source.member, "bio") ??
+      readNestedText(source.member, "intro") ??
+      readNestedText(source.data, "bio") ??
+      readNestedText(source.data, "intro") ??
+      fallback.bio,
+  );
 
   return {
     avatarUrl: resolveAvatarUrl(source.avatarUrl),
+    bio,
     email: toText(source.email) ?? deriveSessionEmail(source, id, displayName) ?? fallback.email,
     id: id ?? fallback.id,
     memberships,
     name: displayName,
+    nickname,
     passport,
     phone: toText(source.phone) ?? toText(source.mobile) ?? "미등록",
     role: toText(source.role),
@@ -621,18 +640,21 @@ const slugifyEmailLocalPart = (value: string): string | undefined => {
 
 const hasSessionPayload = (source: Record<string, unknown>): boolean => {
   const meaningfulKeys = [
+    "bio",
     "avatarUrl",
     "id",
     "memberId",
     "userId",
     "email",
     "name",
+    "nickname",
     "phone",
     "mobile",
     "tier",
     "role",
     "memberships",
     "passport",
+    "intro",
     "bookings",
     "stats",
     "profile",
@@ -851,6 +873,16 @@ const toText = (value: unknown): string | undefined => {
 
   return undefined;
 };
+
+const readNestedText = (value: unknown, key: string): string | undefined => {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+
+  return toText(value[key]);
+};
+
+const normalizeBio = (value: string | undefined): string => Array.from((value ?? "").trim()).slice(0, 20).join("");
 
 const isBookingType = (value: unknown): value is BookingType =>
   value === "air" || value === "rent" || value === "stay" || value === "voucher";

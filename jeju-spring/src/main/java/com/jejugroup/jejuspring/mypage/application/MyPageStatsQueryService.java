@@ -25,8 +25,8 @@ public class MyPageStatsQueryService {
         int stayTripCount = loadUpcomingTripCount(connection, userId, "stay");
 
         return List.of(
-            new MyPageStatView("보유 포인트", "wallet", formatPointBalance(pointBalance)),
-            new MyPageStatView("사용 가능한 쿠폰", "wallet", couponCount + "장"),
+            new MyPageStatView("보유 포인트", "point", formatPointBalance(pointBalance)),
+            new MyPageStatView("사용 가능한 쿠폰", "coupon", couponCount + "장"),
             new MyPageStatView("예정된 항공 일정", "air", airTripCount + "건"),
             new MyPageStatView("예정된 숙소 일정", "stay", stayTripCount + "건")
         );

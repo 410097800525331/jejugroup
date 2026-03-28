@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-type EditableProfile = Pick<UserProfile, "email" | "name" | "phone">;
+type EditableProfile = Pick<UserProfile, "bio" | "email" | "name" | "phone"> & { nickname: string };
 type DashboardStateSlice = {
   profile?: UserProfile;
   stats?: typeof STATS;
@@ -52,6 +52,7 @@ const AVATAR_FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 const AVATAR_RENDER_SIZE = 512;
 const AVATAR_STAGE_INSET = 16;
 const AVATAR_MAX_ZOOM = 6;
+const BIO_MAX_LENGTH = 20;
 const AVATAR_PREVIEW_FRAME_STYLE = {
   alignItems: "center",
   borderRadius: "50%",
@@ -76,20 +77,27 @@ const AVATAR_PREVIEW_INITIAL_STYLE = {
   justifyContent: "center",
   width: "100%",
 };
+const clampBioText = (value: string | undefined) => Array.from((value ?? "").trim()).slice(0, BIO_MAX_LENGTH).join("");
 const createEditableProfile = (profile: UserProfile): EditableProfile => ({
+  bio: profile.bio ?? "",
   email: profile.email,
   name: profile.name,
+  nickname: profile.nickname ?? "",
   phone: profile.phone,
 });
 
 const normalizeProfile = (profile: EditableProfile): EditableProfile => ({
+  bio: clampBioText(profile.bio),
   email: profile.email.trim(),
   name: profile.name.trim(),
+  nickname: profile.nickname.trim(),
   phone: profile.phone.trim(),
 });
 
 const isEditableProfileValid = (profile: EditableProfile) =>
-  profile.name.trim().length > 0 && profile.email.trim().includes("@") && profile.phone.trim().length > 0;
+  (profile.nickname.trim().length === 0 || profile.nickname.trim().length >= 2) &&
+  profile.email.trim().includes("@") &&
+  profile.phone.trim().length > 0;
 
 const toApiUrl = (path: string) => `${API_BASE_URL}${path}`;
 
@@ -284,7 +292,27 @@ export const AccountBenefitSection = () => {
   const avatarStageRef = useRef<HTMLDivElement | null>(null);
   const avatarDragRef = useRef<AvatarDragState | null>(null);
   const avatarPreviewSourceUrl = resolveAvatarUrl(avatarPreviewUrl) ?? dashboardProfile.avatarUrl ?? null;
-  const profileBadgeInitial = (draftProfile.name.trim().charAt(0) || PROFILE.name.trim().charAt(0) || "J").toUpperCase();
+  const profileBadgeInitial = (
+    draftProfile.nickname.trim().charAt(0) ||
+    draftProfile.name.trim().charAt(0) ||
+    profile.nickname?.trim().charAt(0) ||
+    profile.name.trim().charAt(0) ||
+    PROFILE.nickname?.trim().charAt(0) ||
+    PROFILE.name.trim().charAt(0) ||
+    "J"
+  ).toUpperCase();
+  const profilePreviewName =
+    draftProfile.nickname.trim() ||
+    draftProfile.name.trim() ||
+    profile.nickname?.trim() ||
+    profile.name.trim() ||
+    PROFILE.nickname?.trim() ||
+    PROFILE.name.trim();
+  const profileBioText = clampBioText(draftProfile.bio) || clampBioText(profile.bio);
+  const nicknameWarning =
+    draftProfile.nickname.trim().length > 0 && draftProfile.nickname.trim().length < 2
+      ? "닉네임은 2자 이상부터 가능합니다"
+      : null;
 
   useEffect(() => {
     if (isEditModalOpen && window.lucide) {
@@ -601,7 +629,7 @@ export const AccountBenefitSection = () => {
   const handleSaveProfile = async () => {
     const nextProfile = normalizeProfile(draftProfile);
     if (!isEditableProfileValid(nextProfile)) {
-      setSaveError("이름, 이메일, 휴대전화 정보를 확인해 주세요.");
+      setSaveError(nicknameWarning ?? "닉네임, 이메일, 휴대전화 정보를 확인해 주세요.");
       return;
     }
 
@@ -729,8 +757,10 @@ export const AccountBenefitSection = () => {
             </div>
             <div className="box-body">
               <div className="info-row">
-                <span className="label">이름</span>
-                <strong className="value">{profile.name}</strong>
+                <span className="label">닉네임</span>
+                <strong className="value" style={profile.nickname ? undefined : { color: "#9ca3af" }}>
+                  {profile.nickname?.trim() ? profile.nickname : "설정하지 않음"}
+                </strong>
               </div>
               <div className="info-row">
                 <span className="label">이메일</span>
@@ -802,31 +832,36 @@ export const AccountBenefitSection = () => {
                   </div>
                 </header>
 
-                <div
-                  className="profile-link-preview soft-radius"
-                  role="button"
-                  tabIndex={0}
-                  onClick={openAvatarEditor}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      openAvatarEditor();
-                    }
-                  }}
-                >
-                  <div className="companion-avatar soft-radius is-linked" aria-hidden="true" style={{ position: "relative" }}>
-                    <span style={AVATAR_PREVIEW_FRAME_STYLE}>
-                      {avatarPreviewSourceUrl ? (
-                        <img alt="" className="profile-link-preview-image" src={avatarPreviewSourceUrl} style={AVATAR_PREVIEW_IMAGE_STYLE} />
-                      ) : (
-                        <span style={AVATAR_PREVIEW_INITIAL_STYLE}>{profileBadgeInitial}</span>
-                      )}
-                    </span>
-                    <i data-lucide="link" className="lucide-link linked-indicator" />
-                  </div>
-                  <div className="profile-link-copy">
-                    <strong>공용 프로필 미리보기</strong>
-                    <span>눌러서 이미지 변경</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <span style={{ color: "#6b7280", fontSize: "13px", fontWeight: 700, lineHeight: 1.4 }}>
+                    공용 프로필 미리보기 - 눌러서 이미지 변경
+                  </span>
+                  <div
+                    className="profile-link-preview soft-radius"
+                    role="button"
+                    tabIndex={0}
+                    onClick={openAvatarEditor}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        openAvatarEditor();
+                      }
+                    }}
+                  >
+                    <div className="companion-avatar soft-radius is-linked" aria-hidden="true" style={{ position: "relative" }}>
+                      <span style={AVATAR_PREVIEW_FRAME_STYLE}>
+                        {avatarPreviewSourceUrl ? (
+                          <img alt="" className="profile-link-preview-image" src={avatarPreviewSourceUrl} style={AVATAR_PREVIEW_IMAGE_STYLE} />
+                        ) : (
+                          <span style={AVATAR_PREVIEW_INITIAL_STYLE}>{profileBadgeInitial}</span>
+                        )}
+                      </span>
+                      <i data-lucide="link" className="lucide-link linked-indicator" />
+                    </div>
+                    <div className="profile-link-copy">
+                      <strong>{profilePreviewName}</strong>
+                      <span>{profileBioText}</span>
+                    </div>
                   </div>
                 </div>
 
@@ -838,16 +873,43 @@ export const AccountBenefitSection = () => {
                     className="info-row"
                     style={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: "10px", padding: 0, borderBottom: "none" }}
                   >
-                    <span className="label" style={{ fontSize: "15px" }}>이름</span>
+                    <span className="label" style={{ fontSize: "15px" }}>한 줄 소개</span>
+                    <div style={{ width: "100%" }}>
+                      <input
+                        className="id-input"
+                        maxLength={BIO_MAX_LENGTH}
+                        type="text"
+                        value={draftProfile.bio}
+                        onChange={(event) =>
+                          setDraftProfile((current) => ({
+                            ...current,
+                            bio: clampBioText(event.target.value),
+                          }))
+                        }
+                        placeholder="한 줄 소개를 입력해 주세요"
+                        style={{ width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="info-row"
+                    style={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: "10px", padding: 0, borderBottom: "none" }}
+                  >
+                    <span className="label" style={{ fontSize: "15px" }}>닉네임</span>
                     <div style={{ width: "100%" }}>
                       <input
                         className="id-input"
                         type="text"
-                        value={draftProfile.name}
-                        onChange={(event) => setDraftProfile((current) => ({ ...current, name: event.target.value }))}
+                        value={draftProfile.nickname}
+                        onChange={(event) => setDraftProfile((current) => ({ ...current, nickname: event.target.value }))}
                         style={{ width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }}
                       />
                     </div>
+                    {nicknameWarning ? (
+                      <div style={{ color: "#d92d20", fontSize: "13px", fontWeight: 600, lineHeight: 1.4 }}>
+                        {nicknameWarning}
+                      </div>
+                    ) : null}
                   </div>
                   <div
                     className="info-row"

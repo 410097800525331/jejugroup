@@ -2280,3 +2280,68 @@
   - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
   - `git diff --check -- front/components/react/mypage/AccountBenefitSection.tsx front/components/react/mypage/SummarySection.tsx front/components/react/mypage/data.ts front/components/react/mypage/types.ts jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java jeju-spring/src/main/resources/application.yml jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage` passed.
   - `reviewer_avatar_upload_persist (Faraday the 2nd)` reported `이제 blocking findings는 없다.`
+
+- time: `2026-03-28 05:33:00 +09:00`
+- route: `Route B`
+- task: `Add mypage profile bio editing and show bio in the public profile preview copy`
+- participants: `main`, `worker_backend_profile_bio (Halley)`, `worker_front_profile_bio (Pasteur)`, `reviewer_profile_bio_contract (Darwin)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_profile_bio (Halley)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+  - `worker_front_profile_bio (Pasteur)`: `front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/data.ts, front/components/react/mypage/types.ts`
+  - `reviewer_profile_bio_contract (Darwin)`: `review only`
+- verification:
+  - `worker_backend_profile_bio (Halley)` threaded `bio` through `MyPageProfileUpdateRequest`, `MyPageProfileUpdateService`, `MyPageProfileQueryService`, and `MyPageDashboardRepository`, persisting to `user_profiles.bio` and enforcing the server-side `20` character limit with the existing profile save flow.
+  - `worker_front_profile_bio (Pasteur)` replaced the fixed copy under `공용 프로필 미리보기` with the hydrated bio value, added a `한 줄 소개` input to the profile edit modal, included `bio` in the save payload and state normalization, and then patched the client-side bio clamp to be null-safe and codepoint-aware.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `pnpm run guard:text` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/AccountBenefitSection.tsx front/components/react/mypage/data.ts front/components/react/mypage/types.ts jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/model/MyPageProfileUpdateRequest.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageProfileUpdateService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageProfileQueryService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java` passed.
+  - `reviewer_profile_bio_contract (Darwin)` reported `블로킹 findings는 없다.`
+
+- time: `2026-03-28 11:57:25 +09:00`
+- route: `Route B`
+- task: `Replace the mypage editable name field with nickname editing and persist user_profiles.nickname`
+- participants: `main`, `worker_backend_profile_nickname (Hooke)`, `worker_front_profile_nickname (Aquinas)`, `reviewer_profile_nickname_contract (Godel)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_profile_nickname (Hooke)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+  - `worker_front_profile_nickname (Aquinas)`: `front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/data.ts, front/components/react/mypage/types.ts`
+  - `reviewer_profile_nickname_contract (Godel)`: `review only`
+- verification:
+  - `worker_backend_profile_nickname (Hooke)` added `nickname` to `MyPageProfileUpdateRequest`, persisted it through `MyPageProfileUpdateService` into `user_profiles.nickname`, enforced the server-side minimum-length rule with the exact message `닉네임은 2자 이상부터 가능합니다`, and threaded `nickname` plus `bio` through the mypage dashboard/profile snapshot queries with display-name fallback intact.
+  - `worker_front_profile_nickname (Aquinas)` replaced the editable `이름` slot in `front/components/react/mypage/AccountBenefitSection.tsx` with `닉네임`, surfaced the exact 2-character warning inline, blocked save when the nickname is shorter than 2 characters, and switched the public-profile preview headline to `nickname -> display name` fallback while keeping the bio line and avatar-edit trigger.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `pnpm run guard:text` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/AccountBenefitSection.tsx front/components/react/mypage/data.ts front/components/react/mypage/types.ts jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/model/MyPageProfileUpdateRequest.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageProfileUpdateService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageProfileQueryService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java` passed.
+  - `reviewer_profile_nickname_contract (Godel)` reported `블로킹 findings 없음`; residual note only that legacy callers omitting `nickname` would currently fall back to storing `name` as nickname.
+
+- time: `2026-03-28 12:26:17 +09:00`
+- route: `Route B`
+- task: `Separate unset nickname display from real-name fallback across mypage cards and hero`
+- participants: `main`, `worker_backend_nickname_presence (Socrates)`, `worker_front_nickname_presence (Dalton)`, `reviewer_nickname_presence_contract (Feynman)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_nickname_presence (Socrates)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+  - `worker_front_nickname_presence (Dalton)`: `front/components/react/mypage/AccountBenefitSection.tsx, front/components/react/mypage/SummarySection.tsx, front/components/react/mypage/data.ts, front/components/react/mypage/types.ts`
+  - `reviewer_nickname_presence_contract (Feynman)`: `review only`
+- verification:
+  - `worker_backend_nickname_presence (Socrates)` changed the mypage query/update semantics so `nickname` is returned raw with `NULLIF(TRIM(up.nickname), '')`, optional blank saves persist as unset instead of falling back to the real name, and the internal fallback snapshot also leaves nickname blank while keeping the existing bio/avatar/name/email/phone flows intact.
+  - `worker_front_nickname_presence (Dalton)` changed the basic-info card to show `닉네임` with gray `설정하지 않음` when unset, updated the hero highlight to use `nickname -> name` fallback, replaced `profile-welcome-msg` content with the saved bio, kept the public-profile preview headline on `nickname -> name`, and stopped pre-filling an unset nickname from the real name in both the edit form and fallback snapshot.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `pnpm run guard:text` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/AccountBenefitSection.tsx front/components/react/mypage/SummarySection.tsx front/components/react/mypage/data.ts front/components/react/mypage/types.ts jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageProfileQueryService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageProfileUpdateService.java` passed.
+  - `reviewer_nickname_presence_contract (Feynman)` reported `블로킹 finding 없음`; residual note only that the live preview keeps the old bio text until save if the draft bio is cleared.
+
+- time: `2026-03-28 12:32:56 +09:00`
+- route: `Route A`
+- task: `Restore point and coupon stat tones so the hero cards regain their colored icon boxes`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageStatsQueryService.java`
+- verification:
+  - `MyPageStatsQueryService.java` now emits `point` for `보유 포인트` and `coupon` for `사용 가능한 쿠폰` again instead of `wallet`, so the existing mypage stat card icon background/color/border styles can apply without any frontend markup or CSS changes.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageStatsQueryService.java` passed.
