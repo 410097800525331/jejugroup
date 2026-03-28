@@ -2,11 +2,14 @@ package com.jejugroup.jejuspring.mypage.web;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 import jakarta.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,30 +21,37 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jejugroup.jejuspring.auth.model.SessionUser;
 import com.jejugroup.jejuspring.mypage.application.MyPageAvatarService;
 import com.jejugroup.jejuspring.mypage.application.MyPageDashboardRepository;
+import com.jejugroup.jejuspring.mypage.application.MyPageMemberSearchService;
 import com.jejugroup.jejuspring.mypage.application.MyPageProfileUpdateService;
 import com.jejugroup.jejuspring.mypage.model.MyPageProfileUpdateRequest;
 
 @RestController
 @RequestMapping("/api/mypage")
 public class MyPageApiController {
+    private static final Logger log = LoggerFactory.getLogger(MyPageApiController.class);
+
     private final MyPageDashboardRepository dashboardRepository;
     private final MyPageProfileUpdateService profileUpdateService;
     private final MyPageAvatarService avatarService;
+    private final MyPageMemberSearchService memberSearchService;
 
     public MyPageApiController(
         MyPageDashboardRepository dashboardRepository,
         MyPageProfileUpdateService profileUpdateService,
-        MyPageAvatarService avatarService
+        MyPageAvatarService avatarService,
+        MyPageMemberSearchService memberSearchService
     ) {
         this.dashboardRepository = dashboardRepository;
         this.profileUpdateService = profileUpdateService;
         this.avatarService = avatarService;
+        this.memberSearchService = memberSearchService;
     }
 
     @GetMapping(value = "/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -112,6 +122,38 @@ public class MyPageApiController {
         }
     }
 
+    @GetMapping(value = "/members/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> searchMembers(
+        @RequestParam(name = "query", required = false) String query,
+        @RequestParam(name = "q", required = false) String q,
+        @RequestParam(name = "limit", required = false) Integer limit,
+        HttpSession session
+    ) {
+        SessionUser user = requireSessionUser(session);
+        if (user == null) {
+            return json(HttpStatus.UNAUTHORIZED, false, "로그인이 필요합니다.");
+        }
+
+        try {
+            List<MyPageMemberSearchService.MyPageMemberSearchItem> members = memberSearchService.searchMembers(
+                firstText(query, q),
+                limit
+            );
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "members", members
+            ));
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, exception.getMessage());
+        } catch (SQLException exception) {
+            log.warn("회원 검색 SQL 실패. query='{}', q='{}', limit={}", query, q, limit, exception);
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, "회원 검색 정보를 불러오지 못했습니다.");
+        } catch (RuntimeException exception) {
+            log.error("회원 검색 런타임 실패. query='{}', q='{}', limit={}", query, q, limit, exception);
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, "회원 검색 정보를 불러오지 못했습니다.");
+        }
+    }
+
     @GetMapping("/avatar/{userId}/{fileName:.+}")
     public ResponseEntity<Resource> avatar(
         @PathVariable("userId") String userId,
@@ -143,5 +185,13 @@ public class MyPageApiController {
             "success", success,
             "message", message
         ));
+    }
+
+    private String firstText(String primary, String fallback) {
+        if (primary != null && !primary.isBlank()) {
+            return primary;
+        }
+
+        return fallback;
     }
 }

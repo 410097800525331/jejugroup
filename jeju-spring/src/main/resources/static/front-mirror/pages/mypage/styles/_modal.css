@@ -117,6 +117,173 @@
 .companion-list-scroll::-webkit-scrollbar { width: 4px; }
 .companion-list-scroll::-webkit-scrollbar-thumb { background: var(--meta-surface-border); border-radius: 4px; }
 
+.companion-manage-modal .companion-modal-content {
+  height: 640px;
+  min-height: 640px;
+  max-height: 640px;
+}
+
+.companion-manage-modal .companion-search-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-sizing: border-box;
+  height: 194px;
+  padding: 8px;
+  overflow: hidden;
+  background: #f3f5f8;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.companion-manage-modal .companion-search-results-panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.companion-manage-modal .companion-search-results-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.companion-manage-modal .companion-search-card.list-item {
+  align-items: center;
+  appearance: none;
+  background: #f5f7fa;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+  cursor: pointer;
+  display: flex;
+  gap: 9px;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 6px 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.companion-manage-modal .companion-search-card.list-item:hover {
+  background: #eaedf1;
+  border-color: rgba(148, 163, 184, 0.26);
+}
+
+.companion-manage-modal .companion-search-card.list-item[data-linked="true"] {
+  opacity: 1;
+}
+
+.companion-manage-modal .companion-search-card-info {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 7px;
+  min-width: 0;
+}
+
+.companion-manage-modal .companion-search-card-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+.companion-manage-modal .companion-search-card-copy strong {
+  color: var(--meta-text-main);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.02;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.companion-manage-modal .companion-search-card-copy span {
+  color: var(--meta-text-muted);
+  font-size: 11px;
+  line-height: 1.08;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.companion-manage-modal .companion-search-card-badge {
+  align-items: center;
+  background: #fff7ed;
+  border: 1px solid rgba(255, 122, 0, 0.16);
+  border-radius: 14px;
+  color: #ff7a00;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  justify-content: center;
+  min-width: 56px;
+  padding: 7px 12px;
+  box-shadow: 0 6px 14px rgba(255, 122, 0, 0.08);
+}
+
+.companion-manage-modal .companion-search-card-badge[data-linked="true"] {
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #6b7280;
+  box-shadow: none;
+}
+
+.companion-manage-modal .companion-search-avatar {
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid var(--brand-profile);
+  display: flex;
+  flex: 0 0 auto;
+  height: 32px;
+  justify-content: center;
+  position: relative;
+  width: 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.companion-manage-modal .companion-search-avatar-image {
+  border-radius: inherit;
+  inset: 0;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  object-fit: cover;
+  width: 100%;
+  top: 0;
+}
+
+.companion-manage-modal .companion-search-avatar-fallback {
+  color: #111827;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.companion-manage-modal .companion-search-avatar .linked-indicator {
+  height: 12px;
+  width: 12px;
+  right: -3px;
+  bottom: -3px;
+  font-size: 7px;
+}
+
+.companion-manage-modal .companion-search-input {
+  position: relative;
+  z-index: 4;
+}
+
 .list-item {
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px; background: #e9edf3; border-radius: var(--radius-md);

@@ -454,3 +454,9 @@ status: open
 - summary: `프로필 행이 없는 계정의 아바타 업로드가 user_profiles.display_name NOT NULL 제약으로 실패함`
 - details: `새 아바타 저장 로직이 user_profiles에 avatar_url만 insert/upsert하고 있어, 아직 user_profiles row가 없는 계정에서는 display_name NOT NULL 제약 위반으로 POST /api/mypage/avatar가 SQLException으로 실패했다. users.name을 잠근 상태로 읽어 display_name까지 같이 넣는 hotfix를 적용했고, compileJava와 diff check로 수정 상태를 검증했다.`
 - status: `resolved`
+
+- time: `2026-03-28 14:36:19 +09:00`
+- location: `D:\git\jejugroup local JDBC seed runner`
+- summary: `PowerShell Set-Content UTF-8 BOM 때문에 Java 단일 파일 실행이 바로 실패함`
+- details: `가상 유저 시드용 임시 Java 소스를 Set-Content -Encoding utf8로 저장했더니 BOM(\ufeff)이 붙어서 java source-file mode가 1행에서 illegal character로 중단됐다. BOM 없는 UTF-8로 다시 기록해 재실행할 예정이며 repository 파일은 건드리지 않았다.`
+- status: `resolved`

@@ -24,10 +24,14 @@ export interface ItineraryActivity {
 }
 
 export interface ItineraryCompanion {
+  avatarUrl?: string;
+  bio?: string;
   id: string;
   isMember: boolean;
   name: string;
 }
+
+export type CompanionSearchMode = "suggestions" | "results";
 
 export interface ItineraryItem {
   activities: ItineraryActivity[];
@@ -60,6 +64,8 @@ export interface DashboardItineraryActivityInput {
 }
 
 export interface DashboardItineraryCompanionInput {
+  avatarUrl?: string;
+  bio?: string;
   id?: string;
   isMember?: boolean;
   name?: string;

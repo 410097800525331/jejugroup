@@ -2345,3 +2345,209 @@
   - `MyPageStatsQueryService.java` now emits `point` for `보유 포인트` and `coupon` for `사용 가능한 쿠폰` again instead of `wallet`, so the existing mypage stat card icon background/color/border styles can apply without any frontend markup or CSS changes.
   - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
   - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageStatsQueryService.java` passed.
+
+- time: `2026-03-28 13:01:07 +09:00`
+- route: `Route B`
+- task: `Add companion member search suggestions and full-result view inside the existing companion manage modal`
+- participants: `main`, `worker_backend_companion_search (Huygens)`, `worker_front_companion_search (Wegener)`, `reviewer_companion_search_contract (Hilbert)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_companion_search (Huygens)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java`
+  - `worker_front_companion_search (Wegener)`: `front/components/react/mypage/CompanionManageModal.tsx, front/components/react/mypage/useCompanionManager.ts, front/components/react/mypage/types.ts`
+  - `reviewer_companion_search_contract (Hilbert)`: `review only`
+- verification:
+  - `worker_backend_companion_search (Huygens)` added authenticated `GET /api/mypage/members/search`, using real `users.id` prefix lookup with nickname/display-name/name fallback plus `bio` and `avatarUrl` payload fields, and optional server-side `limit` support.
+  - `worker_front_companion_search (Wegener)` kept the existing companion manage modal shell/size, replaced the old exact-match block with live suggestion cards under the existing input, capped the visible suggestion list at `5` items with internal scrolling, and switched Enter/search into a same-modal full-result view that renders all returned matches without resizing the modal.
+  - The first review pass found a blocking same-origin URL builder crash when `API_BASE_URL` is blank and a contract mismatch that rejected 1-character member-ID prefixes; `worker_front_companion_search (Wegener)` fixed both in `front/components/react/mypage/useCompanionManager.ts` and also limited suggestion requests to `5` server-side while leaving strict search results uncapped.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `pnpm run guard:text` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx front/components/react/mypage/useCompanionManager.ts front/components/react/mypage/types.ts jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java` passed.
+  - `reviewer_companion_search_contract (Hilbert)` reported `No blocking findings`; residual note only that full-result searches can still be heavy if the member pool grows large and no live runtime click-through was executed in this turn.
+
+- time: `2026-03-28 13:17:59 +09:00`
+- route: `Route B`
+- task: `Hotfix the local 503 path on /api/mypage/members/search without widening the companion-search modal contract`
+- participants: `main`, `worker_backend_companion_search_hotfix (Hume)`, `reviewer_companion_search_hotfix (Heisenberg)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_companion_search_hotfix (Hume)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java`
+  - `reviewer_companion_search_hotfix (Heisenberg)`: `review only`
+- verification:
+  - `worker_backend_companion_search_hotfix (Hume)` added server-side logging for `/api/mypage/members/search` failure paths so `SQLException` causes log at `warn` and `RuntimeException` causes log at `error` while the client still receives the same opaque `503` response.
+  - `worker_backend_companion_search_hotfix (Hume)` also replaced the prepared `LIMIT ?` pattern in `MyPageMemberSearchService.java` with an already-clamped integer literal append, which is the most likely local DB/driver compatibility issue behind the observed 503.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java` passed.
+  - `reviewer_companion_search_hotfix (Heisenberg)` reported `No blocking findings`; residual notes only that explicit limits are still capped at `50` by design and the hotfix still needs a running Spring process restart before the local 8080 instance will use it.
+
+- time: `2026-03-28 13:52:58 +09:00`
+- route: `Route B`
+- task: `Fix the companion search layout/card regression inside the existing modal shell`
+- participants: `main`, `worker_front_companion_search_layout (Ptolemy)`, `reviewer_companion_search_contract (Epicurus)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_layout (Ptolemy)`: `front/components/react/mypage/CompanionManageModal.tsx, front/components/react/mypage/useCompanionManager.ts, front/components/react/mypage/types.ts`
+  - `reviewer_companion_search_contract (Epicurus)`: `review only`
+- verification:
+  - `worker_front_companion_search_layout (Ptolemy)` changed the live suggestion list into an input-anchored overlay so the companion modal no longer grows when search cards appear, and kept the search-result mode inside the same fixed modal shell with only the inner list scrolling.
+  - The search cards now render closer to the approved mock by using a rounded white capsule layout with a circular avatar preview on the left, a bold name line, and a bio fallback line in the middle; `front/components/react/mypage/useCompanionManager.ts` now threads `avatarUrl` and `bio` through the front state, and `front/components/react/mypage/types.ts` now preserves those optional fields.
+  - The first reviewer pass found two blockers in the search state machine: pending suggestion debounce could overwrite strict result mode, and editing the input during a strict search could leave the button stuck in `검색 중...`. `worker_front_companion_search_layout (Ptolemy)` fixed both by explicitly canceling pending suggestion work on strict submit and aborting/clearing strict-search loading when the input changes.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `pnpm run guard:text` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx front/components/react/mypage/useCompanionManager.ts front/components/react/mypage/types.ts` passed.
+  - `reviewer_companion_search_contract (Epicurus)` reported `No blocking findings`; residual note only that the suggestion/result race has not been browser-smoked and stale suppression still assumes injected search implementations respect or at least coexist with the abort/id guards.
+
+- time: `2026-03-28 14:18:00 +09:00`
+- route: `Route B`
+- task: `Tighten the companion search cards and restore the true result-view switch inside the existing modal shell`
+- participants: `main`, `worker_front_companion_search_layout (Linnaeus)`, `reviewer_companion_search_contract (Nietzsche)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_layout (Linnaeus)`: `front/components/react/mypage/CompanionManageModal.tsx`
+  - `reviewer_companion_search_contract (Nietzsche)`: `review only`
+- verification:
+  - `worker_front_companion_search_layout (Linnaeus)` kept the existing suggestion overlay anchoring and `companion-linked-item list-item` visual family, reduced the suggestion/result card vertical density by trimming padding, avatar size, text spacing, and badge width inside `front/components/react/mypage/CompanionManageModal.tsx`, and then patched the same file so `searchMode === "results"` fully replaces the default linked-companions body instead of stacking below it.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx` passed on the final merged state.
+  - `reviewer_companion_search_contract (Nietzsche)` reported `블로킹 이슈는 없다`; residual note only that the fixed `searchResultsPanelHeight` and suggestion max-height values remain hardcoded and could need retuning if copy length or typography changes later.
+
+- time: `2026-03-28 14:40:00 +09:00`
+- route: `Route B`
+- task: `Refine the companion search button tone and exclude admin-role accounts from member search`
+- participants: `main`, `worker_front_companion_search_button (Lovelace)`, `worker_backend_companion_search_filter (Bacon)`, `reviewer_companion_search_contract (Ramanujan)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_button (Lovelace)`: `front/components/react/mypage/CompanionManageModal.tsx`
+  - `worker_backend_companion_search_filter (Bacon)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java`
+  - `reviewer_companion_search_contract (Ramanujan)`: `review only`
+- verification:
+  - `worker_front_companion_search_button (Lovelace)` changed the companion search submit button in `front/components/react/mypage/CompanionManageModal.tsx` so the inactive state is a neutral gray pill and the active state is a plain Jeju-orange pill with white text, without changing the modal shell or search flow.
+  - `worker_backend_companion_search_filter (Bacon)` updated `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java` so prefix member searches still use the existing API contract while excluding admin accounts via both `users.role = ADMIN` and `user_roles -> roles.code = ADMIN`.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java` passed on the final merged state.
+  - `reviewer_companion_search_contract (Ramanujan)` reported `블로킹 findings는 없다`; residual note only that future admin-role representations beyond the current `ADMIN` values would need matching exclusion logic too.
+
+- time: `2026-03-28 15:10:00 +09:00`
+- route: `Route B`
+- task: `Refine the companion search result card and add-button visuals to match the approved linked-profile style`
+- participants: `main`, `worker_front_companion_search_visuals (Locke)`, `reviewer_companion_search_visual_contract (Dewey)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_visuals (Locke)`: `front/components/react/mypage/CompanionManageModal.tsx`
+  - `reviewer_companion_search_visual_contract (Dewey)`: `review only`
+- verification:
+  - `worker_front_companion_search_visuals (Locke)` restyled `front/components/react/mypage/CompanionManageModal.tsx` so linked avatars use the approved purple ring plus link badge treatment, no-avatar fallbacks render as white circles with black initials, and the `추가` action uses a cleaner Jeju-orange visual while preserving the existing modal shell and search flow.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx` passed on the final merged state.
+  - `reviewer_companion_search_visual_contract (Dewey)` reported `블로킹 findings는 없다`; residual note only that the visual match still relies on several inline size values, so pixel-perfect alignment with the mock would benefit from a live browser pass if requested later.
+
+- time: `2026-03-28 15:27:00 +09:00`
+- route: `Route B`
+- task: `Refine the companion search avatar treatment and dropdown container to match the approved linked-profile style`
+- participants: `main`, `worker_front_companion_search_visuals (Sartre)`, `reviewer_companion_search_visual_contract (Harvey)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_visuals (Sartre)`: `front/components/react/mypage/CompanionManageModal.tsx`
+  - `reviewer_companion_search_visual_contract (Harvey)`: `review only`
+- verification:
+  - `worker_front_companion_search_visuals (Sartre)` updated `front/components/react/mypage/CompanionManageModal.tsx` so all visible search-user avatars reuse the existing `companion-avatar soft-radius is-linked` look, no-avatar fallbacks stay white with black initials, the suggestion dropdown is capped at 4 visible users, and the dropdown container renders as a dark-gray bordered list box with tightly stacked rows.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx` passed on the final merged state.
+  - `reviewer_companion_search_visual_contract (Harvey)` reported `블로킹 findings는 없다`; residual note only that inline size values still mean pixel-perfect mock alignment would need a live browser check if requested later.
+
+- time: `2026-03-28 15:44:00 +09:00`
+- route: `Route B`
+- task: `Refine the companion search dropdown density and extend the companion modal height`
+- participants: `main`, `worker_front_companion_search_visuals (Ohm)`, `reviewer_companion_search_visual_contract (Lagrange)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_visuals (Ohm)`: `front/components/react/mypage/CompanionManageModal.tsx`
+  - `reviewer_companion_search_visual_contract (Lagrange)`: `review only`
+- verification:
+  - `worker_front_companion_search_visuals (Ohm)` updated `front/components/react/mypage/CompanionManageModal.tsx` so the suggestion dropdown attaches flush to the search bar, visible rows use a lighter gray tone with slightly tighter vertical density, and the modal shell height is increased by `+80px` relative to the prior `calc(100vh - 48px)` baseline while keeping the existing search flow intact.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx` passed on the final merged state.
+  - `reviewer_companion_search_visual_contract (Lagrange)` initially misread the shell-height baseline, then confirmed there are no blocking findings once the original `calc(100vh - 48px)` baseline was applied; residual note only that inline size values still make pixel-perfect mock matching a browser-level check if requested later.
+
+- time: `2026-03-28 16:14:00 +09:00`
+- route: `Route B`
+- task: `Reuse the existing companion avatar styling through CSS sizing and remove the viewport-based modal growth`
+- participants: `main`, `worker_front_companion_search_visuals (Euclid)`, `reviewer_companion_search_visual_contract (Confucius)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_visuals (Euclid)`: `front/components/react/mypage/CompanionManageModal.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_companion_search_visual_contract (Confucius)`: `review only`
+- verification:
+  - `worker_front_companion_search_visuals (Euclid)` reworked `front/components/react/mypage/CompanionManageModal.tsx` and `front/pages/mypage/styles/_modal.css` so the search-card avatar now reuses the existing `companion-avatar soft-radius is-linked` styling with CSS-only size reduction, and the companion modal shell uses a modest non-viewport `min-height` instead of `100vh`-based growth while preserving the existing search flow.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx front/pages/mypage/styles/_modal.css` passed on the final merged state.
+  - `reviewer_companion_search_visual_contract (Confucius)` reported `블로킹 findings는 없다`; residual note only that the exact pixel height still depends on viewport/browser rendering and may need a live browser pass if the user wants exact mock parity later.
+
+- time: `2026-03-28 17:16:00 +09:00`
+- route: `Route B`
+- task: `Show an explicit linked badge for already selected users inside the companion search dropdown`
+- participants: `main`, `worker_front_companion_search_visuals (Ampere)`, `reviewer_companion_search_visual_contract (Schrodinger)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_visuals (Ampere)`: `front/components/react/mypage/CompanionManageModal.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_companion_search_visual_contract (Schrodinger)`: `review only`
+- verification:
+  - `worker_front_companion_search_visuals (Ampere)` updated the shared companion search card so the dropdown keeps its current opaque fixed four-row layout and now shows a right-edge `연동됨` badge only for already-linked users, while the full search-results panel keeps the existing `추가/연동됨` badge behavior.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx front/pages/mypage/styles/_modal.css` passed on the final merged state.
+  - `reviewer_companion_search_visual_contract (Schrodinger)` reported `No blocking findings.`
+
+- time: `2026-03-28 17:06:00 +09:00`
+- route: `Route B`
+- task: `Make the companion search dropdown fully opaque and non-scrollable while keeping the modal shell fixed during result browsing`
+- participants: `main`, `worker_front_companion_search_visuals (Curie)`, `reviewer_companion_search_visual_contract (Beauvoir)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_visuals (Curie)`: `front/components/react/mypage/CompanionManageModal.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_companion_search_visual_contract (Beauvoir)`: `review only`
+- verification:
+  - `worker_front_companion_search_visuals (Curie)` kept the existing companion search flow and modal shell sizing, then made the dropdown a fixed opaque four-row box with hidden overflow and no scrollbar while preserving internal scrolling for the full search-results panel only.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx front/pages/mypage/styles/_modal.css` passed on the final merged state.
+  - `reviewer_companion_search_visual_contract (Beauvoir)` initially flagged remaining translucent search-card states and then reported `No blocking findings.` after the final opacity cleanup.
+
+- time: `2026-03-28 16:40:00 +09:00`
+- route: `Route B`
+- task: `Keep the companion modal shell fixed while moving search results into an internal scroll area`
+- participants: `main`, `worker_front_companion_search_visuals (Lorentz)`, `reviewer_companion_search_visual_contract (Dirac)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_visuals (Lorentz)`: `front/components/react/mypage/CompanionManageModal.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_companion_search_visual_contract (Dirac)`: `review only`
+- verification:
+  - `worker_front_companion_search_visuals (Lorentz)` kept the existing companion search flow and avatar/card styling, then fixed the results mode so the companion modal shell stays at a fixed `640px` height and the result list scrolls inside a bounded internal area while the footer remains visible.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx front/pages/mypage/styles/_modal.css` passed on the final merged state.
+  - `reviewer_companion_search_visual_contract (Dirac)` reported `블로킹 findings는 없다`; residual note only that the exact visual height may still need a browser-level check if the user wants pixel-perfect parity with the mock later.
+
+- time: `2026-03-28 16:18:00 +09:00`
+- route: `Route B`
+- task: `Reuse the existing companion avatar styling through CSS sizing and remove the viewport-based modal growth`
+- participants: `main`, `worker_front_companion_search_visuals (Unknown)`, `reviewer_companion_search_visual_contract (Unknown)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_search_visuals (Unknown)`: `front/components/react/mypage/CompanionManageModal.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_companion_search_visual_contract (Unknown)`: `review only`
+- verification:
+  - `worker_front_companion_search_visuals (Unknown)` simplified `front/components/react/mypage/CompanionManageModal.tsx` so the search-card avatar uses the existing `companion-avatar soft-radius is-linked` treatment and the size reduction is delegated to `_modal.css`, while the modal shell height no longer uses the viewport-growth pattern and instead stays content-driven with a modest minimum height.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx front/pages/mypage/styles/_modal.css` passed on the final merged state.
+
+- time: `2026-03-28 14:38:09 +09:00`
+- route: `Route B`
+- task: `Refine the companion search button tone and exclude admin-role accounts from member search`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, front/components/react/mypage/CompanionManageModal.tsx, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java`
+- verification:
+  - `front/components/react/mypage/CompanionManageModal.tsx` now renders the search submit button as a neutral grayscale inactive pill when the trimmed query is empty, and as a plain Jeju orange active pill with white text when the trimmed query is non-empty.
+  - `MyPageMemberSearchService.java` now excludes admin-role accounts from member search results using both `users.role` and `user_roles -> roles.code` checks while preserving the existing API contract and prefix search behavior.
+  - `pnpm -C front/apps/shell check` passed.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
+  - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java` passed.
