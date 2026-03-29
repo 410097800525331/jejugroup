@@ -2913,3 +2913,92 @@
   - `pnpm --dir D:\git\jejugroup\front\apps\cs check` passed on the final state.
   - `pnpm --dir D:\git\jejugroup\front\apps\cs test -- --run src/test/ServiceCenterRegression.test.tsx` passed on the final state.
   - Residual warning: the test run still logs a pre-existing `validateDOMNesting` warning from `front/apps/cs/client/src/pages/Inquiries.tsx`, outside this notice-detail slice.
+
+- time: `2026-03-29 20:16:32 +09:00`
+- route: `Route B`
+- task: `Refine the customer-center notice detail visual treatment so the detail card separates from the page background and every service badge uses a white base with Jeju orange accents`
+- participants: `main`, `worker_notice_detail_visual (Dewey)`, `reviewer_notice_detail (Cicero)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_notice_detail_visual (Dewey)`: `front/apps/cs/client/src/pages/NoticeDetail.tsx, front/apps/cs/client/src/styles/bbs.css`
+  - `reviewer_notice_detail (Cicero)`: `review only`
+- verification:
+  - `worker_notice_detail_visual (Dewey)` restyled the notice detail screen so the background reads cooler and the detail card, meta block, and body block separate more clearly from the page.
+  - The same worker unified every service badge onto a white base and removed the prior yellowish fill so all service types now use the same accent treatment.
+  - `reviewer_notice_detail (Cicero)` found one blocking issue on the first pass: the initial orange badge color failed contrast on white for small text. The worker fixed that by switching the badge text/border/icon to a darker Jeju orange, and the reviewer then reported no blocking findings with an estimated `4.30:1` contrast.
+  - `pnpm --dir D:\git\jejugroup\front\apps\cs check` passed on the final state.
+  - `git diff --check -- D:\git\jejugroup\front\apps\cs\client\src\pages\NoticeDetail.tsx D:\git\jejugroup\front\apps\cs\client\src\styles\bbs.css D:\git\jejugroup\STATE.md D:\git\jejugroup\MULTI_AGENT_LOG.md` passed on the final state.
+
+- time: `2026-03-29 20:24:20 +09:00`
+- route: `Route B`
+- task: `Show service and notice-type badges above each customer-center notice title using the same Jeju-accent badge language as the detail page`
+- participants: `main`, `worker_notice_list_badges (Noether)`, `reviewer_notice_list_badges (Wegener)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_notice_list_badges (Noether)`: `front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx, front/apps/cs/client/src/styles/bbs.css`
+  - `reviewer_notice_list_badges (Wegener)`: `review only`
+- verification:
+  - `worker_notice_list_badges (Noether)` added compact service/type chips above the notice title in the list rows while preserving the existing admin state chip behavior.
+  - The same worker added matching list-badge styling in `bbs.css` using the same white-base/Jeju-orange accent language established on the detail page.
+  - `reviewer_notice_list_badges (Wegener)` reported no blocking findings; row layout, chevron placement, and mobile wrapping remained sound.
+  - `pnpm --dir D:\git\jejugroup\front\apps\cs check` passed on the final state.
+  - `git diff --check -- D:\git\jejugroup\front\apps\cs\client\src\components\serviceCenter\NoticeListItem.tsx D:\git\jejugroup\front\apps\cs\client\src\styles\bbs.css D:\git\jejugroup\STATE.md D:\git\jejugroup\MULTI_AGENT_LOG.md` passed on the final state.
+
+- time: `2026-03-29 20:38:29 +09:00`
+- route: `Route B`
+- task: `Fix the admin CMS notices table so it paginates at 8 rows, removes the pointless sort action, and adds expose-toggle plus delete controls`
+- participants: `main`, `worker_admin_notice_ops (Fermat)`, `reviewer_admin_notice_ops (Jason)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_notice_ops (Fermat)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css, front/admin/data/cms-config.js`
+  - `reviewer_admin_notice_ops (Jason)`: `review only`
+- verification:
+  - `worker_admin_notice_ops (Fermat)` added 8-row client-side pagination for notices, reset/clamp behavior around search and filters, notices-only expose toggle and delete actions, and hid the dead notices-tab secondary action while leaving FAQ/banner behavior unchanged.
+  - The same worker replaced the old fixed mock pager with a real notices pagination container and added the matching admin row-action/pagination styling.
+  - `reviewer_admin_notice_ops (Jason)` reported no blocking findings; notices page state resets correctly on filter/search/tab changes and the notices row-action event delegation stays isolated from FAQ/banner tabs.
+  - `node --check D:\git\jejugroup\front\admin\js\cms.js` passed on the final state.
+  - `git diff --check -- D:\git\jejugroup\front\admin\pages\cms.html D:\git\jejugroup\front\admin\js\cms.js D:\git\jejugroup\front\admin\css\components.css D:\git\jejugroup\front\admin\data\cms-config.js D:\git\jejugroup\STATE.md D:\git\jejugroup\MULTI_AGENT_LOG.md` passed on the final state.
+
+- time: `2026-03-29 21:41:22 +09:00`
+- route: `Route B`
+- task: `Fix the remaining admin CMS notices issues: remove the lingering sort-action footprint, keep inactive notices visible in admin, and restyle the pager to show 1/1 under the centered page button`
+- participants: `main`, `worker_admin_notice_ops (Bohr)`, `reviewer_admin_notice_ops (Kierkegaard)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_notice_ops (Bohr)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css, front/admin/data/cms-config.js`
+  - `reviewer_admin_notice_ops (Kierkegaard)`: `review only`
+- verification:
+  - `worker_admin_notice_ops (Bohr)` switched the admin notices table to hydrate from `/api/admin/tables/cms`, removed the notices-only dead secondary action from the DOM, kept inactive rows visible in admin after status toggles, and restyled the pager into centered prev/current/next controls with the `1/1` display underneath.
+  - `reviewer_admin_notice_ops (Kierkegaard)` first found one blocking data-integrity risk: summary-row blanks could still wipe `content/excerpt` on toggle. That blocker was resolved by changing the toggle path to send only `{ active: nextActive }`, after which the reviewer reported no remaining blocking findings.
+  - `node --check D:\git\jejugroup\front\admin\js\cms.js` passed on the final state.
+  - `git diff --check -- D:\git\jejugroup\front\admin\pages\cms.html D:\git\jejugroup\front\admin\js\cms.js D:\git\jejugroup\front\admin\css\components.css D:\git\jejugroup\front\admin\data\cms-config.js` passed on the final state.
+
+- time: `2026-03-29 22:36:30 +09:00`
+- route: `Route B`
+- task: `Remove the admin notices exposure-toggle alert path and keep inactive notices editable by enriching the admin read payload`
+- participants: `main`, `worker_admin_notice_ops (Faraday)`, `reviewer_admin_notice_ops (Maxwell)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_notice_ops (Faraday)`: `front/admin/js/cms.js, jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java`
+  - `reviewer_admin_notice_ops (Maxwell)`: `review only`
+- verification:
+  - `worker_admin_notice_ops (Faraday)` removed the native confirm/alert path from the notices exposure toggle and kept the existing inactive-row admin behavior intact.
+  - The same worker enriched `/api/admin/tables/cms` notice rows with `excerpt`, `content`, `is_pinned`, `publishedAt`, `createdAt`, `updatedAt`, and `active` metadata so inactive notices can still reopen in edit mode without blank overwrite risk.
+  - `reviewer_admin_notice_ops (Maxwell)` reported no blocking findings after re-reviewing the updated frontend/backend notice flow.
+  - `node --check D:\git\jejugroup\front\admin\js\cms.js` passed on the final state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final state.
+  - `git diff --check -- front/admin/js/cms.js jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java STATE.md` passed on the final state.
+
+- time: `2026-03-29 21:12:34 +09:00`
+- route: `Route B`
+- task: `Refine the admin CMS notices table so the dead sort action is removed, the exposure status itself becomes the toggle control, and the notices pager sits bottom-center`
+- participants: `main`, `worker_admin_notice_ops (Ampere)`, `reviewer_admin_notice_ops (Goodall)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_notice_ops (Ampere)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css, front/admin/data/cms-config.js`
+  - `reviewer_admin_notice_ops (Goodall)`: `review only`
+- verification:
+  - `worker_admin_notice_ops (Ampere)` removed the notices-tab dead secondary action from first paint by starting the button hidden in HTML, converted the status cell into the active/inactive toggle itself, kept edit/delete controls, and anchored the notices pager at the bottom center of the notices section.
+  - `reviewer_admin_notice_ops (Goodall)` first found one blocker: the dead secondary action was only being hidden after DOMContentLoaded and could flash on first paint. That blocker was fixed by marking the button `hidden` in the initial HTML, and the reviewer then reported no remaining blocking findings.
+  - `node --check D:\git\jejugroup\front\admin\js\cms.js` passed on the final state.
+  - `git diff --check -- D:\git\jejugroup\front\admin\pages\cms.html D:\git\jejugroup\front\admin\js\cms.js D:\git\jejugroup\front\admin\css\components.css D:\git\jejugroup\front\admin\data\cms-config.js` passed on the final state.

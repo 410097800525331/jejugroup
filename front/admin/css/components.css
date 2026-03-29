@@ -97,8 +97,29 @@
     overflow-x: auto;
 }
 
+.cms-notices-page {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 70px);
+}
+
+.cms-notices-section {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .admin-table-actions {
     display: flex;
+    flex-wrap: wrap;
+}
+
+.cms-action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
@@ -256,9 +277,112 @@
     flex-wrap: wrap;
 }
 
+.cms-notice-status-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background-color: transparent;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    white-space: nowrap;
+}
+
+.cms-notice-status-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.cms-notice-status-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+.cms-notice-status-toggle--active {
+    border-color: rgba(46, 204, 113, 0.55);
+    color: var(--admin-success);
+}
+
+.cms-notice-status-toggle--active:hover {
+    background-color: rgba(46, 204, 113, 0.08);
+}
+
+.cms-notice-status-toggle--inactive {
+    border-color: rgba(241, 196, 15, 0.6);
+    color: var(--admin-warning);
+}
+
+.cms-notice-status-toggle--inactive:hover {
+    background-color: rgba(241, 196, 15, 0.08);
+}
+
 .cms-notice-row-actions .admin-btn {
     min-width: 72px;
     justify-content: center;
+}
+
+.cms-notice-row-actions .admin-btn.admin-btn-danger {
+    border-color: rgba(231, 76, 60, 0.35);
+    color: var(--admin-danger);
+}
+
+.cms-notice-row-actions .admin-btn.admin-btn-danger:hover {
+    background-color: rgba(231, 76, 60, 0.12);
+    border-color: rgba(231, 76, 60, 0.65);
+    color: var(--admin-danger);
+}
+
+.admin-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.cms-notices-page .admin-pagination {
+    margin-top: auto;
+    padding-top: var(--admin-space-lg);
+    padding-bottom: 2px;
+    width: 100%;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-pagination[hidden] {
+    display: none;
+}
+
+.admin-pagination-info {
+    color: var(--admin-text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0 8px;
+}
+
+.cms-notice-pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.admin-pagination .admin-btn {
+    min-width: 42px;
+    justify-content: center;
+}
+
+.admin-pagination .admin-btn[aria-current="page"] {
+    background-color: var(--admin-accent);
+    border-color: var(--admin-accent);
+    color: #fff;
 }
 
 /* Status Badges */

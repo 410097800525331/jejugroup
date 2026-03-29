@@ -3,7 +3,7 @@ const cmsConfig = {
   searchButtonLabel: '검색',
   statusOptions: [
     { value: 'all', label: '전체' },
-    { value: 'active', label: '활성' },
+    { value: 'active', label: '노출 중' },
     { value: 'draft', label: '임시저장' },
     { value: 'inactive', label: '비노출' }
   ],
@@ -11,7 +11,8 @@ const cmsConfig = {
     notices: {
       searchPlaceholder: '공지 제목이나 ID로 검색',
       primaryAction: '공지 등록',
-      secondaryAction: '정렬',
+      secondaryAction: null,
+      pageSize: 8,
       typeFilterOptions: [
         { value: 'all', label: '전체' },
         { value: 'notice', label: '공지사항' },

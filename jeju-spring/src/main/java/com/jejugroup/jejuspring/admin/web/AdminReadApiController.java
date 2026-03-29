@@ -1559,7 +1559,7 @@ class AdminReadService {
         }
 
         String query = """
-            SELECT id, service_type, notice_type, title, published_at, created_at, is_active
+            SELECT id, service_type, notice_type, title, excerpt, content, is_pinned, is_active, published_at, created_at, updated_at
             FROM notices
             ORDER BY COALESCE(published_at, created_at) DESC, id DESC
             """;
@@ -1568,18 +1568,25 @@ class AdminReadService {
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
+                long noticeId = resultSet.getLong("id");
                 String title = text(resultSet.getString("title"));
                 String serviceType = displayServiceType(resultSet.getString("service_type"));
                 String noticeType = text(resultSet.getString("notice_type"));
+                String excerpt = text(resultSet.getString("excerpt"));
+                String content = text(resultSet.getString("content"));
+                boolean pinned = resultSet.getInt("is_pinned") == 1;
+                boolean active = resultSet.getInt("is_active") == 1;
                 Timestamp publishedAt = resultSet.getTimestamp("published_at");
-                String scheduleText = publishedAt == null ? formatTimestamp(resultSet.getTimestamp("created_at")) : formatTimestamp(publishedAt);
+                Timestamp createdAt = resultSet.getTimestamp("created_at");
+                Timestamp updatedAt = resultSet.getTimestamp("updated_at");
+                String scheduleText = publishedAt == null ? formatTimestamp(createdAt) : formatTimestamp(publishedAt);
                 String statusKey = resolveNoticeStatusKey(resultSet.getInt("is_active"), publishedAt);
                 String statusLabel = resolveStatusLabel(statusKey);
 
-                rows.add(statusRow(
+                Map<String, Object> row = statusRow(
                     searchable(String.valueOf(resultSet.getLong("id")), title, serviceType),
                     List.of(
-                        String.valueOf(resultSet.getLong("id")),
+                        String.valueOf(noticeId),
                         serviceType,
                         noticeType.isBlank() ? "notice" : noticeType,
                         title,
@@ -1588,7 +1595,20 @@ class AdminReadService {
                         "읽기 전용"
                     ),
                     statusKey
-                ));
+                );
+                row.put("noticeId", String.valueOf(noticeId));
+                row.put("id", String.valueOf(noticeId));
+                row.put("serviceType", serviceType);
+                row.put("noticeType", noticeType.isBlank() ? "notice" : noticeType);
+                row.put("title", title);
+                row.put("excerpt", excerpt);
+                row.put("content", content);
+                row.put("pinned", pinned);
+                row.put("active", active);
+                row.put("publishedAt", scheduleText);
+                row.put("createdAt", formatTimestamp(createdAt));
+                row.put("updatedAt", formatTimestamp(updatedAt));
+                rows.add(row);
             }
         }
         return rows;

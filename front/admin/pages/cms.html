@@ -126,7 +126,7 @@
             </div>
         </header>
 
-        <main class="admin-main">
+        <main class="admin-main cms-notices-page">
             <div class="admin-page-header">
                 <h1 class="admin-page-title">콘텐츠 운영 관리</h1>
                 <div style="display: flex; gap: var(--admin-space-md); align-items: center;">
@@ -161,35 +161,32 @@
                     </select>
                     <button class="admin-btn admin-btn-outline" id="cms-search-btn">검색</button>
                 </div>
-                <div style="display:flex; gap:8px;">
-                    <button class="admin-btn admin-btn-outline" id="cms-secondary-action-btn">배포 정리</button>
-                    <button class="admin-btn admin-btn-primary" id="cms-primary-action-btn">신규 항목 생성</button>
+                <div class="cms-action-buttons" id="cms-action-buttons">
+                    <button class="admin-btn admin-btn-primary" id="cms-primary-action-btn" type="button">신규 항목 생성</button>
                 </div>
             </div>
 
-            <div class="admin-table-container">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>콘텐츠 ID</th>
-                            <th>분류</th>
-                            <th>유형</th>
-                            <th>제목</th>
-                            <th>작성 / 예약일</th>
-                            <th>노출 상태</th>
-                            <th>액션</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cms-table-body">
-                    </tbody>
-                </table>
-            </div>
+            <section class="cms-notices-section">
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>콘텐츠 ID</th>
+                                <th>분류</th>
+                                <th>유형</th>
+                                <th>제목</th>
+                                <th>작성 / 예약일</th>
+                                <th>노출 상태</th>
+                                <th>액션</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cms-table-body">
+                        </tbody>
+                    </table>
+                </div>
 
-            <div style="display:flex; justify-content:center; margin-top:20px; gap:8px;">
-                <button class="admin-btn admin-btn-outline" disabled>&lt;</button>
-                <button class="admin-btn admin-btn-primary">1</button>
-                <button class="admin-btn admin-btn-outline">&gt;</button>
-            </div>
+                <div class="admin-pagination" id="cms-notice-pagination" hidden></div>
+            </section>
         </main>
     </div>
 

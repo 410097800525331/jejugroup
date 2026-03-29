@@ -142,7 +142,7 @@ export default function NoticeDetail() {
   const ServiceIcon = serviceTheme.icon;
 
   return (
-    <div className="min-h-screen bg-white notice-detail-page">
+    <div className="min-h-screen notice-detail-page">
       <main className="py-12">
         <div className="max-w-5xl mx-auto px-4">
           <div className="mb-8 flex items-center gap-4 text-gray-400 font-bold">
@@ -190,9 +190,9 @@ export default function NoticeDetail() {
               </div>
             </div>
           ) : notice ? (
-            <article className="bbs-detail-card rounded-[2rem] border border-gray-100 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+            <article className="bbs-detail-card rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
               <div className="flex flex-wrap items-center gap-3 text-sm font-black uppercase tracking-[0.2em] text-gray-400">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-orange-600 tracking-normal uppercase">
+                <span className="bbs-detail-service-badge inline-flex items-center gap-1.5 rounded-full px-3 py-1 tracking-normal uppercase">
                   <ServiceIcon size={14} />
                   {serviceLabel}
                 </span>
@@ -219,7 +219,7 @@ export default function NoticeDetail() {
                 </div>
               </dl>
 
-              <div className="bbs-detail-body mt-8 whitespace-pre-line rounded-3xl border border-gray-100 bg-white px-6 py-7 text-[1.05rem] leading-8 text-gray-700">
+              <div className="bbs-detail-body mt-8 whitespace-pre-line rounded-3xl border border-slate-200 bg-white px-6 py-7 text-[1.05rem] leading-8 text-gray-700">
                 {getDisplayBody(notice)}
               </div>
             </article>

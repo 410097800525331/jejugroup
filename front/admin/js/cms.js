@@ -44,8 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const searchInput = document.querySelector('.admin-table-actions input[type="text"]');
     const statusFilter = document.getElementById('cms-status-filter');
     const searchButton = document.getElementById('cms-search-btn');
-    const secondaryActionButton = document.getElementById('cms-secondary-action-btn');
-    const primaryActionButton = document.getElementById('cms-primary-action-btn');
+    const actionButtonsContainer = document.getElementById('cms-action-buttons');
     const noticeModalBackdrop = document.getElementById('cms-notice-modal');
     const noticeModalCloseBtn = document.getElementById('cms-notice-modal-close');
     const noticeModalCancelBtn = document.getElementById('cms-notice-modal-cancel');
@@ -56,6 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const noticeModalTitleInput = document.getElementById('cms-notice-title');
     const noticeModalContentInput = document.getElementById('cms-notice-content');
     const noticeTypeFilter = document.getElementById('cms-notice-type-filter');
+    const noticePaginationContainer = document.getElementById('cms-notice-pagination');
     const noticeModalEyebrow = noticeModalBackdrop?.querySelector('.admin-modal-eyebrow');
     const noticeModalTitle = noticeModalBackdrop?.querySelector('.admin-modal-title');
     const noticeModalDescription = noticeModalBackdrop?.querySelector('.admin-modal-description');
@@ -68,16 +68,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const syncSidebarUI = (isOpen) => window.AdminSidebarUI?.applySidebarUI({ layout, sidebar, isOpen });
     const TAB_CONFIG = cmsConfig.tabs;
     const DEFAULT_TAB = cmsConfig.defaultTab;
+    const NOTICE_PAGE_SIZE = Number(cmsConfig.tabs?.notices?.pageSize ?? 8) || 8;
     let activeTab = DEFAULT_TAB;
     let searchKeyword = '';
     let activeStatus = 'all';
     let activeNoticeType = 'all';
+    let activeNoticePage = 1;
     let noticeModalMode = 'create';
     let lastNoticeModalTrigger = null;
     let lastNoticeModalFocus = null;
     let editingNoticeId = null;
     let editingNoticeRecord = null;
+    let noticeRecordCache = new Map();
+    let preservedNoticeId = null;
     let isNoticeSaving = false;
+    let isNoticeActionPending = false;
 
     const escapeHtml = (value) => String(value)
         .replaceAll('&', '&amp;')
@@ -205,6 +210,69 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     };
 
+    const normalizeAdminNoticeRow = (row) => {
+        if (!row || typeof row !== 'object') return null;
+
+        const cells = Array.isArray(row.cells) ? row.cells : [];
+        const id = row.noticeId ?? row.id ?? cells[0];
+        if (id === undefined || id === null || String(id).trim() === '') return null;
+
+        const serviceTypeText = String(cells[1] ?? row.serviceType ?? row.service ?? '').trim();
+        const noticeTypeText = String(cells[2] ?? row.noticeType ?? row.type ?? '').trim();
+        const title = String(cells[3] ?? row.title ?? '').trim();
+        const publishedAt = String(cells[4] ?? row.publishedAt ?? row.createdAt ?? row.updatedAt ?? '').trim();
+        const statusKey = row.statusKey || resolveNoticeStatusKey(row.active !== false, publishedAt);
+
+        return {
+            id: String(id).trim(),
+            serviceType: normalizeNoticeServiceType(row.serviceType ?? row.service ?? serviceTypeText),
+            noticeType: normalizeNoticeType(row.noticeType ?? row.type ?? noticeTypeText),
+            title,
+            excerpt: String(row.excerpt || '').trim(),
+            content: String(row.content || '').trim(),
+            active: statusKey !== 'inactive',
+            pinned: row.pinned === true,
+            publishedAt,
+            createdAt: String(row.createdAt || '').trim(),
+            updatedAt: String(row.updatedAt || '').trim(),
+            statusKey,
+            searchText: String(row.searchText || `${id} ${serviceTypeText} ${noticeTypeText} ${title}`.trim()).trim()
+        };
+    };
+
+    const cacheNoticeRecord = (record) => {
+        return normalizeNoticeRecord(record);
+    };
+
+    const pickNonEmptyText = (primary, fallback) => {
+        const normalizedPrimary = String(primary ?? '').trim();
+        if (normalizedPrimary) return normalizedPrimary;
+        const normalizedFallback = String(fallback ?? '').trim();
+        return normalizedFallback;
+    };
+
+    const mergeNoticeRecord = (summaryRecord, cachedRecord) => {
+        if (!summaryRecord && !cachedRecord) return null;
+        if (!summaryRecord) return cachedRecord;
+        if (!cachedRecord) return summaryRecord;
+
+        return {
+            ...summaryRecord,
+            id: summaryRecord.id || cachedRecord.id,
+            serviceType: summaryRecord.serviceType || cachedRecord.serviceType,
+            noticeType: summaryRecord.noticeType || cachedRecord.noticeType,
+            title: pickNonEmptyText(summaryRecord.title, cachedRecord.title),
+            excerpt: pickNonEmptyText(summaryRecord.excerpt, cachedRecord.excerpt),
+            content: pickNonEmptyText(summaryRecord.content, cachedRecord.content),
+            active: typeof summaryRecord.active === 'boolean' ? summaryRecord.active : cachedRecord.active,
+            pinned: typeof summaryRecord.pinned === 'boolean' ? summaryRecord.pinned : cachedRecord.pinned,
+            publishedAt: summaryRecord.publishedAt || cachedRecord.publishedAt,
+            createdAt: summaryRecord.createdAt || cachedRecord.createdAt,
+            updatedAt: summaryRecord.updatedAt || cachedRecord.updatedAt,
+            searchText: pickNonEmptyText(summaryRecord.searchText, cachedRecord.searchText)
+        };
+    };
+
     const extractNoticeList = (payload) => {
         if (Array.isArray(payload)) return payload;
         if (!payload || typeof payload !== 'object') return [];
@@ -220,6 +288,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        return [];
+    };
+
+    const extractAdminNoticeRows = (payload) => {
+        if (!payload || typeof payload !== 'object') return [];
+
+        const tabs = payload.tabs || payload.data?.tabs;
+        if (Array.isArray(tabs?.notices?.rows)) {
+            return tabs.notices.rows;
+        }
+
+        if (Array.isArray(payload.rows)) return payload.rows;
+        if (Array.isArray(payload.data?.rows)) return payload.data.rows;
         return [];
     };
 
@@ -251,7 +332,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return 'active';
     };
 
-    const resolveStatusLabel = (statusKey) => cmsConfig.statusOptions.find((option) => option.value === statusKey)?.label ?? statusKey;
+    const getNoticeExposureLabel = (active) => (active ? '노출 중' : '비노출');
+
+    const getNoticeExposureTitle = (active) => (active ? '공지 비노출로 전환' : '공지 노출로 전환');
 
     const extractNoticeItem = (payload) => {
         if (!payload || typeof payload !== 'object') return null;
@@ -266,7 +349,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const serviceType = formatNoticeServiceLabel(record.serviceType);
         const noticeType = formatNoticeTypeLabel(record.noticeType);
         const statusKey = resolveNoticeStatusKey(record.active, record.publishedAt);
-        const statusLabel = resolveStatusLabel(statusKey);
+        const exposureLabel = getNoticeExposureLabel(record.active);
+        const exposureTitle = getNoticeExposureTitle(record.active);
+        const statusToneClass = record.active ? 'cms-notice-status-toggle--active' : 'cms-notice-status-toggle--inactive';
         return {
             noticeId: record.id,
             noticeType: record.noticeType,
@@ -279,8 +364,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 escapeHtml(noticeType),
                 escapeHtml(record.title),
                 escapeHtml(formatDateText(record.publishedAt)),
-                escapeHtml(statusLabel),
-                `<div class="cms-notice-row-actions"><button type="button" class="admin-btn admin-btn-outline" data-notice-action="edit" data-notice-id="${escapeHtml(record.id)}" aria-label="공지 수정" title="공지 수정">수정</button></div>`
+                `<button type="button" class="cms-notice-status-toggle ${statusToneClass}" data-notice-action="toggle-active" data-notice-id="${escapeHtml(record.id)}" aria-label="${escapeHtml(exposureTitle)}" title="${escapeHtml(exposureTitle)}">${escapeHtml(exposureLabel)}</button>`,
+                `<div class="cms-notice-row-actions">
+                    <button type="button" class="admin-btn admin-btn-outline" data-notice-action="edit" data-notice-id="${escapeHtml(record.id)}" aria-label="공지 수정" title="공지 수정">수정</button>
+                    <button type="button" class="admin-btn admin-btn-outline admin-btn-danger" data-notice-action="delete" data-notice-id="${escapeHtml(record.id)}" aria-label="공지 삭제" title="공지 삭제">삭제</button>
+                </div>`
             ]
         };
     };
@@ -296,18 +384,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const loadNoticeRows = async () => {
-        const { response, parsed } = await requestNoticeJson('/api/customer-center/notices');
-        if (!response.ok) {
-            const message = parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-                ? parsed.message || parsed.error
+        const adminSurfaceResult = await requestNoticeJson('/api/admin/tables/cms');
+        let publicNoticeResult = { response: null, parsed: null };
+        try {
+            publicNoticeResult = await requestNoticeJson('/api/customer-center/notices');
+        } catch (error) {
+            console.warn('[AdminCms] Notice cache load skipped:', error);
+        }
+
+        if (!adminSurfaceResult.response.ok) {
+            const message = adminSurfaceResult.parsed && typeof adminSurfaceResult.parsed === 'object' && !Array.isArray(adminSurfaceResult.parsed)
+                ? adminSurfaceResult.parsed.message || adminSurfaceResult.parsed.error
                 : null;
             throw new Error(message || '공지 목록을 불러오지 못했습니다.');
         }
 
-        const noticeRows = extractNoticeList(parsed)
+        const mergedCache = new Map(noticeRecordCache);
+        extractNoticeList(publicNoticeResult.parsed)
             .map(normalizeNoticeRecord)
             .filter(Boolean)
-            .map(buildNoticeRow)
+            .forEach((record) => {
+                const normalized = cacheNoticeRecord(record);
+                if (normalized) {
+                    mergedCache.set(normalized.id, normalized);
+                }
+            });
+        noticeRecordCache = mergedCache;
+
+        const noticeRows = extractAdminNoticeRows(adminSurfaceResult.parsed)
+            .map(normalizeAdminNoticeRow)
+            .filter(Boolean)
+            .map((row) => {
+                const mergedRecord = mergeNoticeRecord(row, noticeRecordCache.get(row.id));
+                if (!mergedRecord) return null;
+                const normalized = cacheNoticeRecord(mergedRecord);
+                return buildNoticeRow(normalized || mergedRecord);
+            })
             .filter(Boolean);
 
         TAB_CONFIG.notices.rows = noticeRows;
@@ -340,6 +452,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         return extractNoticeItem(parsed);
+    };
+
+    const getFilteredNoticeRows = (tabKey) => {
+        const keyword = searchKeyword.trim().toLowerCase();
+        const rows = getTabConfig(tabKey).rows.filter((row) => {
+            const statusMatch = activeStatus === 'all'
+                || row.statusKey === activeStatus
+                || (tabKey === 'notices' && preservedNoticeId && String(row.noticeId) === String(preservedNoticeId));
+            const noticeTypeMatch = tabKey !== 'notices' || activeNoticeType === 'all' || row.noticeType === activeNoticeType;
+            const searchMatch = !keyword || row.searchText.toLowerCase().includes(keyword);
+            return statusMatch && noticeTypeMatch && searchMatch;
+        });
+
+        return rows;
+    };
+
+    const getNoticeTotalPages = (filteredRows) => Math.max(1, Math.ceil(filteredRows.length / NOTICE_PAGE_SIZE));
+
+    const renderNoticePagination = (filteredRows) => {
+        if (!noticePaginationContainer) return;
+
+        const totalPages = getNoticeTotalPages(filteredRows);
+        if (filteredRows.length === 0) {
+            noticePaginationContainer.hidden = true;
+            noticePaginationContainer.innerHTML = '';
+            return;
+        }
+
+        if (activeNoticePage > totalPages) {
+            activeNoticePage = totalPages;
+        }
+
+        noticePaginationContainer.hidden = false;
+        noticePaginationContainer.innerHTML = [
+            '<div class="cms-notice-pagination-controls">',
+            `<button type="button" class="admin-btn admin-btn-outline" data-notice-page-action="prev" ${activeNoticePage <= 1 ? 'disabled' : ''} aria-label="이전 공지 페이지">&lt;</button>`,
+            `<button type="button" class="admin-btn admin-btn-primary" data-notice-page="${activeNoticePage}" aria-current="page">${escapeHtml(String(activeNoticePage))}</button>`,
+            `<button type="button" class="admin-btn admin-btn-outline" data-notice-page-action="next" ${activeNoticePage >= totalPages ? 'disabled' : ''} aria-label="다음 공지 페이지">&gt;</button>`,
+            '</div>',
+            `<span class="admin-pagination-info">${escapeHtml(`${activeNoticePage}/${totalPages}`)}</span>`
+        ].join('');
+    };
+
+    const resetNoticePagination = () => {
+        activeNoticePage = 1;
     };
 
     const setNoticeModalMode = (mode, notice = null) => {
@@ -409,6 +566,87 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert(error instanceof Error ? error.message : '공지 저장에 실패했습니다.');
         } finally {
             setNoticeSavingState(false);
+        }
+    };
+
+    const sendNoticeMutation = async (noticeId, method, payload = null) => {
+        const url = `/api/customer-center/notices/${encodeURIComponent(String(noticeId))}`;
+        const options = {
+            method,
+            ...(payload ? {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            } : {})
+        };
+        const { response, parsed } = await requestNoticeJson(url, options);
+
+        if (!response.ok) {
+            const message = parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+                ? parsed.message || parsed.error
+                : null;
+            throw new Error(message || '공지 처리에 실패했습니다.');
+        }
+
+        return extractNoticeItem(parsed);
+    };
+
+    const getNoticeRowById = (noticeId) => TAB_CONFIG.notices.rows.find((row) => String(row.noticeId) === String(noticeId)) || null;
+
+    const refreshNoticeRows = async () => {
+        await loadNoticeRows();
+    };
+
+    const setNoticeActionPendingState = (next) => {
+        isNoticeActionPending = next;
+    };
+
+    const toggleNoticeActive = async (noticeId) => {
+        if (isNoticeActionPending) return;
+        const noticeRow = getNoticeRowById(noticeId);
+        if (!noticeRow?.noticeRecord) return;
+
+        const nextActive = !noticeRow.noticeRecord.active;
+        setNoticeActionPendingState(true);
+        try {
+            const nextRecord = mergeNoticeRecord(
+                { ...noticeRow.noticeRecord, active: nextActive },
+                noticeRecordCache.get(String(noticeId))
+            );
+            await sendNoticeMutation(noticeId, 'PUT', { active: nextActive });
+            if (nextRecord) {
+                noticeRecordCache.set(String(noticeId), nextRecord);
+            }
+            preservedNoticeId = String(noticeId);
+            await refreshNoticeRows();
+        } catch (error) {
+            console.error('[AdminCms] Notice active toggle failed:', error);
+        } finally {
+            setNoticeActionPendingState(false);
+        }
+    };
+
+    const deleteNotice = async (noticeId) => {
+        if (isNoticeActionPending) return;
+        const noticeRow = getNoticeRowById(noticeId);
+        if (!noticeRow?.noticeRecord) return;
+
+        if (!window.confirm('이 공지를 삭제할까? 삭제하면 복구할 수 없어.')) return;
+
+        setNoticeActionPendingState(true);
+        try {
+            await sendNoticeMutation(noticeId, 'DELETE');
+            noticeRecordCache.delete(String(noticeId));
+            if (preservedNoticeId === String(noticeId)) {
+                preservedNoticeId = null;
+            }
+            await refreshNoticeRows();
+        } catch (error) {
+            console.error('[AdminCms] Notice delete failed:', error);
+            alert(error instanceof Error ? error.message : '공지 삭제에 실패했습니다.');
+        } finally {
+            setNoticeActionPendingState(false);
         }
     };
 
@@ -487,17 +725,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         const config = getTabConfig(tabKey);
         if (!tableBody) return;
 
-        const keyword = searchKeyword.trim().toLowerCase();
-        const rows = config.rows.filter((row) => {
-            const statusMatch = activeStatus === 'all' || row.statusKey === activeStatus;
-            const noticeTypeMatch = tabKey !== 'notices' || activeNoticeType === 'all' || row.noticeType === activeNoticeType;
-            const searchMatch = !keyword || row.searchText.toLowerCase().includes(keyword);
-            return statusMatch && noticeTypeMatch && searchMatch;
-        });
+        const rows = getFilteredNoticeRows(tabKey);
 
         if (rows.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="${config.columns.length}" style="text-align:center; padding: 40px;">${escapeHtml(config.emptyMessage)}</td></tr>`;
+            if (tabKey === 'notices') {
+                renderNoticePagination([]);
+            }
             return;
+        }
+
+        if (tabKey === 'notices') {
+            const totalPages = getNoticeTotalPages(rows);
+            if (activeNoticePage > totalPages) {
+                activeNoticePage = totalPages;
+            }
+            const startIndex = (activeNoticePage - 1) * NOTICE_PAGE_SIZE;
+            const pageRows = rows.slice(startIndex, startIndex + NOTICE_PAGE_SIZE);
+            renderNoticePagination(rows);
+
+            tableBody.innerHTML = pageRows.map((row) => `
+                <tr>
+                    ${row.cells.map((cell) => `<td>${cell}</td>`).join('')}
+                </tr>
+            `).join('');
+            return;
+        }
+
+        if (noticePaginationContainer) {
+            noticePaginationContainer.hidden = true;
+            noticePaginationContainer.innerHTML = '';
         }
 
         tableBody.innerHTML = rows.map((row) => `
@@ -539,12 +796,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             searchButton.textContent = cmsConfig.searchButtonLabel;
         }
 
-        if (secondaryActionButton) {
-            secondaryActionButton.textContent = config.secondaryAction;
-        }
-
-        if (primaryActionButton) {
-            primaryActionButton.textContent = config.primaryAction;
+        if (actionButtonsContainer) {
+            const secondaryAction = typeof config.secondaryAction === 'string' ? config.secondaryAction.trim() : '';
+            actionButtonsContainer.innerHTML = secondaryAction ? `
+                <button class="admin-btn admin-btn-outline" type="button" data-cms-action="secondary">${escapeHtml(secondaryAction)}</button>
+                <button class="admin-btn admin-btn-primary" type="button" id="cms-primary-action-btn" data-cms-action="primary">${escapeHtml(config.primaryAction)}</button>
+            ` : `
+                <button class="admin-btn admin-btn-primary" type="button" id="cms-primary-action-btn" data-cms-action="primary">${escapeHtml(config.primaryAction)}</button>
+            `;
         }
 
         if (noticeTypeFilter) {
@@ -555,6 +814,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const setActiveTab = (tabKey) => {
         activeTab = TAB_CONFIG[tabKey] ? tabKey : DEFAULT_TAB;
+        if (activeTab !== 'notices') {
+            activeNoticePage = 1;
+            preservedNoticeId = null;
+        }
         if (noticeModalBackdrop && !noticeModalBackdrop.hidden) {
             closeNoticeModal();
         }
@@ -580,6 +843,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             searchKeyword = '';
             activeStatus = 'all';
             activeNoticeType = 'all';
+            resetNoticePagination();
             if (searchInput) searchInput.value = '';
             if (statusFilter) statusFilter.value = 'all';
             if (noticeTypeFilter) noticeTypeFilter.value = 'all';
@@ -590,18 +854,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (searchInput) {
         searchInput.addEventListener('input', (event) => {
             searchKeyword = event.currentTarget.value;
+            preservedNoticeId = null;
+            if (activeTab === 'notices') {
+                resetNoticePagination();
+            }
             renderTableBody(activeTab);
         });
     }
 
     if (searchButton) {
-        searchButton.addEventListener('click', () => renderTableBody(activeTab));
+        searchButton.addEventListener('click', () => {
+            preservedNoticeId = null;
+            if (activeTab === 'notices') {
+                resetNoticePagination();
+            }
+            renderTableBody(activeTab);
+        });
     }
 
-    if (primaryActionButton) {
-        primaryActionButton.addEventListener('click', () => {
-            if (activeTab !== 'notices') return;
-            openNoticeModal('create');
+    if (actionButtonsContainer) {
+        actionButtonsContainer.addEventListener('click', (event) => {
+            const actionButton = event.target.closest('[data-cms-action]');
+            if (!actionButton) return;
+            if (actionButton.dataset.cmsAction === 'primary' && activeTab === 'notices') {
+                openNoticeModal('create');
+            }
         });
     }
 
@@ -630,14 +907,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (tableBody) {
         tableBody.addEventListener('click', (event) => {
             if (activeTab !== 'notices') return;
-            const editButton = event.target.closest('[data-notice-action="edit"]');
-            if (!editButton) return;
+            const actionButton = event.target.closest('[data-notice-action]');
+            if (!actionButton) return;
 
-            const noticeId = editButton.dataset.noticeId;
-            const noticeRow = TAB_CONFIG.notices.rows.find((row) => String(row.noticeId) === String(noticeId));
+            const { noticeAction, noticeId } = actionButton.dataset;
+            const noticeRow = getNoticeRowById(noticeId);
             if (!noticeRow?.noticeRecord) return;
 
-            openNoticeModal('edit', noticeRow.noticeRecord);
+            if (noticeAction === 'edit') {
+                openNoticeModal('edit', mergeNoticeRecord(
+                    noticeRow.noticeRecord,
+                    noticeRecordCache.get(String(noticeId))
+                ) || noticeRow.noticeRecord);
+                return;
+            }
+
+            if (noticeAction === 'toggle-active') {
+                void toggleNoticeActive(noticeId);
+                return;
+            }
+
+            if (noticeAction === 'delete') {
+                void deleteNotice(noticeId);
+            }
+        });
+    }
+
+    if (noticePaginationContainer) {
+        noticePaginationContainer.addEventListener('click', (event) => {
+            const pageButton = event.target.closest('[data-notice-page], [data-notice-page-action]');
+            if (!pageButton || noticePaginationContainer.hidden) return;
+            const filteredRows = getFilteredNoticeRows('notices');
+            const totalPages = getNoticeTotalPages(filteredRows);
+
+            if (pageButton.dataset.noticePage) {
+                const nextPage = Number(pageButton.dataset.noticePage);
+                if (Number.isFinite(nextPage) && nextPage >= 1 && nextPage <= totalPages) {
+                    activeNoticePage = nextPage;
+                    renderTableBody('notices');
+                }
+                return;
+            }
+
+            const action = pageButton.dataset.noticePageAction;
+            if (action === 'prev' && activeNoticePage > 1) {
+                activeNoticePage -= 1;
+                renderTableBody('notices');
+                return;
+            }
+
+            if (action === 'next' && activeNoticePage < totalPages) {
+                activeNoticePage += 1;
+                renderTableBody('notices');
+            }
         });
     }
 
@@ -676,6 +998,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (statusFilter) {
         statusFilter.addEventListener('change', (event) => {
             activeStatus = event.currentTarget.value;
+            preservedNoticeId = null;
+            if (activeTab === 'notices') {
+                resetNoticePagination();
+            }
             renderTableBody(activeTab);
         });
     }
@@ -684,6 +1010,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         noticeTypeFilter.addEventListener('change', (event) => {
             activeNoticeType = normalizeNoticeFilterType(event.currentTarget.value);
             event.currentTarget.value = activeNoticeType;
+            preservedNoticeId = null;
+            if (activeTab === 'notices') {
+                resetNoticePagination();
+            }
             renderTableBody(activeTab);
         });
     }
