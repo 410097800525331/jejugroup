@@ -52,6 +52,7 @@ public class MyPageItineraryService {
                         new MyPageDashboardRepository.MyPageItineraryCompanionSnapshot(
                             event.ownerId(),
                             displayCompanionName(event.ownerName(), event.ownerId()),
+                            event.ownerAvatarUrl(),
                             true
                         )
                     );

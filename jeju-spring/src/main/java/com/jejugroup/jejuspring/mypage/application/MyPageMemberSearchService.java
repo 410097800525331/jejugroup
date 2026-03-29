@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
@@ -20,28 +21,35 @@ public class MyPageMemberSearchService {
     private static final Pattern MEMBER_ID_PATTERN = Pattern.compile("^[a-z0-9._-]{1,30}$");
 
     private final AppProperties appProperties;
+    private final MyPageCompanionInviteService companionInviteService;
 
-    public MyPageMemberSearchService(AppProperties appProperties) {
+    public MyPageMemberSearchService(
+        AppProperties appProperties,
+        MyPageCompanionInviteService companionInviteService
+    ) {
         this.appProperties = appProperties;
+        this.companionInviteService = companionInviteService;
     }
 
-    public List<MyPageMemberSearchItem> searchMembers(String query, Integer limit) throws SQLException {
+    public List<MyPageMemberSearchItem> searchMembers(String query, Integer limit, String excludedUserId) throws SQLException {
         String normalizedQuery = normalizeQuery(query);
         Integer normalizedLimit = normalizeLimit(limit);
 
         try (Connection connection = openConnection()) {
             connection.setReadOnly(true);
-            return searchMembers(connection, normalizedQuery, normalizedLimit);
+            return searchMembers(connection, normalizedQuery, normalizedLimit, excludedUserId);
         }
     }
 
     private List<MyPageMemberSearchItem> searchMembers(
         Connection connection,
         String query,
-        Integer limit
+        Integer limit,
+        String excludedUserId
     ) throws SQLException {
         String upperBound = query + '\uffff';
-        // 관리자는 users.role 과 user_roles/roles.code 둘 다에서 검색 대상에서 제외한다.
+        // 관리자는 users.role 과 user_roles/roles.code 둘 다에서 검색 대상에서 제외하고,
+        // 현재 로그인한 사용자도 companion 후보에서 제외한다.
         String sql = """
             SELECT
                 u.id,
@@ -51,6 +59,7 @@ public class MyPageMemberSearchService {
             FROM users u
             LEFT JOIN user_profiles up ON up.user_id = u.id
             WHERE u.id >= ? AND u.id < ?
+              AND u.id <> ?
               AND COALESCE(UPPER(TRIM(u.role)), '') <> 'ADMIN'
               AND NOT EXISTS (
                   SELECT 1
@@ -70,19 +79,45 @@ public class MyPageMemberSearchService {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, query);
             statement.setString(2, upperBound);
+            statement.setString(3, excludedUserId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     members.add(new MyPageMemberSearchItem(
                         nullToEmpty(resultSet.getString("id")),
                         nullToEmpty(resultSet.getString("display_name")),
                         nullToEmpty(resultSet.getString("bio")),
-                        nullToEmpty(resultSet.getString("avatar_url"))
+                        nullToEmpty(resultSet.getString("avatar_url")),
+                        "AVAILABLE",
+                        "초대"
                     ));
                 }
             }
         }
 
-        return List.copyOf(members);
+        Map<String, MyPageCompanionInviteService.RelationStateSnapshot> relationStates = companionInviteService.loadRelationStates(
+            connection,
+            excludedUserId,
+            members.stream().map(MyPageMemberSearchItem::id).toList()
+        );
+
+        List<MyPageMemberSearchItem> enrichedMembers = new ArrayList<>(members.size());
+        for (MyPageMemberSearchItem member : members) {
+            MyPageCompanionInviteService.RelationStateSnapshot relationState = relationStates.get(member.id());
+            if (relationState == null) {
+                relationState = MyPageCompanionInviteService.RelationStateSnapshot.available();
+            }
+
+            enrichedMembers.add(new MyPageMemberSearchItem(
+                member.id(),
+                member.name(),
+                member.bio(),
+                member.avatarUrl(),
+                relationState.state(),
+                relationState.label()
+            ));
+        }
+
+        return List.copyOf(enrichedMembers);
     }
 
     private String normalizeQuery(String query) {
@@ -130,7 +165,9 @@ public class MyPageMemberSearchService {
         String id,
         String name,
         String bio,
-        String avatarUrl
+        String avatarUrl,
+        String relationState,
+        String relationLabel
     ) {
     }
 }

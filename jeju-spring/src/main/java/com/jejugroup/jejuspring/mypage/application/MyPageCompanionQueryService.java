@@ -18,7 +18,8 @@ public class MyPageCompanionQueryService {
         String query = """
             SELECT
                 cl.companion_user_id,
-                COALESCE(NULLIF(TRIM(up.display_name), ''), u.name) AS companion_name
+                COALESCE(NULLIF(TRIM(up.display_name), ''), u.name) AS companion_name,
+                NULLIF(TRIM(up.avatar_url), '') AS companion_avatar_url
             FROM companion_links cl
             INNER JOIN users u ON u.id = cl.companion_user_id
             LEFT JOIN user_profiles up ON up.user_id = u.id
@@ -36,6 +37,7 @@ public class MyPageCompanionQueryService {
                     companions.add(new MyPageDashboardRepository.MyPageItineraryCompanionSnapshot(
                         nullToEmpty(resultSet.getString("companion_user_id")),
                         nullToEmpty(resultSet.getString("companion_name")),
+                        nullToEmpty(resultSet.getString("companion_avatar_url")),
                         true
                     ));
                 }

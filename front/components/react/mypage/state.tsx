@@ -212,17 +212,49 @@ const mergeProfilePatch = (profile: UserProfile, patch: Partial<UserProfile>): U
         : undefined,
 });
 
-const mergeTravelEventSources = (session: unknown) => {
-  const baseSource = mergeDashboardSources(session, readAccountDashboardMock(session));
-  const baseSnapshot = normalizeDashboardSnapshot(baseSource);
+const mergeLinkedCompanions = (
+  localCompanions: ItineraryCompanion[],
+  serverCompanions: ItineraryCompanion[],
+): ItineraryCompanion[] => {
+  if (serverCompanions.length === 0) {
+    return [];
+  }
 
-  if (baseSnapshot.linkedCompanions.length === 0) {
-    return normalizeDashboardSnapshot(baseSource);
+  const localCompanionById = new Map(localCompanions.map((companion) => [companion.id, companion]));
+
+  return serverCompanions.map((companion) => {
+    const localCompanion = localCompanionById.get(companion.id);
+    if (!localCompanion) {
+      return { ...companion };
+    }
+
+    return {
+      ...localCompanion,
+      ...companion,
+      avatarUrl: companion.avatarUrl ?? localCompanion.avatarUrl,
+      bio: companion.bio ?? localCompanion.bio,
+      relationState: companion.relationState ?? localCompanion.relationState,
+    };
+  });
+};
+
+const mergeTravelEventSources = (dashboardSource: unknown) => {
+  const serverSnapshot = normalizeDashboardSnapshot(dashboardSource);
+  const baseSource = mergeDashboardSources(dashboardSource, readAccountDashboardMock(dashboardSource));
+  const baseSnapshot = normalizeDashboardSnapshot(baseSource);
+  const linkedCompanions = mergeLinkedCompanions(baseSnapshot.linkedCompanions, serverSnapshot.linkedCompanions);
+
+  if (linkedCompanions.length === 0) {
+    return normalizeDashboardSnapshot(
+      mergeDashboardSources(baseSource, {
+        linkedCompanions: [],
+      }),
+    );
   }
 
   const aggregatedTravelEvents = [
     ...baseSnapshot.travelEvents,
-    ...baseSnapshot.linkedCompanions.flatMap((companion) => {
+    ...linkedCompanions.flatMap((companion) => {
       const companionMock = readAccountDashboardMockByAccountKey(companion.id);
       if (!companionMock || !("travelEvents" in companionMock)) {
         return [];
@@ -238,7 +270,7 @@ const mergeTravelEventSources = (session: unknown) => {
 
   return normalizeDashboardSnapshot(
     mergeDashboardSources(baseSource, {
-      linkedCompanions: baseSnapshot.linkedCompanions,
+      linkedCompanions,
       travelEvents: aggregatedTravelEvents,
     }),
   );

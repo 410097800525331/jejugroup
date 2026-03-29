@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { resolveAvatarUrl } from "./data";
 import { useCompanionManager } from "./useCompanionManager";
-import type { ItineraryCompanion } from "./types";
+import type { CompanionRelationState, ItineraryCompanion } from "./types";
 
 interface CompanionManageModalProps {
   initialCompanions: ItineraryCompanion[];
@@ -12,29 +13,39 @@ interface CompanionManageModalProps {
 interface CompanionCardProps {
   companion: ItineraryCompanion;
   isLinked: boolean;
-  showActionBadge: boolean;
-  showLinkedBadge?: boolean;
-  onSelect: (companion: ItineraryCompanion) => void;
+  onInvite: (companion: ItineraryCompanion) => void;
 }
 
 const CompanionAvatar = ({
   companion,
+  className = "",
+  showLinkedIndicator = true,
+  style,
 }: {
   companion: ItineraryCompanion;
+  className?: string;
+  showLinkedIndicator?: boolean;
+  style?: React.CSSProperties;
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
-  const showImage = Boolean(companion.avatarUrl && !imageFailed);
+  const avatarUrl = resolveAvatarUrl(companion.avatarUrl);
+  const showImage = Boolean(avatarUrl && !imageFailed);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [avatarUrl]);
 
   return (
     <div
       aria-hidden="true"
-      className="companion-avatar soft-radius is-linked companion-search-avatar"
+      className={`companion-avatar soft-radius companion-search-avatar ${showLinkedIndicator ? "is-linked" : ""} ${className}`.trim()}
       data-companion-search-avatar="true"
+      style={style}
     >
       {showImage ? (
         <img
           alt=""
-          src={companion.avatarUrl}
+          src={avatarUrl}
           onError={() => setImageFailed(true)}
           className="companion-search-avatar-image"
         />
@@ -43,39 +54,55 @@ const CompanionAvatar = ({
           {companion.name.charAt(0)}
         </span>
       )}
-      <i data-lucide="link" className="lucide-link linked-indicator companion-search-avatar-link" />
+      {showLinkedIndicator ? (
+        <i data-lucide="link" className="lucide-link linked-indicator companion-search-avatar-link" />
+      ) : null}
     </div>
   );
 };
 
-const CompanionSearchCard = ({ companion, isLinked, showActionBadge, showLinkedBadge, onSelect }: CompanionCardProps) => {
+const RELATION_BADGE_LABELS: Record<CompanionRelationState, string> = {
+  incoming_pending: "응답 필요",
+  linked: "연동됨",
+  none: "초대",
+  outgoing_pending: "초대중",
+};
+
+const resolveRelationState = (companion: ItineraryCompanion, isLinked: boolean): CompanionRelationState =>
+  isLinked ? "linked" : companion.relationState ?? "none";
+
+const getRelationBadgeLabel = (relationState: CompanionRelationState) => RELATION_BADGE_LABELS[relationState];
+
+const CompanionSearchCard = ({ companion, isLinked, onInvite }: CompanionCardProps) => {
   const bioText = companion.bio?.trim() || `@${companion.id}`;
+  const relationState = resolveRelationState(companion, isLinked);
+  const isInviteActionable = relationState === "none";
+  const badgeLabel = getRelationBadgeLabel(relationState);
 
   return (
     <button
       className="companion-linked-item list-item soft-radius companion-search-card"
       type="button"
-      onClick={() => onSelect(companion)}
-      disabled={isLinked}
+      onClick={() => {
+        if (isInviteActionable) {
+          onInvite(companion);
+        }
+      }}
+      disabled={!isInviteActionable}
       data-linked={isLinked ? "true" : "false"}
+      data-relation-state={relationState}
     >
       <div className="item-info companion-search-card-info">
-        <CompanionAvatar companion={companion} />
+        <CompanionAvatar companion={companion} showLinkedIndicator={relationState === "linked"} />
         <div className="user-info name-meta companion-search-card-copy">
           <strong>{companion.name}</strong>
           <span>{bioText}</span>
         </div>
       </div>
 
-      {showActionBadge ? (
-        <span className="pill-shape companion-search-card-badge" data-linked={isLinked ? "true" : "false"}>
-          {isLinked ? "연동됨" : "추가"}
-        </span>
-      ) : showLinkedBadge && isLinked ? (
-        <span className="pill-shape companion-search-card-badge" data-linked="true">
-          연동됨
-        </span>
-      ) : null}
+      <span className="pill-shape companion-search-card-badge" data-linked={isLinked ? "true" : "false"}>
+        {badgeLabel}
+      </span>
     </button>
   );
 };
@@ -95,12 +122,14 @@ export const CompanionManageModal = ({
     isSearching,
     errorObj,
     handleSearch,
-    addCompanion,
+    inviteCompanion,
+    commitPendingUnlinks,
     removeCompanion,
     clearSearch,
   } = useCompanionManager({ initialCompanions });
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isApplying, setIsApplying] = useState(false);
   const suggestionLimit = 4;
   const hasSearchText = searchQuery.trim().length > 0;
   const visibleSearchResults = useMemo(
@@ -139,9 +168,17 @@ export const CompanionManageModal = ({
     handleSearch(searchQuery);
   };
 
-  const handleApplyParams = () => {
-    onSave(companions);
-    onClose();
+  const handleApplyParams = async () => {
+    setIsApplying(true);
+    try {
+      await commitPendingUnlinks();
+      onSave(companions);
+      onClose();
+    } catch {
+      return;
+    } finally {
+      setIsApplying(false);
+    }
   };
 
   const isCompanionLinked = (companionId: string) => companions.some((companion) => companion.id === companionId);
@@ -177,8 +214,7 @@ export const CompanionManageModal = ({
                   key={companion.id}
                   companion={companion}
                   isLinked={isCompanionLinked(companion.id)}
-                  onSelect={addCompanion}
-                  showActionBadge
+                  onInvite={inviteCompanion}
                 />
               ))}
             </div>
@@ -204,9 +240,7 @@ export const CompanionManageModal = ({
             key={companion.id}
             companion={companion}
             isLinked={isCompanionLinked(companion.id)}
-            onSelect={addCompanion}
-            showActionBadge={false}
-            showLinkedBadge
+            onInvite={inviteCompanion}
           />
         ))}
       </div>
@@ -243,10 +277,10 @@ export const CompanionManageModal = ({
                 {renderSuggestionList()}
               </div>
             </div>
-            <button
-              type="submit"
+          <button
+            type="submit"
             className="add-btn companion-search-submit pill-shape"
-              disabled={isSearching}
+            disabled={isSearching}
                 style={{
                   background: hasSearchText ? "#ff7a00" : "#eef1f4",
                   border: hasSearchText ? "1px solid #ff7a00" : "1px solid #d7dce2",
@@ -278,23 +312,30 @@ export const CompanionManageModal = ({
               </h4>
               {companions.length === 0 ? (
                 <p className="empty-list" style={{ padding: "48px 20px", fontSize: "15px" }}>
-                  아직 연동된 동행자가 없다. 제주그룹 회원 ID를 검색해서 추가해라.
+                  아직 연동된 동행자가 없다. 제주그룹 회원 ID를 검색해서 초대해라.
                 </p>
               ) : (
                 <div className="companion-linked-list companion-list-scroll" style={{ display: "flex", flex: "1 1 auto", flexDirection: "column", gap: "16px", minHeight: 0, overflowY: "auto", paddingRight: "4px" }}>
                   {companions.map((comp) => (
                     <div key={comp.id} className="companion-linked-item list-item" style={{ padding: "12px 20px", borderRadius: "16px" }}>
                       <div className="item-info">
-                        <div className={`companion-avatar soft-radius ${comp.isMember ? "is-linked" : ""}`} style={{ width: "40px", height: "40px", fontSize: "15px", marginLeft: 0 }}>
-                          {comp.name.charAt(0)}
-                          {comp.isMember && <i data-lucide="link" className="lucide-link linked-indicator" style={{ width: "14px", height: "14px" }} />}
-                        </div>
+                        <CompanionAvatar
+                          companion={comp}
+                          className="companion-linked-avatar"
+                          showLinkedIndicator={comp.isMember}
+                          style={{ width: "40px", height: "40px", fontSize: "15px", marginLeft: 0 }}
+                        />
                         <div className="user-info name-meta">
                           <strong style={{ fontSize: "16px" }}>{comp.name}</strong>
                           <span style={{ fontSize: "13px", color: "var(--meta-text-muted)" }}>@{comp.id}</span>
                         </div>
                       </div>
-                      <button className="remove-btn companion-remove-btn" onClick={() => removeCompanion(comp.id)} style={{ padding: "10px 24px", fontSize: "14px" }}>
+                      <button
+                        className="remove-btn companion-remove-btn"
+                        type="button"
+                        onClick={() => void removeCompanion(comp.id)}
+                        style={{ padding: "10px 24px", fontSize: "14px" }}
+                      >
                         해제
                       </button>
                     </div>
@@ -309,8 +350,14 @@ export const CompanionManageModal = ({
           <button className="cancel-btn pill-shape" type="button" onClick={onClose} style={{ padding: "20px 0", fontSize: "16px" }}>
             취소
           </button>
-          <button className="save-btn pill-shape" type="button" onClick={handleApplyParams} style={{ padding: "20px 0", fontSize: "16px" }}>
-            적용
+          <button
+            className="save-btn pill-shape"
+            type="button"
+            onClick={() => void handleApplyParams()}
+            disabled={isApplying}
+            style={{ padding: "20px 0", fontSize: "16px" }}
+          >
+            {isApplying ? "적용 중" : "적용"}
           </button>
         </footer>
       </div>

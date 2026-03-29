@@ -1,4 +1,12 @@
 export type BookingType = "air" | "rent" | "stay" | "voucher";
+export type CompanionRelationState = "none" | "linked" | "outgoing_pending" | "incoming_pending";
+export type CompanionInviteStatus = "pending" | "accepted" | "rejected" | "cancelled" | "expired";
+export type CompanionInviteDirection = "sent" | "received";
+
+export interface CompanionInviteAlertEntrypointProps {
+  onOpenCompanionInvites?: () => void;
+  pendingInviteCount?: number;
+}
 
 export interface BookingItem {
   amount: string;
@@ -28,7 +36,25 @@ export interface ItineraryCompanion {
   bio?: string;
   id: string;
   isMember: boolean;
+  relationState?: CompanionRelationState;
   name: string;
+}
+
+export interface CompanionInviteItem {
+  createdAt?: string;
+  direction: CompanionInviteDirection;
+  expiresAt?: string;
+  id: number;
+  receiverAvatarUrl?: string;
+  receiverBio?: string;
+  receiverName: string;
+  receiverUserId: string;
+  respondedAt?: string;
+  senderAvatarUrl?: string;
+  senderBio?: string;
+  senderName: string;
+  senderUserId: string;
+  status: CompanionInviteStatus;
 }
 
 export type CompanionSearchMode = "suggestions" | "results";

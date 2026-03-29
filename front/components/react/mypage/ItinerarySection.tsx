@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ItineraryActivity, ItineraryCompanion, ItineraryItem, TravelEventStatus } from "./types";
 import { SectionCard } from "./SectionCard";
 import { CompanionManageModal } from "./CompanionManageModal";
+import { resolveAvatarUrl } from "./data";
 import { useDashboardState } from "./state";
 import { patchAccountDashboardMock } from "./mockAccountDashboardStore";
 
@@ -38,6 +39,43 @@ const getActivityStatusMeta = (status?: TravelEventStatus) => {
         style: undefined,
       };
   }
+};
+
+const ItineraryCompanionAvatar = ({ companion }: { companion: ItineraryCompanion }) => {
+  const [imageFailed, setImageFailed] = useState(false);
+  const avatarUrl = resolveAvatarUrl(companion.avatarUrl);
+  const showImage = Boolean(avatarUrl && !imageFailed);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [avatarUrl]);
+
+  return (
+    <div
+      className={`companion-avatar soft-radius ${companion.isMember ? "is-linked" : ""}`}
+      title={companion.name + (companion.isMember ? " (연동됨)" : "")}
+    >
+      {showImage ? (
+        <img
+          alt=""
+          src={avatarUrl}
+          onError={() => setImageFailed(true)}
+          style={{
+            borderRadius: "inherit",
+            height: "100%",
+            inset: 0,
+            objectFit: "cover",
+            pointerEvents: "none",
+            position: "absolute",
+            width: "100%",
+          }}
+        />
+      ) : (
+        <span style={{ position: "relative", zIndex: 1 }}>{companion.name.charAt(0)}</span>
+      )}
+      {companion.isMember && <i data-lucide="link" className="lucide-link linked-indicator" />}
+    </div>
+  );
 };
 
 export const ItinerarySection = () => {
@@ -119,6 +157,10 @@ export const ItinerarySection = () => {
           const isVisible = shouldAlwaysShow || isExpanded;
           const measuredHeight = dayBlockHeights[day.id] ?? 720;
           const isEmptyDay = day.id === "empty-itinerary";
+          const displayCompanions = linkedCompanions.length > 0 ? linkedCompanions : day.companions;
+          const visibleCompanions = displayCompanions.slice(0, 4);
+          const hiddenCompanionCount = displayCompanions.length > 4 ? displayCompanions.length - 4 : 0;
+          const companionCountLabel = hiddenCompanionCount > 0 ? `외 ${hiddenCompanionCount}명` : `총 ${displayCompanions.length}명`;
 
           return (
             <div
@@ -151,18 +193,11 @@ export const ItinerarySection = () => {
                     <i data-lucide="users" className="lucide-users" />
                     <span className="small-label">함께하는 동행자</span>
                   </div>
-                  <div className={`avatar-stack ${day.companions.length === 0 ? "is-empty" : ""}`}>
-                    {day.companions.map((comp: ItineraryCompanion) => (
-                      <div
-                        className={`companion-avatar soft-radius ${comp.isMember ? "is-linked" : ""}`}
-                        key={comp.id}
-                        title={comp.name + (comp.isMember ? " (연동됨)" : "")}
-                      >
-                        {comp.name.charAt(0)}
-                        {comp.isMember && <i data-lucide="link" className="lucide-link linked-indicator" />}
-                      </div>
+                  <div className="avatar-stack">
+                    {visibleCompanions.map((comp: ItineraryCompanion) => (
+                      <ItineraryCompanionAvatar companion={comp} key={comp.id} />
                     ))}
-                    <span className="comp-count-label">총 {day.companions.length}명</span>
+                    <span className="comp-count-label">{companionCountLabel}</span>
                   </div>
                   <button className="link-action-btn pill-shape" type="button" onClick={() => setManageModalDayId(day.id)}>
                     <i data-lucide="user-plus" className="lucide-user-plus" />

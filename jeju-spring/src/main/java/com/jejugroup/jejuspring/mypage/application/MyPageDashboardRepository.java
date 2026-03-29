@@ -138,7 +138,8 @@ public class MyPageDashboardRepository {
         String status,
         String type,
         String ownerId,
-        String ownerName
+        String ownerName,
+        String ownerAvatarUrl
     ) {
     }
 
@@ -167,6 +168,7 @@ public class MyPageDashboardRepository {
     public record MyPageItineraryCompanionSnapshot(
         String id,
         String name,
+        String avatarUrl,
         boolean isMember
     ) {
     }
@@ -266,7 +268,8 @@ public class MyPageDashboardRepository {
         String query = """
             SELECT
                 cl.companion_user_id,
-                COALESCE(NULLIF(TRIM(up.display_name), ''), u.name) AS companion_name
+                COALESCE(NULLIF(TRIM(up.display_name), ''), u.name) AS companion_name,
+                NULLIF(TRIM(up.avatar_url), '') AS companion_avatar_url
             FROM companion_links cl
             INNER JOIN users u ON u.id = cl.companion_user_id
             LEFT JOIN user_profiles up ON up.user_id = u.id
@@ -284,6 +287,7 @@ public class MyPageDashboardRepository {
                     companions.add(new MyPageItineraryCompanionSnapshot(
                         nullToEmpty(resultSet.getString("companion_user_id")),
                         nullToEmpty(resultSet.getString("companion_name")),
+                        nullToEmpty(resultSet.getString("companion_avatar_url")),
                         true
                     ));
                 }
@@ -533,19 +537,21 @@ public class MyPageDashboardRepository {
         String placeholders = userScopeIds.stream().map(ignored -> "?").collect(Collectors.joining(", "));
         String query = """
             SELECT
-                id,
-                day_id,
-                event_date,
-                event_time,
-                title,
-                activity_label,
-                google_map_url,
-                status,
-                booking_type,
-                owner_name,
-                user_id
-            FROM travel_events
-            WHERE user_id IN (%s)
+                te.id,
+                te.day_id,
+                te.event_date,
+                te.event_time,
+                te.title,
+                te.activity_label,
+                te.google_map_url,
+                te.status,
+                te.booking_type,
+                te.owner_name,
+                te.user_id,
+                NULLIF(TRIM(up.avatar_url), '') AS owner_avatar_url
+            FROM travel_events te
+            LEFT JOIN user_profiles up ON up.user_id = te.user_id
+            WHERE te.user_id IN (%s)
             ORDER BY event_date ASC, event_time ASC, sort_order ASC, id ASC
             """.formatted(placeholders);
 
@@ -569,7 +575,8 @@ public class MyPageDashboardRepository {
                         normalizeTravelEventStatus(resultSet.getString("status")),
                         normalizeBookingType(resultSet.getString("booking_type")),
                         nullToEmpty(resultSet.getString("user_id")),
-                        nullToEmpty(resultSet.getString("owner_name"))
+                        nullToEmpty(resultSet.getString("owner_name")),
+                        nullToEmpty(resultSet.getString("owner_avatar_url"))
                     ));
                 }
             }
@@ -616,6 +623,7 @@ public class MyPageDashboardRepository {
                         new MyPageItineraryCompanionSnapshot(
                             event.ownerId(),
                             displayCompanionName(event.ownerName(), event.ownerId()),
+                            nullToEmpty(event.ownerAvatarUrl()),
                             true
                         )
                     );

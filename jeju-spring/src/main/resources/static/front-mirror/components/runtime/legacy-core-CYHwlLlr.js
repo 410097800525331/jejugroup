@@ -1,16 +1,16 @@
-const M = "ADMIN", $ = (e) => {
+const $ = "ADMIN", z = (e) => {
   if (!e || typeof e != "object")
     return [];
   const t = [];
   return typeof e.role == "string" && e.role.trim() !== "" && t.push(e.role.trim()), Array.isArray(e.roles) && e.roles.forEach((r) => {
     typeof r == "string" && r.trim() !== "" && t.push(r.trim());
   }), t;
-}, ye = (e) => $(e).some((t) => t.toUpperCase().includes(M)), z = "https://jejugroup.alwaysdata.net", R = "http://localhost:9090/jeju-web", k = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), D = () => {
+}, ye = (e) => z(e).some((t) => t.toUpperCase().includes($)), k = "https://jejugroup.alwaysdata.net", R = "http://localhost:9090/jeju-web", D = /* @__PURE__ */ new Set(["localhost", "127.0.0.1"]), K = () => {
   const t = new URLSearchParams(window.location.search).get("api");
-  return t === "local" ? R : t === "remote" ? z : !k.has(window.location.hostname) || window.location.port === "8080" ? "" : window.location.port !== "9090" ? R : "";
-}, K = D(), h = "userSession", V = "jeju:session-updated", Y = "/api/auth/session", Q = "/api/auth/logout", x = 2 * 60 * 1e3;
+  return t === "local" ? R : t === "remote" ? k : !D.has(window.location.hostname) || window.location.port === "8080" ? "" : window.location.port !== "9090" ? R : "";
+}, V = K(), h = "userSession", Y = "jeju:session-updated", Q = "/api/auth/session", x = "/api/auth/logout", F = 2 * 60 * 1e3;
 let c = null, u = null;
-const I = (e) => `${K}${e}`, _ = (e) => {
+const I = (e) => `${V}${e}`, _ = (e) => {
   if (!e)
     return null;
   try {
@@ -19,7 +19,7 @@ const I = (e) => `${K}${e}`, _ = (e) => {
   } catch {
     return null;
   }
-}, F = (e) => {
+}, J = (e) => {
   if (!e || typeof e != "object")
     return null;
   try {
@@ -30,15 +30,15 @@ const I = (e) => `${K}${e}`, _ = (e) => {
 }, O = (e) => {
   try {
     const t = e ? { session: { ...e } } : { session: null };
-    window.dispatchEvent(new CustomEvent(V, { detail: t }));
+    window.dispatchEvent(new CustomEvent(Y, { detail: t }));
   } catch (t) {
     console.warn("[SessionManager] Session event dispatch failed:", t);
   }
 }, j = () => {
   c !== null && (window.clearInterval(c), c = null), u = null;
-}, J = async () => u || (q() ? (u = (async () => {
+}, q = async () => u || (T() ? (u = (async () => {
   try {
-    return await T();
+    return await N();
   } catch (t) {
     return console.warn("[SessionManager] Session heartbeat failed:", t), null;
   } finally {
@@ -46,9 +46,9 @@ const I = (e) => `${K}${e}`, _ = (e) => {
   }
 })(), u) : (j(), null)), w = () => {
   c === null && typeof window.setInterval == "function" && (c = window.setInterval(() => {
-    J();
-  }, x));
-}, q = () => {
+    q();
+  }, F));
+}, T = () => {
   try {
     return _(localStorage.getItem(h));
   } catch {
@@ -57,7 +57,7 @@ const I = (e) => `${K}${e}`, _ = (e) => {
 }, W = (e) => {
   if (!e || typeof e != "object")
     return null;
-  const t = { ...e }, r = F(t);
+  const t = { ...e }, r = J(t);
   try {
     const s = localStorage.getItem(h);
     if (r && s === r)
@@ -69,14 +69,15 @@ const I = (e) => `${K}${e}`, _ = (e) => {
   return w(), O(t), t;
 }, S = () => {
   j();
+  const e = T() !== null;
   try {
     localStorage.getItem(h) !== null && localStorage.removeItem(h);
-  } catch (e) {
-    console.warn("[SessionManager] Session clear failed:", e);
+  } catch (t) {
+    console.warn("[SessionManager] Session clear failed:", t);
   }
-  O(null);
-}, T = async () => {
-  const e = await fetch(I(Y), {
+  e && O(null);
+}, N = async () => {
+  const e = await fetch(I(Q), {
     method: "GET",
     credentials: "include",
     headers: {
@@ -91,14 +92,14 @@ const I = (e) => `${K}${e}`, _ = (e) => {
   return !(t != null && t.success) || !(t != null && t.user) ? (S(), null) : W(t.user);
 }, Ee = async () => {
   try {
-    return await T();
+    return await N();
   } catch (e) {
     return console.warn("[SessionManager] Session resolve failed:", e), null;
   }
 }, je = async () => {
   j();
   try {
-    await fetch(I(Q), {
+    await fetch(I(x), {
       method: "POST",
       credentials: "include",
       headers: {
@@ -132,7 +133,7 @@ const I = (e) => `${K}${e}`, _ = (e) => {
   kind: "external",
   url: e,
   ...t
-}), N = (e) => {
+}), v = (e) => {
   if (!e || typeof e != "object")
     return e;
   if ("kind" in e) {
@@ -142,9 +143,9 @@ const I = (e) => `${K}${e}`, _ = (e) => {
     return `${e.path}${t}${r}`;
   }
   return Object.fromEntries(
-    Object.entries(e).map(([t, r]) => [t, N(r)])
+    Object.entries(e).map(([t, r]) => [t, v(r)])
   );
-}, v = A({
+}, L = A({
   HOME: n("/index.html"),
   AUTH: {
     LOGIN: n("/pages/auth/login.html", { shellStrategy: "auth-shell" }),
@@ -238,7 +239,7 @@ const I = (e) => `${K}${e}`, _ = (e) => {
       EVENT: n("/jejuair/pages/event/event.html")
     }
   }
-}), Ae = A(N(v)), X = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, ee = /^[a-z][a-z0-9+.-]*:/i, y = "shell", te = "jeju:mypage-shell", re = /* @__PURE__ */ new Set(["main", "stay", "air"]), ne = (e, t) => t.split(".").reduce((r, s) => {
+}), Ae = A(v(L)), X = /:([A-Za-z0-9_]+)|\{([A-Za-z0-9_]+)\}/g, ee = /^[a-z][a-z0-9+.-]*:/i, y = "shell", te = "jeju:mypage-shell", re = /* @__PURE__ */ new Set(["main", "stay", "air"]), ne = (e, t) => t.split(".").reduce((r, s) => {
   if (r && typeof r == "object" && s in r)
     return r[s];
 }, e), se = (e) => {
@@ -325,27 +326,27 @@ const I = (e) => `${K}${e}`, _ = (e) => {
     ...r,
     [y]: s
   };
-}, L = (e, t = {}) => {
+}, U = (e, t = {}) => {
   if (typeof e != "string" || e.trim() === "")
     throw new TypeError("[RouteResolver] routeKey must be a non-empty string.");
   if (t === null || typeof t != "object" || Array.isArray(t))
     throw new TypeError("[RouteResolver] params must be a plain object.");
-  const r = e.trim(), s = ne(v, r);
+  const r = e.trim(), s = ne(L, r);
   if (!s || typeof s != "object" || !s.kind)
     throw new Error(`[RouteResolver] Route key not found: ${e}`);
   const a = se(s);
   if (typeof a != "string" || a.trim() === "")
     throw new Error(`[RouteResolver] Route template not found: ${e}`);
-  const o = he(s, t), i = new Set(s.defaultQuery ? Object.keys(s.defaultQuery) : []), l = a.replace(X, (Se, H, G) => {
-    const p = H || G, g = o[p];
+  const o = he(s, t), i = new Set(s.defaultQuery ? Object.keys(s.defaultQuery) : []), l = a.replace(X, (Se, G, M) => {
+    const p = G || M, g = o[p];
     if (g == null)
       throw new Error(`[RouteResolver] Missing route param: ${p} (${e})`);
     return i.add(p), encodeURIComponent(String(g));
-  }), m = l.indexOf("#"), P = m >= 0 ? l.slice(0, m) : l, C = m >= 0 ? l.slice(m) : "", B = `${le(P)}${C}`;
-  return ae(B, o, i);
+  }), m = l.indexOf("#"), C = m >= 0 ? l.slice(0, m) : l, B = m >= 0 ? l.slice(m) : "", H = `${le(C)}${B}`;
+  return ae(H, o, i);
 };
 let b = !1;
-const me = ["ctrlKey", "metaKey", "shiftKey", "altKey"], de = (e) => me.some((t) => !!e[t]), U = (e) => {
+const me = ["ctrlKey", "metaKey", "shiftKey", "altKey"], de = (e) => me.some((t) => !!e[t]), P = (e) => {
   const t = e.getAttribute("data-route-params");
   if (!t)
     return {};
@@ -360,7 +361,7 @@ const me = ["ctrlKey", "metaKey", "shiftKey", "altKey"], de = (e) => me.some((t)
   const t = e.getAttribute("data-route");
   if (t)
     try {
-      const s = U(e), a = L(t, s), o = e.getAttribute("data-route-mode") || "assign", i = (r = window.__JEJU_ROUTE_NAVIGATOR__) == null ? void 0 : r.safeNavigate;
+      const s = P(e), a = U(t, s), o = e.getAttribute("data-route-mode") || "assign", i = (r = window.__JEJU_ROUTE_NAVIGATOR__) == null ? void 0 : r.safeNavigate;
       if (i) {
         i(a, "router-binder", { mode: o });
         return;
@@ -383,7 +384,7 @@ const me = ["ctrlKey", "metaKey", "shiftKey", "altKey"], de = (e) => me.some((t)
     const s = r.getAttribute("data-route");
     if (s)
       try {
-        const a = U(r), o = L(s, a);
+        const a = P(r), o = U(s, a);
         r.setAttribute("href", o);
       } catch (a) {
         r.setAttribute("href", "#"), console.warn(`[RouterBinder] Failed to hydrate href for '${s}':`, a);
@@ -430,15 +431,15 @@ function be(e) {
   return /[<>'";\(\)={}]/.test(e) ? (console.warn("Security Warning: Invalid parameter detected"), !1) : !0;
 }
 export {
-  K as A,
+  V as A,
   Ae as R,
   Ee as a,
   W as b,
-  q as g,
+  T as g,
   ye as h,
   Re as i,
   je as l,
-  L as r,
+  U as r,
   we as s,
   be as v
 };

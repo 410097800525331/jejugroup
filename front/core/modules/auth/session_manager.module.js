@@ -129,6 +129,8 @@ export const saveSession = (user) => {
 export const clearSession = () => {
   stopSessionHeartbeat();
 
+  const hadStoredSession = getStoredSession() !== null;
+
   try {
     if (localStorage.getItem(SESSION_STORAGE_KEY) !== null) {
       localStorage.removeItem(SESSION_STORAGE_KEY);
@@ -137,7 +139,9 @@ export const clearSession = () => {
     console.warn("[SessionManager] Session clear failed:", error);
   }
 
-  emitSessionUpdate(null);
+  if (hadStoredSession) {
+    emitSessionUpdate(null);
+  }
 };
 
 export const fetchSessionFromServer = async () => {

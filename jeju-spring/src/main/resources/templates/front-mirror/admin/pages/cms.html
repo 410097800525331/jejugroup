@@ -185,6 +185,60 @@
         </main>
     </div>
 
+    <div class="admin-modal-backdrop" id="cms-notice-modal" hidden>
+        <div class="admin-modal" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="cms-notice-modal-title"
+            aria-describedby="cms-notice-modal-desc">
+            <div class="admin-modal-header">
+                <div>
+                    <p class="admin-modal-eyebrow">공지사항 등록</p>
+                    <h2 class="admin-modal-title" id="cms-notice-modal-title">새 공지 작성</h2>
+                </div>
+                <button class="admin-modal-close" type="button" id="cms-notice-modal-close" aria-label="닫기">
+                    <i data-lucide="x" style="width:18px; height:18px;"></i>
+                </button>
+            </div>
+            <p class="admin-modal-description" id="cms-notice-modal-desc">
+                공지사항 탭에서 사용할 작성 팝업입니다. 저장 연동은 아직 하지 않습니다.
+            </p>
+
+            <form class="admin-modal-body" id="cms-notice-form">
+                <div class="admin-modal-grid">
+                    <label class="admin-form-field" for="cms-notice-service-category">
+                        <span class="admin-form-label">서비스 분류</span>
+                        <select class="admin-form-control" id="cms-notice-service-category" name="serviceCategory">
+                            <option value="integrated">통합</option>
+                            <option value="air">에어</option>
+                            <option value="stay">스테이</option>
+                            <option value="rentcar">렌터카</option>
+                        </select>
+                    </label>
+                    <label class="admin-form-field" for="cms-notice-type">
+                        <span class="admin-form-label">공지 유형</span>
+                        <select class="admin-form-control" id="cms-notice-type" name="noticeType">
+                            <option value="notice">공지사항</option>
+                            <option value="event">이벤트</option>
+                        </select>
+                    </label>
+                </div>
+                <label class="admin-form-field" for="cms-notice-title">
+                    <span class="admin-form-label">제목</span>
+                    <input class="admin-form-control" id="cms-notice-title" name="title" type="text"
+                        placeholder="공지 제목을 입력하세요" autocomplete="off">
+                </label>
+                <label class="admin-form-field" for="cms-notice-content">
+                    <span class="admin-form-label">공지 내용</span>
+                    <textarea class="admin-form-control" id="cms-notice-content" name="content" rows="8"
+                        placeholder="공지 내용을 입력하세요"></textarea>
+                </label>
+            </form>
+
+            <div class="admin-modal-footer">
+                <button class="admin-btn admin-btn-outline" type="button" id="cms-notice-modal-cancel">취소</button>
+                <button class="admin-btn admin-btn-primary" type="button" id="cms-notice-modal-submit">등록</button>
+            </div>
+        </div>
+    </div>
+
     <script th:src="@{/front-mirror/admin/js/rbac_config.js}" src="/front-mirror/admin/js/rbac_config.js"></script>
     <script th:src="@{/front-mirror/admin/js/sidebar_ui.js}" src="/front-mirror/admin/js/sidebar_ui.js"></script>
     <script th:src="@{/front-mirror/admin/js/store.js}" src="/front-mirror/admin/js/store.js"></script>

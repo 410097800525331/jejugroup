@@ -2,39 +2,39 @@
 
 ## Current Task
 
-- task: `Show an explicit linked badge for already selected users inside the companion search dropdown`
+- task: `Build a notice-create modal on the admin CMS page so the notice registration button opens a popup with the requested category, type, title, and content fields`
 - phase: `implementation`
-- scope: `front/components/react/mypage/CompanionManageModal.tsx, front/pages/mypage/styles/_modal.css, STATE.md, MULTI_AGENT_LOG.md`
-- verification_target: `the companion search dropdown keeps its current opaque fixed-size layout, and any user already selected in linked companions shows a right-edge 연동됨 badge in the dropdown so selection state is obvious before clicking`
+- scope: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css`
+- verification_target: `관리자 CMS 페이지에서 공지사항 탭의 공지 등록 버튼을 누르면 기존 관리자 레이아웃 안에서 작성 팝업이 열리고, 서비스 분류/공지 유형/제목/공지 내용 필드를 가진 UI가 보인다`
 
 ## Route
 
 - route: `Route B`
-- reason: `The user changed the active front-only contract again by requiring dropdown cards to expose already-linked state with an explicit right-edge 연동됨 label, so the same companion modal TSX/CSS slice needs another delegated Route B pass.`
+- reason: `The task spans admin page markup, behavior script, and shared admin component styling across 2+ directories, so the implementation required a frozen delegated write set rather than a single-lane Route A edit.`
 
 ## Writer Slot
 
-- owner: `worker lanes`
+- owner: `planner`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_front_companion_search_visuals`: `front/components/react/mypage/CompanionManageModal.tsx, front/pages/mypage/styles/_modal.css`
-- note: `Keep the current search flow, opaque dropdown sizing, and fixed modal shell, but surface already-linked state inside the dropdown with a visible right-edge 연동됨 badge.`
+  - `worker_admin_cms`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css`
+- note: `The admin CMS popup required one coupled worker slice across markup, behavior, and styling; main remains planner-only on Route B.`
 
 ## Contract Freeze
 
 - contract_freeze: `frozen`
 - status: `frozen`
 - path: `in-state`
-- revision: `companion-search-visual-redesign-v8`
-- note: `Preserve the current companion manage modal search flow, fixed shell sizing, and opaque non-scrollable dropdown geometry, but add a visible right-edge 연동됨 badge to dropdown cards whose users are already selected as linked companions.`
+- revision: `admin-cms-notice-create-modal-v1`
+- note: `admin/pages/cms.html의 공지사항 탭에서 공지 등록 버튼을 누르면 작성 팝업이 열려야 한다. 팝업은 현 관리자페이지 디자인을 해치지 않는 선에서 서비스 분류(통합/에어/스테이/렌터카), 공지 유형(공지사항/이벤트), 제목, 공지 내용을 입력받는 UI만 제공하고 실제 저장 로직은 붙이지 않는다.`
 
 ## Reviewer
 
-- reviewer: `assigned`
-- reviewer_target: `reviewer_companion_search_visual_contract`
-- reviewer_focus: `Check the dropdown keeps its opaque fixed four-row layout and now visibly marks already-selected users with a right-edge 연동됨 badge without breaking the fixed modal shell or search-result scroll behavior.`
+- reviewer: `assigned_complete`
+- reviewer_target: `worker_admin_cms`
+- reviewer_focus: `Verify the popup opens only from the notices primary action, preserves layout, and does not leak focus or accidental save behavior.`
 
 ## Last Update
 
-- timestamp: `2026-03-28 17:12:00 +09:00`
-- note: `Adjusted the Route B contract so the dropdown must keep its opaque fixed four-row layout and explicitly show already-linked users with a right-edge 연동됨 badge.`
+- timestamp: `2026-03-29 19:31:00 +09:00`
+- note: `Route B state restored after delegated admin CMS popup implementation and follow-up accessibility fix; ready for final mirror sync.`

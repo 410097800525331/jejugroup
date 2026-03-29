@@ -1,6 +1,6 @@
 import { j as e, a as g } from "./react-vendor-BoSfm_Te.js";
 import { U as E, a as b, S, b as I, c as k, P as R, d as x, e as A, M as w, f as C, g as L, L as y, h as T, H as M, i as v, j as V, k as H, G as P, C as O, l as _, m as D, n as G, o as U, p as $, q as B, B as N, r as q, s as Y, t as F } from "./icon-vendor-Dpra3II6.js";
-import { r as W } from "./legacy-core-BoI547nw.js";
+import { r as W } from "./legacy-core-CYHwlLlr.js";
 const J = {
   "book-open": q,
   "building-2": N,

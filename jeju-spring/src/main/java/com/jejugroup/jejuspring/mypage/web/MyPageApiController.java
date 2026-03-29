@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jejugroup.jejuspring.auth.model.SessionUser;
 import com.jejugroup.jejuspring.mypage.application.MyPageAvatarService;
+import com.jejugroup.jejuspring.mypage.application.MyPageCompanionInviteService;
 import com.jejugroup.jejuspring.mypage.application.MyPageDashboardRepository;
 import com.jejugroup.jejuspring.mypage.application.MyPageMemberSearchService;
 import com.jejugroup.jejuspring.mypage.application.MyPageProfileUpdateService;
@@ -41,17 +43,20 @@ public class MyPageApiController {
     private final MyPageProfileUpdateService profileUpdateService;
     private final MyPageAvatarService avatarService;
     private final MyPageMemberSearchService memberSearchService;
+    private final MyPageCompanionInviteService companionInviteService;
 
     public MyPageApiController(
         MyPageDashboardRepository dashboardRepository,
         MyPageProfileUpdateService profileUpdateService,
         MyPageAvatarService avatarService,
-        MyPageMemberSearchService memberSearchService
+        MyPageMemberSearchService memberSearchService,
+        MyPageCompanionInviteService companionInviteService
     ) {
         this.dashboardRepository = dashboardRepository;
         this.profileUpdateService = profileUpdateService;
         this.avatarService = avatarService;
         this.memberSearchService = memberSearchService;
+        this.companionInviteService = companionInviteService;
     }
 
     @GetMapping(value = "/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -137,7 +142,8 @@ public class MyPageApiController {
         try {
             List<MyPageMemberSearchService.MyPageMemberSearchItem> members = memberSearchService.searchMembers(
                 firstText(query, q),
-                limit
+                limit,
+                user.id()
             );
             return ResponseEntity.ok(Map.of(
                 "success", true,
@@ -151,6 +157,93 @@ public class MyPageApiController {
         } catch (RuntimeException exception) {
             log.error("회원 검색 런타임 실패. query='{}', q='{}', limit={}", query, q, limit, exception);
             return json(HttpStatus.SERVICE_UNAVAILABLE, false, "회원 검색 정보를 불러오지 못했습니다.");
+        }
+    }
+
+    @GetMapping(value = "/companion-invites", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> listCompanionInvites(HttpSession session) {
+        SessionUser user = requireSessionUser(session);
+        if (user == null) {
+            return json(HttpStatus.UNAUTHORIZED, false, "로그인이 필요합니다.");
+        }
+
+        try {
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "invites", companionInviteService.listInvites(user.id())
+            ));
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, exception.getMessage());
+        } catch (SQLException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, "동행 초대 목록을 불러오지 못했습니다.");
+        }
+    }
+
+    @PostMapping(value = "/companion-invites", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createCompanionInvite(@RequestBody CompanionInviteCreateRequest request, HttpSession session) {
+        SessionUser user = requireSessionUser(session);
+        if (user == null) {
+            return json(HttpStatus.UNAUTHORIZED, false, "로그인이 필요합니다.");
+        }
+        if (request == null) {
+            return json(HttpStatus.BAD_REQUEST, false, "대상 회원 아이디가 필요합니다.");
+        }
+
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "success", true,
+                "invite", companionInviteService.createInvite(user.id(), request.targetUserId())
+            ));
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, exception.getMessage());
+        } catch (MyPageCompanionInviteService.InviteConflictException exception) {
+            return json(HttpStatus.CONFLICT, false, exception.getMessage());
+        } catch (NoSuchElementException exception) {
+            return json(HttpStatus.NOT_FOUND, false, exception.getMessage());
+        } catch (SQLException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, "동행 초대를 생성하지 못했습니다.");
+        }
+    }
+
+    @PostMapping(value = "/companion-invites/{inviteId}/accept", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> acceptCompanionInvite(@PathVariable("inviteId") long inviteId, HttpSession session) {
+        return respondToCompanionInvite(inviteId, session, InviteAction.ACCEPT);
+    }
+
+    @PostMapping(value = "/companion-invites/{inviteId}/reject", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> rejectCompanionInvite(@PathVariable("inviteId") long inviteId, HttpSession session) {
+        return respondToCompanionInvite(inviteId, session, InviteAction.REJECT);
+    }
+
+    @PostMapping(value = "/companion-invites/{inviteId}/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> cancelCompanionInvite(@PathVariable("inviteId") long inviteId, HttpSession session) {
+        return respondToCompanionInvite(inviteId, session, InviteAction.CANCEL);
+    }
+
+    @DeleteMapping(value = "/companion-links/{companionUserId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> unlinkCompanion(@PathVariable("companionUserId") String companionUserId, HttpSession session) {
+        SessionUser user = requireSessionUser(session);
+        if (user == null) {
+            return json(HttpStatus.UNAUTHORIZED, false, "로그인이 필요합니다.");
+        }
+
+        try {
+            MyPageCompanionInviteService.UnlinkResult result = companionInviteService.unlinkCompanion(user.id(), companionUserId);
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "동행 연동을 해제했습니다.",
+                "ownerUserId", result.ownerUserId(),
+                "companionUserId", result.companionUserId(),
+                "removedCount", result.removedCount()
+            ));
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, exception.getMessage());
+        } catch (MyPageCompanionInviteService.InviteConflictException exception) {
+            return json(HttpStatus.CONFLICT, false, exception.getMessage());
+        } catch (NoSuchElementException exception) {
+            return json(HttpStatus.NOT_FOUND, false, exception.getMessage());
+        } catch (SQLException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, "동행 연동을 해제하지 못했습니다.");
         }
     }
 
@@ -187,11 +280,52 @@ public class MyPageApiController {
         ));
     }
 
+    private ResponseEntity<?> respondToCompanionInvite(long inviteId, HttpSession session, InviteAction action) {
+        SessionUser user = requireSessionUser(session);
+        if (user == null) {
+            return json(HttpStatus.UNAUTHORIZED, false, "로그인이 필요합니다.");
+        }
+
+        try {
+            MyPageCompanionInviteService.MyPageCompanionInviteItem invite = switch (action) {
+                case ACCEPT -> companionInviteService.acceptInvite(inviteId, user.id());
+                case REJECT -> companionInviteService.rejectInvite(inviteId, user.id());
+                case CANCEL -> companionInviteService.cancelInvite(inviteId, user.id());
+            };
+
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "invite", invite
+            ));
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, exception.getMessage());
+        } catch (MyPageCompanionInviteService.InviteAccessDeniedException exception) {
+            return json(HttpStatus.FORBIDDEN, false, exception.getMessage());
+        } catch (MyPageCompanionInviteService.InviteConflictException exception) {
+            return json(HttpStatus.CONFLICT, false, exception.getMessage());
+        } catch (NoSuchElementException exception) {
+            return json(HttpStatus.NOT_FOUND, false, exception.getMessage());
+        } catch (SQLException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, "동행 초대를 처리하지 못했습니다.");
+        }
+    }
+
     private String firstText(String primary, String fallback) {
         if (primary != null && !primary.isBlank()) {
             return primary;
         }
 
         return fallback;
+    }
+
+    private enum InviteAction {
+        ACCEPT,
+        REJECT,
+        CANCEL
+    }
+
+    public record CompanionInviteCreateRequest(
+        String targetUserId
+    ) {
     }
 }

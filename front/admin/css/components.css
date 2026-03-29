@@ -320,6 +320,145 @@
     border-color: var(--admin-text-secondary);
 }
 
+body.admin-modal-open {
+    overflow: hidden;
+}
+
+.admin-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--admin-space-lg);
+    background: rgba(7, 10, 16, 0.72);
+    backdrop-filter: blur(10px);
+}
+
+.admin-modal-backdrop[hidden] {
+    display: none;
+}
+
+.admin-modal {
+    width: min(760px, 100%);
+    max-height: min(88vh, 920px);
+    overflow: auto;
+    border-radius: 18px;
+    border: 1px solid var(--admin-glass-border);
+    background: linear-gradient(180deg, rgba(18, 23, 35, 0.98), rgba(14, 18, 28, 0.98));
+    box-shadow: 0 28px 64px rgba(0, 0, 0, 0.42);
+    color: var(--admin-text-primary);
+}
+
+.admin-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--admin-space-md);
+    padding: var(--admin-space-xl) var(--admin-space-xl) var(--admin-space-md);
+}
+
+.admin-modal-eyebrow {
+    margin: 0 0 6px;
+    color: var(--admin-accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.admin-modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+}
+
+.admin-modal-description {
+    margin: 0;
+    padding: 0 var(--admin-space-xl) var(--admin-space-md);
+    color: var(--admin-text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.admin-modal-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--admin-border);
+    background: var(--admin-surface);
+    color: var(--admin-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    flex: 0 0 auto;
+}
+
+.admin-modal-close:hover {
+    background: var(--admin-surface-hover);
+    border-color: var(--admin-text-secondary);
+    color: var(--admin-text-primary);
+}
+
+.admin-modal-body {
+    display: grid;
+    gap: var(--admin-space-lg);
+    padding: 0 var(--admin-space-xl) var(--admin-space-xl);
+}
+
+.admin-modal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--admin-space-md);
+}
+
+.admin-form-field {
+    display: grid;
+    gap: 8px;
+}
+
+.admin-form-label {
+    color: var(--admin-text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.admin-form-control {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--admin-border);
+    background: var(--admin-surface);
+    color: var(--admin-text-primary);
+    outline: none;
+    font: inherit;
+}
+
+.admin-form-control:focus {
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.16);
+}
+
+textarea.admin-form-control {
+    min-height: 180px;
+    resize: vertical;
+}
+
+.admin-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--admin-space-sm);
+    padding: 0 var(--admin-space-xl) var(--admin-space-xl);
+    flex-wrap: wrap;
+}
+
 .hotel-offer-admin-section {
     margin-top: var(--admin-space-xl);
 }
@@ -646,4 +785,36 @@ body.admin-mode[data-theme="light"] .admin-subfilter-control {
     background-color: var(--admin-surface);
     color: var(--admin-text-primary);
     box-shadow: var(--admin-shadow-sm);
+}
+
+@media (max-width: 720px) {
+    .admin-modal-backdrop {
+        padding: var(--admin-space-md);
+    }
+
+    .admin-modal {
+        max-height: 92vh;
+        border-radius: 16px;
+    }
+
+    .admin-modal-header,
+    .admin-modal-description,
+    .admin-modal-body,
+    .admin-modal-footer {
+        padding-left: var(--admin-space-md);
+        padding-right: var(--admin-space-md);
+    }
+
+    .admin-modal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-modal-footer {
+        justify-content: stretch;
+    }
+
+    .admin-modal-footer .admin-btn {
+        flex: 1 1 0;
+        justify-content: center;
+    }
 }

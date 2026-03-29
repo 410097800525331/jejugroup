@@ -46,6 +46,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const searchButton = document.getElementById('cms-search-btn');
     const secondaryActionButton = document.getElementById('cms-secondary-action-btn');
     const primaryActionButton = document.getElementById('cms-primary-action-btn');
+    const noticeModalBackdrop = document.getElementById('cms-notice-modal');
+    const noticeModalCloseBtn = document.getElementById('cms-notice-modal-close');
+    const noticeModalCancelBtn = document.getElementById('cms-notice-modal-cancel');
+    const noticeModalSubmitBtn = document.getElementById('cms-notice-modal-submit');
+    const noticeModalForm = document.getElementById('cms-notice-form');
+    const noticeModalTitleInput = document.getElementById('cms-notice-title');
+    const noticeModal = noticeModalBackdrop?.querySelector('.admin-modal');
+    const adminLayoutRoot = document.querySelector('.admin-layout');
     const themeBtns = document.querySelectorAll('.theme-btn');
     const profileTrigger = document.getElementById('admin-profile-trigger');
     const profileContainer = document.getElementById('admin-profile-container');
@@ -56,6 +64,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     let activeTab = DEFAULT_TAB;
     let searchKeyword = '';
     let activeStatus = 'all';
+    let lastNoticeModalTrigger = null;
+    let lastNoticeModalFocus = null;
 
     const escapeHtml = (value) => String(value)
         .replaceAll('&', '&amp;')
@@ -75,6 +85,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const getTabConfig = (tabKey) => TAB_CONFIG[tabKey] ?? TAB_CONFIG[DEFAULT_TAB];
+
+    const getNoticeModalFocusableElements = () => {
+        if (!noticeModal) return [];
+        return Array.from(noticeModal.querySelectorAll([
+            'button:not([disabled])',
+            '[href]',
+            'input:not([disabled])',
+            'select:not([disabled])',
+            'textarea:not([disabled])',
+            '[tabindex]:not([tabindex="-1"])'
+        ].join(','))).filter((element) => !element.hasAttribute('hidden') && element.offsetParent !== null);
+    };
+
+    const setNoticeModalState = (isOpen) => {
+        if (!noticeModalBackdrop) return;
+        noticeModalBackdrop.hidden = !isOpen;
+        document.body.classList.toggle('admin-modal-open', isOpen);
+        if (adminLayoutRoot) {
+            if ('inert' in adminLayoutRoot) {
+                adminLayoutRoot.inert = isOpen;
+            } else if (isOpen) {
+                adminLayoutRoot.setAttribute('aria-hidden', 'true');
+            } else {
+                adminLayoutRoot.removeAttribute('aria-hidden');
+            }
+        }
+    };
+
+    const closeNoticeModal = () => {
+        setNoticeModalState(false);
+        if (lastNoticeModalTrigger && typeof lastNoticeModalTrigger.focus === 'function') {
+            lastNoticeModalTrigger.focus();
+        }
+        lastNoticeModalTrigger = null;
+        lastNoticeModalFocus = null;
+    };
+
+    const openNoticeModal = () => {
+        if (activeTab !== 'notices' || !noticeModalBackdrop) return;
+        lastNoticeModalTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        setNoticeModalState(true);
+        window.requestAnimationFrame(() => {
+            const focusableElements = getNoticeModalFocusableElements();
+            const focusTarget = noticeModalTitleInput || focusableElements[0] || noticeModal;
+            lastNoticeModalFocus = focusTarget instanceof HTMLElement ? focusTarget : null;
+            focusTarget?.focus();
+        });
+    };
 
     const renderTableHead = (tabKey) => {
         const config = getTabConfig(tabKey);
@@ -137,6 +195,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const setActiveTab = (tabKey) => {
         activeTab = TAB_CONFIG[tabKey] ? tabKey : DEFAULT_TAB;
+        if (noticeModalBackdrop && !noticeModalBackdrop.hidden) {
+            closeNoticeModal();
+        }
         tabButtons.forEach((button) => {
             button.classList.toggle('active', button.dataset.domain === activeTab);
         });
@@ -170,6 +231,67 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (searchButton) {
         searchButton.addEventListener('click', () => renderTableBody(activeTab));
     }
+
+    if (primaryActionButton) {
+        primaryActionButton.addEventListener('click', () => {
+            if (activeTab !== 'notices') return;
+            openNoticeModal();
+        });
+    }
+
+    if (noticeModalBackdrop) {
+        noticeModalBackdrop.addEventListener('click', (event) => {
+            if (event.target === noticeModalBackdrop) closeNoticeModal();
+        });
+    }
+
+    [noticeModalCloseBtn, noticeModalCancelBtn].forEach((button) => {
+        if (!button) return;
+        button.addEventListener('click', closeNoticeModal);
+    });
+
+    if (noticeModalSubmitBtn) {
+        noticeModalSubmitBtn.addEventListener('click', closeNoticeModal);
+    }
+
+    if (noticeModalForm) {
+        noticeModalForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            closeNoticeModal();
+        });
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (!noticeModalBackdrop || noticeModalBackdrop.hidden) return;
+
+        if (event.key === 'Escape') {
+            closeNoticeModal();
+            return;
+        }
+
+        if (event.key !== 'Tab') return;
+
+        const focusableElements = getNoticeModalFocusableElements();
+        const activeElement = document.activeElement;
+        if (focusableElements.length === 0) {
+            event.preventDefault();
+            (lastNoticeModalFocus || noticeModal)?.focus();
+            return;
+        }
+
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+        if (event.shiftKey && activeElement === firstFocusable) {
+            event.preventDefault();
+            lastFocusable.focus();
+            return;
+        }
+
+        if (!event.shiftKey && activeElement === lastFocusable) {
+            event.preventDefault();
+            firstFocusable.focus();
+        }
+    });
 
     if (statusFilter) {
         statusFilter.addEventListener('change', (event) => {

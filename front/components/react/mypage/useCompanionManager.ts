@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 // @ts-ignore 레거시 JS 모듈 타이핑 부재 허용
 import { API_BASE_URL } from "../../../core/modules/config/api_config.module.js";
-import type { CompanionSearchMode, ItineraryCompanion } from "./types";
+import type { CompanionRelationState, CompanionSearchMode, ItineraryCompanion } from "./types";
 
 interface UseCompanionManagerProps {
   initialCompanions?: ItineraryCompanion[];
@@ -17,8 +17,18 @@ type CompanionMemberSearch = (
 ) => Promise<ItineraryCompanion[]>;
 
 const SEARCH_ENDPOINT = "/api/mypage/members/search";
+const COMPANION_UNLINK_ENDPOINT = "/api/mypage/companion-links";
 const SEARCH_DEBOUNCE_MS = 180;
 const MAX_SUGGESTIONS = 5;
+const RELATION_STATE_MAP: Record<string, CompanionRelationState> = {
+  available: "none",
+  invited: "outgoing_pending",
+  incoming_pending: "incoming_pending",
+  linked: "linked",
+  needs_response: "incoming_pending",
+  none: "none",
+  outgoing_pending: "outgoing_pending",
+};
 
 const normalizeMemberId = (value: string) => value.trim().toLowerCase();
 
@@ -26,6 +36,26 @@ const isValidMemberIdQuery = (value: string) => /^[a-z0-9._-]{1,30}$/i.test(valu
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === "object" && !Array.isArray(value);
+
+const extractBackendMessage = (payload: unknown, fallbackMessage: string) => {
+  if (isRecord(payload)) {
+    const message = payload.message ?? payload.error;
+    if (typeof message === "string" && message.trim()) {
+      return message;
+    }
+  }
+
+  return fallbackMessage;
+};
+
+const normalizeRelationState = (value: unknown): CompanionRelationState | undefined => {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const normalized = value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  return RELATION_STATE_MAP[normalized];
+};
 
 const toText = (value: unknown): string | null => {
   if (typeof value === "string") {
@@ -92,6 +122,21 @@ const collectSearchEntries = (payload: unknown): unknown[] => {
   return [];
 };
 
+const collectInvitePayload = (payload: unknown) => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+
+  const candidates = [payload.invite, payload.data, payload.result, payload.item];
+  for (const candidate of candidates) {
+    if (isRecord(candidate)) {
+      return candidate;
+    }
+  }
+
+  return payload;
+};
+
 const toCompanion = (value: unknown): ItineraryCompanion | null => {
   if (!isRecord(value)) {
     return null;
@@ -101,6 +146,16 @@ const toCompanion = (value: unknown): ItineraryCompanion | null => {
   const name = toText(value.name ?? value.displayName ?? value.userName ?? value.nickname ?? value.fullName);
   const avatarUrl = toText(value.avatarUrl ?? value.avatar ?? value.profileImageUrl ?? value.imageUrl ?? value.photoUrl);
   const bio = toText(value.bio ?? value.intro ?? value.description ?? value.summary);
+  const relationState =
+    normalizeRelationState(
+      value.relationState ??
+        value.relation_state ??
+        value.relationStatus ??
+        value.relation_status ??
+        value.companionRelationState ??
+        value.companion_relation_state ??
+        (isRecord(value.relation) ? value.relation.state : undefined),
+    ) ?? ((value.isLinked === true || value.linked === true) ? "linked" : undefined);
 
   if (!id || !name) {
     return null;
@@ -112,6 +167,7 @@ const toCompanion = (value: unknown): ItineraryCompanion | null => {
     id,
     isMember: value.isMember !== false,
     name,
+    relationState,
   };
 };
 
@@ -170,12 +226,85 @@ const defaultSearchMembers: CompanionMemberSearch = async (memberIdPrefix, optio
   return dedupeCompanions(results).filter((companion) => companion.id.toLowerCase().startsWith(memberIdPrefix));
 };
 
+const createCompanionInvite = async (companion: ItineraryCompanion, signal?: AbortSignal) => {
+  const response = await fetch("/api/mypage/companion-invites", {
+    body: JSON.stringify({
+      companionUserId: companion.id,
+      inviteeId: companion.id,
+      inviteeUserId: companion.id,
+      memberId: companion.id,
+      targetUserId: companion.id,
+      userId: companion.id,
+    }),
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    signal,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok || (isRecord(payload) && payload.success === false)) {
+    throw new Error(
+      extractBackendMessage(
+        payload,
+        response.status === 401 ? "로그인이 필요합니다." : "동행 초대에 실패했다",
+      ),
+    );
+  }
+
+  return collectInvitePayload(payload);
+};
+
+const unlinkCompanion = async (companionId: string, signal?: AbortSignal) => {
+  const response = await fetch(`${COMPANION_UNLINK_ENDPOINT}/${encodeURIComponent(companionId)}`, {
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+    method: "DELETE",
+    signal,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok || (isRecord(payload) && payload.success === false)) {
+    throw new Error(
+      extractBackendMessage(
+        payload,
+        response.status === 401 ? "로그인이 필요합니다." : "동행 해제에 실패했다",
+      ),
+    );
+  }
+
+  return payload;
+};
+
 const resolveSearchErrorMessage = (error: unknown) => {
   if (error instanceof Error && error.message.trim()) {
     return error.message;
   }
 
   return "회원 조회 중 오류가 발생했다. 잠시 후 다시 시도해라";
+};
+
+const resolveInviteErrorMessage = (error: unknown) => {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  return "동행 초대 중 오류가 발생했다. 잠시 후 다시 시도해라";
+};
+
+const resolveUnlinkErrorMessage = (error: unknown) => {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  return "동행 해제 중 오류가 발생했다. 잠시 후 다시 시도해라";
 };
 
 export const useCompanionManager = ({
@@ -190,6 +319,7 @@ export const useCompanionManager = ({
   const [isSuggestionLoading, setIsSuggestionLoading] = useState(false);
   const [errorObj, setErrorObj] = useState<{ message: string } | null>(null);
   const activeRequestIdRef = useRef(0);
+  const pendingUnlinkIdsRef = useRef<Set<string>>(new Set());
   const suggestionRequestRef = useRef<{ controller: AbortController | null; timerId: number | null }>({
     controller: null,
     timerId: null,
@@ -372,33 +502,78 @@ export const useCompanionManager = ({
     [cancelSuggestionSearch, runSearch],
   );
 
-  const addCompanion = useCallback(
-    (companion: ItineraryCompanion) => {
-      setCompanions((prev) => {
-        if (prev.some((current) => current.id === companion.id)) {
-          return prev;
-        }
+  const inviteCompanion = useCallback(async (companion: ItineraryCompanion) => {
+    setErrorObj(null);
 
-        return [...prev, companion];
-      });
-      setSearchMode("suggestions");
-      clearSearch();
-    },
-    [clearSearch],
-  );
+    try {
+      const invite = await createCompanionInvite(companion);
+      const relationState = isRecord(invite)
+        ? normalizeRelationState(
+            invite.relationState ??
+              invite.relation_state ??
+              invite.status ??
+              invite.inviteState ??
+              invite.invite_state,
+          ) ?? "outgoing_pending"
+        : "outgoing_pending";
 
-  const removeCompanion = useCallback((id: string) => {
+      setSearchResults((prev) =>
+        prev.map((current) =>
+          current.id === companion.id
+            ? {
+                ...current,
+                relationState,
+              }
+            : current,
+        ),
+      );
+    } catch (error) {
+      setErrorObj({ message: resolveInviteErrorMessage(error) });
+    }
+  }, []);
+
+  const removeCompanion = useCallback(async (id: string) => {
+    setErrorObj(null);
+    pendingUnlinkIdsRef.current.add(id);
     setCompanions((prev) => prev.filter((companion) => companion.id !== id));
+    setSearchResults((prev) =>
+      prev.map((current) =>
+        current.id === id
+          ? {
+              ...current,
+              relationState: "none",
+            }
+          : current,
+      ),
+    );
+  }, []);
+
+  const commitPendingUnlinks = useCallback(async () => {
+    const pendingIds = Array.from(pendingUnlinkIdsRef.current);
+    if (pendingIds.length === 0) {
+      return;
+    }
+
+    for (const id of pendingIds) {
+      try {
+        await unlinkCompanion(id);
+        pendingUnlinkIdsRef.current.delete(id);
+      } catch (error) {
+        setErrorObj({ message: resolveUnlinkErrorMessage(error) });
+        throw error;
+      }
+    }
   }, []);
 
   return {
-    addCompanion,
     companions,
     clearSearch,
     errorObj,
     handleSearch,
     isSearching,
     isSuggestionLoading,
+    inviteCompanion,
+    commitPendingUnlinks,
     removeCompanion,
     searchMode,
     searchQuery,

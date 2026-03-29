@@ -44,19 +44,21 @@ public class MyPageTravelEventQueryService {
         String placeholders = String.join(", ", java.util.Collections.nCopies(userScopeIds.size(), "?"));
         String query = """
             SELECT
-                id,
-                day_id,
-                event_date,
-                event_time,
-                title,
-                activity_label,
-                google_map_url,
-                status,
-                booking_type,
-                owner_name,
-                user_id
-            FROM travel_events
-            WHERE user_id IN (%s)
+                te.id,
+                te.day_id,
+                te.event_date,
+                te.event_time,
+                te.title,
+                te.activity_label,
+                te.google_map_url,
+                te.status,
+                te.booking_type,
+                te.owner_name,
+                te.user_id,
+                NULLIF(TRIM(up.avatar_url), '') AS owner_avatar_url
+            FROM travel_events te
+            LEFT JOIN user_profiles up ON up.user_id = te.user_id
+            WHERE te.user_id IN (%s)
             ORDER BY event_date ASC, event_time ASC, sort_order ASC, id ASC
             """.formatted(placeholders);
 
@@ -80,7 +82,8 @@ public class MyPageTravelEventQueryService {
                         normalizeTravelEventStatus(resultSet.getString("status")),
                         normalizeBookingType(resultSet.getString("booking_type")),
                         nullToEmpty(resultSet.getString("user_id")),
-                        nullToEmpty(resultSet.getString("owner_name"))
+                        nullToEmpty(resultSet.getString("owner_name")),
+                        nullToEmpty(resultSet.getString("owner_avatar_url"))
                     ));
                 }
             }

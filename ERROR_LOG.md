@@ -1,5 +1,11 @@
 # ERROR LOG
 
+- time: `2026-03-29 00:40 +09:00`
+- location: `jeju-spring/gradlew compileJava`
+- summary: `verification blocked by missing Gradle wrapper jar`
+- details: `The wrapper could not start because jeju-spring/gradle/wrapper/gradle-wrapper.jar is absent in the workspace. This prevented a local compile check for the reviewed mypage search change.`
+- status: `open`
+
 - time: `2026-03-23 16:50:06 +09:00`
 - location: `front/apps/cs/client/src/test/InquiryForm.test.tsx`
 - summary: `pnpm run check:cs is blocked by a pre-existing TypeScript syntax error outside the approved write set`
@@ -459,4 +465,42 @@ status: open
 - location: `D:\git\jejugroup local JDBC seed runner`
 - summary: `PowerShell Set-Content UTF-8 BOM 때문에 Java 단일 파일 실행이 바로 실패함`
 - details: `가상 유저 시드용 임시 Java 소스를 Set-Content -Encoding utf8로 저장했더니 BOM(\ufeff)이 붙어서 java source-file mode가 1행에서 illegal character로 중단됐다. BOM 없는 UTF-8로 다시 기록해 재실행할 예정이며 repository 파일은 건드리지 않았다.`
+- status: `resolved`
+
+- time: `2026-03-29 00:46:00 +09:00`
+- location: `D:\git\jejugroup\jeju-spring`
+- summary: `compileJava 검증이 gradle wrapper jar 누락으로 중단됨`
+- details: `./gradlew compileJava는 D:\git\jejugroup\jeju-spring\gradle\wrapper\gradle-wrapper.jar가 없어 실패했지만, 후속으로 D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava를 직접 실행해 동일 검증을 우회 완료했다. wrapper 자체는 여전히 누락 상태지만 이번 작업의 compileJava 검증 blocker는 해소됐다.`
+- status: `resolved`
+- time: `2026-03-29 13:28:44 +09:00`
+- location: `D:\git\jejugroup\jeju-spring`
+- summary: `companion invite compileJava 검증 중 서비스 파일 BOM과 gradle wrapper jar 누락이 연달아 걸림`
+- details: `./gradlew compileJava는 jeju-spring/gradle/wrapper/gradle-wrapper.jar 누락으로 실패했고, 임시 Gradle 배포판으로 우회한 뒤 MyPageCompanionInviteService.java가 BOM(\?\u0000?)이 섞인 상태라 한 번 더 실패했다. 서비스 파일을 UTF-8 no-BOM + LF로 정규화한 뒤 compileJava와 diff check를 다시 통과시켰다.`
+- status: `resolved`- time: `2026-03-29 13:31:00 +09:00`
+- location: `D:\git\jejugroup\ERROR_LOG.md`
+- summary: `직전 로그 entry의 BOM 표기가 깨져서 문구를 정정함`
+- details: `직전 append에서 BOM 문구가 깨져 보일 수 있어, 실제 원인은 MyPageCompanionInviteService.java의 BOM 혼입이었다는 점만 명확히 남긴다. 해당 파일은 이미 UTF-8 no-BOM + LF로 정규화되어 compileJava와 diff check를 통과했다.`
+- status: `resolved`
+- time: `2026-03-29 14:02:00 +09:00`
+- location: `D:\git\jejugroup local Flyway V23 runner`
+- summary: `임시 Flyway 실행기에서 MigrateResult 필드명을 잘못 써 컴파일이 실패함`
+- details: `V23 적용을 위해 temp Java에서 Flyway MigrateResult.schemaVersion 필드를 출력하려 했는데 현재 사용 중인 Flyway 11.7.2 API에 없는 필드라 source-file compile이 실패했다. DB에는 변경이 적용되지 않았고, 출력 코드를 current/info 기반으로 바꿔 재실행할 예정이다.`
+- status: `resolved`
+
+- time: `2026-03-29 14:03:00 +09:00`
+- location: `D:\git\jejugroup local Flyway V23 runner`
+- summary: `임시 Flyway 실행기 classpath에 Jackson 의존성이 빠져 NoClassDefFoundError가 발생함`
+- details: `flyway-core와 flyway-mysql만 classpath에 싣고 V23를 실행하려 했더니 Flyway 11.7.2 초기화 시 com.fasterxml.jackson.databind.ObjectMapper 로딩에 실패했다. DB 변경은 적용되지 않았고, 필요한 Jackson jar를 classpath에 추가해 재실행할 예정이다.`
+- status: `resolved`
+
+- time: `2026-03-29 14:02:19 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\src\main\resources\db\migration\V23__companion_invites_foundation.sql`
+- summary: `로컬 MySQL 8.0에서 V23 migration이 FK CASCADE와 체크 제약 조합 때문에 실패함`
+- details: `Flyway target=23로 로컬 DB에 companion_invites를 반영하려 했지만 MySQL 8.0이 ck_companion_invites_sender_receiver_diff 체크 제약에서 sender_user_id/receiver_user_id를 fk_companion_invites_sender/receiver의 referential action 컬럼으로 동시에 쓰는 구성을 거부했다. 테이블은 생성되지 않았고 flyway_schema_history에도 성공 기록이 생기지 않았으므로, 로컬 호환 형태로 V23 SQL을 조정한 뒤 재실행이 필요하다.`
+- status: `open`
+
+- time: `2026-03-29 14:03:35 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\src\main\resources\db\migration\V23__companion_invites_foundation.sql`
+- summary: `로컬 MySQL 8.0 호환 형태로 V23를 조정한 뒤 Flyway repair+migrate로 companion_invites 반영 완료`
+- details: `체크 제약은 유지하고 FK의 ON DELETE/ON UPDATE CASCADE를 제거해 로컬 MySQL 8.0 제약 충돌을 피했다. 이후 Flyway repair로 실패 이력을 정리하고 target=23 migrate를 재실행해 companion_invites 테이블과 V23 성공 이력을 모두 반영했으며, 컬럼/FK/CHECK/INDEX 메타데이터 검증까지 마쳤다.`
 - status: `resolved`

@@ -2484,6 +2484,34 @@
   - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx front/pages/mypage/styles/_modal.css` passed on the final merged state.
   - `reviewer_companion_search_visual_contract (Confucius)` reported `블로킹 findings는 없다`; residual note only that the exact pixel height still depends on viewport/browser rendering and may need a live browser pass if the user wants exact mock parity later.
 
+- time: `2026-03-29 00:50:00 +09:00`
+- route: `Route B`
+- task: `Exclude the currently signed-in user from companion member search results`
+- participants: `main`, `worker_mypage_member_search_self_exclusion (Pauli)`, `reviewer_mypage_member_search_self_exclusion (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_mypage_member_search_self_exclusion (Pauli)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java`
+  - `reviewer_mypage_member_search_self_exclusion (Steward)`: `review only`
+- verification:
+  - `worker_mypage_member_search_self_exclusion (Pauli)` updated the companion member search controller/service so the current `SessionUser.id()` is passed into the search layer and excluded from all returned candidates while keeping login checks, prefix search, admin exclusion, and existing response handling intact.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `reviewer_mypage_member_search_self_exclusion (Steward)` reported `No blocking findings.`
+
+- time: `2026-03-29 00:24:00 +09:00`
+- route: `Route B`
+- task: `Stop the unauthenticated session check from looping endlessly before login`
+- participants: `main`, `worker_shell_session_loop (Carson)`, `reviewer_shell_session_loop_contract (Athena)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_shell_session_loop (Carson)`: `front/core/modules/auth/session_manager.module.js`
+  - `reviewer_shell_session_loop_contract (Athena)`: `review only`
+- verification:
+  - `worker_shell_session_loop (Carson)` kept the shared auth flow intact and changed `clearSession()` so a 401-driven no-op clear no longer re-emits `jeju:session-updated` when there was no stored session, which breaks the pre-login header retry loop without muting real logout/session removal broadcasts.
+  - `git diff --check -- front/core/modules/auth/session_manager.module.js` passed on the final merged state.
+  - `pnpm run lint` passed on the final merged state.
+  - `reviewer_shell_session_loop_contract (Athena)` reported `No blocking findings.` and confirmed only no-op clears stop broadcasting while real stored-session removal paths still propagate null updates.
+
 - time: `2026-03-28 17:16:00 +09:00`
 - route: `Route B`
 - task: `Show an explicit linked badge for already selected users inside the companion search dropdown`
@@ -2551,3 +2579,305 @@
   - `pnpm -C front/apps/shell check` passed.
   - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
   - `git diff --check -- front/components/react/mypage/CompanionManageModal.tsx jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java` passed.
+
+- time: `2026-03-29 01:24:00 +09:00`
+- route: `Route B`
+- task: `Condense the itinerary companion avatar stack with real profile images and a +N overflow badge`
+- participants: `main`, `worker_itinerary_companion_stack_visuals (Harvey)`, `reviewer_itinerary_companion_stack_visuals (Athena the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_itinerary_companion_stack_visuals (Harvey)`: `front/components/react/mypage/ItinerarySection.tsx, front/pages/mypage/styles/_itinerary.css`
+  - `reviewer_itinerary_companion_stack_visuals (Athena the 2nd)`: `review only`
+- verification:
+  - `worker_itinerary_companion_stack_visuals (Harvey)` updated `front/components/react/mypage/ItinerarySection.tsx` so the itinerary companion card keeps `linkedCompanions` as the primary data source, renders real profile images via `resolveAvatarUrl(...)` when available, falls back to only the first character otherwise, and caps the visible stack at four avatars before collapsing the remainder into a `+N` overflow badge.
+  - `front/pages/mypage/styles/_itinerary.css` now gives the itinerary card a lighter overlap, image/fallback avatar support, an overflow badge, and a horizontal helper label for the total companion count.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/ItinerarySection.tsx front/pages/mypage/styles/_itinerary.css` passed on the final merged state.
+  - `reviewer_itinerary_companion_stack_visuals (Athena the 2nd)` reported `블로킹 findings는 없다`; residual note only that empty-name data would render a blank fallback avatar and very narrow widths may feel tight around the count label.
+
+- time: `2026-03-29 01:41:00 +09:00`
+- route: `Route B`
+- task: `Retune the itinerary companion avatar stack to three avatars plus one overflow badge`
+- participants: `main`, `worker_itinerary_companion_stack_visuals (Goodall the 2nd)`, `reviewer_itinerary_companion_stack_visuals (Steward the 2nd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_itinerary_companion_stack_visuals (Goodall the 2nd)`: `front/components/react/mypage/ItinerarySection.tsx, front/pages/mypage/styles/_itinerary.css`
+  - `reviewer_itinerary_companion_stack_visuals (Steward the 2nd)`: `review only`
+- verification:
+  - `worker_itinerary_companion_stack_visuals (Goodall the 2nd)` kept the saved `linkedCompanions` override and the `resolveAvatarUrl(...)` image/fallback flow, then retuned the itinerary companion card so it renders at most three real avatars and uses the fourth visible slot for a `+N` overflow badge.
+  - `front/pages/mypage/styles/_itinerary.css` now fixes the avatar slot geometry with explicit width/height, `flex: 0 0 auto`, `overflow: hidden`, and `border-radius: 50%` so the circles stay round while the lighter overlap and horizontal count helper remain intact.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/ItinerarySection.tsx front/pages/mypage/styles/_itinerary.css` passed on the final merged state.
+  - `reviewer_itinerary_companion_stack_visuals (Steward the 2nd)` reported `블로킹 없음`; residual note only that a later-loaded global radius utility could re-break the circle if CSS order changes in the future.
+
+- time: `2026-03-29 01:57:00 +09:00`
+- route: `Route B`
+- task: `Roll back the itinerary companion avatar-stack condensation to the pre-redesign state`
+- participants: `main`, `worker_itinerary_companion_stack_rollback (Lorentz the 2nd)`, `reviewer_itinerary_companion_stack_rollback (Athena the 3rd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_itinerary_companion_stack_rollback (Lorentz the 2nd)`: `front/components/react/mypage/ItinerarySection.tsx, front/pages/mypage/styles/_itinerary.css`
+  - `reviewer_itinerary_companion_stack_rollback (Athena the 3rd)`: `review only`
+- verification:
+  - `worker_itinerary_companion_stack_rollback (Lorentz the 2nd)` removed the capped-avatar, `+N`, and profile-image rendering redesign from the itinerary companion card, restoring the simpler initials-based stacked avatar look while keeping `displayCompanions = linkedCompanions.length > 0 ? linkedCompanions : day.companions`.
+  - `front/components/react/mypage/ItinerarySection.tsx` now uses `displayCompanions` for both the rendered stack and the `총 N명` count so the earlier linked-companions apply fix remains intact after the visual rollback.
+  - `front/pages/mypage/styles/_itinerary.css` now matches the simpler pre-condensation stack structure again and no longer contains the overflow badge, profile-image, or dedicated fallback styles from the reverted redesign.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/ItinerarySection.tsx front/pages/mypage/styles/_itinerary.css` passed on the final merged state.
+  - `reviewer_itinerary_companion_stack_rollback (Athena the 3rd)` reported `블로킹 발견 없음`; residual note only that pixel-perfect parity with the earlier runtime look was not browser-smoked in this pass.
+
+- time: `2026-03-29 02:31:00 +09:00`
+- route: `Route B`
+- task: `Sync companion profile avatars into the itinerary companion stack`
+- participants: `main`, `worker_backend_companion_avatar_sync (Noether the 3rd)`, `worker_front_itinerary_avatar_render (Copernicus the 3rd)`, `reviewer_itinerary_companion_avatar_sync (Steward the 3rd)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_companion_avatar_sync (Noether the 3rd)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageCompanionQueryService.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageItineraryService.java`
+  - `worker_front_itinerary_avatar_render (Copernicus the 3rd)`: `front/components/react/mypage/ItinerarySection.tsx`
+  - `reviewer_itinerary_companion_avatar_sync (Steward the 3rd)`: `review only`
+- verification:
+  - `worker_backend_companion_avatar_sync (Noether the 3rd)` added `avatarUrl` to the dashboard companion snapshot, loaded `user_profiles.avatar_url` in the companion-link query, and updated the companion snapshot constructor call sites so spring mypage dashboard payloads now carry saved profile-photo paths for companions.
+  - `worker_front_itinerary_avatar_render (Copernicus the 3rd)` updated `front/components/react/mypage/ItinerarySection.tsx` so the itinerary companion stack still honors the four-avatar cap plus `외 N명` helper behavior, but now resolves and renders each visible companion's saved avatar when available and falls back to the first character if the image is missing or fails to load.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/ItinerarySection.tsx jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageCompanionQueryService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageItineraryService.java` passed on the final merged state.
+  - `useCompanionManager.ts` was read after review to confirm selected companions already preserve `avatarUrl`, so the modal save path does not strip the new field.
+  - `reviewer_itinerary_companion_avatar_sync (Steward the 3rd)` reported `차단되는 발견사항 없음`; residual note only that browser-level rendering was not smoke-checked in this pass.
+
+- time: `2026-03-29 02:56:00 +09:00`
+- route: `Route B`
+- task: `Finalize companion avatar sync across linked cards, itinerary cards, and travel-event fallback companions`
+- participants: `main`, `worker_front_companion_avatar_sync (Dewey the 3rd)`, `worker_front_modal_avatar_sync (Leibniz the 4th)`, `worker_backend_travel_event_avatar_fallback (Chandrasekhar the 4th)`, `reviewer_itinerary_companion_avatar_sync (Athena the 5th)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_companion_avatar_sync (Dewey the 3rd)`: `front/components/react/mypage/data.ts`
+  - `worker_front_modal_avatar_sync (Leibniz the 4th)`: `front/components/react/mypage/CompanionManageModal.tsx`
+  - `worker_backend_travel_event_avatar_fallback (Chandrasekhar the 4th)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageTravelEventQueryService.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageItineraryService.java`
+  - `reviewer_itinerary_companion_avatar_sync (Athena the 5th)`: `review only`
+- verification:
+  - `worker_front_companion_avatar_sync (Dewey the 3rd)` fixed `front/components/react/mypage/data.ts` so `normalizeLinkedCompanion` and `normalizeItineraryCompanion` both preserve normalized `avatarUrl` and `bio`, and `cloneCompanions(...)` now keeps the full `ItineraryCompanion` shape instead of trimming avatar fields away.
+  - `worker_front_modal_avatar_sync (Leibniz the 4th)` updated `front/components/react/mypage/CompanionManageModal.tsx` so the modal's linked-companion rows reuse the same avatar image/initial fallback logic as search cards and normalize relative avatar paths through `resolveAvatarUrl(...)`.
+  - `worker_backend_travel_event_avatar_fallback (Chandrasekhar the 4th)` extended the travel-event snapshot/query path so `ownerAvatarUrl` is loaded from `user_profiles.avatar_url` and threaded into fallback itinerary companions, closing the last initials-only itinerary path.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/data.ts front/components/react/mypage/CompanionManageModal.tsx front/components/react/mypage/ItinerarySection.tsx jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageCompanionQueryService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageTravelEventQueryService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageItineraryService.java` passed on the final merged state.
+  - `reviewer_itinerary_companion_avatar_sync (Athena the 5th)` reported `블로킹 발견 없음`; residual note only that the modal avatar component does not currently reset image-failure state when avatarUrl changes, which is a non-blocking resilience edge case.
+
+- time: `2026-03-29 03:34:00 +09:00`
+- route: `Route B`
+- task: `Repair stale linked-companion avatar hydration so already-saved companions recover their profile photos`
+- participants: `main`, `worker_front_linked_avatar_hydration (Ramanujan the 5th)`, `reviewer_itinerary_companion_avatar_sync (Steward the 5th)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_linked_avatar_hydration (Ramanujan the 5th)`: `front/components/react/mypage/state.tsx, front/components/react/mypage/CompanionManageModal.tsx`
+  - `reviewer_itinerary_companion_avatar_sync (Steward the 5th)`: `review only`
+- verification:
+  - `worker_front_linked_avatar_hydration (Ramanujan the 5th)` fixed `front/components/react/mypage/state.tsx` so dashboard hydration no longer lets stale local `linkedCompanions` mock entries keep old avatar data; for matching companion ids, a fresher non-empty server `avatarUrl` now wins while the remaining local companion fields stay intact.
+  - The same worker updated `front/components/react/mypage/CompanionManageModal.tsx` so the linked-companion rows reuse the shared avatar image renderer and the avatar component resets its failed-image state when `avatarUrl` changes, allowing already-saved companions to recover from initials fallback once fresh avatar data arrives.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/state.tsx front/components/react/mypage/CompanionManageModal.tsx` passed on the final merged state.
+  - `reviewer_itinerary_companion_avatar_sync (Steward the 5th)` initially flagged that the first merge rule still preserved stale truthy local avatar URLs, then reported `블로킹은 남지 않았다` after the server-wins merge rule was corrected.
+
+- time: `2026-03-29 02:12:21 +09:00`
+- route: `Route B`
+- task: `Propagate owner avatar URLs into itinerary fallback companions`
+- participants: `main`, `worker_backend_companion_avatar_sync (planned)`, `reviewer_travel_event_owner_avatar_fallback (planned)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_companion_avatar_sync`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageTravelEventQueryService.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageItineraryService.java`
+  - `reviewer_travel_event_owner_avatar_fallback`: `review only`
+- verification:
+  - `STATE.md` was reclassified to the backend blocker fix and frozen around the `travel-event-owner-avatar-fallback-v1` contract.
+  - The work is limited to three backend files so travel-event snapshots can carry owner avatar URLs into itinerary-synthesized companions without changing any other dashboard payload fields.
+  - No code edits have been applied yet; implementation and compile verification are next.
+
+- time: `2026-03-29 02:13:23 +09:00`
+- route: `Route B`
+- task: `Propagate owner avatar URLs into itinerary fallback companions`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageTravelEventQueryService.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageItineraryService.java`
+- verification:
+  - `MyPageTravelEventQueryService.java` now joins `user_profiles` on the travel-event owner and loads `owner_avatar_url` into each travel-event snapshot.
+  - `MyPageDashboardRepository.java` now carries `ownerAvatarUrl` on `MyPageTravelEventSnapshot` and keeps the mirrored private travel-event query/itinerary helpers aligned with the same field.
+  - `MyPageItineraryService.java` now threads `event.ownerAvatarUrl()` into synthesized fallback companions so the itinerary path no longer emits `avatarUrl=""` for travel-event-derived companions.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageTravelEventQueryService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageDashboardRepository.java jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageItineraryService.java` passed.
+
+- time: `2026-03-29 13:34:26 +09:00`
+- route: `Route B`
+- task: `Introduce companion invitation flow foundation and replace direct-add search actions with invite states`
+- participants: `main`, `worker_backend_companion_invite_foundation (Popper)`, `worker_front_companion_invite_search_ui (Anscombe)`, `reviewer_companion_invite_foundation (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_companion_invite_foundation (Popper)`: `jeju-spring/src/main/resources/db/migration/V23__companion_invites_foundation.sql, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageCompanionInviteService.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageMemberSearchService.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java`
+  - `worker_front_companion_invite_search_ui (Anscombe)`: `front/components/react/mypage/types.ts, front/components/react/mypage/useCompanionManager.ts, front/components/react/mypage/CompanionManageModal.tsx`
+  - `reviewer_companion_invite_foundation (Steward)`: `review only`
+- verification:
+  - `worker_backend_companion_invite_foundation (Popper)` added `V23__companion_invites_foundation.sql` plus `MyPageCompanionInviteService.java`, then wired `/api/mypage/companion-invites` create/list/accept/reject/cancel endpoints through `MyPageApiController.java` and enriched `MyPageMemberSearchService.java` with self/admin exclusion plus relation-state snapshots backed by the new invite table and 30-minute expiry.
+  - `worker_front_companion_invite_search_ui (Anscombe)` updated `front/components/react/mypage/types.ts`, `front/components/react/mypage/useCompanionManager.ts`, and `front/components/react/mypage/CompanionManageModal.tsx` so companion search keeps the existing modal shell but now renders invite-state badges (`초대`, `초대중`, `응답 필요`, `연동됨`) and sends real `POST /api/mypage/companion-invites` requests instead of directly appending companions in local state.
+  - The first reviewer pass found two blockers: the front invite action was only mutating local badge state, and the backend relation-state enum contract (`AVAILABLE / INVITED / NEEDS_RESPONSE / LINKED`) was not being normalized to the front union. Those were fixed before close by wiring the real invite-create call and mapping backend states to `none / outgoing_pending / incoming_pending / linked`.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- D:\git\jejugroup\front\components\react\mypage\types.ts D:\git\jejugroup\front\components\react\mypage\useCompanionManager.ts D:\git\jejugroup\front\components\react\mypage\CompanionManageModal.tsx D:\git\jejugroup\jeju-spring\src\main\resources\db\migration\V23__companion_invites_foundation.sql D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\application\MyPageCompanionInviteService.java D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\application\MyPageMemberSearchService.java D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\web\MyPageApiController.java` passed on the final merged state.
+  - `reviewer_companion_invite_foundation (Steward)` reported `No blocking findings` on the final pass.
+
+- time: `2026-03-29 14:12:18 +09:00`
+- route: `Route B`
+- task: `Repurpose the tone-air summary stat card into a companion-invite alert entrypoint while keeping its layout shell intact`
+- participants: `main`, `worker_front_invite_card_entry`, `worker_front_invite_modal_flow`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_invite_card_entry`: `front/components/react/mypage/SummarySection.tsx, front/components/react/mypage/types.ts`
+  - `worker_front_invite_modal_flow`: `front/components/react/mypage/CompanionInviteModal.tsx, front/components/react/mypage/useCompanionInvites.ts, front/pages/mypage/styles/_modal.css`
+- verification:
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed.
+  - `git diff --check -- front/components/react/mypage/SummarySection.tsx front/components/react/mypage/types.ts front/components/react/mypage/CompanionInviteModal.tsx front/components/react/mypage/useCompanionInvites.ts front/pages/mypage/styles/_modal.css` passed.
+  - The repurposed `tone-air` stat-card now opens `CompanionInviteModal`, surfaces a pending invite count badge, and uses `GET /api/mypage/companion-invites` plus accept/reject actions for pending received invites without redesigning the surrounding summary layout.
+
+- time: `2026-03-29 14:14:20 +09:00`
+- route: `Route B`
+- task: `Repurpose the tone-air summary stat card into a companion-invite alert entrypoint while keeping its layout shell intact`
+- participants: `main`, `worker_front_invite_card_entry (Russell)`, `worker_front_invite_modal_flow (Euclid)`, `reviewer_companion_invite_alert_card (Lagrange)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_invite_card_entry (Russell)`: `front/components/react/mypage/SummarySection.tsx, front/components/react/mypage/types.ts`
+  - `worker_front_invite_modal_flow (Euclid)`: `front/components/react/mypage/CompanionInviteModal.tsx, front/components/react/mypage/useCompanionInvites.ts, front/pages/mypage/styles/_modal.css`
+  - `reviewer_companion_invite_alert_card (Lagrange)`: `review only`
+- verification:
+  - `worker_front_invite_card_entry (Russell)` kept the existing `tone-air` summary stat-card shell but repurposed its semantics into a companion-invite alert card with a bell icon, invite-focused copy, pending-count badge logic, and a click contract that opens the invite modal without redesigning the surrounding summary grid.
+  - `worker_front_invite_modal_flow (Euclid)` added `CompanionInviteModal.tsx` and `useCompanionInvites.ts`, then wired `SummarySection.tsx` so the tone-air card opens a dedicated modal that loads pending received invites from `GET /api/mypage/companion-invites` and lets the user `accept / reject` through the existing invite APIs while `_modal.css` gained only the styling needed for this modal.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed on the final merged state.
+  - `git diff --check -- D:\git\jejugroup\front\components\react\mypage\SummarySection.tsx D:\git\jejugroup\front\components\react\mypage\types.ts D:\git\jejugroup\front\components\react\mypage\CompanionInviteModal.tsx D:\git\jejugroup\front\components\react\mypage\useCompanionInvites.ts D:\git\jejugroup\front\pages\mypage\styles\_modal.css` passed on the final merged state.
+  - `reviewer_companion_invite_alert_card (Lagrange)` reported `No blocking findings`.
+
+- time: `2026-03-29 14:48:14 +09:00`
+- route: `Route B`
+- task: `Repair the companion-invite modal layout so the internal spacing and footer match the existing modal system`
+- participants: `main`, `worker_front_invite_modal_layout_fix (Peirce)`, `reviewer_companion_invite_modal_layout (James)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front_invite_modal_layout_fix (Peirce)`: `front/components/react/mypage/CompanionInviteModal.tsx, front/pages/mypage/styles/_modal.css`
+  - `reviewer_companion_invite_modal_layout (James)`: `review only`
+- verification:
+  - `worker_front_invite_modal_layout_fix (Peirce)` kept the invite modal feature and shell size intact, then retuned the internal spacing so the content column uses tighter modal-specific gaps, the body panel owns the flexible area, the empty state no longer floats in a giant blank region, and the footer sits naturally at the bottom center instead of detaching from the content flow.
+  - The final code diff for the regression landed in `front/pages/mypage/styles/_modal.css`; the modal component contract and invite data flow stayed stable.
+  - `pnpm -C front/apps/shell check` passed on the final merged state.
+  - `git diff --check -- front/components/react/mypage/CompanionInviteModal.tsx front/pages/mypage/styles/_modal.css` passed on the final merged state.
+  - `reviewer_companion_invite_modal_layout (James)` reported `No blocking findings`.
+
+- time: `2026-03-29 14:50:37 +09:00`
+- route: `Route A`
+- task: `Refresh dashboard-linked companion state after companion invite accept/reject actions`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, front/components/react/mypage/CompanionInviteModal.tsx, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/components/react/mypage/CompanionInviteModal.tsx` now pulls `refreshDashboard()` from the mypage dashboard context and runs it after a successful invite `accept` or `reject`, so linked companions and invite-derived summary counts refresh immediately without a manual reload.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed.
+  - `git diff --check -- D:\git\jejugroup\front\components\react\mypage\CompanionInviteModal.tsx D:\git\jejugroup\STATE.md` passed.
+
+- time: `2026-03-29 14:59:51 +09:00`
+- route: `Route A`
+- task: `Add per-invite accept countdown timers to the companion invite modal without breaking row layout`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, front/components/react/mypage/CompanionInviteModal.tsx, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/components/react/mypage/CompanionInviteModal.tsx` now keeps a 1-second modal-local clock while open and renders each pending invite's remaining acceptance time beside the sender name in `HH:MM:SS` format using `expiresAt`, clamped at `00:00:00` when expired.
+  - The timer was placed in the name row with inline flex styling so the existing invite-row layout stays intact.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed.
+  - `git diff --check -- D:\git\jejugroup\front\components\react\mypage\CompanionInviteModal.tsx D:\git\jejugroup\STATE.md` passed.
+
+- time: `2026-03-29 15:18:11 +09:00`
+- route: `Route A`
+- task: `Add balanced inner spacing to the companion invite modal so it matches other mypage popups`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, front/pages/mypage/styles/_modal.css, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/pages/mypage/styles/_modal.css` now gives the companion invite modal calmer inner spacing by increasing modal-specific content padding, widening the header/body/footer rhythm, adding a touch more breathing room around the summary and panel, and restoring a less cramped empty state plus footer.
+  - The invite modal shell size, sections, actions, and API behavior stayed unchanged; this was a spacing-only polish.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed.
+  - `git diff --check -- D:\git\jejugroup\front\pages\mypage\styles\_modal.css D:\git\jejugroup\STATE.md` passed.
+
+- time: `2026-03-29 15:26:07 +09:00`
+- route: `Route A`
+- task: `Fix dashboard hydration so accepted companion invites immediately show up in linked companions`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, front/components/react/mypage/state.tsx, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/components/react/mypage/state.tsx` no longer builds the post-refresh `serverSnapshot` from the session-only payload inside `mergeTravelEventSources(...)`; it now normalizes the freshest dashboard source, so newly accepted companion links can flow into `linkedCompanions` immediately after `refreshDashboard()`.
+  - The hotfix was limited to the dashboard hydration path; invite APIs, modal actions, and linked-companion rendering contracts stayed intact.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed.
+  - `git diff --check -- D:\git\jejugroup\front\components\react\mypage\state.tsx D:\git\jejugroup\STATE.md` passed.
+
+- time: `2026-03-29 15:37:34 +09:00`
+- route: `Route A`
+- task: `Harden companion invite accept so reciprocal pending invites are resolved and companion links persist cleanly`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageCompanionInviteService.java, MULTI_AGENT_LOG.md`
+- verification:
+  - Direct DB inspection during investigation showed reciprocal pending invite rows still coexisting between the same two users while `companion_links` stayed empty, which explained why accept results could leave stale pending invite state behind.
+  - `MyPageCompanionInviteService.java` now resolves any other `pending` invite rows between the same sender/receiver pair when one invite is accepted, so reciprocal pending rows cannot remain after the companion link is created.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
+  - `git diff --check -- D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\application\MyPageCompanionInviteService.java D:\git\jejugroup\STATE.md` passed.
+
+- time: `2026-03-29 17:27:00 +09:00`
+- route: `Route B`
+- task: `Make companion unlink actually persist by removing linked companions from the backend instead of only local UI state`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `MyPageCompanionInviteService.java` now exposes a persistent unlink path that deletes both directions of the `companion_links` pair for the authenticated user and target companion, with authorization kept scoped to the current user relationship.
+  - `MyPageApiController.java` now exposes `DELETE /api/mypage/companion-links/{companionUserId}` for the front to call.
+  - `front/components/react/mypage/useCompanionManager.ts` now calls the unlink endpoint and clears the local linked/search state for the removed companion.
+  - `front/components/react/mypage/CompanionManageModal.tsx` now wires `해제` to the async unlink flow.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
+  - `git diff --check -- D:\git\jejugroup\front\components\react\mypage\useCompanionManager.ts D:\git\jejugroup\front\components\react\mypage\CompanionManageModal.tsx D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\application\MyPageCompanionInviteService.java D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\web\MyPageApiController.java D:\git\jejugroup\STATE.md` passed.
+
+- time: `2026-03-29 18:24:00 +09:00`
+- route: `Route B`
+- task: `Make companion unlink persist through staged apply and close the remaining unlink controller conflict mapping gap`
+- participants: `main`, `worker_backend_unlink_persist (Dalton)`, `worker_front_unlink_persist (Huygens)`, `reviewer_unlink_persist (Planck)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_backend_unlink_persist (Dalton)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/application/MyPageCompanionInviteService.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/web/MyPageApiController.java`
+  - `worker_front_unlink_persist (Huygens)`: `front/components/react/mypage/useCompanionManager.ts, front/components/react/mypage/CompanionManageModal.tsx`
+  - `reviewer_unlink_persist (Planck)`: `review only`
+- verification:
+  - `worker_front_unlink_persist (Huygens)` changed the companion-manage modal flow so `해제` only stages local removals, `적용` is the only path that commits `DELETE /api/mypage/companion-links/{companionUserId}`, and `취소` / backdrop close leaves backend state untouched.
+  - `worker_backend_unlink_persist (Dalton)` kept one persistent unlink path that deletes both directions of the `companion_links` pair and then patched `MyPageApiController.unlinkCompanion()` to map `InviteConflictException` to `409 CONFLICT` instead of leaking a `500` on stale re-unlink attempts.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed on the final merged state.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed on the final merged state.
+  - `git diff --check -- D:\git\jejugroup\front\components\react\mypage\useCompanionManager.ts D:\git\jejugroup\front\components\react\mypage\CompanionManageModal.tsx D:\git\jejugroup\front\components\react\mypage\ItinerarySection.tsx D:\git\jejugroup\front\components\react\mypage\state.tsx D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\application\MyPageCompanionInviteService.java D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\mypage\web\MyPageApiController.java` passed on the final merged state.
+  - `reviewer_unlink_persist (Planck)` reported one blocker on the first pass: `unlinkCompanion()` did not catch `InviteConflictException`, which would have surfaced stale unlink attempts as `500`; that response mapping gap was fixed before close, and the reviewer confirmed the staged-delete/apply semantics plus bidirectional backend deletion behavior were otherwise sound.
+
+- time: `2026-03-29 18:45:00 +09:00`
+- route: `Route A`
+- task: `Clear stale local linkedCompanions when the server companion list is empty after unlink`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, front/components/react/mypage/state.tsx, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/components/react/mypage/state.tsx` no longer returns the merged local `baseSnapshot` when the freshest server `linkedCompanions` list is empty; it now explicitly reapplies `linkedCompanions: []` over the merged source so stale local mock companions cannot resurrect on the other account after unlink.
+  - `pnpm -C D:\git\jejugroup\front\apps\shell check` passed.
+  - `git diff --check -- D:\git\jejugroup\front\components\react\mypage\state.tsx D:\git\jejugroup\STATE.md` passed.
+
+- time: `2026-03-29 19:18:00 +09:00`
+- route: `Route B`
+- task: `Add an admin CMS notice-create popup shell that opens from the notice registration action`
+- participants: `main`, `worker_admin_cms (Kant)`, `reviewer_admin_cms_popup (Carson)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_cms (Kant)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css`
+  - `reviewer_admin_cms_popup (Carson)`: `review only`
+- verification:
+  - `worker_admin_cms (Kant)` added a notice-create modal shell to `front/admin/pages/cms.html`, modal styling to `front/admin/css/components.css`, and notices-tab-scoped open/close wiring in `front/admin/js/cms.js` so the primary action opens a popup with service category, notice type, title, and content fields while keeping save behavior UI-only.
+  - The first reviewer pass flagged a non-blocking accessibility regression where modal focus could escape to the background; the worker then added background `inert` / `aria-hidden` handling plus `Tab` / `Shift+Tab` focus cycling inside the modal without changing the requested layout or tab gating.
+  - `pnpm run guard:text` passed on the final state.
+  - `node --check D:\git\jejugroup\front\admin\js\cms.js` passed on the final state.

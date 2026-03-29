@@ -302,7 +302,7 @@ function cloneBookings(bookings: BookingItem[]): BookingItem[] {
   }));
 }
 
-function cloneCompanions(companions: Array<{ id: string; isMember: boolean; name: string }>) {
+function cloneCompanions(companions: ItineraryCompanion[]) {
   return companions.map((companion) => ({ ...companion }));
 }
 
@@ -745,6 +745,8 @@ const normalizeItineraryCompanion = (companion: unknown, fallback: ItineraryItem
   const record = isRecord(companion) ? companion : {};
 
   return {
+    avatarUrl: resolveAvatarUrl(record.avatarUrl) ?? fallback.avatarUrl,
+    bio: toText(record.bio) ?? fallback.bio,
     id: toText(record.id) ?? fallback.id,
     isMember: typeof record.isMember === "boolean" ? record.isMember : fallback.isMember,
     name: toText(record.name) ?? fallback.name,
@@ -787,6 +789,8 @@ const normalizeLinkedCompanion = (
   const record = isRecord(companion) ? companion : {};
 
   return {
+    avatarUrl: resolveAvatarUrl(record.avatarUrl) ?? fallback.avatarUrl,
+    bio: toText(record.bio) ?? fallback.bio,
     id: toText(record.id) ?? fallback.id,
     isMember: typeof record.isMember === "boolean" ? record.isMember : fallback.isMember,
     name: toText(record.name) ?? fallback.name,
