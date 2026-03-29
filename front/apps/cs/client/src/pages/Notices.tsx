@@ -5,7 +5,6 @@ import {
   ChevronLeft,
   Home as HomeIcon,
   Plane,
-  RotateCcw,
   type LucideIcon,
 } from "lucide-react";
 import { Link } from "wouter";
@@ -106,6 +105,7 @@ function mapNoticeItem(item: NoticeApiItem): NoticeRecord {
   return {
     id: Number(item.id),
     service,
+    noticeType: item.noticeType === "event" ? "event" : "notice",
     title: String(item.title ?? ""),
     date: formatApiDate(item.publishedAt ?? item.createdAt ?? item.updatedAt),
     excerpt: String(item.excerpt?.trim() || item.content?.trim() || ""),
@@ -247,6 +247,7 @@ export default function Notices() {
             error={error}
             onRetry={retry}
             emptyMessage="검색 조건에 맞는 공지가 없어."
+            noticeHref={(notice) => `/notices/${notice.id}`}
           />
         </div>
       </main>

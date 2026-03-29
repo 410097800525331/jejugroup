@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Home from "@/pages/Home";
 import Notices from "@/pages/Notices";
+import NoticeDetail from "@/pages/NoticeDetail";
 import FAQs from "@/pages/FAQs";
 import Inquiries from "@/pages/Inquiries";
 
@@ -17,6 +18,7 @@ function AppRoutes() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/notices"} component={Notices} />
+      <Route path={"/notices/:id"} component={NoticeDetail} />
       <Route path={"/faqs"} component={FAQs} />
       <Route path={"/inquiries"} component={Inquiries} />
       <Route path={"/404"} component={NotFound} />

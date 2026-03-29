@@ -113,13 +113,14 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
              PreparedStatement statement = connection.prepareStatement("""
                  INSERT INTO notices (
                      service_type,
+                     notice_type,
                      title,
                      excerpt,
                      content,
                      is_pinned,
                      is_active,
                      published_at
-                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                  """, Statement.RETURN_GENERATED_KEYS)) {
             bindNoticeDraft(statement, draft);
             statement.executeUpdate();
@@ -137,6 +138,7 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
              PreparedStatement statement = connection.prepareStatement("""
                  UPDATE notices
                  SET service_type = ?,
+                     notice_type = ?,
                      title = ?,
                      excerpt = ?,
                      content = ?,
@@ -147,19 +149,20 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
                  WHERE id = ?
                  """)) {
             bindNoticeDraft(statement, draft);
-            statement.setLong(8, noticeId);
+            statement.setLong(9, noticeId);
             statement.executeUpdate();
         }
     }
 
     private void bindNoticeDraft(PreparedStatement statement, NoticeDraft draft) throws SQLException {
         statement.setString(1, draft.serviceType());
-        statement.setString(2, draft.title());
-        setNullableString(statement, 3, draft.excerpt());
-        statement.setString(4, draft.content());
-        statement.setBoolean(5, draft.pinned());
-        statement.setBoolean(6, draft.active());
-        setNullableTimestamp(statement, 7, draft.publishedAt());
+        statement.setString(2, draft.noticeType());
+        statement.setString(3, draft.title());
+        setNullableString(statement, 4, draft.excerpt());
+        statement.setString(5, draft.content());
+        statement.setBoolean(6, draft.pinned());
+        statement.setBoolean(7, draft.active());
+        setNullableTimestamp(statement, 8, draft.publishedAt());
     }
 
     private long insertFaq(FaqDraft draft) throws SQLException {
@@ -221,6 +224,9 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
         String serviceType = existing == null
             ? normalizeWriteServiceType(request.serviceType())
             : normalizeWriteServiceTypeOrDefault(request.serviceType(), existing.serviceType());
+        String noticeType = existing == null
+            ? normalizeNoticeType(request.noticeType())
+            : normalizeNoticeTypeOrDefault(request.noticeType(), existing.noticeType());
         String title = mergeRequiredText(existing == null ? null : existing.title(), request.title(), "title", 255);
         String content = mergeRequiredText(existing == null ? null : existing.content(), request.content(), "content", Integer.MAX_VALUE);
         String excerpt = mergeOptionalText(existing == null ? null : existing.excerpt(), request.excerpt(), 500);
@@ -228,7 +234,7 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
         boolean active = request.active() != null ? request.active() : existing == null || existing.active();
         LocalDateTime publishedAt = mergePublishedAt(existing == null ? null : existing.publishedAt(), request.publishedAt());
 
-        return new NoticeDraft(serviceType, title, excerpt, content, pinned, active, publishedAt);
+        return new NoticeDraft(serviceType, noticeType, title, excerpt, content, pinned, active, publishedAt);
     }
 
     private FaqDraft requireFaqDraft(CustomerCenterCmsService.FaqUpsertRequest request, FaqRow existing) {
@@ -287,9 +293,27 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
         }
     }
 
+    private String normalizeNoticeType(String value) {
+        if (!StringUtils.hasText(value)) {
+            return "notice";
+        }
+        String normalized = value.trim().toLowerCase();
+        if ("notice".equals(normalized) || "event".equals(normalized)) {
+            return normalized;
+        }
+        throw new IllegalArgumentException("noticeType must be notice or event");
+    }
+
+    private String normalizeNoticeTypeOrDefault(String requestedValue, String existingValue) {
+        if (!StringUtils.hasText(requestedValue)) {
+            return normalizeNoticeType(existingValue);
+        }
+        return normalizeNoticeType(requestedValue);
+    }
+
     private CustomerCenterCmsService.NoticeView toNoticeView(NoticeRow row) {
         return new CustomerCenterCmsService.NoticeView(
-            row.id(), row.serviceType(), row.title(), row.excerpt(), row.content(), row.pinned(), row.active(),
+            row.id(), row.serviceType(), row.noticeType(), row.title(), row.excerpt(), row.content(), row.pinned(), row.active(),
             row.publishedAt(), row.createdAt(), row.updatedAt()
         );
     }
@@ -304,7 +328,7 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
     private NoticeRow loadNoticeById(long noticeId) throws SQLException {
         try (Connection connection = openConnection(true);
              PreparedStatement statement = connection.prepareStatement("""
-                 SELECT id, service_type, title, excerpt, content, is_pinned, is_active, published_at, created_at, updated_at
+                 SELECT id, service_type, notice_type, title, excerpt, content, is_pinned, is_active, published_at, created_at, updated_at
                  FROM notices
                  WHERE id = ?
                  """)) {
@@ -339,6 +363,7 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
         return new NoticeRow(
             resultSet.getLong("id"),
             normalizeNullable(resultSet.getString("service_type")),
+            normalizeNullable(resultSet.getString("notice_type")),
             normalizeNullable(resultSet.getString("title")),
             normalizeNullable(resultSet.getString("excerpt")),
             normalizeNullable(resultSet.getString("content")),
@@ -366,6 +391,7 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
 
     private record NoticeDraft(
         String serviceType,
+        String noticeType,
         String title,
         String excerpt,
         String content,
@@ -388,6 +414,7 @@ public class CustomerCenterCmsWriteService extends CustomerCenterCmsDatabaseSupp
     private record NoticeRow(
         long id,
         String serviceType,
+        String noticeType,
         String title,
         String excerpt,
         String content,

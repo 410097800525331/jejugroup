@@ -250,6 +250,17 @@
     border-bottom: none;
 }
 
+.cms-notice-row-actions {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.cms-notice-row-actions .admin-btn {
+    min-width: 72px;
+    justify-content: center;
+}
+
 /* Status Badges */
 .admin-badge {
     display: inline-flex;

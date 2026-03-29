@@ -504,3 +504,9 @@ status: open
 - summary: `로컬 MySQL 8.0 호환 형태로 V23를 조정한 뒤 Flyway repair+migrate로 companion_invites 반영 완료`
 - details: `체크 제약은 유지하고 FK의 ON DELETE/ON UPDATE CASCADE를 제거해 로컬 MySQL 8.0 제약 충돌을 피했다. 이후 Flyway repair로 실패 이력을 정리하고 target=23 migrate를 재실행해 companion_invites 테이블과 V23 성공 이력을 모두 반영했으며, 컬럼/FK/CHECK/INDEX 메타데이터 검증까지 마쳤다.`
 - status: `resolved`
+
+- time: `2026-03-29 19:55:00 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\gradlew.bat compileJava`
+- summary: `Gradle wrapper jar 누락으로 compileJava가 먼저 막혔지만 로컬 Gradle로 우회 검증 완료`
+- details: `jeju-spring/gradle/wrapper/gradle-wrapper.jar가 없어 ./gradlew.bat compileJava는 실패했다. 이후 D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava를 실행해 동일 검증을 성공적으로 통과시켰다.`
+- status: `resolved`

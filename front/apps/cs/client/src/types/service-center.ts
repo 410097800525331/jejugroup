@@ -1,6 +1,7 @@
 import { LucideIcon } from "lucide-react";
 
 export type ServiceType = "jeju-air" | "jeju-stay" | "jeju-rental" | "common";
+export type NoticeType = "notice" | "event";
 export type InquiryStatus = "pending" | "completed";
 export type SupportTicketStatus = InquiryStatus;
 export type SupportTicketPriority = "low" | "normal" | "high";
@@ -79,6 +80,7 @@ export interface SessionApiResponse {
 export interface Notice {
   id: number;
   service: ServiceType;
+  noticeType?: NoticeType;
   title: string;
   date: string;
   excerpt: string;
@@ -99,6 +101,7 @@ export interface FAQ {
 
 export interface NoticeFormDraft {
   serviceType: ServiceType;
+  noticeType: NoticeType;
   title: string;
   excerpt: string;
   content: string;
@@ -148,6 +151,7 @@ export interface NoticeApi {
   id: number | string;
   serviceType?: ServiceType | string;
   service?: ServiceType | string;
+  noticeType?: NoticeType | string;
   title?: string;
   content?: string;
   excerpt?: string;
@@ -171,6 +175,17 @@ export interface NoticeListApiResponse {
   total?: number;
   page?: number;
   size?: number;
+  message?: string;
+  error?: string;
+  code?: string;
+  [key: string]: unknown;
+}
+
+export interface NoticeDetailApiResponse {
+  success?: boolean;
+  data?: NoticeApi | null;
+  notice?: NoticeApi | null;
+  item?: NoticeApi | null;
   message?: string;
   error?: string;
   code?: string;

@@ -2881,3 +2881,35 @@
   - The first reviewer pass flagged a non-blocking accessibility regression where modal focus could escape to the background; the worker then added background `inert` / `aria-hidden` handling plus `Tab` / `Shift+Tab` focus cycling inside the modal without changing the requested layout or tab gating.
   - `pnpm run guard:text` passed on the final state.
   - `node --check D:\git\jejugroup\front\admin\js\cms.js` passed on the final state.
+
+- time: `2026-03-29 19:48:00 +09:00`
+- route: `Route B`
+- task: `Hydrate the admin CMS notices tab from the live notice API, reuse the popup for edit, and add a notice/event filter`
+- participants: `main`, `worker_admin_notice_runtime (Laplace)`, `reviewer_admin_notice_runtime (Heisenberg)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_notice_runtime (Laplace)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/data/cms-config.js, front/admin/css/components.css`
+  - `reviewer_admin_notice_runtime (Heisenberg)`: `review only`
+- verification:
+  - `worker_admin_notice_runtime (Laplace)` wired the notices tab to hydrate from `GET /api/customer-center/notices`, added a notices-only `notice/event` filter, and reused the existing notice popup for both create and edit with `POST`/`PUT` save paths plus immediate table refresh.
+  - The first reviewer pass found two non-blocking issues: local front-only row insertion could drift from server ordering, and initial bootstrap was waiting on notices hydration. The worker fixed both by reloading notices from the server after save and moving notices hydration off the critical initial bootstrap path.
+  - `node --check D:\git\jejugroup\front\admin\js\cms.js` passed on the final state.
+  - `git diff --check -- D:\git\jejugroup\front\admin\pages\cms.html D:\git\jejugroup\front\admin\js\cms.js D:\git\jejugroup\front\admin\data\cms-config.js D:\git\jejugroup\front\admin\css\components.css D:\git\jejugroup\STATE.md` passed on the final state.
+  - `reviewer_admin_notice_runtime (Heisenberg)` reported no remaining blocking findings after the follow-up fixes; residual note only that browser runtime smoke was not executed.
+
+- time: `2026-03-29 20:06:00 +09:00`
+- route: `Route B`
+- task: `Add a customer-center notice detail view so notice titles open full posts from the live notices API`
+- participants: `main`, `worker_notice_detail_front (Godel)`, `worker_notice_detail_backend (Darwin)`, `reviewer_notice_detail (Aristotle)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_notice_detail_front (Godel)`: `front/apps/cs/client/src/App.tsx, front/apps/cs/client/src/pages/Notices.tsx, front/apps/cs/client/src/pages/NoticeDetail.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx, front/apps/cs/client/src/lib/serviceCenterApi.ts, front/apps/cs/client/src/types/service-center.ts, front/apps/cs/client/src/styles/bbs.css`
+  - `worker_notice_detail_backend (Darwin)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/web/CustomerCenterCmsApiController.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/cms/application/CustomerCenterCmsReadService.java`
+  - `reviewer_notice_detail (Aristotle)`: `review only`
+- verification:
+  - `worker_notice_detail_backend (Darwin)` confirmed the existing `GET /api/customer-center/notices/{noticeId}` surface and active-only notice detail read path were already present and compile clean, so the slice stayed frontend-only in practice.
+  - `worker_notice_detail_front (Godel)` added the `/notices/:id` route, a dedicated `NoticeDetail` page, row-to-detail navigation from the notice list, a `getNoticeDetail()` client call, and the detail page styling/rendering for title/date/service/type/body.
+  - `reviewer_notice_detail (Aristotle)` found one blocking regression on the first pass: `wouter` `Link` wrappers contained nested `<a>` tags in the notice row and detail back links. That nested-anchor issue was fixed before close by styling `Link` directly.
+  - `pnpm --dir D:\git\jejugroup\front\apps\cs check` passed on the final state.
+  - `pnpm --dir D:\git\jejugroup\front\apps\cs test -- --run src/test/ServiceCenterRegression.test.tsx` passed on the final state.
+  - Residual warning: the test run still logs a pre-existing `validateDOMNesting` warning from `front/apps/cs/client/src/pages/Inquiries.tsx`, outside this notice-detail slice.

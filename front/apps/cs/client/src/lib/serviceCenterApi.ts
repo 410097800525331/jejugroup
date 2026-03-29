@@ -5,6 +5,7 @@ import type {
   FaqApi,
   FaqFormDraft,
   NoticeApi,
+  NoticeDetailApiResponse,
   NoticeFormDraft,
   TicketAttachmentApi,
   TicketAttachmentDraft,
@@ -13,6 +14,7 @@ import type {
   ServiceCenterApiError,
   SessionUser,
   ServiceType,
+  NoticeType,
   SupportTicketPriority,
   SupportTicketStatus,
   TicketApi,
@@ -137,6 +139,11 @@ const normalizeServiceTypeValue = (value: unknown): ServiceType => {
     default:
       return "common";
   }
+};
+
+const normalizeNoticeTypeValue = (value: unknown): NoticeType => {
+  const normalized = normalizeString(value).toLowerCase();
+  return normalized === "event" ? "event" : "notice";
 };
 
 const normalizeApiError = (input: {
@@ -328,6 +335,7 @@ const normalizeNotice = (value: NoticeApi): NoticeApi => ({
   id: value.id,
   serviceType: normalizeServiceTypeValue(value.serviceType ?? value.service),
   service: normalizeServiceTypeValue(value.service ?? value.serviceType),
+  noticeType: normalizeNoticeTypeValue(value.noticeType),
   title: normalizeMaybeString(value.title),
   content: normalizeMaybeString(value.content),
   excerpt: normalizeMaybeString(value.excerpt ?? value.summary),
@@ -546,6 +554,15 @@ export const listNotices = async (): Promise<ApiResult<NoticeApi[]>> => {
   );
 };
 
+export const getNoticeDetail = async (noticeId: number | string): Promise<ApiResult<NoticeApi | null>> => {
+  const response = await requestJson(`${CUSTOMER_CENTER_API_PREFIX}/notices/${encodeURIComponent(String(noticeId))}`);
+  if (!response.ok) {
+    return response;
+  }
+
+  return createSuccessResult(normalizeNoticePayload(response.data), response.status);
+};
+
 export const listFaqs = async (): Promise<ApiResult<FaqApi[]>> => {
   const response = await requestJson(`${CUSTOMER_CENTER_API_PREFIX}/faqs`);
   if (!response.ok) {
@@ -560,6 +577,7 @@ export const listFaqs = async (): Promise<ApiResult<FaqApi[]>> => {
 
 export const createNotice = async (payload: NoticeFormDraft): Promise<ApiResult<NoticeApi | null>> => {
   const serviceType = normalizeServiceTypeValue(payload.serviceType);
+  const noticeType = normalizeNoticeTypeValue(payload.noticeType);
   const publishedAt = normalizeMaybeString(payload.publishedAt);
 
   const response = await requestJson(`${CUSTOMER_CENTER_API_PREFIX}/notices`, {
@@ -569,6 +587,7 @@ export const createNotice = async (payload: NoticeFormDraft): Promise<ApiResult<
     },
     body: JSON.stringify({
       serviceType,
+      noticeType,
       title: normalizeMaybeString(payload.title),
       excerpt: normalizeMaybeString(payload.excerpt),
       content: normalizeMaybeString(payload.content),
@@ -590,6 +609,7 @@ export const updateNotice = async (
   payload: NoticeFormDraft,
 ): Promise<ApiResult<NoticeApi | null>> => {
   const serviceType = normalizeServiceTypeValue(payload.serviceType);
+  const noticeType = normalizeNoticeTypeValue(payload.noticeType);
   const publishedAt = normalizeMaybeString(payload.publishedAt);
 
   const response = await requestJson(`${CUSTOMER_CENTER_API_PREFIX}/notices/${encodeURIComponent(String(noticeId))}`, {
@@ -599,6 +619,7 @@ export const updateNotice = async (
     },
     body: JSON.stringify({
       serviceType,
+      noticeType,
       title: normalizeMaybeString(payload.title),
       excerpt: normalizeMaybeString(payload.excerpt),
       content: normalizeMaybeString(payload.content),
@@ -961,6 +982,7 @@ export type {
   FaqApi,
   FaqFormDraft,
   NoticeApi,
+  NoticeDetailApiResponse,
   NoticeFormDraft,
   SupportTicketPriority,
   SupportTicketStatus,

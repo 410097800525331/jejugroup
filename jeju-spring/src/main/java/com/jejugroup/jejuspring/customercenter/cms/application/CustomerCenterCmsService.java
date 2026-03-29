@@ -58,6 +58,7 @@ public class CustomerCenterCmsService {
 
     public record NoticeUpsertRequest(
         String serviceType,
+        String noticeType,
         String title,
         String excerpt,
         String content,
@@ -80,6 +81,7 @@ public class CustomerCenterCmsService {
     public record NoticeView(
         long id,
         String serviceType,
+        String noticeType,
         String title,
         String excerpt,
         String content,

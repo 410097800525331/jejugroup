@@ -42,6 +42,11 @@
   cursor: pointer;
 }
 
+.bbs-item:focus-visible {
+  outline: 2px solid #ff6000;
+  outline-offset: -2px;
+}
+
 .bbs-container--notice .bbs-item {
   border-bottom-color: #dfe5ec;
 }
@@ -81,6 +86,21 @@
 .bbs-container--notice .bbs-item:hover .bbs-item-chevron {
   color: #7f8c9d;
   transform: translateX(1px);
+}
+
+/* Detail */
+.notice-detail-page .bbs-detail-card {
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.06);
+}
+
+.bbs-detail-body {
+  min-height: 240px;
+}
+
+.bbs-detail-body,
+.bbs-detail-empty,
+.bbs-detail-skeleton {
+  border-radius: 2rem;
 }
 
 /* Pagination */

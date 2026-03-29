@@ -1,4 +1,5 @@
 import { PencilLine, Trash2, ChevronRight } from "lucide-react";
+import { Link } from "wouter";
 
 import type { Notice } from "@/types/service-center";
 import "@/styles/bbs.css";
@@ -13,19 +14,21 @@ interface NoticeListItemProps extends Notice {
   isAdmin?: boolean;
   onEdit?: (notice: NoticeWithMeta) => void;
   onDelete?: (notice: NoticeWithMeta) => void;
+  href?: string;
 }
 
 export default function NoticeListItem(props: NoticeListItemProps) {
-  const { title, date, active, isAdmin = false, onEdit, onDelete } = props;
+  const { title, date, active, isAdmin = false, onEdit, onDelete, href } = props;
   const isInactive = active === false;
   const noticePayload = { ...props, active: active !== false };
-
-  return (
-    <div className="bbs-item">
+  const content = (
+    <>
       <div className="bbs-item-content">
         <div className="flex flex-wrap items-center gap-2">
           {isAdmin ? (
-            <span className={`rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase border ${isInactive ? "border-gray-200 bg-gray-100 text-gray-400" : "border-orange-100 bg-orange-50 text-orange-600"}`}>
+            <span
+              className={`rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase border ${isInactive ? "border-gray-200 bg-gray-100 text-gray-400" : "border-orange-100 bg-orange-50 text-orange-600"}`}
+            >
               {isInactive ? "비활성" : "활성"}
             </span>
           ) : null}
@@ -60,6 +63,16 @@ export default function NoticeListItem(props: NoticeListItemProps) {
       ) : (
         <ChevronRight size={20} className="bbs-item-chevron" />
       )}
-    </div>
+    </>
   );
+
+  if (href && !isAdmin) {
+    return (
+      <Link href={href} className="bbs-item" aria-label={`${title} 공지 상세 보기`}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className="bbs-item">{content}</div>;
 }

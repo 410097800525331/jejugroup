@@ -12,6 +12,11 @@ const cmsConfig = {
       searchPlaceholder: '공지 제목이나 ID로 검색',
       primaryAction: '공지 등록',
       secondaryAction: '정렬',
+      typeFilterOptions: [
+        { value: 'all', label: '전체' },
+        { value: 'notice', label: '공지사항' },
+        { value: 'event', label: '이벤트' }
+      ],
       emptyMessage: '공지사항 데이터가 없습니다.',
       columns: ['공지 ID', '도메인', '유형', '제목', '게시 / 예약일', '노출 상태', '관리'],
       rows: []

@@ -22,6 +22,7 @@ interface NoticeListProps {
   showInactive?: boolean;
   onEditNotice?: (notice: NoticeWithMeta) => void;
   onDeleteNotice?: (notice: NoticeWithMeta) => void;
+  noticeHref?: (notice: NoticeWithMeta) => string;
 }
 
 function SkeletonRows() {
@@ -52,6 +53,7 @@ export default function NoticeList({
   isAdmin = false,
   onEditNotice,
   onDeleteNotice,
+  noticeHref,
 }: NoticeListProps) {
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
   const isBusy = isLoading || Boolean(error);
@@ -106,6 +108,7 @@ export default function NoticeList({
                   isAdmin={isAdmin}
                   onEdit={onEditNotice}
                   onDelete={onDeleteNotice}
+                  href={noticeHref?.(notice)}
                 />
               </motion.div>
             ))}

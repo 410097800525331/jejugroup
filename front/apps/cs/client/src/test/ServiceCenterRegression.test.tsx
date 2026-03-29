@@ -6,8 +6,8 @@ import FAQItem from "@/components/serviceCenter/FAQItem";
 import InquirySupportAttachments from "@/components/serviceCenter/InquirySupportAttachments";
 import InquirySupportComments from "@/components/serviceCenter/InquirySupportComments";
 import NoticeListItem from "@/components/serviceCenter/NoticeListItem";
+import { createNotice, updateFaq, updateNotice } from "@/lib/serviceCenterApi";
 import Inquiries from "@/pages/Inquiries";
-import { updateFaq } from "@/lib/serviceCenterApi";
 
 const mocks = vi.hoisted(() => ({
   useAuth: vi.fn(),
@@ -209,6 +209,74 @@ describe("ServiceCenter regressions", () => {
       answer: "answer",
       sortOrder: 7,
       active: true,
+    });
+  });
+
+  it("includes noticeType in the create notice body", async () => {
+    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>(async () => jsonResponse({ notice: { id: 9 } }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await createNotice({
+      serviceType: "common",
+      noticeType: "event",
+      title: "notice payload check",
+      excerpt: "excerpt",
+      content: "content",
+      active: true,
+      pinned: false,
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const firstCall = fetchMock.mock.calls[0];
+    if (!firstCall) {
+      throw new Error("expected fetch to be called");
+    }
+
+    const [url, init] = firstCall;
+    expect(String(url)).toBe("/api/customer-center/notices");
+    expect(init?.method).toBe("POST");
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      serviceType: "common",
+      noticeType: "event",
+      title: "notice payload check",
+      excerpt: "excerpt",
+      content: "content",
+      active: true,
+      pinned: false,
+    });
+  });
+
+  it("includes noticeType in the update notice body", async () => {
+    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>(async () => jsonResponse({ notice: { id: 9 } }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await updateNotice(9, {
+      serviceType: "jeju-air",
+      noticeType: "notice",
+      title: "update payload check",
+      excerpt: "excerpt",
+      content: "content",
+      active: false,
+      pinned: true,
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const firstCall = fetchMock.mock.calls[0];
+    if (!firstCall) {
+      throw new Error("expected fetch to be called");
+    }
+
+    const [url, init] = firstCall;
+    expect(String(url)).toBe("/api/customer-center/notices/9");
+    expect(init?.method).toBe("PUT");
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      serviceType: "jeju-air",
+      noticeType: "notice",
+      title: "update payload check",
+      excerpt: "excerpt",
+      content: "content",
+      active: false,
+      pinned: true,
     });
   });
 

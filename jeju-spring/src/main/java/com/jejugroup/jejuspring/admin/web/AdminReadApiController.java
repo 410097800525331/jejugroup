@@ -1559,7 +1559,7 @@ class AdminReadService {
         }
 
         String query = """
-            SELECT id, service_type, title, published_at, created_at, is_active
+            SELECT id, service_type, notice_type, title, published_at, created_at, is_active
             FROM notices
             ORDER BY COALESCE(published_at, created_at) DESC, id DESC
             """;
@@ -1570,6 +1570,7 @@ class AdminReadService {
             while (resultSet.next()) {
                 String title = text(resultSet.getString("title"));
                 String serviceType = displayServiceType(resultSet.getString("service_type"));
+                String noticeType = text(resultSet.getString("notice_type"));
                 Timestamp publishedAt = resultSet.getTimestamp("published_at");
                 String scheduleText = publishedAt == null ? formatTimestamp(resultSet.getTimestamp("created_at")) : formatTimestamp(publishedAt);
                 String statusKey = resolveNoticeStatusKey(resultSet.getInt("is_active"), publishedAt);
@@ -1580,7 +1581,7 @@ class AdminReadService {
                     List.of(
                         String.valueOf(resultSet.getLong("id")),
                         serviceType,
-                        "notice",
+                        noticeType.isBlank() ? "notice" : noticeType,
                         title,
                         scheduleText,
                         statusLabel,

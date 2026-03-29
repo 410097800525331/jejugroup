@@ -2,39 +2,39 @@
 
 ## Current Task
 
-- task: `Build a notice-create modal on the admin CMS page so the notice registration button opens a popup with the requested category, type, title, and content fields`
+- task: `Add a customer-center notice detail view so notice titles open full posts from the live notices API`
 - phase: `implementation`
-- scope: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css`
-- verification_target: `관리자 CMS 페이지에서 공지사항 탭의 공지 등록 버튼을 누르면 기존 관리자 레이아웃 안에서 작성 팝업이 열리고, 서비스 분류/공지 유형/제목/공지 내용 필드를 가진 UI가 보인다`
+- scope: `front/apps/cs/client/src/App.tsx, front/apps/cs/client/src/pages/Notices.tsx, front/apps/cs/client/src/pages/NoticeDetail.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx, front/apps/cs/client/src/lib/serviceCenterApi.ts, front/apps/cs/client/src/types/service-center.ts, front/apps/cs/client/src/styles/bbs.css`
+- verification_target: `고객센터 공지 목록에서 제목/row 클릭 시 별도 상세 뷰로 이동하고, 제목/날짜/서비스/유형/본문을 실공지 API로 읽어 보여줘야 한다`
 
 ## Route
 
 - route: `Route B`
-- reason: `The task spans admin page markup, behavior script, and shared admin component styling across 2+ directories, so the implementation required a frozen delegated write set rather than a single-lane Route A edit.`
+- reason: `The request still spans routing, list interaction, detail rendering, API plumbing, and stylesheet updates across multiple frontend files, so it exceeds a single-file Route A hotfix even after removing the backend surface from scope.`
 
 ## Writer Slot
 
 - owner: `planner`
 - write_sets:
   - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_admin_cms`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css`
-- note: `The admin CMS popup required one coupled worker slice across markup, behavior, and styling; main remains planner-only on Route B.`
+  - `worker_notice_detail_front`: `front/apps/cs/client/src/App.tsx, front/apps/cs/client/src/pages/Notices.tsx, front/apps/cs/client/src/pages/NoticeDetail.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx, front/apps/cs/client/src/components/serviceCenter/NoticeListItem.tsx, front/apps/cs/client/src/lib/serviceCenterApi.ts, front/apps/cs/client/src/types/service-center.ts, front/apps/cs/client/src/styles/bbs.css`
+- note: `Keep main planner-only; the backend detail surface already existed, so the implementation stayed in the frontend routing/list/detail slice.`
 
 ## Contract Freeze
 
 - contract_freeze: `frozen`
 - status: `frozen`
 - path: `in-state`
-- revision: `admin-cms-notice-create-modal-v1`
-- note: `admin/pages/cms.html의 공지사항 탭에서 공지 등록 버튼을 누르면 작성 팝업이 열려야 한다. 팝업은 현 관리자페이지 디자인을 해치지 않는 선에서 서비스 분류(통합/에어/스테이/렌터카), 공지 유형(공지사항/이벤트), 제목, 공지 내용을 입력받는 UI만 제공하고 실제 저장 로직은 붙이지 않는다.`
+- revision: `customer-center-notice-detail-v1-front-only`
+- note: `고객센터 공지 목록은 기존 /api/customer-center/notices 데이터를 유지하되, 목록 item 클릭 시 별도 상세 화면으로 이동하고, 상세 화면은 /api/customer-center/notices/{id} 단건 API로 제목/날짜/서비스/유형/본문을 렌더한다. 이번 작업은 front 앱 내부 라우팅과 list item interaction, detail rendering만 다룬다.`
 
 ## Reviewer
 
 - reviewer: `assigned_complete`
-- reviewer_target: `worker_admin_cms`
-- reviewer_focus: `Verify the popup opens only from the notices primary action, preserves layout, and does not leak focus or accidental save behavior.`
+- reviewer_target: `reviewer_notice_detail`
+- reviewer_focus: `Verify the notice list navigates cleanly into the new detail view, the detail page handles missing notices without breaking routing, and the frontend API shape stays aligned with the live notice detail contract.`
 
 ## Last Update
 
-- timestamp: `2026-03-29 19:31:00 +09:00`
-- note: `Route B state restored after delegated admin CMS popup implementation and follow-up accessibility fix; ready for final mirror sync.`
+- timestamp: `2026-03-29 20:06:00 +09:00`
+- note: `Frontend notice detail route and page landed, the reviewer-reported nested wouter anchor issue was fixed, and CS check/regression tests passed; only a pre-existing Inquiries nesting warning remains outside this slice.`

@@ -21,7 +21,7 @@ public class CustomerCenterCmsReadService extends CustomerCenterCmsDatabaseSuppo
     public List<CustomerCenterCmsService.NoticeView> listNotices(String serviceType) throws SQLException {
         String normalizedServiceType = normalizeServiceTypeFilter(serviceType);
         StringBuilder query = new StringBuilder("""
-            SELECT id, service_type, title, excerpt, content, is_pinned, is_active, published_at, created_at, updated_at
+            SELECT id, service_type, notice_type, title, excerpt, content, is_pinned, is_active, published_at, created_at, updated_at
             FROM notices
             WHERE is_active = 1
             """);
@@ -95,7 +95,7 @@ public class CustomerCenterCmsReadService extends CustomerCenterCmsDatabaseSuppo
     private NoticeRow loadVisibleNotice(long noticeId, String serviceType) throws SQLException {
         String normalizedServiceType = normalizeServiceTypeFilter(serviceType);
         StringBuilder query = new StringBuilder("""
-            SELECT id, service_type, title, excerpt, content, is_pinned, is_active, published_at, created_at, updated_at
+            SELECT id, service_type, notice_type, title, excerpt, content, is_pinned, is_active, published_at, created_at, updated_at
             FROM notices
             WHERE id = ?
               AND is_active = 1
@@ -148,6 +148,7 @@ public class CustomerCenterCmsReadService extends CustomerCenterCmsDatabaseSuppo
         return new NoticeRow(
             resultSet.getLong("id"),
             normalizeNullable(resultSet.getString("service_type")),
+            normalizeNullable(resultSet.getString("notice_type")),
             normalizeNullable(resultSet.getString("title")),
             normalizeNullable(resultSet.getString("excerpt")),
             normalizeNullable(resultSet.getString("content")),
@@ -177,6 +178,7 @@ public class CustomerCenterCmsReadService extends CustomerCenterCmsDatabaseSuppo
         return new CustomerCenterCmsService.NoticeView(
             row.id(),
             row.serviceType(),
+            row.noticeType(),
             row.title(),
             row.excerpt(),
             row.content(),
@@ -205,6 +207,7 @@ public class CustomerCenterCmsReadService extends CustomerCenterCmsDatabaseSuppo
     private record NoticeRow(
         long id,
         String serviceType,
+        String noticeType,
         String title,
         String excerpt,
         String content,
