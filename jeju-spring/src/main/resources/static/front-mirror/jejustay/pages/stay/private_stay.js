@@ -65,6 +65,15 @@ const initHeroSearchWidgetStability = (hostId, readyEventName) => {
 
 initHeroSearchWidgetStability("hotel-search-widget-root", "jeju:hotel-search-widget-mounted");
 
+const initManagedBannerIconRuntime = async () => {
+    try {
+        const { initPublicManagedBannerIcons } = await import("../../../shared/banner-runtime/public-managed-icons.js");
+        await initPublicManagedBannerIcons();
+    } catch (error) {
+        console.error("[PrivateStayPage] managed banner icon runtime init failed", error);
+    }
+};
+
 const initSharedStayMotion = async () => {
     try {
         const [{ initPremiumAnimations }, { initScrollAnimations }] = await Promise.all([
@@ -80,6 +89,8 @@ const initSharedStayMotion = async () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    void initManagedBannerIconRuntime();
+
     if (window.lucide?.createIcons) {
         window.lucide.createIcons();
     }

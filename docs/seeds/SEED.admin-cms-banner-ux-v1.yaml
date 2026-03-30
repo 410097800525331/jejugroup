@@ -1,0 +1,34 @@
+goal: >
+  Improve the admin CMS banner-tab UX and behavior without changing the
+  surrounding admin layout or introducing backend, mirror, or deployment
+  contract changes.
+constraints:
+  - Limit the slice to `front/admin/pages/cms.html`, `front/admin/js/cms.js`, `front/admin/data/cms-config.js`, and `front/admin/css/components.css`.
+  - Preserve the existing admin page structure, spacing, and overall layout; only the banner-tab UX inside the admin CMS surface may change.
+  - Keep the stored banner ID unchanged in persistence, but show a shorter, readable unique display ID in the table.
+  - Replace raw `stay` / `air` service values with operator-friendly service labels in the UI; `stay` must surface as `호텔`, `한달살기`, `프라이빗`, and `액티비티`, and `air` hero content must surface as `항공`.
+  - Replace raw `family` / `slot` keys with explanation-oriented labels in the admin UI and make their meaning understandable from the banner list and modal.
+  - Make the banner modal's icon field easier to find and understand with clearer label text, helper guidance, and placement.
+  - Rename the raw `sortOrder` concept to an operator-facing `노출 순서` label in the UI.
+  - Restyle banner status buttons so their intent is visually clearer.
+  - Give banner management action buttons distinct colors or tones so they read as separate actions.
+  - Make banner edit and delete actions actually operate on the selected row and complete successfully.
+  - Do not change backend APIs, data contracts, deployment mirrors, or public-facing banner rendering in this slice.
+acceptance_criteria:
+  - The banner table shows a short readable display ID while the actual stored ID remains unchanged.
+  - The banner list and modal show human-friendly service labels instead of raw `stay` / `air` values.
+  - The UI explains `family` and `slot` with descriptive labels instead of raw key names.
+  - The banner modal makes the icon field obvious through label, helper text, and placement.
+  - `sortOrder` is presented as `노출 순서` or an equivalent operator-facing label that conveys display order.
+  - Banner status controls and action buttons use distinct visual styling that improves scannability.
+  - Banner edit and delete actions work end to end on the selected banner row.
+  - The overall admin page layout and non-banner sections remain visually unchanged.
+verification:
+  - `node --check front/admin/js/cms.js`
+  - `git diff --check -- front/admin/pages/cms.html front/admin/js/cms.js front/admin/data/cms-config.js front/admin/css/components.css docs/seeds/SEED.admin-cms-banner-ux-v1.yaml STATE.md MULTI_AGENT_LOG.md`
+  - Manual admin CMS banner-tab review for row labels, modal icon guidance, status/action styling, and edit/delete behavior.
+out_of_scope:
+  - Backend contract changes, new API endpoints, or database schema changes.
+  - Mirror sync changes or deployment path changes.
+  - Public page banner renderer changes.
+  - Redesigning the admin page or changing non-banner CMS sections.

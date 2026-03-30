@@ -1,0 +1,27 @@
+goal: >
+  Freeze the admin CMS banner-tab table repair so the banner list regains a
+  visible status-toggle control and balanced column sizing without changing the
+  overall admin CMS page design or layout structure.
+constraints:
+  - Limit this slice to the admin CMS banner tab only.
+  - Keep implementation scope to `front/admin/js/cms.js`, `front/admin/css/components.css`, and `front/admin/data/cms-config.js`.
+  - Do not change the overall page design, layout structure, route contracts, backend APIs, mirror paths, or non-banner CMS sections.
+  - Restore a visible status-toggle control in the banner table status column.
+  - Keep edit/delete controls inside the management column and aligned as intended.
+  - Reduce the visual and width dominance of the content column so site/service and family/slot columns have more room.
+  - Prefer compact content preview formatting over long raw text blocks.
+acceptance_criteria:
+  - The banner tab shows a visible status-toggle control in the status column for each banner row.
+  - Edit and delete controls remain in the management column and are visually aligned with the intended table layout.
+  - The content column no longer monopolizes table width; site/service and family/slot columns have readable space.
+  - Content preview text is compact and scannable rather than a long raw block.
+  - The overall admin CMS page design and layout structure remain unchanged outside the banner tab table behavior.
+verification:
+  - `node --check front/admin/js/cms.js`
+  - `git diff --check -- front/admin/js/cms.js front/admin/css/components.css front/admin/data/cms-config.js docs/seeds/SEED.admin-cms-banner-table-layout-repair-v1.yaml`
+  - Manual review of the admin CMS banner tab for status-toggle visibility, management-column alignment, and compact content preview rendering.
+out_of_scope:
+  - Backend API changes, database changes, or persistence changes.
+  - Route constants, shell runtime behavior, or deployment mirror updates.
+  - Non-banner admin CMS sections and other admin pages.
+  - Reworking the overall page design, spacing system, or table layout structure.

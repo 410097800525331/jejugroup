@@ -65,16 +65,17 @@ public class MigrationDashboardFactory {
     }
 
     private List<MigrationConfigSectionView> buildConfigSections() {
+        AppProperties.Database database = appProperties.database();
         AppProperties.Alwaysdata alwaysdata = appProperties.alwaysdata();
         AppProperties.External external = appProperties.external();
         AppProperties.Social social = appProperties.social();
 
         return List.of(
             section(
-                "Alwaysdata deploy",
+                "Database and deploy",
                 List.of(
-                    item("DB URL", "ALWAYSDATA_DB_URL", alwaysdata.dbUrl()),
-                    item("DB user", "ALWAYSDATA_DB_USER", alwaysdata.dbUser()),
+                    item("DB URL", "DB_URL / ALWAYSDATA_DB_URL", database.dbUrl()),
+                    item("DB user", "DB_USER / ALWAYSDATA_DB_USER", database.dbUser()),
                     item("SSH host", "ALWAYSDATA_SSH_HOST / SSH_HOST", alwaysdata.sshHost()),
                     item("SSH user", "ALWAYSDATA_SSH_USER / SSH_USER", alwaysdata.sshUser()),
                     item("Remote deploy path", "REMOTE_DEPLOY_PATH", alwaysdata.remoteDeployPath())

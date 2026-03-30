@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tabButtons = document.querySelectorAll('.segment-btn');
     const tableBody = document.getElementById('cms-table-body');
     const tableHeadRow = document.querySelector('.admin-table thead tr');
+    const tableElement = tableHeadRow?.closest('table.admin-table') ?? document.querySelector('.admin-table');
     const searchInput = document.querySelector('.admin-table-actions input[type="text"]');
     const statusFilter = document.getElementById('cms-status-filter');
     const searchButton = document.getElementById('cms-search-btn');
@@ -90,8 +91,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const bannerModalCtaHrefInput = document.getElementById('cms-banner-cta-href');
     const bannerModalImageUrlInput = document.getElementById('cms-banner-image-url');
     const bannerModalAltTextInput = document.getElementById('cms-banner-alt-text');
-    const bannerModalSortOrderInput = document.getElementById('cms-banner-sort-order');
+    const bannerModalIconKeySelect = document.getElementById('cms-banner-icon-key');
     const bannerModalActiveSelect = document.getElementById('cms-banner-active');
+    const bannerModalSiteHelp = document.getElementById('cms-banner-site-help');
+    const bannerModalFamilyHelp = document.getElementById('cms-banner-family-help');
+    const bannerModalSlotHelp = document.getElementById('cms-banner-slot-help');
     const bannerModalEyebrow = bannerModalBackdrop?.querySelector('.admin-modal-eyebrow');
     const bannerModalTitle = bannerModalBackdrop?.querySelector('.admin-modal-title');
     const bannerModalDescription = bannerModalBackdrop?.querySelector('.admin-modal-description');
@@ -106,6 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const TAB_CONFIG = cmsConfig.tabs;
     const DEFAULT_TAB = cmsConfig.defaultTab;
     const NOTICE_PAGE_SIZE = Number(cmsConfig.tabs?.notices?.pageSize ?? 8) || 8;
+    const BANNER_API_BASE = '/api/admin/cms/banners';
     let activeTab = DEFAULT_TAB;
     let searchKeyword = '';
     let activeStatus = 'all';
@@ -1061,6 +1066,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
+    const bannerIconKeyOptions = Array.isArray(cmsConfig.tabs?.banner?.iconKeyOptions)
+        ? cmsConfig.tabs.banner.iconKeyOptions
+            .map((option) => ({
+                value: String(option?.value ?? '').trim(),
+                label: String(option?.label ?? option?.value ?? '').trim()
+            }))
+            .filter((option) => option.value)
+        : [];
+    const bannerIconKeyValueSet = new Set(bannerIconKeyOptions.map((option) => option.value));
+    const bannerSlotMetadata = Array.isArray(cmsConfig.tabs?.banner?.slotMetadata)
+        ? cmsConfig.tabs.banner.slotMetadata
+            .map((meta) => ({
+                slotKey: String(meta?.slotKey ?? '').trim(),
+                shortId: String(meta?.shortId ?? '').trim(),
+                serviceLabel: String(meta?.serviceLabel ?? '').trim(),
+                familyLabel: String(meta?.familyLabel ?? '').trim(),
+                slotLabel: String(meta?.slotLabel ?? '').trim(),
+                rawSite: String(meta?.rawSite ?? '').trim(),
+                rawFamily: String(meta?.rawFamily ?? '').trim(),
+                iconHint: String(meta?.iconHint ?? '').trim()
+            }))
+            .filter((meta) => meta.slotKey)
+        : [];
+    const bannerSlotMetadataMap = new Map(bannerSlotMetadata.map((meta) => [meta.slotKey, meta]));
+    const getBannerSlotMeta = (banner) => {
+        const slotKey = String(banner?.slotKey ?? banner?.id ?? '').trim();
+        if (!slotKey) return null;
+        return bannerSlotMetadataMap.get(slotKey) || null;
+    };
+
+    const normalizeBannerIconKey = (value) => {
+        const normalized = String(value ?? '').trim();
+        return bannerIconKeyValueSet.has(normalized) ? normalized : '';
+    };
+
     const normalizeBannerStatusKey = (value, active) => {
         const normalized = String(value || '').trim().toLowerCase();
         if (normalized === 'active' || normalized === 'inactive' || normalized === 'draft') {
@@ -1080,7 +1120,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    const formatBannerFamilyLabel = (value) => normalizeBannerFamily(value);
+    const formatBannerFamilyLabel = (value) => {
+        switch (normalizeBannerFamily(value)) {
+            case 'inline_cta_banner_family':
+                return '인라인 CTA';
+            case 'hero_image_set':
+                return '히어로 이미지';
+            case 'promo_card_family':
+            default:
+                return '프로모 카드';
+        }
+    };
+
+    const formatBannerDisplayId = (banner) => {
+        const meta = getBannerSlotMeta(banner);
+        if (meta?.shortId) return meta.shortId;
+        const sortSuffix = Number.isFinite(Number(banner?.sortOrder)) ? String(Number(banner.sortOrder)).padStart(2, '0') : '00';
+        return `B${sortSuffix}`;
+    };
+
+    const formatBannerSiteServiceLabel = (banner) => {
+        const meta = getBannerSlotMeta(banner);
+        if (meta?.serviceLabel) return meta.serviceLabel;
+        return formatBannerServiceLabel(banner?.site);
+    };
+
+    const formatBannerFamilySlotLabel = (banner) => {
+        const meta = getBannerSlotMeta(banner);
+        if (meta?.slotLabel) return meta.slotLabel;
+        return `${formatBannerFamilyLabel(banner?.family)} · ${String(banner?.slotKey ?? '').trim()}`;
+    };
+
+    const compactBannerPreviewText = (value, maxLength = 18) => {
+        const normalized = String(value ?? '').replace(/\s+/g, ' ').trim();
+        if (!normalized) return '';
+        if (normalized.length <= maxLength) return normalized;
+        return `${normalized.slice(0, Math.max(1, maxLength - 1))}…`;
+    };
 
     const formatBannerStatusLabel = (value, active) => {
         switch (normalizeBannerStatusKey(value, active)) {
@@ -1094,28 +1170,128 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    const getBannerModalSubmitLabel = () => (bannerModalMode === 'edit' ? '저장' : '등록');
+    const getBannerModalSubmitLabel = () => (bannerModalMode === 'edit' ? '수정' : '등록');
 
     const getBannerModalCopy = (mode) => (mode === 'edit' ? {
         eyebrow: '배너 수정',
         title: '배너 수정',
-        description: '세션 로컬 상태에 있는 배너 값을 불러와서 바로 수정한다.',
-        submit: '저장'
+        description: '기존 배너의 사이트, 유형, 위치, 콘텐츠, 이미지, CTA 정보를 바로 수정합니다.',
+        submit: '수정'
     } : {
         eyebrow: '배너 등록',
-        title: '새 배너 작성',
-        description: '배너는 세션 로컬 상태로만 저장된다. family에 따라 텍스트 영역과 이미지 영역이 전환된다.',
+        title: '새 배너 등록',
+        description: '배너의 사이트, 유형, 위치, 콘텐츠, 이미지, CTA 정보를 한 번에 등록합니다.',
         submit: '등록'
     });
 
     const getBannerFieldMode = (family) => (normalizeBannerFamily(family) === 'hero_image_set' ? 'image' : 'text');
 
+    const syncBannerEditContractState = () => {
+        const isEditMode = bannerModalMode === 'edit';
+        if (bannerModalSiteSelect) bannerModalSiteSelect.disabled = isEditMode;
+        if (bannerModalFamilySelect) bannerModalFamilySelect.disabled = isEditMode;
+        if (bannerModalSlotKeyInput) {
+            bannerModalSlotKeyInput.readOnly = isEditMode;
+            bannerModalSlotKeyInput.disabled = false;
+        }
+
+        if (bannerModalSiteHelp) {
+            bannerModalSiteHelp.textContent = isEditMode
+                ? '기존 배너는 여기서 못 바꾸고, 위치 변경은 새 위치로 관리한다.'
+                : '표에서는 항공 또는 숙박 세부 분류로 풀어서 보여준다.';
+        }
+
+        if (bannerModalFamilyHelp) {
+            bannerModalFamilyHelp.textContent = isEditMode
+                ? '기존 배너는 여기서 못 바꾸고, 다른 타입이 필요하면 새 위치로 다시 만든다.'
+                : '같은 화면에 묶이는 템플릿 타입이다. 위치와 같이 본다.';
+        }
+
+        if (bannerModalSlotHelp) {
+            bannerModalSlotHelp.textContent = isEditMode
+                ? '기존 배너는 여기서 못 바꾸고, 위치 이동은 새 위치로 관리한다.'
+                : '운영자가 보는 위치 이름이다. 저장은 기존 위치 키 규칙을 유지한다.';
+        }
+    };
+
+    const syncBannerIconKeyOptions = () => {
+        if (!bannerModalIconKeySelect) return;
+        bannerModalIconKeySelect.innerHTML = [
+            '<option value="">선택</option>',
+            ...bannerIconKeyOptions.map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`)
+        ].join('');
+    };
+
+    const getBannerApiErrorMessage = (parsed, fallback) => {
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            return parsed.message || parsed.error || fallback;
+        }
+        return fallback;
+    };
+
+    const extractBannerPayloadItem = (payload) => {
+        if (!payload) return null;
+        if (Array.isArray(payload)) return payload[0] || null;
+        if (typeof payload !== 'object') return null;
+        const data = payload.data ?? payload.result ?? payload.payload;
+        if (Array.isArray(data)) return data[0] || null;
+        const candidates = [
+            payload.banner,
+            payload.item,
+            payload.data,
+            data?.banner,
+            data?.item,
+            data
+        ];
+
+        for (const candidate of candidates) {
+            if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
+                return candidate;
+            }
+        }
+
+        return payload;
+    };
+
+    const extractBannerListRecords = (payload) => {
+        if (!payload) return [];
+        if (Array.isArray(payload)) return payload;
+        if (typeof payload !== 'object') return [];
+
+        const data = payload.data ?? payload.result ?? payload.payload;
+        const candidates = [
+            payload.items,
+            payload.banners,
+            payload.rows,
+            data?.items,
+            data?.banners,
+            data?.rows,
+            data
+        ];
+
+        for (const candidate of candidates) {
+            if (Array.isArray(candidate)) return candidate;
+        }
+
+        if (data && typeof data === 'object') return [data];
+        return [];
+    };
+
     const extractAdminBannerRows = (payload) => {
-        if (!payload || typeof payload !== 'object') return [];
+        if (!payload) return [];
+        if (Array.isArray(payload)) return payload;
+        if (typeof payload !== 'object') return [];
         const tabs = payload.tabs || payload.data?.tabs;
         if (Array.isArray(tabs?.banner?.rows)) return tabs.banner.rows;
+        if (Array.isArray(payload.items)) return payload.items;
+        if (Array.isArray(payload.banners)) return payload.banners;
         if (Array.isArray(payload.rows)) return payload.rows;
+        if (Array.isArray(payload.data)) return payload.data;
+        if (Array.isArray(payload.data?.items)) return payload.data.items;
+        if (Array.isArray(payload.data?.banners)) return payload.data.banners;
         if (Array.isArray(payload.data?.rows)) return payload.data.rows;
+        if (payload.banner || payload.item) return [payload.banner || payload.item];
+        if (payload.data && typeof payload.data === 'object') return [payload.data];
         return [];
     };
 
@@ -1170,13 +1346,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const id = row.bannerId ?? row.id ?? cells[0];
         if (id === undefined || id === null || String(id).trim() === '') return null;
 
+        if (cells.length === 0) {
+            return normalizeBannerRecord({
+                ...row,
+                bannerId: String(id).trim(),
+                id: String(id).trim(),
+                slotKey: String(row.slotKey ?? row.slot_key ?? row.slotKeyId ?? row.slotKeyID ?? id).trim() || String(id).trim()
+            });
+        }
+
         const siteLabel = String(cells[1] ?? row.site ?? row.service ?? row.serviceType ?? '').trim();
         const familySlotLabel = String(cells[2] ?? row.familySlot ?? row.family ?? row.slotKey ?? '').trim();
         const contentText = String(cells[3] ?? row.content ?? row.body ?? row.title ?? '').trim();
         const imageText = String(cells[4] ?? row.imageUrl ?? row.image_url ?? '').trim();
-        const sortText = String(cells[5] ?? row.sortOrder ?? row.sort_order ?? '').trim();
-        const statusText = String(cells[6] ?? row.statusKey ?? row.status ?? '').trim();
-
+        const statusText = String(row.statusKey ?? row.status ?? cells[5] ?? cells[6] ?? '').trim();
         const { family, slotKey } = parseBannerFamilySlot(familySlotLabel);
         const resolvedSlotKey = String(row.slotKey ?? slotKey ?? id).trim() || String(id).trim();
         const resolvedSite = normalizeBannerServiceLabel(row.site ?? row.service ?? row.serviceType ?? siteLabel);
@@ -1184,8 +1367,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             row.statusKey ?? row.status ?? parseBannerStatusFromCell(statusText),
             row.active !== false
         );
-        const parsedSortOrder = Number(row.sortOrder ?? row.sort_order ?? sortText);
-        const sortOrder = Number.isFinite(parsedSortOrder) ? parsedSortOrder : 0;
+        const sortOrder = Number.isFinite(Number(row.sortOrder ?? row.sort_order)) ? Number(row.sortOrder ?? row.sort_order) : 0;
         const ctaLabel = String(row.ctaLabel ?? row.cta_label ?? '').trim();
         const ctaHref = String(row.ctaHref ?? row.cta_href ?? '').trim();
 
@@ -1197,10 +1379,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const fallbackBody = String(row.body ?? contentParts.slice(1).join(' ') ?? contentText).trim();
 
         return normalizeBannerRecord({
-            id: resolvedSlotKey,
+            bannerId: String(id).trim(),
+            id: String(id).trim(),
             site: resolvedSite,
             family,
             slotKey: resolvedSlotKey,
+            iconKey: normalizeBannerIconKey(row.iconKey ?? row.icon_key),
             eyebrow: String(row.eyebrow ?? row.badge ?? '').trim(),
             title: fallbackTitle,
             body: fallbackBody,
@@ -1218,18 +1402,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const normalizeBannerRecord = (banner) => {
         if (!banner || typeof banner !== 'object') return null;
+        const bannerId = String(banner.bannerId ?? banner.banner_id ?? banner.id ?? banner.slotKey ?? banner.slot_key ?? '').trim();
         const slotKey = String(banner.slotKey ?? banner.slot_key ?? banner.id ?? banner.bannerId ?? '').trim();
-        if (!slotKey) return null;
+        const resolvedId = bannerId || slotKey;
+        if (!resolvedId) return null;
 
         const imageUrl = String(banner.imageUrl ?? banner.image_url ?? '').trim();
         const active = banner.active !== false;
         const statusKey = normalizeBannerStatusKey(banner.statusKey ?? banner.status_key, active);
 
         return {
-            id: slotKey,
+            id: resolvedId,
+            bannerId: resolvedId,
             site: normalizeBannerServiceType(banner.site ?? banner.service ?? banner.serviceType),
             family: normalizeBannerFamily(banner.family),
-            slotKey,
+            slotKey: slotKey || resolvedId,
+            iconKey: normalizeBannerIconKey(banner.iconKey ?? banner.icon_key),
             eyebrow: String(banner.eyebrow || '').trim(),
             title: String(banner.title || '').trim(),
             body: String(banner.body || banner.content || '').trim(),
@@ -1250,6 +1438,45 @@ document.addEventListener('DOMContentLoaded', async () => {
         return normalized ? { ...normalized } : null;
     };
 
+    const managedBannerTemplates = Array.isArray(cmsConfig.tabs?.banner?.fallbackRows)
+        ? cmsConfig.tabs.banner.fallbackRows.map(normalizeBannerRecord).filter(Boolean)
+        : [];
+
+    const getManagedBannerTemplateBySlotKey = (slotKey) => {
+        const normalizedSlotKey = String(slotKey ?? '').trim();
+        if (!normalizedSlotKey) return null;
+        return managedBannerTemplates.find((template) => String(template.slotKey) === normalizedSlotKey) || null;
+    };
+
+    const getAvailableManagedBannerTemplates = () => {
+        const occupiedSlotKeys = new Set(
+            bannerRuntimeRows
+                .map((record) => String(record?.slotKey ?? record?.id ?? '').trim())
+                .filter(Boolean)
+        );
+
+        return managedBannerTemplates.filter((template) => template.slotKey && !occupiedSlotKeys.has(String(template.slotKey)));
+    };
+
+    const syncBannerModalWithTemplate = (template) => {
+        if (!template) return;
+
+        syncBannerIconKeyOptions();
+        if (bannerModalSiteSelect) bannerModalSiteSelect.value = template.site;
+        if (bannerModalFamilySelect) bannerModalFamilySelect.value = template.family;
+        if (bannerModalSlotKeyInput) bannerModalSlotKeyInput.value = template.slotKey;
+        if (bannerModalIconKeySelect) bannerModalIconKeySelect.value = template.iconKey || '';
+        if (bannerModalEyebrowInput) bannerModalEyebrowInput.value = template.eyebrow;
+        if (bannerModalTitleInput) bannerModalTitleInput.value = template.title;
+        if (bannerModalBodyInput) bannerModalBodyInput.value = template.body;
+        if (bannerModalCtaLabelInput) bannerModalCtaLabelInput.value = template.ctaLabel;
+        if (bannerModalCtaHrefInput) bannerModalCtaHrefInput.value = template.ctaHref;
+        if (bannerModalImageUrlInput) bannerModalImageUrlInput.value = template.imageUrl;
+        if (bannerModalAltTextInput) bannerModalAltTextInput.value = template.altText;
+        if (bannerModalActiveSelect) bannerModalActiveSelect.value = String(template.active);
+        syncBannerFieldMode();
+    };
+
     const buildBannerRow = (banner) => {
         const record = normalizeBannerRecord(banner);
         if (!record) return null;
@@ -1259,30 +1486,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         const statusToneClass = statusKey === 'active'
             ? 'cms-banner-status-toggle--active'
             : 'cms-banner-status-toggle--inactive';
-        const contentParts = [];
-        if (record.eyebrow) contentParts.push(record.eyebrow);
-        if (record.title) contentParts.push(record.title);
-        if (record.body) contentParts.push(record.body);
-        if (record.ctaLabel) contentParts.push(record.ctaLabel);
-        const contentPreview = contentParts.length > 0 ? contentParts.join(' | ') : '-';
+        const contentParts = [
+            compactBannerPreviewText(record.eyebrow, 12),
+            compactBannerPreviewText(record.title, 14),
+            compactBannerPreviewText(record.body, 18),
+            compactBannerPreviewText(record.ctaLabel, 12)
+        ].filter(Boolean);
+        const contentPreview = contentParts.length > 0 ? contentParts.join(' · ') : '-';
+        const displayId = formatBannerDisplayId(record);
+        const siteServiceLabel = formatBannerSiteServiceLabel(record);
+        const familySlotLabel = formatBannerFamilySlotLabel(record);
 
         return {
             bannerId: record.id,
             bannerRecord: record,
             statusKey,
             sortOrder: record.sortOrder,
-            searchText: `${record.id} ${record.site} ${record.family} ${record.slotKey} ${record.eyebrow} ${record.title} ${record.body} ${record.ctaLabel} ${record.ctaHref} ${record.imageUrl} ${record.altText}`.trim().toLowerCase(),
+            searchText: `${record.id} ${record.site} ${record.family} ${record.slotKey} ${record.iconKey} ${record.eyebrow} ${record.title} ${record.body} ${record.ctaLabel} ${record.ctaHref} ${record.imageUrl} ${record.altText}`.trim().toLowerCase(),
             cells: [
-                escapeHtml(record.id),
-                escapeHtml(formatBannerServiceLabel(record.site)),
-                `<div>${escapeHtml(record.family)}<br>${escapeHtml(record.slotKey)}</div>`,
-                escapeHtml(contentPreview),
-                record.imageUrl ? escapeHtml(record.imageUrl) : '-',
-                escapeHtml(String(record.sortOrder)),
+                `<div class="cms-banner-meta-cell" title="원본 ID: ${escapeHtml(record.id)}"><span class="cms-banner-display-id">${escapeHtml(displayId)}</span><span class="cms-banner-meta-sub">원본 ID 보관</span></div>`,
+                `<div class="cms-banner-meta-cell" title="원본 서비스: ${escapeHtml(record.site)} / ${escapeHtml(record.family)}"><span class="cms-banner-meta-main">${escapeHtml(siteServiceLabel)}</span><span class="cms-banner-meta-sub">서비스 분류</span></div>`,
+                `<div class="cms-banner-meta-cell" title="원본 타입: ${escapeHtml(record.family)} / 위치: ${escapeHtml(record.slotKey)}"><span class="cms-banner-meta-main">${escapeHtml(familySlotLabel)}</span><span class="cms-banner-meta-sub">타입 / 위치</span></div>`,
+                `<div class="cms-banner-content-preview" title="${escapeHtml(contentPreview)}">${escapeHtml(contentPreview)}</div>`,
+                `<div class="cms-banner-image-cell" title="${escapeHtml(record.imageUrl || '-')}">${record.imageUrl ? escapeHtml(record.imageUrl) : '-'}</div>`,
                 `<button type="button" class="cms-banner-status-toggle ${statusToneClass}" data-banner-action="toggle-active" data-banner-id="${escapeHtml(record.id)}" aria-label="${escapeHtml(statusLabel)}" title="${escapeHtml(statusLabel)}">${escapeHtml(statusLabel)}</button>`,
                 `<div class="cms-banner-row-actions">
-                    <button type="button" class="admin-btn admin-btn-outline" data-banner-action="edit" data-banner-id="${escapeHtml(record.id)}" aria-label="배너 수정" title="배너 수정">수정</button>
-                    <button type="button" class="admin-btn admin-btn-outline admin-btn-danger" data-banner-action="delete" data-banner-id="${escapeHtml(record.id)}" aria-label="배너 삭제" title="배너 삭제">삭제</button>
+                    <button type="button" class="admin-btn admin-btn-outline cms-banner-action-edit" data-banner-action="edit" data-banner-id="${escapeHtml(record.id)}" aria-label="배너 수정" title="배너 수정">수정</button>
+                    <button type="button" class="admin-btn admin-btn-outline admin-btn-danger cms-banner-action-delete" data-banner-action="delete" data-banner-id="${escapeHtml(record.id)}" aria-label="배너 삭제" title="배너 삭제">삭제</button>
                 </div>`
             ]
         };
@@ -1293,14 +1523,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const mode = getBannerFieldMode(bannerModalFamilySelect.value);
         bannerFieldGroups.forEach((field) => {
             const group = field.dataset.bannerFieldGroup;
-            const visible = group === mode;
+            const visible = group === mode || (group === 'icon' && mode === 'text');
             field.hidden = !visible;
             const control = field.querySelector('input, textarea');
             if (control) {
+                control.disabled = !visible;
                 control.required = visible && ((mode === 'image' && (control.id === 'cms-banner-image-url' || control.id === 'cms-banner-alt-text'))
-                    || (mode === 'text' && (control.id === 'cms-banner-title')));
+                    || (mode === 'text' && (control.id === 'cms-banner-title' || control.id === 'cms-banner-icon-key')));
             }
         });
+        if (bannerModalIconKeySelect) {
+            bannerModalIconKeySelect.disabled = mode !== 'text';
+            bannerModalIconKeySelect.required = mode === 'text';
+        }
+        syncBannerEditContractState();
     };
 
     const setBannerSavingState = (next) => {
@@ -1360,7 +1596,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const setBannerModalMode = (mode, banner = null) => {
         bannerModalMode = mode === 'edit' ? 'edit' : 'create';
         editingBannerRecord = banner ? normalizeBannerRecord(banner) : null;
-        editingBannerId = editingBannerRecord?.id ?? null;
+        editingBannerId = bannerModalMode === 'edit' ? editingBannerRecord?.id ?? null : null;
 
         const copy = getBannerModalCopy(bannerModalMode);
         if (bannerModalEyebrow) bannerModalEyebrow.textContent = copy.eyebrow;
@@ -1371,25 +1607,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!bannerModalForm) return;
 
         bannerModalForm.reset();
-        if (bannerModalSiteSelect) bannerModalSiteSelect.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.site : 'integrated';
-        if (bannerModalFamilySelect) bannerModalFamilySelect.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.family : 'promo_card_family';
-        if (bannerModalSlotKeyInput) bannerModalSlotKeyInput.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.slotKey : '';
-        if (bannerModalEyebrowInput) bannerModalEyebrowInput.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.eyebrow : '';
-        if (bannerModalTitleInput) bannerModalTitleInput.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.title : '';
-        if (bannerModalBodyInput) bannerModalBodyInput.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.body : '';
-        if (bannerModalCtaLabelInput) bannerModalCtaLabelInput.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.ctaLabel : '';
-        if (bannerModalCtaHrefInput) bannerModalCtaHrefInput.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.ctaHref : '';
-        if (bannerModalImageUrlInput) bannerModalImageUrlInput.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.imageUrl : '';
-        if (bannerModalAltTextInput) bannerModalAltTextInput.value = bannerModalMode === 'edit' && editingBannerRecord ? editingBannerRecord.altText : '';
-        if (bannerModalSortOrderInput) bannerModalSortOrderInput.value = bannerModalMode === 'edit' && editingBannerRecord ? String(editingBannerRecord.sortOrder) : '';
-        if (bannerModalActiveSelect) bannerModalActiveSelect.value = bannerModalMode === 'edit' && editingBannerRecord ? String(editingBannerRecord.active) : 'true';
+        syncBannerIconKeyOptions();
+        if (bannerModalSiteSelect) bannerModalSiteSelect.value = editingBannerRecord?.site || 'integrated';
+        if (bannerModalFamilySelect) bannerModalFamilySelect.value = editingBannerRecord?.family || 'promo_card_family';
+        if (bannerModalSlotKeyInput) bannerModalSlotKeyInput.value = editingBannerRecord?.slotKey || '';
+        if (bannerModalIconKeySelect) bannerModalIconKeySelect.value = editingBannerRecord?.iconKey || '';
+        if (bannerModalEyebrowInput) bannerModalEyebrowInput.value = editingBannerRecord?.eyebrow || '';
+        if (bannerModalTitleInput) bannerModalTitleInput.value = editingBannerRecord?.title || '';
+        if (bannerModalBodyInput) bannerModalBodyInput.value = editingBannerRecord?.body || '';
+        if (bannerModalCtaLabelInput) bannerModalCtaLabelInput.value = editingBannerRecord?.ctaLabel || '';
+        if (bannerModalCtaHrefInput) bannerModalCtaHrefInput.value = editingBannerRecord?.ctaHref || '';
+        if (bannerModalImageUrlInput) bannerModalImageUrlInput.value = editingBannerRecord?.imageUrl || '';
+        if (bannerModalAltTextInput) bannerModalAltTextInput.value = editingBannerRecord?.altText || '';
+        if (bannerModalActiveSelect) bannerModalActiveSelect.value = editingBannerRecord ? String(editingBannerRecord.active) : 'true';
         syncBannerFieldMode();
     };
 
-    const openBannerModal = (mode = 'create', banner = null) => {
+    const openBannerModal = async (mode = 'create', banner = null) => {
         if (activeTab !== 'banner' || !bannerModalBackdrop) return;
         lastBannerModalTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        setBannerModalMode(mode, banner);
+
+        if (mode === 'create') {
+            const createTemplate = getAvailableManagedBannerTemplates()[0] || null;
+            if (!createTemplate) {
+                alert('등록 가능한 관리 위치가 없어. 삭제된 위치가 있어야 복구하거나 새로 만들 수 있어.');
+                return;
+            }
+            banner = createTemplate;
+        }
+
+        let bannerRecord = banner ? normalizeBannerRecord(banner) : null;
+        if (mode === 'edit' && bannerRecord?.id) {
+            try {
+                bannerRecord = await getBannerApiRecord(bannerRecord.id) || bannerRecord;
+            } catch (error) {
+                console.error('[AdminCms] Banner detail load failed:', error);
+                alert(error instanceof Error ? error.message : 'Banner detail load failed.');
+                return;
+            }
+        }
+
+        setBannerModalMode(mode, bannerRecord);
         setBannerModalState(true);
         window.requestAnimationFrame(() => {
             const focusableElements = getBannerModalFocusableElements();
@@ -1397,6 +1655,73 @@ document.addEventListener('DOMContentLoaded', async () => {
             lastBannerModalFocus = focusTarget instanceof HTMLElement ? focusTarget : null;
             focusTarget?.focus();
         });
+    };
+
+    const getBannerApiRecord = async (bannerId) => {
+        const normalizedId = String(bannerId ?? '').trim();
+        if (!normalizedId) return null;
+
+        const { response, parsed } = await requestNoticeJson(`${BANNER_API_BASE}/${encodeURIComponent(normalizedId)}`);
+        if (!response.ok) {
+            throw new Error(getBannerApiErrorMessage(parsed, 'Banner detail load failed.'));
+        }
+
+        return normalizeBannerRecord(extractBannerPayloadItem(parsed));
+    };
+
+    const saveBannerApiRecord = async (bannerId, payload, method) => {
+        const normalizedMethod = method === 'POST' ? 'POST' : 'PUT';
+        const normalizedId = String(bannerId ?? '').trim();
+        if (normalizedMethod !== 'POST' && !normalizedId) {
+            throw new Error('Banner id is required.');
+        }
+        const url = normalizedMethod === 'POST'
+            ? BANNER_API_BASE
+            : `${BANNER_API_BASE}/${encodeURIComponent(normalizedId)}`;
+        const { response, parsed } = await requestNoticeJson(url, {
+            method: normalizedMethod,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(getBannerApiErrorMessage(parsed, normalizedMethod === 'POST' ? 'Banner create failed.' : 'Banner update failed.'));
+        }
+
+        return normalizeBannerRecord(extractBannerPayloadItem(parsed));
+    };
+
+    const deleteBannerApiRecord = async (bannerId) => {
+        const normalizedId = String(bannerId ?? '').trim();
+        if (!normalizedId) return;
+
+        const { response, parsed } = await requestNoticeJson(`${BANNER_API_BASE}/${encodeURIComponent(normalizedId)}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error(getBannerApiErrorMessage(parsed, 'Banner delete failed.'));
+        }
+    };
+
+    const reorderBannerApiRecords = async (records) => {
+        const payload = {
+            bannerIds: records.map((record) => String(record.id))
+        };
+
+        const { response, parsed } = await requestNoticeJson(`${BANNER_API_BASE}/reorder`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(getBannerApiErrorMessage(parsed, 'Banner reorder failed.'));
+        }
     };
 
     const commitBannerRuntimeRows = (records) => {
@@ -1415,38 +1740,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const loadBannerRows = async () => {
-        let adminSurfaceResult = null;
-        try {
-            adminSurfaceResult = await requestNoticeJson('/api/admin/tables/cms');
-        } catch (error) {
-            console.warn('[AdminCms] Banner list load skipped:', error);
+        const { response, parsed } = await requestNoticeJson(BANNER_API_BASE);
+        if (!response.ok) {
+            throw new Error(getBannerApiErrorMessage(parsed, 'Banner list load failed.'));
         }
 
-        const adminRows = adminSurfaceResult?.response?.ok
-            ? extractAdminBannerRows(adminSurfaceResult.parsed)
-                .map(normalizeAdminBannerRow)
-                .filter(Boolean)
-            : [];
+        const bannerRows = extractBannerListRecords(parsed)
+            .map(normalizeBannerRecord)
+            .filter(Boolean);
 
-        if (adminRows.length > 0) {
-            bannerBaseRows = adminRows.map(cloneBannerRecord).filter(Boolean);
-        } else {
-            bannerBaseRows = Array.isArray(cmsConfig.tabs.banner.fallbackRows)
-                ? cmsConfig.tabs.banner.fallbackRows.map(normalizeBannerRecord).filter(Boolean)
-                : [];
-        }
-
+        bannerBaseRows = bannerRows.map(cloneBannerRecord).filter(Boolean);
         bannerRuntimeRows = bannerBaseRows.map(cloneBannerRecord).filter(Boolean);
         return commitBannerRuntimeRows(bannerRuntimeRows);
     };
 
-    const getBannerRowById = (bannerId) => bannerRuntimeRows.find((row) => String(row.id) === String(bannerId)) || null;
+    const getBannerRowById = (bannerId) => {
+        const bannerRecord = bannerRuntimeRows.find((row) => String(row.id) === String(bannerId)) || null;
+        return bannerRecord ? buildBannerRow(bannerRecord) : null;
+    };
 
     const submitBannerModal = async () => {
         if (!bannerModalForm || isBannerSaving) return;
 
-        const site = normalizeBannerServiceType(bannerModalSiteSelect?.value);
-        const family = normalizeBannerFamily(bannerModalFamilySelect?.value);
+        let site = normalizeBannerServiceType(bannerModalSiteSelect?.value);
+        let family = normalizeBannerFamily(bannerModalFamilySelect?.value);
         const slotKey = bannerModalSlotKeyInput?.value?.trim() || '';
         const eyebrow = bannerModalEyebrowInput?.value?.trim() || '';
         const title = bannerModalTitleInput?.value?.trim() || '';
@@ -1455,38 +1772,48 @@ document.addEventListener('DOMContentLoaded', async () => {
         const ctaHref = bannerModalCtaHrefInput?.value?.trim() || '';
         const imageUrl = bannerModalImageUrlInput?.value?.trim() || '';
         const altText = bannerModalAltTextInput?.value?.trim() || '';
-        const sortOrderText = bannerModalSortOrderInput?.value?.trim() || '0';
+        const iconKey = normalizeBannerIconKey(bannerModalIconKeySelect?.value);
+        let sortOrder = Number.isFinite(Number(editingBannerRecord?.sortOrder)) ? Number(editingBannerRecord.sortOrder) : 0;
         const active = bannerModalActiveSelect?.value === 'false' ? false : true;
 
-        if (!slotKey) {
-            alert('슬롯 키를 입력해.');
-            bannerModalSlotKeyInput?.focus();
+        if (!slotKey) return;
+
+        if (bannerModalMode === 'create') {
+            const availableTemplates = getAvailableManagedBannerTemplates();
+            if (availableTemplates.length === 0) {
+                alert('등록 가능한 관리 위치가 없어. 삭제된 위치가 있어야 복구하거나 새로 만들 수 있어.');
+                return;
+            }
+
+            const template = getManagedBannerTemplateBySlotKey(slotKey);
+            if (!template || !availableTemplates.some((item) => String(item.slotKey) === String(slotKey))) {
+                alert('빈 관리 위치만 저장할 수 있어.');
+                bannerModalSlotKeyInput?.focus();
+                return;
+            }
+
+            site = template.site;
+            family = template.family;
+            if (bannerModalSiteSelect) bannerModalSiteSelect.value = site;
+            sortOrder = Number.isFinite(Number(template.sortOrder)) ? Number(template.sortOrder) : sortOrder;
+            if (bannerModalFamilySelect) bannerModalFamilySelect.value = family;
+            syncBannerFieldMode();
+        }
+
+        if (getBannerFieldMode(family) === 'image' && !imageUrl) return;
+        if (getBannerFieldMode(family) === 'text' && !title) return;
+        if (getBannerFieldMode(family) === 'text' && !iconKey) {
+            alert('아이콘 키를 선택해.');
+            bannerModalIconKeySelect?.focus();
             return;
         }
 
-        if (!Number.isFinite(Number(sortOrderText))) {
-            alert('정렬 순서는 숫자로 입력해.');
-            bannerModalSortOrderInput?.focus();
-            return;
-        }
-
-        if (getBannerFieldMode(family) === 'image' && !imageUrl) {
-            alert('hero_image_set은 이미지 URL이 필요해.');
-            bannerModalImageUrlInput?.focus();
-            return;
-        }
-
-        if (getBannerFieldMode(family) === 'text' && !title) {
-            alert('배너 제목을 입력해.');
-            bannerModalTitleInput?.focus();
-            return;
-        }
-
-        const nextRecord = normalizeBannerRecord({
-            id: slotKey,
-            site,
-            family,
+        const payload = {
             slotKey,
+            family,
+            site,
+            service: site,
+            iconKey,
             eyebrow,
             title,
             body,
@@ -1494,25 +1821,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             ctaHref,
             imageUrl,
             altText,
-            sortOrder: Number(sortOrderText),
+            sortOrder,
             active
-        });
-
-        if (!nextRecord) {
-            alert('배너 저장에 실패했어.');
-            return;
-        }
+        };
 
         setBannerSavingState(true);
         try {
-            const nextRows = bannerRuntimeRows.filter((record) => String(record.id) !== String(editingBannerId || slotKey));
-            nextRows.push(nextRecord);
-            commitBannerRuntimeRows(nextRows);
+            const savedBanner = await saveBannerApiRecord(editingBannerId, payload, bannerModalMode === 'edit' ? 'PUT' : 'POST');
+            if (savedBanner) {
+                bannerRecordCache.set(savedBanner.id, savedBanner);
+                editingBannerRecord = savedBanner;
+            }
+            await loadBannerRows();
             closeBannerModal(true);
-            alert('배너 저장이 완료됐다.');
         } catch (error) {
             console.error('[AdminCms] Banner save failed:', error);
-            alert(error instanceof Error ? error.message : '배너 저장에 실패했다.');
+            alert(error instanceof Error ? error.message : '배너 저장에 실패했어.');
         } finally {
             setBannerSavingState(false);
         }
@@ -1521,17 +1845,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     const toggleBannerActive = async (bannerId) => {
         if (isBannerActionPending) return;
         const bannerRow = getBannerRowById(bannerId);
-        if (!bannerRow?.bannerRecord) return;
+        const bannerRecord = bannerRow?.bannerRecord ?? bannerRow;
+        if (!bannerRecord) return;
 
         setBannerActionPendingState(true);
         try {
-            const nextRecord = {
-                ...bannerRow.bannerRecord,
-                active: !bannerRow.bannerRecord.active,
-                statusKey: bannerRow.bannerRecord.active ? 'inactive' : 'active'
-            };
-            const nextRows = bannerRuntimeRows.map((record) => (String(record.id) === String(bannerId) ? nextRecord : record));
-            commitBannerRuntimeRows(nextRows);
+            const savedBanner = await saveBannerApiRecord(bannerId, {
+                slotKey: bannerRecord.slotKey,
+                family: bannerRecord.family,
+                site: bannerRecord.site,
+                service: bannerRecord.site,
+                iconKey: bannerRecord.iconKey,
+                eyebrow: bannerRecord.eyebrow,
+                title: bannerRecord.title,
+                body: bannerRecord.body,
+                ctaLabel: bannerRecord.ctaLabel,
+                ctaHref: bannerRecord.ctaHref,
+                imageUrl: bannerRecord.imageUrl,
+                altText: bannerRecord.altText,
+                sortOrder: bannerRecord.sortOrder,
+                active: !bannerRecord.active
+            }, 'PUT');
+            if (savedBanner) {
+                bannerRecordCache.set(savedBanner.id, savedBanner);
+                editingBannerRecord = savedBanner;
+            }
+            await loadBannerRows();
         } catch (error) {
             console.error('[AdminCms] Banner active toggle failed:', error);
         } finally {
@@ -1542,36 +1881,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const deleteBanner = async (bannerId) => {
         if (isBannerActionPending) return;
         const bannerRow = getBannerRowById(bannerId);
-        if (!bannerRow?.bannerRecord) return;
+        if (!bannerRow?.bannerRecord && !bannerRow) return;
 
-        if (!window.confirm('이 배너를 삭제할까? 세션 안에서만 지워진다.')) return;
+        if (!window.confirm('이 배너를 삭제할까? 삭제하면 복구할 수 없어.')) return;
 
         setBannerActionPendingState(true);
         try {
-            const nextRows = bannerRuntimeRows.filter((record) => String(record.id) !== String(bannerId));
-            commitBannerRuntimeRows(nextRows);
+            await deleteBannerApiRecord(bannerId);
+            await loadBannerRows();
             if (editingBannerId && String(editingBannerId) === String(bannerId)) {
                 closeBannerModal(true);
             }
         } catch (error) {
             console.error('[AdminCms] Banner delete failed:', error);
-            alert(error instanceof Error ? error.message : '배너 삭제에 실패했다.');
+            alert(error instanceof Error ? error.message : '배너 삭제에 실패했어.');
         } finally {
             setBannerActionPendingState(false);
         }
     };
 
-    const normalizeBannerBatchOrder = async () => {
-        if (bannerRuntimeRows.length === 0) return;
-
-        const nextRows = [...bannerRuntimeRows]
-            .sort((left, right) => (left.sortOrder - right.sortOrder) || left.slotKey.localeCompare(right.slotKey))
-            .map((record, index) => ({
-                ...record,
-                sortOrder: (index + 1) * 10
-            }));
-        commitBannerRuntimeRows(nextRows);
-    };
 
     const renderSidebarMenus = (role) => {
         const accessibleMenus = window.RBAC_CONFIG.getAccessibleMenus(role);
@@ -1859,15 +2187,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (actionButtonsContainer) {
-            const secondaryAction = typeof config.secondaryAction === 'string' ? config.secondaryAction.trim() : '';
-            actionButtonsContainer.innerHTML = secondaryAction ? `
-                <button class="admin-btn admin-btn-outline" type="button" data-cms-action="secondary">${escapeHtml(secondaryAction)}</button>
-                <button class="admin-btn admin-btn-primary" type="button" id="cms-primary-action-btn" data-cms-action="primary">${escapeHtml(config.primaryAction)}</button>
-            ` : `
+            actionButtonsContainer.innerHTML = `
                 <button class="admin-btn admin-btn-primary" type="button" id="cms-primary-action-btn" data-cms-action="primary">${escapeHtml(config.primaryAction)}</button>
             `;
         }
-
         if (noticeTypeFilter) {
             noticeTypeFilter.hidden = tabKey !== 'notices';
             noticeTypeFilter.disabled = tabKey !== 'notices';
@@ -1876,6 +2199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const setActiveTab = (tabKey) => {
         activeTab = TAB_CONFIG[tabKey] ? tabKey : DEFAULT_TAB;
+        tableElement?.classList.toggle('admin-table--banner', activeTab === 'banner');
         if (activeTab !== 'notices') {
             activeNoticePage = 1;
             preservedNoticeId = null;
@@ -1956,9 +2280,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 openBannerModal('create');
                 return;
             }
-            if (actionButton.dataset.cmsAction === 'secondary' && activeTab === 'banner') {
-                void normalizeBannerBatchOrder();
-            }
         });
     }
 
@@ -2031,6 +2352,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (bannerModalFamilySelect) {
         bannerModalFamilySelect.addEventListener('change', () => {
             syncBannerFieldMode();
+        });
+    }
+
+    if (bannerModalSlotKeyInput) {
+        bannerModalSlotKeyInput.addEventListener('change', () => {
+            if (bannerModalMode !== 'create') return;
+            const template = getManagedBannerTemplateBySlotKey(bannerModalSlotKeyInput.value);
+            if (!template) return;
+            syncBannerModalWithTemplate(template);
         });
     }
 

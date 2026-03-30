@@ -1,0 +1,39 @@
+goal: >
+  Persist admin CMS banners in the database by extending banner storage to
+  cover the full normalized contract without losing data, while keeping the
+  existing admin banner API behavior intact for list, detail, create, update,
+  delete, toggle, and reorder flows.
+constraints:
+  - Limit implementation scope to `docs/seeds/SEED.admin-cms-banner-db-v1.yaml`,
+    `jeju-spring/src/main/resources/db/migration/**`,
+    `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/**`, and only the
+    minimal `front/admin/js/cms.js` changes required if the API contract needs
+    a client adjustment.
+  - Keep the normalized banner contract unchanged: `slotKey`, `family`,
+    `site/service`, `eyebrow`, `title`, `body`, `ctaLabel`, `ctaHref`,
+    `imageUrl`, `altText`, `sortOrder`, `active`.
+  - Extend the existing banner persistence schema rather than introducing a new
+    parallel model or a lossy mapping.
+  - Preserve CRUD, detail, toggle, and reorder behavior end to end.
+  - Do not change admin design, layout, or CSS.
+  - Do not touch deployment mirror sync paths.
+  - Do not change public page banner rendering behavior in this slice.
+  - Keep the work compatible with the existing admin banner API endpoints
+    consumed by `front/admin/js/cms.js`.
+acceptance_criteria:
+  - The banner persistence layer stores the full normalized contract losslessly.
+  - Existing admin banner CRUD, detail, toggle, and reorder flows continue to
+    work against DB-backed persistence.
+  - The current admin banner API contract remains compatible with the CMS
+    client, with only minimal front-side changes allowed if strictly required.
+  - No layout or design changes are introduced in the admin CMS surface.
+verification:
+  - `node --check front/admin/js/cms.js`
+  - `.codex-temp\\gradle-8.14.4\\bin\\gradle.bat -p jeju-spring compileJava`
+  - `git diff --check -- docs/seeds/SEED.admin-cms-banner-db-v1.yaml jeju-spring/src/main/java/com/jejugroup/jejuspring/admin jeju-spring/src/main/resources/db/migration front/admin/js/cms.js STATE.md MULTI_AGENT_LOG.md`
+out_of_scope:
+  - Admin CMS layout, visual design, or CSS changes.
+  - Mirror sync changes or deployment mirror updates.
+  - Public page banner rendering changes.
+  - Expanding the work beyond admin banner persistence and the minimal API
+    contract adjustments needed to keep the CMS client working.

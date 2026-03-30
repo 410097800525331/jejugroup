@@ -1,0 +1,45 @@
+goal: >
+  Freeze the end-to-end contract for banner icon_key support so admin CMS
+  can edit icons, existing banner storage can persist them through API/DB, and
+  public managed banner slots can render Lucide icons at runtime without any
+  layout, spacing, or shell DOM changes.
+constraints:
+  - Use the existing banner storage as the source of truth for persistence and keep the normalized banner contract lossless across admin UI, API, and DB.
+  - Limit editable/renderable icon_key support to managed non-hero banner slots only.
+  - Treat hero_image_set as icon_key out-of-scope or ignored: the field must not be editable there, and any provided value must not affect persistence or rendering for hero-image slots.
+  - Keep the current public managed-slot markers intact: `data-banner-slot` and `data-banner-field="icon"` are the runtime anchors for icon rendering.
+  - Keep the current banner layout, spacing, typography, DOM shell, and route/shell behavior unchanged.
+  - Restrict icon_key values through a whitelist of Lucide icon keys rather than free-form input.
+  - Do not introduce a parallel banner model, a new banner shell, or a redesign of the admin CMS banner surface.
+  - Do not touch mirror paths or deployment plumbing in this seed.
+  - The initial whitelist should cover the icons already used by the current managed non-hero slots: `plane`, `coins`, `car`, `crown`, `camera`, `wine`, `luggage`, `map`, `flower-2`.
+scope:
+  admin_cms:
+    - Admin banner CMS editing UI for managed non-hero banners must expose icon_key selection and persist the chosen value through the existing banner save flow.
+    - icon_key must be hidden, disabled, or ignored for hero_image_set banners.
+    - The admin UI should validate icon_key against the allowlist before save.
+  api_db:
+    - Banner create/update/read persistence must carry icon_key through the existing banner storage contract.
+    - Existing banner records without icon_key must continue to load safely.
+    - Invalid or disallowed icon_key values must be rejected at the boundary instead of being silently accepted.
+  public_runtime:
+    - Managed non-hero slots must render the stored icon_key in the existing icon container referenced by `data-banner-field="icon"`.
+    - Existing fallback icon markup should remain available when the stored icon_key is missing, blank, or unavailable.
+    - hero_image_set banners must not use icon_key for public rendering.
+acceptance_criteria:
+  - Admin CMS can create and edit icon_key for managed non-hero banner slots only.
+  - The saved icon_key survives API round-trips and database persistence without loss or remapping.
+  - Public managed non-hero banner slots render the CMS-selected Lucide icon at runtime through the existing icon marker, without changing the banner structure or layout.
+  - hero_image_set banners do not expose icon_key as an editable contract and ignore any icon_key value during runtime rendering.
+  - The implementation enforces a whitelist-based icon_key contract and rejects unknown Lucide keys.
+  - Existing banner behavior for non-icon fields remains unchanged.
+verification:
+  - Review this seed for exact scope boundaries: admin CMS, API/DB persistence, public managed runtime, and hero_image_set exclusion.
+  - Confirm the allowlist includes the current banner icons and does not broaden into free-form icon input.
+  - Confirm the seed does not introduce layout, shell, route, or mirror-path changes.
+out_of_scope:
+  - Banner redesign, spacing changes, typography changes, or DOM restructuring.
+  - New banner shell components or a parallel banner data model.
+  - Route constant changes, shell runtime changes, or mirror/deployment updates.
+  - Expanding icon_key behavior to hero_image_set beyond explicitly ignoring it.
+  - Adding new managed banner slots or changing the existing banner slot taxonomy.

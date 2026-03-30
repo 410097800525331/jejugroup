@@ -1,0 +1,38 @@
+goal: >
+  Freeze the admin banner icon-fix and UX-trim contract so the eventual
+  implementation can make admin-saved iconKey values reach the public managed
+  banner runtime, while removing display-order UI from the admin banner tab and
+  clarifying CTA link wording without changing backend contracts.
+constraints:
+  - Limit this slice to `front/admin/pages/cms.html`, `front/admin/js/cms.js`, `front/admin/data/cms-config.js`, `front/admin/css/components.css`, and `front/shared/banner-runtime/public-managed-icons.js`.
+  - Keep backend sortOrder contract behavior intact; it may stay in data flow or storage, but the admin banner UI must hide it.
+  - Do not change backend APIs, database schema, migration scripts, or mirror sync paths.
+  - Do not change the rest of the admin banner tab layout outside the requested removals and wording updates.
+  - Treat the public managed-banner runtime as the first place to suspect icon loss: icon validation and normalization must not discard or overwrite a valid admin-saved `iconKey`.
+  - Preserve the existing fallback behavior only when `iconKey` is missing or invalid; valid saved values must flow through to public rendering.
+  - Rename the admin-facing `CTA 링크` label and helper copy to an operator-friendly description that makes clear it is the destination URL for link-style CTA navigation and may not apply to button-style CTA variants.
+  - Remove all admin banner UI for `노출 순서`: table columns, modal fields, explanatory copy, and the `노출 순서 정리` button.
+scope:
+  admin_cms:
+    - Update the banner tab in `front/admin/pages/cms.html`, `front/admin/js/cms.js`, `front/admin/data/cms-config.js`, and `front/admin/css/components.css`.
+    - Hide or remove display-order UI elements in the banner table and modal, but do not alter the backend sortOrder contract.
+    - Replace `CTA 링크` wording with clearer operator guidance that describes the link-style CTA destination URL and its limited applicability.
+  public_runtime:
+    - Update `front/shared/banner-runtime/public-managed-icons.js` so the runtime respects the stored `iconKey` coming from admin save data.
+    - Keep validation and normalization permissive enough to honor valid saved keys instead of remapping them away.
+    - Preserve existing fallback icons only for missing, blank, or invalid values.
+acceptance_criteria:
+  - A banner saved in admin with a valid `iconKey` renders that icon in the public managed-banner runtime.
+  - The public runtime no longer drops or normalizes away a valid admin-saved `iconKey`.
+  - The admin banner tab no longer shows `노출 순서` table columns, modal fields, explanatory copy, or the `노출 순서 정리` button.
+  - The admin-facing `CTA 링크` text is replaced with operator-friendly copy that clearly means the destination URL for link-style CTA behavior and does not imply every CTA variant uses it.
+  - The banner tab keeps its other layout and controls intact outside the requested removals and copy changes.
+verification:
+  - Review the seed against the five-file scope and confirm no backend, DB, or mirror changes are included.
+  - After implementation, run `node --check front/admin/js/cms.js` and a focused diff review on the five scoped files.
+  - Manually confirm the admin banner tab hides display-order UX and the public runtime reflects a saved `iconKey`.
+out_of_scope:
+  - Backend contract changes, API shape changes, or database migrations.
+  - Mirror sync edits under `jeju-web` or `jeju-spring`.
+  - Reworking the banner tab layout beyond the requested removals and CTA copy update.
+  - Adding new banner features, new icon catalogs, or a new sort-order UI model.

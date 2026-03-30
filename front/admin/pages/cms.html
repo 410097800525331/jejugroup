@@ -321,36 +321,34 @@
                 </button>
             </div>
             <p class="admin-modal-description" id="cms-banner-modal-desc">
-                배너는 세션 로컬 상태로만 저장됩니다. family에 따라 텍스트 영역과 이미지 영역이 자동으로 전환됩니다.
+                배너는 세션 로컬 상태로만 저장됩니다. edit에서는 아이콘, 카피, 노출 상태만 바꾸고, 서비스 분류/타입/위치는 새 위치로 관리합니다.
             </p>
 
             <form class="admin-modal-body" id="cms-banner-form">
                 <div class="admin-modal-grid">
                     <label class="admin-form-field" for="cms-banner-site">
-                        <span class="admin-form-label">사이트 / 서비스</span>
+                        <span class="admin-form-label">서비스 분류</span>
                         <select class="admin-form-control" id="cms-banner-site" name="site">
                             <option value="integrated">통합</option>
                             <option value="air">항공</option>
                             <option value="stay">숙박</option>
                         </select>
+                        <small class="admin-form-help" id="cms-banner-site-help">표에서는 항공 또는 숙박 세부 분류로 풀어서 보여준다.</small>
                     </label>
                     <label class="admin-form-field" for="cms-banner-family">
-                        <span class="admin-form-label">패밀리</span>
+                        <span class="admin-form-label">타입</span>
                         <select class="admin-form-control" id="cms-banner-family" name="family">
-                            <option value="promo_card_family">promo_card_family</option>
-                            <option value="inline_cta_banner_family">inline_cta_banner_family</option>
-                            <option value="hero_image_set">hero_image_set</option>
+                            <option value="promo_card_family">프로모 카드</option>
+                            <option value="inline_cta_banner_family">인라인 CTA</option>
+                            <option value="hero_image_set">히어로 이미지</option>
                         </select>
+                        <small class="admin-form-help" id="cms-banner-family-help">같은 화면에 묶이는 템플릿 타입이다. 위치와 같이 본다.</small>
                     </label>
                     <label class="admin-form-field" for="cms-banner-slot-key">
-                        <span class="admin-form-label">슬롯 키</span>
+                        <span class="admin-form-label">위치</span>
                         <input class="admin-form-control" id="cms-banner-slot-key" name="slotKey" type="text"
-                            placeholder="slot_key를 입력하세요" autocomplete="off">
-                    </label>
-                    <label class="admin-form-field" for="cms-banner-sort-order">
-                        <span class="admin-form-label">정렬 순서</span>
-                        <input class="admin-form-control" id="cms-banner-sort-order" name="sortOrder" type="number"
-                            min="0" step="1" placeholder="0">
+                            placeholder="호텔 메인 / 한달살기 서브 1 / 히어로 1" autocomplete="off">
+                        <small class="admin-form-help" id="cms-banner-slot-help">운영자가 보는 위치 이름이다. 저장은 기존 위치 키 규칙을 유지한다.</small>
                     </label>
                     <label class="admin-form-field" for="cms-banner-active">
                         <span class="admin-form-label">노출 상태</span>
@@ -372,6 +370,13 @@
                         <input class="admin-form-control" id="cms-banner-title" name="title" type="text"
                             placeholder="배너 제목" autocomplete="off">
                     </label>
+                    <label class="admin-form-field admin-form-field--wide" for="cms-banner-icon-key" data-banner-field-group="icon">
+                        <span class="admin-form-label">아이콘</span>
+                        <select class="admin-form-control" id="cms-banner-icon-key" name="iconKey">
+                            <option value="">선택</option>
+                        </select>
+                        <small class="admin-form-help">텍스트형 배너에만 쓰는 작은 아이콘이다. 제목 옆에 붙는 느낌으로 고른다.</small>
+                    </label>
                     <label class="admin-form-field" for="cms-banner-body" data-banner-field-group="text">
                         <span class="admin-form-label">본문</span>
                         <textarea class="admin-form-control" id="cms-banner-body" name="body" rows="4"
@@ -383,9 +388,10 @@
                             placeholder="버튼 문구" autocomplete="off">
                     </label>
                     <label class="admin-form-field" for="cms-banner-cta-href" data-banner-field-group="text">
-                        <span class="admin-form-label">CTA 링크</span>
+                        <span class="admin-form-label">링크형 CTA 이동 주소</span>
                         <input class="admin-form-control" id="cms-banner-cta-href" name="ctaHref" type="text"
-                            placeholder="링크 또는 액션 텍스트" autocomplete="off">
+                            placeholder="링크형 CTA가 이동할 주소" autocomplete="off">
+                        <small class="admin-form-help">링크형 CTA일 때만 쓰는 이동 주소다. 버튼형 CTA에는 적용되지 않을 수 있으니 비워 둘 수도 있다.</small>
                     </label>
                 </div>
 

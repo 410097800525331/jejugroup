@@ -21,9 +21,9 @@ abstract class CustomerCenterCmsDatabaseSupport {
     }
 
     protected Connection openConnection(boolean readOnly) throws SQLException {
-        String url = normalize(appProperties.alwaysdata().dbUrl());
-        String user = normalize(appProperties.alwaysdata().dbUser());
-        String password = normalize(appProperties.alwaysdata().dbPassword());
+        String url = normalize(appProperties.database().dbUrl());
+        String user = normalize(appProperties.database().dbUser());
+        String password = normalize(appProperties.database().dbPassword());
 
         if (!StringUtils.hasText(url) || !StringUtils.hasText(user) || !StringUtils.hasText(password)) {
             throw new SQLException("Customer-center CMS DB configuration is missing");

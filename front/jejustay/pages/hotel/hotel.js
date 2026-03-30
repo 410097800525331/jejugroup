@@ -65,6 +65,15 @@ const initHeroSearchWidgetStability = (hostId, readyEventName) => {
 
 initHeroSearchWidgetStability("hotel-search-widget-root", "jeju:hotel-search-widget-mounted");
 
+const initManagedBannerIconRuntime = async () => {
+  try {
+    const { initPublicManagedBannerIcons } = await import("../../../shared/banner-runtime/public-managed-icons.js");
+    await initPublicManagedBannerIcons();
+  } catch (error) {
+    console.error("[HotelPage] managed banner icon runtime init failed", error);
+  }
+};
+
 const startHotelPage = async () => {
   try {
     const { initHotelPage } = await import("./modules/hotelPageApp.js");
@@ -76,8 +85,10 @@ const startHotelPage = async () => {
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
+    void initManagedBannerIconRuntime();
     void startHotelPage();
   }, { once: true });
 } else {
+  void initManagedBannerIconRuntime();
   void startHotelPage();
 }

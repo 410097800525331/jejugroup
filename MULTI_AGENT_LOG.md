@@ -3101,3 +3101,414 @@
   - The sync refreshed the derived admin mirror outputs under `jeju-spring/src/main/resources/{static,templates}/front-mirror/admin/**`, including `admin/css/components.css`, `admin/data/cms-config.js`, `admin/js/cms.js`, and `templates/front-mirror/admin/pages/cms.html`.
   - The same sync also rolled the generated customer-center mirror assets/templates under `jeju-spring/src/main/resources/{static,templates}/front-mirror/pages/cs/**`, including new hashed asset bundle names referenced by `customer_center.html`.
   - `reviewer_admin_banner_sync (Leibniz)` found no blocking issue inside the derived mirror outputs; the separately modified `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java` is an unrelated non-mirror worktree change rather than a sync-generated mirror artifact.
+
+- time: `2026-03-30 13:31:00 +09:00`
+- route: `Route B`
+- task: `Add an admin banner CRUD API around the normalized banner contract and connect the CMS banner tab to that API while keeping DB persistence out of scope for this slice`
+- participants: `main`, `worker_seed_admin_banner_api (Raman)`, `worker_admin_banner_backend_api (Plato)`, `worker_admin_banner_front_api (Hooke)`, `reviewer_admin_banner_api (Ampere)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_banner_api (Raman)`: `docs/seeds/SEED.admin-cms-banner-api-v1.yaml`
+  - `worker_admin_banner_backend_api (Plato)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/**`
+  - `worker_admin_banner_front_api (Hooke)`: `front/admin/js/cms.js`
+  - `reviewer_admin_banner_api (Ampere)`: `review only`
+- verification:
+  - `worker_seed_admin_banner_api (Raman)` froze the API slice in `docs/seeds/SEED.admin-cms-banner-api-v1.yaml`, keeping DB persistence, mirror sync, and layout/CSS changes out of scope.
+  - `worker_admin_banner_backend_api (Plato)` added `AdminBannerApiController.java` with an authenticated in-memory admin banner CRUD API plus reorder support under `/api/admin/cms/banners*`.
+  - `worker_admin_banner_front_api (Hooke)` rewired `front/admin/js/cms.js` so the banner tab now calls the new admin banner API for list/detail/create/update/delete/reorder flows instead of local-only CRUD.
+  - `reviewer_admin_banner_api (Ampere)` found one blocking issue on the first pass: `hero_image_set` creation/update could pass the UI without a title but the backend still rejected blank titles, so a backend follow-up fix is required before close.
+  - `node --check front/admin/js/cms.js` passed on the initial API-wiring state.
+  - `.codex-temp\\gradle-8.14.4\\bin\\gradle.bat -p jeju-spring compileJava` passed on the initial API-wiring state.
+
+- time: `2026-03-30 13:38:00 +09:00`
+- route: `Route B`
+- task: `Close the admin banner API follow-up blocker by aligning hero_image_set validation with the API contract`
+- participants: `main`, `worker_admin_banner_backend_api (Plato)`, `reviewer_admin_banner_api (Ampere)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_banner_backend_api (Plato)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminBannerApiController.java`
+  - `reviewer_admin_banner_api (Ampere)`: `review only`
+- verification:
+  - `worker_admin_banner_backend_api (Plato)` changed the in-memory banner API so `hero_image_set` no longer hard-fails on a blank title; it now resolves the title from `title -> altText -> fallbackTitle -> slotKey` while keeping non-hero families on the existing required-title path.
+  - `reviewer_admin_banner_api (Ampere)` re-reviewed the API slice and reported `블로킹 findings 없음`; Route B state ownership and participation logging were also confirmed.
+  - `.codex-temp\\gradle-8.14.4\\bin\\gradle.bat -p jeju-spring compileJava` passed on the follow-up state.
+  - `git diff --check -- front/admin/js/cms.js jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminBannerApiController.java docs/seeds/SEED.admin-cms-banner-api-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed on the follow-up state.
+
+- time: `2026-03-30 14:09:00 +09:00`
+- route: `Route B`
+- task: `Freeze the DB-backed admin banner persistence contract before replacing the in-memory store`
+- participants: `main`, `worker_seed_admin_banner_db (Kuhn)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_banner_db (Kuhn)`: `docs/seeds/SEED.admin-cms-banner-db-v1.yaml`
+- verification:
+  - `worker_seed_admin_banner_db (Kuhn)` froze the DB-backed admin banner persistence slice in `docs/seeds/SEED.admin-cms-banner-db-v1.yaml`, keeping layout/design changes, mirror sync, and public banner rendering changes out of scope.
+  - The frozen contract preserves the normalized banner fields `slotKey`, `family`, `site/service`, `eyebrow`, `title`, `body`, `ctaLabel`, `ctaHref`, `imageUrl`, `altText`, `sortOrder`, and `active` while requiring DB-backed CRUD/detail/toggle/reorder behavior.
+  - `git diff --check -- docs/seeds/SEED.admin-cms-banner-db-v1.yaml STATE.md` passed on the seed-freeze state.
+
+- time: `2026-03-30 14:20:00 +09:00`
+- route: `Route B`
+- task: `Implement DB-backed admin banner persistence with schema extension, backend storage swap, and minimal managed-slot CMS contract updates`
+- participants: `main`, `worker_banner_db_schema (Kant)`, `worker_banner_backend_persistence (Mill)`, `worker_banner_front_contract (Socrates)`, `reviewer_admin_banner_db_persistence (Bernoulli)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_banner_db_schema (Kant)`: `jeju-spring/src/main/resources/db/migration/**`
+  - `worker_banner_backend_persistence (Mill)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/**`
+  - `worker_banner_front_contract (Socrates)`: `front/admin/js/cms.js`
+  - `reviewer_admin_banner_db_persistence (Bernoulli)`: `review only`
+- verification:
+  - `worker_banner_db_schema (Kant)` added `V25__extend_admin_banner_contract_and_seed_managed_banners.sql` to extend banner storage for `slot_key`, `family`, `service_type`, `eyebrow`, `body`, `cta_label`, `cta_href`, and `alt_text`, and to upsert the 14 managed banner slots/banners/exposure rules without deleting legacy rows.
+  - `worker_banner_backend_persistence (Mill)` added `AdminBannerDbStore.java`, switched `AdminBannerApiController.java` to the DB-backed store, wired raw JDBC persistence against `AppProperties.alwaysdata()`, and updated `AdminReadApiController.java` to read `slot_key` with `banner_code` fallback.
+  - `worker_banner_front_contract (Socrates)` kept the admin layout intact while updating the banner-tab copy and shifting the create flow toward managed-slot restoration semantics in `front/admin/js/cms.js`.
+  - `reviewer_admin_banner_db_persistence (Bernoulli)` found three issues on the first pass: create was a dead-end under the managed-slot allowlist, slot/site-family mismatches could still be saved, and `hero_image_set` titles were not preserved losslessly.
+
+- time: `2026-03-30 14:33:00 +09:00`
+- route: `Route B`
+- task: `Close the admin banner DB persistence blocker set by aligning managed-slot restore behavior, slot template validation, and hero blank-title preservation`
+- participants: `main`, `worker_banner_backend_persistence (Mill)`, `worker_banner_front_contract (Socrates)`, `reviewer_admin_banner_db_persistence (Bernoulli)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_banner_backend_persistence (Mill)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/**`
+  - `worker_banner_front_contract (Socrates)`: `front/admin/js/cms.js`
+  - `reviewer_admin_banner_db_persistence (Bernoulli)`: `review only`
+- verification:
+  - `worker_banner_backend_persistence (Mill)` added managed-slot template validation for `slotKey -> site/family`, preserved blank `hero_image_set` titles as stored values, and kept `slot_key`/`service_type` persistence wired through the DB write path.
+  - `worker_banner_front_contract (Socrates)` restricted create-mode UX to deleted managed slots only, auto-aligned create-mode `site/family` to the chosen managed template, and fixed the banner API base path to `/api/admin/cms/banners`.
+  - `reviewer_admin_banner_db_persistence (Bernoulli)` re-reviewed the follow-up state and reported `blocking findings 없음`; residual risk is limited to the read-only CMS summary surface not showing every new banner field and the lack of live migrated-DB CRUD clicks.
+  - `node --check front/admin/js/cms.js` passed on the follow-up state.
+  - `.codex-temp\\gradle-8.14.4\\bin\\gradle.bat -p jeju-spring compileJava` passed on the follow-up state.
+  - `git diff --check -- docs/seeds/SEED.admin-cms-banner-db-v1.yaml jeju-spring/src/main/resources/db/migration/V25__extend_admin_banner_contract_and_seed_managed_banners.sql jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminBannerApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminBannerDbStore.java jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java front/admin/js/cms.js STATE.md MULTI_AGENT_LOG.md` passed on the final state.
+
+- time: `2026-03-30 14:42:00 +09:00`
+- route: `Route B`
+- task: `Sync the completed admin CMS banner DB persistence changes into the jeju-spring mirror using the repository sync pipeline`
+- participants: `main`, `worker_sync_admin_banner_db_mirror (Aristotle)`, `reviewer_admin_banner_db_sync (Pascal)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_admin_banner_db_mirror (Aristotle)`: `derived jeju-spring/src/main/resources/static/front-mirror/** and derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_admin_banner_db_sync (Pascal)`: `review only`
+- verification:
+  - `worker_sync_admin_banner_db_mirror (Aristotle)` ran `pnpm run sync` from `D:\lsh\git\jejugroup`, and the sync completed successfully with exit code `0`.
+  - The sync refreshed the derived admin mirror output at `jeju-spring/src/main/resources/static/front-mirror/admin/js/cms.js`; no template mirror updates or customer-center generated churn were produced in this run.
+  - `reviewer_admin_banner_db_sync (Pascal)` reported `blocking findings 없음`; residual note only is that the mirror JS still re-fetches banner rows after save/delete/reorder, so a backend mutation success followed by list reload failure could still look like a UI failure under transient backend issues.
+
+- time: `2026-03-30 15:02:00 +09:00`
+- route: `Route B`
+- task: `Freeze the config rename contract so DB credentials move out of app.alwaysdata and into app.database without changing runtime resolution behavior`
+- participants: `main`, `worker_seed_admin_banner_config_rename (Mendel)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_banner_config_rename (Mendel)`: `docs/seeds/SEED.admin-cms-banner-config-rename-v1.yaml`
+- verification:
+  - `worker_seed_admin_banner_config_rename (Mendel)` froze `docs/seeds/SEED.admin-cms-banner-config-rename-v1.yaml`, specifying that `app.database` will own DB credentials while `app.alwaysdata` keeps deploy/SSH/admin fields only.
+  - The frozen contract preserves the existing `DB_URL` / `DB_USER` / `DB_PASSWORD` precedence and keeps DB target, migrations, mirror sync, and frontend changes out of scope.
+  - `git diff --check -- docs/seeds/SEED.admin-cms-banner-config-rename-v1.yaml STATE.md` passed on the seed-freeze state.
+
+- time: `2026-03-30 15:25:00 +09:00`
+- route: `Route B`
+- task: `Rename the misleading alwaysdata-style DB property naming so DB credentials live under app.database while deploy/SSH/admin settings remain under app.alwaysdata`
+- participants: `main`, `worker_banner_config_rename (Jason)`, `reviewer_admin_banner_config_rename (Feynman)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_banner_config_rename (Jason)`: `jeju-spring/src/main/resources/application.yml, jeju-spring/src/main/java/com/jejugroup/jejuspring/config/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage/**`
+  - `reviewer_admin_banner_config_rename (Feynman)`: `review only`
+- verification:
+  - `worker_banner_config_rename (Jason)` split DB credentials into `app.database`, kept `app.alwaysdata` for SSH/admin/deploy fields only, and rewired all DB callsites in admin/auth/booking/customercenter/mypage to `appProperties.database()`.
+  - `MigrationDashboardFactory` was updated so DB values render from `database` while deploy/SSH/admin values continue to render from `alwaysdata`.
+  - `.codex-temp\\gradle-8.14.4\\bin\\gradle.bat -p jeju-spring compileJava` passed on the rename state.
+  - `git diff --check -- jeju-spring/src/main/resources/application.yml jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java jeju-spring/src/main/java/com/jejugroup/jejuspring/admin jeju-spring/src/main/java/com/jejugroup/jejuspring/auth jeju-spring/src/main/java/com/jejugroup/jejuspring/booking jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage docs/seeds/SEED.admin-cms-banner-config-rename-v1.yaml STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md` passed on the final state.
+  - `reviewer_admin_banner_config_rename (Feynman)` reported `blocking findings 없음`; only residual note is that `src/test/java/com/jejugroup/jejuspring/IntegrationTestDatabaseProperties.java` still references the legacy `app.alwaysdata.db-*` path and may deserve a separate cleanup later.
+
+- time: `2026-03-30 16:11:00 +09:00`
+- route: `Route B`
+- task: `Freeze the runtime hydration contract for replacing managed public-page banner hardcoding without changing design or layout`
+- participants: `main`, `worker_seed_front_banner_runtime (Popper)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_front_banner_runtime (Popper)`: `docs/seeds/SEED.front-banner-runtime-hydration-v1.yaml`
+- verification:
+  - `worker_seed_front_banner_runtime (Popper)` froze `docs/seeds/SEED.front-banner-runtime-hydration-v1.yaml`, fixing the managed slot list, target pages, shared runtime boundary, API path, and fallback-skeleton rule.
+  - The frozen contract keeps layout/design/DOM structure unchanged and limits the hardcoding removal to managed banner content dependence only.
+  - `git diff --check -- docs/seeds/SEED.front-banner-runtime-hydration-v1.yaml` passed on the seed-freeze state.
+
+- time: `2026-03-30 16:27:00 +09:00`
+- route: `Route B`
+- task: `Freeze the copy-strip contract for removing managed public-page banner literals before public API hydration exists`
+- participants: `main`, `worker_seed_front_banner_copy_strip (Euclid)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_front_banner_copy_strip (Euclid)`: `docs/seeds/SEED.front-banner-copy-strip-v1.yaml`
+- verification:
+  - `worker_seed_front_banner_copy_strip (Euclid)` froze `docs/seeds/SEED.front-banner-copy-strip-v1.yaml`, keeping the managed slot list fixed while limiting the scope to stripping text literals such as copy, CTA labels, and alt text.
+  - The frozen contract explicitly preserves DOM structure, classes, spacing, and image `src` values, and accepts temporary blank public content until a public read API is added later.
+
+- time: `2026-03-30 16:39:00 +09:00`
+- route: `Route B`
+- task: `Strip managed public-page banner hardcoded copy while preserving structure and keeping temporary blank public content acceptable`
+- participants: `main`, `worker_feature_stay_banner_copy_strip (Boyle)`, `worker_feature_air_banner_copy_strip (Nietzsche)`, `reviewer_front_banner_copy_strip (Planck)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_feature_stay_banner_copy_strip (Boyle)`: `front/jejustay/pages/hotel/jejuhotel.html, front/jejustay/pages/stay/private_stay.html, front/jejustay/pages/stay/jejustay_life.html, front/jejustay/pages/travel/activities.html`
+  - `worker_feature_air_banner_copy_strip (Nietzsche)`: `front/jejuair/index.html`
+  - `reviewer_front_banner_copy_strip (Planck)`: `review only`
+- verification:
+  - `worker_feature_stay_banner_copy_strip (Boyle)` blanked managed stay-banner literals for `eyebrow`, `title`, `body`, and `cta_label` while preserving slot markers, classes, icons, hrefs, and banner shells.
+  - `worker_feature_air_banner_copy_strip (Nietzsche)` cleared the managed Jeju Air hero image `alt` literals only, leaving `src`, swiper structure, and pagination intact.
+  - The first reviewer pass found one blocking accessibility issue: visible CTA text was blanked without replacement names on interactive controls.
+  - `worker_feature_stay_banner_copy_strip (Boyle)` fixed that blocker by adding minimal non-visible `aria-label` values to the affected CTA anchors/buttons without restoring visible marketing copy.
+  - `reviewer_front_banner_copy_strip (Planck)` re-reviewed the final state and reported `blocking 없음`; layout/DOM/class regressions and out-of-scope edits were not found in the target files.
+  - `git diff --check -- front/jejustay/pages/hotel/jejuhotel.html front/jejustay/pages/stay/private_stay.html front/jejustay/pages/stay/jejustay_life.html front/jejustay/pages/travel/activities.html front/jejuair/index.html docs/seeds/SEED.front-banner-copy-strip-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed, with only a non-blocking CRLF normalization warning on `front/jejuair/index.html`.
+
+- time: `2026-03-30 16:52:00 +09:00`
+- route: `Route B`
+- task: `Sync the completed public-page banner copy-strip changes from front into the jeju-spring mirror using the repository sync pipeline`
+- participants: `main`, `worker_sync_front_banner_copy_strip_mirror (Galileo)`, `reviewer_front_banner_copy_strip_sync (Zeno)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_front_banner_copy_strip_mirror (Galileo)`: `derived jeju-spring/src/main/resources/static/front-mirror/** and derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_front_banner_copy_strip_sync (Zeno)`: `review only`
+- verification:
+  - `worker_sync_front_banner_copy_strip_mirror (Galileo)` ran `pnpm run sync` successfully and reported the expected mirror refreshes at `jeju-spring/src/main/resources/templates/front-mirror/jejuair/index.html`, the four `jejustay` page templates, and `jeju-spring/src/main/resources/static/front-mirror/admin/js/cms.js`.
+  - `reviewer_front_banner_copy_strip_sync (Zeno)` flagged a blocking process issue for the sync slice because the current worktree still includes unrelated backend/config/migration changes outside the derived mirror outputs, so the task cannot be treated as a clean sync-only lane even though the mirror refresh itself completed.
+  - No mirror-generation failure was reported; the blocker is scope contamination from concurrent non-mirror changes already present in the worktree.
+
+- time: `2026-03-30 18:01:00 +09:00`
+- route: `Route B`
+- task: `Freeze the icon_key contract for admin CMS editing, DB/API persistence, and public managed-slot icon rendering`
+- participants: `main`, `worker_seed_banner_icon_key (Chandrasekhar)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_banner_icon_key (Chandrasekhar)`: `docs/seeds/SEED.banner-icon-key-runtime-v1.yaml`
+- verification:
+  - `worker_seed_banner_icon_key (Chandrasekhar)` froze `docs/seeds/SEED.banner-icon-key-runtime-v1.yaml`, limiting `icon_key` to managed non-hero slots, pinning the initial Lucide whitelist, and keeping hero_image_set explicitly out of scope for icon editing/rendering.
+  - The frozen contract preserves the existing banner shell layout and uses the current `data-banner-slot` / `data-banner-field="icon"` markers as public runtime anchors.
+
+- time: `2026-03-30 18:30:00 +09:00`
+- route: `Route B`
+- task: `Implement icon_key editing/persistence/runtime for managed banners and close the blocker fixes against the current hardcoded icon baseline`
+- participants: `main`, `worker_admin_banner_icon_key (Godel)`, `worker_public_banner_icon_runtime (Hegel)`, `worker_backend_banner_icon_key (Hume)`, `reviewer_banner_icon_key_runtime (Pauli)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_banner_icon_key (Godel)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/data/cms-config.js`
+  - `worker_public_banner_icon_runtime (Hegel)`: `front/shared/banner-runtime/**, front/jejustay/pages/hotel/hotel.js, front/jejustay/pages/stay/private_stay.js, front/jejustay/pages/stay/jejustay_life.js, front/jejustay/pages/travel/activities.js, front/jejuair/index.html`
+  - `worker_backend_banner_icon_key (Hume)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/**/web/**, jeju-spring/src/main/resources/db/migration/**`
+  - `reviewer_banner_icon_key_runtime (Pauli)`: `review only`
+- verification:
+  - `worker_admin_banner_icon_key (Godel)` added the icon selector to the admin banner modal, wired `iconKey` through the banner admin client flow, and then corrected the fallback/template defaults to the current hardcoded icon baseline while leaving `hero_image_set` icon defaults blank.
+  - `worker_public_banner_icon_runtime (Hegel)` added the shared public managed-banner icon runtime, connected it into the four managed stay pages, and then fixed the selector logic to match the real DOM shape of `data-banner-slot` parents plus `data-banner-field="icon"` children.
+  - `worker_backend_banner_icon_key (Hume)` added DB/API `iconKey` persistence, the public `/api/banners/managed` read endpoint, whitelist enforcement, and then corrected `AdminBannerDbStore` bootstrap defaults plus `V26__add_banner_icon_key_and_backfill_managed_banners.sql` backfill values to the current hardcoded icon baseline while keeping hero icons blank/ignored.
+  - `reviewer_banner_icon_key_runtime (Pauli)` first caught blocking regressions in the default icon baselines and confirmed after the fix pass that those blockers were resolved and no new blocker remained.
+  - `node --check front/admin/data/cms-config.js` passed.
+  - `node --input-type=module --eval "import('./front/shared/banner-runtime/public-managed-icons.js')"` passed with only the existing non-blocking `MODULE_TYPELESS_PACKAGE_JSON` warning.
+  - `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat compileJava` passed.
+  - `git diff --check -- front/admin/data/cms-config.js front/shared/banner-runtime/public-managed-icons.js jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminBannerDbStore.java jeju-spring/src/main/resources/db/migration/V26__add_banner_icon_key_and_backfill_managed_banners.sql STATE.md MULTI_AGENT_LOG.md` passed.
+
+- time: `2026-03-30 18:39:00 +09:00`
+- route: `Route B`
+- task: `Sync the completed banner icon_key changes from front into the jeju-spring mirror using the repository sync pipeline`
+- participants: `main`, `worker_sync_banner_icon_key_mirror (Ptolemy)`, `reviewer_banner_icon_key_sync (Kierkegaard)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_banner_icon_key_mirror (Ptolemy)`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_banner_icon_key_sync (Kierkegaard)`: `review only`
+- verification:
+  - `worker_sync_banner_icon_key_mirror (Ptolemy)` ran `pnpm run sync` successfully and refreshed the expected mirror outputs for the admin banner CMS, the shared public banner-icon runtime, the four managed `jejustay` page scripts/templates, and the mirrored `jejuair/index.html`.
+  - The sync produced the new derived file `jeju-spring/src/main/resources/static/front-mirror/shared/banner-runtime/public-managed-icons.js`, matching the `front` source runtime and wiring into the mirrored page scripts.
+  - `reviewer_banner_icon_key_sync (Kierkegaard)` reported `blocker 없음` and found the mirror changes aligned with the `front` banner icon_key source changes without mirror-boundary/process issues.
+  - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/templates/front-mirror` emitted only the existing non-blocking CRLF warnings for `jeju-spring/src/main/resources/static/front-mirror/jejustay/pages/travel/activities.js` and `jeju-spring/src/main/resources/templates/front-mirror/jejuair/index.html`.
+
+- time: `2026-03-30 18:54:00 +09:00`
+- route: `Route A`
+- task: `Hydrate stripped managed public-banner copy from the existing public banner API so visible banner content returns on the public pages`
+- participants: `main`
+- write_sets:
+  - `main`: `front/shared/banner-runtime/public-managed-icons.js, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Extended `front/shared/banner-runtime/public-managed-icons.js` to normalize full managed banner records from `/api/banners/managed`, not just `iconKey`.
+  - The runtime now repopulates managed-slot `eyebrow`, `title`, `body`, and `cta_label` text plus anchor `href` values in-place while preserving the existing icon hydration path and slot markers.
+  - `node --input-type=module --eval "import('./front/shared/banner-runtime/public-managed-icons.js')"` passed with only the existing non-blocking `MODULE_TYPELESS_PACKAGE_JSON` warning.
+  - `git diff --check -- front/shared/banner-runtime/public-managed-icons.js STATE.md` passed.
+
+- time: `2026-03-30 19:03:00 +09:00`
+- route: `Route B`
+- task: `Sync the public banner copy hydration hotfix and existing banner icon_key changes from front into the jeju-spring mirror`
+- participants: `main`, `worker_sync_public_banner_runtime_mirror (Rawls)`, `reviewer_public_banner_runtime_sync (Wegener)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_public_banner_runtime_mirror (Rawls)`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_public_banner_runtime_sync (Wegener)`: `review only`
+- verification:
+  - `worker_sync_public_banner_runtime_mirror (Rawls)` ran `pnpm run sync` successfully and refreshed the expected mirror outputs for the public banner hydration runtime, admin banner CMS assets, and the affected mirrored `jejustay`/`jejuair` templates and scripts.
+  - `reviewer_public_banner_runtime_sync (Wegener)` reported `blocker 없음` for the derived mirror outputs. A follow-up manual check by `main` confirmed the mirrored public templates still include the `data-banner-field` markers required by the shared runtime.
+  - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/templates/front-mirror` emitted only the existing non-blocking CRLF warnings for `jeju-spring/src/main/resources/static/front-mirror/jejustay/pages/travel/activities.js` and `jeju-spring/src/main/resources/templates/front-mirror/jejuair/index.html`.
+
+- time: `2026-03-30 19:31:00 +09:00`
+- route: `Route B`
+- task: `Refine the admin CMS banner tab UX so banner rows are understandable, action controls are styled and working, and banner editing guidance matches actual operator needs`
+- participants: `main`, `worker_seed_admin_banner_ux (James)`, `worker_admin_banner_ux (Euler)`, `reviewer_admin_banner_ux (Bacon)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_banner_ux (James)`: `docs/seeds/SEED.admin-cms-banner-ux-v1.yaml`
+  - `worker_admin_banner_ux (Euler)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/data/cms-config.js, front/admin/css/components.css`
+  - `reviewer_admin_banner_ux (Bacon)`: `review only`
+- verification:
+  - `worker_seed_admin_banner_ux (James)` froze `docs/seeds/SEED.admin-cms-banner-ux-v1.yaml` for the admin banner-tab UX slice.
+  - `worker_admin_banner_ux (Euler)` introduced operator-friendly banner display metadata, clearer service/type/location labels, more visible icon/sort guidance in the banner modal, distinct status/action styling, and fixed the banner row-action lookup so edit/delete/toggle resolve against the selected row.
+  - The first reviewer pass caught one blocker: edit-mode copy and editable fields claimed `site/family/slot` could change even though the backend contract forbids that, plus one out-of-scope notice-header text drift.
+  - `worker_admin_banner_ux (Euler)` fixed that blocker by locking `서비스 분류`, `배너 묶음`, and `슬롯 위치` in edit mode, aligning the helper copy with the backend contract, and restoring the out-of-scope notice header text.
+  - `reviewer_admin_banner_ux (Bacon)` re-checked the final state and reported `새 blocker 없음`.
+  - `node --check front/admin/js/cms.js` passed.
+  - `node --check front/admin/data/cms-config.js` passed.
+  - `git diff --check -- front/admin/pages/cms.html front/admin/js/cms.js front/admin/data/cms-config.js front/admin/css/components.css` passed.
+
+- time: `2026-03-30 19:41:00 +09:00`
+- route: `Route B`
+- task: `Sync the completed admin CMS banner-tab UX updates from front into the jeju-spring mirror`
+- participants: `main`, `worker_sync_admin_banner_ux_mirror (Carver)`, `reviewer_admin_banner_ux_sync (Harvey)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_admin_banner_ux_mirror (Carver)`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_admin_banner_ux_sync (Harvey)`: `review only`
+- verification:
+  - `worker_sync_admin_banner_ux_mirror (Carver)` ran `pnpm run sync` successfully and refreshed the expected admin mirror outputs, including `front-mirror/admin/js/cms.js`, `front-mirror/admin/data/cms-config.js`, `front-mirror/admin/css/components.css`, and `front-mirror/admin/pages/cms.html`.
+  - `reviewer_admin_banner_ux_sync (Harvey)` reported `블로커 없음` and confirmed the admin banner-tab UX source changes were reflected in the derived mirror outputs without mirror-boundary/process issues.
+  - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/templates/front-mirror` emitted only the existing non-blocking CRLF warnings.
+
+- time: `2026-03-30 20:04:00 +09:00`
+- route: `Route B`
+- task: `Fix banner icon changes not applying and simplify the admin banner modal/table by removing display-order UX and clarifying CTA link behavior`
+- participants: `main`, `worker_seed_admin_banner_icon_fix (Sagan)`, `worker_admin_banner_ux_trim (Banach)`, `worker_public_banner_icon_fix (Tesla)`, `reviewer_admin_banner_icon_fix (Beauvoir)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_banner_icon_fix (Sagan)`: `docs/seeds/SEED.admin-banner-icon-fix-and-ux-trim-v1.yaml`
+  - `worker_admin_banner_ux_trim (Banach)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/data/cms-config.js, front/admin/css/components.css`
+  - `worker_public_banner_icon_fix (Tesla)`: `front/shared/banner-runtime/public-managed-icons.js`
+  - `reviewer_admin_banner_icon_fix (Beauvoir)`: `review only`
+- verification:
+  - `worker_seed_admin_banner_icon_fix (Sagan)` froze `docs/seeds/SEED.admin-banner-icon-fix-and-ux-trim-v1.yaml` for the combined admin UX trim and public icon-fix slice.
+  - `worker_admin_banner_ux_trim (Banach)` removed the display-order UI from the admin banner tab, removed the reorder action, preserved hidden sortOrder payload handling, and rewrote the CTA link copy to explain that it is the destination URL for link-style CTA behavior.
+  - `worker_public_banner_icon_fix (Tesla)` removed the overly strict `lucide.icons` registry gate so valid kebab-case admin-saved `iconKey` values survive normalization in the public managed-banner runtime.
+  - The first reviewer pass found one blocker: clearing CTA link values in admin left the previous public anchor `href` in place because the runtime only overwrote `href` when a new value existed.
+  - `worker_public_banner_icon_fix (Tesla)` fixed that blocker by resetting anchor-style CTA targets to `#` when `ctaHref` is blank while keeping button-style CTA behavior unchanged.
+  - `reviewer_admin_banner_icon_fix (Beauvoir)` re-checked the final state and reported `새 blocker 없음`.
+  - `node --check front/admin/js/cms.js` passed.
+  - `node --check front/admin/data/cms-config.js` passed.
+  - `node --check front/shared/banner-runtime/public-managed-icons.js` passed.
+  - `git diff --check -- front/admin/pages/cms.html front/admin/js/cms.js front/admin/data/cms-config.js front/shared/banner-runtime/public-managed-icons.js STATE.md` passed.
+
+- time: `2026-03-30 15:06:19 +09:00`
+- route: `Route B`
+- task: `Sync the completed admin banner icon/runtime fix and banner-tab UX trim updates from front into the jeju-spring mirror`
+- participants: `main`, `worker_sync_admin_banner_trim_mirror (Dewey)`, `reviewer_admin_banner_trim_sync (Darwin)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_admin_banner_trim_mirror (Dewey)`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_admin_banner_trim_sync (Darwin)`: `review only`
+- verification:
+  - `worker_sync_admin_banner_trim_mirror (Dewey)` ran `pnpm run sync` successfully and refreshed the expected derived mirror outputs, including `jeju-spring/src/main/resources/static/front-mirror/admin/js/cms.js`, `jeju-spring/src/main/resources/static/front-mirror/admin/data/cms-config.js`, `jeju-spring/src/main/resources/static/front-mirror/admin/css/components.css`, `jeju-spring/src/main/resources/templates/front-mirror/admin/pages/cms.html`, the mirrored `jejustay` page scripts/templates, and `jeju-spring/src/main/resources/templates/front-mirror/jejuair/index.html`.
+  - `reviewer_admin_banner_trim_sync (Darwin)` reported `블로킹 이슈 없음` and confirmed the mirror sync reflects the latest admin banner icon/runtime fix and banner-tab UX trim changes without mirror-boundary regressions.
+  - `git diff --name-only -- jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/templates/front-mirror` showed only the expected derived mirror outputs.
+  - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/templates/front-mirror` emitted only non-blocking CRLF normalization warnings for `jeju-spring/src/main/resources/static/front-mirror/jejustay/pages/travel/activities.js` and `jeju-spring/src/main/resources/templates/front-mirror/jejuair/index.html`.
+
+- time: `2026-03-30 15:06:19 +09:00`
+- route: `Route B`
+- task: `Repair the admin CMS banner table layout so the status toggle returns, action buttons align correctly, and banner column widths favor service/family labels over oversized content text`
+- participants: `main`, `worker_seed_banner_table_layout_repair (McClintock)`, `worker_admin_banner_table_layout_repair (Dirac)`, `reviewer_admin_banner_table_layout_repair (Heisenberg)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_banner_table_layout_repair (McClintock)`: `docs/seeds/SEED.admin-cms-banner-table-layout-repair-v1.yaml`
+  - `worker_admin_banner_table_layout_repair (Dirac)`: `front/admin/js/cms.js, front/admin/css/components.css, front/admin/data/cms-config.js`
+  - `reviewer_admin_banner_table_layout_repair (Heisenberg)`: `review only`
+- verification:
+  - `worker_seed_banner_table_layout_repair (McClintock)` froze `docs/seeds/SEED.admin-cms-banner-table-layout-repair-v1.yaml` for the admin banner table repair slice.
+  - `worker_admin_banner_table_layout_repair (Dirac)` restored the missing banner status-toggle cell, kept edit/delete controls inside the 관리 column, and tightened banner-table sizing plus content preview formatting so 사이트/서비스 and 패밀리/슬롯 columns have more usable width without redesigning the page.
+  - `node --check front/admin/js/cms.js` passed.
+  - `git diff --check -- front/admin/js/cms.js front/admin/css/components.css front/admin/data/cms-config.js` passed.
+  - `reviewer_admin_banner_table_layout_repair (Heisenberg)` reported no blocking issues and confirmed the banner row now emits 7 cells aligned with the configured columns while the CSS keeps the content column from monopolizing width.
+
+- time: `2026-03-30 15:06:19 +09:00`
+- route: `Route A`
+- task: `Hotfix the local managed banner rows by restoring the original public-facing copy directly in the local DB`
+- participants: `main`
+- write_sets:
+  - `main`: `local MySQL managed banner rows in jejugroup_local, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification:
+  - Loaded DB connection values from `jeju-spring/.env` and used the local Gradle-cached `mysql-connector-j-9.6.0.jar` to run a direct JDBC hotfix against `jejugroup_local`.
+  - Updated the 11 managed text-banner rows in `banners` plus matching `banner_slots.slot_name` values to the original public-facing copy.
+  - Set `subtitle` using the same effective rule as `AdminBannerDbStore.resolveSubtitle`: `body` first, otherwise `eyebrow`, otherwise fallback text.
+  - Read back all 11 updated rows and confirmed the restored `title`, `subtitle`, and `cta_label` values.
+  - The first execution failed before DB connection due to a BOM-prefixed temporary Java file; this was logged in `ERROR_LOG.md`, corrected with BOM-free UTF-8 output, and the rerun succeeded.
+
+- time: `2026-03-30 15:06:19 +09:00`
+- route: `Route A`
+- task: `Align V27 managed banner copy restore migration with the current subtitle seed rule`
+- participants: `main`
+- write_sets:
+  - `main`: `jeju-spring/src/main/resources/db/migration/V27__restore_managed_banner_public_copy.sql, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Updated `V27__restore_managed_banner_public_copy.sql` so `b.subtitle` is restored with `COALESCE(NULLIF(src.body, ''), NULLIF(src.eyebrow, ''), NULLIF(src.cta_label, ''), src.banner_code)`.
+  - This now matches the effective `AdminBannerDbStore.resolveSubtitle` fallback order for the managed text-banner restore path.
+  - `git diff --check -- jeju-spring/src/main/resources/db/migration/V27__restore_managed_banner_public_copy.sql` passed.
+
+- time: `2026-03-30 15:06:19 +09:00`
+- route: `Route A`
+- task: `Rename the admin CMS banner table header from 패밀리 / 슬롯 to 타입 / 위치`
+- participants: `main`
+- write_sets:
+  - `main`: `front/admin/data/cms-config.js, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Updated the banner column header label in `front/admin/data/cms-config.js` from `패밀리 / 슬롯` to `타입 / 위치`.
+  - `node --check front/admin/data/cms-config.js` passed.
+  - `git diff --check -- front/admin/data/cms-config.js` passed.
+
+- time: `2026-03-30 15:06:19 +09:00`
+- route: `Route B`
+- task: `Finish the admin CMS banner terminology rename by replacing the remaining 패밀리/슬롯 copy with 타입/위치 wording and resync the mirror`
+- participants: `main`, `worker_admin_banner_terminology_rename (Schrodinger)`, `worker_sync_admin_banner_terminology_mirror (Meitner)`, `worker_admin_banner_helper_copy_fix (Linnaeus)`, `worker_sync_admin_banner_helper_copy_mirror (Curie)`, `reviewer_admin_banner_terminology_sync (Anscombe)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_banner_terminology_rename (Schrodinger)`: `front/admin/js/cms.js, front/admin/pages/cms.html`
+  - `worker_sync_admin_banner_terminology_mirror (Meitner)`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `worker_admin_banner_helper_copy_fix (Linnaeus)`: `front/admin/js/cms.js, front/admin/pages/cms.html`
+  - `worker_sync_admin_banner_helper_copy_mirror (Curie)`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_admin_banner_terminology_sync (Anscombe)`: `review only`
+- verification:
+  - `worker_admin_banner_terminology_rename (Schrodinger)` replaced the remaining operator-facing `패밀리`, `배너 묶음`, `슬롯 위치`, and `표시 위치` banner-copy terms in `front/admin/js/cms.js` and `front/admin/pages/cms.html` with `타입 / 위치` wording while preserving internal identifiers such as `slotKey`.
+  - `worker_admin_banner_helper_copy_fix (Linnaeus)` finished the last helper/alert wording cleanup so operator-facing banner text no longer exposes `슬롯` and instead uses `위치` wording.
+  - `node --check front/admin/js/cms.js` passed on the source terminology-change slices.
+  - `git diff --check -- front/admin/js/cms.js front/admin/pages/cms.html` passed on the source terminology-change slices.
+  - `worker_sync_admin_banner_terminology_mirror (Meitner)` and `worker_sync_admin_banner_helper_copy_mirror (Curie)` ran `pnpm run sync` successfully and refreshed the expected derived mirror outputs under `jeju-spring/src/main/resources/static/front-mirror/admin/**` and `jeju-spring/src/main/resources/templates/front-mirror/admin/pages/cms.html`.
+  - Final reviewer `reviewer_admin_banner_terminology_sync (Anscombe)` reported `블로킹 이슈 없음` and confirmed source/mirror operator-facing banner terminology is consistently `타입`, `위치`, or `타입 / 위치`, with no remaining user-visible `슬롯` wording.
+
+- time: `2026-03-30 15:06:19 +09:00`
+- route: `Route B`
+- task: `Tighten the admin CMS banner table spacing so the first columns sit closer together without forcing awkward line breaks`
+- participants: `main`, `worker_admin_banner_spacing_fix (Arendt)`, `worker_sync_admin_banner_spacing_mirror (Dalton)`, `reviewer_admin_banner_spacing_sync (Gauss)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_banner_spacing_fix (Arendt)`: `front/admin/css/components.css`
+  - `worker_sync_admin_banner_spacing_mirror (Dalton)`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_admin_banner_spacing_sync (Gauss)`: `review only`
+- verification:
+  - `worker_admin_banner_spacing_fix (Arendt)` tightened the banner-table cell padding from `14px 14px` to `12px 12px` and reduced the fixed widths of the first columns in `front/admin/css/components.css` so `배너 ID`, `사이트 / 서비스`, `타입 / 위치`, and `콘텐츠` sit closer together while keeping the current layout pattern.
+  - The final width choices were `배너 ID 96px`, `사이트 / 서비스 132px`, `타입 / 위치 152px`, `콘텐츠 216px`, `이미지 132px`, with `상태 118px` and `관리 156px` left usable.
+  - `git diff --check -- front/admin/css/components.css` passed.
+  - `worker_sync_admin_banner_spacing_mirror (Dalton)` ran `pnpm run sync` successfully and refreshed the expected derived mirror outputs, including `jeju-spring/src/main/resources/static/front-mirror/admin/css/components.css` and the associated mirrored admin assets/templates.
+  - Final reviewer `reviewer_admin_banner_spacing_sync (Gauss)` reported `블로킹 이슈 없음` and confirmed source/mirror CSS are aligned and that labels like `사이트 / 서비스` are protected from awkward wrap by the fixed-width plus `white-space: nowrap` rules.
+
+- time: `2026-03-30 15:06:19 +09:00`
+- route: `Route B`
+- task: `Further tighten the admin CMS banner table spacing and fix the garbled Korean copy inside the banner modal`
+- participants: `main`, `worker_admin_banner_spacing_and_modal_copy_fix (Peirce)`, `worker_sync_admin_banner_spacing_and_modal_copy_mirror (Boole)`, `reviewer_admin_banner_spacing_and_modal_copy_sync (Avicenna)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_banner_spacing_and_modal_copy_fix (Peirce)`: `front/admin/css/components.css, front/admin/js/cms.js`
+  - `worker_sync_admin_banner_spacing_and_modal_copy_mirror (Boole)`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_admin_banner_spacing_and_modal_copy_sync (Avicenna)`: `review only`
+- verification:
+  - `worker_admin_banner_spacing_and_modal_copy_fix (Peirce)` tightened the banner-table spacing further by reducing banner-table cell padding to `10px 8px` and setting columns 1~5 to `80/116/128/176/132px` while keeping `상태 118px`, `관리 156px`, and the existing nowrap protections for short labels.
+  - `worker_admin_banner_spacing_and_modal_copy_fix (Peirce)` also restored readable Korean for the banner modal copy in `front/admin/js/cms.js`, including `배너 수정`, `새 배너 등록`, and the create/edit descriptions.
+  - `node --check front/admin/js/cms.js` passed.
+  - `git diff --check -- front/admin/css/components.css front/admin/js/cms.js` passed.
+  - `worker_sync_admin_banner_spacing_and_modal_copy_mirror (Boole)` ran `pnpm run sync` successfully and refreshed the expected derived mirror outputs, including `jeju-spring/src/main/resources/static/front-mirror/admin/css/components.css`, `jeju-spring/src/main/resources/static/front-mirror/admin/js/cms.js`, and `jeju-spring/src/main/resources/templates/front-mirror/admin/pages/cms.html`.
+  - Final reviewer `reviewer_admin_banner_spacing_and_modal_copy_sync (Avicenna)` reported no blocking issues and confirmed the spacing is materially tighter, nowrap protections still prevent awkward wraps, and the banner modal Korean copy is no longer garbled in source or mirror.

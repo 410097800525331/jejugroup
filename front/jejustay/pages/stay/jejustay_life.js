@@ -63,6 +63,15 @@ const initHeroSearchWidgetStability = (hostId) => {
 
 initHeroSearchWidgetStability("life-search-widget-root");
 
+const initManagedBannerIconRuntime = async () => {
+    try {
+        const { initPublicManagedBannerIcons } = await import("../../../shared/banner-runtime/public-managed-icons.js");
+        await initPublicManagedBannerIcons();
+    } catch (error) {
+        console.error("[LongStayPage] managed banner icon runtime init failed", error);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // 아이콘 초기화
     if (window.lucide) {
@@ -559,6 +568,8 @@ function initSearchLogic() {
 
 // Ensure it runs after DOM Load
 document.addEventListener('DOMContentLoaded', () => {
+    void initManagedBannerIconRuntime();
+
     // Run Init Logic
     renderLongStayHotels();
     

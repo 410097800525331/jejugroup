@@ -1,0 +1,28 @@
+goal: >
+  Replace the admin CMS banner tab's local-only CRUD flow with an authenticated
+  admin banner API that serves the normalized banner contract from an in-memory
+  server store for this pass.
+constraints:
+  - Limit this slice to `front/admin/js/cms.js`, `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/**`, and this seed file.
+  - Keep the normalized banner contract unchanged: `slotKey`, `family`, `site/service`, `eyebrow`, `title`, `body`, `ctaLabel`, `ctaHref`, `imageUrl`, `altText`, `sortOrder`, `active`.
+  - Require admin authentication via session user with `ADMIN` role for the banner CRUD API.
+  - Implement the backend banner data as an in-memory server store for the current process only; do not add DB persistence in this pass.
+  - The banner tab must use the API for list, get, create, update, delete, toggle-active, and reorder actions.
+  - Preserve existing notices and faqs behavior.
+  - Do not change admin design, layout, or CSS.
+  - Do not touch mirror sync, DB migration, or public page banner renderer behavior.
+acceptance_criteria:
+  - An authenticated admin banner API exists with `list`, `get`, `create`, `update`, and `delete` operations.
+  - The banner tab no longer depends on a local-only source and uses the API for its CRUD workflow.
+  - The normalized slot/family/service contract remains intact end to end.
+  - Notices and faqs remain unaffected.
+verification:
+  - `node --check front/admin/js/cms.js`
+  - `.codex-temp\\gradle-8.14.4\\bin\\gradle.bat -p jeju-spring compileJava`
+  - `git diff --check -- front/admin/js/cms.js jeju-spring/src/main/java/com/jejugroup/jejuspring/admin docs/seeds/SEED.admin-cms-banner-api-v1.yaml STATE.md MULTI_AGENT_LOG.md`
+out_of_scope:
+  - DB persistence, schema changes, or migration work.
+  - Mirror sync updates.
+  - Public page banner renderer replacement.
+  - Admin CMS design, layout, or CSS changes.
+  - Notices and faqs behavior changes.

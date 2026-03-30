@@ -510,3 +510,19 @@ status: open
 - summary: `Gradle wrapper jar 누락으로 compileJava가 먼저 막혔지만 로컬 Gradle로 우회 검증 완료`
 - details: `jeju-spring/gradle/wrapper/gradle-wrapper.jar가 없어 ./gradlew.bat compileJava는 실패했다. 이후 D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava를 실행해 동일 검증을 성공적으로 통과시켰다.`
 - status: `resolved`
+- time: `2026-03-30 15:20:00 +09:00`
+- location: `D:\lsh\git\jejugroup\gradlew`
+- summary: `repo root wrapper 호출 경로를 잘못 잡아 compileJava가 한 번 실패함`
+- details: `PowerShell에서 .\gradlew 대신 .\gradlew.bat 또는 repo root wrapper 경로를 사용해야 했다. 작업 내용에는 영향 없고, 올바른 wrapper로 재실행해 검증을 이어갈 예정이다.`
+- status: `resolved`
+# time: `2026-03-30 15:06:19 +09:00`
+# location: `local DB managed banner hotfix runner`
+# summary: `BOM 붙은 임시 Java 파일 때문에 DB hotfix runner가 첫 실행에서 컴파일 실패`
+# details: `PowerShell Set-Content UTF8 출력이 BOM을 포함하면서 BannerCopyHotfix.java 첫 줄에서 illegal character '\\ufeff' 오류가 발생했다. 로컬 DB 연결 자체 전에 실패했고, utf8NoBOM으로 다시 생성해 재실행 예정.`
+# status: `open`
+
+# time: `2026-03-30 15:06:19 +09:00`
+# location: `local DB managed banner hotfix runner`
+# summary: `BOM 컴파일 오류 재실행으로 해결`
+# details: `임시 Java 파일을 BOM 없는 UTF-8로 다시 생성해서 로컬 MySQL managed banner 11행을 정상 업데이트했고, title/subtitle/cta_label readback 검증도 끝냈다.`
+# status: `resolved`

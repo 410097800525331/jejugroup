@@ -271,11 +271,121 @@
     border-bottom: none;
 }
 
+.admin-table--banner {
+    table-layout: fixed;
+}
+
+.admin-table--banner th,
+.admin-table--banner td {
+    padding: 10px 8px;
+}
+
+.admin-table--banner th:nth-child(1),
+.admin-table--banner td:nth-child(1) {
+    width: 80px;
+}
+
+.admin-table--banner th:nth-child(2),
+.admin-table--banner td:nth-child(2) {
+    width: 116px;
+}
+
+.admin-table--banner th:nth-child(3),
+.admin-table--banner td:nth-child(3) {
+    width: 128px;
+}
+
+.admin-table--banner th:nth-child(4),
+.admin-table--banner td:nth-child(4) {
+    width: 176px;
+}
+
+.admin-table--banner th:nth-child(5),
+.admin-table--banner td:nth-child(5) {
+    width: 132px;
+}
+
+.admin-table--banner th:nth-child(6),
+.admin-table--banner td:nth-child(6) {
+    width: 118px;
+    text-align: center;
+}
+
+.admin-table--banner th:nth-child(7),
+.admin-table--banner td:nth-child(7) {
+    width: 156px;
+    text-align: left;
+}
+
+.admin-table--banner th:nth-child(1),
+.admin-table--banner th:nth-child(2),
+.admin-table--banner th:nth-child(3),
+.admin-table--banner th:nth-child(6),
+.admin-table--banner th:nth-child(7) {
+    white-space: nowrap;
+}
+
+.admin-table--banner td:nth-child(2),
+.admin-table--banner td:nth-child(3),
+.admin-table--banner td:nth-child(4),
+.admin-table--banner td:nth-child(5) {
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.cms-banner-content-preview,
+.cms-banner-image-cell {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.45;
+}
+
+.cms-banner-content-preview {
+    -webkit-line-clamp: 2;
+}
+
+.cms-banner-image-cell {
+    -webkit-line-clamp: 1;
+}
+
 .cms-notice-row-actions,
 .cms-faq-row-actions {
     display: inline-flex;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+.cms-banner-row-actions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.cms-banner-meta-cell {
+    display: grid;
+    gap: 4px;
+}
+
+.cms-banner-display-id,
+.cms-banner-meta-main {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cms-banner-meta-sub {
+    font-size: 0.75rem;
+    color: var(--admin-text-secondary);
+    white-space: nowrap;
 }
 
 .cms-notice-status-toggle,
@@ -296,6 +406,32 @@
     white-space: nowrap;
 }
 
+.cms-banner-status-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 108px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    white-space: nowrap;
+}
+
+.cms-banner-status-toggle:hover {
+    transform: translateY(-1px);
+}
+
+.cms-banner-status-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
 .cms-notice-status-toggle:hover,
 .cms-faq-status-toggle:hover {
     background-color: rgba(255, 255, 255, 0.04);
@@ -313,9 +449,19 @@
     color: var(--admin-success);
 }
 
+.cms-banner-status-toggle--active {
+    border-color: rgba(46, 204, 113, 0.55);
+    background: rgba(46, 204, 113, 0.12);
+    color: var(--admin-success);
+}
+
 .cms-notice-status-toggle--active:hover,
 .cms-faq-status-toggle--active:hover {
     background-color: rgba(46, 204, 113, 0.08);
+}
+
+.cms-banner-status-toggle--active:hover {
+    background: rgba(46, 204, 113, 0.18);
 }
 
 .cms-notice-status-toggle--inactive,
@@ -324,9 +470,19 @@
     color: var(--admin-warning);
 }
 
+.cms-banner-status-toggle--inactive {
+    border-color: rgba(241, 196, 15, 0.6);
+    background: rgba(241, 196, 15, 0.1);
+    color: var(--admin-warning);
+}
+
 .cms-notice-status-toggle--inactive:hover,
 .cms-faq-status-toggle--inactive:hover {
     background-color: rgba(241, 196, 15, 0.08);
+}
+
+.cms-banner-status-toggle--inactive:hover {
+    background: rgba(241, 196, 15, 0.16);
 }
 
 .cms-notice-row-actions .admin-btn,
@@ -335,14 +491,41 @@
     justify-content: center;
 }
 
+.cms-banner-row-actions .admin-btn {
+    min-width: 76px;
+    justify-content: center;
+}
+
+.cms-banner-row-actions .cms-banner-action-edit {
+    border-color: rgba(76, 140, 255, 0.35);
+    color: #7fb0ff;
+}
+
+.cms-banner-row-actions .cms-banner-action-edit:hover {
+    background-color: rgba(76, 140, 255, 0.12);
+    border-color: rgba(76, 140, 255, 0.6);
+    color: #a9cbff;
+}
+
 .cms-notice-row-actions .admin-btn.admin-btn-danger,
 .cms-faq-row-actions .admin-btn.admin-btn-danger {
     border-color: rgba(231, 76, 60, 0.35);
     color: var(--admin-danger);
 }
 
+.cms-banner-row-actions .cms-banner-action-delete {
+    border-color: rgba(231, 76, 60, 0.35);
+    color: var(--admin-danger);
+}
+
 .cms-notice-row-actions .admin-btn.admin-btn-danger:hover,
 .cms-faq-row-actions .admin-btn.admin-btn-danger:hover {
+    background-color: rgba(231, 76, 60, 0.12);
+    border-color: rgba(231, 76, 60, 0.65);
+    color: var(--admin-danger);
+}
+
+.cms-banner-row-actions .cms-banner-action-delete:hover {
     background-color: rgba(231, 76, 60, 0.12);
     border-color: rgba(231, 76, 60, 0.65);
     color: var(--admin-danger);
@@ -572,6 +755,18 @@ body.admin-modal-open {
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.02em;
+}
+
+.admin-form-help {
+    display: block;
+    margin-top: -2px;
+    color: var(--admin-text-secondary);
+    font-size: 0.74rem;
+    line-height: 1.45;
+}
+
+.admin-form-field--wide {
+    grid-column: 1 / -1;
 }
 
 .admin-form-control {

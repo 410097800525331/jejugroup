@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app")
 public record AppProperties(
     Migration migration,
+    Database database,
     Alwaysdata alwaysdata,
     External external,
     Social social,
@@ -19,7 +20,8 @@ public record AppProperties(
                 List.of("Spring datasource auto-config now targets the local MySQL baseline while AuthService keeps the legacy users-table contract.")
             )
             : migration;
-        alwaysdata = alwaysdata == null ? new Alwaysdata("", "", "", "", "", "", "", "", "") : alwaysdata;
+        database = database == null ? new Database("", "", "") : database;
+        alwaysdata = alwaysdata == null ? new Alwaysdata("", "", "", "", "", "") : alwaysdata;
         external = external == null ? new External("", "") : external;
         social = social == null ? new Social("", "", "") : social;
         mypage = mypage == null ? new MyPage("./.tmp/mypage-avatars") : mypage;
@@ -32,10 +34,19 @@ public record AppProperties(
         }
     }
 
-    public record Alwaysdata(
+    public record Database(
         String dbUrl,
         String dbUser,
-        String dbPassword,
+        String dbPassword
+    ) {
+        public Database {
+            dbUrl = normalize(dbUrl);
+            dbUser = normalize(dbUser);
+            dbPassword = normalize(dbPassword);
+        }
+    }
+
+    public record Alwaysdata(
         String sshHost,
         String sshUser,
         String sshPassword,
@@ -44,9 +55,6 @@ public record AppProperties(
         String remoteDeployPath
     ) {
         public Alwaysdata {
-            dbUrl = normalize(dbUrl);
-            dbUser = normalize(dbUser);
-            dbPassword = normalize(dbPassword);
             sshHost = normalize(sshHost);
             sshUser = normalize(sshUser);
             sshPassword = normalize(sshPassword);

@@ -1,0 +1,61 @@
+goal: >
+  Freeze the contract for stripping only the hardcoded public banner copy from
+  the managed Jeju Stay and Jeju Air banner slots, while preserving the
+  existing DOM structure, classes, placement, and visual layout even if public
+  users temporarily see blank text content before runtime data is supplied.
+constraints:
+  - Target files are limited to `front/jejustay/pages/hotel/jejuhotel.html`,
+    `front/jejustay/pages/stay/private_stay.html`,
+    `front/jejustay/pages/stay/jejustay_life.html`,
+    `front/jejustay/pages/travel/activities.html`, and
+    `front/jejuair/index.html`.
+  - Preserve the existing managed slot set exactly as-is and do not add, remove,
+    rename, or split slots. The 14 managed slots are:
+    `stay_hotel_promo_main`, `stay_hotel_promo_sub_1`,
+    `stay_hotel_promo_sub_2`, `stay_private_promo_main`,
+    `stay_private_promo_sub_1`, `stay_private_promo_sub_2`,
+    `stay_life_synergy_banner`, `stay_life_promo_1`, `stay_life_promo_2`,
+    `stay_life_promo_3`, `stay_activities_auth_banner`, `air_home_hero_1`,
+    `air_home_hero_2`, `air_home_hero_3`.
+  - Remove or blank hardcoded managed text literals only, including copy, CTA
+    labels, alt text, and other literal text nodes inside managed banner fields
+    on those slots.
+  - Keep existing image `src` literals unchanged on this pass, including the
+    three Jeju Air hero images, so the pages do not fall back to broken-image
+    placeholders or layout collapse.
+  - Do not change layout, DOM nesting, class names, spacing, or placement of
+    any managed banner shell.
+  - Allow the public page to show temporary blank managed content when the
+    runtime data is absent or not yet wired; do not reintroduce fallback copy
+    for those managed fields.
+  - Do not expand scope into runtime hydration behavior, route constants, mirror
+    paths, shell behavior, admin surfaces, or unrelated pages.
+acceptance_criteria:
+  - The five target files still expose the same 14 managed slots in the same
+    locations, with the same DOM structure and class names.
+  - Managed banner copy is no longer hardcoded in those slots; the remaining
+    markup can render blank content for the managed text fields without breaking
+    layout.
+  - The existing image `src` values remain in place, especially for
+    `air_home_hero_1`, `air_home_hero_2`, and `air_home_hero_3`, so the page
+    continues to show images instead of broken placeholders.
+  - No slot count, slot name, or banner shell placement changes occur.
+  - The visible page structure stays intact even when the managed text fields
+    are empty.
+verification:
+  - Review the final diff for only the seed contract and confirm the slot list
+    matches the 14 managed slots above.
+  - Confirm the contract explicitly keeps image `src` literals unchanged while
+    removing only managed text literals.
+  - Confirm the contract allows temporary blank public content and forbids any
+    DOM/layout/class changes.
+out_of_scope:
+  - Banner redesign, spacing changes, typography changes, or DOM restructuring.
+  - Adding or removing managed slots, renaming slots, or changing their family
+    markers.
+  - Any runtime hydration implementation, API integration, or fallback-copy
+    reintroduction.
+  - Changing image `src` values, replacing images, or introducing image-loading
+    behavior changes in this pass.
+  - Route constant changes, shell runtime changes, mirror-path edits, or any
+    changes outside the five target files.

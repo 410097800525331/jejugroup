@@ -1,0 +1,39 @@
+goal: >
+  Remove the misleading alwaysdata DB naming by moving database credentials
+  into a dedicated `app.database` config block/record while keeping
+  `app.alwaysdata` reserved for deploy, SSH, and admin settings, and without
+  changing runtime DB resolution behavior.
+constraints:
+  - Limit implementation scope to `jeju-spring/src/main/resources/application.yml`,
+    `jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java`,
+    and all Java callsites that currently read DB credentials through
+    `appProperties.alwaysdata().dbUrl()/dbUser()/dbPassword()`.
+  - Introduce a dedicated `app.database` block/record for DB credentials and
+    keep `app.alwaysdata` for SSH, admin, and deployment fields only.
+  - Preserve the existing DB environment precedence exactly: `DB_URL` /
+    `DB_USER` / `DB_PASSWORD` must still win first, then fall back as before to
+    the alwaysdata-backed env values and current defaults.
+  - Keep `alwaysdata` SSH/admin/deploy fields working with no behavior change.
+  - Do not change the actual DB target, schema, migrations, mirror sync, or any
+    frontend code.
+  - Do not add new runtime branches, feature flags, or background sync logic.
+acceptance_criteria:
+  - `application.yml` no longer stores DB credentials under `app.alwaysdata`; the
+    DB credentials live under `app.database` instead.
+  - `AppProperties.java` exposes a DB config record/block separate from
+    `alwaysdata`, and `alwaysdata` still exposes the deploy/SSH/admin fields.
+  - Every Java callsite that previously used
+    `appProperties.alwaysdata().dbUrl()/dbUser()/dbPassword()` compiles after the
+    rename and reads from the new DB config accessors.
+  - Runtime DB resolution behavior remains unchanged, including the same
+    environment-variable precedence and local fallback defaults.
+  - Existing alwaysdata SSH/admin/deploy behavior remains intact.
+verification:
+  - `./gradlew -p jeju-spring compileJava`
+  - `git diff --check -- jeju-spring/src/main/resources/application.yml jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java jeju-spring/src/main/java/com/jejugroup/jejuspring/admin jeju-spring/src/main/java/com/jejugroup/jejuspring/auth jeju-spring/src/main/java/com/jejugroup/jejuspring/booking jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter jeju-spring/src/main/java/com/jejugroup/jejuspring/mypage`
+out_of_scope:
+  - Changing the actual database host, schema, or migration history.
+  - Modifying mirror sync, deployment topology, or frontend layout.
+  - Renaming or altering alwaysdata SSH/admin/deploy fields beyond moving DB
+    credentials out of that block.
+  - Any frontend change.

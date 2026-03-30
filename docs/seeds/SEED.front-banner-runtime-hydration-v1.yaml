@@ -1,0 +1,28 @@
+goal: >
+  Freeze the contract for replacing managed banner hardcoding with runtime CMS
+  hydration on the Jeju Stay and Jeju Air public pages, while preserving the
+  current banner design and layout and keeping the existing static markup only
+  as a fallback skeleton when the CMS API is unavailable.
+constraints:
+  - Use `front` as the only human-edited source of truth and consume the existing admin banner API at `/api/admin/cms/banners`.
+  - Limit the hydration contract to these managed slots only: `stay_hotel_promo_main`, `stay_hotel_promo_sub_1`, `stay_hotel_promo_sub_2`, `stay_private_promo_main`, `stay_private_promo_sub_1`, `stay_private_promo_sub_2`, `stay_life_synergy_banner`, `stay_life_promo_1`, `stay_life_promo_2`, `stay_life_promo_3`, `stay_activities_auth_banner`, `air_home_hero_1`, `air_home_hero_2`, `air_home_hero_3`.
+  - Limit the public-page scope to `front/jejustay/pages/hotel/jejuhotel.html` and `front/jejustay/pages/hotel/hotel.js`, `front/jejustay/pages/stay/private_stay.html` and `front/jejustay/pages/stay/private_stay.js`, `front/jejustay/pages/stay/jejustay_life.html` and `front/jejustay/pages/stay/jejustay_life.js`, `front/jejustay/pages/travel/activities.html` and `front/jejustay/pages/travel/activities.js`, and `front/jejuair/index.html` with `front/jejuair/js/main-banner.js` or the existing matching entry.
+  - Allow the shared runtime module only under `front/shared/banner-runtime/**`.
+  - Preserve the current banner layout, spacing, typography, DOM structure, and interaction affordances; do not redesign the page or remove the existing structural shell.
+  - Remove hardcoded banner-content dependence only for the managed slots; do not delete the fallback skeleton markup that is needed when the API fails or returns no usable data.
+  - Do not expand scope into route constants, mirror paths, unrelated shell behavior, or other CMS surfaces.
+acceptance_criteria:
+  - Each listed slot hydrates from CMS/API data at runtime on its target page and shows managed banner content when the API succeeds.
+  - When the API is unavailable or returns no usable banner data, the page falls back to the existing static skeleton without breaking layout or navigation.
+  - The visible banner design and page layout remain unchanged apart from the hydrated content values.
+  - The implementation uses a shared runtime path under `front/shared/banner-runtime/**` instead of duplicating banner-fetch logic across pages.
+  - The managed-banner hardcoding dependency is removed from the target pages without removing the structural markup that supports fallback rendering.
+verification:
+  - Review the frozen seed for exact slot coverage, target-page coverage, API path, and shared-module boundary.
+  - Confirm the contract stays within the listed pages and does not introduce layout or mirror changes.
+out_of_scope:
+  - Banner redesign, spacing changes, typography changes, or DOM restructuring.
+  - New admin write APIs, CMS schema changes, or database changes.
+  - Touching deployment mirror paths such as `jeju-spring/**` or `jeju-web/src/main/webapp/**`.
+  - Changing route constants, shell runtime behavior, or unrelated CMS/admin surfaces.
+  - Adding new banner slots, deleting fallback skeleton markup, or replacing the current public-page banner areas with a different component architecture.

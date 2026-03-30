@@ -1,6 +1,17 @@
 /* ========== Activities Page Logic ========== */
 
+const initManagedBannerIconRuntime = async () => {
+    try {
+        const { initPublicManagedBannerIcons } = await import("../../../shared/banner-runtime/public-managed-icons.js");
+        await initPublicManagedBannerIcons();
+    } catch (error) {
+        console.error("[ActivitiesPage] managed banner icon runtime init failed", error);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+    void initManagedBannerIconRuntime();
+
     // 1. Initialize Icons
     if (lucide) lucide.createIcons();
 

@@ -1735,6 +1735,7 @@ class AdminReadService {
                 bs.placement,
                 bs.screen_type,
                 b.banner_code,
+                b.slot_key,
                 b.title,
                 b.subtitle,
                 b.start_at,
@@ -1800,11 +1801,12 @@ class AdminReadService {
 
                 rows.add(statusRow(
                     searchable(
-                        bannerId,
-                        text(resultSet.getString("banner_code")),
-                        text(resultSet.getString("title")),
-                        text(resultSet.getString("slot_code")),
-                        text(resultSet.getString("slot_name"))
+                bannerId,
+                text(resultSet.getString("slot_key")),
+                text(resultSet.getString("banner_code")),
+                text(resultSet.getString("title")),
+                text(resultSet.getString("slot_code")),
+                text(resultSet.getString("slot_name"))
                     ),
                     List.of(
                         bannerId,
@@ -3058,9 +3060,9 @@ class AdminReadService {
     }
 
     private Connection openConnection() throws SQLException {
-        String url = normalize(appProperties.alwaysdata().dbUrl());
-        String user = normalize(appProperties.alwaysdata().dbUser());
-        String password = normalize(appProperties.alwaysdata().dbPassword());
+        String url = normalize(appProperties.database().dbUrl());
+        String user = normalize(appProperties.database().dbUser());
+        String password = normalize(appProperties.database().dbPassword());
 
         if (!StringUtils.hasText(url) || !StringUtils.hasText(user) || !StringUtils.hasText(password)) {
             throw new SQLException("admin DB configuration is missing");

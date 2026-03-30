@@ -866,9 +866,9 @@ public class MyPageDashboardRepository {
     }
 
     private Connection openConnection() throws SQLException {
-        String url = normalize(appProperties.alwaysdata().dbUrl());
-        String user = normalize(appProperties.alwaysdata().dbUser());
-        String password = normalize(appProperties.alwaysdata().dbPassword());
+        String url = normalize(appProperties.database().dbUrl());
+        String user = normalize(appProperties.database().dbUser());
+        String password = normalize(appProperties.database().dbPassword());
 
         if (!StringUtils.hasText(url) || !StringUtils.hasText(user) || !StringUtils.hasText(password)) {
             throw new SQLException("Spring mypage DB configuration is missing");

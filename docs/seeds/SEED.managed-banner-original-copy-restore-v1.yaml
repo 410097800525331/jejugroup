@@ -1,0 +1,42 @@
+goal: >
+  Restore the managed banner wording to the original public-facing marketing
+  copy instead of the normalized operator-summary copy, and make that restored
+  wording the checked-in source of truth for the admin fallback and backend
+  managed-banner seed path.
+constraints:
+  - Scope is limited to `front/admin/data/cms-config.js`,
+    `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminBannerDbStore.java`,
+    `jeju-spring/src/main/resources/db/migration/**` needed for this restore,
+    and the derived mirror outputs produced by a later sync.
+  - Preserve the current banner slot keys, family/site structure, and icon
+    handling exactly as they are.
+  - Keep overall design, layout, spacing, and page structure untouched.
+  - Existing DB-managed banner rows must be restorable through the checked-in
+    migration path, not through manual undocumented steps.
+  - The later sync is required after source changes so the mirror outputs stay
+    derived from the restored source contract.
+  - Do not touch any paths outside the scope above.
+acceptance_criteria:
+  - The admin fallback and backend seed path use the original public-facing
+    marketing copy for the managed banner content.
+  - DB-managed banner rows can be brought back to that original wording by
+    running the checked-in migration path.
+  - Slot keys, family/site structure, and icon handling remain unchanged.
+  - The visual design and layout remain unchanged.
+  - After the source changes, the derived mirror outputs are refreshed by the
+    required later sync and match the restored source contract.
+verification:
+  - `node --check front/admin/data/cms-config.js`
+  - `.codex-temp\\gradle-8.14.4\\bin\\gradle.bat -p jeju-spring compileJava`
+  - `git diff --check -- front/admin/data/cms-config.js jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminBannerDbStore.java jeju-spring/src/main/resources/db/migration docs/seeds/SEED.managed-banner-original-copy-restore-v1.yaml`
+  - `pnpm run sync`
+  - `git diff --check -- jeju-spring/src/main/resources/static/front-mirror jeju-spring/src/main/resources/templates/front-mirror`
+out_of_scope:
+  - Changing any managed banner slot key, family marker, site marker, or icon
+    handling.
+  - Altering banner layout, spacing, typography, or other design details.
+  - Reworking the admin CMS surface beyond the restored banner copy contract.
+  - Manual database edits, undocumented recovery steps, or ad hoc row fixes
+    outside the migration path.
+  - Any changes to paths outside the stated scope, including unrelated mirror
+    or deployment edits.
