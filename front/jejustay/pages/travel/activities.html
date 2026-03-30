@@ -81,18 +81,18 @@
         </div>
 
         <!-- ========== Authentication Banner ========== -->
-        <section class="auth-section container">
-            <div class="auth-banner glass-effect" id="authBanner">
+        <section class="auth-section container" data-banner-family="inline_cta_banner_family">
+            <div class="auth-banner glass-effect" id="authBanner" data-banner-slot="stay_activities_auth_banner">
                 <div class="auth-content">
-                    <div class="auth-icon-box">
+                    <div class="auth-icon-box" data-banner-field="icon">
                         <i data-lucide="plane"></i>
                     </div>
                     <div class="auth-text">
-                        <h3 data-lang="authTitle">제주항공 탑승객 인증</h3>
-                        <p data-lang="authDesc">항공권번호를 인증하고 <strong>최대 50% 추가 할인</strong> 혜택을 받으세요.</p>
+                        <h3 data-banner-field="title" data-lang="authTitle">제주항공 탑승객 인증</h3>
+                        <p data-banner-field="body" data-lang="authDesc">항공권번호를 인증하고 <strong>최대 50% 추가 할인</strong> 혜택을 받으세요.</p>
                     </div>
                 </div>
-                <button class="auth-btn" id="authBtn"><span data-lang="authBtn">인증하고 혜택받기</span> <i
+                <button class="auth-btn" id="authBtn" data-banner-field="cta"><span data-banner-field="cta_label" data-lang="authBtn">인증하고 혜택받기</span> <i
                         data-lucide="chevron-right"></i></button>
             </div>
         </section>

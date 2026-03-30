@@ -244,6 +244,172 @@
         </div>
     </div>
 
+    <div class="admin-modal-backdrop" id="cms-faq-modal" hidden>
+        <div class="admin-modal" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="cms-faq-modal-title"
+            aria-describedby="cms-faq-modal-desc">
+            <div class="admin-modal-header">
+                <div>
+                    <p class="admin-modal-eyebrow">FAQ 등록</p>
+                    <h2 class="admin-modal-title" id="cms-faq-modal-title">새 FAQ 작성</h2>
+                </div>
+                <button class="admin-modal-close" type="button" id="cms-faq-modal-close" aria-label="닫기">
+                    <i data-lucide="x" style="width:18px; height:18px;"></i>
+                </button>
+            </div>
+            <p class="admin-modal-description" id="cms-faq-modal-desc">
+                FAQ는 서비스 분류, 카테고리, 질문, 답변, 정렬 순서, 노출 상태를 함께 저장합니다.
+            </p>
+
+            <form class="admin-modal-body" id="cms-faq-form">
+                <div class="admin-modal-grid">
+                    <label class="admin-form-field" for="cms-faq-service-type">
+                        <span class="admin-form-label">서비스 분류</span>
+                        <select class="admin-form-control" id="cms-faq-service-type" name="serviceType">
+                            <option value="integrated">통합</option>
+                            <option value="air">에어</option>
+                            <option value="stay">스테이</option>
+                            <option value="rentcar">렌터카</option>
+                        </select>
+                    </label>
+                    <label class="admin-form-field" for="cms-faq-category">
+                        <span class="admin-form-label">카테고리</span>
+                        <input class="admin-form-control" id="cms-faq-category" name="category" type="text"
+                            placeholder="카테고리를 입력해">
+                    </label>
+                    <label class="admin-form-field" for="cms-faq-question">
+                        <span class="admin-form-label">질문</span>
+                        <input class="admin-form-control" id="cms-faq-question" name="question" type="text"
+                            placeholder="FAQ 질문을 입력해">
+                    </label>
+                    <label class="admin-form-field" for="cms-faq-sort-order">
+                        <span class="admin-form-label">정렬 순서</span>
+                        <input class="admin-form-control" id="cms-faq-sort-order" name="sortOrder" type="number"
+                            min="0" step="1" placeholder="0">
+                    </label>
+                    <label class="admin-form-field" for="cms-faq-active">
+                        <span class="admin-form-label">노출 상태</span>
+                        <select class="admin-form-control" id="cms-faq-active" name="active">
+                            <option value="true">노출 중</option>
+                            <option value="false">비노출</option>
+                        </select>
+                    </label>
+                </div>
+                <label class="admin-form-field" for="cms-faq-answer">
+                    <span class="admin-form-label">답변</span>
+                    <textarea class="admin-form-control" id="cms-faq-answer" name="answer" rows="8"
+                        placeholder="FAQ 답변을 입력해"></textarea>
+                </label>
+            </form>
+
+            <div class="admin-modal-footer">
+                <button class="admin-btn admin-btn-outline" type="button" id="cms-faq-modal-cancel">취소</button>
+                <button class="admin-btn admin-btn-primary" type="button" id="cms-faq-modal-submit">등록</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-modal-backdrop" id="cms-banner-modal" hidden>
+        <div class="admin-modal" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="cms-banner-modal-title"
+            aria-describedby="cms-banner-modal-desc">
+            <div class="admin-modal-header">
+                <div>
+                    <p class="admin-modal-eyebrow" id="cms-banner-modal-eyebrow">배너 등록</p>
+                    <h2 class="admin-modal-title" id="cms-banner-modal-title">새 배너 작성</h2>
+                </div>
+                <button class="admin-modal-close" type="button" id="cms-banner-modal-close" aria-label="닫기">
+                    <i data-lucide="x" style="width:18px; height:18px;"></i>
+                </button>
+            </div>
+            <p class="admin-modal-description" id="cms-banner-modal-desc">
+                배너는 세션 로컬 상태로만 저장됩니다. family에 따라 텍스트 영역과 이미지 영역이 자동으로 전환됩니다.
+            </p>
+
+            <form class="admin-modal-body" id="cms-banner-form">
+                <div class="admin-modal-grid">
+                    <label class="admin-form-field" for="cms-banner-site">
+                        <span class="admin-form-label">사이트 / 서비스</span>
+                        <select class="admin-form-control" id="cms-banner-site" name="site">
+                            <option value="integrated">통합</option>
+                            <option value="air">항공</option>
+                            <option value="stay">숙박</option>
+                        </select>
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-family">
+                        <span class="admin-form-label">패밀리</span>
+                        <select class="admin-form-control" id="cms-banner-family" name="family">
+                            <option value="promo_card_family">promo_card_family</option>
+                            <option value="inline_cta_banner_family">inline_cta_banner_family</option>
+                            <option value="hero_image_set">hero_image_set</option>
+                        </select>
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-slot-key">
+                        <span class="admin-form-label">슬롯 키</span>
+                        <input class="admin-form-control" id="cms-banner-slot-key" name="slotKey" type="text"
+                            placeholder="slot_key를 입력하세요" autocomplete="off">
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-sort-order">
+                        <span class="admin-form-label">정렬 순서</span>
+                        <input class="admin-form-control" id="cms-banner-sort-order" name="sortOrder" type="number"
+                            min="0" step="1" placeholder="0">
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-active">
+                        <span class="admin-form-label">노출 상태</span>
+                        <select class="admin-form-control" id="cms-banner-active" name="active">
+                            <option value="true">노출 중</option>
+                            <option value="false">비노출</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="admin-modal-grid">
+                    <label class="admin-form-field" for="cms-banner-eyebrow" data-banner-field-group="text">
+                        <span class="admin-form-label">Eyebrow</span>
+                        <input class="admin-form-control" id="cms-banner-eyebrow" name="eyebrow" type="text"
+                            placeholder="상단 보조 문구" autocomplete="off">
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-title" data-banner-field-group="text">
+                        <span class="admin-form-label">제목</span>
+                        <input class="admin-form-control" id="cms-banner-title" name="title" type="text"
+                            placeholder="배너 제목" autocomplete="off">
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-body" data-banner-field-group="text">
+                        <span class="admin-form-label">본문</span>
+                        <textarea class="admin-form-control" id="cms-banner-body" name="body" rows="4"
+                            placeholder="배너 본문"></textarea>
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-cta-label" data-banner-field-group="text">
+                        <span class="admin-form-label">CTA 라벨</span>
+                        <input class="admin-form-control" id="cms-banner-cta-label" name="ctaLabel" type="text"
+                            placeholder="버튼 문구" autocomplete="off">
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-cta-href" data-banner-field-group="text">
+                        <span class="admin-form-label">CTA 링크</span>
+                        <input class="admin-form-control" id="cms-banner-cta-href" name="ctaHref" type="text"
+                            placeholder="링크 또는 액션 텍스트" autocomplete="off">
+                    </label>
+                </div>
+
+                <div class="admin-modal-grid">
+                    <label class="admin-form-field" for="cms-banner-image-url" data-banner-field-group="image">
+                        <span class="admin-form-label">이미지 URL</span>
+                        <input class="admin-form-control" id="cms-banner-image-url" name="imageUrl" type="text"
+                            placeholder="이미지 경로" autocomplete="off">
+                    </label>
+                    <label class="admin-form-field" for="cms-banner-alt-text" data-banner-field-group="image">
+                        <span class="admin-form-label">대체 텍스트</span>
+                        <input class="admin-form-control" id="cms-banner-alt-text" name="altText" type="text"
+                            placeholder="이미지 alt 텍스트" autocomplete="off">
+                    </label>
+                </div>
+            </form>
+
+            <div class="admin-modal-footer">
+                <button class="admin-btn admin-btn-outline" type="button" id="cms-banner-modal-cancel">취소</button>
+                <button class="admin-btn admin-btn-primary" type="button" id="cms-banner-modal-submit">등록</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/rbac_config.js"></script>
     <script src="../js/sidebar_ui.js"></script>
     <script src="../js/store.js"></script>

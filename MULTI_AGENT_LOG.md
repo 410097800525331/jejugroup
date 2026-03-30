@@ -3002,3 +3002,102 @@
   - `reviewer_admin_notice_ops (Goodall)` first found one blocker: the dead secondary action was only being hidden after DOMContentLoaded and could flash on first paint. That blocker was fixed by marking the button `hidden` in the initial HTML, and the reviewer then reported no remaining blocking findings.
   - `node --check D:\git\jejugroup\front\admin\js\cms.js` passed on the final state.
   - `git diff --check -- D:\git\jejugroup\front\admin\pages\cms.html D:\git\jejugroup\front\admin\js\cms.js D:\git\jejugroup\front\admin\css\components.css D:\git\jejugroup\front\admin\data\cms-config.js` passed on the final state.
+
+- time: `2026-03-30 09:48:57 +09:00`
+- route: `Route B`
+- task: `Complete the admin CMS FAQ tab to the same operational level as notices with FAQ create/edit/delete, exposure toggle, and search in the existing faq segment`
+- participants: `main`, `worker_seed_admin_faq_ops (Sartre)`, `worker_admin_faq_front (Descartes)`, `worker_admin_faq_backend (Hypatia)`, `reviewer_admin_faq_ops (Laplace)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_faq_ops (Sartre)`: `docs/seeds/SEED.admin-cms-faq-ops-v1.yaml`
+  - `worker_admin_faq_front (Descartes)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/css/components.css, front/admin/data/cms-config.js`
+  - `worker_admin_faq_backend (Hypatia)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java`
+  - `reviewer_admin_faq_ops (Laplace)`: `review only`
+- verification:
+  - `worker_seed_admin_faq_ops (Sartre)` froze the contract in `docs/seeds/SEED.admin-cms-faq-ops-v1.yaml` for finishing the admin CMS FAQ segment only, keeping public FAQ redesign and mirror edits out of scope.
+  - `worker_admin_faq_front (Descartes)` added the FAQ modal/form and FAQ row actions in the existing CMS surface so the FAQ tab now supports create/edit/delete/active-toggle/search through `/api/customer-center/faqs*`, while removing the dead FAQ secondary action and preserving notices-tab behavior.
+  - `worker_admin_faq_backend (Hypatia)` enriched `/api/admin/tables/cms` FAQ rows with edit-hydration metadata including `faqId`, raw `serviceType`, `category`, `question`, `answer`, `sortOrder`, `active`, `createdAt`, `updatedAt`, `statusKey`, and `searchText`.
+  - `reviewer_admin_faq_ops (Laplace)` first found one blocker: the FAQ modal lacked `Escape` close and `Tab`/`Shift+Tab` focus trapping because the global keydown handler was still notice-only. That blocker was fixed in `front/admin/js/cms.js`, and the reviewer then reported no blocking findings.
+  - `node --check front/admin/js/cms.js` passed on the final state.
+  - `node --check front/admin/data/cms-config.js` passed on the final state.
+  - `D:\lsh\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\lsh\git\jejugroup\jeju-spring compileJava` passed on the final state.
+  - `git diff --check -- front/admin/pages/cms.html front/admin/js/cms.js front/admin/css/components.css front/admin/data/cms-config.js jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java docs/seeds/SEED.admin-cms-faq-ops-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed on the final state.
+
+- time: `2026-03-30 09:55:36 +09:00`
+- route: `Route B`
+- task: `Sync the completed admin CMS FAQ changes from front into the jeju-spring mirror using the repository sync pipeline`
+- participants: `main`, `worker_sync_admin_faq_mirror (Nash)`, `reviewer_admin_faq_sync (Singer)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_admin_faq_mirror (Nash)`: `derived jeju-spring mirror outputs touched by pnpm run sync`
+  - `reviewer_admin_faq_sync (Singer)`: `review only`
+- verification:
+  - `worker_sync_admin_faq_mirror (Nash)` ran `git status --short`, `pnpm run sync`, and `git status --short` from `D:\lsh\git\jejugroup`, and the sync completed successfully.
+  - The sync refreshed the derived admin mirror outputs under `jeju-spring/src/main/resources/{static,templates}/front-mirror/admin/**` and also rolled the generated customer-center mirror assets/templates under `jeju-spring/src/main/resources/{static,templates}/front-mirror/pages/cs/**`.
+  - `reviewer_admin_faq_sync (Singer)` first noted that the active worktree still included the separately edited backend source file from the FAQ feature slice, but when scoped to the sync-added mirror outputs the reviewer reported no blocking findings.
+  - Residual risk only: `jeju-spring/src/main/resources/templates/front-mirror/pages/cs/customer_center.html` picked up line-ending/whitespace churn, so mirror-scoped `git diff --check` reports trailing-whitespace noise there even though the reviewer found no functional blocking issue in the derived outputs.
+
+- time: `2026-03-30 10:32:55 +09:00`
+- route: `Route B`
+- task: `Normalize the currently hardcoded marketing banner surfaces with stable slot/type naming while preserving the existing hardcoded Jeju Stay and Jeju Air banner content and layout`
+- participants: `main`, `worker_seed_banner_slots (Russell)`, `worker_banner_stay_slots (Locke)`, `worker_banner_air_slots (Lorentz)`, `reviewer_banner_slots (Lovelace)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_banner_slots (Russell)`: `docs/seeds/SEED.banner-slot-normalization-v1.yaml`
+  - `worker_banner_stay_slots (Locke)`: `front/jejustay/pages/hotel/jejuhotel.html, front/jejustay/pages/stay/private_stay.html, front/jejustay/pages/stay/jejustay_life.html, front/jejustay/pages/travel/activities.html`
+  - `worker_banner_air_slots (Lorentz)`: `front/jejuair/index.html`
+  - `reviewer_banner_slots (Lovelace)`: `review only`
+- verification:
+  - `worker_seed_banner_slots (Russell)` froze the naming-only contract in `docs/seeds/SEED.banner-slot-normalization-v1.yaml`, explicitly keeping admin/API/DB work and hardcoded banner removal out of scope.
+  - `worker_banner_stay_slots (Locke)` added `data-banner-family`, `data-banner-slot`, and `data-banner-field` markers across the Jeju Stay promo-card and inline CTA banner surfaces without changing the hardcoded copy or layout.
+  - The normalized Jeju Stay slots now cover `stay_hotel_promo_main`, `stay_hotel_promo_sub_1`, `stay_hotel_promo_sub_2`, `stay_private_promo_main`, `stay_private_promo_sub_1`, `stay_private_promo_sub_2`, `stay_life_promo_1`, `stay_life_promo_2`, `stay_life_promo_3`, `stay_life_synergy_banner`, and `stay_activities_auth_banner`.
+  - `worker_banner_air_slots (Lorentz)` marked the Jeju Air hero swiper as `hero_image_set` and tagged the three existing images as `air_home_hero_1`, `air_home_hero_2`, and `air_home_hero_3` with `data-banner-field="image"` while leaving swiper structure, order, and image sources untouched.
+  - `reviewer_banner_slots (Lovelace)` reported no blocking findings; residual note only that downstream CMS parsers will need to consume `promo_card_family`, `inline_cta_banner_family`, and `hero_image_set` consistently in a later integration slice.
+  - `git diff --check -- front/jejustay/pages/hotel/jejuhotel.html front/jejustay/pages/stay/private_stay.html front/jejustay/pages/stay/jejustay_life.html front/jejustay/pages/travel/activities.html front/jejuair/index.html docs/seeds/SEED.banner-slot-normalization-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed on the final state.
+  - Residual warning only: `front/jejuair/index.html` emitted a CRLF normalization warning in the worktree, but no blocking content/layout regression was found.
+
+- time: `2026-03-30 12:18:00 +09:00`
+- route: `Route B`
+- task: `Build the admin CMS banner-tab frontend around the normalized hardcoded banner slots while preserving the existing admin design/layout and keeping the current hardcoded marketing banners as the fallback source`
+- participants: `main`, `worker_seed_admin_banner_front (Parfit)`, `worker_admin_banner_front (Einstein)`, `reviewer_admin_banner_front (Newton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_seed_admin_banner_front (Parfit)`: `docs/seeds/SEED.admin-cms-banner-front-v1.yaml`
+  - `worker_admin_banner_front (Einstein)`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/data/cms-config.js`
+  - `reviewer_admin_banner_front (Newton)`: `review only`
+- verification:
+  - `worker_seed_admin_banner_front (Parfit)` froze the frontend-only banner-tab contract in `docs/seeds/SEED.admin-cms-banner-front-v1.yaml`, keeping layout/design changes, banner write APIs, DB persistence, and public-page renderer replacement out of scope.
+  - `worker_admin_banner_front (Einstein)` wired the `banner` tab to render admin rows or normalized fallback rows, added the banner modal in the existing CMS modal pattern, and connected local create/edit/toggle/delete plus the harmless `배치 정리` reorder action without touching CSS files.
+  - `reviewer_admin_banner_front (Newton)` found one blocking issue on the first pass: the banner flow let `sessionStorage` outrank the backend/fallback source contract, so a follow-up worker patch is required before the slice can close.
+  - `node --check front/admin/js/cms.js` passed on the worker state.
+  - `node --check front/admin/data/cms-config.js` passed on the worker state.
+  - `git diff --check -- front/admin/pages/cms.html front/admin/js/cms.js front/admin/data/cms-config.js docs/seeds/SEED.admin-cms-banner-front-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed on the worker state before the blocker follow-up.
+
+- time: `2026-03-30 12:29:00 +09:00`
+- route: `Route B`
+- task: `Close the admin CMS banner-tab frontend blocker by restoring backend/fallback-first banner sourcing and completing re-review`
+- participants: `main`, `worker_admin_banner_front (Einstein)`, `reviewer_admin_banner_front (Newton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_banner_front (Einstein)`: `front/admin/js/cms.js`
+  - `reviewer_admin_banner_front (Newton)`: `review only`
+- verification:
+  - `worker_admin_banner_front (Einstein)` removed the `sessionStorage` banner source path, changed `loadBannerRows()` to use `admin rows -> fallback rows` as the base source, and kept local banner CRUD/reorder state in page memory only through `bannerRuntimeRows`.
+  - `reviewer_admin_banner_front (Newton)` re-reviewed the follow-up and reported `블로킹 findings 없음`; notices/FAQ behavior and the existing admin layout remained intact.
+  - `node --check front/admin/js/cms.js` passed on the follow-up state.
+  - `node --check front/admin/data/cms-config.js` passed on the follow-up state.
+  - `git diff --check -- front/admin/pages/cms.html front/admin/js/cms.js front/admin/data/cms-config.js docs/seeds/SEED.admin-cms-banner-front-v1.yaml STATE.md MULTI_AGENT_LOG.md` passed on the follow-up state.
+
+- time: `2026-03-30 12:41:00 +09:00`
+- route: `Route B`
+- task: `Sync the completed admin CMS banner-tab frontend changes from front into the jeju-spring mirror using the repository sync pipeline`
+- participants: `main`, `worker_sync_admin_banner_mirror (Faraday)`, `reviewer_admin_banner_sync (Leibniz)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_admin_banner_mirror (Faraday)`: `derived jeju-spring/src/main/resources/static/front-mirror/** and derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
+  - `reviewer_admin_banner_sync (Leibniz)`: `review only`
+- verification:
+  - `worker_sync_admin_banner_mirror (Faraday)` ran `pnpm run sync` from `D:\lsh\git\jejugroup`, and the sync completed successfully.
+  - The sync refreshed the derived admin mirror outputs under `jeju-spring/src/main/resources/{static,templates}/front-mirror/admin/**`, including `admin/css/components.css`, `admin/data/cms-config.js`, `admin/js/cms.js`, and `templates/front-mirror/admin/pages/cms.html`.
+  - The same sync also rolled the generated customer-center mirror assets/templates under `jeju-spring/src/main/resources/{static,templates}/front-mirror/pages/cs/**`, including new hashed asset bundle names referenced by `customer_center.html`.
+  - `reviewer_admin_banner_sync (Leibniz)` found no blocking issue inside the derived mirror outputs; the separately modified `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java` is an unrelated non-mirror worktree change rather than a sync-generated mirror artifact.

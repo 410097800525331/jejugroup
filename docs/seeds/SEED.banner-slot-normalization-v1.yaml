@@ -1,0 +1,29 @@
+goal: >
+  Maintain the current hardcoded Jeju Stay and Jeju Air banner content and
+  introduce stable normalized slot/type naming for CMS readiness using
+  promo_card_family, inline_cta_banner_family, and hero_image_set across the
+  relevant surfaces.
+
+constraints:
+  - Hardcoded text, icons, layout, and DOM structure must be preserved and not removed.
+  - This slice is naming and slot-marker normalization only.
+  - The Jeju Air swiper must only define image-replacement slots; it must not be refactored into a dynamic carousel.
+  - Admin, API, and DB implementation are out of scope.
+  - front remains the only human-edited source of truth.
+
+acceptance_criteria:
+  - The bottom promo card groups in jejuhotel, private_stay, and jejustay_life are normalized under promo_card_family naming.
+  - The jejustay_life synergy banner and activities auth banner are normalized under inline_cta_banner_family naming.
+  - The three Jeju Air hero swiper panels are normalized under hero_image_set slot naming.
+  - The current hardcoded content and visual layout are preserved.
+
+verification:
+  - Review front/jejuair/index.html manually because `node --check` is not applicable to HTML.
+  - Run `git diff --check -- front/jejustay/pages/hotel/jejuhotel.html front/jejustay/pages/stay/private_stay.html front/jejustay/pages/stay/jejustay_life.html front/jejustay/pages/travel/activities.html front/jejuair/index.html docs/seeds/SEED.banner-slot-normalization-v1.yaml STATE.md MULTI_AGENT_LOG.md`.
+  - Reviewer pass for naming consistency and hardcoded content/layout preservation.
+
+out_of_scope:
+  - Admin CMS banner tab implementation.
+  - Backend API or DB schema implementation.
+  - jeju-spring mirror sync.
+  - Removing the hardcoded banners.

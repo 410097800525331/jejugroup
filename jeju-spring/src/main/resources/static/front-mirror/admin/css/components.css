@@ -271,13 +271,15 @@
     border-bottom: none;
 }
 
-.cms-notice-row-actions {
+.cms-notice-row-actions,
+.cms-faq-row-actions {
     display: inline-flex;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-.cms-notice-status-toggle {
+.cms-notice-status-toggle,
+.cms-faq-status-toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -294,44 +296,53 @@
     white-space: nowrap;
 }
 
-.cms-notice-status-toggle:hover {
+.cms-notice-status-toggle:hover,
+.cms-faq-status-toggle:hover {
     background-color: rgba(255, 255, 255, 0.04);
 }
 
-.cms-notice-status-toggle:focus-visible {
+.cms-notice-status-toggle:focus-visible,
+.cms-faq-status-toggle:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
 }
 
-.cms-notice-status-toggle--active {
+.cms-notice-status-toggle--active,
+.cms-faq-status-toggle--active {
     border-color: rgba(46, 204, 113, 0.55);
     color: var(--admin-success);
 }
 
-.cms-notice-status-toggle--active:hover {
+.cms-notice-status-toggle--active:hover,
+.cms-faq-status-toggle--active:hover {
     background-color: rgba(46, 204, 113, 0.08);
 }
 
-.cms-notice-status-toggle--inactive {
+.cms-notice-status-toggle--inactive,
+.cms-faq-status-toggle--inactive {
     border-color: rgba(241, 196, 15, 0.6);
     color: var(--admin-warning);
 }
 
-.cms-notice-status-toggle--inactive:hover {
+.cms-notice-status-toggle--inactive:hover,
+.cms-faq-status-toggle--inactive:hover {
     background-color: rgba(241, 196, 15, 0.08);
 }
 
-.cms-notice-row-actions .admin-btn {
+.cms-notice-row-actions .admin-btn,
+.cms-faq-row-actions .admin-btn {
     min-width: 72px;
     justify-content: center;
 }
 
-.cms-notice-row-actions .admin-btn.admin-btn-danger {
+.cms-notice-row-actions .admin-btn.admin-btn-danger,
+.cms-faq-row-actions .admin-btn.admin-btn-danger {
     border-color: rgba(231, 76, 60, 0.35);
     color: var(--admin-danger);
 }
 
-.cms-notice-row-actions .admin-btn.admin-btn-danger:hover {
+.cms-notice-row-actions .admin-btn.admin-btn-danger:hover,
+.cms-faq-row-actions .admin-btn.admin-btn-danger:hover {
     background-color: rgba(231, 76, 60, 0.12);
     border-color: rgba(231, 76, 60, 0.65);
     color: var(--admin-danger);

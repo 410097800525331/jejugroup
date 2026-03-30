@@ -1620,7 +1620,7 @@ class AdminReadService {
         }
 
         String query = """
-            SELECT id, service_type, category, question, created_at, is_active
+            SELECT id, service_type, category, question, answer, sort_order, is_active, created_at, updated_at
             FROM faqs
             ORDER BY created_at DESC, id DESC
             """;
@@ -1629,24 +1629,55 @@ class AdminReadService {
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
+                long faqId = resultSet.getLong("id");
+                String rawServiceType = text(resultSet.getString("service_type"));
+                String serviceTypeLabel = displayServiceType(rawServiceType);
                 String question = text(resultSet.getString("question"));
-                String serviceType = displayServiceType(resultSet.getString("service_type"));
                 String category = text(resultSet.getString("category"));
-                String statusKey = resultSet.getInt("is_active") == 1 ? "active" : "inactive";
+                String answer = text(resultSet.getString("answer"));
+                int sortOrder = resultSet.getInt("sort_order");
+                boolean active = resultSet.getInt("is_active") == 1;
+                Timestamp createdAt = resultSet.getTimestamp("created_at");
+                Timestamp updatedAt = resultSet.getTimestamp("updated_at");
+                String statusKey = active ? "active" : "inactive";
+                String searchText = searchable(
+                    String.valueOf(faqId),
+                    rawServiceType,
+                    serviceTypeLabel,
+                    category,
+                    question,
+                    answer,
+                    String.valueOf(sortOrder),
+                    statusKey
+                );
 
-                rows.add(statusRow(
-                    searchable(String.valueOf(resultSet.getLong("id")), serviceType, category, question),
+                Map<String, Object> row = statusRow(
+                    searchText,
                     List.of(
-                        String.valueOf(resultSet.getLong("id")),
-                        serviceType,
+                        String.valueOf(faqId),
+                        serviceTypeLabel,
                         category,
                         question,
-                        formatTimestamp(resultSet.getTimestamp("created_at")),
+                        formatTimestamp(createdAt),
                         resolveStatusLabel(statusKey),
                         "읽기 전용"
                     ),
                     statusKey
-                ));
+                );
+                row.put("faqId", String.valueOf(faqId));
+                row.put("id", String.valueOf(faqId));
+                row.put("serviceType", rawServiceType);
+                row.put("serviceTypeLabel", serviceTypeLabel);
+                row.put("category", category);
+                row.put("question", question);
+                row.put("answer", answer);
+                row.put("sortOrder", sortOrder);
+                row.put("active", active);
+                row.put("createdAt", formatTimestamp(createdAt));
+                row.put("updatedAt", formatTimestamp(updatedAt));
+                row.put("statusKey", statusKey);
+                row.put("searchText", searchText);
+                rows.add(row);
             }
         }
         return rows;

@@ -1,0 +1,28 @@
+goal: >
+  Freeze the admin CMS banner-tab front slice so the existing hardcoded
+  marketing banners remain available as fallback management data in the admin
+  CMS UI while the banner tab is wired to the normalized slot contract.
+constraints:
+  - Limit this slice to the front admin contract only: `front/admin/pages/cms.html`, `front/admin/js/cms.js`, and `front/admin/data/cms-config.js`.
+  - Preserve the existing admin screen structure, components, layout, spacing, and CSS tone; do not redesign the page.
+  - Keep the current hardcoded banner content intact and expose it as fallback rows when the admin CMS banner read surface returns no banner rows or is unavailable.
+  - Prefer the backend read surface `/api/admin/tables/cms` when present, but do not introduce DB writes, write APIs, persistence changes, or public-page banner replacement in this pass.
+  - Normalize banner slot usage around `promo_card_family`, `inline_cta_banner_family`, `hero_image_set`, and existing explicit `slot_key` values such as `stay_hotel_promo_main`.
+  - Keep notices and faqs behavior stable while adding the banner-tab slice.
+  - Do not expand scope into deployment mirrors, shell runtime, route constants, or unrelated admin surfaces.
+acceptance_criteria:
+  - The admin CMS banner tab renders a list view from management data using normalized slot keys.
+  - Search and status filters work for the banner tab.
+  - The banner modal entry flow opens from the tab list and reaches the expected detail/edit view.
+  - Notices and faqs remain functionally unchanged.
+  - The existing admin layout, design, and CSS tone remain visually unchanged.
+verification:
+  - `node --check front/admin/js/cms.js`
+  - `node --check front/admin/data/cms-config.js`
+  - `git diff --check -- front/admin/pages/cms.html front/admin/js/cms.js front/admin/data/cms-config.js docs/seeds/SEED.admin-cms-banner-front-v1.yaml STATE.md MULTI_AGENT_LOG.md`
+out_of_scope:
+  - DB save or update flow for banner data.
+  - Write API integration for banner persistence.
+  - Removing or refactoring the current hardcoded banner source.
+  - Public page banner renderer changes.
+  - Layout, typography, spacing, color, or component redesign.
