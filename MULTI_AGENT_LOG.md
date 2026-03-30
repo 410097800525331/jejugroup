@@ -3512,3 +3512,65 @@
   - `git diff --check -- front/admin/css/components.css front/admin/js/cms.js` passed.
   - `worker_sync_admin_banner_spacing_and_modal_copy_mirror (Boole)` ran `pnpm run sync` successfully and refreshed the expected derived mirror outputs, including `jeju-spring/src/main/resources/static/front-mirror/admin/css/components.css`, `jeju-spring/src/main/resources/static/front-mirror/admin/js/cms.js`, and `jeju-spring/src/main/resources/templates/front-mirror/admin/pages/cms.html`.
   - Final reviewer `reviewer_admin_banner_spacing_and_modal_copy_sync (Avicenna)` reported no blocking issues and confirmed the spacing is materially tighter, nowrap protections still prevent awkward wraps, and the banner modal Korean copy is no longer garbled in source or mirror.
+
+- time: `2026-03-30 17:08:00 +09:00`
+- route: `Route B`
+- task: `Redesign the OCI runtime into a Docker-based app/mysql/nginx deployment and prepare repo artifacts for that flow`
+- participants: `main`, `worker_app_containerization (Helmholtz)`, `worker_compose_proxy_docs (Epicurus)`, `reviewer_oci_docker_runtime (Hubble)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_app_containerization (Helmholtz)`: `jeju-spring/build.gradle, jeju-spring/Dockerfile, jeju-spring/.dockerignore, .dockerignore`
+  - `worker_compose_proxy_docs (Epicurus)`: `docker-compose.yml, deploy/nginx/default.conf, docs/docker-oci-runtime-migration.md`
+  - `reviewer_oci_docker_runtime (Hubble)`: `review only`
+- verification:
+  - `worker_app_containerization (Helmholtz)` fixed the Docker app path by pinning `bootJar` output to `jeju-spring/build/libs/jeju-spring.jar`, rewriting `jeju-spring/Dockerfile` as a repo-root-context multi-stage JAR image build, and adding a repo-root `.dockerignore` that excludes build noise and secret key material from the Docker context.
+  - `worker_compose_proxy_docs (Epicurus)` created `docker-compose.yml`, `deploy/nginx/default.conf`, and `docs/docker-oci-runtime-migration.md` for the OCI Docker runtime, wiring `app/mysql/nginx`, `/opt/jejugroup/.env`, `/uploads`, and the host-MySQL-to-container-MySQL migration steps.
+  - `worker_compose_proxy_docs (Epicurus)` corrected the first draft so the app service now builds from `jeju-spring/Dockerfile` instead of launching `ROOT.war`, uses `/uploads` as the host bind mount, and rewrote the operator guide with UTF-8 BOM to avoid mojibake on Windows.
+  - `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat --no-daemon -p D:\lsh\git\jejugroup\jeju-spring bootJar` passed, and `jeju-spring/build/libs/jeju-spring.jar` exists as the Docker image input artifact.
+  - `git diff --check -- .dockerignore jeju-spring/build.gradle jeju-spring/Dockerfile jeju-spring/.dockerignore docker-compose.yml deploy/nginx/default.conf docs/docker-oci-runtime-migration.md` passed.
+  - `reviewer_oci_docker_runtime (Hubble)` reported no blocking findings after the docs encoding rewrite. Residual risk: this workspace does not have a `docker` CLI, so `docker compose up -d` could not be exercised locally.
+
+- time: `2026-03-30 17:39:00 +09:00`
+- route: `Route B`
+- task: `Fix the Docker build context blocker during the live OCI cutover and complete the container switch`
+- participants: `main`, `worker_docker_context_fix (Carson)`, `worker_docker_context_secret_fix (Averroes)`, `reviewer_oci_cutover_build_fix (Fermat)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, live OCI runtime commands`
+  - `worker_docker_context_fix (Carson)`: `.dockerignore`
+  - `worker_docker_context_secret_fix (Averroes)`: `.dockerignore`
+  - `reviewer_oci_cutover_build_fix (Fermat)`: `review only`
+- verification:
+  - During the live OCI Docker cutover, `docker compose up -d --build app` initially failed because the repo-root Docker build context excluded `jeju-spring/gradle/wrapper/gradle-wrapper.jar`.
+  - `worker_docker_context_fix (Carson)` restored the Gradle wrapper jar to the Docker context with a negation rule in the root `.dockerignore`.
+  - Reviewer `reviewer_oci_cutover_build_fix (Fermat)` then identified a blocking secret-leakage gap because repo-root `.dockerignore` still allowed `*.pem`, `*.key`, and `.env` files into the Docker context.
+  - `worker_docker_context_secret_fix (Averroes)` tightened the root `.dockerignore` to exclude `**/*.pem`, `**/*.key`, `**/.env`, and `**/.env.*` while preserving `!jeju-spring/gradle/wrapper/gradle-wrapper.jar`, and the final reviewer pass reported no blocking findings.
+  - Main updated the staged OCI source tree with the corrected `.dockerignore`, copied the missing `gradle-wrapper.jar` to the server-side repo snapshot, rebuilt the app image successfully, adjusted `/opt/jejugroup/.env` and `/uploads` permissions for the container runtime, and completed the cutover by stopping/disabling the direct-host `jejugroup`, `nginx`, and `mysql` services before starting the compose `nginx` service on port 80.
+  - Final runtime verification on the OCI VM showed `jejugroup-app`, `jejugroup-mysql`, and `jejugroup-nginx` all `Up`, and both `http://127.0.0.1/actuator/health` and `http://129.146.53.253/actuator/health` returned `{"status":"UP","groups":["liveness","readiness"]}`.
+
+- time: `2026-03-30 17:53:00 +09:00`
+- route: `Route A`
+- task: `Restore live OCI login by replacing the Docker MySQL contents with the user-provided local dump`
+- participants: `main`
+- write_sets:
+  - `main`: `live OCI runtime commands, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification:
+  - Confirmed the live app was already pointing at the Docker MySQL service via `jdbc:mysql://mysql:3306/jejugroup_db`, so the login failure was not caused by the app reading the local workstation DB URL.
+  - Verified the user-provided dump `C:\Users\pc-0600\Documents\dumps\jejugroup_local.sql` contains the expected `users` table and readable Korean data without a BOM prefix.
+  - Copied that dump into the running `jejugroup-mysql` container and re-imported it with `mysql --default-character-set=utf8mb4` after recreating `jejugroup_db`, avoiding the earlier stdin/CRLF path that left the app DB half-replaced.
+  - Post-import checks showed `users` exists again in `jejugroup_db` with 30 rows, including `admin`, `gaeun96`, `hyeonu97`, `jihun95`, and `jimin93`.
+  - Restarted the `app` service, and `docker inspect --format='{{.State.Status}} {{.State.ExitCode}} {{.State.Error}}' jejugroup-app` now reports `running 0`.
+  - Public `GET http://129.146.53.253/actuator/health` returned `200` with `{"status":"UP","groups":["liveness","readiness"]}`.
+  - Public `POST http://129.146.53.253/api/auth/login` with `id=admin&pw=1234` returned `200` and `GET /api/auth/session` with the issued cookie returned the authenticated admin session payload.
+
+- time: `2026-03-30 17:33:58 +09:00`
+- route: `Route A`
+- task: `Add and validate a one-command OCI Docker redeploy script for the live Jeju Group server`
+- participants: `main`
+- write_sets:
+  - `main`: `scripts/oci-docker-redeploy.ps1, STATE.md, MULTI_AGENT_LOG.md, live OCI runtime commands for validation`
+- verification:
+  - `scripts/oci-docker-redeploy.ps1` now packages the current worktree with secret/build-output exclusions, uploads the archive plus `gradle-wrapper.jar`, refreshes `/opt/jejugroup/docker-src`, runs `docker compose up -d mysql` followed by `docker compose up -d --build app nginx`, and waits for both remote and public health checks.
+  - The script's previously garbled Korean error strings were rewritten into readable UTF-8 copy for the missing SSH key, missing wrapper jar, and public health-check failure paths.
+  - PowerShell parser verification passed with `[System.Management.Automation.Language.Parser]::ParseFile(...)`.
+  - `curl.exe -fsS http://129.146.53.253/actuator/health` returned `{"status":"UP","groups":["liveness","readiness"]}` after the script cleanup.
+  - `ssh -i D:\lsh\git\jejugroup\ssh-key-2026-03-30.key ubuntu@129.146.53.253 "cd /opt/jejugroup/docker-src && docker compose ps"` confirmed `jejugroup-app`, `jejugroup-mysql`, and `jejugroup-nginx` are all `Up` on the live OCI Docker stack.

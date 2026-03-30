@@ -2,40 +2,38 @@
 
 ## Current Task
 
-- task: `Further tighten the admin CMS banner table spacing and fix the garbled Korean copy inside the banner modal`
-- phase: `implementation`
-- scope: `front/admin/css/components.css, front/admin/js/cms.js, derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/**, STATE.md, MULTI_AGENT_LOG.md`
-- verification_target: `The admin CMS banner table must feel noticeably tighter in the first columns without awkward wraps, and the banner modal must show readable Korean copy instead of garbled ??? text.`
+- task: `Debug the live OCI Docker runtime so database-backed login works again`
+- phase: `completed`
+- scope: `OCI runtime env inspection, container logs, DB connectivity validation, minimal fix if needed, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification_target: `Identify why login fails on the live Docker deployment, restore working database-backed auth if broken, and verify the app and DB path with concrete runtime checks.`
 
 ## Route
 
-- route: `Route B`
-- reason: `The user expanded the scope to a stronger banner-table spacing adjustment plus a banner-modal copy fix, and the work still requires source edits and a jeju-spring mirror sync hard-trigger path, so it stays in delegated Route B.`
+- route: `Route A`
+- reason: `The user reported a live-runtime login failure after the Docker cutover, and the next step is a bounded operational debug slice focused on server-side runtime inspection and a minimal targeted fix.`
 
 ## Writer Slot
 
-- owner: `planner-only main`
+- owner: `main`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_admin_banner_spacing_and_modal_copy_fix`: `front/admin/css/components.css, front/admin/js/cms.js`
-  - `worker_sync_admin_banner_spacing_mirror`: `derived jeju-spring/src/main/resources/static/front-mirror/**, derived jeju-spring/src/main/resources/templates/front-mirror/** touched by pnpm run sync`
-- note: `Main stays planner-only. The source fixes are tightly coupled on the same admin banner surface, so one worker owns the CSS spacing and modal-copy repair together; the sync worker owns only the derived mirror outputs.`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md, minimal runtime/config files if required, live OCI runtime commands for validation`
+- note: `Single-lane production debug slice. Start with runtime inspection, then apply only the smallest fix needed to restore DB-backed login.`
 
 ## Contract Freeze
 
 - contract_freeze: `done`
 - status: `direct_user_contract`
-- path: `docs/seeds/SEED.managed-banner-original-copy-restore-v1.yaml`
-- revision: `managed-banner-original-copy-restore-v1`
-- note: `The contract is directly frozen from the user's wording: tighten the banner-table spacing more aggressively while preserving the layout and fix the garbled Korean copy inside the banner popup.`
+- path: `direct_user_contract`
+- revision: `oci-login-db-debug-v1`
+- note: `The contract is directly frozen from the user's report that the live OCI deployment appears unable to log in, likely due to DB connectivity or runtime env mismatch.`
 
 ## Reviewer
 
-- reviewer: `required`
-- reviewer_target: `reviewer_admin_banner_spacing_sync`
-- reviewer_focus: `Check that the banner table spacing is visibly tighter in source and mirror, labels still avoid awkward wraps, the banner modal Korean copy is no longer garbled, and there are no blocking regressions.`
+- reviewer: `not_assigned`
+- reviewer_target: `pending`
+- reviewer_focus: `Concrete runtime evidence that the live Docker app can reach the intended MySQL database and that login-path failures are resolved or precisely diagnosed.`
 
 ## Last Update
 
-- timestamp: `2026-03-30 15:06:19 +09:00`
-- note: `Route B banner spacing plus modal-copy slice completed. The first columns were tightened more aggressively in source CSS, the banner modal Korean copy was restored, the mirror was resynced, and the final reviewer reported no blocking issues.`
+- timestamp: `2026-03-30 17:53:00 +09:00`
+- note: `OCI Docker MySQL was replaced with the user-provided local dump using a UTF-8-safe container-side import, the app was restarted successfully, public health returned UP again, and admin login with password 1234 now succeeds on the live server.`

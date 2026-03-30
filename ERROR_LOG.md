@@ -526,3 +526,89 @@ status: open
 # summary: `BOM 컴파일 오류 재실행으로 해결`
 # details: `임시 Java 파일을 BOM 없는 UTF-8로 다시 생성해서 로컬 MySQL managed banner 11행을 정상 업데이트했고, title/subtitle/cta_label readback 검증도 끝냈다.`
 # status: `resolved`
+## 2026-03-30 16:29:00 +09:00
+
+- time: `2026-03-30 16:29:00 +09:00`
+- location: `D:\lsh\git\jejugroup\ssh-key-2026-03-30.key`
+- summary: `OCI SSH 접속 시 개인키 권한 과다로 OpenSSH가 키를 거부함`
+- details: `ssh -i ... ubuntu@129.146.53.253 실행 시 NT AUTHORITY\\Authenticated Users 읽기 권한 때문에 "UNPROTECTED PRIVATE KEY FILE" 오류가 발생했고, 키 로딩이 차단되어 publickey 인증에 실패했다.`
+- status: `open`
+
+## 2026-03-30 16:30:00 +09:00
+
+- time: `2026-03-30 16:30:00 +09:00`
+- location: `D:\lsh\git\jejugroup\ssh-key-2026-03-30.key`
+- summary: `OCI SSH 접속용 개인키 권한 수정 후 접속 복구`
+- details: `icacls로 상속을 끄고 현재 사용자 읽기 권한만 남긴 뒤, ssh -i ... ubuntu@129.146.53.253 "hostname && whoami && uname -a" 검증이 성공했다.`
+- status: `resolved`
+
+## 2026-03-30 16:38:00 +09:00
+
+- time: `2026-03-30 16:38:00 +09:00`
+- location: `OCI remote bootstrap command`
+- summary: `PowerShell이 원격 bash 변수 치환을 선행 해석해 OCI 초기 세팅 명령이 실패함`
+- details: `ssh \"...\" \"DB_PASS=$(openssl ...)\" 형태를 PowerShell에서 실행하면서 openssl 서브셸이 로컬에서 먼저 평가되어 command not found가 발생했고, 뒤따른 chown도 빈 변수 때문에 실패했다. 스크립트를 표준입력으로 넘기는 방식으로 재시도 필요.`
+- status: `open`
+
+## 2026-03-30 16:41:00 +09:00
+
+- time: `2026-03-30 16:41:00 +09:00`
+- location: `OCI systemd jejugroup.service`
+- summary: `배포용 systemd 서비스와 nginx 프록시는 생성됐지만 Spring Boot WAR가 기동 직후 exit 1로 종료됨`
+- details: `WAR 업로드, systemd service 생성, nginx reverse proxy 설정까지는 완료됐다. 그러나 systemctl restart jejugroup 후 서비스가 auto-restart 루프에 들어가고 localhost health check는 502를 반환했다. journalctl 원인 분석이 필요하다.`
+- status: `open`
+
+## 2026-03-30 16:42:30 +09:00
+
+- time: `2026-03-30 16:42:30 +09:00`
+- location: `OCI remote bootstrap command`
+- summary: `PowerShell 원격 bash 치환 충돌 우회 완료`
+- details: `원격 초기 세팅 스크립트를 ssh 표준입력으로 넘기는 방식으로 재실행하여 앱 디렉터리, DB, 앱 전용 MySQL 계정, /opt/jejugroup/.env 생성을 정상 완료했다.`
+- status: `resolved`
+
+## 2026-03-30 16:43:30 +09:00
+
+- time: `2026-03-30 16:43:30 +09:00`
+- location: `OCI systemd jejugroup.service`
+- summary: `실행형 WAR 기동 실패를 expanded classpath 실행으로 우회해 서비스 복구`
+- details: `java -jar /opt/jejugroup/jeju-spring.war는 SpringApplication classpath 누락으로 실패했지만, WAR를 /opt/jejugroup/app-current로 압축 해제한 뒤 WEB-INF/classes, WEB-INF/lib, WEB-INF/lib-provided를 classpath로 지정하는 systemd ExecStart로 교체하여 nginx / 및 /actuator/health가 200/UP을 반환했다.`
+- status: `resolved`
+
+## 2026-03-30 17:27:00 +09:00
+
+- time: `2026-03-30 17:27:00 +09:00`
+- location: `OCI docker compose build app`
+- summary: `Docker app image build blocked because repo-root .dockerignore excluded gradle-wrapper.jar`
+- details: `OCI 서버에서 docker compose up -d --build app 실행 중 jeju-spring/Dockerfile의 gradlew step가 'Unable to access jarfile /workspace/jeju-spring/gradle/wrapper/gradle-wrapper.jar'로 실패했다. 원인은 repo-root .dockerignore의 **/*.jar 규칙이 Gradle wrapper jar까지 Docker build context에서 제외한 것이다. narrow repo fix 후 재시도 필요하다.`
+- status: `open`
+
+## 2026-03-30 17:39:00 +09:00
+
+- time: `2026-03-30 17:39:00 +09:00`
+- location: `OCI docker compose build app`
+- summary: `Docker build blocker resolved and OCI cutover completed`
+- details: `repo-root .dockerignore에 gradle-wrapper.jar 재포함 규칙과 *.pem/*.key/.env 계열 차단 규칙을 반영하고, tar 업로드에서 빠졌던 gradle-wrapper.jar를 서버 소스에 별도로 복사한 뒤 app 이미지를 재빌드했다. 이후 /opt/jejugroup/.env 권한을 컨테이너가 읽을 수 있게 조정하고 app를 재기동했으며, docker compose 기준 app/mysql/nginx가 모두 정상 상태가 되었고 public /actuator/health도 UP을 반환했다.`
+- status: `resolved`
+## 2026-03-30 16:45:08 +09:00
+
+- time: `2026-03-30 16:45:08 +09:00`
+- location: `jeju-spring Docker verification`
+- summary: `docker CLI not available in the local environment`
+- details: `Gradle bootJar verification succeeded, but docker build could not be executed because the docker command is not installed or not on PATH in this workspace.`
+- status: `deferred`
+
+## 2026-03-30 17:42:00 +09:00
+
+- time: `2026-03-30 17:42:00 +09:00`
+- location: `local mysqldump for OCI DB overwrite`
+- summary: `첫 로컬 DB dump 시도가 잘못된 DB 이름과 tablespace 권한 문제로 실패`
+- details: `초기 mysqldump 명령에서 DB 이름이 잘못 전달돼 \`jeju\`로 인식됐고, 이어서 로컬 계정 권한으로는 tablespace dump가 막혔다. DB 이름을 \`jejugroup_local\`로 바로잡고 \`--no-tablespaces\`를 추가한 뒤 dump 생성은 정상 완료됐다.`
+- status: `resolved`
+
+## 2026-03-30 17:49:00 +09:00
+
+- time: `2026-03-30 17:49:00 +09:00`
+- location: `OCI Docker MySQL local-dump import`
+- summary: `초기 OCI import가 CRLF env 값과 ssh stdin 경로 때문에 반쯤 실패해 app가 502로 내려감`
+- details: `서버 .env를 쉘에서 읽는 과정에 CRLF가 남아 DB 이름 끝에 carriage return이 붙었고, 이어서 ssh stdin으로 dump를 직접 넣는 방식도 꼬여 `users` 테이블이 없는 상태로 app가 재기동됐다. 이후 dump를 컨테이너 내부 파일로 복사하고 `mysql --default-character-set=utf8mb4`로 다시 import하는 방식으로 복구했다.`
+- status: `resolved`

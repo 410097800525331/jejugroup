@@ -180,3 +180,7 @@ tasks.named('bootWar') {
 		Files.move(sanitizedWarFile.toPath(), warFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
 	}
 }
+
+tasks.named('bootJar') {
+	archiveFileName = 'jeju-spring.jar'
+}
