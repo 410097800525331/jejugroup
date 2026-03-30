@@ -1,0 +1,78 @@
+goal: >
+  Freeze the front-only stay hotel search contract so known destinations in
+  hotelDestinationCatalog keep resolving locally first, while unknown
+  destinations trigger exactly one submit-time Nominatim Search API fallback
+  and land on the hotel-list route with enough metadata for a generic
+  externally resolved destination result state.
+in_scope:
+  - >
+    Constrain the hotel search flow under front/components/react/hotel/** only.
+  - >
+    Keep hotelDestinationCatalog as the first-resolution path for existing
+    destinations such as 제주도 and 도쿄.
+  - >
+    Add a submit-time-only Nominatim fallback that runs once per submit when a
+    destination is not found locally.
+  - >
+    Filter Nominatim fallback results to stable region/city-like places only
+    so the resolved destination is fit for hotel search routing.
+  - >
+    Pass resolved fallback metadata into the hotel-list route so
+    hotelListPageData can render a generic destination result state for
+    externally resolved places.
+  - >
+    Keep the contract aligned with the existing hotel search and hotel-list
+    query/navigation seam without introducing autocomplete polling or
+    per-keystroke external requests.
+out_of_scope:
+  - >
+    Any edit to jeju-spring, jeju-web, mirror paths, or backend code.
+  - >
+    Any generated file change.
+  - >
+    Any autocomplete polling, debounce-driven lookup loop, or per-keystroke
+    Nominatim usage.
+  - >
+    Any redesign of unrelated hotel, landing, or shell surfaces.
+constraints:
+  - >
+    Nominatim is policy-sensitive here: use it submit-time only, with one
+    search per submit, and never as autocomplete infrastructure.
+  - >
+    Local catalog resolution must always win for known destinations.
+  - >
+    The fallback must reject non region/city-like matches instead of
+    returning arbitrary points of interest.
+  - >
+    The hotel-list page data contract must accept enough resolved metadata to
+    show a generic externally resolved destination state without pretending
+    the place came from the local catalog.
+  - >
+    The contract must remain front-only and stay within the shared hotel React
+    module boundary.
+acceptance_criteria:
+  - >
+    Submitting a known destination such as 제주도 or 도쿄 resolves locally
+    without calling Nominatim.
+  - >
+    Submitting an unknown destination performs one submit-time Nominatim
+    lookup and no autocomplete polling or per-keystroke requests.
+  - >
+    Only stable region/city-like Nominatim results are eligible for fallback
+    resolution.
+  - >
+    The hotel-list route receives enough metadata to render a generic
+    externally resolved destination result state.
+  - >
+    The entire change stays inside front/components/react/hotel/** and avoids
+    mirrors, backend, and generated files.
+verification:
+  - >
+    Review the seed text to confirm the local-first catalog rule, the
+    one-search-per-submit Nominatim fallback, the region/city-like filtering
+    constraint, and the generic hotel-list metadata requirement.
+  - >
+    Confirm the contract explicitly excludes autocomplete polling and
+    per-keystroke external usage.
+  - >
+    Confirm the scope stays inside front/components/react/hotel/** only.

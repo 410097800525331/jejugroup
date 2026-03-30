@@ -1,0 +1,90 @@
+goal: >
+  Freeze the front-only hotel-list baseline contract so
+  /jejustay/pages/hotel/hotel-list.html?keyword=히로시마&region=hiroshima&adults=1&children=0&rooms=1
+  is the canonical Hiroshima baseline state, and every known destination
+  search reuses the same Hiroshima baseline-equivalent layout/data logic
+  while unresolved destinations stay neutral.
+in_scope:
+  - >
+    Define the canonical hotel-list baseline around the exact Hiroshima query
+    state at /jejustay/pages/hotel/hotel-list.html?keyword=히로시마&region=hiroshima&adults=1&children=0&rooms=1.
+  - >
+    Require every known destination to use Hiroshima baseline-equivalent
+    logic: the same layout composition, the same shared hotel-list data
+    assembly, and the same query normalization flow.
+  - >
+    Allow destination label, region, country, hotel card fields, and filter
+    counts to vary by local identity while keeping the Hiroshima baseline
+    structure and assembly rules shared.
+  - >
+    Make hotelSearchQuery, hotelDestinationCatalog, and hotelListPageData the
+    explicit shared hotel slice contract surface for destination resolution
+    and page assembly.
+  - >
+    Preserve a neutral fallback for unresolved destination searches instead of
+    forcing them into a known destination profile.
+  - >
+    Keep the contract front-only and aligned with the existing hotel-list
+    shell/runtime boundary.
+out_of_scope:
+  - >
+    Any edit to jeju-spring, jeju-web, deployment mirrors, generated files,
+    or backend/runtime APIs.
+  - >
+    Any implementation work outside this seed contract file.
+  - >
+    Any redesign of the hotel-list UI that changes the Hiroshima baseline
+    structure.
+  - >
+    Any change that makes unresolved destinations reuse a known destination
+    profile.
+constraints:
+  - >
+    The canonical baseline query must resolve to Hiroshima and remain the
+    reference state for known destination searches.
+  - >
+    Known destination inputs must not degrade into a sparse generic profile.
+  - >
+    Destination identity fields may vary by region, but the page composition
+    and data-assembly rules must stay Hiroshima baseline-equivalent.
+  - >
+    hotelSearchQuery, hotelDestinationCatalog, and hotelListPageData must be
+    treated as one shared hotel slice contract and stay internally
+    consistent.
+  - >
+    Unresolved destinations must stay neutral and clearly unresolved, not
+    coerced to hiroshima or another known region.
+  - >
+    The contract must remain front-only and must not depend on mirror or
+    backend changes.
+acceptance_criteria:
+  - >
+    The seed explicitly defines
+    /jejustay/pages/hotel/hotel-list.html?keyword=히로시마&region=hiroshima&adults=1&children=0&rooms=1
+    as the canonical Hiroshima baseline state.
+  - >
+    Known destinations are specified to use the Hiroshima baseline-equivalent
+    layout/data logic rather than a generic sparse profile.
+  - >
+    Destination label, region, country, hotel-card fields, and filter counts
+    are allowed to change per destination identity, but the structural
+    composition and assembly rules remain shared.
+  - >
+    hotelSearchQuery, hotelDestinationCatalog, and hotelListPageData are
+    named as the shared hotel slice contract.
+  - >
+    Unresolved destination searches are required to keep a neutral fallback.
+  - >
+    The contract excludes mirror, backend, and generated-file changes.
+verification:
+  - >
+    Review the seed text for the exact baseline query, the Hiroshima
+    baseline-equivalent rule, the shared hotel slice contract names, and the
+    neutral unresolved fallback.
+  - >
+    Confirm the contract stays front-only and names jeju-spring, jeju-web,
+    and generated outputs as out of scope.
+  - >
+    Check that the wording does not leave room for known destinations to use
+    a generic sparse profile or for unresolved destinations to inherit
+    Hiroshima.

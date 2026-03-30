@@ -10,7 +10,69 @@
   - The auto-refresh timer is cleared on `beforeunload`, `pagehide`, and `401` session responses so the page stops background polling once the admin session is gone.
   - `node --check front/admin/js/dashboard.js` passed.
 
+- time: `2026-03-31 17:40:00 +09:00`
+- route: `Route B`
+- task: `Connect hotel checkout persistence, random reservation numbers, and guest reservation lookup across stay and air`
+- participants: `main`, `worker_booking_backend (Bohr)`, `worker_reservation_drawer_shared (Copernicus)`, `worker_hotel_checkout_front (Volta)`, `worker_jejuair_checkout_front (Zeno)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_booking_backend (Bohr)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/booking/**`
+  - `worker_reservation_drawer_shared (Copernicus)`: `front/components/react/ui/reservationDrawer/**, front/apps/shell/src/runtime/ui/drawer.ts`
+  - `worker_hotel_checkout_front (Volta)`: `front/jejustay/pages/hotel/hotel-payment.html, front/jejustay/pages/hotel/hotel-payment-complete.html`
+  - `worker_jejuair_checkout_front (Zeno)`: `front/jejuair/js/payment.js`
+- verification:
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**` now issues backend-generated `JA########` / `JS########` reservation numbers, stores booking passenger email, persists stay bookings through the shared booking tables, and supports guest lookup by `reservationNo + email` while keeping the old JejuAir `reservationNo + travelDate + lastName + firstName` payload as a temporary fallback.
+  - `jeju-spring/src/test/java/com/jejugroup/jejuspring/booking/BookingApiControllerIntegrationTests.java` now covers the new air/stay reservation number formats, guest email lookup, stay persistence, and the legacy guest-lookup fallback.
+  - `front/components/react/ui/reservationDrawer/**` and `front/apps/shell/src/runtime/ui/drawer.ts` now submit the shared non-member lookup form to `/api/booking/guest-lookup` with `reservationNo + email`, and render loading/success/error states inline instead of using an alert placeholder.
+  - `front/jejustay/pages/hotel/hotel-payment.html` now sends a real `/api/booking/checkout` request for stay checkout with `checkInDate`, `checkOutDate`, destination, guest email, and lookup aliases, and redirects to the completion page only after a successful backend response.
+  - `front/jejustay/pages/hotel/hotel-payment-complete.html` now shows only backend-issued booking aliases, loads the shell bootstrap so guest users can open the shared reservation drawer from the completion CTA, and keeps a page-href fallback if the drawer runtime cannot boot.
+  - `front/jejuair/js/payment.js` no longer fabricates local `JJU-####-####` reservation numbers and now treats a missing backend booking number as a checkout failure.
+  - `pnpm run check:shell` passed.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring test --tests com.jejugroup.jejuspring.booking.BookingApiControllerIntegrationTests` passed.
+  - Reviewer agents were assigned repeatedly for closeout, but none returned a findings payload before shutdown; I therefore did a manual final read-through after the automated checks and did not find an additional blocker beyond the residual note below.
+
 # MULTI AGENT LOG
+
+- time: `2026-03-31 18:42:00 +09:00`
+- route: `Route A`
+- task: `Sync the current JejuStay destination-search workspace state into the jeju-spring derived mirrors`
+- participants: `main`
+- write_sets:
+  - `main`: `derived sync outputs, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification:
+  - `pnpm run sync` passed and completed the existing `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` pipeline.
+  - The sync refreshed `jeju-spring/src/main/resources/templates/front-mirror/**` and `jeju-spring/src/main/resources/static/front-mirror/**` from the current `front/**` workspace state without manual mirror edits.
+  - Mirror output reported `template 47개, static 263개 처리`, plus `generated runtime copied: yes` and `customer center overlay copied: yes`.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` warning and a Node `DEP0190` deprecation warning, but exited successfully.
+
+- time: `2026-03-31 18:39:00 +09:00`
+- route: `Route B`
+- task: `Fix JejuStay shared destination search so typed queries and URL-hydrated keywords behave correctly on hotel landing and hotel-list search`
+- participants: `main`, `worker_destination_search_shared (Locke)`, `reviewer_destination_search_shared (Kuhn)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_destination_search_shared (Locke)`: `front/components/react/hotel/**, front/components/react/life/**, front/components/react/search/**, front/shared/destination/**`
+  - `reviewer_destination_search_shared (Kuhn)`: `review only`
+- verification:
+  - `front/shared/destination/destinationSearch.js` now falls back from city suggestions to airport-backed city suggestions for typed destination queries, so `오카야마` no longer renders an empty dropdown.
+  - `front/components/react/hotel/hotelDestinationCatalog.ts` now keeps the hotel destination catalog authoritative and only uses shared city/airport resolution as a fallback, preserving hotel-specific labels while still resolving airport-backed cities.
+  - `front/components/react/hotel/hotelSearchQuery.ts` now marks URL `keyword` hydration as a typed destination query and no longer restores stale `keyword/region` params after the destination is cleared.
+  - `pnpm run check:shell` passed.
+  - `pnpm run build:shell` passed with only the existing Vite `new URL('/', import.meta.url)` warning.
+  - `reviewer_destination_search_shared (Kuhn)` reported `no findings` on the final pass after the follow-up fix.
+
+- time: `2026-03-31 18:50:00 +09:00`
+- route: `Route B`
+- task: `Harden JejuAir checkout handoff so payment only restores Availability drafts when a fresh one-shot marker exists`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` now writes both the persisted booking draft and a separate one-shot handoff marker into `sessionStorage`, and the payload carries a `handoffId` for the immediate payment handoff.
+  - `front/jejuair/js/payment.js` now refuses to restore a stored Availability draft unless a fresh handoff marker exists, and when it does restore it immediately rewrites the payment URL with the journey query so refresh/back on the immediate flow still works.
+  - `node --check D:/git/jejugroup/front/jejuair/js/payment.js` passed.
+  - `git diff --check -- D:/git/jejugroup/front/jejuair/pages/booking/Availability.html D:/git/jejugroup/front/jejuair/js/payment.js D:/git/jejugroup/STATE.md` passed.
+  - A targeted node smoke reproduced `completeQuery=true`, `completeStored=true`, and `restoredWhenMarkerMissing=false`, confirming the stale-leakage guard.
 
 - time: `2026-03-27 13:07:29 +09:00`
 - route: `Route B`
@@ -198,6 +260,65 @@
   - `node --check front/admin/js/dashboard.js` passed
   - `node scripts/spring/sync-front-assets-to-spring.cjs` passed and refreshed the affected spring admin mirror files
   - SHA256 parity checks confirmed `front/admin/js/dashboard.js` matches `jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js`
+
+- time: `2026-03-31 01:06:00 +09:00`
+- route: `Route B`
+- task: `Persist Jeju Air payment completion into booking records and wire member/guest booking lookup flows`
+- participants: `main`, `worker_contract (Godel)`, `worker_booking_front (Gauss)`, `worker_booking_backend (Averroes)`, `reviewer_booking_persistence (Newton)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_contract (Godel)`: `docs/seeds/SEED.booking-payment-persistence-v1.yaml`
+  - `worker_booking_front (Gauss)`: `front/jejuair/js/payment.js, front/jejuair/pages/booking/payment.html, front/jejuair/pages/booking/viewOnOffReservationList.html`
+  - `worker_booking_backend (Averroes)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**, jeju-spring/src/main/resources/db/migration/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/booking/**`
+  - `reviewer_booking_persistence (Newton)`: `review only`
+- verification:
+  - `docs/seeds/SEED.booking-payment-persistence-v1.yaml` froze the Route B contract around persisting Jeju Air payment completion into the booking tree while reusing the existing mypage bookings area and adding guest lookup with reservation-number-plus-verification gating.
+  - `front/jejuair/pages/booking/payment.html` and `front/jejuair/js/payment.js` now collect authoritative destination/travel date inputs, normalize guest travel dates to ISO, call `POST /api/booking/checkout`, render success state from backend response data, and route members versus guests to the correct follow-up page with absolute fallbacks.
+  - `front/jejuair/pages/booking/viewOnOffReservationList.html` now calls `POST /api/booking/guest-lookup`, pre-fills reservation data from success-page query params, and renders sanitized inline results instead of alert-only stubs.
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**` gained checkout/guest-lookup write support plus request/response models, while `V28__booking_guest_checkout_and_lookup.sql` enables guest-capable storage and lookup fields without changing the existing booking read endpoints.
+  - `D:\git\jejugroup\jeju-spring\gradlew.bat` could not run because `gradle\wrapper\gradle-wrapper.jar` is missing, so verification used `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat` instead; the wrapper failure was logged in `ERROR_LOG.md`.
+  - `node --check front/jejuair/js/payment.js` passed.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat test --tests com.jejugroup.jejuspring.booking.BookingApiControllerIntegrationTests` passed.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat compileJava` passed.
+  - `git diff --check -- front/jejuair/js/payment.js front/jejuair/pages/booking/payment.html front/jejuair/pages/booking/viewOnOffReservationList.html jeju-spring/src/main/java/com/jejugroup/jejuspring/booking jeju-spring/src/main/resources/db/migration/V28__booking_guest_checkout_and_lookup.sql jeju-spring/src/test/java/com/jejugroup/jejuspring/booking docs/seeds/SEED.booking-payment-persistence-v1.yaml STATE.md ERROR_LOG.md` passed.
+  - `reviewer_booking_persistence (Newton)` reported `블로킹 findings 없음`; residual note only that no browser-render check was run and Jackson `LocalDate` binding remains an implicit dependency.
+
+- time: `2026-03-31 01:39:00 +09:00`
+- route: `Route A`
+- task: `Adjust Jeju Air payment itinerary inputs for round-trip day-based return-date calculation`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/payment.html, front/jejuair/js/payment.js, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/payment.html` now keeps only departure-date entry in the itinerary block, adds a round-trip checkbox plus a trip-days input that stays disabled until round-trip is checked, and shows a read-only return-date field for the computed result.
+  - `front/jejuair/js/payment.js` now normalizes the departure date, enables trip-days only for round trips, computes return date as `departure + (trip days - 1)`, and keeps the checkout payload anchored on the departure date while recording the round-trip summary in `memo`.
+  - `node --check front/jejuair/js/payment.js` passed.
+  - `git diff --check -- front/jejuair/js/payment.js front/jejuair/pages/booking/payment.html STATE.md` passed.
+
+- time: `2026-03-31 01:44:00 +09:00`
+- route: `Route A`
+- task: `Sync the Jeju Air payment itinerary hotfix into derived mirror artifacts`
+- participants: `main`
+- write_sets:
+  - `main`: `derived sync outputs, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` completed successfully from `D:\git\jejugroup`.
+  - The sync pipeline rebuilt the shell and customer-center front artifacts, then refreshed the `jeju-spring` front-mirror targets through the existing `scripts/spring/sync-front-assets-to-spring.cjs` flow.
+  - Mirror output reported `template 45개, static 260개 처리`, with `generated runtime copied: yes` and `customer center overlay copied: yes`.
+  - Only the known non-blocking warnings remained: the Vite `new URL('/', import.meta.url)` build-time warning and the Node `DEP0190` deprecation warning.
+
+- time: `2026-03-31 02:37:00 +09:00`
+- route: `Route A`
+- task: `Use Jeju Air Availability inputs as the payment itinerary source and remove the payment itinerary form`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/Availability.html, front/jejuair/pages/booking/payment.html, front/jejuair/js/payment.js, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/payment.html` no longer renders the separate itinerary block, so the payment page stops asking for departure/round-trip values a second time.
+  - `front/jejuair/pages/booking/Availability.html` now gathers the active booking inputs, normalizes departure/return dates, derives trip days for round trips, and navigates to `payment.html` with the itinerary data encoded in the query string.
+  - `front/jejuair/js/payment.js` now reads forwarded Availability params as the authoritative journey state, uses that forwarded departure/destination/trip metadata for checkout payloads and memo text, and blocks checkout when the Availability step did not provide valid travel data.
+  - `node --check front/jejuair/js/payment.js` passed.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html front/jejuair/pages/booking/payment.html front/jejuair/js/payment.js STATE.md` passed.
   - `git diff --check -- STATE.md docs/seeds/SEED.admin-shell-icon-tab-repair-v2.yaml front/admin/js/dashboard.js jeju-spring/src/main/resources/static/front-mirror/admin/js/dashboard.js` passed
   - `reviewer_admin_shell_v2 (Averroes)` reported `블로킹 finding 없음`; residual note only that emoji icon rendering can vary slightly by OS/font and browser real-render validation was not run in this turn
 
@@ -3678,3 +3799,547 @@
   - `worker_banner_assets_runtime (Descartes)` moved `slide1.png`, `slide2.png`, and `slide3.png` from the repo-root `.tmp/banner-assets/api/banners/assets/air_home_hero_*` folders into `D:\git\jejugroup\jeju-spring\.tmp\banner-assets/api/banners/assets/air_home_hero_*` without changing DB values.
   - Post-move verification confirmed `GET http://127.0.0.1:8080/api/banners/assets/air_home_hero_2/slide2.png` returns `200`.
   - Verified the new file exists under `D:\git\jejugroup\jeju-spring\.tmp\banner-assets\api\banners\assets\air_home_hero_2\slide2.png` and the old repo-root copy no longer exists.
+
+- time: `2026-03-30 23:56:00 +09:00`
+- route: `Route A`
+- task: `Restore visible booking action buttons on Jeju Air availability and payment pages`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/css/Availability.css, front/jejuair/css/payment.css, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Read-only inspection traced the bug to selector specificity: the global `.jejuair-main-content button { background: transparent; }` rule overrode `.search_btn` and `.pay_button` base backgrounds, while `.pay_button:hover` still won on specificity.
+  - `front/jejuair/css/Availability.css` now styles the booking search CTA with `.jejuair-main-content .search_btn`, so the filled orange button remains visible without hover.
+  - `front/jejuair/css/payment.css` now styles `.jejuair-main-content .pay_button`, `.jejuair-main-content .pay_button:hover`, and `.jejuair-main-content .pay_button:disabled`, so `payButton` and `successConfirmBtn` keep their normal filled state and still preserve the existing hover/disabled behavior.
+  - `git diff --check -- front/jejuair/css/Availability.css front/jejuair/css/payment.css STATE.md` passed.
+
+- time: `2026-03-31 00:06:00 +09:00`
+- route: `Route A`
+- task: `Randomize the Jeju Air payment success booking payload`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/payment.html, front/jejuair/js/payment.js, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/payment.html` now exposes dedicated success placeholders for reservation number and destination instead of a fully hardcoded completion block.
+  - `front/jejuair/js/payment.js` now generates a random `JJU-NNNN-NNNN` reservation number on successful payment, chooses a random destination from a fixed list, and uses a 1,000-won-step total between `200,000원` and `2,000,000원` when no valid total query parameter is supplied.
+  - The payment summary and success amount now stay aligned because the page builds one amount breakdown from the chosen total and reuses that total in the success payload.
+  - `node --check front/jejuair/js/payment.js` passed.
+  - `git diff --check -- front/jejuair/pages/booking/payment.html front/jejuair/js/payment.js STATE.md` passed.
+
+- time: `2026-03-31 00:45:00 +09:00`
+- route: `Route B`
+- task: `Standardize stay hotel-list against the Hiroshima baseline for every known destination search`
+- participants: `main`, `worker_contract (Pasteur)`, `worker_hotel_list_baseline (Hubble)`, `reviewer_hotel_list_baseline (Steward)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_contract (Pasteur)`: `docs/seeds/SEED.hotel-list-hiroshima-baseline-v1.yaml`
+  - `worker_hotel_list_baseline (Hubble)`: `front/components/react/hotel/**`
+  - `reviewer_hotel_list_baseline (Steward)`: `review only`
+- verification:
+  - `worker_contract (Pasteur)` froze `docs/seeds/SEED.hotel-list-hiroshima-baseline-v1.yaml` around the exact Hiroshima hotel-list query as the canonical baseline, with known destinations required to reuse Hiroshima-grade layout/data logic and unresolved destinations kept neutral.
+  - `front/components/react/hotel/hotelListPageData.ts` now resolves destination identity through the shared hotel destination contract, keeps unresolved searches neutral, removes known-destination fallback to the sparse region-prefixed generic profile, and routes known searches through the Hiroshima-grade hotel-list assembly path with canonical filter ids.
+  - `front/components/react/hotel/hotelSearchQuery.ts` now reuses `hotelDestinationCatalog` instead of owning a duplicated destination catalog, and keyword aliases now win when deriving the initial destination value.
+  - Reviewer `reviewer_hotel_list_baseline (Steward)` first found a blocking fallback-location dead-filter bug in the known-destination profile path; the follow-up worker pass fixed the fallback location id / landmark / filter alignment, and the final reviewer pass reported `no findings`.
+  - `git diff --check -- front/components/react/hotel/hotelListPageData.ts front/components/react/hotel/hotelSearchQuery.ts docs/seeds/SEED.hotel-list-hiroshima-baseline-v1.yaml STATE.md` passed.
+  - `pnpm run check:shell` passed.
+  - `pnpm run build:shell` passed with the existing Vite `new URL('/', import.meta.url)` runtime warning only.
+
+- time: `2026-03-31 01:14:00 +09:00`
+- route: `Route A`
+- task: `Expand non-Hiroshima hotel-list destinations beyond the 4-card fallback`
+- participants: `main`
+- write_sets:
+  - `main`: `front/components/react/hotel/hotelListPageData.ts, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Read-only inspection confirmed the regression source: `buildCanonicalHotels(...)` expanded only Hiroshima while non-Hiroshima known destinations only ran the one-pass enrich path and therefore stayed at four cards.
+  - `front/components/react/hotel/hotelListPageData.ts` now routes known non-Hiroshima destinations through `expandBaselineHotels(...)`, so they reuse the same variant expansion path instead of stopping at the base four fallback cards.
+  - The fallback known-destination hotel seeds now align their `locationId` values with the `ui-local-*` location axis used by the fallback profile, and variant titles now use the readable suffix labels instead of the internal variant ids.
+  - `git diff --check -- front/components/react/hotel/hotelListPageData.ts STATE.md` passed.
+  - `pnpm run check:shell` passed.
+  - `pnpm run build:shell` passed with the existing Vite `new URL('/', import.meta.url)` runtime warning only.
+
+- time: `2026-03-31 01:21:00 +09:00`
+- route: `Route A`
+- task: `Sync the hotel-list hotfix into derived mirror artifacts`
+- participants: `main`
+- write_sets:
+  - `main`: `derived sync outputs, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` passed and completed the existing `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` pipeline.
+  - The sync refreshed generated runtime outputs and the `jeju-spring/src/main/resources/static/front-mirror/**` plus `jeju-spring/src/main/resources/templates/front-mirror/**` mirrors without manual mirror edits.
+  - Because the pipeline mirrors the current front workspace state, previously pending front changes outside the hotel-list hotfix also propagated into the spring mirror during this sync.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` runtime warning and a Node `DEP0190` deprecation warning from the sync script, but the command exited successfully.
+
+- time: `2026-03-31 00:52:00 +09:00`
+- route: `Route B`
+- task: `Dehardcode hotel search region handling and prepare the stay hotel flow for API-backed destination metadata`
+- participants: `main`, `worker_contract (Russell)`, `worker_hotel_catalog (Popper)`, `worker_hotel_landing (Carson)`, `reviewer_hotel_region_api_prep (Kuhn)`
+- write_sets:
+  - `main`: `MULTI_AGENT_LOG.md`
+  - `worker_contract (Russell)`: `docs/seeds/SEED.hotel-region-api-prep-v1.yaml`
+  - `worker_hotel_catalog (Popper)`: `front/components/react/hotel/hotelDestinationCatalog.ts, front/components/react/hotel/hotelSearchQuery.ts, front/components/react/hotel/searchWidgetData.ts, front/components/react/hotel/hotelListPageData.ts`
+  - `worker_hotel_landing (Carson)`: `front/jejustay/pages/hotel/jejuhotel.html`
+  - `reviewer_hotel_region_api_prep (Kuhn)`: `review only`
+- verification:
+  - `worker_contract (Russell)` froze `docs/seeds/SEED.hotel-region-api-prep-v1.yaml` so the slice stayed front-only and pinned to a single destination source-of-truth plus API-prep seam.
+  - `front/components/react/hotel/hotelDestinationCatalog.ts` now centralizes hotel destination metadata and dropdown columns, and `front/components/react/hotel/hotelSearchQuery.ts` plus `front/components/react/hotel/searchWidgetData.ts` now reuse that shared contract instead of duplicating region/alias lists.
+  - `front/components/react/hotel/hotelListPageData.ts` now resolves destination identity through the shared catalog, keeps unresolved searches in a neutral `지역 미지정` state instead of falling back to unrelated hiroshima, preserves canonical summary labels, and restores the fallback-location plus experience-filter enrichment paths while keeping Hiroshima-only variants scoped to Hiroshima.
+  - `front/jejustay/pages/hotel/jejuhotel.html` now routes destination cards with `keyword` params instead of raw `region` hardcodes, preserving visible cards and navigation targets while letting the shared destination contract derive region identity.
+  - Reviewer `reviewer_hotel_region_api_prep (Kuhn)` first found canonical-label, dropdown-group, and Hiroshima-variant regressions; after follow-up worker fixes, the final reviewer pass reported `no findings`.
+  - `pnpm --package=typescript dlx tsc -p front/apps/shell/tsconfig.json --noEmit --pretty false --ignoreDeprecations 6.0` passed.
+  - `git diff --check -- front/components/react/hotel/hotelDestinationCatalog.ts front/components/react/hotel/hotelSearchQuery.ts front/components/react/hotel/searchWidgetData.ts front/components/react/hotel/hotelListPageData.ts front/jejustay/pages/hotel/jejuhotel.html docs/seeds/SEED.hotel-region-api-prep-v1.yaml` passed.
+  - `STATE.md` was not rewritten on closeout because an out-of-band booking Route B task had already taken over the active state tracker during this run, so only the append-only multi-agent record was updated here.
+
+- time: `2026-03-30 23:38:37 +09:00`
+- route: `Route A`
+- task: `Sync the Jeju Air Availability-to-payment itinerary hotfix into derived mirror artifacts`
+- participants: `main`
+- write_sets:
+  - `main`: `derived sync outputs, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` passed and completed the existing `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` pipeline.
+  - The sync refreshed `jeju-spring/src/main/resources/templates/front-mirror/**` and `jeju-spring/src/main/resources/static/front-mirror/**` from the current `front/**` source of truth without manual mirror edits.
+  - Mirror output reported `template 45개, static 260개 처리`, plus `generated runtime copied: yes` and `customer center overlay copied: yes`.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` runtime warning and the Node `DEP0190` deprecation warning, but the command exited successfully so the Availability-to-payment forwarded-booking flow is now mirrored into Spring.
+
+- time: `2026-03-31 02:09:00 +09:00`
+- route: `Route A`
+- task: `Add submit-time destination resolution fallback to Jeju Air Availability arrival inputs`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/Availability.html, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` arrival inputs are no longer locked to readonly, so users can type concrete city or region values while preserving the existing quick-pick dropdown selection behavior on click.
+  - The inline Availability booking script now normalizes arrival values through a local alias catalog first and only falls back to OpenStreetMap Nominatim on submit, keeping the page out of per-keystroke autocomplete traffic.
+  - Known aliases now canonicalize common portfolio destinations such as `도쿄`, `동경`, `제주도`, `오사카`, `후쿠오카`, `방콕`, `다낭`, and `싱가폴`, while broader quick-pick labels like `일본` or `대한민국` still pass through as local known destinations without network lookup.
+  - Nominatim filtering is limited to city or region-grade candidates and scores the remaining results before choosing one, then writes the resolved label back into the arrival input and the payment-page query string.
+  - An inline-script parse check using Node `vm.Script` passed for the updated HTML script block.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html STATE.md` passed.
+  - `STATE.md` was not rewritten on closeout because an out-of-band Route A mypage typography task had already taken over the active state tracker during this run, so only the append-only multi-agent log was updated here.
+
+- time: `2026-03-31 02:23:00 +09:00`
+- route: `Route A`
+- task: `Map Jeju Air Availability arrival region input to representative airport labels and codes`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/Availability.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` now keeps the typed-arrival + submit-time Nominatim normalization flow, but upgrades mapped destinations to airport-form labels such as `도쿄 · 나리타 국제공항 (NRT)` and includes `destinationCode`, `destinationAirport`, and `destinationCity` in the payment query string.
+  - The local representative-airport map now covers the main portfolio destinations including `제주/CJU`, `서울/ICN`, `부산/PUS`, `도쿄/NRT`, `오사카/KIX`, `후쿠오카/FUK`, `방콕/BKK`, `다낭/DAD`, `싱가포르/SIN`, `히로시마/HIJ`, and `사이판/SPN`, while broader bucket labels such as `일본` or `베트남` still pass through without forcing an arbitrary airport.
+  - Unknown typed destinations still resolve through submit-time Nominatim city normalization first, then attempt one more pass against the representative-airport map before falling back to the normalized city label.
+  - An inline-script parse check using Node `vm.Script` passed for the updated HTML script block.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html STATE.md MULTI_AGENT_LOG.md` passed.
+
+- time: `2026-03-31 02:29:00 +09:00`
+- route: `Route A`
+- task: `Sync the current front workspace into the jeju-spring derived mirrors`
+- participants: `main`
+- write_sets:
+  - `main`: `derived sync outputs, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` passed and completed the existing `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` pipeline.
+  - The sync refreshed `jeju-spring/src/main/resources/templates/front-mirror/**` and `jeju-spring/src/main/resources/static/front-mirror/**` from the current `front/**` workspace state without manual mirror edits.
+  - Mirror output reported `template 45개, static 260개 처리`, plus `generated runtime copied: yes` and `customer center overlay copied: yes`.
+  - Because the pipeline mirrors the whole current front workspace, other pending front-side changes in the dirty worktree propagated into the spring mirrors alongside the Jeju Air Availability updates.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` runtime warning and a Node `DEP0190` deprecation warning from the sync script, but the command exited successfully.
+
+- time: `2026-03-31 02:41:00 +09:00`
+- route: `Route A`
+- task: `Add local typeahead filtering for Jeju Air Availability departure and arrival inputs`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/Availability.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` location inputs across booking, multi-leg, and flight forms now accept typing with `autocomplete="off"` instead of leaving several departure/arrival fields locked to readonly selection-only behavior.
+  - The Availability inline script now owns a local departure alias catalog, so typing `인천` filters the departure dropdown down to `서울(인천)` and submit-time booking query normalization also upgrades raw departure input to the canonical airport-form label when a match exists.
+  - Arrival quick-picks now filter locally from the representative-airport list as the user types, while keeping the existing submit-time Nominatim fallback for unmapped typed destinations and avoiding any per-keystroke network lookup.
+  - Dropdown selection moved to delegated click handling so dynamically re-rendered filtered `<li>` items stay clickable without re-binding listeners after each local filter pass.
+  - An inline-script parse check using Node `vm.Script` passed for the updated HTML script block.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html STATE.md MULTI_AGENT_LOG.md` passed.
+
+- time: `2026-03-31 02:44:00 +09:00`
+- route: `Route A`
+- task: `Sync the latest Jeju Air Availability workspace state into the jeju-spring derived mirrors`
+- participants: `main`
+- write_sets:
+  - `main`: `derived sync outputs, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` passed and completed the existing `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` pipeline.
+  - The sync refreshed `jeju-spring/src/main/resources/templates/front-mirror/**` and `jeju-spring/src/main/resources/static/front-mirror/**` from the current `front/**` workspace state without manual mirror edits.
+  - Mirror output reported `template 45개, static 260개 처리`, plus `generated runtime copied: yes` and `customer center overlay copied: yes`.
+  - The latest Jeju Air Availability local typeahead/filter changes therefore propagated into the Spring-served mirror page as part of this run.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` runtime warning and a Node `DEP0190` deprecation warning from the sync script, but the command exited successfully.
+
+- time: `2026-03-31 01:52:00 +09:00`
+- route: `Route B`
+- task: `Add submit-time OpenStreetMap Nominatim fallback to the stay hotel destination search`
+- participants: `main`, `worker_hotel_nominatim (Hypatia)`, `reviewer_hotel_nominatim (Hegel)`
+- write_sets:
+  - `main`: `MULTI_AGENT_LOG.md`
+  - `worker_hotel_nominatim (Hypatia)`: `front/components/react/hotel/hotelNominatimResolver.ts, front/components/react/hotel/HotelSearchWidgetContext.tsx, front/components/react/hotel/hotelSearchQuery.ts, front/components/react/hotel/hotelListPageData.ts`
+  - `reviewer_hotel_nominatim (Hegel)`: `review only`
+- verification:
+  - The existing contract stayed pinned to `docs/seeds/SEED.hotel-nominatim-submit-fallback-v1.yaml`, keeping the slice front-only and limiting Nominatim usage to submit-time fallback instead of autocomplete.
+  - `front/components/react/hotel/HotelSearchWidgetContext.tsx` now resolves known destinations through the local catalog first and only calls Nominatim once on submit when the typed destination is still unresolved.
+  - `front/components/react/hotel/hotelNominatimResolver.ts` now caches repeated queries, allows a runtime-overridable endpoint, and filters/scores Nominatim results so only city/region-grade place candidates with usable label/country signals are accepted.
+  - `front/components/react/hotel/hotelSearchQuery.ts` now carries `resolvedSource/resolvedRegion/resolvedLabel/resolvedCountry` metadata through the hotel-list route so externally resolved destinations survive the URL round-trip.
+  - `front/components/react/hotel/hotelListPageData.ts` now renders Nominatim-resolved destinations with a generic external profile and restores a raw-query-based generic fallback profile when both catalog and Nominatim resolution fail, instead of collapsing to an empty unresolved result.
+  - Reviewer `reviewer_hotel_nominatim (Hegel)` first found the empty generic fallback regression and an overly loose administrative-boundary filter; after the follow-up worker pass, the final reviewer pass reported `findings 없음`.
+  - `pnpm run check:shell` passed.
+  - `git diff --check -- front/components/react/hotel/hotelNominatimResolver.ts front/components/react/hotel/HotelSearchWidgetContext.tsx front/components/react/hotel/hotelSearchQuery.ts front/components/react/hotel/hotelListPageData.ts` passed.
+  - `STATE.md` was not rewritten on closeout because an out-of-band Jeju Air mirror-sync task had already taken over the active state tracker during this run, so only the append-only multi-agent log was updated here.
+
+- time: `2026-03-30 23:38:37 +09:00`
+- route: `Route A`
+- task: `Fix Jeju Air Availability-to-payment date forwarding so checkout accepts selected travel dates`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/Availability.html, front/jejuair/js/payment.js, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Read-only inspection found the regression in the forwarded date parsing: the Availability calendar writes strings like `2026. 4. 2 ~ 2026. 4. 5`, but the forwarding and payment validators only accepted tightly formatted `YYYY-MM-DD`, so `travelDate` collapsed to empty during redirect validation.
+  - `front/jejuair/pages/booking/Availability.html` now normalizes date fragments with optional spaces around `.` or `-`, so the existing calendar display text is converted into canonical `YYYY-MM-DD` query params before redirecting to payment.
+  - `front/jejuair/js/payment.js` now uses the same tolerant date parsing, so forwarded travel dates remain valid even if the query contains spaced dotted dates from older or cached links.
+  - `node --check front/jejuair/js/payment.js` passed.
+  - A targeted Node parser smoke using the real calendar-style sample `2026. 4. 2 ~ 2026. 4. 5` produced `travelDate=2026-04-02` and `returnDate=2026-04-05`.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html front/jejuair/js/payment.js STATE.md` passed.
+
+- time: `2026-03-30 23:38:37 +09:00`
+- route: `Route A`
+- task: `Sync the Jeju Air forwarded-date hotfix into derived spring mirror artifacts`
+- participants: `main`
+- write_sets:
+  - `main`: `derived sync outputs, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` passed and completed the existing `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` pipeline.
+  - The sync refreshed `jeju-spring/src/main/resources/templates/front-mirror/**` and `jeju-spring/src/main/resources/static/front-mirror/**` from the corrected `front/**` booking source without manual mirror edits.
+  - Mirror output reported `template 45개, static 260개 처리`, plus `generated runtime copied: yes` and `customer center overlay copied: yes`.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` runtime warning and the Node `DEP0190` deprecation warning, but the command exited successfully so the Jeju Air booking pages served by Spring now include the forwarded-date fix.
+
+- time: `2026-03-30 23:38:37 +09:00`
+- route: `Route A`
+- task: `Fix Jeju Air checkout validation so member bookings stop failing with invalid input`
+- participants: `main`
+- write_sets:
+  - `main`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/application/BookingWriteService.java, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Read-only inspection found the remaining failure in backend normalization: the default Jeju Air payment flow submits `memberBooking=true` without any guest/passenger name fields, while `BookingWriteService` previously required passenger last/first names unconditionally and therefore returned the generic `입력값이 올바르지 않습니다.` error.
+  - `BookingWriteService.java` now resolves missing passenger names from `SessionUser.name` first and then the submitted card-holder name before the required-text guard runs, preserving explicit passenger/guest names when the frontend provides them and only using fallback data when the checkout payload omitted names.
+  - The fallback splits multi-token names on whitespace, falls back to a simple first-character / remainder split for compact names, and now also covers the non-logged-in default-member path because card-holder input is already mandatory for card checkout.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/application/BookingWriteService.java STATE.md` passed.
+
+- time: `2026-03-30 23:52:45 +09:00`
+- route: `Route A`
+- task: `Reduce the oversized mypage booking status pill typography`
+- participants: `main`
+- write_sets:
+  - `main`: `front/pages/mypage/styles/_trip-card.css, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Read-only inspection traced the oversized `pill-shape brand-air` text to the mypage booking status pill using only the color tone classes, so the label was visually inheriting too much emphasis inside the trip-card header.
+  - `front/pages/mypage/styles/_trip-card.css` now gives the colored booking status pills their own compact type scale with `11px` text, tighter spacing, reduced padding, and a fixed inline-flex height so labels like `출발 예정` or longer status text look balanced.
+  - The change is scoped to the tone classes used by `StatusPill`, so existing pill-shaped action buttons and other rounded controls keep their original sizing.
+  - `git diff --check -- front/pages/mypage/styles/_trip-card.css STATE.md` passed.
+
+- time: `2026-03-31 00:32:00 +09:00`
+- route: `Route B`
+- task: `Replace the mypage booking action with a reservation receipt popup`
+- participants: `main`, `worker_booking_receipt_component (Galileo)`, `worker_booking_receipt_style (Avicenna)`, `reviewer_booking_receipt (Meitner)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_booking_receipt_component (Galileo)`: `front/components/react/mypage/BookingSection.tsx`
+  - `worker_booking_receipt_style (Avicenna)`: `front/pages/mypage/styles/_trip-card.css`
+  - `reviewer_booking_receipt (Meitner)`: `review only`
+- verification:
+  - `worker_booking_receipt_component (Galileo)` changed the outline booking CTA text from `결제 진행하기` to `예약 확인`, added open/close modal state, and rendered type-aware receipt details for `air/stay/rent/voucher` using the existing booking card data plus tag-based payment-method fallback.
+  - `worker_booking_receipt_style (Avicenna)` added scoped receipt-modal styling under the mypage trip-card stylesheet so the popup reads like a ticket/receipt without disturbing the rest of the booking-card controls.
+  - The first reviewer pass found a blocking JSX/CSS class mismatch plus weak non-air receipt labeling; the follow-up component pass aligned the modal classes to the stylesheet and replaced generic placeholder wording with type-specific field groupings that stay within the current booking data contract.
+  - `pnpm -C front/apps/shell exec tsc -p tsconfig.json --noEmit` passed.
+  - `git diff --check -- front/components/react/mypage/BookingSection.tsx front/pages/mypage/styles/_trip-card.css STATE.md` passed.
+  - Final reviewer pass from `reviewer_booking_receipt (Meitner)` reported `블로킹 없음` after confirming the JSX/CSS selectors now match and the receipt rows render coherently from the current booking data shape.
+
+- time: `2026-03-31 03:10:00 +09:00`
+- route: `Route A`
+- task: `Rollback Jeju Air Availability to the pre-API-integration state and resync mirrors`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/Availability.html, STATE.md, MULTI_AGENT_LOG.md, derived sync outputs`
+- verification:
+  - The user explicitly requested a rollback, so `front/jejuair/pages/booking/Availability.html` was restored from `HEAD`, removing the recent editable input, Nominatim, and representative-airport integration logic from the Jeju Air booking page source of truth.
+  - `pnpm run sync` passed, so the restored source page was propagated back through the existing front-to-spring mirror pipeline into `jeju-spring/src/main/resources/templates/front-mirror/jejuair/pages/booking/Availability.html` without manual mirror edits.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html STATE.md MULTI_AGENT_LOG.md` passed.
+
+- time: `2026-03-31 03:24:00 +09:00`
+- route: `Route A`
+- task: `Apply region search API only to the Jeju Air Availability arrival inputs and remove hardcoded arrival options`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/Availability.html, STATE.md, MULTI_AGENT_LOG.md, derived sync outputs`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` now keeps the departure inputs and page structure untouched while replacing only the arrival input lists with Nominatim-backed search on the arrival fields.
+  - The arrival dropdowns no longer ship hardcoded region `<li>` entries; instead they render API search results after the user types at least two characters, with debounced fetch, simple dedupe, and empty/error states.
+  - `pnpm run sync` passed, so the same arrival-search behavior is propagated into `jeju-spring/src/main/resources/templates/front-mirror/jejuair/pages/booking/Availability.html` without manual mirror edits.
+  - Inline script parse check via `node` `vm.Script` passed.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html STATE.md MULTI_AGENT_LOG.md` passed.
+
+- time: `2026-03-31 03:45:00 +09:00`
+- route: `Route A`
+- task: `Add an env slot for the public world-city service key`
+- participants: `main`
+- write_sets:
+  - `main`: `jeju-spring/.env, jeju-spring/.env.example, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - Added the shared env variable name `DATA_GO_KR_WORLD_CITY_SERVICE_KEY` to `jeju-spring/.env` with an empty value so a real secret can be supplied later without hardcoding it into source.
+  - Added the same variable to `jeju-spring/.env.example` with a placeholder value so the expected contract is documented for future setup.
+  - `git diff --check -- jeju-spring/.env jeju-spring/.env.example STATE.md MULTI_AGENT_LOG.md` passed.
+
+- time: `2026-03-31 06:12:00 +09:00`
+- route: `Route B`
+- task: `Split destination search sources so JejuAir uses airport data and JejuStay uses city data`
+- participants: `main`, `worker_shared_destination (Meitner)`, `worker_hotel_destination (Anscombe)`, `worker_jejuair_airport (Locke)`, `reviewer_destination_split (Beauvoir)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_shared_destination (Meitner)`: `scripts/generate-destination-catalogs.js, front/shared/destination/**`
+  - `worker_hotel_destination (Anscombe)`: `front/components/react/hotel/**`
+  - `worker_jejuair_airport (Locke)`: `front/jejuair/pages/booking/Availability.html, front/jejuair/css/Availability.css`
+  - `reviewer_destination_split (Beauvoir)`: `review only`
+- verification:
+  - `scripts/generate-destination-catalogs.js` now derives shared city and airport catalogs from the official public CSV sources, and `front/shared/destination/generated/destination-airport-search.browser.js` now exposes a browser-safe airport search helper without any service-key usage at runtime.
+  - `front/components/react/hotel/hotelDestinationCatalog.ts`, `front/components/react/hotel/hotelSearchQuery.ts`, `front/components/react/hotel/HotelSearchWidgetContext.tsx`, and `front/components/react/hotel/hotelListPageData.ts` now resolve typed hotel destinations through the shared official city source first and only fall back to the featured local catalog where the public city dataset is missing coverage; `front/components/react/hotel/hotelNominatimResolver.ts` is no longer used.
+  - `front/jejuair/pages/booking/Availability.html` now loads the shared airport browser bundle and uses `window.__JEJUGROUP_DESTINATION_SEARCH__.searchWorldAirportDestinations(...)` for arrival dropdown search instead of page-local airport arrays or Nominatim/fetch-string hacks.
+  - `pnpm run check:shell` passed.
+  - `git diff --check -- scripts/generate-destination-catalogs.js front/shared/destination/destinationSearch.js front/shared/destination/generated/destination-catalogs.json front/shared/destination/generated/destination-airport-search.browser.js front/components/react/hotel/hotelDestinationCatalog.ts front/components/react/hotel/hotelSearchQuery.ts front/components/react/hotel/HotelSearchWidgetContext.tsx front/components/react/hotel/hotelListPageData.ts front/jejuair/pages/booking/Availability.html front/jejuair/css/Availability.css STATE.md MULTI_AGENT_LOG.md ERROR_LOG.md` passed.
+  - The JejuAir inline script parse check via `node` `vm.Script` passed.
+  - Final reviewer `reviewer_destination_split (Beauvoir)` reported `블로킹 없음`.
+
+- time: `2026-03-31 10:26:00 +09:00`
+- route: `Route A`
+- task: `Repair JejuAir Availability airport dropdown regression and remove page-local airport option lists`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/Availability.html, front/jejuair/css/Availability.css, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` no longer embeds page-local airport `<li>` option lists for departure or arrival groups; both sides now use the shared airport search flow with editable inputs.
+  - The page now preloads the shared airport browser helper through safe candidate paths and shows an explicit failure message instead of silently returning empty results when the helper cannot be loaded.
+  - `front/jejuair/css/Availability.css` now lets the airport dropdown escape the reservation card without clipping and positions the layer below the field with higher stacking priority.
+  - Airport dropdowns stay closed until at least two characters are typed, so the page no longer shows the oversized instructional layer on bare focus.
+  - Inline script parsing via `node` `vm.Script` passed.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html front/jejuair/css/Availability.css STATE.md` passed.
+- time: `2026-03-31 04:36:00 +09:00`
+- route: `Route A`
+- task: `Create a JejuStay hotel payment page and wire hotel-main-list card clicks to it`
+- participants: `main`
+- write_sets:
+  - `main`: `front/components/react/hotel/HotelCardPremium.tsx, front/components/react/hotel/hotelListPageData.ts, front/jejustay/pages/hotel/hotel-payment.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/components/react/hotel/hotelListPageData.ts` now exports the JejuStay hotel payment-page href builder, preserving existing hotel-list search params while appending the selected hotel summary fields needed by checkout.
+  - `front/components/react/hotel/HotelCardPremium.tsx` now treats the hotel card as a keyboard-accessible link to the new payment page while skipping navigation when the click originated from interactive controls such as the wishlist button.
+  - `front/jejustay/pages/hotel/hotel-payment.html` was added as a front-only standalone payment page with inline styling/script that renders the selected hotel summary, forwarded stay dates, guest counts, price breakdown, and a validated payment form mock.
+  - `pnpm run check:shell` passed.
+- time: `2026-03-31 04:58:00 +09:00`
+- route: `Route A`
+- task: `Restyle the JejuStay hotel payment page using the provided checkout layout while keeping shared header/footer`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejustay/pages/hotel/hotel-payment.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejustay/pages/hotel/hotel-payment.html` now uses the provided checkout-style body structure for reservation details, guest info, payment method, cancellation policy, and sticky price summary while keeping the repository's shared header/footer placeholders and bootstrap hooks intact.
+  - The payment-page query hydration script was reconnected to the new selectors so hotel image/title/location/badge, dates, guests, destination, and price totals still populate from the forwarded hotel-list query params.
+  - `pnpm run check:shell` passed.
+  - An inline script parse check using Node `vm.Script` passed for the updated payment-page script block.
+- time: `2026-03-31 05:36:00 +09:00`
+- route: `Route A`
+- task: `Replace the JejuStay payment alert with a blank payment-complete page flow`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejustay/pages/hotel/hotel-payment.html, front/jejustay/pages/hotel/hotel-payment-complete.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejustay/pages/hotel/hotel-payment.html` submit handler no longer uses `window.alert`; it now redirects to `/jejustay/pages/hotel/hotel-payment-complete.html` with the existing query plus reservation/total metadata.
+  - `front/jejustay/pages/hotel/hotel-payment-complete.html` was added as a blank completion page that keeps only the shared header/footer placeholders, bootstrap wiring, and an empty `#hotel-payment-complete-root` mount for later code injection.
+  - `pnpm run check:shell` passed.
+  - An inline script parse check using Node `vm.Script` passed for the updated payment-page script block.
+- time: `2026-03-31 05:49:00 +09:00`
+- route: `Route A`
+- task: `Apply the provided editorial booking-confirmed design to the JejuStay payment-complete page`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejustay/pages/hotel/hotel-payment.html, front/jejustay/pages/hotel/hotel-payment-complete.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejustay/pages/hotel/hotel-payment.html` now forwards `guestEmail` along with the existing booking metadata when redirecting after submit.
+  - `front/jejustay/pages/hotel/hotel-payment-complete.html` now uses the provided editorial booking-confirmed layout as a standalone page without shared header/footer and hydrates hotel title, location, image, stay dates, booking code, and guest email from the query string.
+  - `pnpm run check:shell` passed.
+  - An inline script parse check using Node `vm.Script` passed for both payment-page script blocks.
+- time: `2026-03-31 06:21:00 +09:00`
+- route: `Route A`
+- task: `Tighten the JejuStay payment-complete viewport fit and add entrance animation`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejustay/pages/hotel/hotel-payment-complete.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejustay/pages/hotel/hotel-payment-complete.html` now uses reduced vertical spacing across the left editorial block, success header, card margin, and footer note so the confirmation screen fits the viewport with less forced scrolling.
+  - The success badge, title, and subtitle now animate in on load through scoped keyframes without changing the booking hydration contract.
+  - `pnpm run check:shell` passed.
+  - An inline script parse check using Node `vm.Script` passed for the updated completion-page script block.
+- time: `2026-03-31 06:28:00 +09:00`
+- route: `Route A`
+- task: `Add a clockwise fill animation to the JejuStay booking-confirmed success icon`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejustay/pages/hotel/hotel-payment-complete.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejustay/pages/hotel/hotel-payment-complete.html` now gives the success icon a clockwise conic ring sweep plus glyph rotation that settles into a filled check-circle state, while keeping the existing completion layout intact.
+  - `pnpm run check:shell` passed.
+  - An inline script parse check using Node `vm.Script` passed for the updated completion-page script block.
+- time: `2026-03-31 06:35:00 +09:00`
+- route: `Route A`
+- task: `Change the JejuStay booking-confirmed icon to a 12-o'clock clockwise fill reveal`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejustay/pages/hotel/hotel-payment-complete.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejustay/pages/hotel/hotel-payment-complete.html` no longer uses the previous rotate-pop icon motion; the filled check-circle is now revealed clockwise from 12 o'clock through a staged clip-path fill sequence over a faint outline icon.
+  - `pnpm run check:shell` passed.
+  - An inline script parse check using Node `vm.Script` passed for the updated completion-page script block.
+- time: `2026-03-31 06:43:00 +09:00`
+- route: `Route A`
+- task: `Replace the JejuStay booking-confirmed icon animation with a smoother full-icon clockwise reveal`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejustay/pages/hotel/hotel-payment-complete.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejustay/pages/hotel/hotel-payment-complete.html` now drops the staged clip-path fill in favor of a conic-mask sweep with a typed `--icon-fill-angle` property, so the full check-circle glyph is revealed clockwise much more smoothly.
+  - `pnpm run check:shell` passed.
+  - An inline script parse check using Node `vm.Script` passed for the updated completion-page script block.
+- time: `2026-03-31 04:39:00 +09:00`
+- route: `Route A`
+- task: `Sync the current JejuStay hotel payment-page workspace state into the jeju-spring derived mirrors`
+- participants: `main`
+- write_sets:
+  - `main`: `derived sync outputs, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` passed and completed the existing `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` pipeline.
+  - The sync refreshed `jeju-spring/src/main/resources/templates/front-mirror/**` and `jeju-spring/src/main/resources/static/front-mirror/**` from the current `front/**` workspace state without manual mirror edits.
+  - Mirror output reported `template 46개, static 260개 처리`, plus `generated runtime copied: yes` and `customer center overlay copied: yes`.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` runtime warning and a Node `DEP0190` deprecation warning, but the command exited successfully.
+
+- time: `2026-03-31 05:22:00 +09:00`
+- route: `Route B`
+- task: `Make the shared destination airport helper browser-safe for JejuAir consumption`
+- participants: `worker_shared_destination`
+- write_sets:
+  - `worker_shared_destination`: `front/shared/destination/**, scripts/generate-destination-catalogs.js`
+- verification:
+  - Added `front/shared/destination/generated/destination-airport-search.browser.js` as a browser-safe airport search bundle that attaches `window.__JEJUGROUP_DESTINATION_SEARCH__` without any service key or Nominatim dependency.
+  - Updated `front/shared/destination/destinationSearch.js` to use Hangul-safe normalization for shared airport search.
+  - Updated `scripts/generate-destination-catalogs.js` to emit the browser-safe airport bundle alongside the generated JSON catalog.
+  - Verified the browser bundle in a Node `vm` sandbox and confirmed `searchWorldAirportDestinations('인천')` resolves `ICN`.
+  - `git diff --check` passed for the touched shared files.
+
+- time: `2026-03-31 05:43:00 +09:00`
+- route: `Route B`
+- task: `Refactor JejuAir Availability to consume the shared airport catalog without page-local airport arrays`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` now fetches the shared airport catalog from `front/shared/destination/generated/destination-catalogs.json` instead of embedding `AIRPORT_CATALOG`, `AIRPORT_SEARCH_HINTS`, or `AIRPORT_LABEL_OVERRIDES`.
+  - The arrival dropdown still renders matching airports for city or airport queries, including multi-airport cities like Tokyo and Bangkok.
+  - Inline script parsing passed via Node `vm.Script`.
+  - `git diff --check` passed for the updated workspace files.
+
+- time: `2026-03-31 05:52:00 +09:00`
+- route: `Route B`
+- task: `Refactor JejuAir Availability to consume the shared airport catalog without page-local airport arrays`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` now loads `front/shared/destination/generated/destination-airport-search.browser.js` via script tag and reads `window.__JEJUGROUP_DESTINATION_SEARCH__.searchWorldAirportDestinations(...)` instead of using a page-local fetch string.
+  - The inline airport catalog, airport hints, airport label overrides, and duplicate airport score helper were removed from the page.
+  - `git grep` confirmed the page no longer contains `fetch(` or page-local airport catalog constants.
+  - Inline script parsing passed via Node `vm.Script`.
+
+- time: `2026-03-31 02:51:47 +09:00`
+- route: `Route B`
+- task: `Persist JejuAir Availability selections into payment and complete checkout safely`
+- participants: `main`, `worker_jejuair_booking_checkout (Hume)`, `reviewer_jejuair_booking_checkout (Heisenberg)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_jejuair_booking_checkout (Hume)`: `front/jejuair/pages/booking/Availability.html, front/jejuair/pages/booking/payment.html, front/jejuair/js/payment.js`
+  - `reviewer_jejuair_booking_checkout (Heisenberg)`: `review only`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` now serializes the selected departure, destination, trip type, passenger counts, and date state into the existing payment route instead of dropping the booking context before checkout.
+  - `front/jejuair/pages/booking/payment.html` now renders a visible journey summary so the forwarded booking data is reflected on the payment screen before the user pays.
+  - `front/jejuair/js/payment.js` now consumes the forwarded journey payload, validates round-trip and multi-segment dates from that state, and requires both departure and destination before allowing payment.
+  - Explicit checkout API failures no longer fall back to demo success; only network-level fetch failures use the local success fallback so the normal flow can complete safely without masking real server errors.
+  - `node --check front/jejuair/js/payment.js` passed.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html front/jejuair/pages/booking/payment.html front/jejuair/js/payment.js STATE.md` passed.
+  - Final reviewer `reviewer_jejuair_booking_checkout (Heisenberg)` reported `블로킹 findings 없음`.
+
+- time: `2026-03-31 03:14:32 +09:00`
+- route: `Route B`
+- task: `Persist JejuAir Availability selections into payment and complete checkout safely`
+- participants: `main`, `worker_jejuair_booking_checkout (Hume)`, `reviewer_jejuair_booking_checkout (Heisenberg)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_jejuair_booking_checkout (Hume)`: `front/jejuair/pages/booking/Availability.html, front/jejuair/js/payment.js`
+  - `reviewer_jejuair_booking_checkout (Heisenberg)`: `review only`
+- verification:
+  - The first payment follow-up found that route-level query transport could still blank `departure`, `destination`, and `travelDate`, so `front/jejuair/pages/booking/Availability.html` now persists the forwarded booking payload as a `draftId`-scoped `sessionStorage` draft before navigation.
+  - `front/jejuair/js/payment.js` now prefers a complete query draft, falls back only to a complete storage draft with a matching `draftId` inside a 15-minute TTL, and clears mismatched or expired drafts instead of mixing partial query fields with stale stored values.
+  - Both success paths now clear the stored booking draft so repeated visits cannot silently reuse an old journey after checkout completion.
+  - `node --check front/jejuair/js/payment.js` passed.
+  - `git diff --check -- front/jejuair/pages/booking/Availability.html front/jejuair/js/payment.js STATE.md` passed.
+  - Final reviewer `reviewer_jejuair_booking_checkout (Heisenberg)` reported `블로킹 findings 없음`.
+
+- time: `2026-03-31 03:37:00 +09:00`
+- route: `Route B`
+- task: `Apply shared JejuStay city-search behavior to requested stay and travel search bars`
+- participants: `main`, `worker_stay_city_search_shared (Sartre)`, `worker_stay_city_search_static (Noether)`, `reviewer_stay_city_search (Erdos)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_stay_city_search_shared (Sartre)`: `front/components/react/hotel/**, front/components/react/life/**, front/components/react/search/**, front/shared/destination/**`
+  - `worker_stay_city_search_static (Noether)`: `front/jejustay/pages/travel/activities.html, front/jejustay/pages/travel/esim.html`
+  - `reviewer_stay_city_search (Erdos)`: `review only`
+- verification:
+  - `front/components/react/hotel/HotelSearchWidgetDestinationDropdown.tsx` and `front/components/react/life/LifeSearchWidget.tsx` now build visible typed destination suggestions from `front/shared/destination/destinationSearch.js` once the user starts typing, instead of continuing to show only the old static destination columns.
+  - `front/components/react/search/SearchDestinationDropdown.tsx` now stays a pure renderer, while `front/components/react/hotel/HotelSearchWidgetContext.tsx`, `front/components/react/hotel/HotelSearchWidgetHotelForm.tsx`, `front/components/react/hotel/HotelListSearchBar.tsx`, `front/components/react/hotel/hotelSearchQuery.ts`, and `front/components/react/life/LifeSearchWidgetContext.tsx` keep the shared city-search flow open on focus and preserve typed destination routing.
+  - `front/components/react/hotel/hotelListPageData.ts` no longer collapses the hotel-list mock path to an empty result set for unresolved or direct-entry searches; it now keeps a fallback hotel set instead.
+  - `front/jejustay/pages/travel/activities.html` now wires the inline search bar to the shared generated city catalog, filters `.activity-card` results on Enter/button, renders a status message, and scrolls to the matching results section.
+  - `front/jejustay/pages/travel/esim.html` now wires the hero search box to the shared generated city catalog, highlights matching `.country-card` items on Enter/button, and scrolls to the destination grid without the old dead dropdown script.
+  - `pnpm -C front/apps/shell exec tsc --noEmit --pretty false` passed.
+  - `git diff --check -- front/components/react/search/SearchDestinationDropdown.tsx front/components/react/hotel/HotelSearchWidgetContext.tsx front/components/react/hotel/HotelSearchWidgetDestinationDropdown.tsx front/components/react/hotel/HotelSearchWidgetHotelForm.tsx front/components/react/hotel/HotelListSearchBar.tsx front/components/react/hotel/hotelSearchQuery.ts front/components/react/life/LifeSearchWidgetContext.tsx front/components/react/life/LifeSearchWidget.tsx front/components/react/hotel/hotelListPageData.ts front/shared/destination/destinationSearch.js front/shared/destination/destinationSearch.d.ts front/jejustay/pages/travel/activities.html front/jejustay/pages/travel/esim.html` passed.
+  - `reviewer_stay_city_search (Erdos)` reported `no findings` on the final pass after the unresolved hotel-list fallback regression was fixed.
+
+- time: `2026-03-31 04:07:00 +09:00`
+- route: `Route B`
+- task: `Restore default hardcoded destination dropdowns while switching typed JejuStay search input to API city results`
+- participants: `main`, `worker_stay_city_search_shared (Sagan)`, `worker_stay_city_search_static (Pasteur)`, `reviewer_stay_city_search (Carver)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_stay_city_search_shared (Sagan)`: `front/components/react/hotel/**, front/components/react/life/**, front/components/react/search/**, front/shared/destination/**`
+  - `worker_stay_city_search_static (Pasteur)`: `front/jejustay/pages/travel/activities.html, front/jejustay/pages/travel/esim.html`
+  - `reviewer_stay_city_search (Carver)`: `review only`
+- verification:
+  - `front/components/react/hotel/HotelSearchWidgetContext.tsx` and `front/components/react/life/LifeSearchWidgetContext.tsx` now track whether the user actually typed a destination query, so hydrated or preselected values do not force the dropdown into API mode on bare open.
+  - `front/components/react/hotel/HotelSearchWidgetDestinationDropdown.tsx` and `front/components/react/life/LifeSearchWidget.tsx` now use `getDestinationSuggestionColumns(...)`, keeping the existing hardcoded dropdown columns on click/focus and switching to shared city API suggestions only after real typing begins.
+  - `front/shared/destination/destinationSearch.js` and `front/shared/destination/destinationSearch.d.ts` now expose the shared helper used for the static-on-open / typed-query-to-API split.
+  - `front/jejustay/pages/travel/activities.html` and `front/jejustay/pages/travel/esim.html` now re-run `sync()` once the city catalog finishes loading if the user already typed a query, so typed suggestions still appear even when the catalog arrives late.
+  - `pnpm -C front/apps/shell exec tsc --noEmit --pretty false` passed.
+  - `pnpm run check:shell` passed from the shared worker.
+  - `pnpm run build:shell` passed from the shared worker.
+  - `git diff --check -- front/shared/destination/destinationSearch.js front/shared/destination/destinationSearch.d.ts front/components/react/hotel/HotelSearchWidgetContext.tsx front/components/react/hotel/HotelSearchWidgetDestinationDropdown.tsx front/components/react/life/LifeSearchWidgetContext.tsx front/components/react/life/LifeSearchWidget.tsx front/jejustay/pages/travel/activities.html front/jejustay/pages/travel/esim.html STATE.md` passed.
+  - `reviewer_stay_city_search (Carver)` reported `no findings`.
+
+- time: `2026-03-31 18:34:00 +09:00`
+- route: `Route B`
+- task: `Stabilize JejuAir Availability to payment journey handoff when route navigation drops query params`
+- participants: `main`, `worker_jejuair_checkout_front (Peirce)`, `reviewer_booking_random_lookup (Avicenna)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_jejuair_checkout_front (Peirce)`: `front/jejuair/pages/booking/Availability.html, front/jejuair/js/payment.js`
+  - `reviewer_booking_random_lookup (Avicenna)`: `review only`
+- verification:
+  - `front/jejuair/pages/booking/Availability.html` now writes both the booking draft and a fresh one-shot `jejuair:booking-handoff` marker with matching `draftId`/`handoffId` before navigating to payment.
+  - `front/jejuair/js/payment.js` now restores a stored Availability draft only when it is fresh, marked as Availability-originated, and paired with a fresh matching handoff marker; when restored, it rewrites the payment URL with the journey query and clears the handoff marker to avoid later stale leakage.
+  - `node --check D:\git\jejugroup\front\jejuair\js\payment.js` passed.
+  - `git diff --check -- D:\git\jejugroup\front\jejuair\pages\booking\Availability.html D:\git\jejugroup\front\jejuair\js\payment.js D:\git\jejugroup\STATE.md` passed.
+  - `reviewer_booking_random_lookup (Avicenna)` reported `no findings` after the handoff marker follow-up fix.

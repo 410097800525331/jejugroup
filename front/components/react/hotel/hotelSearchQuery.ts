@@ -1,3 +1,9 @@
+import {
+  findHotelDestinationByKeyword,
+  findHotelDestinationByRegion,
+  resolveHotelDestination
+} from "./hotelDestinationCatalog";
+
 type GuestState = {
   adults: number;
   children: number;
@@ -11,54 +17,10 @@ type CalendarState = {
 
 export interface HotelSearchInitialState {
   destinationValue?: string;
+  hasTypedDestinationQuery?: boolean;
   guest?: Partial<GuestState>;
   calendar?: Partial<CalendarState>;
 }
-
-interface HotelDestinationEntry {
-  aliases: string[];
-  label: string;
-  region: string;
-}
-
-const HOTEL_DESTINATION_CATALOG: HotelDestinationEntry[] = [
-  { region: "hiroshima", label: "히로시마", aliases: ["히로시마", "hiroshima"] },
-  { region: "jeju", label: "제주", aliases: ["제주", "제주도", "jeju"] },
-  { region: "seoul", label: "서울", aliases: ["서울", "seoul"] },
-  { region: "incheon", label: "인천", aliases: ["인천", "incheon"] },
-  { region: "busan", label: "부산", aliases: ["부산", "busan"] },
-  { region: "sokcho", label: "속초", aliases: ["속초", "sokcho"] },
-  { region: "osaka", label: "오사카", aliases: ["오사카", "osaka"] },
-  { region: "tokyo", label: "도쿄", aliases: ["도쿄", "동경", "tokyo"] },
-  { region: "fukuoka", label: "후쿠오카", aliases: ["후쿠오카", "fukuoka"] },
-  { region: "bangkok", label: "방콕", aliases: ["방콕", "bangkok"] },
-  { region: "danang", label: "다낭", aliases: ["다낭", "danang", "da nang"] },
-  { region: "singapore", label: "싱가포르", aliases: ["싱가포르", "싱가폴", "singapore"] }
-];
-
-const normalizeDestinationKey = (value: string) => value.trim().toLowerCase().replace(/\s+/g, "");
-
-const findDestinationByKeyword = (keyword: string) => {
-  const normalizedKeyword = normalizeDestinationKey(keyword);
-  if (!normalizedKeyword) {
-    return null;
-  }
-
-  return (
-    HOTEL_DESTINATION_CATALOG.find((entry) =>
-      entry.aliases.some((alias) => normalizeDestinationKey(alias) === normalizedKeyword)
-    ) ?? null
-  );
-};
-
-const findDestinationByRegion = (region: string | null) => {
-  if (!region) {
-    return null;
-  }
-
-  const normalizedRegion = normalizeDestinationKey(region);
-  return HOTEL_DESTINATION_CATALOG.find((entry) => entry.region === normalizedRegion) ?? null;
-};
 
 const parseDateParam = (value: string | null) => {
   if (!value) {
@@ -115,11 +77,14 @@ export const getHotelSearchInitialStateFromUrl = (search: string): HotelSearchIn
   const params = new URLSearchParams(search);
   const keyword = params.get("keyword");
   const region = params.get("region");
-  const resolvedDestination = findDestinationByRegion(region);
-  const destinationValue = keyword?.trim() || resolvedDestination?.label || "";
+  const keywordDestination = findHotelDestinationByKeyword(keyword);
+  const resolvedDestination = findHotelDestinationByRegion(region) ?? resolveHotelDestination(region, keyword).destination;
+  const destinationValue =
+    keywordDestination?.label || keyword?.trim() || resolvedDestination?.label || "";
 
   return {
     destinationValue,
+    hasTypedDestinationQuery: Boolean(keyword?.trim()),
     guest: {
       adults: parseCountParam(params.get("adults"), 1, 1),
       children: parseCountParam(params.get("children"), 0, 0),
@@ -137,6 +102,11 @@ export const buildHotelListRouteParams = (
     destinationValue: string;
     guest: GuestState;
     calendar: CalendarState;
+    resolvedDestination?: {
+      countryLabel: string;
+      label: string;
+      region: string;
+    } | null;
   },
   currentSearch = ""
 ) => {
@@ -144,7 +114,7 @@ export const buildHotelListRouteParams = (
   const currentParams = new URLSearchParams(currentSearch);
   const shell = readShellParam(currentSearch);
   const destinationValue = input.destinationValue.trim();
-  const resolvedDestination = destinationValue ? findDestinationByKeyword(destinationValue) : null;
+  const resolvedDestination = destinationValue ? resolveHotelDestination(null, destinationValue).destination : null;
   const checkIn = formatDateParam(input.calendar.checkIn);
   const checkOut = formatDateParam(input.calendar.checkOut);
 
@@ -156,7 +126,9 @@ export const buildHotelListRouteParams = (
     params.keyword = destinationValue;
   }
 
-  if (resolvedDestination) {
+  if (input.resolvedDestination) {
+    params.region = input.resolvedDestination.region;
+  } else if (resolvedDestination) {
     params.region = resolvedDestination.region;
   }
 

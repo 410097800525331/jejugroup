@@ -31,7 +31,7 @@ public class BookingQueryRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (!resultSet.next()) {
-                    throw new NoSuchElementException("議댁옱?섏? ?딅뒗 ?ъ슜?먯엯?덈떎.");
+                    throw new NoSuchElementException("존재하지 않는 사용자입니다.");
                 }
 
                 return new BookingUserRow(
@@ -255,12 +255,149 @@ public class BookingQueryRepository {
         }
     }
 
+    public BookingGuestLookupRow loadGuestLookup(
+        Connection connection,
+        String reservationNo,
+        String email
+    ) throws SQLException {
+        String query = """
+            SELECT b.booking_no, b.destination, b.total_amount, b.user_id,
+                   bi.service_start_date,
+                   bp.passenger_last_name, bp.passenger_first_name,
+                   COALESCE(NULLIF(TRIM(bp.email), ''), NULLIF(TRIM(u.email), '')) AS email
+            FROM bookings b
+            INNER JOIN booking_items bi
+                ON bi.booking_id = b.id
+               AND bi.item_no = 1
+            INNER JOIN booking_passengers bp
+                ON bp.booking_id = b.id
+               AND bp.is_primary = 1
+            LEFT JOIN users u
+                ON u.id = b.user_id
+            WHERE b.booking_no = ?
+              AND LOWER(TRIM(COALESCE(NULLIF(bp.email, ''), NULLIF(u.email, '')))) = LOWER(TRIM(?))
+            LIMIT 1
+            """;
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, requireReservationNo(reservationNo));
+            statement.setString(2, requireLookupEmail(email));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    throw new NoSuchElementException("예약 정보를 찾을 수 없습니다.");
+                }
+
+                return new BookingGuestLookupRow(
+                    resultSet.getString("booking_no"),
+                    resultSet.getString("destination"),
+                    resultSet.getBigDecimal("total_amount"),
+                    resultSet.getString("user_id") != null,
+                    toLocalDate(resultSet.getDate("service_start_date")),
+                    resultSet.getString("passenger_last_name"),
+                    resultSet.getString("passenger_first_name"),
+                    resultSet.getString("email")
+                );
+            }
+        }
+    }
+
+    public BookingGuestLookupRow loadGuestLookup(
+        Connection connection,
+        String reservationNo,
+        java.time.LocalDate travelDate,
+        String lastName,
+        String firstName
+    ) throws SQLException {
+        String query = """
+            SELECT b.booking_no, b.destination, b.total_amount, b.user_id,
+                   bi.service_start_date,
+                   bp.passenger_last_name, bp.passenger_first_name,
+                   COALESCE(NULLIF(TRIM(bp.email), ''), NULLIF(TRIM(u.email), '')) AS email
+            FROM bookings b
+            INNER JOIN booking_items bi
+                ON bi.booking_id = b.id
+               AND bi.item_no = 1
+            INNER JOIN booking_passengers bp
+                ON bp.booking_id = b.id
+               AND bp.is_primary = 1
+            LEFT JOIN users u
+                ON u.id = b.user_id
+            WHERE b.booking_no = ?
+              AND bi.service_start_date = ?
+              AND bp.passenger_last_name = ?
+              AND bp.passenger_first_name = ?
+            LIMIT 1
+            """;
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, requireReservationNo(reservationNo));
+            statement.setDate(2, Date.valueOf(requireTravelDate(travelDate)));
+            statement.setString(3, requireLookupName(lastName));
+            statement.setString(4, requireLookupName(firstName));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    throw new NoSuchElementException("예약 정보를 찾을 수 없습니다.");
+                }
+
+                return new BookingGuestLookupRow(
+                    resultSet.getString("booking_no"),
+                    resultSet.getString("destination"),
+                    resultSet.getBigDecimal("total_amount"),
+                    resultSet.getString("user_id") != null,
+                    toLocalDate(resultSet.getDate("service_start_date")),
+                    resultSet.getString("passenger_last_name"),
+                    resultSet.getString("passenger_first_name"),
+                    resultSet.getString("email")
+                );
+            }
+        }
+    }
+
     private String requireUserId(String userId) {
         if (!StringUtils.hasText(userId)) {
             throw new IllegalArgumentException("userId is required");
         }
 
         return userId.trim();
+    }
+
+    private String requireReservationNo(String reservationNo) {
+        if (!StringUtils.hasText(reservationNo)) {
+            throw new IllegalArgumentException("입력값이 올바르지 않습니다.");
+        }
+
+        return reservationNo.trim();
+    }
+
+    private String requireLookupEmail(String email) {
+        if (!StringUtils.hasText(email)) {
+            throw new IllegalArgumentException("입력값이 올바르지 않습니다.");
+        }
+
+        String normalized = email.trim();
+        if (!normalized.contains("@")) {
+            throw new IllegalArgumentException("입력값이 올바르지 않습니다.");
+        }
+
+        return normalized;
+    }
+
+    private java.time.LocalDate requireTravelDate(java.time.LocalDate travelDate) {
+        if (travelDate == null) {
+            throw new IllegalArgumentException("입력값이 올바르지 않습니다.");
+        }
+
+        return travelDate;
+    }
+
+    private String requireLookupName(String name) {
+        if (!StringUtils.hasText(name)) {
+            throw new IllegalArgumentException("입력값이 올바르지 않습니다.");
+        }
+
+        return name.trim();
     }
 
     private LocalDate toLocalDate(Date date) {
@@ -335,6 +472,18 @@ public class BookingQueryRepository {
         LocalDateTime completedAt,
         String failureCode,
         String failureMessage
+    ) {
+    }
+
+    public record BookingGuestLookupRow(
+        String bookingNo,
+        String destination,
+        BigDecimal amount,
+        boolean memberBooking,
+        LocalDate travelDate,
+        String lastName,
+        String firstName,
+        String email
     ) {
     }
 }

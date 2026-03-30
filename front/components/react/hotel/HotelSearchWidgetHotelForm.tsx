@@ -10,6 +10,7 @@ export const HotelSearchFormHotel = () => {
     checkInLabel,
     checkOutLabel,
     guestSummary,
+    ensureDestinationOpen,
     setDestinationValue,
     openDestinationInput,
     toggleDestination,
@@ -38,6 +39,7 @@ export const HotelSearchFormHotel = () => {
                 placeholder="어디로 떠나시나요?"
                 type="text"
                 value={state.destinationValue}
+                onFocus={ensureDestinationOpen}
                 onChange={(event) => {
                   setDestinationValue(event.target.value);
                 }}

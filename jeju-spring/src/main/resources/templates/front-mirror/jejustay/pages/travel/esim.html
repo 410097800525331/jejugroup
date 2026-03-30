@@ -20,6 +20,92 @@
     <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/header.css}" href="/front-mirror/components/react/layout/header.css">
     <link rel="stylesheet" th:href="@{/front-mirror/components/react/layout/footer.css}" href="/front-mirror/components/react/layout/footer.css">
     <link rel="stylesheet" th:href="@{/front-mirror/components/react/ui/FAB/fab.css}" href="/front-mirror/components/react/ui/FAB/fab.css">
+    <style>
+        .city-search-shell {
+            position: relative;
+            width: 100%;
+        }
+
+        .city-search-dropdown {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 0;
+            right: 0;
+            z-index: 30;
+            display: none;
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.92);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.14);
+            backdrop-filter: blur(12px);
+        }
+
+        .city-search-dropdown.is-open {
+            display: block;
+        }
+
+        .city-search-empty,
+        .city-search-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        .city-search-empty {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .city-search-option {
+            border: 0;
+            border-top: 1px solid rgba(226, 232, 240, 0.72);
+            background: transparent;
+            cursor: pointer;
+            transition: background-color 0.18s ease;
+        }
+
+        .city-search-option:first-child {
+            border-top: 0;
+        }
+
+        .city-search-option:hover,
+        .city-search-option:focus-visible {
+            background: rgba(255, 80, 0, 0.06);
+            outline: none;
+        }
+
+        .city-search-option-primary {
+            display: block;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .city-search-option-secondary {
+            display: block;
+            margin-top: 2px;
+            font-size: 0.82rem;
+            color: #64748b;
+        }
+
+        .city-search-option-detail {
+            font-size: 0.84rem;
+            color: #ff5000;
+            white-space: nowrap;
+        }
+
+        .country-card.is-search-match {
+            outline: 3px solid rgba(255, 80, 0, 0.28);
+            outline-offset: 2px;
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(255, 80, 0, 0.16);
+        }
+    </style>
 </head>
 
 <body>
@@ -28,19 +114,23 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">언제 어디서나,<br>자유롭게 연결되세요.</h1>
+            <div class="hero-content">
+                <h1 class="hero-title">언제 어디서나,<br>자유롭게 연결되세요.</h1>
 
-            <!-- Redesigned Search Box -->
-            <div class="search-box">
-                <div class="search-btn-icon">
-                    <i data-lucide="search"></i>
+                <!-- Redesigned Search Box -->
+                <div class="city-search-shell" data-city-search-root="esim">
+                    <div class="search-box">
+                        <div class="search-btn-icon">
+                            <i data-lucide="search"></i>
+                        </div>
+                        <input id="esimCitySearchInput" type="text" class="search-input" placeholder="어디로 떠나시나요?"
+                            autocomplete="off">
+                        <button class="btn-check-esim" id="esimCitySearchButton" type="button">조회하기</button>
+                    </div>
+                    <div class="city-search-dropdown" id="esimCitySearchDropdown" aria-live="polite"></div>
                 </div>
-                <input type="text" class="search-input" placeholder="어디로 떠나시나요?">
-                <button class="btn-check-esim">조회하기</button>
             </div>
-        </div>
-    </section>
+        </section>
 
     <!-- Country Grid Section -->
     <section class="section">
@@ -452,30 +542,6 @@
                 });
             });
 
-            // Search Input Dropdown
-            const searchInput = document.getElementById('searchInput');
-            const searchDropdown = document.getElementById('searchDropdown');
-
-            if (searchInput && searchDropdown) {
-                searchInput.addEventListener('focus', () => {
-                    searchDropdown.classList.add('active');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('.search-box')) {
-                        searchDropdown.classList.remove('active');
-                    }
-                });
-            }
-
-            // Destination item click
-            document.querySelectorAll('.destination-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    if (searchInput) searchInput.value = item.dataset.country;
-                    if (searchDropdown) searchDropdown.classList.remove('active');
-                });
-            });
-
             // ============================================
             // 2. External Libraries (Lucide) - Run LAST & Safely
             // ============================================
@@ -484,6 +550,278 @@
             } else {
                 console.warn('Lucide icons library failed to load.');
             }
+        });
+    </script>
+    <script type="module">
+        const CITY_CATALOG_URL = "../../../shared/destination/generated/destination-catalogs.json";
+
+        const normalizeSearchKey = (value) => String(value ?? "")
+            .normalize("NFKC")
+            .toLowerCase()
+            .replace(/[^a-z0-9가-힣]+/g, "");
+
+        const scoreTextMatch = (queryKey, candidateKey, exactScore, prefixScore, partialScore) => {
+            if (!queryKey || !candidateKey) {
+                return 0;
+            }
+
+            if (candidateKey === queryKey) {
+                return exactScore;
+            }
+
+            if (candidateKey.startsWith(queryKey) || queryKey.startsWith(candidateKey)) {
+                return prefixScore;
+            }
+
+            if (candidateKey.includes(queryKey) || queryKey.includes(candidateKey)) {
+                return partialScore;
+            }
+
+            return 0;
+        };
+
+        const compareByScore = (left, right) => {
+            if (right.score !== left.score) {
+                return right.score - left.score;
+            }
+
+            return left.index - right.index;
+        };
+
+        const scoreCity = (city, queryKey) => {
+            const keys = [
+                normalizeSearchKey(city.label),
+                normalizeSearchKey(city.englishLabel),
+                normalizeSearchKey(city.countryLabel)
+            ];
+
+            return Math.max(
+                scoreTextMatch(queryKey, keys[0], 120, 80, 40),
+                scoreTextMatch(queryKey, keys[1], 110, 75, 35),
+                scoreTextMatch(queryKey, keys[2], 50, 30, 15)
+            );
+        };
+
+        const searchCityDestinations = (cityCatalog, query) => {
+            const queryKey = normalizeSearchKey(query);
+            if (!queryKey) {
+                return [];
+            }
+
+            return cityCatalog.map((city, index) => ({
+                city,
+                index,
+                score: scoreCity(city, queryKey)
+            }))
+                .filter((candidate) => candidate.score > 0)
+                .sort(compareByScore)
+                .slice(0, 8)
+                .map((candidate) => {
+                    const label = candidate.city.label?.trim() || "";
+                    const countryLabel = candidate.city.countryLabel?.trim() || "";
+                    const englishLabel = candidate.city.englishLabel?.trim() || "";
+
+                    return {
+                        label,
+                        countryLabel,
+                        englishLabel,
+                        detailUrl: candidate.city.detailUrl ?? "",
+                        displayLabel: countryLabel ? `${label} (${countryLabel})` : label
+                    };
+                });
+        };
+
+        const initCitySearch = ({ input, button, dropdown }) => {
+            if (!input || !button || !dropdown) {
+                return;
+            }
+
+            const countryCards = Array.from(document.querySelectorAll(".country-card"));
+            const countryGrid = document.querySelector(".country-grid");
+            const countrySection = countryGrid?.closest(".section");
+
+            let cityCatalog = [];
+            let cityCatalogReady = false;
+            let lastSubmittedQuery = "";
+
+            const cityCatalogPromise = fetch(CITY_CATALOG_URL, { cache: "force-cache" })
+                .then((response) => (response.ok ? response.json() : null))
+                .then((data) => {
+                    cityCatalog = Array.isArray(data?.cityCatalog) ? data.cityCatalog : [];
+                    cityCatalogReady = true;
+                    if (input.value.trim()) {
+                        sync();
+                    }
+                })
+                .catch((error) => {
+                    console.error("[EsimPage] city catalog load failed", error);
+                    cityCatalogReady = true;
+                    if (input.value.trim()) {
+                        sync();
+                    }
+                });
+
+            const closeDropdown = () => {
+                dropdown.classList.remove("is-open");
+                dropdown.replaceChildren();
+            };
+
+            const clearCountryHighlights = () => {
+                countryCards.forEach((card) => {
+                    card.classList.remove("is-search-match");
+                });
+            };
+
+            const applyEsimSearch = (query, selectedResult = null) => {
+                lastSubmittedQuery = query;
+                const queryKey = normalizeSearchKey(query);
+                const countryTerms = [];
+
+                if (selectedResult?.countryLabel) {
+                    countryTerms.push(selectedResult.countryLabel);
+                }
+
+                if (selectedResult?.label && selectedResult.label !== selectedResult.countryLabel) {
+                    countryTerms.push(selectedResult.label);
+                }
+
+                if (query) {
+                    countryTerms.push(query);
+                }
+
+                const normalizedTerms = countryTerms
+                    .map((term) => normalizeSearchKey(term))
+                    .filter(Boolean);
+
+                let firstMatch = null;
+
+                clearCountryHighlights();
+
+                countryCards.forEach((card) => {
+                    const cardKey = normalizeSearchKey(card.textContent);
+                    const isMatch = normalizedTerms.some((term) => cardKey.includes(term)) || (!!queryKey && cardKey.includes(queryKey));
+
+                    if (isMatch) {
+                        card.classList.add("is-search-match");
+                        firstMatch = firstMatch ?? card;
+                    }
+                });
+
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+                    return;
+                }
+
+                countrySection?.scrollIntoView({ behavior: "smooth", block: "start" });
+            };
+
+            const submitEsimSearch = (query) => {
+                const normalizedQuery = String(query ?? "").trim();
+                if (!normalizedQuery) {
+                    clearCountryHighlights();
+                    countrySection?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    return;
+                }
+
+                const [firstResult] = searchCityDestinations(cityCatalog, normalizedQuery);
+                const nextQuery = firstResult?.label ?? normalizedQuery;
+
+                input.value = nextQuery;
+                closeDropdown();
+                applyEsimSearch(nextQuery, firstResult);
+            };
+
+            const renderDropdown = (results, query) => {
+                dropdown.replaceChildren();
+
+                if (!query.trim()) {
+                    closeDropdown();
+                    return;
+                }
+
+                if (!cityCatalogReady) {
+                    const loadingState = document.createElement("div");
+                    loadingState.className = "city-search-empty";
+                    loadingState.textContent = "도시 데이터를 불러오는 중이에요.";
+                    dropdown.appendChild(loadingState);
+                    dropdown.classList.add("is-open");
+                    return;
+                }
+
+                if (!results.length) {
+                    const emptyState = document.createElement("div");
+                    emptyState.className = "city-search-empty";
+                    emptyState.textContent = "일치하는 도시가 없어요.";
+                    dropdown.appendChild(emptyState);
+                    dropdown.classList.add("is-open");
+                    return;
+                }
+
+                results.forEach((result) => {
+                    const item = document.createElement("button");
+                    item.type = "button";
+                    item.className = "city-search-option";
+                    item.dataset.cityLabel = result.label;
+                    item.dataset.cityDetailUrl = result.detailUrl;
+                    item.innerHTML = `
+                        <span>
+                            <span class="city-search-option-primary">${result.displayLabel}</span>
+                            <span class="city-search-option-secondary">${result.englishLabel || result.countryLabel || "공유 도시 데이터"}</span>
+                        </span>
+                        <span class="city-search-option-detail">${result.detailUrl ? "선택" : "도시"}</span>
+                    `;
+                    item.addEventListener("click", () => {
+                        input.value = result.label;
+                        submitEsimSearch(result.label);
+                    });
+                    dropdown.appendChild(item);
+                });
+
+                dropdown.classList.add("is-open");
+            };
+
+            const sync = () => {
+                const results = searchCityDestinations(cityCatalog, input.value);
+                renderDropdown(results, input.value);
+            };
+
+            input.addEventListener("input", sync);
+            input.addEventListener("focus", sync);
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    closeDropdown();
+                }
+
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    submitEsimSearch(input.value);
+                }
+            });
+
+            button.addEventListener("click", () => {
+                submitEsimSearch(input.value);
+            });
+
+            input.addEventListener("input", () => {
+                if (!input.value.trim()) {
+                    clearCountryHighlights();
+                    lastSubmittedQuery = "";
+                }
+            });
+
+            document.addEventListener("click", (event) => {
+                if (!event.target.closest('[data-city-search-root="esim"]')) {
+                    closeDropdown();
+                }
+            });
+
+            void cityCatalogPromise;
+        };
+
+        void initCitySearch({
+            input: document.getElementById("esimCitySearchInput"),
+            button: document.getElementById("esimCitySearchButton"),
+            dropdown: document.getElementById("esimCitySearchDropdown")
         });
     </script>
     <script type="module" th:src="@{/front-mirror/components/runtime/bootstrap.js}" src="/front-mirror/components/runtime/bootstrap.js"></script>

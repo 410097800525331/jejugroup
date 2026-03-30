@@ -1,0 +1,99 @@
+goal: >
+  Freeze the front-only hotel region refactor that replaces scattered region
+  hardcodes with one shared destination contract for hotel search and landing
+  navigation, while preserving current visible behavior and preparing a clean
+  seam for API-backed destination metadata later.
+scope:
+  in_scope:
+    - >
+      Create or centralize one shared destination catalog/source-of-truth in
+      front for hotel search and landing navigation.
+    - >
+      Make hotelSearchQuery, route param building, and initial state parsing
+      consume the shared destination source instead of duplicating
+      aliases/labels/regions.
+    - >
+      Replace hotelListPageData unknown-search fallback behavior that currently
+      defaults to an unrelated region like hiroshima with a deterministic
+      neutral fallback or unresolved state that is aligned to the shared
+      catalog.
+    - >
+      Remove raw region hardcodes from jejuhotel landing destination cards when
+      the card data can be derived from the shared destination source.
+    - >
+      Preserve current visible hotel search, landing navigation, and card
+      behavior while making destination metadata swappable to API data in a
+      later step.
+  out_of_scope:
+    - >
+      Any change to jeju-spring, jeju-web, deployment mirrors, generated
+      files, STATE.md, or MULTI_AGENT_LOG.md.
+    - >
+      Any API backend implementation or runtime fetch wiring for destination
+      metadata.
+    - >
+      Any change to visible hotel UX, navigation targets, or search flow
+      semantics beyond removing duplicated region hardcodes and unsafe fallback
+      defaults.
+    - >
+      Any broad rewrite of unrelated stay, booking, or landing surfaces.
+constraints:
+  - >
+    Keep the contract front-only and limited to the hotel region handling
+    slice.
+  - >
+    Preserve current search result resolution and navigation behavior for
+    known destinations.
+  - >
+    Destination identity should come from one shared contract rather than
+    being re-declared independently in each consumer.
+  - >
+    hotelSearchQuery, route param building, and initial state parsing must all
+    read the same shared destination source.
+  - >
+    hotelListPageData must not map unresolved or unknown destination searches
+    to an unrelated region.
+  - >
+    The new shared destination source must be designed so the data backing can
+    later move to API-provided metadata without changing the consumer contract.
+acceptance_criteria:
+  - >
+    There is one shared destination catalog or equivalent source-of-truth used
+    by both hotel search and landing navigation.
+  - >
+    front/components/react/hotel/hotelSearchQuery.ts no longer owns separate
+    alias, label, or region lists that duplicate the shared destination
+    contract.
+  - >
+    front/components/react/hotel/searchWidgetData.ts and
+    front/components/react/hotel/hotelListPageData.ts resolve destination
+    identity from the same shared source used by hotelSearchQuery.
+  - >
+    hotelListPageData no longer defaults unknown search inputs to an unrelated
+    region like hiroshima; it uses a deterministic neutral fallback or an
+    unresolved state aligned with the shared catalog.
+  - >
+    front/jejustay/pages/hotel/jejuhotel.html destination cards no longer
+    embed raw region hardcodes when the same data can be derived from the
+    shared destination source.
+  - >
+    The refactor preserves current visible UX, route behavior, and landing
+    navigation for existing destinations.
+  - >
+    The implementation is clearly prepared for future API-backed destination
+    metadata, but does not require the API data yet.
+verification:
+  - >
+    Review the touched front hotel files and confirm the shared destination
+    contract is the single source used across query building, initial parsing,
+    page data, and landing cards.
+  - >
+    Confirm unknown destination handling no longer falls through to an
+    unrelated region default.
+  - >
+    Confirm the change stays inside front and does not touch mirrors or
+    backend runtime paths.
+  - >
+    Use targeted diff inspection and text search over the touched hotel files
+    to verify duplicated hardcodes were removed and the visible flow remains
+    intact.

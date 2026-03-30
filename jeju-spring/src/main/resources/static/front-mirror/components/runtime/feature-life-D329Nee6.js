@@ -1,11 +1,11 @@
-import { a as s, j as t } from "./react-vendor-BoSfm_Te.js";
+import { a as l, j as t } from "./react-vendor-BoSfm_Te.js";
 import { b as v } from "./feature-layout-MqEyxW8f.js";
-import { c as q, g as F, d as B, s as Y, S as K, e as Q, f as X, D as J } from "./feature-hotel-3JCHxj0F.js";
-const z = [
+import { c as Y, g as U, d as B, s as Q, S as K, e as X, f as J, D as z, h as Z } from "./feature-hotel-0wDBN8rD.js";
+const ee = [
   { value: "3", dataLang: "calFlex3", label: "3박" },
   { value: "7", dataLang: "calFlex7", label: "1주일" },
   { value: "30", dataLang: "calFlex30", label: "1개월" }
-], Z = [
+], ae = [
   {
     key: "rooms",
     title: "객실",
@@ -30,15 +30,16 @@ const z = [
     descriptionLang: "guestChildrenDesc",
     defaultValue: "0"
   }
-], U = [
+], $ = [
   { value: "kitchen", dataLang: "lifeOptionKitchen", label: "주방" },
   { value: "washer", dataLang: "lifeOptionWasher", label: "세탁기" },
   { value: "full-kitchen", dataLang: "lifeOptionFullKitchen", label: "풀옵션 주방" },
   { value: "washer-dryer", dataLang: "lifeOptionWasherDryer", label: "세탁기/건조기" },
   { value: "desk", dataLang: "lifeOptionDesk", label: "업무용 데스크" },
   { value: "parking", dataLang: "lifeOptionParking", label: "전용 주차장" }
-], ee = "jeju:life-search-submit", S = 14, I = 24 * 60 * 60 * 1e3, ae = {
+], ne = "jeju:life-search-submit", I = 14, _ = 24 * 60 * 60 * 1e3, te = {
   destinationValue: "",
+  hasTypedDestinationQuery: !1,
   isDestinationOpen: !1,
   isGuestOpen: !1,
   isOptionsOpen: !1,
@@ -48,18 +49,28 @@ const z = [
     children: 0
   },
   requiredOptions: [],
-  calendar: q()
-}, $ = s.createContext(null), H = (e) => {
+  calendar: Y()
+}, W = l.createContext(null), H = (e) => {
   if (!e)
     return "날짜 선택";
   const a = new Date(e), n = a.getFullYear(), c = String(a.getMonth() + 1).padStart(2, "0"), r = String(a.getDate()).padStart(2, "0");
   return `${n}-${c}-${r}`;
-}, ne = (e, a) => {
+}, se = (e, a) => {
   switch (a.type) {
     case "SET_DESTINATION_VALUE":
       return {
         ...e,
         destinationValue: a.value
+      };
+    case "MARK_TYPED_DESTINATION_QUERY":
+      return {
+        ...e,
+        hasTypedDestinationQuery: !0
+      };
+    case "RESET_TYPED_DESTINATION_QUERY":
+      return {
+        ...e,
+        hasTypedDestinationQuery: !1
       };
     case "TOGGLE_DESTINATION":
       return {
@@ -127,7 +138,7 @@ const z = [
           tempCheckIn: e.calendar.checkIn,
           tempCheckOut: e.calendar.checkOut,
           hoverDate: null,
-          visibleMonth: e.calendar.checkIn ? F(e.calendar.checkIn) : e.calendar.visibleMonth
+          visibleMonth: e.calendar.checkIn ? U(e.calendar.checkIn) : e.calendar.visibleMonth
         }
       };
     case "CLOSE_CALENDAR":
@@ -147,7 +158,7 @@ const z = [
         calendar: {
           ...e.calendar,
           hoverDate: null,
-          visibleMonth: Y(e.calendar.visibleMonth, a.delta)
+          visibleMonth: Q(e.calendar.visibleMonth, a.delta)
         }
       };
     case "SET_CALENDAR_TAB":
@@ -207,7 +218,7 @@ const z = [
           checkOut: c,
           tempCheckIn: n,
           tempCheckOut: c,
-          visibleMonth: n ? F(n) : e.calendar.visibleMonth
+          visibleMonth: n ? U(n) : e.calendar.visibleMonth
         }
       };
     }
@@ -229,80 +240,82 @@ const z = [
   }
 }, h = (e, a = null) => {
   a !== "destinationDropdown" && e({ type: "CLOSE_DESTINATION" }), a !== "guestPopupLarge" && e({ type: "CLOSE_GUEST" }), a !== "optionsPopupLarge" && e({ type: "CLOSE_OPTIONS" }), a !== "calendarPopup" && e({ type: "CLOSE_CALENDAR" });
-}, te = ({ children: e }) => {
-  const [a, n] = s.useReducer(ne, ae);
-  s.useEffect(() => {
-    const l = () => {
+}, le = ({ children: e }) => {
+  const [a, n] = l.useReducer(se, te);
+  l.useEffect(() => {
+    const s = () => {
       h(n);
     };
-    return document.addEventListener("click", l), () => {
-      document.removeEventListener("click", l);
+    return document.addEventListener("click", s), () => {
+      document.removeEventListener("click", s);
     };
   }, []);
-  const c = s.useCallback((l) => {
-    l.stopPropagation();
-  }, []), r = s.useCallback((l) => {
-    n({ type: "SET_DESTINATION_VALUE", value: l });
-  }, []), d = s.useCallback((l) => {
-    l.stopPropagation(), h(n, "destinationDropdown"), n({ type: "TOGGLE_DESTINATION" });
-  }, []), i = s.useCallback(
-    (l) => {
-      l.stopPropagation(), h(n, "destinationDropdown"), n({ type: "SET_DESTINATION_VALUE", value: l.currentTarget.value }), a.isDestinationOpen || n({ type: "TOGGLE_DESTINATION" });
+  const c = l.useCallback((s) => {
+    s.stopPropagation();
+  }, []), r = l.useCallback((s) => {
+    n({ type: "SET_DESTINATION_VALUE", value: s }), n({ type: "MARK_TYPED_DESTINATION_QUERY" });
+  }, []), o = l.useCallback(() => {
+    h(n, "destinationDropdown"), a.isDestinationOpen || n({ type: "TOGGLE_DESTINATION" });
+  }, [a.isDestinationOpen]), i = l.useCallback((s) => {
+    s.stopPropagation(), h(n, "destinationDropdown"), n({ type: "TOGGLE_DESTINATION" });
+  }, []), O = l.useCallback(
+    (s) => {
+      s.stopPropagation(), o();
     },
-    [a.isDestinationOpen]
-  ), O = s.useCallback((l) => {
-    n({ type: "SET_DESTINATION_VALUE", value: l }), n({ type: "CLOSE_DESTINATION" });
-  }, []), m = s.useCallback((l) => {
-    l.stopPropagation(), h(n, "guestPopupLarge"), n({ type: "TOGGLE_GUEST" });
-  }, []), g = s.useCallback((l, o, E) => {
-    E.stopPropagation(), n({ type: "ADJUST_GUEST", key: l, delta: o });
-  }, []), C = s.useCallback((l) => {
-    l.stopPropagation(), h(n, "optionsPopupLarge"), n({ type: "TOGGLE_OPTIONS" });
-  }, []), u = s.useCallback((l) => {
-    n({ type: "TOGGLE_REQUIRED_OPTION", value: l });
-  }, []), L = s.useCallback(
-    (l) => {
-      if (l.stopPropagation(), a.calendar.isOpen) {
+    [o]
+  ), m = l.useCallback((s) => {
+    n({ type: "SET_DESTINATION_VALUE", value: s }), n({ type: "RESET_TYPED_DESTINATION_QUERY" }), n({ type: "CLOSE_DESTINATION" });
+  }, []), g = l.useCallback((s) => {
+    s.stopPropagation(), h(n, "guestPopupLarge"), n({ type: "TOGGLE_GUEST" });
+  }, []), E = l.useCallback((s, d, C) => {
+    C.stopPropagation(), n({ type: "ADJUST_GUEST", key: s, delta: d });
+  }, []), u = l.useCallback((s) => {
+    s.stopPropagation(), h(n, "optionsPopupLarge"), n({ type: "TOGGLE_OPTIONS" });
+  }, []), D = l.useCallback((s) => {
+    n({ type: "TOGGLE_REQUIRED_OPTION", value: s });
+  }, []), N = l.useCallback(
+    (s) => {
+      if (s.stopPropagation(), a.calendar.isOpen) {
         n({ type: "CLOSE_CALENDAR" });
         return;
       }
       h(n, "calendarPopup"), n({ type: "OPEN_CALENDAR" });
     },
     [a.calendar.isOpen]
-  ), N = s.useCallback(() => {
+  ), L = l.useCallback(() => {
     n({ type: "SHIFT_CALENDAR_MONTH", delta: -1 });
-  }, []), k = s.useCallback(() => {
+  }, []), k = l.useCallback(() => {
     n({ type: "SHIFT_CALENDAR_MONTH", delta: 1 });
-  }, []), D = s.useCallback((l) => {
-    n({ type: "SET_CALENDAR_TAB", tab: l });
-  }, []), x = s.useCallback((l) => {
-    n({ type: "SET_FLEXIBLE_OPTION", value: l });
-  }, []), T = s.useCallback((l) => {
-    n({ type: "SELECT_CALENDAR_DATE", timestamp: l });
-  }, []), f = s.useCallback((l) => {
-    n({ type: "SET_CALENDAR_HOVER_DATE", timestamp: l });
-  }, []), _ = s.useCallback(() => {
+  }, []), S = l.useCallback((s) => {
+    n({ type: "SET_CALENDAR_TAB", tab: s });
+  }, []), T = l.useCallback((s) => {
+    n({ type: "SET_FLEXIBLE_OPTION", value: s });
+  }, []), f = l.useCallback((s) => {
+    n({ type: "SELECT_CALENDAR_DATE", timestamp: s });
+  }, []), x = l.useCallback((s) => {
+    n({ type: "SET_CALENDAR_HOVER_DATE", timestamp: s });
+  }, []), A = l.useCallback(() => {
     n({ type: "SET_CALENDAR_HOVER_DATE", timestamp: null });
-  }, []), A = s.useCallback(() => {
+  }, []), y = l.useCallback(() => {
     n({ type: "CLEAR_CALENDAR" });
-  }, []), y = s.useCallback(() => {
-    const { tempCheckIn: l, tempCheckOut: o } = a.calendar;
-    if (!l && !o) {
+  }, []), j = l.useCallback(() => {
+    const { tempCheckIn: s, tempCheckOut: d } = a.calendar;
+    if (!s && !d) {
       n({ type: "CLEAR_CALENDAR" }), n({ type: "CLOSE_CALENDAR" });
       return;
     }
-    if (!l || !o) {
+    if (!s || !d) {
       window.alert("체크인과 체크아웃 날짜를 모두 선택해주세요");
       return;
     }
-    if ((o - l) / I < S) {
-      window.alert(`장기 체류 서비스는 최소 ${S}박부터 예약 가능합니다`);
+    if ((d - s) / _ < I) {
+      window.alert(`장기 체류 서비스는 최소 ${I}박부터 예약 가능합니다`);
       return;
     }
     n({ type: "CONFIRM_CALENDAR" });
-  }, [a.calendar]), j = s.useCallback(() => {
+  }, [a.calendar]), R = l.useCallback(() => {
     h(n), document.dispatchEvent(
-      new CustomEvent(ee, {
+      new CustomEvent(ne, {
         detail: {
           destination: a.destinationValue.trim(),
           guest: a.guest,
@@ -313,100 +326,102 @@ const z = [
         }
       })
     );
-  }, [a.calendar.checkIn, a.calendar.checkOut, a.calendar.flexibleValue, a.destinationValue, a.guest, a.requiredOptions]), P = s.useMemo(() => {
-    const l = [`성인 ${a.guest.adults}명`, `객실 ${a.guest.rooms}개`];
-    return a.guest.children > 0 && l.splice(1, 0, `아동 ${a.guest.children}명`), l.join(", ");
-  }, [a.guest.adults, a.guest.children, a.guest.rooms]), p = s.useMemo(() => U.filter((l) => a.requiredOptions.includes(l.value)).map((l) => l.label), [a.requiredOptions]), R = s.useMemo(() => p.length === 0 ? "선택사항 없음" : p.length > 2 ? `${p[0]}, ${p[1]} 외 ${p.length - 2}` : p.join(", "), [p]), G = s.useMemo(() => {
-    const l = a.calendar.isOpen ? a.calendar.tempCheckIn ?? a.calendar.checkIn : a.calendar.checkIn;
-    return H(l);
-  }, [a.calendar.checkIn, a.calendar.isOpen, a.calendar.tempCheckIn]), M = s.useMemo(() => {
-    const l = a.calendar.isOpen ? a.calendar.tempCheckOut ?? a.calendar.checkOut : a.calendar.checkOut;
-    return H(l);
-  }, [a.calendar.checkOut, a.calendar.isOpen, a.calendar.tempCheckOut]), w = s.useMemo(() => {
-    const { tempCheckIn: l, tempCheckOut: o } = a.calendar;
-    return !l || !o ? null : (o - l) / I < S ? `* 최소 ${S}박 이상 선택해주세요` : null;
-  }, [a.calendar.tempCheckIn, a.calendar.tempCheckOut]), V = s.useMemo(() => {
-    const { checkIn: l, checkOut: o } = a.calendar;
-    if (!l || !o)
+  }, [a.calendar.checkIn, a.calendar.checkOut, a.calendar.flexibleValue, a.destinationValue, a.guest, a.requiredOptions]), P = l.useMemo(() => {
+    const s = [`성인 ${a.guest.adults}명`, `객실 ${a.guest.rooms}개`];
+    return a.guest.children > 0 && s.splice(1, 0, `아동 ${a.guest.children}명`), s.join(", ");
+  }, [a.guest.adults, a.guest.children, a.guest.rooms]), p = l.useMemo(() => $.filter((s) => a.requiredOptions.includes(s.value)).map((s) => s.label), [a.requiredOptions]), G = l.useMemo(() => p.length === 0 ? "선택사항 없음" : p.length > 2 ? `${p[0]}, ${p[1]} 외 ${p.length - 2}` : p.join(", "), [p]), M = l.useMemo(() => {
+    const s = a.calendar.isOpen ? a.calendar.tempCheckIn ?? a.calendar.checkIn : a.calendar.checkIn;
+    return H(s);
+  }, [a.calendar.checkIn, a.calendar.isOpen, a.calendar.tempCheckIn]), w = l.useMemo(() => {
+    const s = a.calendar.isOpen ? a.calendar.tempCheckOut ?? a.calendar.checkOut : a.calendar.checkOut;
+    return H(s);
+  }, [a.calendar.checkOut, a.calendar.isOpen, a.calendar.tempCheckOut]), V = l.useMemo(() => {
+    const { tempCheckIn: s, tempCheckOut: d } = a.calendar;
+    return !s || !d ? null : (d - s) / _ < I ? `* 최소 ${I}박 이상 선택해주세요` : null;
+  }, [a.calendar.tempCheckIn, a.calendar.tempCheckOut]), F = l.useMemo(() => {
+    const { checkIn: s, checkOut: d } = a.calendar;
+    if (!s || !d)
       return;
-    const E = (o - l) / I;
-    return E >= 28 ? `한 달 살기 특가 적용 (${E}박)` : void 0;
-  }, [a.calendar.checkIn, a.calendar.checkOut]), W = s.useMemo(() => ({
+    const C = (d - s) / _;
+    return C >= 28 ? `한 달 살기 특가 적용 (${C}박)` : void 0;
+  }, [a.calendar.checkIn, a.calendar.checkOut]), q = l.useMemo(() => ({
     state: a,
     guestSummary: P,
-    requiredOptionsSummary: R,
-    checkInLabel: G,
-    checkOutLabel: M,
-    calendarWarning: w,
-    searchButtonTitle: V,
+    requiredOptionsSummary: G,
+    checkInLabel: M,
+    checkOutLabel: w,
+    calendarWarning: V,
+    searchButtonTitle: F,
     setDestinationValue: r,
-    toggleDestination: d,
-    openDestinationInput: i,
-    selectDestination: O,
-    toggleGuest: m,
-    adjustGuest: g,
-    toggleOptions: C,
-    toggleRequiredOption: u,
-    toggleCalendar: L,
-    showPreviousMonth: N,
+    ensureDestinationOpen: o,
+    toggleDestination: i,
+    openDestinationInput: O,
+    selectDestination: m,
+    toggleGuest: g,
+    adjustGuest: E,
+    toggleOptions: u,
+    toggleRequiredOption: D,
+    toggleCalendar: N,
+    showPreviousMonth: L,
     showNextMonth: k,
-    setCalendarTab: D,
-    selectFlexibleOption: x,
-    selectCalendarDate: T,
-    setCalendarHoverDate: f,
-    clearCalendarHoverDate: _,
-    clearCalendar: A,
-    confirmCalendar: y,
-    submitSearch: j,
+    setCalendarTab: S,
+    selectFlexibleOption: T,
+    selectCalendarDate: f,
+    setCalendarHoverDate: x,
+    clearCalendarHoverDate: A,
+    clearCalendar: y,
+    confirmCalendar: j,
+    submitSearch: R,
     stopPropagation: c
   }), [
     a,
     P,
-    R,
     G,
     M,
     w,
     V,
+    F,
     r,
-    d,
+    o,
     i,
     O,
     m,
     g,
-    C,
+    E,
     u,
-    L,
-    N,
-    k,
     D,
-    x,
+    N,
+    L,
+    k,
+    S,
     T,
     f,
-    _,
+    x,
     A,
     y,
     j,
+    R,
     c
   ]);
-  return /* @__PURE__ */ t.jsx($.Provider, { value: W, children: e });
+  return /* @__PURE__ */ t.jsx(W.Provider, { value: q, children: e });
 }, b = () => {
-  const e = s.useContext($);
+  const e = l.useContext(W);
   if (!e)
     throw new Error("LifeSearchWidget context missing");
   return e;
-}, le = ["월", "화", "수", "목", "금", "토", "일"], se = (e) => `${e.getFullYear()}년 ${e.getMonth() + 1}월`, ce = () => {
+}, ce = ["월", "화", "수", "목", "금", "토", "일"], ie = (e) => `${e.getFullYear()}년 ${e.getMonth() + 1}월`, re = () => {
   const {
     state: e,
     stopPropagation: a,
     showPreviousMonth: n,
     showNextMonth: c,
     setCalendarTab: r,
-    selectFlexibleOption: d,
+    selectFlexibleOption: o,
     selectCalendarDate: i,
     setCalendarHoverDate: O,
     clearCalendarHoverDate: m,
     clearCalendar: g,
-    confirmCalendar: C,
+    confirmCalendar: E,
     calendarWarning: u
   } = b();
   return /* @__PURE__ */ t.jsx(
@@ -415,17 +430,17 @@ const z = [
       calendar: e.calendar,
       clearButtonId: "btn-clear",
       confirmButtonId: "btn-confirm",
-      flexibleOptions: z,
+      flexibleOptions: ee,
       footerStartContent: u ? /* @__PURE__ */ t.jsx("span", { className: "warning-text", "data-warning": "long-stay", children: u }) : null,
-      monthLabelFormatter: se,
+      monthLabelFormatter: ie,
       monthsContainerId: "calendarMonths",
       nextButtonId: "nextMonth",
       onClear: g,
-      onConfirm: C,
+      onConfirm: E,
       onDateHover: O,
       onDateHoverLeave: m,
       onDateSelect: i,
-      onFlexibleOptionSelect: d,
+      onFlexibleOptionSelect: o,
       onInteract: a,
       onNextMonth: c,
       onPreviousMonth: n,
@@ -437,31 +452,31 @@ const z = [
       tabCalendarId: "tab-calendar",
       tabFlexibleId: "tab-flexible",
       weekStartsOn: "monday",
-      weekdayLabels: le
+      weekdayLabels: ce
     }
   );
-}, ie = () => {
+}, oe = () => {
   const { state: e, adjustGuest: a, stopPropagation: n } = b();
   return /* @__PURE__ */ t.jsx(
-    Q,
+    X,
     {
       isOpen: e.isGuestOpen,
-      onAdjust: (c, r, d) => {
-        a(c, r, d);
+      onAdjust: (c, r, o) => {
+        a(c, r, o);
       },
       onInteract: n,
       popupId: "guestPopupLarge",
-      rows: Z,
+      rows: ae,
       values: e.guest
     }
   );
-}, re = ({
+}, de = ({
   popupId: e,
   isOpen: a,
   options: n,
   selectedValues: c,
   onInteract: r,
-  onToggle: d
+  onToggle: o
 }) => /* @__PURE__ */ t.jsx("div", { className: `options-popup-new${a ? " active" : ""}`, id: e, onClick: r, children: /* @__PURE__ */ t.jsx("div", { className: "options-grid", children: n.map((i) => /* @__PURE__ */ t.jsxs("label", { className: "option-check-item", children: [
   /* @__PURE__ */ t.jsx("span", { className: "option-name", "data-lang": i.dataLang, children: i.label }),
   /* @__PURE__ */ t.jsx(
@@ -470,45 +485,50 @@ const z = [
       checked: c.includes(i.value),
       className: "option-checkbox",
       onChange: () => {
-        d(i.value);
+        o(i.value);
       },
       type: "checkbox",
       value: i.value
     }
   )
-] }, i.value)) }) }), oe = () => {
+] }, i.value)) }) }), ue = () => {
   const { state: e, stopPropagation: a, toggleRequiredOption: n } = b();
   return /* @__PURE__ */ t.jsx(
-    re,
+    de,
     {
       isOpen: e.isOptionsOpen,
       onInteract: a,
       onToggle: n,
-      options: U,
+      options: $,
       popupId: "optionsPopupLarge",
       selectedValues: e.requiredOptions
     }
   );
-}, de = () => {
+}, pe = () => {
   const {
     state: e,
     guestSummary: a,
     requiredOptionsSummary: n,
     checkInLabel: c,
     checkOutLabel: r,
-    searchButtonTitle: d,
-    setDestinationValue: i,
-    openDestinationInput: O,
-    toggleDestination: m,
-    selectDestination: g,
-    stopPropagation: C,
-    toggleGuest: u,
-    toggleOptions: L,
-    toggleCalendar: N,
+    searchButtonTitle: o,
+    ensureDestinationOpen: i,
+    setDestinationValue: O,
+    openDestinationInput: m,
+    toggleDestination: g,
+    selectDestination: E,
+    stopPropagation: u,
+    toggleGuest: D,
+    toggleOptions: N,
+    toggleCalendar: L,
     submitSearch: k
-  } = b();
+  } = b(), S = J(
+    e.destinationValue,
+    e.hasTypedDestinationQuery,
+    z
+  );
   return /* @__PURE__ */ t.jsx("div", { className: "search-widget-large long-stay-search-widget", children: /* @__PURE__ */ t.jsx("div", { className: "search-widget-v2", children: /* @__PURE__ */ t.jsxs("div", { className: "global-search-bar-v2", id: "mnSearchForm", children: [
-    /* @__PURE__ */ t.jsxs("div", { className: `search-item-v2${e.isDestinationOpen ? " active" : ""}`, id: "destinationFieldLarge", onClick: m, children: [
+    /* @__PURE__ */ t.jsxs("div", { className: `search-item-v2${e.isDestinationOpen ? " active" : ""}`, id: "destinationFieldLarge", onClick: g, children: [
       /* @__PURE__ */ t.jsx("div", { className: "item-icon-v2", children: /* @__PURE__ */ t.jsx(v, { className: "life-search-icon", name: "map-pin" }) }),
       /* @__PURE__ */ t.jsxs("div", { className: "item-content-v2", children: [
         /* @__PURE__ */ t.jsx("label", { className: "item-label-v2", "data-lang": "lifeDestLabel", children: "여행지" }),
@@ -522,26 +542,27 @@ const z = [
             placeholder: "어디로 떠날까요?",
             type: "text",
             value: e.destinationValue,
-            onChange: (D) => {
-              i(D.target.value);
+            onFocus: i,
+            onChange: (T) => {
+              O(T.target.value);
             },
-            onClick: O
+            onClick: m
           }
         )
       ] }),
       /* @__PURE__ */ t.jsx(
-        X,
+        Z,
         {
-          columns: J,
+          columns: S,
           dropdownId: "destinationDropdown",
           isOpen: e.isDestinationOpen,
-          onInteract: C,
-          onSelect: g
+          onInteract: u,
+          onSelect: E
         }
       )
     ] }),
     /* @__PURE__ */ t.jsx("div", { className: "v2-divider" }),
-    /* @__PURE__ */ t.jsxs("div", { className: `search-item-v2${e.calendar.isOpen ? " active" : ""}`, id: "checkInField", onClick: N, children: [
+    /* @__PURE__ */ t.jsxs("div", { className: `search-item-v2${e.calendar.isOpen ? " active" : ""}`, id: "checkInField", onClick: L, children: [
       /* @__PURE__ */ t.jsx("div", { className: "item-icon-v2", children: /* @__PURE__ */ t.jsx(v, { className: "life-search-icon", name: "calendar" }) }),
       /* @__PURE__ */ t.jsxs("div", { className: "item-content-v2", children: [
         /* @__PURE__ */ t.jsx("label", { className: "item-label-v2", "data-lang": "lifeScheduleLabel", children: "일정" }),
@@ -551,34 +572,34 @@ const z = [
           /* @__PURE__ */ t.jsx("span", { "data-lang": "dateSelect", id: "checkOutDisplay", children: r })
         ] })
       ] }),
-      /* @__PURE__ */ t.jsx(ce, {})
+      /* @__PURE__ */ t.jsx(re, {})
     ] }),
     /* @__PURE__ */ t.jsx("div", { className: "v2-divider" }),
-    /* @__PURE__ */ t.jsxs("div", { className: `search-item-v2${e.isGuestOpen ? " active" : ""}`, id: "guestFieldLarge", onClick: u, children: [
+    /* @__PURE__ */ t.jsxs("div", { className: `search-item-v2${e.isGuestOpen ? " active" : ""}`, id: "guestFieldLarge", onClick: D, children: [
       /* @__PURE__ */ t.jsx("div", { className: "item-icon-v2", children: /* @__PURE__ */ t.jsx(v, { className: "life-search-icon", name: "users" }) }),
       /* @__PURE__ */ t.jsxs("div", { className: "item-content-v2", children: [
         /* @__PURE__ */ t.jsx("label", { className: "item-label-v2", "data-lang": "lifeGuestLabel", children: "여행자" }),
         /* @__PURE__ */ t.jsx("div", { className: "display-text-v2", id: "guestSummary", children: a })
       ] }),
-      /* @__PURE__ */ t.jsx(ie, {})
+      /* @__PURE__ */ t.jsx(oe, {})
     ] }),
     /* @__PURE__ */ t.jsx("div", { className: "v2-divider" }),
-    /* @__PURE__ */ t.jsxs("div", { className: `search-item-v2${e.isOptionsOpen ? " active" : ""}`, id: "optionsFieldLarge", onClick: L, children: [
+    /* @__PURE__ */ t.jsxs("div", { className: `search-item-v2${e.isOptionsOpen ? " active" : ""}`, id: "optionsFieldLarge", onClick: N, children: [
       /* @__PURE__ */ t.jsx("div", { className: "item-icon-v2", children: /* @__PURE__ */ t.jsx(v, { className: "life-search-icon", name: "sliders-horizontal" }) }),
       /* @__PURE__ */ t.jsxs("div", { className: "item-content-v2", children: [
         /* @__PURE__ */ t.jsx("label", { className: "item-label-v2", "data-lang": "lifeOptionsLabel", children: "필수 옵션" }),
         /* @__PURE__ */ t.jsx("div", { className: "display-text-v2", id: "optionsSummary", children: n })
       ] }),
-      /* @__PURE__ */ t.jsx(oe, {})
+      /* @__PURE__ */ t.jsx(ue, {})
     ] }),
-    /* @__PURE__ */ t.jsx("div", { className: "search-btn-wrapper-v2", children: /* @__PURE__ */ t.jsxs("button", { className: "search-btn-v2", id: "searchBtn", onClick: k, title: d, type: "button", children: [
+    /* @__PURE__ */ t.jsx("div", { className: "search-btn-wrapper-v2", children: /* @__PURE__ */ t.jsxs("button", { className: "search-btn-v2", id: "searchBtn", onClick: k, title: o, type: "button", children: [
       /* @__PURE__ */ t.jsx(v, { className: "life-search-button-icon", name: "search" }),
       /* @__PURE__ */ t.jsx("span", { "data-lang": "btnSearch", children: "검색하기" })
     ] }) })
   ] }) }) });
-}, ue = () => /* @__PURE__ */ t.jsx(te, { children: /* @__PURE__ */ t.jsx(de, {}) }), pe = "jeju:search-widget-mounted", ge = () => (s.useLayoutEffect(() => {
-  document.dispatchEvent(new Event(pe));
-}, []), /* @__PURE__ */ t.jsx(ue, {}));
+}, he = () => /* @__PURE__ */ t.jsx(le, { children: /* @__PURE__ */ t.jsx(pe, {}) }), Oe = "jeju:search-widget-mounted", Ce = () => (l.useLayoutEffect(() => {
+  document.dispatchEvent(new Event(Oe));
+}, []), /* @__PURE__ */ t.jsx(he, {}));
 export {
-  ge as L
+  Ce as L
 };

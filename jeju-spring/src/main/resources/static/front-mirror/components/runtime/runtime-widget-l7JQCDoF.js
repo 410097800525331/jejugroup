@@ -1,5 +1,5 @@
 import { c as T, j as x } from "./react-vendor-BoSfm_Te.js";
-import { C as D } from "./feature-ui-DAUngKpP.js";
+import { C as D } from "./feature-ui-2CpV_mIT.js";
 let b = null, h = null, m = !1;
 const E = () => typeof window > "u" ? null : window.frontI18n ?? null, w = (e) => e === "en" || e === "ko" ? e : null, P = () => {
   try {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { HotelShellIcon } from "@front-components/layout/HotelShellIcon";
 import { WishlistButton } from "@front-components/ui/WishlistButton";
-import type { HotelListPageHotel } from "./hotelListPageData";
+import { buildHotelPaymentPageHref, type HotelListPageHotel } from "./hotelListPageData";
 
 interface HotelCardPremiumProps {
   hotel: HotelListPageHotel;
@@ -16,6 +16,9 @@ const REVIEW_LABEL_MAP: Record<string, string> = {
 };
 
 export const HotelCardPremium = ({ hotel }: HotelCardPremiumProps) => {
+  const paymentPageHref = useMemo(() => {
+    return buildHotelPaymentPageHref(hotel, window.location.search);
+  }, [hotel]);
   const wishlistItem = useMemo(() => {
     return {
       id: hotel.id,
@@ -30,6 +33,10 @@ export const HotelCardPremium = ({ hotel }: HotelCardPremiumProps) => {
   });
   const reviewLabel = REVIEW_LABEL_MAP[hotel.reviewLabel] ?? hotel.reviewLabel;
   const hasBadge = hotel.badge.trim().length > 0;
+
+  const handleNavigateToPayment = () => {
+    window.location.href = paymentPageHref;
+  };
 
   useEffect(() => {
     if (!window.FABState) {
@@ -49,7 +56,34 @@ export const HotelCardPremium = ({ hotel }: HotelCardPremiumProps) => {
   }, [wishlistItem.id]);
 
   return (
-    <article className="hotel-card-premium">
+    <article
+      aria-label={`${hotel.title} 결제 페이지로 이동`}
+      className="hotel-card-premium"
+      onClick={(event) => {
+        const target = event.target;
+        if (target instanceof Element && target.closest("button, a, input, select, textarea, label")) {
+          return;
+        }
+
+        handleNavigateToPayment();
+      }}
+      onKeyDown={(event) => {
+        const target = event.target;
+        if (target instanceof Element && target.closest("button, a, input, select, textarea, label")) {
+          return;
+        }
+
+        if (event.key !== "Enter" && event.key !== " ") {
+          return;
+        }
+
+        event.preventDefault();
+        handleNavigateToPayment();
+      }}
+      role="link"
+      style={{ cursor: "pointer" }}
+      tabIndex={0}
+    >
       <div className="hotel-card-image">
         <img alt={hotel.title} decoding="async" loading="lazy" src={hotel.imageUrl} />
         {hasBadge ? <span className="badge-overlay">{hotel.badge}</span> : null}

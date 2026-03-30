@@ -1,0 +1,594 @@
+[
+  {
+    "city": "Seoul",
+    "cityKo": "서울",
+    "airport": "Seoul Gimpo International Airport",
+    "airportKo": "김포국제공항",
+    "iata": "GMP",
+    "icao": "RKSS"
+  },
+  {
+    "city": "Seoul",
+    "cityKo": "서울",
+    "airport": "Seoul Incheon International Airport",
+    "airportKo": "인천국제공항",
+    "iata": "ICN",
+    "icao": "RKSI"
+  },
+  {
+    "city": "Jeju",
+    "cityKo": "제주",
+    "airport": "Jeju International Airport",
+    "airportKo": "제주국제공항",
+    "iata": "CJU",
+    "icao": "RKPC"
+  },
+  {
+    "city": "Busan",
+    "cityKo": "부산",
+    "airport": "Busan Gimhae Airport",
+    "airportKo": "김해국제공항",
+    "iata": "PUS",
+    "icao": "RKPK"
+  },
+  {
+    "city": "Tokyo",
+    "cityKo": "도쿄",
+    "airport": "Tokyo Haneda Airport",
+    "airportKo": "하네다 공항",
+    "iata": "HND",
+    "icao": "RJTT"
+  },
+  {
+    "city": "Tokyo",
+    "cityKo": "도쿄",
+    "airport": "Tokyo Narita Airport",
+    "airportKo": "나리타 국제공항",
+    "iata": "NRT",
+    "icao": "RJAA"
+  },
+  {
+    "city": "Osaka",
+    "cityKo": "오사카",
+    "airport": "Osaka Itami Airport",
+    "airportKo": "오사카 국제공항",
+    "iata": "ITM",
+    "icao": "RJOO"
+  },
+  {
+    "city": "Osaka",
+    "cityKo": "오사카",
+    "airport": "Osaka Kansai International Airport",
+    "airportKo": "간사이 국제공항",
+    "iata": "KIX",
+    "icao": "RJBB"
+  },
+  {
+    "city": "Osaka",
+    "cityKo": "고베",
+    "airport": "Osaka Kobe Airport",
+    "airportKo": "고베 공항",
+    "iata": "UKB",
+    "icao": "RJBE"
+  },
+  {
+    "city": "Osaka",
+    "cityKo": "오사카",
+    "airport": "Osaka Yao Airport",
+    "airportKo": "오사카 야오 공항",
+    "iata": "n/a",
+    "icao": "RJOY"
+  },
+  {
+    "city": "Fukuoka",
+    "cityKo": "후쿠오카",
+    "airport": "Fukuoka Airport",
+    "airportKo": "후쿠오카 공항",
+    "iata": "FUK",
+    "icao": "RJFF"
+  },
+  {
+    "city": "Bangkok",
+    "cityKo": "방콕",
+    "airport": "Bangkok Don Mueang International Airport",
+    "airportKo": "돈므앙 국제공항",
+    "iata": "DMK",
+    "icao": "VTBD"
+  },
+  {
+    "city": "Bangkok",
+    "cityKo": "방콕",
+    "airport": "Bangkok Suvarnabhumi International Airport",
+    "airportKo": "수완나품 공항",
+    "iata": "BKK",
+    "icao": "VTBS"
+  },
+  {
+    "city": "Singapore",
+    "cityKo": "싱가포르",
+    "airport": "Singapore Changi Airport",
+    "airportKo": "싱가포르 창이 공항",
+    "iata": "SIN",
+    "icao": "WSSS"
+  },
+  {
+    "city": "Singapore",
+    "cityKo": "싱가포르",
+    "airport": "Singapore Seletar Airport",
+    "airportKo": "셀레타르 공항",
+    "iata": "XSP",
+    "icao": "WSSL"
+  },
+  {
+    "city": "Da Nang",
+    "cityKo": "다낭",
+    "airport": "Da Nang Airport",
+    "airportKo": "다낭 국제공항",
+    "iata": "DAD",
+    "icao": "VVDN"
+  },
+  {
+    "city": "Hanoi",
+    "cityKo": "하노이",
+    "airport": "Hanoi Gia Lam Airport",
+    "airportKo": "하노이 지아람 공항",
+    "iata": "n/a",
+    "icao": "VVGL"
+  },
+  {
+    "city": "Hanoi",
+    "cityKo": "하노이",
+    "airport": "Hanoi Noi Bai Airport",
+    "airportKo": "노이바이 국제공항",
+    "iata": "HAN",
+    "icao": "VVNB"
+  },
+  {
+    "city": "Taipei",
+    "cityKo": "타이베이",
+    "airport": "Taipei Songshan Airport",
+    "airportKo": "타이베이 쑹산 공항",
+    "iata": "TSA",
+    "icao": "RCSS"
+  },
+  {
+    "city": "Taipei",
+    "cityKo": "타이베이",
+    "airport": "Taiwan Taoyuan International Airport",
+    "airportKo": "타이완 타오위안 국제공항",
+    "iata": "TPE",
+    "icao": "RCTP"
+  },
+  {
+    "city": "Hong Kong",
+    "cityKo": "홍콩",
+    "airport": "Hong Kong International Airport",
+    "airportKo": "홍콩 국제공항",
+    "iata": "HKG",
+    "icao": "VHHH"
+  },
+  {
+    "city": "Beijing",
+    "cityKo": "베이징",
+    "airport": "Beijing Capital International Airport",
+    "airportKo": "베이징 서우두 국제공항",
+    "iata": "PEK",
+    "icao": "ZBAA"
+  },
+  {
+    "city": "Beijing",
+    "cityKo": "베이징",
+    "airport": "Beijing Daxing International Airport",
+    "airportKo": "베이징 다싱 국제공항",
+    "iata": "PKX",
+    "icao": "ZBAD"
+  },
+  {
+    "city": "Beijing",
+    "cityKo": "베이징",
+    "airport": "Beijing Nanyuan Airport",
+    "airportKo": "베이징 난위안 공항",
+    "iata": "NAY",
+    "icao": "ZBNY"
+  },
+  {
+    "city": "Shanghai",
+    "cityKo": "상하이",
+    "airport": "Shanghai Hongqiao International Airport",
+    "airportKo": "상하이 훙차오 국제공항",
+    "iata": "SHA",
+    "icao": "ZSSS"
+  },
+  {
+    "city": "Shanghai",
+    "cityKo": "상하이",
+    "airport": "Shanghai Pudong International Airport",
+    "airportKo": "상하이 푸둥 국제공항",
+    "iata": "PVG",
+    "icao": "ZSPD"
+  },
+  {
+    "city": "Kuala Lumpur",
+    "cityKo": "쿠알라룸푸르",
+    "airport": "Kuala Lumpur International Airport",
+    "airportKo": "쿠알라룸푸르 국제공항",
+    "iata": "KUL",
+    "icao": "WMKK"
+  },
+  {
+    "city": "Kuala Lumpur",
+    "cityKo": "쿠알라룸푸르",
+    "airport": "Subang Airport",
+    "airportKo": "수방 공항",
+    "iata": "SZB",
+    "icao": "WMSA"
+  },
+  {
+    "city": "Manila",
+    "cityKo": "마닐라",
+    "airport": "Manila Ninoy Aquino International Airport",
+    "airportKo": "니노이 아키노 국제공항",
+    "iata": "MNL",
+    "icao": "RPLL"
+  },
+  {
+    "city": "Manila",
+    "cityKo": "마닐라",
+    "airport": "Sangley Point Air Base",
+    "airportKo": "생레이 포인트 공군기지",
+    "iata": "SGL",
+    "icao": "RPLS"
+  },
+  {
+    "city": "Saipan",
+    "cityKo": "사이판",
+    "airport": "Saipan International Airport",
+    "airportKo": "사이판 국제공항",
+    "iata": "SPN",
+    "icao": "PGSN"
+  },
+  {
+    "city": "Guam",
+    "cityKo": "괌",
+    "airport": "Guam Antonio B Won Pat International Airport",
+    "airportKo": "안토니오 B. 원 팻 국제공항",
+    "iata": "GUM",
+    "icao": "PGUM"
+  },
+  {
+    "city": "Sydney",
+    "cityKo": "시드니",
+    "airport": "JA Douglas McCurdy Sydney Airport",
+    "airportKo": "JA 더글러스 맥커디 시드니 공항",
+    "iata": "YQY",
+    "icao": "CYQY"
+  },
+  {
+    "city": "Sydney",
+    "cityKo": "시드니",
+    "airport": "Sydney Kingsford Smith Airport",
+    "airportKo": "시드니 공항",
+    "iata": "SYD",
+    "icao": "YSSY"
+  },
+  {
+    "city": "Melbourne",
+    "cityKo": "멜버른",
+    "airport": "Melbourne Avalon Airport",
+    "airportKo": "아발론 공항",
+    "iata": "AVV",
+    "icao": "YMAV"
+  },
+  {
+    "city": "Melbourne",
+    "cityKo": "멜버른",
+    "airport": "Melbourne Essendon Fields Airport",
+    "airportKo": "에센돈 공항",
+    "iata": "MEB",
+    "icao": "YMEN"
+  },
+  {
+    "city": "Melbourne",
+    "cityKo": "멜버른",
+    "airport": "Melbourne Moorabbin Airport",
+    "airportKo": "무라빈 공항",
+    "iata": "MBW",
+    "icao": "YMMB"
+  },
+  {
+    "city": "Melbourne",
+    "cityKo": "멜버른",
+    "airport": "Melbourne Orlando(US) International Airport",
+    "airportKo": "멜버른 올랜도(US) 국제공항",
+    "iata": "MLB",
+    "icao": "KMLB"
+  },
+  {
+    "city": "Melbourne",
+    "cityKo": "멜버른",
+    "airport": "Melbourne Tullamarine Airport",
+    "airportKo": "멜버른 공항",
+    "iata": "MEL",
+    "icao": "YMML"
+  },
+  {
+    "city": "Auckland",
+    "cityKo": "오클랜드",
+    "airport": "Auckland International Airport",
+    "airportKo": "오클랜드 공항",
+    "iata": "AKL",
+    "icao": "NZAA"
+  },
+  {
+    "city": "Los Angeles",
+    "cityKo": "로스앤젤레스",
+    "airport": "Los Angeles International Airport",
+    "airportKo": "로스 앤젤레스 국제공항",
+    "iata": "LAX",
+    "icao": "KLAX"
+  },
+  {
+    "city": "Los angeles",
+    "cityKo": "로스앤젤레스",
+    "airport": "Los Angeles Maria Dolores Airport",
+    "airportKo": "마리아 돌로레스 공항",
+    "iata": "LSQ",
+    "icao": "SCGE"
+  },
+  {
+    "city": "Los Angeles",
+    "cityKo": "로스앤젤레스",
+    "airport": "Los Angeles Van Nuys Airport",
+    "airportKo": "반 누이 공항",
+    "iata": "VNY",
+    "icao": "KVNY"
+  },
+  {
+    "city": "San Francisco",
+    "cityKo": "샌프란시스코",
+    "airport": "San Francisco International Airport",
+    "airportKo": "샌프란시스코 국제공항",
+    "iata": "SFO",
+    "icao": "KSFO"
+  },
+  {
+    "city": "New York",
+    "cityKo": "뉴욕",
+    "airport": "New York John F Kennedy International Airport",
+    "airportKo": "존 F. 케네디 국제공항",
+    "iata": "JFK",
+    "icao": "KJFK"
+  },
+  {
+    "city": "New York",
+    "cityKo": "뉴욕",
+    "airport": "New York LaGuardia Airport",
+    "airportKo": "라과디아 공항",
+    "iata": "LGA",
+    "icao": "KLGA"
+  },
+  {
+    "city": "New York",
+    "cityKo": "뉴욕",
+    "airport": "New York Stewart International Airport",
+    "airportKo": "스튜어트 국제공항",
+    "iata": "SWF",
+    "icao": "KSWF"
+  },
+  {
+    "city": "London",
+    "cityKo": "런던",
+    "airport": "London City Airport",
+    "airportKo": "런던 시티 공항",
+    "iata": "LCY",
+    "icao": "EGLC"
+  },
+  {
+    "city": "London",
+    "cityKo": "런던",
+    "airport": "London Gatwick Airport",
+    "airportKo": "개트윅 공항",
+    "iata": "LGW",
+    "icao": "EGKK"
+  },
+  {
+    "city": "London",
+    "cityKo": "런던",
+    "airport": "London Heathrow Airport",
+    "airportKo": "히드로 공항",
+    "iata": "LHR",
+    "icao": "EGLL"
+  },
+  {
+    "city": "London",
+    "cityKo": "런던",
+    "airport": "London International Airport",
+    "airportKo": "런던 국제공항",
+    "iata": "YXU",
+    "icao": "CYXU"
+  },
+  {
+    "city": "London",
+    "cityKo": "런던",
+    "airport": "London Luton Airport",
+    "airportKo": "루턴 공항",
+    "iata": "LTN",
+    "icao": "EGGW"
+  },
+  {
+    "city": "Paris",
+    "cityKo": "파리",
+    "airport": "Paris Charles de Gaulle Airport",
+    "airportKo": "샤를 드골 공항",
+    "iata": "CDG",
+    "icao": "LFPG"
+  },
+  {
+    "city": "Paris",
+    "cityKo": "파리",
+    "airport": "Paris Le Bourget Airport",
+    "airportKo": "파리 르 부르제 공항",
+    "iata": "LBG",
+    "icao": "LFPB"
+  },
+  {
+    "city": "Paris",
+    "cityKo": "파리",
+    "airport": "Paris Orly Airport",
+    "airportKo": "오를리 공항",
+    "iata": "ORY",
+    "icao": "LFPO"
+  },
+  {
+    "city": "Paris",
+    "cityKo": "파리",
+    "airport": "Paris Pontoise-Cormeilles Airport",
+    "airportKo": "퐁투아즈 코르메이유 비행장",
+    "iata": "POX",
+    "icao": "LFPT"
+  },
+  {
+    "city": "Amsterdam",
+    "cityKo": "암스테르담",
+    "airport": "Amsterdam Schiphol Airport",
+    "airportKo": "암스테르담 스키폴 공항",
+    "iata": "AMS",
+    "icao": "EHAM"
+  },
+  {
+    "city": "Frankfurt",
+    "cityKo": "프랑크푸르트",
+    "airport": "Frankfurt Airport",
+    "airportKo": "프랑크푸르트 공항",
+    "iata": "FRA",
+    "icao": "EDDF"
+  },
+  {
+    "city": "Milan",
+    "cityKo": "밀라노",
+    "airport": "Milan Bergamo/Orio al Serio Airport",
+    "airportKo": "일 카라바조 국제공항",
+    "iata": "BGY",
+    "icao": "LIME"
+  },
+  {
+    "city": "Milan",
+    "cityKo": "밀라노",
+    "airport": "Milan Linate Airport",
+    "airportKo": "리나테 공항",
+    "iata": "LIN",
+    "icao": "LIML"
+  },
+  {
+    "city": "Milan",
+    "cityKo": "밀라노",
+    "airport": "Milan Malpensa Airport",
+    "airportKo": "밀라노 말펜사 공항",
+    "iata": "MXP",
+    "icao": "LIMC"
+  },
+  {
+    "city": "Rome",
+    "cityKo": "로마",
+    "airport": "Griffiss International Airport",
+    "airportKo": "그리피스 국제공항",
+    "iata": "RME",
+    "icao": "KRME"
+  },
+  {
+    "city": "Rome",
+    "cityKo": "로마",
+    "airport": "Rome Ciampino Airport",
+    "airportKo": "참피노 G. B. 파스틴 국제공항",
+    "iata": "CIA",
+    "icao": "LIRA"
+  },
+  {
+    "city": "Rome",
+    "cityKo": "로마",
+    "airport": "Rome Fiumicino Airport",
+    "airportKo": "레오나르도 다빈치 피우미치노 공항",
+    "iata": "FCO",
+    "icao": "LIRF"
+  },
+  {
+    "city": "Dubai",
+    "cityKo": "두바이",
+    "airport": "Al Maktoum International Airport",
+    "airportKo": "알 막툼 국제공항",
+    "iata": "DWC",
+    "icao": "OMDW"
+  },
+  {
+    "city": "Dubai",
+    "cityKo": "두바이",
+    "airport": "Dubai Creek Airport",
+    "airportKo": "두바이 크릭 수상비행장",
+    "iata": "DCG",
+    "icao": "n/a"
+  },
+  {
+    "city": "Dubai",
+    "cityKo": "두바이",
+    "airport": "Dubai International Airport",
+    "airportKo": "두바이 국제공항",
+    "iata": "DXB",
+    "icao": "OMDB"
+  },
+  {
+    "city": "Abu Dhabi",
+    "cityKo": "아부다비",
+    "airport": "Abu Dhabi Zayed International Airport",
+    "airportKo": "아부다비 국제공항",
+    "iata": "AUH",
+    "icao": "OMAA"
+  },
+  {
+    "city": "Abu Dhabi",
+    "cityKo": "아부다비",
+    "airport": "Al Bateen Executive Airport",
+    "airportKo": "알 바틴 이그제큐티브 공항",
+    "iata": "AZI",
+    "icao": "OMAD"
+  },
+  {
+    "city": "Doha",
+    "cityKo": "도하",
+    "airport": "Doha Hamad International Airport",
+    "airportKo": "하마드 국제공항",
+    "iata": "DOH",
+    "icao": "OTHH"
+  },
+  {
+    "city": "Jakarta",
+    "cityKo": "자카르타",
+    "airport": "Jakarta Halim Perdanakusuma Airport",
+    "airportKo": "할림 페르다나쿠수마 국제공항",
+    "iata": "HLP",
+    "icao": "WIHH"
+  },
+  {
+    "city": "Jakarta",
+    "cityKo": "자카르타",
+    "airport": "Jakarta Soekarno-Hatta International Airport",
+    "airportKo": "수카르노 하타 국제공항",
+    "iata": "CGK",
+    "icao": "WIII"
+  },
+  {
+    "city": "Phuket",
+    "cityKo": "푸껫",
+    "airport": "Phuket International Airport",
+    "airportKo": "푸켓 국제공항",
+    "iata": "HKT",
+    "icao": "VTSP"
+  },
+  {
+    "city": "Chiang Mai",
+    "cityKo": "치앙마이",
+    "airport": "Chiang Mai International Airport",
+    "airportKo": "치앙마이 국제공항",
+    "iata": "CNX",
+    "icao": "VTCC"
+  }
+]

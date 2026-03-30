@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="light" lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>JEJU STAY | 예약 완료</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "tertiary-fixed-dim": "#c6c6c6",
+                "on-secondary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "surface-dim": "#dadada",
+                "on-secondary-container": "#656464",
+                "primary-container": "#ff5c00",
+                "on-primary": "#ffffff",
+                "on-background": "#1a1c1c",
+                "on-tertiary-fixed": "#1a1c1c",
+                "on-primary-fixed": "#370e00",
+                "primary-fixed-dim": "#ffb59a",
+                "surface-container-low": "#f3f3f3",
+                "surface-bright": "#f9f9f9",
+                "primary": "#a73a00",
+                "on-primary-fixed-variant": "#802a00",
+                "error": "#ba1a1a",
+                "primary-fixed": "#ffdbce",
+                "surface-container-lowest": "#ffffff",
+                "on-tertiary-container": "#2a2c2c",
+                "secondary-container": "#e4e2e1",
+                "outline-variant": "#e4beb1",
+                "surface-container-highest": "#e2e2e2",
+                "on-tertiary-fixed-variant": "#454747",
+                "tertiary-fixed": "#e2e2e2",
+                "surface-container": "#eeeeee",
+                "on-secondary-fixed-variant": "#474747",
+                "inverse-surface": "#2f3131",
+                "inverse-on-surface": "#f1f1f1",
+                "background": "#f9f9f9",
+                "surface-container-high": "#e8e8e8",
+                "secondary": "#5f5e5e",
+                "on-surface": "#1a1c1c",
+                "tertiary": "#5d5f5f",
+                "surface": "#f9f9f9",
+                "surface-tint": "#a73a00",
+                "secondary-fixed": "#e4e2e1",
+                "on-error-container": "#93000a",
+                "error-container": "#ffdad6",
+                "inverse-primary": "#ffb59a",
+                "outline": "#8f7065",
+                "tertiary-container": "#929393",
+                "on-secondary-fixed": "#1b1c1c",
+                "on-error": "#ffffff",
+                "secondary-fixed-dim": "#c8c6c6",
+                "on-surface-variant": "#5b4137",
+                "on-primary-container": "#521800",
+                "surface-variant": "#e2e2e2"
+              },
+              fontFamily: {
+                "headline": ["Plus Jakarta Sans"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {
+                "DEFAULT": "0.5rem",
+                "lg": "0.75rem",
+                "xl": "1rem",
+                "full": "9999px"
+              }
+            }
+          }
+        }
+    </script>
+    <style>
+        @property --icon-fill-angle {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: 0deg;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .editorial-shadow {
+            box-shadow: 0 12px 40px rgba(26, 28, 28, 0.06);
+        }
+
+        .primary-gradient {
+            background: linear-gradient(135deg, #a73a00 0%, #ff5c00 100%);
+        }
+
+        .success-icon-ring {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-icon-ring::after {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            border-radius: 9999px;
+            background: #ffdbce;
+            z-index: 0;
+        }
+
+        .success-icon-outline,
+        .success-icon-fill {
+            position: relative;
+            z-index: 1;
+            font-size: 2.25rem;
+            color: #a73a00;
+        }
+
+        .success-icon-outline {
+            opacity: 0.16;
+            font-variation-settings: 'FILL' 0, 'wght' 420, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .success-icon-fill {
+            position: absolute;
+            inset: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            font-variation-settings: 'FILL' 1, 'wght' 420, 'GRAD' 0, 'opsz' 24;
+            --icon-fill-angle: 0deg;
+            -webkit-mask-image: conic-gradient(from -90deg, #000 0deg, #000 var(--icon-fill-angle), transparent calc(var(--icon-fill-angle) + 0.5deg));
+            mask-image: conic-gradient(from -90deg, #000 0deg, #000 var(--icon-fill-angle), transparent calc(var(--icon-fill-angle) + 0.5deg));
+            will-change: opacity;
+            animation: success-fill-sweep 0.72s linear forwards;
+            animation-delay: 0.08s;
+        }
+
+        .success-title-reveal {
+            animation: success-title-reveal 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation-delay: 0.18s;
+        }
+
+        .success-copy-fade {
+            animation: success-copy-fade 0.7s ease both;
+            animation-delay: 0.32s;
+        }
+
+        @keyframes success-title-reveal {
+            0% {
+                opacity: 0;
+                transform: translateY(26px);
+                letter-spacing: -0.08em;
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                letter-spacing: -0.04em;
+            }
+        }
+
+        @keyframes success-copy-fade {
+            0% {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes success-fill-sweep {
+            0% {
+                opacity: 0;
+                --icon-fill-angle: 0deg;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 1;
+                --icon-fill-angle: 360deg;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-surface font-body text-on-surface">
+    <main class="min-h-screen flex flex-col md:grid md:grid-cols-12 gap-0 overflow-hidden">
+        <section class="hidden md:flex md:col-span-5 relative h-full bg-zinc-900 overflow-hidden">
+            <div class="absolute inset-0 z-10 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            <img alt="Jeju Landscape" class="absolute inset-0 w-full h-full object-cover" id="heroLandscapeImage" src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=1200&q=80">
+            <div class="relative z-20 mt-auto p-10 xl:p-12 w-full">
+                <div class="mb-6">
+                    <span class="text-white/80 font-headline tracking-widest text-xs uppercase block mb-2">Editorial Stays</span>
+                    <h2 class="text-white text-4xl font-headline font-bold tracking-tight" id="editorialTitle">Jeju Horizon</h2>
+                </div>
+                <div class="bg-white/10 backdrop-blur-xl p-6 rounded-lg inline-block border border-white/10">
+                    <p class="text-white/90 text-sm italic font-headline leading-relaxed" id="editorialCopy">
+                        "The horizon is not a destination, but a state of mind. We invite you to find yours amidst the basalt and the breeze."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="flex-1 md:col-span-7 flex flex-col justify-center items-center px-6 py-8 md:px-16 xl:px-24 bg-surface relative">
+            <div class="max-w-xl w-full">
+                <div class="text-center mb-10 md:mb-12">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary-fixed mb-6 success-icon-ring">
+                        <span class="material-symbols-outlined success-icon-outline">check_circle</span>
+                        <span class="material-symbols-outlined success-icon-fill">check_circle</span>
+                    </div>
+                    <h1 class="font-headline text-4xl md:text-5xl font-extrabold text-on-surface tracking-tighter mb-3 success-title-reveal">Booking Confirmed!</h1>
+                    <p class="text-secondary text-lg font-body success-copy-fade">Your journey begins here.</p>
+                </div>
+
+                <div class="bg-surface-container-low rounded-xl p-1 mb-6">
+                    <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-8 space-y-8">
+                        <div class="flex items-start gap-6">
+                            <div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                                <img alt="예약 숙소" class="w-full h-full object-cover" id="hotelImage" src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80">
+                            </div>
+                            <div>
+                                <p class="text-xs font-label uppercase tracking-widest text-primary font-bold mb-1">Accommodation</p>
+                                <h3 class="font-headline text-xl font-bold text-on-surface" id="hotelTitle">The Ocean Heritage Suite</h3>
+                                <p class="text-secondary text-sm flex items-center gap-1 mt-1">
+                                    <span class="material-symbols-outlined text-sm">location_on</span>
+                                    <span id="hotelLocation">Seogwipo, Jeju Island</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-8 pt-8 border-t border-surface-container-high">
+                            <div class="space-y-1">
+                                <p class="text-xs font-label text-secondary uppercase tracking-wider">Stay Dates</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-on-surface-variant">calendar_today</span>
+                                    <p class="font-headline font-semibold text-on-surface" id="stayDates">Oct 12 - 15, 2024</p>
+                                </div>
+                            </div>
+                            <div class="space-y-1 text-right md:text-left">
+                                <p class="text-xs font-label text-secondary uppercase tracking-wider">Booking ID</p>
+                                <div class="flex items-center justify-end md:justify-start gap-2">
+                                    <span class="material-symbols-outlined text-on-surface-variant">confirmation_number</span>
+                                    <p class="font-headline font-semibold text-on-surface" id="bookingCode">예약번호 확인 필요</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface-container-low p-4 rounded-lg flex items-center gap-4">
+                            <span class="material-symbols-outlined text-secondary">alternate_email</span>
+                            <p class="text-sm text-secondary font-body">
+                                A confirmation email has been sent to <span class="text-on-surface font-semibold" id="guestEmail">john.doe@example.com</span>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <a class="primary-gradient text-on-primary font-headline font-bold py-5 rounded-lg editorial-shadow hover:opacity-90 transition-all flex items-center justify-center gap-2 text-base active:scale-[0.98]" href="/pages/mypage/dashboard.html?shell=stay" id="primaryBookingCta">
+                        View Reservation in My Page
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
+                    <a class="bg-transparent text-secondary hover:text-on-surface font-headline font-semibold py-4 transition-colors flex items-center justify-center gap-2 group" href="/index.html" id="secondaryBookingCta">
+                        <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">keyboard_backspace</span>
+                        Return to Home
+                    </a>
+                </div>
+
+                <div class="mt-10 text-center border-t border-surface-container-high pt-6">
+                    <p class="text-xs text-secondary/60 font-label tracking-wide">
+                        Need help? Contact our concierge at <span class="text-primary font-medium">support@jejustay.com</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="absolute bottom-0 right-0 opacity-[0.03] select-none pointer-events-none">
+                <span class="text-[12rem] font-headline font-black leading-none -mb-8 -mr-16">JEJU</span>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="../../../components/runtime/bootstrap.js"></script>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const fallbackHotel = {
+            title: "제주 프리미엄 오션 호텔",
+            location: "Seogwipo, Jeju Island",
+            image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80"
+        };
+
+        const toBoolean = (value) => {
+            if (typeof value === "boolean") {
+                return value;
+            }
+            if (typeof value === "string") {
+                const normalized = value.trim().toLowerCase();
+                return ["true", "1", "yes", "y"].includes(normalized);
+            }
+            return false;
+        };
+
+        const parseDate = (value) => {
+            if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                return null;
+            }
+            const [year, month, day] = value.split("-").map(Number);
+            const date = new Date(year, month - 1, day);
+            return Number.isNaN(date.getTime()) ? null : date;
+        };
+
+        const formatDate = (date) => {
+            if (!date) {
+                return "날짜 미정";
+            }
+            return date.toLocaleDateString("ko-KR", {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+            });
+        };
+
+        const pickValue = (...values) => values.map((value) => String(value || "").trim()).find(Boolean) || "";
+        const bookingNo = pickValue(params.get("bookingNo"), params.get("reservationNo"), params.get("booking_no"));
+        const guestEmail = pickValue(params.get("guestEmail"), params.get("reservationEmail"), params.get("email"));
+        const hotelTitle = pickValue(params.get("hotelTitle")) || fallbackHotel.title;
+        const hotelLocation = pickValue(params.get("hotelLocation")) || fallbackHotel.location;
+        const hotelImage = pickValue(params.get("hotelImage")) || fallbackHotel.image;
+        const checkIn = parseDate(params.get("checkIn"));
+        const checkOut = parseDate(params.get("checkOut"));
+        const stayDates = checkIn && checkOut ? `${formatDate(checkIn)} - ${formatDate(checkOut)}` : "체류 일자는 예약 확인 메일을 확인해 주세요.";
+        const isMemberBooking = toBoolean(params.get("memberBooking"));
+        const primaryCta = document.getElementById("primaryBookingCta");
+        const secondaryCta = document.getElementById("secondaryBookingCta");
+        const guestLookupUrl = (() => {
+            const query = new URLSearchParams();
+            if (bookingNo) {
+                query.set("reservationNo", bookingNo);
+            }
+            if (guestEmail) {
+                query.set("reservationEmail", guestEmail);
+                query.set("email", guestEmail);
+            }
+            return `/jejuair/pages/booking/viewOnOffReservationList.html?${query.toString()}`;
+        })();
+
+        document.getElementById("hotelTitle").textContent = hotelTitle;
+        document.getElementById("hotelLocation").textContent = hotelLocation;
+        document.getElementById("hotelImage").src = hotelImage;
+        document.getElementById("hotelImage").alt = hotelTitle;
+        document.getElementById("stayDates").textContent = stayDates;
+        document.getElementById("bookingCode").textContent = bookingNo ? `#${bookingNo}` : "예약번호 확인 필요";
+        document.getElementById("guestEmail").textContent = guestEmail || "guest@jejustay.com";
+        document.getElementById("editorialTitle").textContent = params.get("keyword") ? `${params.get("keyword")} Horizon` : "Jeju Horizon";
+
+        if (primaryCta instanceof HTMLAnchorElement) {
+            if (isMemberBooking) {
+                primaryCta.textContent = "마이페이지에서 예약 보기";
+                primaryCta.href = "/pages/mypage/dashboard.html?shell=stay";
+                primaryCta.removeAttribute("data-action");
+            } else {
+                primaryCta.textContent = "비회원 예약조회 열기";
+                primaryCta.href = guestLookupUrl;
+                primaryCta.setAttribute("data-action", "OPEN_RESERVATION_DRAWER");
+            }
+        }
+
+        if (secondaryCta instanceof HTMLAnchorElement) {
+            secondaryCta.textContent = "호텔 목록으로 돌아가기";
+            secondaryCta.href = "/jejustay/pages/hotel/hotel-list.html";
+        }
+    </script>
+</body>
+
+</html>

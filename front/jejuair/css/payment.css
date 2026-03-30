@@ -255,7 +255,7 @@
   font-size: 26px;
 }
 
-.pay_button {
+.jejuair-main-content .pay_button {
   width: 100%;
   margin-top: 18px;
   height: 48px;
@@ -268,11 +268,11 @@
   cursor: pointer;
 }
 
-.pay_button:hover {
+.jejuair-main-content .pay_button:hover {
   background: #e54600;
 }
 
-.pay_button:disabled {
+.jejuair-main-content .pay_button:disabled {
   background: #ffa074;
   cursor: not-allowed;
 }

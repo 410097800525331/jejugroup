@@ -17,7 +17,7 @@ The goal is simple:
 
 ## Template
 
-Copy this template into `docs/seeds/SEED.yaml`; that file is the actual workflow contract for the workflow.
+Copy this template into `SEED.yaml`; that file is the actual workflow contract for the workflow.
 
 ```yaml
 goal: "<primary objective>"

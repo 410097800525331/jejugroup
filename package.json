@@ -8,6 +8,7 @@
   "scripts": {
     "scan:routes": "node front/scripts/scan_hardcoded_routes.js",
     "lint": "pnpm run guard:text && pnpm run scan:routes && pnpm run check:shell && pnpm run check:cs",
+    "generate:destinations": "node scripts/generate-destination-catalogs.js",
     "build:front": "pnpm run build:shell && pnpm run build:cs",
     "test:build": "pnpm run build:front",
     "test:smoke": "pnpm run smoke:cs && pnpm run smoke:front",

@@ -1,4 +1,5 @@
 import { HotelShellIcon } from "@front-components/layout/HotelShellIcon";
+import { getDestinationSuggestionColumns } from "../../../shared/destination/destinationSearch.js";
 import { DESTINATION_COLUMNS } from "@front-components/hotel/searchWidgetData";
 import { SearchDestinationDropdown } from "@front-components/search/SearchDestinationDropdown";
 import { LifeSearchWidgetProvider, useLifeSearchWidget } from "./LifeSearchWidgetContext";
@@ -14,6 +15,7 @@ const LifeSearchWidgetContent = () => {
     checkInLabel,
     checkOutLabel,
     searchButtonTitle,
+    ensureDestinationOpen,
     setDestinationValue,
     openDestinationInput,
     toggleDestination,
@@ -24,6 +26,11 @@ const LifeSearchWidgetContent = () => {
     toggleCalendar,
     submitSearch
   } = useLifeSearchWidget();
+  const destinationColumns = getDestinationSuggestionColumns(
+    state.destinationValue,
+    state.hasTypedDestinationQuery,
+    DESTINATION_COLUMNS
+  );
 
   return (
     <div className="search-widget-large long-stay-search-widget">
@@ -45,6 +52,7 @@ const LifeSearchWidgetContent = () => {
                 placeholder="어디로 떠날까요?"
                 type="text"
                 value={state.destinationValue}
+                onFocus={ensureDestinationOpen}
                 onChange={(event) => {
                   setDestinationValue(event.target.value);
                 }}
@@ -52,7 +60,7 @@ const LifeSearchWidgetContent = () => {
               />
             </div>
             <SearchDestinationDropdown
-              columns={DESTINATION_COLUMNS}
+              columns={destinationColumns}
               dropdownId="destinationDropdown"
               isOpen={state.isDestinationOpen}
               onInteract={stopPropagation}

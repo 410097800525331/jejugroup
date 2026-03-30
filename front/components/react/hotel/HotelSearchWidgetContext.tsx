@@ -17,6 +17,7 @@ import {
 } from "@front-components/search/rangeDatePicker";
 import type { SearchCalendarTab } from "@front-components/search/types";
 import { resolveRoute } from "@front-core-utils/path_resolver.js";
+import { resolveHotelDestination } from "./hotelDestinationCatalog";
 import { buildHotelListRouteParams, type HotelSearchInitialState } from "./hotelSearchQuery";
 
 type SearchTab = "hotel" | "pension" | "activity";
@@ -26,6 +27,7 @@ type PopupId = "destinationDropdown" | "guestPopupLarge" | "calendarPopup" | nul
 interface SearchWidgetState {
   activeTab: SearchTab;
   destinationValue: string;
+  hasTypedDestinationQuery: boolean;
   isDestinationOpen: boolean;
   isGuestOpen: boolean;
   guest: Record<GuestKey, number>;
@@ -35,6 +37,8 @@ interface SearchWidgetState {
 type SearchWidgetAction =
   | { type: "SET_ACTIVE_TAB"; tab: SearchTab }
   | { type: "SET_DESTINATION_VALUE"; value: string }
+  | { type: "MARK_TYPED_DESTINATION_QUERY" }
+  | { type: "RESET_TYPED_DESTINATION_QUERY" }
   | { type: "TOGGLE_DESTINATION" }
   | { type: "CLOSE_DESTINATION" }
   | { type: "TOGGLE_GUEST" }
@@ -58,6 +62,7 @@ interface SearchWidgetContextValue {
   checkOutLabel: string;
   setActiveTab: (tab: SearchTab) => void;
   setDestinationValue: (value: string) => void;
+  ensureDestinationOpen: () => void;
   toggleDestination: (event: MouseEvent<HTMLElement>) => void;
   openDestinationInput: (event: MouseEvent<HTMLInputElement>) => void;
   selectDestination: (value: string) => void;
@@ -73,7 +78,7 @@ interface SearchWidgetContextValue {
   clearCalendarHoverDate: () => void;
   clearCalendar: () => void;
   confirmCalendar: () => void;
-  submitSearch: () => void;
+  submitSearch: () => Promise<void>;
   stopPropagation: (event: MouseEvent<HTMLElement>) => void;
 }
 
@@ -87,6 +92,7 @@ const createInitialSearchWidgetState = (providedState?: HotelSearchInitialState)
   return {
     activeTab: "hotel",
     destinationValue: providedState?.destinationValue ?? "",
+    hasTypedDestinationQuery: providedState?.hasTypedDestinationQuery ?? false,
     isDestinationOpen: false,
     isGuestOpen: false,
     guest: {
@@ -137,6 +143,16 @@ const searchWidgetReducer = (state: SearchWidgetState, action: SearchWidgetActio
       return {
         ...state,
         destinationValue: action.value
+      };
+    case "MARK_TYPED_DESTINATION_QUERY":
+      return {
+        ...state,
+        hasTypedDestinationQuery: true
+      };
+    case "RESET_TYPED_DESTINATION_QUERY":
+      return {
+        ...state,
+        hasTypedDestinationQuery: false
       };
     case "TOGGLE_DESTINATION":
       return {
@@ -345,7 +361,15 @@ export const HotelSearchWidgetProvider = ({ children, initialState }: HotelSearc
 
   const setDestinationValue = useCallback((value: string) => {
     dispatch({ type: "SET_DESTINATION_VALUE", value });
+    dispatch({ type: "MARK_TYPED_DESTINATION_QUERY" });
   }, []);
+
+  const ensureDestinationOpen = useCallback(() => {
+    closeOtherPopups(dispatch, "destinationDropdown");
+    if (!state.isDestinationOpen) {
+      dispatch({ type: "TOGGLE_DESTINATION" });
+    }
+  }, [state.isDestinationOpen]);
 
   const toggleDestination = useCallback((event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -356,17 +380,14 @@ export const HotelSearchWidgetProvider = ({ children, initialState }: HotelSearc
   const openDestinationInput = useCallback(
     (event: MouseEvent<HTMLInputElement>) => {
       event.stopPropagation();
-      closeOtherPopups(dispatch, "destinationDropdown");
-      dispatch({ type: "SET_DESTINATION_VALUE", value: event.currentTarget.value });
-      if (!state.isDestinationOpen) {
-        dispatch({ type: "TOGGLE_DESTINATION" });
-      }
+      ensureDestinationOpen();
     },
-    [state.isDestinationOpen]
+    [ensureDestinationOpen]
   );
 
   const selectDestination = useCallback((value: string) => {
     dispatch({ type: "SET_DESTINATION_VALUE", value });
+    dispatch({ type: "RESET_TYPED_DESTINATION_QUERY" });
     dispatch({ type: "CLOSE_DESTINATION" });
   }, []);
 
@@ -432,8 +453,11 @@ export const HotelSearchWidgetProvider = ({ children, initialState }: HotelSearc
     dispatch({ type: "CONFIRM_CALENDAR" });
   }, []);
 
-  const submitSearch = useCallback(() => {
+  const submitSearch = useCallback(async () => {
     closeOtherPopups(dispatch);
+
+    const destinationValue = state.destinationValue.trim();
+    const resolvedDestination = destinationValue ? resolveHotelDestination(null, destinationValue).destination : null;
 
     const targetUrl = resolveRoute(
       "SERVICES.STAY.HOTEL_LIST",
@@ -444,7 +468,8 @@ export const HotelSearchWidgetProvider = ({ children, initialState }: HotelSearc
           calendar: {
             checkIn: state.calendar.checkIn,
             checkOut: state.calendar.checkOut
-          }
+          },
+          resolvedDestination
         },
         window.location.search
       )
@@ -487,6 +512,7 @@ export const HotelSearchWidgetProvider = ({ children, initialState }: HotelSearc
       checkOutLabel,
       setActiveTab,
       setDestinationValue,
+      ensureDestinationOpen,
       toggleDestination,
       openDestinationInput,
       selectDestination,
@@ -513,6 +539,7 @@ export const HotelSearchWidgetProvider = ({ children, initialState }: HotelSearc
     checkOutLabel,
     setActiveTab,
     setDestinationValue,
+    ensureDestinationOpen,
     toggleDestination,
     openDestinationInput,
     selectDestination,

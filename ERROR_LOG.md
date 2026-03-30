@@ -633,3 +633,41 @@ status: open
 - summary: `compileJava가 AdminBannerApiController와 중복된 package-private record 선언 때문에 실패함`
 - details: `배너 업로드/외부화 작업 중 AdminBannerDbStore.java 끝에 AdminBannerUpsertRequest, AdminBannerReorderRequest, AdminBannerActiveRequest, AdminBannerSeed, AdminBannerRecord를 다시 추가해 동일 패키지 내 중복 선언이 발생했다. 중복 블록을 제거하고 AdminBannerRecord의 이미지 URL 갱신을 생성자 직접 호출로 바꾼 뒤 compileJava를 다시 통과시켰다.`
 - status: `resolved`
+
+## 2026-03-30 22:44:59 +09:00
+
+- time: `2026-03-30 22:44:59 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\gradlew.bat`
+- summary: `Spring wrapper jar 누락으로 gradlew 기반 검증이 즉시 실패함`
+- details: `booking 결제 저장/조회 검증 중 `D:\git\jejugroup\jeju-spring\gradlew.bat test --tests com.jejugroup.jejuspring.booking.BookingApiControllerIntegrationTests`를 실행했지만 `gradle\wrapper\gradle-wrapper.jar`가 없어 `Unable to access jarfile`로 바로 중단됐다. 이후 워크스페이스에 이미 풀려 있던 `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat`로 동일 test/compileJava 검증을 대체 실행해 작업 검증은 계속 진행했다.`
+- status: `resolved`
+
+- time: `2026-03-31 04:06:00 +09:00`
+- location: `official odcloud world-city dataset suitability check`
+- summary: `공식 세계도시 데이터셋이 JejuStay/JejuAir 공용 목적지 검색 소스로는 범위가 부족함`
+- details: `env에 넣은 DATA_GO_KR_WORLD_CITY_SERVICE_KEY로 https://api.odcloud.kr/api/15042620/v1/uddi:b56fa58e-0351-4719-b8a5-a674cb74195e 를 page=1, perPage=300, returnType=JSON으로 조회한 결과 totalCount=179였다. 실제 검색 확인에서 도쿄/오사카/싱가포르/방콕은 존재했지만 인천/제주/서울/부산/후쿠오카/다낭은 비어 있어, 현재 포트폴리오 목적지 요구를 만족하지 못하므로 바로 구현에 투입하면 회귀가 발생한다.`
+- status: `open`
+
+- time: `2026-03-31 05:22:00 +09:00`
+- location: `scripts/generate-destination-catalogs.js`
+- summary: `browser bundle generation 중 외부 CSV fetch가 ECONNRESET로 실패함`
+- details: `shared destination helper의 browser-safe artifact를 추가하는 과정에서 `node scripts/generate-destination-catalogs.js`를 다시 실행했지만, 공공데이터 CSV 다운로드 단계에서 `fetch failed` / `ECONNRESET`가 발생해 브라우저 번들 파일 생성이 중단됐다. 기존 JSON 아티팩트는 이미 존재하므로 로컬 데이터로 browser bundle을 재생성하는 후속 조치가 필요하다.`
+- status: `open`
+
+- time: `2026-03-31 06:13:00 +09:00`
+- location: `scripts/generate-destination-catalogs.js`
+- summary: `browser bundle generation blocker cleared with the derived shared artifact in place`
+- details: `후속 정리에서 shared airport browser bundle `front/shared/destination/generated/destination-airport-search.browser.js`를 확보했고, JejuAir Availability는 이제 이 shared bundle만 읽도록 바뀌었다. 초기 ECONNRESET은 외부 재다운로드 시도의 일시적 실패로 남기되, 이번 목적지 검색 전환 작업의 실제 blocker는 해소됐다.`
+- status: `resolved`
+
+- time: `2026-03-31 17:30:00 +09:00`
+- location: `jeju-spring/gradlew.bat test --tests com.jejugroup.jejuspring.booking.BookingApiControllerIntegrationTests`
+- summary: `booking verification first hit the missing Gradle wrapper jar again`
+- details: `The booking persistence and guest-lookup verification initially failed immediately because jeju-spring/gradle/wrapper/gradle-wrapper.jar is absent in this workspace. I switched the same targeted test run to the local D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat distribution and continued verification there.`
+- status: `resolved`
+
+- time: `2026-03-31 17:33:00 +09:00`
+- location: `jeju-spring/src/test/java/com/jejugroup/jejuspring/booking/BookingApiControllerIntegrationTests.java`
+- summary: `typed JsonPath assertions briefly blocked booking test compilation`
+- details: `The first temp-Gradle run reached compileTestJava and failed on two ambiguous assertThat(JsonPath.read(...)) calls after the reservationNo alias assertions were added. Those assertions were rewritten through typed local String variables, and the same targeted BookingApiControllerIntegrationTests run then passed successfully.`
+- status: `resolved`

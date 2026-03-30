@@ -1,0 +1,166 @@
+{
+  "Seoul": [
+    {
+      "airport": "Seoul Gimpo International Airport",
+      "airportKo": "김포국제공항",
+      "iata": "GMP",
+      "icao": "RKSS",
+      "city": "Seoul",
+      "cityKo": "서울"
+    },
+    {
+      "airport": "Seoul Incheon International Airport",
+      "airportKo": "인천국제공항",
+      "iata": "ICN",
+      "icao": "RKSI",
+      "city": "Seoul",
+      "cityKo": "서울"
+    }
+  ],
+  "Incheon": [
+    {
+      "airport": "Seoul Incheon International Airport",
+      "airportKo": "인천국제공항",
+      "iata": "ICN",
+      "icao": "RKSI",
+      "city": "Seoul",
+      "cityKo": "서울"
+    }
+  ],
+  "Jeju": [
+    {
+      "airport": "Bom Jesus Vale do Gurgueia Regional Airport",
+      "airportKo": "봉 제주스 발레 두 구르게이아 지역 공항",
+      "iata": "n/a",
+      "icao": "SNGG",
+      "city": "Bom Jesus",
+      "cityKo": "봉제주스"
+    },
+    {
+      "airport": "Jeju International Airport",
+      "airportKo": "제주국제공항",
+      "iata": "CJU",
+      "icao": "RKPC",
+      "city": "Jeju",
+      "cityKo": "제주"
+    }
+  ],
+  "Busan": [
+    {
+      "airport": "Busan Gimhae Airport",
+      "airportKo": "김해국제공항",
+      "iata": "PUS",
+      "icao": "RKPK",
+      "city": "Busan",
+      "cityKo": "부산"
+    }
+  ],
+  "Tokyo": [
+    {
+      "airport": "Tokyo Haneda Airport",
+      "airportKo": "하네다 공항",
+      "iata": "HND",
+      "icao": "RJTT",
+      "city": "Tokyo",
+      "cityKo": "도쿄"
+    },
+    {
+      "airport": "Tokyo Narita Airport",
+      "airportKo": "나리타 국제공항",
+      "iata": "NRT",
+      "icao": "RJAA",
+      "city": "Tokyo",
+      "cityKo": "도쿄"
+    }
+  ],
+  "Osaka": [
+    {
+      "airport": "Osaka Itami Airport",
+      "airportKo": "오사카 국제공항",
+      "iata": "ITM",
+      "icao": "RJOO",
+      "city": "Osaka",
+      "cityKo": "오사카"
+    },
+    {
+      "airport": "Osaka Kansai International Airport",
+      "airportKo": "간사이 국제공항",
+      "iata": "KIX",
+      "icao": "RJBB",
+      "city": "Osaka",
+      "cityKo": "오사카"
+    },
+    {
+      "airport": "Osaka Kobe Airport",
+      "airportKo": "고베 공항",
+      "iata": "UKB",
+      "icao": "RJBE",
+      "city": "Osaka",
+      "cityKo": "고베"
+    },
+    {
+      "airport": "Osaka Yao Airport",
+      "airportKo": "오사카 야오 공항",
+      "iata": "n/a",
+      "icao": "RJOY",
+      "city": "Osaka",
+      "cityKo": "오사카"
+    }
+  ],
+  "Fukuoka": [
+    {
+      "airport": "Fukuoka Airport",
+      "airportKo": "후쿠오카 공항",
+      "iata": "FUK",
+      "icao": "RJFF",
+      "city": "Fukuoka",
+      "cityKo": "후쿠오카"
+    }
+  ],
+  "Bangkok": [
+    {
+      "airport": "Bangkok Don Mueang International Airport",
+      "airportKo": "돈므앙 국제공항",
+      "iata": "DMK",
+      "icao": "VTBD",
+      "city": "Bangkok",
+      "cityKo": "방콕"
+    },
+    {
+      "airport": "Bangkok Suvarnabhumi International Airport",
+      "airportKo": "수완나품 공항",
+      "iata": "BKK",
+      "icao": "VTBS",
+      "city": "Bangkok",
+      "cityKo": "방콕"
+    }
+  ],
+  "Da Nang": [
+    {
+      "airport": "Da Nang Airport",
+      "airportKo": "다낭 국제공항",
+      "iata": "DAD",
+      "icao": "VVDN",
+      "city": "Da Nang",
+      "cityKo": "다낭"
+    }
+  ],
+  "Singapore": [
+    {
+      "airport": "Singapore Changi Airport",
+      "airportKo": "싱가포르 창이 공항",
+      "iata": "SIN",
+      "icao": "WSSS",
+      "city": "Singapore",
+      "cityKo": "싱가포르"
+    },
+    {
+      "airport": "Singapore Seletar Airport",
+      "airportKo": "셀레타르 공항",
+      "iata": "XSP",
+      "icao": "WSSL",
+      "city": "Singapore",
+      "cityKo": "싱가포르"
+    }
+  ]
+}

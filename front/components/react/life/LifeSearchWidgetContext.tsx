@@ -23,6 +23,7 @@ type PopupId = "destinationDropdown" | "guestPopupLarge" | "calendarPopup" | "op
 
 interface LifeSearchWidgetState {
   destinationValue: string;
+  hasTypedDestinationQuery: boolean;
   isDestinationOpen: boolean;
   isGuestOpen: boolean;
   isOptionsOpen: boolean;
@@ -33,6 +34,8 @@ interface LifeSearchWidgetState {
 
 type LifeSearchWidgetAction =
   | { type: "SET_DESTINATION_VALUE"; value: string }
+  | { type: "MARK_TYPED_DESTINATION_QUERY" }
+  | { type: "RESET_TYPED_DESTINATION_QUERY" }
   | { type: "TOGGLE_DESTINATION" }
   | { type: "CLOSE_DESTINATION" }
   | { type: "TOGGLE_GUEST" }
@@ -60,6 +63,7 @@ interface LifeSearchWidgetContextValue {
   calendarWarning: string | null;
   searchButtonTitle?: string;
   setDestinationValue: (value: string) => void;
+  ensureDestinationOpen: () => void;
   toggleDestination: (event: MouseEvent<HTMLElement>) => void;
   openDestinationInput: (event: MouseEvent<HTMLInputElement>) => void;
   selectDestination: (value: string) => void;
@@ -88,6 +92,7 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 const initialState: LifeSearchWidgetState = {
   destinationValue: "",
+  hasTypedDestinationQuery: false,
   isDestinationOpen: false,
   isGuestOpen: false,
   isOptionsOpen: false,
@@ -120,6 +125,16 @@ const lifeSearchWidgetReducer = (state: LifeSearchWidgetState, action: LifeSearc
       return {
         ...state,
         destinationValue: action.value
+      };
+    case "MARK_TYPED_DESTINATION_QUERY":
+      return {
+        ...state,
+        hasTypedDestinationQuery: true
+      };
+    case "RESET_TYPED_DESTINATION_QUERY":
+      return {
+        ...state,
+        hasTypedDestinationQuery: false
       };
     case "TOGGLE_DESTINATION":
       return {
@@ -346,7 +361,15 @@ export const LifeSearchWidgetProvider = ({ children }: PropsWithChildren) => {
 
   const setDestinationValue = useCallback((value: string) => {
     dispatch({ type: "SET_DESTINATION_VALUE", value });
+    dispatch({ type: "MARK_TYPED_DESTINATION_QUERY" });
   }, []);
+
+  const ensureDestinationOpen = useCallback(() => {
+    closeOtherPopups(dispatch, "destinationDropdown");
+    if (!state.isDestinationOpen) {
+      dispatch({ type: "TOGGLE_DESTINATION" });
+    }
+  }, [state.isDestinationOpen]);
 
   const toggleDestination = useCallback((event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -357,17 +380,14 @@ export const LifeSearchWidgetProvider = ({ children }: PropsWithChildren) => {
   const openDestinationInput = useCallback(
     (event: MouseEvent<HTMLInputElement>) => {
       event.stopPropagation();
-      closeOtherPopups(dispatch, "destinationDropdown");
-      dispatch({ type: "SET_DESTINATION_VALUE", value: event.currentTarget.value });
-      if (!state.isDestinationOpen) {
-        dispatch({ type: "TOGGLE_DESTINATION" });
-      }
+      ensureDestinationOpen();
     },
-    [state.isDestinationOpen]
+    [ensureDestinationOpen]
   );
 
   const selectDestination = useCallback((value: string) => {
     dispatch({ type: "SET_DESTINATION_VALUE", value });
+    dispatch({ type: "RESET_TYPED_DESTINATION_QUERY" });
     dispatch({ type: "CLOSE_DESTINATION" });
   }, []);
 
@@ -543,6 +563,7 @@ export const LifeSearchWidgetProvider = ({ children }: PropsWithChildren) => {
       calendarWarning,
       searchButtonTitle,
       setDestinationValue,
+      ensureDestinationOpen,
       toggleDestination,
       openDestinationInput,
       selectDestination,
@@ -572,6 +593,7 @@ export const LifeSearchWidgetProvider = ({ children }: PropsWithChildren) => {
     calendarWarning,
     searchButtonTitle,
     setDestinationValue,
+    ensureDestinationOpen,
     toggleDestination,
     openDestinationInput,
     selectDestination,

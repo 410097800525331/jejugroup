@@ -28,6 +28,78 @@
     <section id="paymentContainer" class="payment_container">
       <div class="payment_layout">
         <div class="payment_left">
+          <article id="journeySummary" class="payment_block">
+            <h2>여정 정보</h2>
+            <div class="summary_rows">
+              <div class="summary_row">
+                <span>trip type</span>
+                <strong id="journeyTripType">왕복</strong>
+              </div>
+              <div class="summary_row">
+                <span>출발지</span>
+                <strong id="journeyDeparture">-</strong>
+              </div>
+              <div class="summary_row">
+                <span>도착지</span>
+                <strong id="journeyDestination">-</strong>
+              </div>
+              <div class="summary_row">
+                <span>출발일</span>
+                <strong id="journeyTravelDate">-</strong>
+              </div>
+              <div class="summary_row hidden" id="journeyReturnRow">
+                <span>귀국일</span>
+                <strong id="journeyReturnDate">-</strong>
+              </div>
+              <div class="summary_row">
+                <span>탑승객</span>
+                <strong id="journeyPassengers">성인 1</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="payment_block">
+            <h2>예약 유형</h2>
+            <label class="method_item">
+              <input type="radio" name="bookingType" value="member" checked>
+              <div>
+                <strong>회원 예약</strong>
+                <p>결제 후 마이페이지에서 예약 내역을 바로 확인합니다.</p>
+              </div>
+            </label>
+            <label class="method_item">
+              <input type="radio" name="bookingType" value="guest">
+              <div>
+                <strong>비회원 예약</strong>
+                <p>결제 후 예약 조회 페이지에서 예약번호와 탑승객 정보를 확인합니다.</p>
+              </div>
+            </label>
+          </article>
+
+          <article id="guestInfoForm" class="payment_block hidden">
+            <h2>비회원 예약 정보</h2>
+            <div class="field_inline">
+              <div class="field_group">
+                <label for="guestBookerLastName">예약자 성</label>
+                <input id="guestBookerLastName" type="text" placeholder="성">
+              </div>
+              <div class="field_group">
+                <label for="guestBookerFirstName">예약자 이름</label>
+                <input id="guestBookerFirstName" type="text" placeholder="이름">
+              </div>
+            </div>
+            <div class="field_inline">
+              <div class="field_group">
+                <label for="guestPassengerLastName">탑승객 성</label>
+                <input id="guestPassengerLastName" type="text" placeholder="성">
+              </div>
+              <div class="field_group">
+                <label for="guestPassengerFirstName">탑승객 이름</label>
+                <input id="guestPassengerFirstName" type="text" placeholder="이름">
+              </div>
+            </div>
+          </article>
+
           <article class="payment_block">
             <h2>결제 수단 선택</h2>
             <label class="method_item">
@@ -141,9 +213,10 @@
     <section id="paymentSuccess" class="payment_success hidden">
       <div class="success_box">
         <h2>결제 완료</h2>
-        <p>제주 여행 예약이 정상적으로 접수되었습니다.</p>
+        <p id="successMessage">제주 여행 예약이 정상적으로 접수되었습니다.</p>
         <div class="success_meta">
-          <p><strong>예약번호</strong> JJU-2026-0001</p>
+          <p><strong>예약번호</strong> <span id="successReservationNumber">JJU-0000-0000</span></p>
+          <p><strong>목적지</strong> <span id="successDestination">도쿄 / 나리타</span></p>
           <p><strong>결제금액</strong> <span id="successAmount">719,000원</span></p>
         </div>
         <button id="successConfirmBtn" class="pay_button" type="button">확인</button>

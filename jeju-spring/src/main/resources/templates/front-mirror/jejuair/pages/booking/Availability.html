@@ -37,17 +37,9 @@
           <div class="form_row">
             <div class="form_group">
               <label>출발지</label>
-              <input readonly placeholder="선택">
+              <input placeholder="도시/지역 입력" autocomplete="off">
               <div class="dropdown">
-                <ul>
-                  <li>서울(인천)</li>
-                  <li>서울(김포)</li>
-                  <li>부산</li>
-                  <li>제주</li>
-                  <li>광주</li>
-                  <li>청주</li>
-                  <li>대구</li>
-                </ul>
+                <ul></ul>
               </div>
             </div>
             <div class="swap_icon">
@@ -55,21 +47,9 @@
             </div>
             <div class="form_group">
               <label>도착지</label>
-              <input readonly placeholder="선택">
+              <input placeholder="도시/지역 입력" autocomplete="off">
               <div class="dropdown">
-                <ul>
-                  <li>대한민국</li>
-                  <li>일본</li>
-                  <li>동북아시아</li>
-                  <li>베트남</li>
-                  <li>필리핀</li>
-                  <li>인도네시아</li>
-                  <li>싱가포르</li>
-                  <li>태국/라오스</li>
-                  <li>말레이시아</li>
-                  <li>사이판</li>
-                  <li>몽골</li>
-                </ul>
+                <ul></ul>
               </div>
             </div>
           </div>
@@ -131,36 +111,16 @@
           <div class="form_row">
             <div class="form_group">
               <label>출발지 (1구간)</label>
-              <input readonly placeholder="선택">
+              <input placeholder="도시/지역 입력" autocomplete="off">
               <div class="dropdown">
-                <ul>
-                  <li>서울(인천)</li>
-                  <li>서울(김포)</li>
-                  <li>부산</li>
-                  <li>제주</li>
-                  <li>광주</li>
-                  <li>청주</li>
-                  <li>대구</li>
-                </ul>
+                <ul></ul>
               </div>
             </div>
             <div class="form_group">
               <label>도착지 (1구간)</label>
-              <input readonly placeholder="선택">
+              <input placeholder="도시/지역 입력" autocomplete="off">
               <div class="dropdown">
-                <ul>
-                  <li>대한민국</li>
-                  <li>일본</li>
-                  <li>동북아시아</li>
-                  <li>베트남</li>
-                  <li>필리핀</li>
-                  <li>인도네시아</li>
-                  <li>싱가포르</li>
-                  <li>태국/라오스</li>
-                  <li>말레이시아</li>
-                  <li>사이판</li>
-                  <li>몽골</li>
-                </ul>
+                <ul></ul>
               </div>
             </div>
             <div class="form_group">
@@ -171,36 +131,16 @@
           <div class="form_row">
             <div class="form_group">
               <label>출발지 (2구간)</label>
-              <input readonly placeholder="선택">
+              <input placeholder="도시/지역 입력" autocomplete="off">
               <div class="dropdown">
-                <ul>
-                  <li>서울(인천)</li>
-                  <li>서울(김포)</li>
-                  <li>부산</li>
-                  <li>제주</li>
-                  <li>광주</li>
-                  <li>청주</li>
-                  <li>대구</li>
-                </ul>
+                <ul></ul>
               </div>
             </div>
             <div class="form_group">
               <label>도착지 (2구간)</label>
-              <input readonly placeholder="선택">
+              <input placeholder="도시/지역 입력" autocomplete="off">
               <div class="dropdown">
-                <ul>
-                  <li>대한민국</li>
-                  <li>일본</li>
-                  <li>동북아시아</li>
-                  <li>베트남</li>
-                  <li>필리핀</li>
-                  <li>인도네시아</li>
-                  <li>싱가포르</li>
-                  <li>태국/라오스</li>
-                  <li>말레이시아</li>
-                  <li>사이판</li>
-                  <li>몽골</li>
-                </ul>
+                <ul></ul>
               </div>
             </div>
             <div class="form_group">
@@ -245,36 +185,16 @@
         <div class="form_row">
           <div class="form_group">
             <label>출발지</label>
-            <input readonly placeholder="선택">
+            <input placeholder="도시/지역 입력" autocomplete="off">
             <div class="dropdown">
-              <ul>
-                <li>서울(인천)</li>
-                <li>서울(김포)</li>
-                <li>부산</li>
-                <li>제주</li>
-                <li>광주</li>
-                <li>청주</li>
-                <li>대구</li>
-              </ul>
+              <ul></ul>
             </div>
           </div>
           <div class="form_group">
             <label>도착지</label>
-            <input readonly placeholder="선택">
+            <input placeholder="도시/지역 입력" autocomplete="off">
             <div class="dropdown">
-              <ul>
-                <li>대한민국</li>
-                <li>일본</li>
-                <li>동북아시아</li>
-                <li>베트남</li>
-                <li>필리핀</li>
-                <li>인도네시아</li>
-                <li>싱가포르</li>
-                <li>태국/라오스</li>
-                <li>말레이시아</li>
-                <li>사이판</li>
-                <li>몽골</li>
-              </ul>
+              <ul></ul>
             </div>
           </div>
         </div>
@@ -325,13 +245,297 @@
       });
     });
 
+    const airportSearchCache = new Map();
+    const airportSearchTimers = new WeakMap();
+    const airportSearchLoader = (() => {
+      let pending = null;
+
+      const candidatePaths = () => {
+        const dynamic = [];
+
+        try {
+          dynamic.push(new URL('../../shared/destination/generated/destination-airport-search.browser.js', document.baseURI).href);
+        } catch (error) {
+          /* noop */
+        }
+
+        if (window.location?.origin) {
+          dynamic.push(new URL('/front-mirror/shared/destination/generated/destination-airport-search.browser.js', window.location.origin).href);
+          dynamic.push(new URL('/shared/destination/generated/destination-airport-search.browser.js', window.location.origin).href);
+        }
+
+        return [...new Set(dynamic)];
+      };
+
+      const loadScript = (src) => new Promise(resolve => {
+        const existing = document.querySelector(`script[data-airport-search-src="${src}"]`);
+        if (existing) {
+          existing.addEventListener('load', () => resolve(true), { once: true });
+          existing.addEventListener('error', () => resolve(false), { once: true });
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.dataset.airportSearchSrc = src;
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.head.appendChild(script);
+      });
+
+      return async () => {
+        if (window.__JEJUGROUP_DESTINATION_SEARCH__?.searchWorldAirportDestinations) {
+          return window.__JEJUGROUP_DESTINATION_SEARCH__;
+        }
+
+        if (!pending) {
+          pending = (async () => {
+            for (const src of candidatePaths()) {
+              const loaded = await loadScript(src);
+              if (loaded && window.__JEJUGROUP_DESTINATION_SEARCH__?.searchWorldAirportDestinations) {
+                return window.__JEJUGROUP_DESTINATION_SEARCH__;
+              }
+            }
+
+            return null;
+          })();
+        }
+
+        return pending;
+      };
+    })();
+    airportSearchLoader();
+
+    const normalizeAirportKey = value =>
+      (value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .replace(/[()[\]·\-]/g, '')
+        .replace(/\./g, '');
+
+    const escapeHtml = value =>
+      String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const getGroupLabel = group => group.querySelector('label')?.textContent?.trim() || '';
+    const isAirportSearchGroup = group => /^(출발지|도착지)/.test(getGroupLabel(group));
+
+    const getAirportLabel = (airport) => {
+      const city = airport.cityLabel || airport.cityEnglishLabel || "";
+      const airportName = airport.airportLabel || airport.airportEnglishLabel || "";
+      const code = airport.iata && airport.iata !== "n/a" ? ` (${airport.iata})` : "";
+
+      if (city && airportName) {
+        return `${city} - ${airportName}${code}`;
+      }
+
+      return `${airportName || city}${code}`.trim();
+    };
+
+    const buildAirportSearchKeys = (airport) => {
+      const rawKeys = [
+        airport.cityLabel,
+        airport.cityEnglishLabel,
+        airport.airportLabel,
+        airport.airportEnglishLabel,
+        airport.iata,
+        airport.icao,
+        `${airport.cityLabel || ''}${airport.airportLabel || ''}`,
+        `${airport.cityEnglishLabel || ''}${airport.airportEnglishLabel || ''}`
+      ];
+
+      return [...new Set(rawKeys.map(normalizeAirportKey).filter(Boolean))];
+    };
+
+    const isStrongAirportMatch = (normalizedQuery, key) => {
+      if (!normalizedQuery || !key) {
+        return false;
+      }
+
+      if (key === normalizedQuery) {
+        return true;
+      }
+
+      if (key.startsWith(normalizedQuery)) {
+        return true;
+      }
+
+      if (normalizedQuery.length >= 3 && key.includes(normalizedQuery)) {
+        return true;
+      }
+
+      return false;
+    };
+
+    const searchAirportOptions = (query) => {
+      const normalizedQuery = normalizeAirportKey(query);
+      if (normalizedQuery.length < 2) {
+        return [];
+      }
+
+      if (airportSearchCache.has(normalizedQuery)) {
+        return airportSearchCache.get(normalizedQuery);
+      }
+
+      const destinationSearch = window.__JEJUGROUP_DESTINATION_SEARCH__;
+      if (!destinationSearch?.searchWorldAirportDestinations) {
+        return [];
+      }
+
+      const options = destinationSearch.searchWorldAirportDestinations(query)
+        .filter((airport) => {
+          const keys = buildAirportSearchKeys(airport);
+          return keys.some((key) => isStrongAirportMatch(normalizedQuery, key));
+        })
+        .map((airport) => ({
+          label: getAirportLabel(airport),
+          city: airport.cityLabel || airport.cityEnglishLabel || "",
+          airport: airport.airportLabel || airport.airportEnglishLabel || "",
+          iata: airport.iata || "",
+          icao: airport.icao || ""
+        }))
+        .filter((option, index, list) => {
+          const key = normalizeAirportKey(option.label);
+          return list.findIndex((item) => normalizeAirportKey(item.label) === key) === index;
+        });
+
+      airportSearchCache.set(normalizedQuery, options);
+      return options;
+    };
+
+    const renderAirportDropdown = (group, options = [], message = '') => {
+      const list = group.querySelector('.dropdown ul');
+      if (!list) return;
+
+      if (!options.length) {
+        list.innerHTML = `<li data-empty="true">${escapeHtml(message || '검색 결과 없음')}</li>`;
+        return;
+      }
+
+      list.innerHTML = options
+        .map(option => `<li data-airport-value="${escapeHtml(option.label)}" data-airport-code="${escapeHtml(option.iata || '')}" data-airport-city="${escapeHtml(option.city || '')}">${escapeHtml(option.label)}</li>`)
+        .join('');
+    };
+
+    const cancelAirportSearch = group => {
+      const timer = airportSearchTimers.get(group);
+      if (timer) {
+        clearTimeout(timer);
+        airportSearchTimers.delete(group);
+      }
+    };
+
+    const closeAllDropdowns = () => {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+    };
+
+    const runAirportSearch = async (group, query) => {
+      const input = group.querySelector('input');
+      const dropdown = group.querySelector('.dropdown');
+      if (!input || !dropdown) return;
+
+      const trimmedQuery = query.trim();
+      if (trimmedQuery.length < 2) {
+        dropdown.classList.remove('active');
+        return;
+      }
+
+      renderAirportDropdown(group, [], '검색 중...');
+      dropdown.classList.add('active');
+
+      await airportSearchLoader();
+      if (input.value.trim() !== trimmedQuery) {
+        return;
+      }
+
+      const options = searchAirportOptions(query);
+      if (options.length) {
+        renderAirportDropdown(group, options, '검색 결과 없음');
+      } else if (window.__JEJUGROUP_DESTINATION_SEARCH__?.searchWorldAirportDestinations) {
+        renderAirportDropdown(group, [], '검색 결과 없음');
+      } else {
+        renderAirportDropdown(group, [], '공항 검색 데이터를 불러오지 못했어');
+      }
+
+      dropdown.classList.add('active');
+    };
+
+    const scheduleAirportSearch = (group, query) => {
+      cancelAirportSearch(group);
+
+      const timer = setTimeout(() => {
+        runAirportSearch(group, query);
+      }, 500);
+
+      airportSearchTimers.set(group, timer);
+    };
+
     /* ================= 드롭다운 기본 ================= */
     document.querySelectorAll('.form_group input[readonly]').forEach(input => {
+      if (isAirportSearchGroup(input.closest('.form_group'))) {
+        return;
+      }
+
       input.addEventListener('click', e => {
         e.stopPropagation();
         const drop = input.nextElementSibling;
-        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+        closeAllDropdowns();
         if (drop) drop.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.form_group').forEach(group => {
+      if (!isAirportSearchGroup(group)) return;
+
+      const input = group.querySelector('input');
+      const dropdown = group.querySelector('.dropdown');
+      if (!input || !dropdown) return;
+
+      const openDropdown = () => {
+        closeAllDropdowns();
+        dropdown.classList.add('active');
+      };
+
+      input.addEventListener('click', e => {
+        e.stopPropagation();
+        const query = input.value.trim();
+        if (query.length >= 2) {
+          openDropdown();
+          scheduleAirportSearch(group, query);
+          return;
+        }
+        dropdown.classList.remove('active');
+      });
+
+      input.addEventListener('input', () => {
+        const query = input.value.trim();
+
+        if (query.length < 2) {
+          cancelAirportSearch(group);
+          renderAirportDropdown(group, [], '');
+          dropdown.classList.remove('active');
+          return;
+        }
+
+        openDropdown();
+        renderAirportDropdown(group, [], '검색 중...');
+        scheduleAirportSearch(group, query);
+      });
+
+      dropdown.addEventListener('click', e => {
+        const item = e.target.closest('li[data-airport-value]');
+        if (!item) return;
+
+        input.value = item.dataset.airportValue || '';
+        input.dataset.airportCode = item.dataset.airportCode || '';
+        input.dataset.airportCity = item.dataset.airportCity || '';
+        dropdown.classList.remove('active');
       });
     });
 
@@ -344,6 +548,10 @@
 
     /* 출발지 / 도착지 선택 */
     document.querySelectorAll('.dropdown li').forEach(li => {
+      if (li.hasAttribute('data-airport-value')) {
+        return;
+      }
+
       li.addEventListener('click', e => {
         const group = li.closest('.form_group');
         const input = group.querySelector('input');
@@ -354,7 +562,7 @@
 
     /* 바깥 클릭 시 dropdown 닫기 */
     document.addEventListener('click', () => {
-      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+      closeAllDropdowns();
     });
 
     /* ================= 출발지 / 도착지 스왑 ================= */
@@ -434,7 +642,7 @@
       /* input 클릭 → dropdown 열기 */
       input.addEventListener('click', e => {
         e.stopPropagation();
-        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+        closeAllDropdowns();
         dropdown.classList.add('active');
       });
 
@@ -664,6 +872,161 @@
       calendarLayer.classList.remove('active');
     }
 
+    const formatJourneyDate = (date) => {
+      if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+        return '';
+      }
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    const parsePassengerCounts = (value) => {
+      const counts = { adult: 1, child: 0, infant: 0 };
+      const normalized = String(value || '').trim();
+
+      if (!normalized) {
+        return counts;
+      }
+
+      const adultMatch = normalized.match(/성인\s*(\d+)/);
+      const childMatch = normalized.match(/소아\s*(\d+)/);
+      const infantMatch = normalized.match(/유아\s*(\d+)/);
+
+      if (adultMatch) counts.adult = Math.max(1, Number.parseInt(adultMatch[1], 10) || 1);
+      if (childMatch) counts.child = Math.max(0, Number.parseInt(childMatch[1], 10) || 0);
+      if (infantMatch) counts.infant = Math.max(0, Number.parseInt(infantMatch[1], 10) || 0);
+
+      return counts;
+    };
+
+    const BOOKING_DRAFT_STORAGE_KEY = 'jejuair:booking-draft';
+    const BOOKING_HANDOFF_STORAGE_KEY = 'jejuair:booking-handoff';
+    const BOOKING_HANDOFF_WINDOW_NAME_PREFIX = 'jejuair:booking-handoff:v1:';
+    const BOOKING_DRAFT_SOURCE = 'SERVICES.AIR.BOOKING.AVAILABILITY';
+    const BOOKING_HANDOFF_TTL_MS = 2 * 60 * 1000;
+    const generateDraftId = () => {
+      if (window.crypto?.randomUUID) {
+        return window.crypto.randomUUID();
+      }
+
+      return `draft-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+    };
+
+    const collectJourneyPayload = () => {
+      const tripType = document.querySelector('.booking_trip_type button.active')?.dataset.type || 'round';
+      const roundInputs = document.querySelectorAll('.trip_round .form_row:first-child .form_group input');
+      const passengerInput = [...document.querySelectorAll('.trip_round .form_group')]
+        .find(group => group.querySelector('label')?.textContent === '탑승객')
+        ?.querySelector('input[readonly]');
+
+      const departure = roundInputs[0]?.value?.trim() || '';
+      const destination = roundInputs[1]?.value?.trim() || '';
+      const passengers = passengerInput?.value?.trim() || '성인 1';
+      const passengerCounts = parsePassengerCounts(passengers);
+
+      const payload = new URLSearchParams();
+      payload.set('tripType', tripType);
+      payload.set('departure', departure);
+      payload.set('destination', destination);
+      payload.set('travelDate', formatJourneyDate(departDate));
+      payload.set('returnDate', tripType === 'round' ? formatJourneyDate(returnDate2) : '');
+      payload.set('tripDays', tripType === 'round' && departDate && returnDate2
+        ? String(Math.max(1, Math.round((returnDate2.getTime() - departDate.getTime()) / 86400000)))
+        : tripType === 'oneway'
+          ? '0'
+          : '');
+      payload.set('passengers', passengers);
+      payload.set('adultCount', String(passengerCounts.adult));
+      payload.set('childCount', String(passengerCounts.child));
+      payload.set('infantCount', String(passengerCounts.infant));
+      payload.set('sourceRoute', BOOKING_DRAFT_SOURCE);
+      payload.set('sourcePage', window.location.pathname);
+
+      if (tripType === 'multi') {
+        const multiRows = [...document.querySelectorAll('.trip_multi .form_row')].map(row => {
+          const groups = row.querySelectorAll('.form_group');
+          const segmentDate = row.querySelector('.date_input');
+
+          return {
+            departure: groups[0]?.querySelector('input')?.value?.trim() || '',
+            destination: groups[1]?.querySelector('input')?.value?.trim() || '',
+            travelDate: formatJourneyDate(new Date(segmentDate?.value || '')),
+          };
+        }).filter(segment => segment.departure || segment.destination || segment.travelDate);
+
+        if (multiRows.length) {
+          payload.set('segments', JSON.stringify(multiRows));
+          payload.set('departure', multiRows[0]?.departure || departure);
+          payload.set('destination', multiRows[multiRows.length - 1]?.destination || destination);
+          payload.set('travelDate', multiRows[0]?.travelDate || formatJourneyDate(departDate));
+          payload.set('returnDate', multiRows[multiRows.length - 1]?.travelDate || '');
+          payload.set('tripDays', multiRows.length > 1 ? String(multiRows.length - 1) : '0');
+        }
+      }
+
+      const adultBase = 89000;
+      const childBase = 67000;
+      const infantBase = 20000;
+      const tripMultiplier = {
+        round: 1.85,
+        oneway: 1,
+        multi: 2.15,
+      }[tripType] || 1;
+      const baseTotal =
+        passengerCounts.adult * adultBase +
+        passengerCounts.child * childBase +
+        passengerCounts.infant * infantBase;
+      const total = Math.max(1000, Math.round((baseTotal * tripMultiplier) / 1000) * 1000);
+
+      payload.set('total', String(total));
+      return payload;
+    };
+
+    const persistJourneyDraft = (payload, handoffId) => {
+      if (!(payload instanceof URLSearchParams)) {
+        return;
+      }
+
+      try {
+        const savedAt = new Date().toISOString();
+        const draft = {
+          ...Object.fromEntries(payload.entries()),
+          handoffId,
+          savedAt,
+          sourceRoute: BOOKING_DRAFT_SOURCE,
+          sourcePage: window.location.pathname,
+        };
+        window.sessionStorage.setItem(BOOKING_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+
+        if (handoffId) {
+          window.name = `${BOOKING_HANDOFF_WINDOW_NAME_PREFIX}${JSON.stringify({
+            handoffId,
+            draftId: draft.draftId || '',
+            savedAt,
+            expiresAt: new Date(Date.now() + BOOKING_HANDOFF_TTL_MS).toISOString(),
+            sourceRoute: BOOKING_DRAFT_SOURCE,
+            sourcePage: window.location.pathname,
+            oneShot: true,
+          })}`;
+
+          window.sessionStorage.setItem(BOOKING_HANDOFF_STORAGE_KEY, JSON.stringify({
+            handoffId,
+            draftId: draft.draftId || '',
+            savedAt,
+            expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+            sourceRoute: BOOKING_DRAFT_SOURCE,
+            sourcePage: window.location.pathname,
+            oneShot: true,
+          }));
+        }
+      } catch (_error) {
+        /* sessionStorage unavailable */
+      }
+    };
+
     /* 임시 요금 */
     function mockPrice() {
       const price = [38900, 41900, 44900, 50900, 59900, 68900];
@@ -673,7 +1036,25 @@
     /* 결제 페이지 연결 */
     document.querySelectorAll('#booking .search_btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        window.jejuAirRoute?.navigate("SERVICES.AIR.BOOKING.PAYMENT");
+        const payload = collectJourneyPayload();
+        const draftId = generateDraftId();
+        const handoffId = generateDraftId();
+        payload.set('draftId', draftId);
+        payload.set('handoffId', handoffId);
+        persistJourneyDraft(payload, handoffId);
+        const params = Object.fromEntries(payload.entries());
+        const fallbackUrl = `/jejuair/pages/booking/payment.html?${payload.toString()}`;
+
+        if (window.jejuAirRoute?.navigate) {
+          Promise.resolve(
+            window.jejuAirRoute.navigate("SERVICES.AIR.BOOKING.PAYMENT", params),
+          ).catch(() => {
+            window.location.href = fallbackUrl;
+          });
+          return;
+        }
+
+        window.location.href = fallbackUrl;
       });
     });
 

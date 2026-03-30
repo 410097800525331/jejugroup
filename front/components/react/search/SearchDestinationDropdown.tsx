@@ -26,14 +26,14 @@ export const SearchDestinationDropdown = ({
             <ul className="destination-list">
               {column.items.map((item) => (
                 <li
-                  className="destination-item"
+                  className={item.image ? "destination-item" : "destination-item-text"}
                   data-value={item.value}
                   key={item.value}
                   onClick={() => {
                     onSelect(item.value);
                   }}
                 >
-                  <img alt={item.alt} src={item.image} />
+                  {item.image ? <img alt={item.alt} src={item.image} /> : null}
                   <div className="destination-info">
                     <span className="destination-name" data-lang={item.nameLang}>
                       {item.name}

@@ -1,6 +1,6 @@
 ---
 name: ouroboros-evaluate
-description: Verify implementation against the frozen seed using staged repository checks. Use when the user invokes `ooo evaluate` or asks whether the finished work satisfies `docs/seeds/SEED.yaml`, the acceptance criteria, the verification steps, and any Route B/C reviewer obligations.
+description: Verify implementation against the frozen seed using staged repository checks. Use when the user invokes `ooo evaluate` or asks whether the finished work satisfies `SEED.yaml`, the acceptance criteria, the verification steps, and any Route B/C reviewer obligations.
 ---
 
 # `ooo evaluate`
@@ -17,7 +17,7 @@ ooo evaluate <seed-path>
 ## Workflow
 
 1. Re-read `STATE.md` and confirm the active task, route, and ownership state.
-2. Read the seed from the provided path, or default to `docs/seeds/SEED.yaml`.
+2. Read the seed from the provided path, or default to `SEED.yaml` in the workspace root.
 3. If no valid seed exists, stop and return to `ooo seed`.
 4. Run evaluation in stages:
    - Stage 1: mechanical verification

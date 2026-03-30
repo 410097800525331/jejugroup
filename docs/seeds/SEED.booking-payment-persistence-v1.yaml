@@ -1,0 +1,32 @@
+goal: >
+  Freeze the Jeju Air booking-payment persistence contract so
+  /jejuair/pages/booking/payment.html completion stores a booking tree in the
+  Spring backend, member bookings become visible through the existing
+  /api/mypage/dashboard bookings area, and guest reservation lookup is exposed
+  without leaking reservations on reservation number alone.
+constraints:
+  - Keep the scope limited to the Jeju Air booking flow and the booking Spring package plus any required database migration files.
+  - Treat the payment completion path as authoritative for persisting bookings, payment_attempts, and payment_transactions as a single booking tree.
+  - Preserve the existing /api/mypage/dashboard path and reuse its bookings section for member visibility; do not add a new mypage screen.
+  - Add a guest reservation lookup API that requires reservation number plus the current guest verification fields, including travel date and passenger name, so reservation number alone cannot expose all data.
+  - Allow database migration work needed to make guest persistence and lookup possible.
+  - Let the payment page collect any additional minimum guest lookup fields that are not currently captured, including reserver or passenger name and travel date.
+  - Return authoritative booking_no, destination, and amount from the payment completion response, and require the front success screen to render from that response.
+  - Keep the contract deterministic: one completed payment creates one persisted booking tree and one visible member booking snapshot, with no cross-domain side effects.
+  - Do not expand this slice into hotel, USIM, or any shared payment refactor across other domains.
+acceptance_criteria:
+  - Completing booking payment via /jejuair/pages/booking/payment.html persists the booking tree into bookings, payment_attempts, and payment_transactions in the Spring backend.
+  - The payment completion response includes authoritative booking_no, destination, and amount, and the front success view uses those returned values instead of locally inferred data.
+  - A logged-in member can see the newly saved booking immediately in the existing /api/mypage/dashboard bookings area without a new mypage route or screen.
+  - A guest reservation lookup API exists and only returns data after validating reservation number together with the required guest verification fields such as travel date and passenger name.
+  - The guest lookup contract prevents broad reservation-number-only disclosure and does not expose unrelated bookings.
+  - Any required DB migration for guest-capable storage is included in the allowed booking Spring migration scope.
+  - No hotel, USIM, or other domain payment contract is changed by this seed.
+verification:
+  - Run the booking Spring backend test suite covering payment completion, mypage booking visibility, and guest lookup validation.
+  - Run the repository Spring build or package check used for backend contract verification.
+out_of_scope:
+  - Adding a new mypage UI or replacing the existing /api/mypage/dashboard bookings area with a separate surface.
+  - Exposing guest reservations by reservation number alone without additional verification fields.
+  - Changing hotel, USIM, admin, support, or shared payment contracts.
+  - A broad payment refactor across multiple domains or a frontend-only persistence approximation.

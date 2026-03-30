@@ -10,6 +10,7 @@ export const HotelListSearchBar = () => {
     checkInLabel,
     checkOutLabel,
     guestSummary,
+    ensureDestinationOpen,
     setDestinationValue,
     openDestinationInput,
     toggleDestination,
@@ -41,6 +42,7 @@ export const HotelListSearchBar = () => {
                 placeholder="도시, 지역, 숙소명을 검색하세요"
                 type="text"
                 value={state.destinationValue}
+                onFocus={ensureDestinationOpen}
                 onChange={(event) => {
                   setDestinationValue(event.target.value);
                 }}

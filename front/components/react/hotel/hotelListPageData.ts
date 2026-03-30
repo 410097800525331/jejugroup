@@ -1,4 +1,5 @@
 import { getHotelSearchInitialStateFromUrl } from "./hotelSearchQuery";
+import { resolveHotelDestination } from "./hotelDestinationCatalog";
 
 export interface HotelListFilterOption {
   checked?: boolean;
@@ -44,6 +45,11 @@ export interface HotelListPageData {
   migrationPath?: string;
   region: string;
   regionLabel: string;
+  resolvedDestination?: {
+    countryLabel: string;
+    label: string;
+    region: string;
+  } | null;
   searchSummary: HotelListSearchSummary;
   shell?: string;
 }
@@ -70,7 +76,27 @@ interface RegionProfile {
   amenities: HotelListFilterOption[];
 }
 
-const DEFAULT_REGION = "hiroshima";
+interface ResolvedRegionDestination {
+  countryLabel: string;
+  label: string;
+  region: string;
+  source: "catalog" | "fallback";
+}
+
+const UNRESOLVED_REGION = "unresolved";
+
+const UNRESOLVED_REGION_PROFILE: RegionProfile = {
+  label: "지역 미지정",
+  countryLabel: "",
+  mapButtonLabel: "지도에서 숙소 보기",
+  popularFilters: [],
+  propertyTypes: [],
+  guestRatings: [],
+  locations: [],
+  paymentOptions: [],
+  amenities: [],
+  hotels: []
+};
 
 const REGION_PROFILES: Record<string, RegionProfile> = {
   hiroshima: {
@@ -824,6 +850,26 @@ export const parseHotelPriceValue = (price: string) => {
   return Number.isNaN(parsed) ? 0 : parsed;
 };
 
+export const HOTEL_PAYMENT_PAGE_PATH = "/jejustay/pages/hotel/hotel-payment.html";
+
+export const buildHotelPaymentPageHref = (hotel: HotelListPageHotel, currentSearch: string) => {
+  const params = new URLSearchParams(currentSearch);
+
+  params.set("hotelId", hotel.id);
+  params.set("hotelTitle", hotel.title);
+  params.set("hotelLocation", hotel.location);
+  params.set("hotelImage", hotel.imageUrl);
+  params.set("hotelBadge", hotel.badge);
+  params.set("hotelStars", hotel.stars);
+  params.set("hotelReviewScore", hotel.reviewScore);
+  params.set("hotelReviewLabel", hotel.reviewLabel);
+  params.set("hotelCurrentPrice", hotel.currentPrice);
+  params.set("hotelOriginalPrice", hotel.originalPrice);
+  params.set("hotelTags", hotel.tags.join("|"));
+
+  return `${HOTEL_PAYMENT_PAGE_PATH}?${params.toString()}`;
+};
+
 const formatPriceValue = (price: number) => {
   return `₩${Math.max(49000, price).toLocaleString("ko-KR")}`;
 };
@@ -982,58 +1028,164 @@ const deriveLocationScoreFilters = (reviewScore: number) => {
   return ["ui-location-6"];
 };
 
-const enrichHiroshimaHotel = (
+const buildEnrichedHotel = (
   hotel: HotelListPageHotel,
-  variant: HiroshimaHotelVariant | null,
-  index: number
+  index: number,
+  region: string,
+  regionLabel: string,
+  profile: RegionProfile,
+  reviewScoreValue: number,
+  currentPriceValue: number,
+  originalPriceValue: number,
+  extraFilterIds: string[] = [],
+  extraTags: string[] = [],
+  idSuffix: string | null = null,
+  titleSuffix: string | null = null,
+  badge: string | null = null
 ): HotelListPageHotel => {
-  const reviewScoreValue = Math.max(
-    7.5,
-    Math.min(9.8, Number.parseFloat(hotel.reviewScore) + (variant?.reviewDelta ?? 0) + ((index % 3) - 1) * 0.05)
-  );
-
-  const currentPriceValue = parseHotelPriceValue(hotel.currentPrice) + (variant?.currentPriceDelta ?? 0) + (index % 5) * 3000;
-  const originalPriceValue = Math.max(
-    currentPriceValue + 14000,
-    parseHotelPriceValue(hotel.originalPrice) + (variant?.originalPriceDelta ?? 0) + (index % 4) * 4000
-  );
+  const preset = resolveRegionLayoutPreset(region, regionLabel);
+  const landmarkIds = preset.landmarkOptions.map((option) => option.id);
+  const locationFilters = preset.locationFilters[hotel.locationId] ?? resolveFallbackLocationFilters(profile, hotel.locationId, landmarkIds);
 
   const derivedFilterIds = dedupeFilters([
     ...hotel.filterIds,
-    ...(HIROSHIMA_LOCATION_FILTERS[hotel.locationId] ?? []),
+    ...locationFilters,
     ...deriveRatingFilters(reviewScoreValue),
     deriveStarFilterId(hotel.stars),
     ...derivePropertyTypeFilters(hotel),
     ...deriveAmenityFilters(hotel),
     ...deriveLocationScoreFilters(reviewScoreValue),
     ...deriveBrandFilters(hotel),
+    ...deriveExperienceFilters(hotel),
     ...(reviewScoreValue >= 9.3 && hotel.stars.includes("★★★★★") ? ["ui-agoda-luxe"] : []),
-    ...(variant?.extraFilterIds ?? [])
+    ...extraFilterIds
   ]);
 
   return {
     ...hotel,
-    id: variant ? `${hotel.id}-${variant.id}` : hotel.id,
-    title: variant ? `${hotel.title} ${variant.titleSuffix}` : hotel.title,
-    badge: variant?.badge ?? hotel.badge,
+    id: idSuffix ? `${hotel.id}-${idSuffix}` : hotel.id,
+    title: titleSuffix ? `${hotel.title} ${titleSuffix}` : hotel.title,
+    badge: badge ?? hotel.badge,
     reviewScore: reviewScoreValue.toFixed(1),
     reviewLabel: deriveReviewLabel(reviewScoreValue),
     originalPrice: formatPriceValue(originalPriceValue),
     currentPrice: formatPriceValue(currentPriceValue),
     filterIds: derivedFilterIds,
-    tags: Array.from(new Set([...hotel.tags, ...(variant?.extraTags ?? [])])).slice(0, 4)
+    tags: Array.from(new Set([...hotel.tags, ...extraTags])).slice(0, 4)
   };
 };
 
-const expandHiroshimaHotels = (hotels: HotelListPageHotel[]) => {
-  const expandedHotels = hotels.flatMap((hotel, index) => {
+const enrichBaselineHotel = (
+  hotel: HotelListPageHotel,
+  index: number,
+  region: string,
+  regionLabel: string,
+  profile: RegionProfile
+): HotelListPageHotel => {
+  const reviewScoreValue = Math.max(7.5, Math.min(9.8, Number.parseFloat(hotel.reviewScore) + ((index % 3) - 1) * 0.05));
+  const currentPriceValue = parseHotelPriceValue(hotel.currentPrice) + (index % 5) * 3000;
+  const originalPriceValue = Math.max(
+    currentPriceValue + 14000,
+    parseHotelPriceValue(hotel.originalPrice) + (index % 4) * 4000
+  );
+
+  return buildEnrichedHotel(
+    hotel,
+    index,
+    region,
+    regionLabel,
+    profile,
+    reviewScoreValue,
+    currentPriceValue,
+    originalPriceValue
+  );
+};
+
+const enrichHiroshimaHotelVariant = (
+  hotel: HotelListPageHotel,
+  variant: HiroshimaHotelVariant,
+  index: number
+): HotelListPageHotel => {
+  const reviewScoreValue = Math.max(
+    7.5,
+    Math.min(9.8, Number.parseFloat(hotel.reviewScore) + variant.reviewDelta + ((index % 3) - 1) * 0.05)
+  );
+  const currentPriceValue = parseHotelPriceValue(hotel.currentPrice) + variant.currentPriceDelta + (index % 5) * 3000;
+  const originalPriceValue = Math.max(
+    currentPriceValue + 14000,
+    parseHotelPriceValue(hotel.originalPrice) + variant.originalPriceDelta + (index % 4) * 4000
+  );
+
+  return buildEnrichedHotel(
+    hotel,
+    index,
+    "hiroshima",
+    "히로시마",
+    REGION_PROFILES.hiroshima,
+    reviewScoreValue,
+    currentPriceValue,
+    originalPriceValue,
+    variant.extraFilterIds,
+    variant.extraTags,
+    variant.id,
+    variant.titleSuffix,
+    variant.badge
+  );
+};
+
+const enrichBaselineHotelVariant = (
+  hotel: HotelListPageHotel,
+  variant: HiroshimaHotelVariant,
+  index: number,
+  region: string,
+  regionLabel: string,
+  profile: RegionProfile
+): HotelListPageHotel => {
+  const reviewScoreValue = Math.max(
+    7.5,
+    Math.min(9.8, Number.parseFloat(hotel.reviewScore) + variant.reviewDelta + ((index % 3) - 1) * 0.05)
+  );
+  const currentPriceValue = parseHotelPriceValue(hotel.currentPrice) + variant.currentPriceDelta + (index % 5) * 3000;
+  const originalPriceValue = Math.max(
+    currentPriceValue + 14000,
+    parseHotelPriceValue(hotel.originalPrice) + variant.originalPriceDelta + (index % 4) * 4000
+  );
+
+  return buildEnrichedHotel(
+    hotel,
+    index,
+    region,
+    regionLabel,
+    profile,
+    reviewScoreValue,
+    currentPriceValue,
+    originalPriceValue,
+    variant.extraFilterIds,
+    variant.extraTags,
+    variant.id,
+    variant.titleSuffix,
+    variant.badge
+  );
+};
+
+const expandBaselineHotels = (
+  hotels: HotelListPageHotel[],
+  region: string,
+  regionLabel: string,
+  profile: RegionProfile
+) => {
+  return hotels.flatMap((hotel, index) => {
     return [
-      enrichHiroshimaHotel(hotel, null, index),
-      ...HIROSHIMA_VARIANTS.map((variant) => enrichHiroshimaHotel(hotel, variant, index))
+      enrichBaselineHotel(hotel, index, region, regionLabel, profile),
+      ...HIROSHIMA_VARIANTS.map((variant) =>
+        enrichBaselineHotelVariant(hotel, variant, index, region, regionLabel, profile)
+      )
     ];
   });
+};
 
-  return expandedHotels;
+const expandHiroshimaHotels = (hotels: HotelListPageHotel[]) => {
+  return expandBaselineHotels(hotels, "hiroshima", "히로시마", REGION_PROFILES.hiroshima);
 };
 
 interface RegionLayoutPreset {
@@ -1202,35 +1354,11 @@ const deriveExperienceFilters = (hotel: HotelListPageHotel) => {
   return derivedFilterIds;
 };
 
-const enrichRegionalHotel = (
-  hotel: HotelListPageHotel,
-  region: string,
-  regionLabel: string,
-  profile: RegionProfile
-) => {
-  const reviewScoreValue = Number.parseFloat(hotel.reviewScore) || 0;
-  const preset = resolveRegionLayoutPreset(region, regionLabel);
-  const landmarkIds = preset.landmarkOptions.map((option) => option.id);
-  const locationFilters = preset.locationFilters[hotel.locationId] ?? resolveFallbackLocationFilters(profile, hotel.locationId, landmarkIds);
-
-  return {
-    ...hotel,
-    filterIds: dedupeFilters([
-      ...hotel.filterIds,
-      ...locationFilters,
-      ...deriveRatingFilters(reviewScoreValue),
-      deriveStarFilterId(hotel.stars),
-      ...derivePropertyTypeFilters(hotel),
-      ...deriveAmenityFilters(hotel),
-      ...deriveLocationScoreFilters(reviewScoreValue),
-      ...deriveBrandFilters(hotel),
-      ...deriveExperienceFilters(hotel),
-      ...(reviewScoreValue >= 9.3 && hotel.stars.includes("★★★★★") ? ["ui-agoda-luxe"] : [])
-    ])
-  };
-};
-
 const buildCanonicalHotels = (region: string, regionLabel: string, profile: RegionProfile, hotels: HotelListPageHotel[]) => {
+  if (region === UNRESOLVED_REGION) {
+    return hotels.length > 0 ? hotels : buildFallbackDestinationProfile(UNRESOLVED_REGION, regionLabel).hotels;
+  }
+
   if (region === "hiroshima") {
     if (hotels.some((hotel) =>
       hotel.title.endsWith(" 프라임") || hotel.title.endsWith(" 레지던스") || hotel.title.endsWith(" 시그니처")
@@ -1241,7 +1369,7 @@ const buildCanonicalHotels = (region: string, regionLabel: string, profile: Regi
     return expandHiroshimaHotels(hotels);
   }
 
-  return hotels.map((hotel) => enrichRegionalHotel(hotel, region, regionLabel, profile));
+  return expandBaselineHotels(hotels, region, regionLabel, profile);
 };
 
 const countHotelsByFilterId = (hotels: HotelListPageHotel[], filterId: string) => {
@@ -1394,33 +1522,44 @@ const dedupeFilters = (filterIds: string[]) => {
   return Array.from(new Set(filterIds.filter((filterId) => filterId.trim() !== "")));
 };
 
-const buildGenericProfile = (region: string, label: string, countryLabel: string): RegionProfile => {
+const buildKnownDestinationProfile = (region: string, label: string, countryLabel: string): RegionProfile => {
   return {
     label,
     countryLabel,
     mapButtonLabel: `지도에서 ${label} 호텔 보기`,
     popularFilters: [
-      { id: `${region}-central`, label: `${label} 중심가` },
-      { id: `${region}-shopping`, label: "쇼핑 중심지" },
-      { id: `${region}-resort`, label: "리조트 특가" },
-      { id: `${region}-breakfast`, label: "조식 포함" }
+      { id: "prepaid", label: "지금 바로 결제" },
+      { id: "pay-at-hotel", label: "숙소에서 요금 결제" },
+      { id: "rating-9", label: "투숙객 평점: 9+ 최고" },
+      { id: "kitchen", label: "주방" },
+      { id: "internet", label: "인터넷" },
+      { id: "frontdesk", label: "24시간 프런트 데스크" },
+      { id: "downtown", label: `${label} 중심가` },
+      { id: "other-popular", label: "기타" }
     ],
     propertyTypes: [
-      { id: `${region}-hotel`, label: "호텔", count: 214 },
-      { id: `${region}-resort-type`, label: "리조트", count: 18 },
-      { id: `${region}-apartment`, label: "서비스 아파트", count: 37 },
-      { id: `${region}-villa`, label: "빌라", count: 9 }
+      { id: "hotel", label: "호텔", count: 214 },
+      { id: "resort", label: "리조트", count: 18 },
+      { id: "ryokan", label: "료칸", count: 2 },
+      { id: "apartment", label: "아파트", count: 37 },
+      { id: "guesthouse", label: "게스트하우스 / 비앤비", count: 12 },
+      { id: "hostel", label: "호스텔", count: 8 },
+      { id: "serviced-apartment", label: "서비스 아파트", count: 6 },
+      { id: "private-house-entire", label: "프라이빗 하우스 전체", count: 4 },
+      { id: "capsule", label: "캡슐 호텔", count: 3 },
+      { id: "villa", label: "빌라", count: 9 }
     ],
     locations: [
-      { id: `${region}-center`, label: `${label} 센트럴`, count: 81 },
-      { id: `${region}-bay`, label: `${label} 베이`, count: 28, description: "인기 관광 구역" },
-      { id: `${region}-station`, label: `${label} 역세권`, count: 44 },
-      { id: `${region}-old-town`, label: `${label} 올드타운`, count: 17 }
+      { id: "ui-local-central", label: `${label} 중심가`, count: 81 },
+      { id: "ui-local-waterfront", label: `${label} 워터프런트`, count: 28, description: "인기 관광 구역" },
+      { id: "ui-local-old-town", label: `${label} 도심권`, count: 44 },
+      { id: "ui-local-station", label: `${label} 역세권`, count: 17 }
     ],
     paymentOptions: [
-      { id: `${region}-free-cancel`, label: "예약 무료 취소", count: 59 },
-      { id: `${region}-pay-at-hotel`, label: "숙소에서 요금 결제", count: 33 },
-      { id: `${region}-prepaid`, label: "지금 바로 결제", count: 118 }
+      { id: "free-cancel", label: "예약 무료 취소", count: 59 },
+      { id: "pay-at-hotel", label: "숙소에서 요금 결제", count: 33 },
+      { id: "book-now-pay-later", label: "선예약 후지불", count: 41 },
+      { id: "prepaid", label: "지금 바로 결제", count: 118 }
     ],
     guestRatings: [
       { id: "rating-9", label: "9+ 최고", count: 39 },
@@ -1428,18 +1567,19 @@ const buildGenericProfile = (region: string, label: string, countryLabel: string
       { id: "rating-7", label: "7+ 좋음", count: 164 }
     ],
     amenities: [
-      { id: `${region}-pool`, label: "수영장", count: 22 },
-      { id: `${region}-spa`, label: "스파", count: 11 },
-      { id: `${region}-parking`, label: "무료 주차", count: 57 },
-      { id: `${region}-breakfast-amenity`, label: "조식 포함", count: 76 }
+      { id: "pool", label: "수영장", count: 22 },
+      { id: "spa", label: "스파", count: 11 },
+      { id: "parking", label: "무료 주차", count: 57 },
+      { id: "fitness", label: "피트니스", count: 17 },
+      { id: "restaurant", label: "레스토랑", count: 76 }
     ],
     hotels: [
       {
         id: `${region}-central-hotel`,
-        title: `${label} 센트럴 호텔`,
+        title: `${label} 프리미엄 호텔`,
         stars: "★★★★★",
-        location: `${label} 중심가 · 대표 관광지 인접`,
-        locationId: `${region}-center`,
+        location: `${label} 시내 중심 · 대표 명소 인접`,
+        locationId: "ui-local-central",
         propertyTypeId: "hotel",
         reviewScore: "9.1",
         reviewLabel: "Excellent",
@@ -1447,15 +1587,15 @@ const buildGenericProfile = (region: string, label: string, countryLabel: string
         currentPrice: "₩269,000",
         imageUrl: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80",
         badge: "추천 호텔",
-        filterIds: [`${region}-central`, `${region}-shopping`, `${region}-breakfast`],
+        filterIds: ["downtown", "internet", "prepaid", "restaurant"],
         tags: ["무료 Wi-Fi", "라운지", "조식 포함"]
       },
       {
         id: `${region}-grand-resort`,
         title: `${label} 그랜드 리조트`,
         stars: "★★★★",
-        location: `${label} 베이 프런트 · 전망 특화`,
-        locationId: `${region}-bay`,
+        location: `${label} 워터프런트 · 전망 특화`,
+        locationId: "ui-local-waterfront",
         propertyTypeId: "resort",
         reviewScore: "8.8",
         reviewLabel: "Great",
@@ -1463,7 +1603,7 @@ const buildGenericProfile = (region: string, label: string, countryLabel: string
         currentPrice: "₩228,000",
         imageUrl: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80",
         badge: "리조트 특가",
-        filterIds: [`${region}-resort`, `${region}-pool`, `${region}-spa`],
+        filterIds: ["pool", "spa", "pay-at-hotel"],
         tags: ["오션뷰", "수영장", "스파"]
       },
       {
@@ -1471,7 +1611,7 @@ const buildGenericProfile = (region: string, label: string, countryLabel: string
         title: `${label} 스테이션 스테이`,
         stars: "★★★",
         location: `${label} 역 도보 5분`,
-        locationId: `${region}-station`,
+        locationId: "ui-local-station",
         propertyTypeId: "hotel",
         reviewScore: "8.4",
         reviewLabel: "Very Good",
@@ -1479,15 +1619,15 @@ const buildGenericProfile = (region: string, label: string, countryLabel: string
         currentPrice: "₩139,000",
         imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80",
         badge: "역세권",
-        filterIds: [`${region}-station`, `${region}-free-cancel`],
+        filterIds: ["frontdesk", "free-cancel", "internet"],
         tags: ["역세권", "셀프 체크인", "무료 취소"]
       },
       {
         id: `${region}-premium-suite`,
-        title: `${label} 프리미엄 스위트`,
+        title: `${label} 시그니처 스위트`,
         stars: "★★★★★",
         location: `${label} 메인 스트립 · 야경 명소`,
-        locationId: `${region}-old-town`,
+        locationId: "ui-local-old-town",
         propertyTypeId: "villa",
         reviewScore: "9.3",
         reviewLabel: "Exceptional",
@@ -1495,62 +1635,203 @@ const buildGenericProfile = (region: string, label: string, countryLabel: string
         currentPrice: "₩338,000",
         imageUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80",
         badge: "럭셔리",
-        filterIds: [`${region}-villa`, `${region}-shopping`],
+        filterIds: ["pool", "spa", "downtown"],
         tags: ["스위트룸", "레이트 체크아웃", "피트니스"]
       }
     ]
   };
 };
 
-const resolveRegionProfile = (region: string | null, keyword: string | null) => {
-  const normalizedRegion = region?.trim().toLowerCase() || "";
+const buildFallbackDestinationProfile = (region: string, label: string): RegionProfile => {
+  return {
+    label,
+    countryLabel: "",
+    mapButtonLabel: "지도에서 검색 결과 보기",
+    popularFilters: [
+      { id: "prepaid", label: "지금 바로 결제" },
+      { id: "pay-at-hotel", label: "숙소에서 요금 결제" },
+      { id: "rating-9", label: "투숙객 평점: 9+ 최고" },
+      { id: "kitchen", label: "주방" },
+      { id: "internet", label: "인터넷" },
+      { id: "frontdesk", label: "24시간 프런트 데스크" },
+      { id: "other-popular", label: "기타" }
+    ],
+    propertyTypes: [
+      { id: "hotel", label: "호텔", count: 168 },
+      { id: "resort", label: "리조트", count: 12 },
+      { id: "apartment", label: "아파트", count: 24 },
+      { id: "guesthouse", label: "게스트하우스 / 비앤비", count: 10 },
+      { id: "hostel", label: "호스텔", count: 7 },
+      { id: "serviced-apartment", label: "서비스 아파트", count: 5 },
+      { id: "private-house-entire", label: "프라이빗 하우스 전체", count: 6 },
+      { id: "capsule", label: "캡슐 호텔", count: 3 },
+      { id: "villa", label: "빌라", count: 4 }
+    ],
+    locations: [
+      { id: "ui-fallback-central", label: `${label} 중심가`, count: 64 },
+      { id: "ui-fallback-station", label: `${label} 역세권`, count: 21 },
+      { id: "ui-fallback-waterfront", label: `${label} 워터프런트`, count: 18 },
+      { id: "ui-fallback-old-town", label: `${label} 올드타운`, count: 11 }
+    ],
+    paymentOptions: [
+      { id: "free-cancel", label: "예약 무료 취소", count: 44 },
+      { id: "pay-at-hotel", label: "숙소에서 요금 결제", count: 27 },
+      { id: "book-now-pay-later", label: "선예약 후지불", count: 31 },
+      { id: "prepaid", label: "지금 바로 결제", count: 96 }
+    ],
+    guestRatings: [
+      { id: "rating-9", label: "9+ 최고", count: 22 },
+      { id: "rating-8", label: "8+ 우수", count: 88 },
+      { id: "rating-7", label: "7+ 좋음", count: 143 }
+    ],
+    amenities: [
+      { id: "pool", label: "수영장", count: 14 },
+      { id: "spa", label: "스파", count: 8 },
+      { id: "parking", label: "주차장", count: 37 },
+      { id: "fitness", label: "피트니스", count: 13 },
+      { id: "restaurant", label: "레스토랑", count: 49 }
+    ],
+    hotels: [
+      {
+        id: `${region}-fallback-central-hotel`,
+        title: `${label} 프리미엄 호텔`,
+        stars: "★★★★★",
+        location: `${label} 중심가 · 대표 명소 인접`,
+        locationId: "ui-fallback-central",
+        propertyTypeId: "hotel",
+        reviewScore: "8.9",
+        reviewLabel: "Excellent",
+        originalPrice: "₩240,000",
+        currentPrice: "₩179,000",
+        imageUrl: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80",
+        badge: "추천 숙소",
+        filterIds: ["downtown", "internet", "prepaid", "restaurant"],
+        tags: ["무료 Wi-Fi", "라운지", "조식 포함"]
+      },
+      {
+        id: `${region}-fallback-grand-resort`,
+        title: `${label} 그랜드 리조트`,
+        stars: "★★★★",
+        location: `${label} 워터프런트 · 전망 특화`,
+        locationId: "ui-fallback-waterfront",
+        propertyTypeId: "resort",
+        reviewScore: "8.6",
+        reviewLabel: "Great",
+        originalPrice: "₩280,000",
+        currentPrice: "₩219,000",
+        imageUrl: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80",
+        badge: "리조트 특가",
+        filterIds: ["pool", "spa", "pay-at-hotel"],
+        tags: ["오션뷰", "수영장", "스파"]
+      },
+      {
+        id: `${region}-fallback-station-stay`,
+        title: `${label} 스테이션 스테이`,
+        stars: "★★★",
+        location: `${label} 역 도보 5분`,
+        locationId: "ui-fallback-station",
+        propertyTypeId: "hotel",
+        reviewScore: "8.2",
+        reviewLabel: "Very Good",
+        originalPrice: "₩160,000",
+        currentPrice: "₩124,000",
+        imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80",
+        badge: "역세권",
+        filterIds: ["frontdesk", "free-cancel", "internet"],
+        tags: ["역세권", "셀프 체크인", "무료 취소"]
+      },
+      {
+        id: `${region}-fallback-signature-suite`,
+        title: `${label} 시그니처 스위트`,
+        stars: "★★★★★",
+        location: `${label} 메인 스트립 · 야경 명소`,
+        locationId: "ui-fallback-old-town",
+        propertyTypeId: "villa",
+        reviewScore: "9.0",
+        reviewLabel: "Excellent",
+        originalPrice: "₩360,000",
+        currentPrice: "₩299,000",
+        imageUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80",
+        badge: "럭셔리",
+        filterIds: ["pool", "spa", "other-popular"],
+        tags: ["스위트룸", "레이트 체크아웃", "피트니스"]
+      }
+    ]
+  };
+};
 
-  if (normalizedRegion && REGION_PROFILES[normalizedRegion]) {
-    return { region: normalizedRegion, profile: REGION_PROFILES[normalizedRegion] };
+const isNeutralFallbackLabel = (value: string) => {
+  const trimmed = value.trim();
+  return trimmed === "" || trimmed === "지역 미지정";
+};
+
+const formatDestinationLabel = (label: string, countryLabel: string) => {
+  return countryLabel.trim() ? `${label}, ${countryLabel}` : label;
+};
+
+const resolveRegionProfile = (
+  region: string | null,
+  keyword: string | null,
+  fallbackLabelInput?: string | null
+) => {
+  const localResolvedDestination = resolveHotelDestination(region, keyword);
+  const destination = localResolvedDestination.destination;
+  const rawSearchLabel = fallbackLabelInput?.trim() || keyword?.trim() || "";
+  const fallbackLabel = rawSearchLabel;
+  const normalizedFallbackLabel = isNeutralFallbackLabel(fallbackLabel) ? "" : fallbackLabel;
+  const fallbackRegion = normalizedFallbackLabel
+    ? normalizedFallbackLabel
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || UNRESOLVED_REGION
+    : UNRESOLVED_REGION;
+
+  if (!destination) {
+    if (normalizedFallbackLabel) {
+      return {
+        region: fallbackRegion,
+        profile: buildFallbackDestinationProfile(fallbackRegion, normalizedFallbackLabel),
+        destination: {
+          countryLabel: "",
+          label: normalizedFallbackLabel,
+          region: fallbackRegion,
+          source: "fallback"
+        } as ResolvedRegionDestination
+      };
+    }
+
+    return {
+      region: UNRESOLVED_REGION,
+      profile: buildFallbackDestinationProfile(UNRESOLVED_REGION, "지역 미지정"),
+      destination: null
+    };
   }
 
-  if (normalizedRegion === "bangkok") {
-    return { region: "bangkok", profile: buildGenericProfile("bangkok", "방콕", "태국") };
+  if (REGION_PROFILES[destination.region]) {
+    return {
+      region: destination.region,
+      profile: REGION_PROFILES[destination.region],
+      destination: {
+        countryLabel: destination.countryLabel,
+        label: destination.label,
+        region: destination.region,
+        source: "catalog"
+      }
+    };
   }
 
-  if (normalizedRegion === "tokyo") {
-    return { region: "tokyo", profile: buildGenericProfile("tokyo", "도쿄", "일본") };
-  }
-
-  if (normalizedRegion === "danang") {
-    return { region: "danang", profile: buildGenericProfile("danang", "다낭", "베트남") };
-  }
-
-  if (normalizedRegion === "singapore") {
-    return { region: "singapore", profile: buildGenericProfile("singapore", "싱가포르", "싱가포르") };
-  }
-
-  const normalizedKeyword = keyword?.trim().toLowerCase() || "";
-  if (normalizedKeyword.includes("제주") || normalizedKeyword.includes("jeju")) {
-    return { region: "jeju", profile: REGION_PROFILES.jeju };
-  }
-
-  if (normalizedKeyword.includes("오사카") || normalizedKeyword.includes("osaka")) {
-    return { region: "osaka", profile: REGION_PROFILES.osaka };
-  }
-
-  if (normalizedKeyword.includes("방콕") || normalizedKeyword.includes("bangkok")) {
-    return { region: "bangkok", profile: buildGenericProfile("bangkok", "방콕", "태국") };
-  }
-
-  if (normalizedKeyword.includes("도쿄") || normalizedKeyword.includes("tokyo")) {
-    return { region: "tokyo", profile: buildGenericProfile("tokyo", "도쿄", "일본") };
-  }
-
-  if (normalizedKeyword.includes("다낭") || normalizedKeyword.includes("danang")) {
-    return { region: "danang", profile: buildGenericProfile("danang", "다낭", "베트남") };
-  }
-
-  if (normalizedKeyword.includes("싱가포르") || normalizedKeyword.includes("singapore")) {
-    return { region: "singapore", profile: buildGenericProfile("singapore", "싱가포르", "싱가포르") };
-  }
-
-  return { region: DEFAULT_REGION, profile: REGION_PROFILES[DEFAULT_REGION] };
+  return {
+    region: destination.region,
+    profile: buildKnownDestinationProfile(destination.region, destination.label, destination.countryLabel),
+    destination: {
+      countryLabel: destination.countryLabel,
+      label: destination.label,
+      region: destination.region,
+      source: "catalog"
+    }
+  };
 };
 
 const buildFilterSections = (
@@ -1616,14 +1897,21 @@ const applyCheckedState = (options: HotelListFilterOption[], selectedFilterIds: 
 };
 
 export const enhanceHotelListPageData = (pageData: HotelListPageData): HotelListPageData => {
-  const resolved = resolveRegionProfile(pageData.region, pageData.regionLabel);
+  const resolved = resolveRegionProfile(
+    pageData.region,
+    pageData.regionLabel,
+    pageData.searchSummary.destinationLabel
+  );
   const profile = resolved.profile;
   const selectedFilterIds = extractSelectedFilterIdsFromPageData(pageData);
-  const canonicalHotels = buildCanonicalHotels(pageData.region, pageData.regionLabel, profile, pageData.hotels);
+  const canonicalHotels = buildCanonicalHotels(resolved.region, profile.label, profile, pageData.hotels);
 
   return {
     ...pageData,
-    filterSections: buildFilterSections(pageData.region, pageData.regionLabel, profile, canonicalHotels, selectedFilterIds),
+    region: resolved.region,
+    regionLabel: profile.label,
+    mapButtonLabel: profile.mapButtonLabel,
+    filterSections: buildFilterSections(resolved.region, profile.label, profile, canonicalHotels, selectedFilterIds),
     hotels: canonicalHotels
   };
 };
@@ -1633,9 +1921,14 @@ export const buildMockHotelListPageData = (search: string): HotelListPageData =>
   const keyword = params.get("keyword");
   const region = params.get("region");
   const initialSearchState = getHotelSearchInitialStateFromUrl(search);
-  const resolved = resolveRegionProfile(region, keyword);
-  const destinationLabel =
-    initialSearchState.destinationValue?.trim() || `${resolved.profile.label}, ${resolved.profile.countryLabel}`;
+  const resolved = resolveRegionProfile(
+    region,
+    keyword,
+    initialSearchState.destinationValue
+  );
+  const destinationLabel = resolved.destination
+    ? formatDestinationLabel(resolved.destination.label, resolved.destination.countryLabel)
+    : initialSearchState.destinationValue?.trim() || resolved.profile.label;
 
   const checkInLabel = formatShortDateLabel(initialSearchState.calendar?.checkIn ?? null);
   const checkOutLabel = formatShortDateLabel(initialSearchState.calendar?.checkOut ?? null);
@@ -1648,6 +1941,13 @@ export const buildMockHotelListPageData = (search: string): HotelListPageData =>
     migrationPath: "/migration",
     region: resolved.region,
     regionLabel: resolved.profile.label,
+    resolvedDestination: resolved.destination
+      ? {
+          region: resolved.destination.region,
+          label: resolved.destination.label,
+          countryLabel: resolved.destination.countryLabel
+        }
+      : null,
     mapButtonLabel: resolved.profile.mapButtonLabel,
     searchSummary: {
       destinationLabel,
