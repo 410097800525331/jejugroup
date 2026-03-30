@@ -89,7 +89,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const bannerModalBodyInput = document.getElementById('cms-banner-body');
     const bannerModalCtaLabelInput = document.getElementById('cms-banner-cta-label');
     const bannerModalCtaHrefInput = document.getElementById('cms-banner-cta-href');
+    const bannerModalImageFileInput = document.getElementById('cms-banner-image-file');
     const bannerModalImageUrlInput = document.getElementById('cms-banner-image-url');
+    const bannerModalImageStatus = document.getElementById('cms-banner-image-status');
     const bannerModalAltTextInput = document.getElementById('cms-banner-alt-text');
     const bannerModalIconKeySelect = document.getElementById('cms-banner-icon-key');
     const bannerModalActiveSelect = document.getElementById('cms-banner-active');
@@ -136,6 +138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let bannerModalMode = 'create';
     let lastBannerModalTrigger = null;
     let lastBannerModalFocus = null;
+    let selectedBannerImageFile = null;
     let editingBannerId = null;
     let editingBannerRecord = null;
     let bannerRecordCache = new Map();
@@ -1277,6 +1280,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         return [];
     };
 
+    const extractBannerImageUrl = (payload) => {
+        if (!payload) return '';
+        if (typeof payload === 'string') return payload.trim();
+        if (Array.isArray(payload)) return extractBannerImageUrl(payload[0]);
+        if (typeof payload !== 'object') return '';
+
+        const data = payload.data ?? payload.result ?? payload.payload;
+        const candidates = [
+            payload.imageUrl,
+            payload.image_url,
+            payload.servedUrl,
+            payload.served_url,
+            payload.url,
+            data?.imageUrl,
+            data?.image_url,
+            data?.servedUrl,
+            data?.served_url,
+            data?.url,
+            data
+        ];
+
+        for (const candidate of candidates) {
+            if (typeof candidate === 'string' && candidate.trim()) {
+                return candidate.trim();
+            }
+
+            if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
+                const nested = extractBannerImageUrl(candidate);
+                if (nested) return nested;
+            }
+        }
+
+        return '';
+    };
+
     const extractAdminBannerRows = (payload) => {
         if (!payload) return [];
         if (Array.isArray(payload)) return payload;
@@ -1438,6 +1476,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         return normalized ? { ...normalized } : null;
     };
 
+    const syncBannerImageUploadState = (file = null) => {
+        selectedBannerImageFile = file instanceof File ? file : null;
+        if (!bannerModalImageStatus) return;
+
+        if (selectedBannerImageFile) {
+            bannerModalImageStatus.textContent = `선택된 파일: ${selectedBannerImageFile.name}`;
+            return;
+        }
+
+        const currentImageUrl = String(bannerModalImageUrlInput?.value ?? '').trim();
+        bannerModalImageStatus.textContent = currentImageUrl
+            ? `현재 URL: ${currentImageUrl}`
+            : '선택된 파일 없음';
+    };
+
+    const resetBannerImageUploadState = () => {
+        if (bannerModalImageFileInput) {
+            bannerModalImageFileInput.value = '';
+        }
+        syncBannerImageUploadState(null);
+    };
+
     const managedBannerTemplates = Array.isArray(cmsConfig.tabs?.banner?.fallbackRows)
         ? cmsConfig.tabs.banner.fallbackRows.map(normalizeBannerRecord).filter(Boolean)
         : [];
@@ -1474,6 +1534,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (bannerModalImageUrlInput) bannerModalImageUrlInput.value = template.imageUrl;
         if (bannerModalAltTextInput) bannerModalAltTextInput.value = template.altText;
         if (bannerModalActiveSelect) bannerModalActiveSelect.value = String(template.active);
+        resetBannerImageUploadState();
         syncBannerFieldMode();
     };
 
@@ -1525,16 +1586,44 @@ document.addEventListener('DOMContentLoaded', async () => {
             const group = field.dataset.bannerFieldGroup;
             const visible = group === mode || (group === 'icon' && mode === 'text');
             field.hidden = !visible;
-            const control = field.querySelector('input, textarea');
-            if (control) {
+            const controls = field.querySelectorAll('input, textarea, select');
+            controls.forEach((control) => {
                 control.disabled = !visible;
-                control.required = visible && ((mode === 'image' && (control.id === 'cms-banner-image-url' || control.id === 'cms-banner-alt-text'))
+
+                if (control.id === 'cms-banner-image-url') {
+                    control.readOnly = true;
+                    control.required = false;
+                    return;
+                }
+
+                if (control.id === 'cms-banner-image-file') {
+                    control.required = false;
+                    return;
+                }
+
+                control.required = visible && ((mode === 'image' && control.id === 'cms-banner-alt-text')
                     || (mode === 'text' && (control.id === 'cms-banner-title' || control.id === 'cms-banner-icon-key')));
-            }
+            });
         });
+        if (bannerModalImageFileInput) {
+            bannerModalImageFileInput.disabled = mode !== 'image';
+            if (mode !== 'image') {
+                resetBannerImageUploadState();
+            }
+        }
+        if (bannerModalImageUrlInput) {
+            bannerModalImageUrlInput.readOnly = true;
+            bannerModalImageUrlInput.disabled = mode !== 'image';
+        }
+        if (bannerModalAltTextInput) {
+            bannerModalAltTextInput.required = mode === 'image';
+        }
         if (bannerModalIconKeySelect) {
             bannerModalIconKeySelect.disabled = mode !== 'text';
             bannerModalIconKeySelect.required = mode === 'text';
+        }
+        if (mode === 'image' && !selectedBannerImageFile) {
+            syncBannerImageUploadState(null);
         }
         syncBannerEditContractState();
     };
@@ -1583,6 +1672,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const closeBannerModal = (force = false) => {
         if (isBannerSaving && !force) return;
         setBannerModalState(false);
+        resetBannerImageUploadState();
         if (lastBannerModalTrigger && typeof lastBannerModalTrigger.focus === 'function') {
             lastBannerModalTrigger.focus();
         }
@@ -1620,6 +1710,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (bannerModalImageUrlInput) bannerModalImageUrlInput.value = editingBannerRecord?.imageUrl || '';
         if (bannerModalAltTextInput) bannerModalAltTextInput.value = editingBannerRecord?.altText || '';
         if (bannerModalActiveSelect) bannerModalActiveSelect.value = editingBannerRecord ? String(editingBannerRecord.active) : 'true';
+        syncBannerImageUploadState(null);
         syncBannerFieldMode();
     };
 
@@ -1631,6 +1722,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const createTemplate = getAvailableManagedBannerTemplates()[0] || null;
             if (!createTemplate) {
                 alert('등록 가능한 관리 위치가 없어. 삭제된 위치가 있어야 복구하거나 새로 만들 수 있어.');
+                return;
+            }
+            if (normalizeBannerFamily(createTemplate.family) === 'hero_image_set') {
+                alert('히어로 이미지는 기존 슬롯 편집으로만 관리해.');
                 return;
             }
             banner = createTemplate;
@@ -1667,6 +1762,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         return normalizeBannerRecord(extractBannerPayloadItem(parsed));
+    };
+
+    const getBannerImageUploadUrl = (bannerId) => {
+        const normalizedId = String(bannerId ?? '').trim();
+        if (!normalizedId) return '';
+        return `${BANNER_API_BASE}/${encodeURIComponent(normalizedId)}/image`;
+    };
+
+    const uploadBannerImageAsset = async (bannerId, file) => {
+        const uploadUrl = getBannerImageUploadUrl(bannerId);
+        if (!uploadUrl || !(file instanceof File)) return '';
+
+        const formData = new FormData();
+        formData.append('file', file, file.name);
+        formData.append('image', file, file.name);
+
+        const { response, parsed } = await requestNoticeJson(uploadUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(getBannerApiErrorMessage(parsed, 'Banner image upload failed.'));
+        }
+
+        return extractBannerImageUrl(parsed);
     };
 
     const saveBannerApiRecord = async (bannerId, payload, method) => {
@@ -1775,6 +1896,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const iconKey = normalizeBannerIconKey(bannerModalIconKeySelect?.value);
         let sortOrder = Number.isFinite(Number(editingBannerRecord?.sortOrder)) ? Number(editingBannerRecord.sortOrder) : 0;
         const active = bannerModalActiveSelect?.value === 'false' ? false : true;
+        const imageMode = getBannerFieldMode(family) === 'image';
+        const selectedImageFile = selectedBannerImageFile;
 
         if (!slotKey) return;
 
@@ -1800,9 +1923,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             syncBannerFieldMode();
         }
 
-        if (getBannerFieldMode(family) === 'image' && !imageUrl) return;
-        if (getBannerFieldMode(family) === 'text' && !title) return;
-        if (getBannerFieldMode(family) === 'text' && !iconKey) {
+        if (imageMode && bannerModalMode === 'create') {
+            alert('히어로 이미지는 기존 슬롯 편집으로만 저장해.');
+            return;
+        }
+
+        if (imageMode && !imageUrl && !selectedImageFile) {
+            alert('이미지 파일을 업로드해.');
+            bannerModalImageFileInput?.focus();
+            return;
+        }
+        if (!imageMode && !title) return;
+        if (!imageMode && !iconKey) {
             alert('아이콘 키를 선택해.');
             bannerModalIconKeySelect?.focus();
             return;
@@ -1827,11 +1959,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         setBannerSavingState(true);
         try {
-            const savedBanner = await saveBannerApiRecord(editingBannerId, payload, bannerModalMode === 'edit' ? 'PUT' : 'POST');
+            let payloadToSave = payload;
+
+            if (imageMode && selectedImageFile) {
+                const uploadTargetId = String(editingBannerId ?? editingBannerRecord?.id ?? '').trim();
+                if (!uploadTargetId) {
+                    throw new Error('히어로 이미지는 기존 배너 ID가 있어야 업로드할 수 있어.');
+                }
+
+                const uploadedImageUrl = await uploadBannerImageAsset(uploadTargetId, selectedImageFile);
+                if (!uploadedImageUrl) {
+                    throw new Error('업로드된 이미지 경로를 받지 못했어.');
+                }
+
+                payloadToSave = {
+                    ...payload,
+                    imageUrl: uploadedImageUrl
+                };
+                if (bannerModalImageUrlInput) {
+                    bannerModalImageUrlInput.value = uploadedImageUrl;
+                }
+            }
+
+            const savedBanner = await saveBannerApiRecord(editingBannerId, payloadToSave, bannerModalMode === 'edit' ? 'PUT' : 'POST');
             if (savedBanner) {
                 bannerRecordCache.set(savedBanner.id, savedBanner);
                 editingBannerRecord = savedBanner;
             }
+            resetBannerImageUploadState();
             await loadBannerRows();
             closeBannerModal(true);
         } catch (error) {
@@ -2352,6 +2507,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (bannerModalFamilySelect) {
         bannerModalFamilySelect.addEventListener('change', () => {
             syncBannerFieldMode();
+        });
+    }
+
+    if (bannerModalImageFileInput) {
+        bannerModalImageFileInput.addEventListener('change', (event) => {
+            const file = event.currentTarget.files?.[0] || null;
+            syncBannerImageUploadState(file);
         });
     }
 

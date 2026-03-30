@@ -3574,3 +3574,107 @@
   - PowerShell parser verification passed with `[System.Management.Automation.Language.Parser]::ParseFile(...)`.
   - `curl.exe -fsS http://129.146.53.253/actuator/health` returned `{"status":"UP","groups":["liveness","readiness"]}` after the script cleanup.
   - `ssh -i D:\lsh\git\jejugroup\ssh-key-2026-03-30.key ubuntu@129.146.53.253 "cd /opt/jejugroup/docker-src && docker compose ps"` confirmed `jejugroup-app`, `jejugroup-mysql`, and `jejugroup-nginx` are all `Up` on the live OCI Docker stack.
+
+- time: `2026-03-30 20:18:00 +09:00`
+- route: `Route B`
+- task: `Harden docker-compose.yml and deploy/nginx/default.conf for the OCI production topology`
+- participants: `main, worker_compose, worker_nginx`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_compose`: `docker-compose.yml`
+  - `worker_nginx`: `deploy/nginx/default.conf`
+- verification:
+  - `worker_compose` rewired `docker-compose.yml` so `nginx`, `app`, and `mysql` all join a named `jejugroup_net`, only `nginx` publishes `80:80`, and app upload routing uses `MYPAGE_AVATAR_UPLOAD_ROOT=/uploads/mypage-avatars` while preserving `/uploads` and `jejugroup_mysql_data`.
+  - `worker_nginx` updated `deploy/nginx/default.conf` to keep the existing upstream proxy path and forwarded headers while adding explicit `X-Forwarded-Port`.
+  - `main` restored Route B metadata after subagent drift touched restricted task-tracking files and kept implementation changes limited to the delegated config write sets.
+
+- time: `2026-03-30 20:56:00 +09:00`
+- route: `Route A`
+- task: `Deploy the hardened OCI Docker compose/nginx config and verify the live runtime`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md, live OCI runtime commands for sync and verification`
+- verification:
+  - Synced the updated `docker-compose.yml` and `deploy/nginx/default.conf` to `/opt/jejugroup/docker-src` on the OCI host and confirmed the remote files reflect `jejugroup_net`, `MYPAGE_AVATAR_UPLOAD_ROOT=/uploads/mypage-avatars`, and `X-Forwarded-Port`.
+  - Rebuilt and recreated the live `app` and `nginx` containers with `docker compose up -d mysql` followed by `docker compose up -d --build app nginx`; `docker compose ps` now shows `jejugroup-app`, `jejugroup-mysql`, and `jejugroup-nginx` all `Up`.
+  - Verified private and public actuator health at `http://127.0.0.1/actuator/health` and `http://129.146.53.253/actuator/health`, both returning `200` with `{"status":"UP","groups":["liveness","readiness"]}` after startup stabilized.
+  - Confirmed the running app environment now exposes `MYPAGE_AVATAR_UPLOAD_ROOT=/uploads/mypage-avatars`, `SERVER_PORT=8080`, and `JEJU_SHARED_ENV_PATH=/opt/jejugroup/.env`.
+  - Confirmed data retention surfaces remain intact: `jejugroup_mysql_data` still exists as a Docker named volume and `/uploads` plus `/uploads/mypage-avatars` still exist on the host.
+  - Re-checked the previously known static asset paths `/front-mirror/jejuair/assets/img/main/section_travel_t{1,2,3}_01.avif`; all three still return `404`, so the rollout fixed config alignment but did not resolve the separate front-mirror asset packaging issue.
+
+- time: `2026-03-30 21:22:00 +09:00`
+- route: `Route B`
+- task: `Fix the live jejuair AVIF asset packaging gap`
+- participants: `main, worker_packaging, worker_mirror, reviewer_avif_packaging`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_packaging`: `scripts/spring/mirror-front-to-thymeleaf.cjs`
+  - `worker_mirror`: `jeju-spring/src/main/resources/static/front-mirror/**`
+- verification:
+  - Read-only investigation traced the live `404` responses for `section_travel_t{1,2,3}_01.avif` to `scripts/spring/mirror-front-to-thymeleaf.cjs`, where `.avif` was missing from the `STATIC_EXTENSIONS` allowlist.
+  - `worker_packaging` added `.avif` to the mirror allowlist, and `worker_mirror` regenerated the spring static mirror so `section_travel_t{1,2,3}_01.avif` plus `section_discount_{1,2,4}.avif` now exist under `jeju-spring/src/main/resources/static/front-mirror/jejuair/assets/img/main`.
+  - Synced the updated script and regenerated AVIF files to `/opt/jejugroup/docker-src` on OCI, rebuilt the `app` container, and confirmed `http://127.0.0.1/front-mirror/jejuair/assets/img/main/section_travel_t{1,2,3}_01.avif` all return `200` after the app recovered to `200 UP`.
+  - `reviewer_avif_packaging` reported no findings and confirmed the fix stays inside the intended `front -> spring mirror` boundary without widening scope.
+
+- time: `2026-03-30 21:17:29 +09:00`
+- route: `Route B`
+- task: `Externalize managed Jeju Air hero banner images to served storage and hide inactive public banners`
+- participants: `main`
+- verification:
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminBannerDbStore.java` initially failed `compileJava` because the file ended up with duplicate package-private record declarations that already existed in `AdminBannerApiController.java`.
+  - The duplicate records were removed, image-path updates were switched to explicit `AdminBannerRecord` construction, and `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` then passed cleanly.
+
+- time: `2026-03-30 21:24:10 +09:00`
+- route: `Route B`
+- task: `Externalize managed Jeju Air hero banner images to served storage and hide inactive public banners`
+- participants: `main`
+- verification:
+  - Removed the dead `AdminBannerStore` fallback implementation from `AdminBannerApiController.java` so no repo-asset runtime fallback remains in the banner admin source.
+  - Tightened `AdminBannerDbStore` so hero `imageUrl` values must use `/api/banners/assets/{bannerId}/...`, and changed the admin upload flow to store the file only and return `{ imageUrl: servedPath }` without mutating DB rows.
+  - Removed the classpath slide1~3 copy fallback from `BannerAssetService`, leaving the upload root as the only runtime asset source and keeping public reads on the served-path contract.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed after the review fixes.
+
+- time: `2026-03-30 22:05:00 +09:00`
+- route: `Route B`
+- task: `Fix admin CMS banner visibility drift and move managed banner images to external storage`
+- participants: `main, worker_contract, worker_front_banner, worker_banner_backend, reviewer_banner_runtime`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_contract`: `docs/seeds/SEED.admin-banner-external-image-storage-v1.yaml`
+  - `worker_front_banner`: `front/admin/pages/cms.html, front/admin/js/cms.js, front/admin/data/cms-config.js, front/jejuair/index.html`
+  - `worker_banner_backend`: `jeju-spring/src/main/java/**banner**, jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java`
+- verification:
+  - `worker_contract` froze `docs/seeds/SEED.admin-banner-external-image-storage-v1.yaml` so the scope stayed pinned to managed Jeju Air hero visibility, external image storage, served-path DB persistence, and no active hardcoded repo-image fallback.
+  - `worker_front_banner` removed the checked-in `slide1/2/3.png` hero `src` fallback, made the public Jeju Air hero render only from active `/api/banners/managed` rows, whitelisted `/api/banners/assets/` served paths, and changed hero saves to `upload -> single save` while blocking create-mode hero writes.
+  - `worker_banner_backend` added `app.banner.uploadRoot`, exposed `POST /api/admin/cms/banners/{bannerId}/image` plus `GET /api/banners/assets/{bannerId}/{fileName}`, returned served paths without immediate DB mutation, filtered inactive rows out of the public banner API, removed repo-static copy fallback, and enforced served-path-only hero image writes.
+  - `reviewer_banner_runtime` initially found repo-fallback and save-atomicity gaps; after the follow-up fixes, the second reviewer pass reported no findings.
+  - Mechanical verification passed with `node --check front/admin/js/cms.js`, `git diff --check` on the touched files, and `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava`.
+
+- time: `2026-03-30 23:18:00 +09:00`
+- route: `Route B`
+- task: `Repair managed hero DB served paths and remove the last classpath rehydration fallback`
+- participants: `main`, `worker_banner_backend (Laplace)`, `reviewer_banner_runtime (Hubble)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_banner_backend (Laplace)`: `jeju-spring/src/main/java/**banner**, jeju-spring/src/main/resources/application.yml`
+  - `reviewer_banner_runtime (Hubble)`: `review only`
+- verification:
+  - `worker_banner_backend (Laplace)` added the default `app.banner.upload-root` binding in `jeju-spring/src/main/resources/application.yml`, backfilled the live `air_home_hero_*` DB rows to `/api/banners/assets/...`, and then removed the remaining classpath rehydration path so managed hero runtime reads depend only on external files.
+  - Live JDBC verification confirmed `air_home_hero_1`, `air_home_hero_2`, and `air_home_hero_3` now persist `/api/banners/assets/air_home_hero_{1,2,3}/slide{1,2,3}.png`.
+  - Local `GET http://127.0.0.1:8080/api/banners/managed` now returns the same served paths for the public banner payload.
+  - `D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat -p D:\git\jejugroup\jeju-spring compileJava` passed.
+  - `git diff --check` passed.
+  - Final reviewer pass from `reviewer_banner_runtime (Hubble)` reported `no findings` after the classpath fallback removal.
+
+- time: `2026-03-30 23:44:00 +09:00`
+- route: `Route B`
+- task: `Realign managed hero files into the live Spring banner upload root`
+- participants: `main`, `worker_banner_assets_runtime (Descartes)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_banner_assets_runtime (Descartes)`: `.tmp/banner-assets/**, jeju-spring/.tmp/banner-assets/**`
+- verification:
+  - Runtime inspection proved the broken hero image was not a DB-link issue: `/api/banners/assets/...` returned `404` while the files existed only under `D:\git\jejugroup\.tmp\banner-assets\...`, and the live Spring process was running with `user.dir=D:\git\jejugroup\jeju-spring`.
+  - `worker_banner_assets_runtime (Descartes)` moved `slide1.png`, `slide2.png`, and `slide3.png` from the repo-root `.tmp/banner-assets/api/banners/assets/air_home_hero_*` folders into `D:\git\jejugroup\jeju-spring\.tmp\banner-assets/api/banners/assets/air_home_hero_*` without changing DB values.
+  - Post-move verification confirmed `GET http://127.0.0.1:8080/api/banners/assets/air_home_hero_2/slide2.png` returns `200`.
+  - Verified the new file exists under `D:\git\jejugroup\jeju-spring\.tmp\banner-assets\api\banners\assets\air_home_hero_2\slide2.png` and the old repo-root copy no longer exists.

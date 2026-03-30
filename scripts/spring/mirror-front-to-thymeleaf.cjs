@@ -42,6 +42,7 @@ const STATIC_EXTENSIONS = new Set([
   '.mjs',
   '.mp4',
   '.png',
+  '.avif',
   '.svg',
   '.txt',
   '.webm',

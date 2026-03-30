@@ -25,7 +25,7 @@ public class BannerApiController {
         try {
             return ResponseEntity.ok(Map.of(
                 "success", true,
-                "data", bannerStore.listBanners()
+                "data", bannerStore.listPublicBanners()
             ));
         } catch (RuntimeException exception) {
             return json(HttpStatus.SERVICE_UNAVAILABLE, false, "Banner service unavailable");

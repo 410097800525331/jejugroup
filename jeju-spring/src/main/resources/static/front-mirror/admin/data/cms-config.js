@@ -186,7 +186,7 @@ const bannerFallbackRows = [
     body: '제주항공 메인 비주얼 슬라이드 1.',
     ctaLabel: '',
     ctaHref: '',
-    imageUrl: '/jejuair/assets/img/main/slide1.png',
+    imageUrl: '',
     altText: '제주항공 메인 슬라이드 1',
     sortOrder: 120,
     active: true
@@ -202,7 +202,7 @@ const bannerFallbackRows = [
     body: '제주항공 메인 비주얼 슬라이드 2.',
     ctaLabel: '',
     ctaHref: '',
-    imageUrl: '/jejuair/assets/img/main/slide2.png',
+    imageUrl: '',
     altText: '제주항공 메인 슬라이드 2',
     sortOrder: 130,
     active: true
@@ -218,7 +218,7 @@ const bannerFallbackRows = [
     body: '제주항공 메인 비주얼 슬라이드 3.',
     ctaLabel: '',
     ctaHref: '',
-    imageUrl: '/jejuair/assets/img/main/slide3.png',
+    imageUrl: '',
     altText: '제주항공 메인 슬라이드 3',
     sortOrder: 140,
     active: true

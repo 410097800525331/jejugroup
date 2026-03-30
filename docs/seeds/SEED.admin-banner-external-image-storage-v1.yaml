@@ -1,0 +1,46 @@
+goal: >
+  Ensure Jeju Air managed hero banners stop rendering publicly when marked
+  inactive in the admin CMS, while managed banner images move to external
+  upload storage and persist only served paths in the database.
+constraints:
+  - Limit this slice to the managed banner contract and its source-of-truth
+    surfaces in `front/admin/pages/cms.html`, `front/admin/data/cms-config.js`,
+    `front/jejuair/index.html`, and the Jeju Spring managed banner seed/runtime
+    path that consumes the same contract.
+  - Remove hardcoded managed-banner image fallbacks from the checked-in source
+    of truth, including the admin fallback config, Spring managed banner seeds,
+    and the default Jeju Air hero slide source.
+  - Do not delete banner images; store uploads in an external folder instead of
+    repo-internal static assets, following the same persistence pattern as
+    profile avatar storage.
+  - Persist only the served image path in the database; the repo must not store
+    the binary asset as the runtime source of truth for managed hero banners.
+  - The admin CMS must support hero image banner management through upload
+    flow, not manual URL text entry as the primary path.
+  - Keep `front` as the source of truth and do not make `jeju-spring` or
+    `jeju-web` static mirrors the authored source.
+  - Respect do-not-touch mirror boundaries during implementation; this seed only
+    defines the contract.
+acceptance_criteria:
+  - When a managed Jeju Air hero banner is set to inactive in `admin/pages/cms.html`,
+    the public Jeju Air page does not render that banner.
+  - Managed hero banner uploads are stored outside the repository static asset
+    tree, and the database stores only the served path needed at runtime.
+  - No hardcoded managed hero image fallback remains in the checked-in contract
+    path for the admin fallback config, Spring managed banner seed, or the
+    Jeju Air default slide source.
+  - The admin CMS can manage hero image banners via upload-centric workflow.
+  - The contract stays aligned with the current managed-banner runtime path and
+    does not reintroduce repo-asset coupling.
+verification:
+  - Reproduce the managed banner inactive state and confirm the public Jeju Air
+    page does not render the banner.
+  - Confirm upload path persistence by saving a managed banner image and
+    verifying the database stores the served path only.
+  - Confirm no hardcoded hero fallback remains in the managed banner contract
+    path.
+  - Run the targeted build/test command required by the implementation slice.
+out_of_scope:
+  - Unrelated banner family redesign or broader CMS visual redesign.
+  - Deployed-domain smoke checks.
+  - `jeju-web` legacy mirror edits.

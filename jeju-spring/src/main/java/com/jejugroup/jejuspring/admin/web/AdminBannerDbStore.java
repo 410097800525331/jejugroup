@@ -1,5 +1,6 @@
 package com.jejugroup.jejuspring.admin.web;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -15,9 +16,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.jejugroup.jejuspring.banner.application.BannerAssetService;
 import com.jejugroup.jejuspring.config.AppProperties;
 
 @Service
@@ -34,9 +38,9 @@ public class AdminBannerDbStore {
         new AdminBannerSeed("stay_life_promo_2", "stay", "promo_card_family", "stay_life_promo_2", "", "로컬 라이프 멤버십 카드", "현지인 맛집, 카페, 렌터카까지 최대 20% 제휴 할인", "", "#", "", "", "map", 90, true),
         new AdminBannerSeed("stay_life_promo_3", "stay", "promo_card_family", "stay_life_promo_3", "", "한 달 살기 가이드북 제공", "쓰레기 배출일부터 근처 인프라 정보까지 생활 필수 정보 수록", "", "#", "", "", "flower-2", 100, true),
         new AdminBannerSeed("stay_activities_auth_banner", "stay", "inline_cta_banner_family", "stay_activities_auth_banner", "", "제주항공 탑승객 인증", "항공권번호를 인증하고 최대 50% 추가 할인 혜택을 받으세요.", "인증하고 혜택받기", "#", "", "", "plane", 110, true),
-        new AdminBannerSeed("air_home_hero_1", "air", "hero_image_set", "air_home_hero_1", "AIR HERO", "Jeju Air Hero 1", "Jeju Air main page hero slide 1.", "", "", "/jejuair/assets/img/main/slide1.png", "Jeju Air main page slide 1", "", 120, true),
-        new AdminBannerSeed("air_home_hero_2", "air", "hero_image_set", "air_home_hero_2", "AIR HERO", "Jeju Air Hero 2", "Jeju Air main page hero slide 2.", "", "", "/jejuair/assets/img/main/slide2.png", "Jeju Air main page slide 2", "", 130, true),
-        new AdminBannerSeed("air_home_hero_3", "air", "hero_image_set", "air_home_hero_3", "AIR HERO", "Jeju Air Hero 3", "Jeju Air main page hero slide 3.", "", "", "/jejuair/assets/img/main/slide3.png", "Jeju Air main page slide 3", "", 140, true)
+        new AdminBannerSeed("air_home_hero_1", "air", "hero_image_set", "air_home_hero_1", "AIR HERO", "Jeju Air Hero 1", "Jeju Air main page hero slide 1.", "", "", "/api/banners/assets/air_home_hero_1/slide1.png", "Jeju Air main page slide 1", "", 120, true),
+        new AdminBannerSeed("air_home_hero_2", "air", "hero_image_set", "air_home_hero_2", "AIR HERO", "Jeju Air Hero 2", "Jeju Air main page hero slide 2.", "", "", "/api/banners/assets/air_home_hero_2/slide2.png", "Jeju Air main page slide 2", "", 130, true),
+        new AdminBannerSeed("air_home_hero_3", "air", "hero_image_set", "air_home_hero_3", "AIR HERO", "Jeju Air Hero 3", "Jeju Air main page hero slide 3.", "", "", "/api/banners/assets/air_home_hero_3/slide3.png", "Jeju Air main page slide 3", "", 140, true)
     );
     private static final List<String> MANAGED_BANNER_IDS = MANAGED_BANNER_SEEDS.stream()
         .map(AdminBannerSeed::bannerId)
@@ -64,15 +68,36 @@ public class AdminBannerDbStore {
         .thenComparing(AdminBannerRecord::bannerId);
 
     private final AppProperties appProperties;
+    private final BannerAssetService bannerAssetService;
     private boolean bootstrapped;
 
-    public AdminBannerDbStore(AppProperties appProperties) {
+    public AdminBannerDbStore(AppProperties appProperties, BannerAssetService bannerAssetService) {
         this.appProperties = appProperties;
+        this.bannerAssetService = bannerAssetService;
+    }
+
+    @PostConstruct
+    public void initializeManagedBanners() {
+        ensureBootstrapped();
     }
 
     public synchronized Map<String, Object> listBanners() {
         ensureBootstrapped();
         List<Map<String, Object>> items = loadManagedBanners().stream()
+            .sorted(BANNER_ORDER)
+            .map(this::toResponse)
+            .toList();
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("items", items);
+        payload.put("count", items.size());
+        return payload;
+    }
+
+    public synchronized Map<String, Object> listPublicBanners() {
+        ensureBootstrapped();
+        List<Map<String, Object>> items = loadManagedBanners().stream()
+            .filter(AdminBannerRecord::active)
             .sorted(BANNER_ORDER)
             .map(this::toResponse)
             .toList();
@@ -125,6 +150,16 @@ public class AdminBannerDbStore {
         );
         persistBanner(updated);
         return toResponse(updated);
+    }
+
+    synchronized String uploadBannerImage(String bannerId, MultipartFile image) {
+        ensureBootstrapped();
+        requireManagedBanner(bannerId);
+        try {
+            return bannerAssetService.storeBannerImage(bannerId, image);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Admin banner service unavailable", exception);
+        }
     }
 
     synchronized Map<String, Object> deleteBanner(String bannerId) {
@@ -235,6 +270,8 @@ public class AdminBannerDbStore {
                 return null;
             });
 
+            ensureManagedHeroAssets();
+
             bootstrapped = true;
         }
     }
@@ -275,6 +312,59 @@ public class AdminBannerDbStore {
         });
     }
 
+    private void ensureManagedHeroAssets() {
+        for (AdminBannerRecord record : loadManagedBanners()) {
+            if (!isManagedHeroBanner(record)) {
+                continue;
+            }
+
+            String fileName = resolveManagedHeroFileName(record);
+            if (!StringUtils.hasText(fileName)) {
+                continue;
+            }
+
+            try {
+                if (bannerAssetService.ensureStoredAsset(record.bannerId(), fileName)) {
+                    String servedPath = bannerAssetService.buildServedPath(record.bannerId(), fileName);
+                    if (!servedPath.equals(record.imageUrl())) {
+                        persistBanner(new AdminBannerRecord(
+                            record.bannerId(),
+                            record.site(),
+                            record.family(),
+                            record.slotKey(),
+                            record.eyebrow(),
+                            record.title(),
+                            record.body(),
+                            record.ctaLabel(),
+                            record.ctaHref(),
+                            servedPath,
+                            record.altText(),
+                            record.iconKey(),
+                            record.sortOrder(),
+                            record.active()
+                        ));
+                    }
+                }
+            } catch (IOException ignored) {
+                // 외부 파일이 없으면 자동 복구하지 않고, DB 보정도 건너뛴다.
+            }
+        }
+    }
+
+    private String resolveManagedHeroFileName(AdminBannerRecord record) {
+        String fileName = StringUtils.getFilename(record.imageUrl());
+        if (StringUtils.hasText(fileName)) {
+            return fileName;
+        }
+
+        return switch (record.bannerId()) {
+            case "air_home_hero_1" -> "slide1.png";
+            case "air_home_hero_2" -> "slide2.png";
+            case "air_home_hero_3" -> "slide3.png";
+            default -> "";
+        };
+    }
+
     private AdminBannerRecord findManagedBanner(String bannerId) {
         return executeInTransaction(connection -> selectManagedBanner(connection, bannerId));
     }
@@ -292,6 +382,10 @@ public class AdminBannerDbStore {
         if (!MANAGED_BANNER_IDS.contains(bannerId)) {
             throw new IllegalArgumentException("slotKey is not managed");
         }
+    }
+
+    private boolean isManagedHeroBanner(AdminBannerRecord record) {
+        return "air".equals(record.site()) && "hero_image_set".equals(record.family());
     }
 
     private AdminBannerRecord selectManagedBanner(Connection connection, String bannerId) throws SQLException {
@@ -604,8 +698,9 @@ public class AdminBannerDbStore {
         if (!template.family().equals(family)) {
             throw new IllegalArgumentException("slotKey family does not match managed template");
         }
-        String title = resolveTitle(family, request.title(), request.altText());
+        String title = resolveTitle(family, request.title(), request.altText(), bannerId);
         String iconKey = resolveIconKey(family, request.iconKey());
+        String imageUrl = normalizeHeroImageUrl(bannerId, family, request.imageUrl());
 
         return new AdminBannerRecord(
             bannerId,
@@ -617,7 +712,7 @@ public class AdminBannerDbStore {
             normalizeText(request.body()),
             normalizeText(request.ctaLabel()),
             normalizeText(request.ctaHref()),
-            normalizeText(request.imageUrl()),
+            imageUrl,
             normalizeText(request.altText()),
             iconKey,
             sortOrder,
@@ -628,13 +723,28 @@ public class AdminBannerDbStore {
     private String resolveTitle(
         String family,
         String rawTitle,
-        String altText
+        String altText,
+        String bannerId
     ) {
         if ("hero_image_set".equals(family)) {
-            return normalizeText(rawTitle);
+            return firstText(rawTitle, altText, bannerId);
         }
 
         return requireText(rawTitle, "title is required");
+    }
+
+    private String normalizeHeroImageUrl(String bannerId, String family, String rawValue) {
+        if (!"hero_image_set".equals(family)) {
+            return normalizeText(rawValue);
+        }
+
+        String imageUrl = normalizeText(rawValue);
+        String expectedPrefix = "/api/banners/assets/" + bannerId + "/";
+        if (!StringUtils.hasText(imageUrl) || !imageUrl.startsWith(expectedPrefix)) {
+            throw new IllegalArgumentException("hero imageUrl must use the served banner asset path");
+        }
+
+        return imageUrl;
     }
 
     private String resolveSubtitle(AdminBannerRecord record) {

@@ -321,7 +321,7 @@
                 </button>
             </div>
             <p class="admin-modal-description" id="cms-banner-modal-desc">
-                배너는 세션 로컬 상태로만 저장됩니다. edit에서는 아이콘, 카피, 노출 상태만 바꾸고, 서비스 분류/타입/위치는 새 위치로 관리합니다.
+                배너는 업로드한 이미지를 기준으로 저장한다. 히어로 이미지는 파일 업로드를 우선으로 두고, 저장 시 served path가 반영된다.
             </p>
 
             <form class="admin-modal-body" id="cms-banner-form">
@@ -396,10 +396,17 @@
                 </div>
 
                 <div class="admin-modal-grid">
+                    <label class="admin-form-field" for="cms-banner-image-file" data-banner-field-group="image">
+                        <span class="admin-form-label">이미지 업로드</span>
+                        <input class="admin-form-control" id="cms-banner-image-file" name="imageFile" type="file"
+                            accept="image/*">
+                        <small class="admin-form-help" id="cms-banner-image-help">파일을 고르고 저장하면 업로드된 served path를 반영한다.</small>
+                    </label>
                     <label class="admin-form-field" for="cms-banner-image-url" data-banner-field-group="image">
-                        <span class="admin-form-label">이미지 URL</span>
+                        <span class="admin-form-label">반영된 이미지 URL</span>
                         <input class="admin-form-control" id="cms-banner-image-url" name="imageUrl" type="text"
-                            placeholder="이미지 경로" autocomplete="off">
+                            placeholder="업로드 후 경로가 표시된다" autocomplete="off" readonly>
+                        <small class="admin-form-help" id="cms-banner-image-status">선택된 파일 없음</small>
                     </label>
                     <label class="admin-form-field" for="cms-banner-alt-text" data-banner-field-group="image">
                         <span class="admin-form-label">대체 텍스트</span>

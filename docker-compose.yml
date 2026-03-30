@@ -1,4 +1,19 @@
 services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: jejugroup-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /uploads:/uploads:ro
+    depends_on:
+      app:
+        condition: service_started
+    networks:
+      - jejugroup_net
+
   app:
     build:
       context: .
@@ -9,8 +24,8 @@ services:
       - /opt/jejugroup/.env
     environment:
       JEJU_SHARED_ENV_PATH: /opt/jejugroup/.env
-      MYPAGE_AVATAR_UPLOAD_ROOT: /uploads
       SERVER_PORT: "8080"
+      MYPAGE_AVATAR_UPLOAD_ROOT: /uploads/mypage-avatars
     volumes:
       - /opt/jejugroup/.env:/opt/jejugroup/.env:ro
       - /uploads:/uploads
@@ -19,6 +34,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    networks:
+      - jejugroup_net
 
   mysql:
     image: mysql:8.4
@@ -38,20 +55,13 @@ services:
       timeout: 5s
       retries: 12
       start_period: 30s
-
-  nginx:
-    image: nginx:1.27-alpine
-    container_name: jejugroup-nginx
-    restart: unless-stopped
-    depends_on:
-      app:
-        condition: service_started
-    ports:
-      - "80:80"
-    volumes:
-      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - /uploads:/uploads:ro
+    networks:
+      - jejugroup_net
 
 volumes:
   jejugroup_mysql_data:
     name: jejugroup_mysql_data
+
+networks:
+  jejugroup_net:
+    name: jejugroup_net

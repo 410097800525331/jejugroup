@@ -21,12 +21,8 @@
   <div class="ticket"></div>
 
   <!-- ##### slide ##### -->
-  <section class="swiper mySwiper" data-banner-family="hero_image_set">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide"><img src="assets/img/main/slide1.png" alt="" data-banner-slot="air_home_hero_1" data-banner-field="image"></div>
-      <div class="swiper-slide"><img src="assets/img/main/slide2.png" alt="" data-banner-slot="air_home_hero_2" data-banner-field="image"></div>
-      <div class="swiper-slide"><img src="assets/img/main/slide3.png" alt="" data-banner-slot="air_home_hero_3" data-banner-field="image"></div>
-    </div>
+  <section class="swiper mySwiper" data-banner-family="hero_image_set" hidden>
+    <div class="swiper-wrapper"></div>
     <div class="swiper-pagination"></div>
   </section>
 
@@ -167,17 +163,145 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    const swiper = new Swiper(".mySwiper", {
-      speed: 1400,
-      autoplay: {
-        delay: 2500,
-        disableOnInteraction: false,
-      },
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-    });
+    const heroSection = document.querySelector('.swiper.mySwiper[data-banner-family="hero_image_set"]');
+    const heroWrapper = heroSection?.querySelector('.swiper-wrapper');
+    const heroPagination = heroSection?.querySelector('.swiper-pagination');
+    let heroSwiper = null;
+
+    const extractManagedHeroItems = (payload) => {
+      if (!payload) return [];
+      if (Array.isArray(payload)) return payload;
+      if (typeof payload !== 'object') return [];
+
+      const data = payload.data ?? payload.result ?? payload.payload;
+      const candidates = [
+        data?.items,
+        data?.rows,
+        payload.items,
+        payload.rows,
+        payload.banners
+      ];
+
+      for (const candidate of candidates) {
+        if (Array.isArray(candidate)) return candidate;
+      }
+
+      return [];
+    };
+
+    const normalizeManagedHeroItem = (item, index) => {
+      if (!item || typeof item !== 'object') return null;
+
+      const slotKey = String(item.slotKey ?? item.slot_key ?? item.id ?? `air_home_hero_${index + 1}`).trim();
+      const imageUrl = String(item.imageUrl ?? item.image_url ?? '').trim();
+      const altText = String(item.altText ?? item.alt_text ?? '').trim();
+      const sortOrder = Number.isFinite(Number(item.sortOrder ?? item.sort_order)) ? Number(item.sortOrder ?? item.sort_order) : index;
+      const active = item.active !== false;
+
+      return {
+        slotKey,
+        imageUrl,
+        altText,
+        sortOrder,
+        active
+      };
+    };
+
+    const isSafeHeroImageUrl = (value) => {
+      const url = String(value ?? '').trim();
+      if (!url) return false;
+
+      if (url.startsWith('/api/banners/assets/')) {
+        return true;
+      }
+
+      try {
+        const parsed = new URL(url, window.location.href);
+        return parsed.origin === window.location.origin && parsed.pathname.startsWith('/api/banners/assets/');
+      } catch {
+        return false;
+      }
+    };
+
+    const destroyHeroSwiper = () => {
+      if (heroSwiper && typeof heroSwiper.destroy === 'function') {
+        heroSwiper.destroy(true, true);
+      }
+      heroSwiper = null;
+    };
+
+    const renderManagedHeroSlides = (items) => {
+      if (!heroSection || !heroWrapper) return;
+
+      const slides = (Array.isArray(items) ? items : [])
+        .map(normalizeManagedHeroItem)
+        .filter((item) => item && item.active && isSafeHeroImageUrl(item.imageUrl))
+        .sort((left, right) => left.sortOrder - right.sortOrder);
+
+      destroyHeroSwiper();
+      heroWrapper.replaceChildren();
+
+      if (slides.length === 0) {
+        heroSection.hidden = true;
+        return;
+      }
+
+      slides.forEach((item) => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+
+        const image = document.createElement('img');
+        image.src = item.imageUrl;
+        image.alt = item.altText || '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.dataset.bannerSlot = item.slotKey;
+        image.dataset.bannerField = 'image';
+
+        slide.appendChild(image);
+        heroWrapper.appendChild(slide);
+      });
+
+      heroSection.hidden = false;
+      if (window.Swiper && heroPagination) {
+        heroSwiper = new Swiper(heroSection, {
+          speed: 1400,
+          autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+          },
+          pagination: {
+            el: heroPagination,
+            clickable: true,
+          },
+        });
+      }
+    };
+
+    const loadManagedHeroSlides = async () => {
+      if (!heroSection || !heroWrapper) return;
+
+      try {
+        const response = await fetch('/api/banners/managed', {
+          credentials: 'same-origin',
+          headers: {
+            Accept: 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`managed banner load failed (${response.status})`);
+        }
+
+        const payload = await response.json();
+        renderManagedHeroSlides(extractManagedHeroItems(payload));
+      } catch (error) {
+        console.error('[JejuAir] managed hero banner load failed:', error);
+        renderManagedHeroSlides([]);
+      }
+    };
+
+    void loadManagedHeroSlides();
 
     const items = document.querySelectorAll(".notice_item");
 

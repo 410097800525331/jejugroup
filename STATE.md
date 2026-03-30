@@ -2,38 +2,39 @@
 
 ## Current Task
 
-- task: `Debug the live OCI Docker runtime so database-backed login works again`
+- task: `Fix admin CMS banner visibility drift and move managed banner images to external storage`
 - phase: `completed`
-- scope: `OCI runtime env inspection, container logs, DB connectivity validation, minimal fix if needed, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
-- verification_target: `Identify why login fails on the live Docker deployment, restore working database-backed auth if broken, and verify the app and DB path with concrete runtime checks.`
+- scope: `external banner asset folder alignment between repo-root .tmp and jeju-spring runtime .tmp, served-path runtime verification, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification_target: `Managed hero rows should keep served-path DB values and the actual external files must exist under the live Spring runtime upload root so /api/banners/assets/... returns 200.`
 
 ## Route
 
-- route: `Route A`
-- reason: `The user reported a live-runtime login failure after the Docker cutover, and the next step is a bounded operational debug slice focused on server-side runtime inspection and a minimal targeted fix.`
+- route: `Route B`
+- reason: `The new user report showed the hero images still render broken even though DB/API paths are correct; runtime inspection found the files were materialized under repo-root .tmp while the live Spring process serves from jeju-spring/.tmp, so the external asset files had to be realigned.`
 
 ## Writer Slot
 
-- owner: `main`
+- owner: `delegated`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md, minimal runtime/config files if required, live OCI runtime commands for validation`
-- note: `Single-lane production debug slice. Start with runtime inspection, then apply only the smallest fix needed to restore DB-backed login.`
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_banner_assets_runtime`: `.tmp/banner-assets/**, jeju-spring/.tmp/banner-assets/**`
+- note: `This follow-up was a runtime asset realignment only: move the already-externalized managed hero files into the actual Spring upload root without changing the served-path contract.`
 
 ## Contract Freeze
 
 - contract_freeze: `done`
-- status: `direct_user_contract`
-- path: `direct_user_contract`
-- revision: `oci-login-db-debug-v1`
-- note: `The contract is directly frozen from the user's report that the live OCI deployment appears unable to log in, likely due to DB connectivity or runtime env mismatch.`
+- status: `seed_frozen`
+- path: `docs/seeds/SEED.admin-banner-external-image-storage-v1.yaml`
+- revision: `admin-banner-external-image-storage-v1`
+- note: `Seed stays frozen. This follow-up only fixes the physical external-file location so the existing served-path contract works at runtime.`
 
 ## Reviewer
 
-- reviewer: `not_assigned`
-- reviewer_target: `pending`
-- reviewer_focus: `Concrete runtime evidence that the live Docker app can reach the intended MySQL database and that login-path failures are resolved or precisely diagnosed.`
+- reviewer: `assigned`
+- reviewer_target: `reviewer_banner_runtime`
+- reviewer_focus: `Managed hero images must physically exist under the live Spring upload root so /api/banners/assets/... resolves, without reintroducing repo/classpath fallback paths.`
 
 ## Last Update
 
-- timestamp: `2026-03-30 17:53:00 +09:00`
-- note: `OCI Docker MySQL was replaced with the user-provided local dump using a UTF-8-safe container-side import, the app was restarted successfully, public health returned UP again, and admin login with password 1234 now succeeds on the live server.`
+- timestamp: `2026-03-30 23:44:00 +09:00`
+- note: `Completed the runtime asset realignment: moved managed hero files into jeju-spring/.tmp/banner-assets, verified the live asset URL returns 200, and left DB values untouched.`

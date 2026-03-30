@@ -612,3 +612,24 @@ status: open
 - summary: `초기 OCI import가 CRLF env 값과 ssh stdin 경로 때문에 반쯤 실패해 app가 502로 내려감`
 - details: `서버 .env를 쉘에서 읽는 과정에 CRLF가 남아 DB 이름 끝에 carriage return이 붙었고, 이어서 ssh stdin으로 dump를 직접 넣는 방식도 꼬여 `users` 테이블이 없는 상태로 app가 재기동됐다. 이후 dump를 컨테이너 내부 파일로 복사하고 `mysql --default-character-set=utf8mb4`로 다시 import하는 방식으로 복구했다.`
 - status: `resolved`
+# 2026-03-30 20:22:00 +09:00
+- location: `local verification shell`
+- summary: `docker compose config 검증 불가`
+- details: `최종 compose 검증으로 `docker compose -f docker-compose.yml config`를 실행했지만, 현재 로컬 셸에 docker CLI가 설치되어 있지 않아 CommandNotFoundException으로 실패했다. 설정 자체 수정은 완료됐고, compose 해석 검증은 Docker가 있는 환경에서 후속 확인이 필요하다.`
+- status: `deferred`
+# 2026-03-30 20:55:00 +09:00
+- location: `OCI rollout health probe`
+- summary: `재기동 직후 헬스체크가 502를 반환함`
+- details: `OCI에서 `docker compose up -d --build app nginx` 직후 `curl http://127.0.0.1/actuator/health`를 너무 빨리 때려 nginx upstream connect refused로 502가 한 번 발생했다. 직후 컨테이너 상태와 앱 로그를 재확인했고, 앱이 완전히 올라온 뒤에는 private/public health check가 모두 200 UP으로 정상화됐다.`
+- status: `resolved`
+# 2026-03-30 21:19:00 +09:00
+- location: `OCI app rebuild verification`
+- summary: `AVIF 재배포 직후 자산 체크가 502를 반환함`
+- details: `AVIF 패키징 fix를 올린 뒤 `docker compose up -d --build app` 직후 곧바로 `/front-mirror/jejuair/assets/img/main/section_travel_t{1,2,3}_01.avif`를 확인하자 nginx가 아직 재기동 중인 app upstream에 붙지 못해 502가 발생했다. 15초 대기 후 `actuator/health`가 200 UP으로 돌아왔고, 같은 세 자산도 모두 200으로 정상화됐다.`
+- status: `resolved`
+
+- time: `2026-03-30 21:17:29 +09:00`
+- location: `D:\git\jejugroup\jeju-spring\src\main\java\com\jejugroup\jejuspring\admin\web\AdminBannerDbStore.java`
+- summary: `compileJava가 AdminBannerApiController와 중복된 package-private record 선언 때문에 실패함`
+- details: `배너 업로드/외부화 작업 중 AdminBannerDbStore.java 끝에 AdminBannerUpsertRequest, AdminBannerReorderRequest, AdminBannerActiveRequest, AdminBannerSeed, AdminBannerRecord를 다시 추가해 동일 패키지 내 중복 선언이 발생했다. 중복 블록을 제거하고 AdminBannerRecord의 이미지 URL 갱신을 생성자 직접 호출로 바꾼 뒤 compileJava를 다시 통과시켰다.`
+- status: `resolved`
