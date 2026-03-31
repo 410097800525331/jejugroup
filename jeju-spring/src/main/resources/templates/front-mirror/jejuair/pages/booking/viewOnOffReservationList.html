@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
   <base th:href="@{/front-mirror/jejuair/}" href="/front-mirror/jejuair/">
   <title>제주항공</title>
   <link rel="ico" th:href="@{/front-mirror/jejuair/favicon.ico}" href="/front-mirror/jejuair/favicon.ico">
@@ -13,7 +12,6 @@
 </head>
 
 <body class="jejuair-main-content">
-  <!-- ##### header ##### -->
   <header id="header_wrap"></header>
   <div class="ticket"></div>
 
@@ -21,40 +19,48 @@
     <div class="inner2">
       <div>
         <h1>비회원 예약조회</h1>
-        <p>여행사, 공항, 고객센터, 비회원 예약 및 회원 예약도 조회할 수 있어요.<br>여행사에서 구매하신 고객님은 항공사 예약번호를 입력해 주세요.</p>
+        <p>
+          항공, 숙박, 고객센터를 통해 접수된 비회원 예약을 조회할 수 있습니다.<br>
+          예약번호를 입력해 주세요.
+        </p>
       </div>
+
       <form class="search_form" id="guestLookupForm">
         <div class="form_row form_input">
           <label><b>예약번호</b></label>
           <input id="reservationNo" type="text" placeholder="예약번호 입력">
         </div>
         <div class="form_row form_input">
-          <label><b>탑승일자</b></label>
+          <label><b>예약 이메일</b></label>
+          <input id="reservationEmail" type="email" placeholder="example@domain.com" autocomplete="email">
+        </div>
+        <div class="form_row form_input">
+          <label><b>출발일자</b></label>
           <input type="text" id="flight_date" placeholder="YYYY.MM.DD 또는 YYYY-MM-DD">
         </div>
+
         <div class="passenger_box">
           <h4>탑승객 정보 입력</h4>
           <div class="name_row">
-            <input id="passengerLastName" type="text" placeholder="성 (Last Name)">
-            <input id="passengerFirstName" type="text" placeholder="이름 (First Name)">
+            <input id="passengerLastName" type="text" placeholder="성(Last Name)">
+            <input id="passengerFirstName" type="text" placeholder="이름(First Name)">
             <button type="button" class="add_btn">추가</button>
           </div>
-          <p>예약 시 입력한 탑승객명을 입력해 주세요. 국제선은 <strong>영문 탑승객명</strong>만 조회 가능합니다.</p>
+          <p>이메일이 없으면 기존 방식대로 출발일자와 탑승객 영문 이름으로 조회합니다.</p>
         </div>
+
         <button type="submit" class="btn">조회</button>
       </form>
+
       <div class="warning" id="lookupStatus" hidden></div>
       <div class="warning" id="lookupResult" hidden></div>
+
       <div class="warning">
-        <h3>유의사항</h3>
+        <h3>안내</h3>
         <div>
-          <p>- 홈페이지 로그인 없이 간편하게 예약조회가 가능합니다.</p>
-          <p>- 항공권 예약 변경 및 취소 문의는 해당 구매처로 문의바랍니다.</p>
-          <p>- 예약조회 후 부가서비스 구매 및 취소가 가능합니다.</p>
-          <p>- 부가서비스 구매 취소 내역 확인은, 예약 조회 후 확인 가능하시며, 탑승객 연락처가 존재할 경우에 한하여 부가서비스 구매/취소 확인서가 제공됩니다.</p>
-          <p>- 구매처별 부가서비스 구매가 제한될 수 있습니다.</p>
-          <p>- 부가서비스 추가 구매후 취소를 원하시는 경우, 부가서비스 선 취소 후 해당 여행사 또는 구매처를 통해 항공권 취소가 가능합니다.</p>
-          <p>- 항공권 구매처를 통해 여정확인서 발급이 가능합니다.</p>
+          <p>- 예약 이메일이 있으면 예약번호와 이메일만으로 조회할 수 있습니다.</p>
+          <p>- 이메일이 없으면 기존과 동일하게 출발일자와 탑승객 이름이 필요합니다.</p>
+          <p>- 입력값은 예약 시 등록한 정보와 동일해야 조회됩니다.</p>
         </div>
       </div>
     </div>
@@ -64,13 +70,14 @@
     document.addEventListener("DOMContentLoaded", () => {
       const lookupForm = document.getElementById("guestLookupForm");
       const reservationNoInput = document.getElementById("reservationNo");
+      const reservationEmailInput = document.getElementById("reservationEmail");
       const flightDateInput = document.getElementById("flight_date");
       const passengerBox = document.querySelector(".passenger_box");
       const lookupStatus = document.getElementById("lookupStatus");
       const lookupResult = document.getElementById("lookupResult");
       const addBtn = passengerBox.querySelector(".add_btn");
 
-      const normalizeText = (value) => value.trim().replace(/\s+/g, " ");
+      const normalizeText = (value) => String(value || "").trim().replace(/\s+/g, " ");
       const normalizeDate = (value) => normalizeText(value).replace(/\./g, "-");
       const formatAmount = (value) => {
         if (value === null || value === undefined || value === "") return "";
@@ -80,6 +87,7 @@
         if (!Number.isFinite(amount)) return "";
         return `${amount.toLocaleString()}원`;
       };
+
       const readPassengers = () => Array.from(passengerBox.querySelectorAll(".name_row"))
         .map((row) => {
           const inputs = row.querySelectorAll("input");
@@ -111,23 +119,32 @@
           : payload?.booking && typeof payload.booking === "object"
             ? payload.booking
             : payload;
+
         const bookingNo = normalizeText(
           source?.booking_no
           || source?.bookingNo
           || source?.reservationNo
           || source?.reservation_no
           || reservationNoInput.value
-          || "",
         );
         const destination = normalizeText(source?.destination || source?.arrival || source?.to || "");
         const travelDate = normalizeText(source?.travelDate || source?.travel_date || flightDateInput.value || "");
         const amount = formatAmount(source?.amount ?? source?.totalAmount ?? source?.paymentAmount);
         const memberBooking = source?.memberBooking ?? source?.member_booking;
         const lookup = source?.lookup && typeof source.lookup === "object" ? source.lookup : {};
+        const email = normalizeText(
+          source?.email
+          || source?.reservationEmail
+          || source?.reservation_email
+          || reservationEmailInput.value
+        );
         const passengerName = normalizeText(
-          [lookup.lastName || lookup.passengerLastName || "", lookup.firstName || lookup.passengerFirstName || ""]
+          [
+            lookup.lastName || lookup.passengerLastName || source?.lastName || "",
+            lookup.firstName || lookup.passengerFirstName || source?.firstName || "",
+          ]
             .filter(Boolean)
-            .join(" "),
+            .join(" ")
         );
 
         lookupResult.textContent = "";
@@ -136,7 +153,8 @@
         const body = document.createElement("div");
         const rows = [
           ["예약번호", bookingNo || "-"],
-          ["탑승일자", travelDate || "-"],
+          ["예약 이메일", email || "-"],
+          ["출발일자", travelDate || "-"],
           ["탑승객명", passengerName || "-"],
           ["목적지", destination || "-"],
           ["결제금액", amount || "-"],
@@ -147,9 +165,8 @@
           const paragraph = document.createElement("p");
           const strong = document.createElement("strong");
           strong.textContent = label;
-          const textNode = document.createTextNode(` ${value}`);
           paragraph.appendChild(strong);
-          paragraph.appendChild(textNode);
+          paragraph.appendChild(document.createTextNode(` ${value}`));
           body.appendChild(paragraph);
         });
 
@@ -161,56 +178,83 @@
       const prefillFromQuery = () => {
         const params = new URLSearchParams(window.location.search);
         reservationNoInput.value = params.get("reservationNo") || params.get("bookingNo") || "";
+        reservationEmailInput.value = params.get("reservationEmail") || params.get("email") || params.get("guestEmail") || "";
         flightDateInput.value = params.get("travelDate") || "";
 
-        const passengerRows = Array.from(passengerBox.querySelectorAll(".name_row"));
-        const firstRow = passengerRows[0];
-        if (firstRow) {
-          const inputs = firstRow.querySelectorAll("input");
-          inputs[0].value = params.get("lastName") || "";
-          inputs[1].value = params.get("firstName") || "";
+        const firstRow = passengerBox.querySelector(".name_row");
+        if (!firstRow) {
+          return;
         }
+
+        const inputs = firstRow.querySelectorAll("input");
+        inputs[0].value = params.get("lastName") || "";
+        inputs[1].value = params.get("firstName") || "";
       };
 
       addBtn.addEventListener("click", () => {
         const nameRow = document.createElement("div");
         nameRow.className = "name_row";
-
         nameRow.innerHTML = `
-      <input type="text" placeholder="성 (Last Name)">
-      <input type="text" placeholder="이름 (First Name)">
+      <input type="text" placeholder="성(Last Name)">
+      <input type="text" placeholder="이름(First Name)">
       <button type="button" class="remove_btn">삭제</button>
     `;
 
         passengerBox.insertBefore(nameRow, passengerBox.querySelector("p"));
       });
 
-      passengerBox.addEventListener("click", (e) => {
-        if (e.target.classList.contains("remove_btn")) {
-          e.target.parentElement.remove();
+      passengerBox.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement) || !target.classList.contains("remove_btn")) {
+          return;
         }
+
+        target.parentElement.remove();
       });
 
       prefillFromQuery();
 
-      lookupForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+      lookupForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
         const reservationNo = normalizeText(reservationNoInput.value);
+        const email = normalizeText(reservationEmailInput.value);
         const travelDate = normalizeText(flightDateInput.value);
         const passengers = readPassengers();
         const primaryPassenger = passengers[0] || {};
+        const useEmailLookup = Boolean(email);
 
-        if (!reservationNo || !travelDate || !primaryPassenger.lastName || !primaryPassenger.firstName) {
-          setStatus("예약번호, 탑승일자, 탑승객 성과 이름을 모두 입력해 주세요.", true);
+        if (!reservationNo || (!useEmailLookup && (!travelDate || !primaryPassenger.lastName || !primaryPassenger.firstName))) {
+          setStatus(
+            useEmailLookup
+              ? "예약번호와 이메일을 모두 입력해 주세요."
+              : "예약번호, 출발일자, 탑승객 성과 이름을 모두 입력해 주세요.",
+            true
+          );
           lookupResult.hidden = true;
           return;
         }
 
-        setStatus("예약을 조회하는 중입니다.");
+        setStatus("예약 정보를 확인하고 있습니다.");
         lookupResult.hidden = true;
 
         try {
+          const requestBody = useEmailLookup
+            ? {
+                reservationNo,
+                bookingNo: reservationNo,
+                email,
+                reservationEmail: email,
+              }
+            : {
+                reservationNo,
+                bookingNo: reservationNo,
+                travelDate: normalizeDate(travelDate),
+                lastName: primaryPassenger.lastName,
+                firstName: primaryPassenger.firstName,
+                passengers,
+              };
+
           const response = await fetch("/api/booking/guest-lookup", {
             method: "POST",
             credentials: "include",
@@ -218,14 +262,7 @@
               Accept: "application/json",
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              reservationNo,
-              bookingNo: reservationNo,
-              travelDate: normalizeDate(travelDate),
-              lastName: primaryPassenger.lastName,
-              firstName: primaryPassenger.firstName,
-              passengers,
-            }),
+            body: JSON.stringify(requestBody),
           });
 
           const payload = await response.json().catch(() => ({}));
@@ -233,7 +270,7 @@
             throw new Error(payload?.message || payload?.error || "예약 조회에 실패했습니다.");
           }
 
-          setStatus("예약 조회가 완료되었습니다.");
+          setStatus("예약 정보를 확인했습니다.");
           renderResult(payload);
         } catch (error) {
           lookupResult.hidden = true;
@@ -243,8 +280,6 @@
     });
   </script>
 
-
-  <!-- ##### footer ##### -->
   <footer id="footer_wrap"></footer>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

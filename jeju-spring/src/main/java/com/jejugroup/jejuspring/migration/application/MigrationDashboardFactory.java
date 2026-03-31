@@ -87,7 +87,7 @@ public class MigrationDashboardFactory {
                     item("Admin email", "ALWAYSDATA_ADMIN_EMAIL / ADMIN_EMAIL", alwaysdata.adminEmail()),
                     item("Admin password", "ALWAYSDATA_ADMIN_PASSWORD / ADMIN_PASSWORD", alwaysdata.adminPassword()),
                     item("OpenWeather key", "OPENWEATHER_API_KEY", external.openweatherApiKey()),
-                    item("OpenAI key", "OPENAI_API_KEY", external.openaiApiKey())
+                    item("Gemini key", "GEMINI_API_KEY", external.geminiApiKey())
                 )
             ),
             section(

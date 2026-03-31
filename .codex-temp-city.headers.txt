@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+Date: Tue, 31 Mar 2026 04:11:50 GMT
+Server: JBCS httpd
+Set-Cookie: JSESSIONID=g4Or24KE7bA4SC9Z1hfaaLjeLh9nPGUTULRdbfsD.iros41; path=/
+Content-Length: 21595
+Content-Disposition: attachment; filename="국토연구원 세계도시정보 자료(2019년).csv"
+Access-Control-Allow-Origin: *
+Content-Type: application/octet-stream; charset=UTF-8
+

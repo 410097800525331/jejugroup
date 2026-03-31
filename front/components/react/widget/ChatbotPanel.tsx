@@ -32,10 +32,58 @@ type ChatApiResponse = {
   }>;
 };
 
+const CHAT_API_PATH = "/api/chat";
+
 const createWelcomeText = (language: ChatbotLanguage) => {
   return language === "en" 
     ? "Welcome to Jeju Group. How can I assist you today?" 
     : "안녕하세요. 제주그룹 도우미입니다.\n여행의 모든 고민을 무엇이든 말씀해 주세요. 😊";
+};
+
+const readFailureMessage = (payload: unknown): string | null => {
+  if (typeof payload === "string") {
+    return payload.trim() || null;
+  }
+
+  if (typeof payload !== "object" || payload === null) {
+    return null;
+  }
+
+  const record = payload as Record<string, unknown>;
+  const directFields = [record.message, record.detail, record.errorMessage, record.reason];
+
+  for (const field of directFields) {
+    if (typeof field === "string" && field.trim()) {
+      return field.trim();
+    }
+  }
+
+  const error = record.error;
+  if (typeof error === "string" && error.trim()) {
+    return error.trim();
+  }
+
+  if (typeof error === "object" && error !== null) {
+    const nested = error as Record<string, unknown>;
+    const nestedFields = [nested.message, nested.detail, nested.errorMessage, nested.reason];
+
+    for (const field of nestedFields) {
+      if (typeof field === "string" && field.trim()) {
+        return field.trim();
+      }
+    }
+  }
+
+  return null;
+};
+
+const extractFailureMessage = async (response: Response) => {
+  try {
+    const payload = (await response.json()) as unknown;
+    return readFailureMessage(payload);
+  } catch {
+    return null;
+  }
 };
 
 const extractChatbotReply = (data: ChatApiResponse) => {
@@ -66,7 +114,7 @@ export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: Ch
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-      const response = await fetch("https://jejugroup.alwaysdata.net/api/chat", {
+      const response = await fetch(CHAT_API_PATH, {
         method: "GET",
         cache: "no-cache",
         signal: controller.signal
@@ -154,7 +202,7 @@ export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: Ch
     setLoading(true);
 
     try {
-      const response = await fetch("https://jejugroup.alwaysdata.net/api/chat", {
+      const response = await fetch(CHAT_API_PATH, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -163,7 +211,7 @@ export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: Ch
           messages: [
             {
               role: "system",
-              content: language === "en" ? "You are Jeju Group Assistant" : "너는 제주그룹 안내 도우미다."
+              content: language === "en" ? "You are Jeju Group Assistant" : "당신은 제주그룹 안내 도우미입니다."
             },
             ...historyPayload,
             {
@@ -175,14 +223,15 @@ export const ChatbotPanel = ({ isOpen, onClose, language, onLanguageChange }: Ch
       });
 
       if (!response.ok) {
-        throw new Error(`Chat API failed: ${response.status}`);
+        const failureMessage = (await extractFailureMessage(response)) ?? `Chat API failed: ${response.status}`;
+        throw new Error(failureMessage);
       }
 
       const data = (await response.json()) as ChatApiResponse;
       const botMessage = extractChatbotReply(data) ?? "응답 처리 실패";
       addMessage("bot", String(botMessage));
     } catch (error) {
-      addMessage("bot", `오류 상태: ${(error as Error).message}`);
+      addMessage("bot", `오류가 발생했습니다: ${(error as Error).message}`);
     } finally {
       setLoading(false);
     }

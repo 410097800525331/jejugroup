@@ -298,7 +298,7 @@ export const ALL_FAQS: FAQ[] = [
     service: "jeju-stay",
     category: "환불 정책",
     question: "제주스테이 숙소 예약 후 환불 정책은?",
-    answer: "각 숙소마다 다른 환불 정책이 있으니 예약 시 확인해주세요.",
+    answer: "각 숙소마다 다른 환불 정책이 있으니 예약 시 확인해 주세요.",
     color: "from-cyan-400 to-cyan-600",
     icon: HomeIcon,
   },

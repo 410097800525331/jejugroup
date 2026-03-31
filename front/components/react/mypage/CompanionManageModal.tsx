@@ -267,7 +267,7 @@ export const CompanionManageModal = ({
                 ref={inputRef}
                 className="id-input companion-search-input"
                 type="text"
-                placeholder="제주그룹 회원 ID를 입력해라"
+                placeholder="제주그룹 회원 ID를 입력해 주세요"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{ padding: "18px 24px", fontSize: "16px", borderRadius: "12px", width: "100%" }}
@@ -312,7 +312,7 @@ export const CompanionManageModal = ({
               </h4>
               {companions.length === 0 ? (
                 <p className="empty-list" style={{ padding: "48px 20px", fontSize: "15px" }}>
-                  아직 연동된 동행자가 없다. 제주그룹 회원 ID를 검색해서 초대해라.
+                  아직 연동된 동행자가 없습니다. 제주그룹 회원 ID를 검색해 초대해 주세요.
                 </p>
               ) : (
                 <div className="companion-linked-list companion-list-scroll" style={{ display: "flex", flex: "1 1 auto", flexDirection: "column", gap: "16px", minHeight: 0, overflowY: "auto", paddingRight: "4px" }}>

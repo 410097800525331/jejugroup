@@ -299,7 +299,7 @@
         lifeDestSEAsia: "동남아시아",
         lifeDestEurope: "유럽 / 미주",
         
-        lifeStayWarning: "* 최소 14박 이상 선택해주세요",
+        lifeStayWarning: "* 최소 14박 이상 선택해 주세요",
         lifeAmenityLabel: "필수 옵션",
         lifeAmenityPlaceholder: "주방, 세탁기 등",
         lifeOptKitchen: "풀옵션 주방",
@@ -388,7 +388,7 @@
         authBtn: "인증하고 혜택받기",
         
         authModalTitle: "제주항공 탑승권 인증",
-        authModalDesc: "예약번호(6자리)와 탑승일을 입력해주세요.",
+        authModalDesc: "예약번호(6자리)와 탑승일을 입력해 주세요.",
         authLabelRes: "예약번호",
         authLabelDate: "탑승일",
         authSubmit: "혜택 적용하기",
@@ -401,7 +401,7 @@
         // Customer Center
         csHeroTitle: "무엇을 도와드릴까요?",
         csHeroSubtitle: "궁금한 점을 검색하거나 아래 자주 묻는 질문을 확인하세요.",
-        csSearchPlaceholder: "검색어를 입력해주세요 (예: 수하물, 환불, 예약변경)",
+        csSearchPlaceholder: "검색어를 입력해 주세요 (예: 수하물, 환불, 예약변경)",
         csTabAll: "자주 묻는 질문",
         csTabRes: "항공 예약",
         csTabHotel: "호텔/숙박",

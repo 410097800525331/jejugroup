@@ -2,34 +2,42 @@
 
 ## Current Task
 
-- task: `Ignore local downloaded Gradle zip artifacts under .tmp for commit hygiene`
+- task: `Fix local chatbot retrieval to prefer real FAQ answer lines and align membership expectations`
 - phase: `implementation`
-- scope: `.gitignore, STATE.md, MULTI_AGENT_LOG.md`
-- verification_target: `.tmp/gradle-8.14.4-bin.zip 같은 로컬 Gradle 다운로드 zip이 git status/commit 후보에서 제외되어야 한다.`
+- scope: `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/**, STATE.md, MULTI_AGENT_LOG.md`
+- verification_target: `ChatService uses runtime-loaded local Jeju Group knowledge, recent user turns only, and service-center FAQ matching returns the adjacent answer line for questions like web check-in while keeping Gemini-shaped JSON and no external AI calls.`
 
 ## Route
 
-- route: `Route A`
-- reason: `This is a tiny single-file ignore-rule hotfix limited to repository hygiene in .gitignore, so Route A fits without shared-asset fanout.`
+- route: `Route B`
+- reason: `The task is a backend chatbot retrieval refinement with runtime-loaded local knowledge and test updates across service and test files, so the active task and verification target changed.`
 
 ## Writer Slot
 
 - owner: `main`
-- write_set: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- write_set: `STATE.md, MULTI_AGENT_LOG.md`
 - write_sets:
-  - `main`: `.gitignore, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `main`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/**`
+- note: `Only the chatbot service and its tests are being changed in this refinement.`
 
 ## Contract Freeze
 
-- contract_freeze: `Add a root ignore rule for local .tmp Gradle distribution zip downloads without touching any tracked source or mirror outputs.`
+- contract_freeze: `Keep /api/chat backed by runtime-loaded local Jeju Group knowledge only, using the site HTML and service-center source data as knowledge inputs, ignore assistant/system messages in retrieval, compose Gemini-shaped JSON for the frontend, and avoid markdown emphasis markers in answers.`
+
+## Seed
+
+- status: `skipped`
+- path: `n/a`
+- revision: `n/a`
+- note: `Scope was clarified in-thread and frozen directly in STATE for this Route B chatbot retrieval refinement task.`
 
 ## Reviewer
 
-- reviewer: `none`
-- reviewer_target: `not applicable`
-- reviewer_focus: `Tiny ignore-only task`
+- reviewer: `assigned`
+- reviewer_target: `reviewer_chat_local`
+- reviewer_focus: `Local knowledge loading, FAQ answer-line selection, membership expectation alignment, and chat response contract stability`
 
 ## Last Update
 
-- timestamp: `2026-03-31 18:44:00 +09:00`
-- note: `Reclassified to a tiny Route A repo-hygiene task to ignore local Gradle zip downloads under .tmp before commit.`
+- timestamp: `2026-03-31 22:28:00 +09:00`
+- note: `Completed the local chatbot retrieval refinement, including FAQ answer-line selection and membership expectation alignment, with targeted chatbot tests passing.`

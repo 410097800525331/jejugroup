@@ -37,7 +37,7 @@ export default function InquiryList({
       <header className="bbs-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
         <div>
           <h1>내 문의 내역</h1>
-          <p>로그인한 계정으로 작성한 1:1 문의 내역이야.</p>
+          <p>로그인한 계정으로 작성한 1:1 문의 내역입니다.</p>
           {!authenticated ? (
             <div
               style={{
@@ -50,7 +50,7 @@ export default function InquiryList({
                 fontWeight: 700,
               }}
             >
-              로그인해야 문의 목록 확인과 작성이 가능해.
+              로그인해야 문의 목록 확인과 작성이 가능합니다.
             </div>
           ) : null}
           {errorMessage ? (
@@ -77,7 +77,7 @@ export default function InquiryList({
           type="button"
         >
           <Plus size={20} />
-          {authenticated ? "문의하기" : "로그인 필요"}
+          {authenticated ? "문의하기" : "로그인이 필요합니다"}
         </button>
       </header>
 
@@ -85,7 +85,7 @@ export default function InquiryList({
         <>
           <div className="bbs-list">
             {isLoading ? (
-              <div className="py-20 text-center text-gray-400">문의 내역을 불러오는 중이야.</div>
+              <div className="py-20 text-center text-gray-400">문의 내역을 불러오는 중입니다.</div>
             ) : inquiries.length > 0 ? (
               inquiries.map((inquiry, index) => (
                 <InquiryListItem
@@ -100,7 +100,7 @@ export default function InquiryList({
                 />
               ))
             ) : (
-              <div className="py-20 text-center text-gray-400">등록된 문의 내역이 없어.</div>
+              <div className="py-20 text-center text-gray-400">등록된 문의 내역이 없습니다.</div>
             )}
           </div>
 
@@ -150,7 +150,7 @@ export default function InquiryList({
         </>
       ) : (
         <div className="bbs-list">
-          <div className="py-20 text-center text-gray-400">로그인해야 문의 목록을 확인할 수 있어.</div>
+          <div className="py-20 text-center text-gray-400">로그인해야 문의 목록을 확인할 수 있습니다.</div>
         </div>
       )}
     </div>

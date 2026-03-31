@@ -56,10 +56,10 @@ public class SupportApiController {
         return runWithUser(session, user -> supportService.updateTicket(user, ticketId, request));
     }
 
-    @DeleteMapping(value = "/tickets/{ticketId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteTicket(@PathVariable("ticketId") long ticketId, HttpSession session) {
+    @DeleteMapping(value = "/tickets/{ticketId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteTicket(@PathVariable("ticketId") long ticketId, @RequestBody SupportTicketPasswordRequest request, HttpSession session) {
         return runWithUser(session, user -> {
-            supportService.deleteTicket(user, ticketId);
+            supportService.deleteTicket(user, ticketId, request.password());
             return Map.of("deleted", true, "ticketId", ticketId);
         });
     }
@@ -190,6 +190,9 @@ record SupportTicketView(
 ) {
 }
 
+record SupportTicketPasswordRequest(String password) {
+}
+
 record SupportCommentView(long id, long ticketId, String authorUserId, String authorRole, String authorName, String content, boolean internal) {
 }
 
@@ -215,7 +218,8 @@ record SupportTicketUpsertRequest(
     String title,
     String content,
     String status,
-    String priority
+    String priority,
+    String password
 ) {
 }
 

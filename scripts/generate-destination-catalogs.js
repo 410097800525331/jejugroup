@@ -105,6 +105,46 @@ const buildRowObject = (headers, values) => {
 
 const getFirst = (...values) => values.find((value) => String(value ?? '').trim().length > 0) ?? '';
 
+const airportTextFixes = {
+  BEL: { airportLabel: '발 데 칸즈 공항' },
+  CQF: {
+    cityLabel: '칼레 / 됭케르크',
+    airportLabel: '칼레 됭케르크 공항',
+  },
+  KQT: { cityLabel: '쿠르곤테파' },
+  MIG: {
+    cityLabel: '몐양',
+    airportLabel: '몐양 난자오 공항',
+  },
+  QGY: { airportEnglishLabel: 'Győr-Pér Airport' },
+};
+
+const repairAirportRecord = (record) => {
+  const fixes = airportTextFixes[record.iata];
+  if (!fixes) {
+    return record;
+  }
+
+  const repairedRecord = { ...record, ...fixes };
+  repairedRecord.searchText = normalizeKey(
+    [
+      repairedRecord.airportEnglishLabel,
+      repairedRecord.airportLabel,
+      repairedRecord.iata,
+      repairedRecord.icao,
+      repairedRecord.regionLabel,
+      repairedRecord.countryLabel,
+      repairedRecord.countryEnglishLabel,
+      repairedRecord.cityLabel,
+      repairedRecord.cityEnglishLabel,
+    ]
+      .filter(Boolean)
+      .join(' ')
+  );
+
+  return repairedRecord;
+};
+
 const buildCityCatalog = (rows) => {
   return rows
     .map((row) => {
@@ -183,7 +223,7 @@ const buildAirportCatalog = (rows) => {
           .join(' ')
       );
 
-      return airportRecord;
+      return repairAirportRecord(airportRecord);
     })
     .filter(Boolean);
 };

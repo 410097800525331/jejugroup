@@ -19,12 +19,14 @@ import type {
   SupportTicketStatus,
   TicketApi,
   TicketCreateRequest,
+  TicketDeleteRequest,
   TicketCreateResponse,
   TicketDetailApiResponse,
   TicketListApiResponse,
   TicketMessageApi,
   TicketAttachmentDeleteResult,
   TicketCommentDeleteResult,
+  TicketUpdateRequest,
 } from "@/types/service-center";
 
 const JSON_HEADERS = {
@@ -447,6 +449,7 @@ const normalizeTicket = (value: TicketApi): TicketApi => {
     ...value,
     id: value.id,
     ticketId: value.ticketId ?? value.id,
+    userId: normalizeMaybeString(value.userId ?? raw.user_id),
     serviceType: normalizeServiceTypeValue(
       value.serviceType ??
         raw.service_type ??
@@ -939,6 +942,76 @@ export const getTicketDetail = async (ticketId: number | string): Promise<ApiRes
   return createSuccessResult(normalizeTicketPayload(response.data), response.status);
 };
 
+export const updateTicket = async (
+  ticketId: number | string,
+  payload: TicketUpdateRequest,
+): Promise<ApiResult<TicketApi | null>> => {
+  const serviceType = normalizeServiceTypeValue(payload.serviceType);
+  const inquiryTypeCode = normalizeMaybeString(payload.inquiryTypeCode ?? payload.inquiryType);
+  const requesterName = normalizeMaybeString(payload.requesterName ?? payload.name);
+  const requesterEmail = normalizeMaybeString(payload.requesterEmail ?? payload.email);
+  const requesterPhone = normalizeMaybeString(payload.requesterPhone ?? payload.phone);
+  const status = normalizeMaybeString(payload.status);
+  const priority = normalizeMaybeString(payload.priority);
+  const password = normalizeMaybeString(payload.password);
+
+  const response = await requestJson(`${CUSTOMER_CENTER_API_PREFIX}/support/tickets/${encodeURIComponent(String(ticketId))}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      serviceType,
+      inquiryTypeCode,
+      requesterName,
+      requesterEmail,
+      requesterPhone,
+      title: normalizeMaybeString(payload.title),
+      content: normalizeMaybeString(payload.content),
+      ...(status ? { status } : {}),
+      ...(priority ? { priority } : {}),
+      ...(password ? { password } : {}),
+    }),
+  });
+
+  if (!response.ok) {
+    return response;
+  }
+
+  return createSuccessResult(normalizeTicketPayload(response.data), response.status);
+};
+
+export const deleteTicket = async (
+  ticketId: number | string,
+  payload: TicketDeleteRequest,
+): Promise<ApiResult<DeletedRecord | null>> => {
+  const password = normalizeMaybeString(payload.password);
+
+  const response = await requestJson(`${CUSTOMER_CENTER_API_PREFIX}/support/tickets/${encodeURIComponent(String(ticketId))}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ...(password ? { password } : {}),
+    }),
+  });
+
+  if (!response.ok) {
+    return response;
+  }
+
+  const raw = isRecord(response.data) ? response.data : null;
+  const deletedRecord = raw
+    ? {
+        id: normalizeIdentifier(raw.ticketId ?? raw.id ?? raw.ticket_id, ticketId),
+        entity: normalizeMaybeString(raw.entity ?? raw.type) ?? "ticket",
+      }
+    : null;
+
+  return createSuccessResult(deletedRecord, response.status);
+};
+
 export const createTicket = async (payload: TicketCreateRequest): Promise<ApiResult<TicketApi | null>> => {
   const serviceType = normalizeServiceTypeValue(payload.serviceType);
   const inquiryTypeCode = normalizeMaybeString(payload.inquiryTypeCode ?? payload.inquiryType);
@@ -996,7 +1069,9 @@ export type {
   TicketCommentDraft,
   TicketApi,
   TicketCreateRequest,
+  TicketDeleteRequest,
   TicketCreateResponse,
   TicketDetailApiResponse,
   TicketListApiResponse,
+  TicketUpdateRequest,
 };

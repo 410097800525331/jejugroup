@@ -279,6 +279,7 @@ export interface TicketAttachmentApi {
 export interface TicketApi {
   id: number | string;
   ticketId?: number | string;
+  userId?: string;
   serviceType?: ServiceType | string;
   service?: ServiceType | string;
   inquiryType?: string;
@@ -340,6 +341,14 @@ export interface TicketCreateRequest {
   status?: SupportTicketStatus;
   priority?: SupportTicketPriority;
   agreement?: boolean;
+}
+
+export interface TicketUpdateRequest extends TicketCreateRequest {
+  password: string;
+}
+
+export interface TicketDeleteRequest {
+  password: string;
 }
 
 export interface TicketCreateResponse {

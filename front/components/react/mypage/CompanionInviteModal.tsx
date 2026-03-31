@@ -163,7 +163,7 @@ export const CompanionInviteModal = ({
         </header>
 
         <p className="modal-desc companion-invite-modal-desc">
-          받은 동행자 초대를 확인하고 수락하거나 거절해라.
+          받은 동행자 초대를 확인하고 수락하거나 거절할 수 있습니다.
         </p>
 
         <div className="companion-invite-modal-body">

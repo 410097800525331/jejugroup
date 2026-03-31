@@ -1,5 +1,11 @@
 # ERROR LOG
 
+- time: `2026-03-31 11:29:25 +09:00`
+- location: `jeju-spring/gradlew test`
+- summary: `full module test run failed on pre-existing unrelated context/bootstrap issues`
+- details: `The focused weather tests passed, but the full jeju-spring test suite failed with many unrelated Spring context/bootstrap errors already present in the workspace, including AdminBannerDbStore initialization and BookingApiControllerIntegrationTests bean construction failures. This did not originate from the new /api/weather slice, but it blocked a clean full-suite verification run.`
+- status: `open`
+
 - time: `2026-03-29 00:40 +09:00`
 - location: `jeju-spring/gradlew compileJava`
 - summary: `verification blocked by missing Gradle wrapper jar`
@@ -16,6 +22,12 @@
 - location: `pnpm -C front/apps/cs check`
 - summary: `inquiries slice implementation blockers resolved`
 - details: `후속 수정으로 serviceCenterApi/AuthContext/InquiryForm/test blockers를 정리했고, `pnpm -C front/apps/cs check`, `pnpm -C front/apps/cs test`, `pnpm -C front/apps/cs build`가 모두 통과했다.`
+- status: `resolved`
+
+- time: `2026-03-31 09:17:53 +09:00`
+- location: `local MySQL jejugroup_local import from D:\lsh\git\jejugroup\jeju-spring\jejugroup_local.sql`
+- summary: `initial mysql SOURCE-based reimport attempts left the local DB empty before stdin import recovery`
+- details: `I first recreated \`jejugroup_local\` and tried to replay the workspace dump through mysql client \`SOURCE\` commands. A Windows path escaping issue first raised \`Unknown command '\\l'\`, and the follow-up \`SOURCE\` execution still failed at dump line 41 with \`Unknown database 'jejugroup_local'\`, leaving the freshly recreated schema empty. I recovered in the same task by streaming the UTF-8 dump into mysql stdin with explicit \`DROP DATABASE\`, \`CREATE DATABASE ... utf8mb4\`, and \`USE jejugroup_local\` statements prefixed before the dump payload.`
 - status: `resolved`
 
 - time: `2026-03-26 16:04:48 +09:00`
@@ -666,8 +678,66 @@ status: open
 - details: `The booking persistence and guest-lookup verification initially failed immediately because jeju-spring/gradle/wrapper/gradle-wrapper.jar is absent in this workspace. I switched the same targeted test run to the local D:\git\jejugroup\.codex-temp\gradle-8.14.4\bin\gradle.bat distribution and continued verification there.`
 - status: `resolved`
 
+# time: `2026-03-31 18:08:00 +09:00`
+# location: `front/components/react`, `front/core`, `front/apps/shell` scan
+# summary: `rg.exe was unavailable in this PowerShell environment during copy audit`
+# details: `Attempting to use rg.exe for scoped text discovery failed with Access is denied, so the copy audit switched to PowerShell-native file enumeration and Select-String checks. The task continued with that fallback path.`
+# status: `resolved`
+
 - time: `2026-03-31 17:33:00 +09:00`
 - location: `jeju-spring/src/test/java/com/jejugroup/jejuspring/booking/BookingApiControllerIntegrationTests.java`
 - summary: `typed JsonPath assertions briefly blocked booking test compilation`
 - details: `The first temp-Gradle run reached compileTestJava and failed on two ambiguous assertThat(JsonPath.read(...)) calls after the reservationNo alias assertions were added. Those assertions were rewritten through typed local String variables, and the same targeted BookingApiControllerIntegrationTests run then passed successfully.`
 - status: `resolved`
+
+- time: `2026-03-31 09:26:30 +09:00`
+- location: `pnpm run guard:text`
+- summary: `repository-wide text guard blocked hotel payment hotfix verification on pre-existing mojibake`
+- details: `While verifying the hotel payment autofill fix, the repository text guard failed on pre-existing mojibake/replacement-character findings in AGENTS.md plus generated destination artifacts under front/shared/destination/generated/** and jeju-spring front-mirror outputs. The hotel payment file edit itself was not named in the guard output, so this remains a separate repository integrity issue that still blocks clean guard verification.`
+- status: `open`
+
+- time: `2026-03-31 09:44:01 +09:00`
+- location: `STATE.md`
+- summary: `current task board was repointed to a different mirror-sync task during the stay-search hotfix`
+- details: `While implementing the jejustay_life search redirect hotfix, STATE.md was externally rewritten back to an unrelated Route B jeju-spring mirror sync task after I had already reclassified it for this request. I did not overwrite the new active task again, so the code change in front/components/react/life/LifeSearchWidgetContext.tsx now exists without a matching STATE entry for this request.`
+- status: `open`
+
+- time: `2026-03-31 10:40:50 +09:00`
+- location: `STATE.md`
+- summary: `current task board was repointed to a different mypage/backend booking task during the air-receipt popup replacement`
+- details: `While replacing the mypage air receipt popup inside front/components/react/mypage/BookingSection.tsx, STATE.md was externally rewritten back to a broader Route B booking-cancellation task that spans front plus jeju-spring backend files. I left that newer active task untouched, so the popup UI change is complete in BookingSection.tsx but the task board no longer reflects this popup-only slice.`
+- status: `open`
+
+- time: `2026-03-31 11:18:29 +09:00`
+- location: `jeju-spring/gradlew test --tests com.jejugroup.jejuspring.chat.*`
+- summary: `full test invocation was blocked by the workspace's pre-existing Spring context failures and a Gradle test-results lock`
+- details: `A broad test invocation first hit an output.bin cleanup lock in build/test-results/test/binary, and the follow-up full test run failed across existing JejuSpringApplicationTests because AdminBannerDbStore initialization could not create its DB-backed Spring context. I switched to targeted chat-only verification with --no-daemon, which passed, so the chat implementation itself is verified while the repository-wide spring suite remains externally blocked.`
+- status: `resolved`
+- time: `2026-03-31 11:50:00 +09:00`
+- location: `jeju-spring`
+- summary: `full Gradle test verification failed on pre-existing Spring context/bootstrap issues outside the Gemini chat slice`
+- details: `./gradlew.bat test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests passed, but ./gradlew.bat test and ./gradlew.bat test --tests com.jejugroup.jejuspring.booking.BookingApiControllerIntegrationTests failed in the broader Spring suite. The full suite failure reported admin DB bootstrap problems in AdminBannerDbStore (admin DB configuration is missing) and repeated context-threshold skips; the targeted chat slice itself remained green.`
+- status: `open`
+- time: `2026-03-31 11:55:00 +09:00`
+- location: `jeju-spring/gradlew.bat test --tests com.jejugroup.jejuspring.JejuSpringApplicationTests.migrationDashboardLoads`
+- summary: `migration dashboard label verification was blocked by the pre-existing Spring context/bootstrap failure`
+- details: `The updated migration dashboard label/sourceKey test did not reach its assertions because the broader JejuSpringApplicationTests context still fails during AdminBannerDbStore initialization with admin DB configuration missing. The failure matches the earlier repository-wide Spring bootstrap issue and is not specific to the label change itself.`
+- status: `open`
+
+- time: `2026-03-31 12:22:00 +09:00`
+- location: `jeju-spring/./gradlew.bat compileJava`
+- summary: `temporary compile failure after removing AppProperties.External.openaiApiKey()`
+- details: `The Gemini-only config rename broke a legacy reference in MigrationDashboardFactory that still called external.openaiApiKey(). I restored a compatibility accessor on AppProperties.External so the workspace compiles without changing files outside the requested backend chat/config/test set.`
+- status: `resolved`
+
+- time: `2026-03-31 12:54:54 +09:00`
+- location: `.githooks/pre-commit -> scripts/guards/check-text-integrity.js --staged`
+- summary: `commit was blocked by mojibake in AGENTS.md and replacement characters inside a staged generated jeju-spring runtime bundle`
+- details: `The staged pre-commit guard failed on mojibake-corrupted Korean lines in AGENTS.md plus replacement characters in jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-hotel-D0xfv2Bu.js. I repaired the AGENTS.md lines and removed the protected generated mirror bundle from the staged set instead of editing the manual-approval mirror path directly.`
+- status: `resolved`
+
+- time: `2026-03-31 22:28:00 +09:00`
+- location: `jeju-spring/./gradlew.bat test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests`
+- summary: `repository Gradle verification was blocked by an unrelated pre-existing compile error in stay monthly-deal code`
+- details: `The requested chat test run failed during compileJava in src/main/java/com/jejugroup/jejuspring/stay/application/StayMonthlyDealDbStore.java because MonthlyDealRow no longer has currentPrice(). I verified the chatbot slice by compiling jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/ChatService.java and jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatServiceTests.java directly with javac, then ran ./gradlew.bat test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests -x compileJava -x compileTestJava successfully.`
+- status: `open`

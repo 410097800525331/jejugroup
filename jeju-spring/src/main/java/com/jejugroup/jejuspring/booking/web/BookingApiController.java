@@ -106,6 +106,33 @@ public class BookingApiController {
         }
     }
 
+    @PostMapping(value = "/{bookingNo}/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> cancelBooking(@PathVariable("bookingNo") String bookingNo, HttpSession session) {
+        SessionUser user = readSessionUser(session);
+        if (user == null) {
+            return json(HttpStatus.UNAUTHORIZED, false, "로그인이 필요합니다.");
+        }
+
+        try {
+            BookingWriteService.BookingCancellationView cancellation = bookingWriteService.cancelBooking(bookingNo, user);
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "예약이 취소되었습니다.",
+                "data", cancellation
+            ));
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, exception.getMessage());
+        } catch (BookingWriteService.BookingAccessDeniedException exception) {
+            return json(HttpStatus.FORBIDDEN, false, exception.getMessage());
+        } catch (BookingWriteService.BookingConflictException exception) {
+            return json(HttpStatus.CONFLICT, false, exception.getMessage());
+        } catch (NoSuchElementException exception) {
+            return json(HttpStatus.NOT_FOUND, false, "예약을 찾을 수 없습니다.");
+        } catch (SQLException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, "예약 취소를 처리하지 못했습니다.");
+        }
+    }
+
     private SessionUser readSessionUser(HttpSession session) {
         Object sessionUser = session.getAttribute("user");
         if (sessionUser instanceof SessionUser user) {

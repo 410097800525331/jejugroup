@@ -46,8 +46,8 @@ public class SupportService {
         return ticketService.updateTicket(user, ticketId, request);
     }
 
-    public void deleteTicket(SessionUser user, long ticketId) throws SQLException {
-        ticketService.deleteTicket(user, ticketId);
+    public void deleteTicket(SessionUser user, long ticketId, String password) throws SQLException {
+        ticketService.deleteTicket(user, ticketId, password);
     }
 
     public List<SupportCommentView> listComments(SessionUser user, long ticketId) throws SQLException {

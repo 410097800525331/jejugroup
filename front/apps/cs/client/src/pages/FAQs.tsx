@@ -108,7 +108,7 @@ export default function FAQs() {
   const [reloadToken, setReloadToken] = useState(0);
 
   const handleChatbotClick = () => {
-    alert("지금은 챗봇 연결이 준비 중이야. 필요한 FAQ부터 먼저 찾아봐.");
+    alert("지금은 챗봇 연결이 준비 중입니다. 필요한 FAQ부터 먼저 찾아보세요.");
   };
 
   const handleFaqToggle = (id: string) => {
@@ -135,7 +135,7 @@ export default function FAQs() {
       })
       .catch((fetchError: unknown) => {
         if (active) {
-          setError(fetchError instanceof Error ? fetchError.message : "FAQ 목록을 불러오지 못했어.");
+          setError(fetchError instanceof Error ? fetchError.message : "FAQ 목록을 불러오지 못했습니다.");
         }
       })
       .finally(() => {
@@ -186,8 +186,8 @@ export default function FAQs() {
             </Link>
 
             <SectionHeader
-              title="FAQ Library"
-              description="서비스별 자주 묻는 질문을 여기서 바로 확인할 수 있어."
+              title="FAQ 모음"
+              description="서비스별 자주 묻는 질문을 여기서 바로 확인하실 수 있습니다."
             />
           </motion.div>
 
@@ -229,7 +229,7 @@ export default function FAQs() {
               </div>
             ) : error ? (
               <div className="py-24 text-center rounded-[3rem] border-2 border-dashed border-gray-200 bg-gray-50">
-                <p className="text-gray-500 font-black text-xl">FAQ를 불러오지 못했어.</p>
+                <p className="text-gray-500 font-black text-xl">FAQ를 불러오지 못했습니다.</p>
                 <p className="mt-3 text-gray-400">{error}</p>
                 <button
                   type="button"
@@ -252,7 +252,7 @@ export default function FAQs() {
               </AnimatePresence>
             ) : (
               <div className="py-24 text-center rounded-[3rem] border-2 border-dashed border-gray-200 bg-gray-50 text-gray-400 font-medium">
-                검색 조건에 맞는 FAQ가 없어.
+                검색 조건에 맞는 FAQ가 없습니다.
               </div>
             )}
           </div>

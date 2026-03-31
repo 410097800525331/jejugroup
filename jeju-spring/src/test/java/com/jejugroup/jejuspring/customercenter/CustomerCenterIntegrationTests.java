@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -42,6 +43,7 @@ class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
     private static final String SUPPORT_OWNER_NAME = "Support Owner";
     private static final String SUPPORT_OWNER_EMAIL = "support.owner@example.com";
     private static final String SUPPORT_OWNER_PHONE = "010-1111-2222";
+    private static final String SUPPORT_OWNER_PASSWORD = "owner-password-1234";
     private static final String SUPPORT_OTHER_ID = "cc-support-other";
     private static final String SUPPORT_ADMIN_ID = "cc-support-admin";
 
@@ -100,7 +102,7 @@ class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
         mockMvc.perform(put("/api/customer-center/support/tickets/{ticketId}", SUPPORT_TICKET_ID)
                 .sessionAttr("user", sessionUser(SUPPORT_OWNER_ID, SUPPORT_OWNER_NAME, "USER"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(supportTicketJson("Owner updated title", "Owner updated content", SUPPORT_SERVICE_TYPE)))
+                .content(supportTicketJson("Owner updated title", "Owner updated content", SUPPORT_SERVICE_TYPE, SUPPORT_OWNER_PASSWORD)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.title").value("Owner updated title"))
             .andExpect(jsonPath("$.data.content").value("Owner updated content"));
@@ -114,12 +116,19 @@ class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
     }
 
     @Test
-    void otherUserIsForbiddenButAdminCanOverrideSupportTicket() throws Exception {
+    void ownerWrongPasswordIsRejectedAndAdminCanOverrideSupportTicket() throws Exception {
         seedSupportFixture();
 
         mockMvc.perform(get("/api/customer-center/support/tickets/{ticketId}", SUPPORT_TICKET_ID)
                 .sessionAttr("user", sessionUser(SUPPORT_OTHER_ID, "Support Other", "USER")))
             .andExpect(status().isForbidden());
+
+        mockMvc.perform(put("/api/customer-center/support/tickets/{ticketId}", SUPPORT_TICKET_ID)
+                .sessionAttr("user", sessionUser(SUPPORT_OWNER_ID, SUPPORT_OWNER_NAME, "USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(supportTicketJson("Wrong password title", "Wrong password content", SUPPORT_SERVICE_TYPE, "wrong-password")))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.message").value("비밀번호가 일치하지 않아."));
 
         mockMvc.perform(put("/api/customer-center/support/tickets/{ticketId}", SUPPORT_TICKET_ID)
                 .sessionAttr("user", sessionUser(SUPPORT_ADMIN_ID, "Support Admin", "ADMIN"))
@@ -135,6 +144,36 @@ class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
             SUPPORT_TICKET_ID
         );
         assertThat(updatedContent).isEqualTo("Admin override content");
+    }
+
+    @Test
+    void ownerCorrectPasswordCanDeleteSupportTicketAndAdminBypassesPasswordGate() throws Exception {
+        seedSupportFixture();
+
+        mockMvc.perform(delete("/api/customer-center/support/tickets/{ticketId}", SUPPORT_TICKET_ID)
+                .sessionAttr("user", sessionUser(SUPPORT_OWNER_ID, SUPPORT_OWNER_NAME, "USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(supportTicketPasswordJson("wrong-password")))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.message").value("비밀번호가 일치하지 않아."));
+
+        mockMvc.perform(delete("/api/customer-center/support/tickets/{ticketId}", SUPPORT_TICKET_ID)
+                .sessionAttr("user", sessionUser(SUPPORT_OWNER_ID, SUPPORT_OWNER_NAME, "USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(supportTicketPasswordJson(SUPPORT_OWNER_PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.deleted").value(true))
+            .andExpect(jsonPath("$.data.ticketId").value(SUPPORT_TICKET_ID));
+
+        seedSupportTicket();
+
+        mockMvc.perform(delete("/api/customer-center/support/tickets/{ticketId}", SUPPORT_TICKET_ID)
+                .sessionAttr("user", sessionUser(SUPPORT_ADMIN_ID, "Support Admin", "ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(supportTicketPasswordJson("wrong-password")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.deleted").value(true))
+            .andExpect(jsonPath("$.data.ticketId").value(SUPPORT_TICKET_ID));
     }
 
     @Test
@@ -587,7 +626,7 @@ class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
                 role = VALUES(role)
             """,
             SUPPORT_OWNER_ID,
-            "encoded-password",
+            new BCryptPasswordEncoder().encode(SUPPORT_OWNER_PASSWORD),
             SUPPORT_OWNER_NAME,
             SUPPORT_OWNER_PHONE,
             SUPPORT_OWNER_EMAIL,
@@ -754,14 +793,22 @@ class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
     }
 
     private SessionUser sessionUser(String id, String name, String role) {
-        return new SessionUser(id, name, role);
+        return new SessionUser(id, name, "", "", role);
     }
 
     private String supportTicketJson(String title, String content, String serviceType) {
-        return supportTicketJson(title, content, serviceType, "pending", "normal");
+        return supportTicketJson(title, content, serviceType, "pending", "normal", null);
     }
 
     private String supportTicketJson(String title, String content, String serviceType, String status, String priority) {
+        return supportTicketJson(title, content, serviceType, status, priority, null);
+    }
+
+    private String supportTicketJson(String title, String content, String serviceType, String password) {
+        return supportTicketJson(title, content, serviceType, "pending", "normal", password);
+    }
+
+    private String supportTicketJson(String title, String content, String serviceType, String status, String priority, String password) {
         return """
             {
               "serviceType": "%s",
@@ -773,7 +820,7 @@ class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
               "title": "%s",
               "content": "%s",
               "status": "%s",
-              "priority": "%s"
+              "priority": "%s"%s
             }
             """.formatted(
             serviceType,
@@ -784,8 +831,17 @@ class CustomerCenterIntegrationTests extends IntegrationTestDatabaseProperties {
             title,
             content,
             status,
-            priority
+            priority,
+            password == null ? "" : ",\n              \"password\": \"%s\"".formatted(password)
         );
+    }
+
+    private String supportTicketPasswordJson(String password) {
+        return """
+            {
+              "password": "%s"
+            }
+            """.formatted(password);
     }
 
     private String commentJson(String content, boolean internal) {

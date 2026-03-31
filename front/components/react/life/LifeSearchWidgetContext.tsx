@@ -16,6 +16,9 @@ import {
   shiftVisibleMonth
 } from "@front-components/search/rangeDatePicker";
 import type { SearchCalendarTab } from "@front-components/search/types";
+import { resolveRoute } from "@front-core-utils/path_resolver.js";
+import { resolveHotelDestination } from "../hotel/hotelDestinationCatalog";
+import { buildHotelListRouteParams } from "../hotel/hotelSearchQuery";
 import { LIFE_REQUIRED_OPTIONS } from "./lifeSearchWidgetData";
 
 type GuestKey = "rooms" | "adults" | "children";
@@ -84,8 +87,6 @@ interface LifeSearchWidgetContextValue {
   submitSearch: () => void;
   stopPropagation: (event: MouseEvent<HTMLElement>) => void;
 }
-
-export const LONG_STAY_SEARCH_SUBMIT_EVENT = "jeju:life-search-submit";
 
 const MIN_LONG_STAY_DAYS = 14;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -485,18 +486,26 @@ export const LifeSearchWidgetProvider = ({ children }: PropsWithChildren) => {
   const submitSearch = useCallback(() => {
     closeOtherPopups(dispatch);
 
-    document.dispatchEvent(
-      new CustomEvent(LONG_STAY_SEARCH_SUBMIT_EVENT, {
-        detail: {
-          destination: state.destinationValue.trim(),
+    const destinationValue = state.destinationValue.trim();
+    const resolvedDestination = destinationValue ? resolveHotelDestination(null, destinationValue).destination : null;
+
+    const targetUrl = resolveRoute(
+      "SERVICES.STAY.HOTEL_LIST",
+      buildHotelListRouteParams(
+        {
+          destinationValue: state.destinationValue,
           guest: state.guest,
-          requiredOptions: state.requiredOptions,
-          checkIn: state.calendar.checkIn,
-          checkOut: state.calendar.checkOut,
-          flexibleValue: state.calendar.flexibleValue
-        }
-      })
+          calendar: {
+            checkIn: state.calendar.checkIn,
+            checkOut: state.calendar.checkOut
+          },
+          resolvedDestination
+        },
+        window.location.search
+      )
     );
+
+    window.location.assign(targetUrl);
   }, [state.calendar.checkIn, state.calendar.checkOut, state.calendar.flexibleValue, state.destinationValue, state.guest, state.requiredOptions]);
 
   const guestSummary = useMemo(() => {

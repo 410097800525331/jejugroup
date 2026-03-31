@@ -101,7 +101,7 @@ const requestJson = async <T,>(url: string, init?: RequestInit): Promise<T> => {
   }
 
   if (!response.ok) {
-    throw new Error(extractMessage(payload, response.status === 403 ? "소유자 또는 관리자만 첨부 메타데이터를 관리할 수 있어." : "요청을 처리하지 못했어."));
+    throw new Error(extractMessage(payload, response.status === 403 ? "소유자 또는 관리자만 첨부 메타데이터를 관리할 수 있습니다." : "요청을 처리하지 못했습니다."));
   }
 
   return payload as T;
@@ -188,7 +188,7 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
       setAttachments(extractArrayPayload<AttachmentApiItem>(payload, ["attachments", "items", "data"]).map(normalizeAttachment));
     } catch (error) {
       setAttachments([]);
-      setLoadError(error instanceof Error ? error.message : "첨부 메타데이터를 불러오지 못했어.");
+      setLoadError(error instanceof Error ? error.message : "첨부 메타데이터를 불러오지 못했습니다.");
     } finally {
       setLoading(false);
     }
@@ -220,13 +220,13 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!canManage) {
-      setSubmitError("소유자 또는 관리자만 첨부 메타데이터를 등록할 수 있어.");
+      setSubmitError("소유자 또는 관리자만 첨부 메타데이터를 등록할 수 있습니다.");
       return;
     }
 
     const payload = createPayload(draft);
     if (!payload.originalFilename || !payload.storedFilename || !payload.storageKey || !payload.contentType) {
-      setSubmitError("파일명, 저장명, 저장키, content type을 모두 입력해줘.");
+      setSubmitError("파일명, 저장명, 저장키, content type을 모두 입력해 주세요.");
       return;
     }
 
@@ -242,7 +242,7 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
       setDraft(emptyDraft());
       await loadAttachments();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "첨부 메타데이터를 저장하지 못했어.");
+      setSubmitError(error instanceof Error ? error.message : "첨부 메타데이터를 저장하지 못했습니다.");
     } finally {
       setSubmitting(false);
     }
@@ -268,13 +268,13 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
 
   const handleUpdate = async (attachmentId: number) => {
     if (!canManage) {
-      setSubmitError("소유자 또는 관리자만 첨부 메타데이터를 수정할 수 있어.");
+      setSubmitError("소유자 또는 관리자만 첨부 메타데이터를 수정할 수 있습니다.");
       return;
     }
 
     const payload = createPayload(editingDraft);
     if (!payload.originalFilename || !payload.storedFilename || !payload.storageKey || !payload.contentType) {
-      setSubmitError("파일명, 저장명, 저장키, content type을 모두 입력해줘.");
+      setSubmitError("파일명, 저장명, 저장키, content type을 모두 입력해 주세요.");
       return;
     }
 
@@ -293,7 +293,7 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
       cancelEdit();
       await loadAttachments();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "첨부 메타데이터를 수정하지 못했어.");
+      setSubmitError(error instanceof Error ? error.message : "첨부 메타데이터를 수정하지 못했습니다.");
     } finally {
       setBusyId(null);
     }
@@ -301,11 +301,11 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
 
   const handleDelete = async (attachmentId: number) => {
     if (!canManage) {
-      setSubmitError("소유자 또는 관리자만 첨부 메타데이터를 삭제할 수 있어.");
+      setSubmitError("소유자 또는 관리자만 첨부 메타데이터를 삭제할 수 있습니다.");
       return;
     }
 
-    if (!window.confirm("이 첨부 메타데이터를 삭제할까?")) return;
+    if (!window.confirm("이 첨부 메타데이터를 삭제하시겠습니까?")) return;
 
     setBusyId(attachmentId);
     setSubmitError(null);
@@ -318,7 +318,7 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
       if (editingId === attachmentId) cancelEdit();
       await loadAttachments();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "첨부 메타데이터를 삭제하지 못했어.");
+      setSubmitError(error instanceof Error ? error.message : "첨부 메타데이터를 삭제하지 못했습니다.");
     } finally {
       setBusyId(null);
     }
@@ -329,8 +329,8 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-bold text-orange-500">첨부</p>
-          <h3 className="mt-1 text-lg font-extrabold text-slate-900">attachments metadata</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-500">{ticketTitle ? `“${ticketTitle}”` : "선택한 문의"}의 첨부 메타데이터만 관리해.</p>
+          <h3 className="mt-1 text-lg font-extrabold text-slate-900">첨부 메타데이터</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-500">{ticketTitle ? `“${ticketTitle}”` : "선택한 문의"}의 첨부 메타데이터만 관리합니다.</p>
         </div>
         <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">{attachments.length}개</div>
       </div>
@@ -341,13 +341,13 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
         }`}
       >
         {canManage
-          ? "소유자 또는 관리자 권한이 확인돼. 첨부 메타데이터를 바로 등록, 수정, 삭제할 수 있어."
-          : "소유자 또는 관리자만 첨부 메타데이터를 관리할 수 있어."}
+          ? "소유자 또는 관리자 권한이 확인되었습니다. 첨부 메타데이터를 바로 등록, 수정, 삭제할 수 있습니다."
+          : "소유자 또는 관리자만 첨부 메타데이터를 관리할 수 있습니다."}
       </div>
       <p className="mt-3 text-xs font-semibold leading-5 text-slate-400">
         {isCompletedStatus
-          ? "처리 완료 상태여도 메타데이터 관리는 가능해."
-          : "binary 업로드/다운로드는 제외하고 메타데이터만 다뤄."}
+          ? "처리 완료 상태여도 메타데이터 관리는 가능합니다."
+          : "binary 업로드/다운로드는 제외하고 메타데이터만 다룹니다."}
       </p>
 
       <form onSubmit={handleCreate} className="mt-5 rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
@@ -359,28 +359,28 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
             id={`support-attachment-${ticketId}`}
             value={draft.originalFilename}
             onChange={(event) => setDraft((current) => ({ ...current, originalFilename: event.target.value }))}
-            placeholder="original filename"
+            placeholder="원본 파일명"
             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-orange-300 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100"
             disabled={!canManage || submitting}
           />
           <input
             value={draft.storedFilename}
             onChange={(event) => setDraft((current) => ({ ...current, storedFilename: event.target.value }))}
-            placeholder="stored filename"
+            placeholder="저장 파일명"
             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-orange-300 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100"
             disabled={!canManage || submitting}
           />
           <input
             value={draft.storageKey}
             onChange={(event) => setDraft((current) => ({ ...current, storageKey: event.target.value }))}
-            placeholder="storage key"
+            placeholder="저장 키"
             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-orange-300 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100 md:col-span-2"
             disabled={!canManage || submitting}
           />
           <input
             value={draft.contentType}
             onChange={(event) => setDraft((current) => ({ ...current, contentType: event.target.value }))}
-            placeholder="content type"
+            placeholder="콘텐츠 타입"
             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-orange-300 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100"
             disabled={!canManage || submitting}
           />
@@ -390,7 +390,7 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
             step={1}
             value={draft.fileSizeBytes}
             onChange={(event) => setDraft((current) => ({ ...current, fileSizeBytes: event.target.value }))}
-            placeholder="file size bytes"
+            placeholder="파일 크기 바이트"
             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-orange-300 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100"
             disabled={!canManage || submitting}
           />
@@ -411,7 +411,7 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
       <div className="mt-5 space-y-3">
         {loading ? (
           <div className="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-sm font-medium text-slate-400">
-            첨부 메타데이터를 불러오는 중이야.
+            첨부 메타데이터를 불러오는 중입니다.
           </div>
         ) : loadError ? (
           <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">{loadError}</div>
@@ -460,19 +460,19 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
                 <dl className="mt-4 grid gap-3 text-sm md:grid-cols-2">
                   <div className="rounded-2xl bg-slate-50 px-3 py-2">
                     <dt className="text-xs font-bold text-slate-400">stored filename</dt>
-                    <dd className="mt-1 font-semibold text-slate-700">{item.storedFilename || "정보 없음"}</dd>
+                    <dd className="mt-1 font-semibold text-slate-700">{item.storedFilename || "정보가 없습니다"}</dd>
                   </div>
                   <div className="rounded-2xl bg-slate-50 px-3 py-2">
                     <dt className="text-xs font-bold text-slate-400">storage key</dt>
-                    <dd className="mt-1 break-all font-semibold text-slate-700">{item.storageKey || "정보 없음"}</dd>
+                    <dd className="mt-1 break-all font-semibold text-slate-700">{item.storageKey || "정보가 없습니다"}</dd>
                   </div>
                   <div className="rounded-2xl bg-slate-50 px-3 py-2">
                     <dt className="text-xs font-bold text-slate-400">업로드 사용자</dt>
-                    <dd className="mt-1 font-semibold text-slate-700">{item.uploadedByUserId || "정보 없음"}</dd>
+                    <dd className="mt-1 font-semibold text-slate-700">{item.uploadedByUserId || "정보가 없습니다"}</dd>
                   </div>
                   <div className="rounded-2xl bg-slate-50 px-3 py-2">
                     <dt className="text-xs font-bold text-slate-400">binary 상태</dt>
-                    <dd className="mt-1 font-semibold text-slate-700">업로드/다운로드는 제외</dd>
+                    <dd className="mt-1 font-semibold text-slate-700">업로드/다운로드는 제외합니다</dd>
                   </div>
                 </dl>
 
@@ -532,7 +532,7 @@ export default function InquirySupportAttachments({ ticketId, ticketOwnerId, tic
           })
         ) : (
           <div className="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-sm font-medium text-slate-400">
-            아직 첨부 메타데이터가 없어. binary 없이 메타데이터만 남길 수 있어.
+            아직 첨부 메타데이터가 없습니다. binary 없이 메타데이터만 남길 수 있습니다.
           </div>
         )}
       </div>

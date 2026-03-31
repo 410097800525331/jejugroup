@@ -161,7 +161,8 @@ class SupportTicketService extends SupportDatabaseSupport {
         String priority = normalizePriority(request.priority());
 
         try (Connection connection = openConnection()) {
-            accessPolicy.requireTicketAccess(connection, user, ticketId);
+            TicketRow ticket = accessPolicy.requireTicketAccess(connection, user, ticketId);
+            accessPolicy.requireOwnerPassword(connection, user, ticket, request.password());
             if (categoryId != null) {
                 ensureCategoryMatchesTicketScope(connection, categoryId, serviceType);
             }
@@ -206,10 +207,11 @@ class SupportTicketService extends SupportDatabaseSupport {
         }
     }
 
-    void deleteTicket(SessionUser user, long ticketId) throws SQLException {
+    void deleteTicket(SessionUser user, long ticketId, String password) throws SQLException {
         accessPolicy.requireAuthenticated(user);
         try (Connection connection = openConnection()) {
-            accessPolicy.requireTicketAccess(connection, user, ticketId);
+            TicketRow ticket = accessPolicy.requireTicketAccess(connection, user, ticketId);
+            accessPolicy.requireOwnerPassword(connection, user, ticket, password);
             try (PreparedStatement statement = connection.prepareStatement("""
                 DELETE FROM support_tickets
                 WHERE id = ?

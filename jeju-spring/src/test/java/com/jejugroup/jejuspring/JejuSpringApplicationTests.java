@@ -98,7 +98,9 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 		mockMvc.perform(get("/migration"))
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("jeju-spring migration hub")))
-			.andExpect(content().string(containsString("jeju-web .env reuse")));
+			.andExpect(content().string(containsString("jeju-web .env reuse")))
+			.andExpect(content().string(containsString("Gemini key (legacy OpenAI fallback)")))
+			.andExpect(content().string(containsString("GEMINI_API_KEY / OPENAI_API_KEY")));
 	}
 
 	@Test
@@ -184,7 +186,7 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 	void mypageDashboardApiKeepsAuthenticatedBehavior() throws Exception {
 		seedUser("minji", "?띾?吏DB", "minji.db@jejugroup.example");
 
-		mockMvc.perform(get("/api/mypage/dashboard").sessionAttr("user", new SessionUser("minji", "", "USER")))
+		mockMvc.perform(get("/api/mypage/dashboard").sessionAttr("user", new SessionUser("minji", "", "", "", "USER")))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(content().string(containsString("\"success\":true")))
@@ -204,7 +206,7 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 		seedUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, MYPAGE_PROFILE_OWNER_EMAIL, MYPAGE_PROFILE_OWNER_PHONE);
 
 		mockMvc.perform(put("/api/mypage/profile")
-				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER"))
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "", "", "USER"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(profileUpdateJson("Mypage Saved", "mypage.saved@example.com", "010-4040-4040")))
 			.andExpect(status().isOk())
@@ -233,7 +235,7 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 		)).isEqualTo("Mypage Saved");
 
 		mockMvc.perform(get("/api/mypage/dashboard")
-				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER")))
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "", "", "USER")))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.success").value(true))
@@ -247,7 +249,7 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 		seedUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, MYPAGE_PROFILE_OWNER_EMAIL, MYPAGE_PROFILE_OWNER_PHONE);
 
 		mockMvc.perform(put("/api/mypage/profile")
-				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER"))
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "", "", "USER"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(profileUpdateJson("   ", "not-an-email", "010-5050-5050")))
 			.andExpect(status().isBadRequest())
@@ -260,7 +262,7 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 		seedUser(MYPAGE_PROFILE_CONFLICT_ID, MYPAGE_PROFILE_CONFLICT_NAME, MYPAGE_PROFILE_CONFLICT_EMAIL, MYPAGE_PROFILE_CONFLICT_PHONE);
 
 		mockMvc.perform(put("/api/mypage/profile")
-				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER"))
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "", "", "USER"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(profileUpdateJson("Mypage Saved", MYPAGE_PROFILE_CONFLICT_EMAIL, "010-6060-6060")))
 			.andExpect(status().isConflict())
@@ -268,7 +270,7 @@ class JejuSpringApplicationTests extends IntegrationTestDatabaseProperties {
 			.andExpect(jsonPath("$.message").value("이미 사용 중인 이메일 또는 전화번호입니다."));
 
 		mockMvc.perform(put("/api/mypage/profile")
-				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "USER"))
+				.sessionAttr("user", new SessionUser(MYPAGE_PROFILE_OWNER_ID, MYPAGE_PROFILE_OWNER_NAME, "", "", "USER"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(profileUpdateJson("Mypage Saved", "mypage.saved2@example.com", MYPAGE_PROFILE_CONFLICT_PHONE)))
 			.andExpect(status().isConflict())

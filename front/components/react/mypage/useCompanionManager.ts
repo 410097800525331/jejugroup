@@ -288,7 +288,7 @@ const resolveSearchErrorMessage = (error: unknown) => {
     return error.message;
   }
 
-  return "회원 조회 중 오류가 발생했다. 잠시 후 다시 시도해라";
+  return "회원 조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
 };
 
 const resolveInviteErrorMessage = (error: unknown) => {
@@ -296,7 +296,7 @@ const resolveInviteErrorMessage = (error: unknown) => {
     return error.message;
   }
 
-  return "동행 초대 중 오류가 발생했다. 잠시 후 다시 시도해라";
+  return "동행 초대 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
 };
 
 const resolveUnlinkErrorMessage = (error: unknown) => {
@@ -304,7 +304,7 @@ const resolveUnlinkErrorMessage = (error: unknown) => {
     return error.message;
   }
 
-  return "동행 해제 중 오류가 발생했다. 잠시 후 다시 시도해라";
+  return "동행 해제 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
 };
 
 export const useCompanionManager = ({
@@ -352,7 +352,7 @@ export const useCompanionManager = ({
       if (!normalizedQuery) {
         setSearchResults([]);
         if (options?.strict) {
-          setErrorObj({ message: "검색할 제주그룹 회원 ID를 입력해라" });
+          setErrorObj({ message: "검색할 제주그룹 회원 ID를 입력해 주세요." });
         }
         return [];
       }

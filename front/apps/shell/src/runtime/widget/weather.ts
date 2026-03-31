@@ -2,6 +2,7 @@ let weatherInitialized = false;
 
 const DEFAULT_LAT = 37.5665;
 const DEFAULT_LON = 126.978;
+const WEATHER_API_PATH = "/api/weather";
 
 const getWeatherIconHtml = (iconCode: string, size: "small" | "large" = "small") => {
   const iconMap: Record<string, [string, string]> = {
@@ -26,19 +27,39 @@ const getWeatherIconHtml = (iconCode: string, size: "small" | "large" = "small")
   return `<i class="fa-solid ${iconClass}" style="color:${color};margin-right:4px;"></i>`;
 };
 
+const readWeatherErrorMessage = async (response: Response, fallbackMessage: string) => {
+  const bodyText = await response.text();
+
+  if (!bodyText.trim()) {
+    return fallbackMessage;
+  }
+
+  try {
+    const body = JSON.parse(bodyText);
+    const message = typeof body === "string" ? body : body?.message ?? body?.error ?? body?.detail ?? body?.msg;
+    if (typeof message === "string" && message.trim()) {
+      return message.trim();
+    }
+  } catch (_error) {
+    // 텍스트 응답이면 그대로 보여준다.
+  }
+
+  return bodyText.trim();
+};
+
 const fetchWeather = async (lat: number, lon: number) => {
-  const response = await fetch(`https://jejugroup.alwaysdata.net/api/weather?type=current&lat=${lat}&lon=${lon}`);
+  const response = await fetch(`${WEATHER_API_PATH}?type=current&lat=${lat}&lon=${lon}`);
   if (!response.ok) {
-    throw new Error(`weather fetch failed: ${response.status}`);
+    throw new Error(await readWeatherErrorMessage(response, `weather fetch failed: ${response.status}`));
   }
 
   return response.json();
 };
 
 const fetchPollution = async (lat: number, lon: number) => {
-  const response = await fetch(`https://jejugroup.alwaysdata.net/api/weather?type=pollution&lat=${lat}&lon=${lon}`);
+  const response = await fetch(`${WEATHER_API_PATH}?type=pollution&lat=${lat}&lon=${lon}`);
   if (!response.ok) {
-    throw new Error(`pollution fetch failed: ${response.status}`);
+    throw new Error(await readWeatherErrorMessage(response, `pollution fetch failed: ${response.status}`));
   }
 
   return response.json();
@@ -165,9 +186,9 @@ export const setupWeatherWidget = () => {
     }
 
     try {
-      const response = await fetch(`https://jejugroup.alwaysdata.net/api/weather?type=search&q=${encodeURIComponent(query)}`);
+      const response = await fetch(`${WEATHER_API_PATH}?type=search&q=${encodeURIComponent(query)}`);
       if (!response.ok) {
-        throw new Error(`city weather failed: ${response.status}`);
+        throw new Error(await readWeatherErrorMessage(response, `city weather failed: ${response.status}`));
       }
 
       const weather = await response.json();

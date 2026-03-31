@@ -6234,7 +6234,7 @@
     "countryEnglishLabel": "Brazil",
     "cityLabel": "벨렝",
     "cityEnglishLabel": "Belem",
-    "airportLabel": "발 드 � 국제공항",
+    "airportLabel": "발 데 칸즈 공항",
     "airportEnglishLabel": "Belem Val de Cans Airport",
     "iata": "BEL",
     "icao": "SBBE",
@@ -7922,7 +7922,7 @@
     "regionLabel": "아시아태평양",
     "countryLabel": "타지키스탄",
     "countryEnglishLabel": "Tajikistan",
-    "cityLabel": "쿠르곤�파",
+    "cityLabel": "쿠르곤테파",
     "cityEnglishLabel": "Qurghonteppa",
     "airportLabel": "보흐타르 국제공항",
     "airportEnglishLabel": "Bokhtar International Airport",
@@ -9781,13 +9781,13 @@
     "regionLabel": "유럽",
     "countryLabel": "프랑스",
     "countryEnglishLabel": "France",
-    "cityLabel": "칼레 蝸Ｅ�",
+    "cityLabel": "칼레 / 됭케르크",
     "cityEnglishLabel": "Calais-Dunkerque",
-    "airportLabel": "칼레 蝸Ｅ� 공항",
+    "airportLabel": "칼레 됭케르크 공항",
     "airportEnglishLabel": "Calais/Dunkerque Airport",
     "iata": "CQF",
     "icao": "LFAC",
-    "searchText": "calaisdunkerqueairportecqflfacfranceecalaisdunkerque"
+    "searchText": "calaisdunkerqueairportcqflfacfrancecalaisdunkerque"
   },
   {
     "region": "calama",
@@ -22849,10 +22849,10 @@
     "cityLabel": "죄르",
     "cityEnglishLabel": "Gyor",
     "airportLabel": "죄르페르 공항",
-    "airportEnglishLabel": "Gy�r-Per Airport",
+    "airportEnglishLabel": "Győr-Pér Airport",
     "iata": "QGY",
     "icao": "LHPR",
-    "searchText": "gyrperairportqgylhprhungarygyor"
+    "searchText": "gyorperairportqgylhprhungarygyor"
   },
   {
     "region": "ha-apai",
@@ -39915,13 +39915,13 @@
     "regionLabel": "아시아태평양",
     "countryLabel": "중국",
     "countryEnglishLabel": "China",
-    "cityLabel": "x양",
+    "cityLabel": "몐양",
     "cityEnglishLabel": "Mianyang",
-    "airportLabel": "x양 난자오 공항",
+    "airportLabel": "몐양 난자오 공항",
     "airportEnglishLabel": "Mianyang Nanjiao Airport",
     "iata": "MIG",
     "icao": "ZUMY",
-    "searchText": "mianyangnanjiaoairportxmigzumychinaxmianyang"
+    "searchText": "mianyangnanjiaoairportmigzumychinamianyang"
   },
   {
     "region": "macon",
@@ -71527,7 +71527,7 @@
       airportEnglishLabel: airport.airportEnglishLabel?.trim() || '',
       iata,
       icao: airport.icao?.trim() || '',
-      displayLabel: (cityLabel || airport.cityEnglishLabel || airport.airportEnglishLabel) + ' ? ' + airportLabel + (iata ? ' (' + iata + ')' : '')
+      displayLabel: (cityLabel || airport.cityEnglishLabel || airport.airportEnglishLabel) + ' · ' + airportLabel + (iata ? ' (' + iata + ')' : '')
     };
   };
 

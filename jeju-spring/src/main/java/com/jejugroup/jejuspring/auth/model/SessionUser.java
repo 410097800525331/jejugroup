@@ -5,6 +5,8 @@ import java.io.Serializable;
 public record SessionUser(
     String id,
     String name,
+    String email,
+    String phone,
     String role
 ) implements Serializable {
     private static final long serialVersionUID = 1L;

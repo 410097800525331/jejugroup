@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+Date: Tue, 31 Mar 2026 04:12:08 GMT
+Server: JBCS httpd
+Set-Cookie: JSESSIONID=2xs6S0TpT7yMv0H-VFjayaV6XpEW9cpJXNYOlehD.iros31; path=/
+Content-Length: 549978
+Content-Disposition: attachment; filename="국토교통부_세계공항정보_20251231.csv"
+Access-Control-Allow-Origin: *
+Content-Type: application/octet-stream; charset=UTF-8
+

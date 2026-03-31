@@ -26,7 +26,7 @@ export const MOCK_INQUIRIES: InquiryRecord[] = [
     content: "예약 확정 여부와 체크인 안내를 받고 싶어.",
     date: "2026.03.22",
     status: "completed",
-    reply: "예약이 확정되었고 체크인은 15시부터 가능해.",
+    reply: "예약이 확정되었고 체크인은 15시부터 가능합니다.",
     repliedAt: "2026.03.22",
   },
 ];

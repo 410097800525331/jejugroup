@@ -67,7 +67,7 @@ function formatApiDate(value?: string | null) {
 
 function getDisplayBody(notice: NoticeApi | null) {
   const body = notice?.content?.trim() || notice?.excerpt?.trim() || "";
-  return body.length > 0 ? body : "본문이 없어.";
+  return body.length > 0 ? body : "본문이 없습니다.";
 }
 
 export default function NoticeDetail() {
@@ -81,7 +81,7 @@ export default function NoticeDetail() {
   useEffect(() => {
     if (!noticeId) {
       setIsLoading(false);
-      setError("공지 ID가 없어.");
+      setError("공지 ID가 없습니다.");
       setNotice(null);
       return;
     }
@@ -109,11 +109,11 @@ export default function NoticeDetail() {
         }
 
         if (fetchError instanceof Error && "status" in fetchError && (fetchError as { status?: number }).status === 404) {
-          setError("해당 공지를 찾지 못했어.");
+          setError("해당 공지를 찾지 못했습니다.");
           return;
         }
 
-        setError(fetchError instanceof Error ? fetchError.message : "공지 상세를 불러오지 못했어.");
+        setError(fetchError instanceof Error ? fetchError.message : "공지 상세를 불러오지 못했습니다.");
       })
       .finally(() => {
         if (active) {
@@ -138,7 +138,7 @@ export default function NoticeDetail() {
   const serviceLabel = serviceTheme.label;
   const noticeTypeLabel = getNoticeTypeLabel(notice?.noticeType);
   const publishedAt = formatApiDate(notice?.publishedAt ?? notice?.createdAt ?? notice?.updatedAt);
-  const title = notice?.title?.trim() || "제목이 없어.";
+  const title = notice?.title?.trim() || "제목이 없습니다.";
   const ServiceIcon = serviceTheme.icon;
 
   return (
@@ -171,7 +171,7 @@ export default function NoticeDetail() {
           ) : error ? (
             <div className="bbs-detail-empty rounded-[2rem] border border-dashed border-gray-200 bg-gray-50 px-6 py-20 text-center">
               <p className="text-lg font-black text-gray-700">{error}</p>
-              <p className="mt-3 text-sm text-gray-400">잠깐 뒤에 다시 시도해줘.</p>
+              <p className="mt-3 text-sm text-gray-400">잠시 후 다시 시도해 주세요.</p>
               <div className="mt-8 flex items-center justify-center gap-3">
                 <button
                   type="button"
@@ -225,8 +225,8 @@ export default function NoticeDetail() {
             </article>
           ) : (
             <div className="bbs-detail-empty rounded-[2rem] border border-dashed border-gray-200 bg-gray-50 px-6 py-20 text-center">
-              <p className="text-lg font-black text-gray-700">공지 데이터가 없어.</p>
-              <p className="mt-3 text-sm text-gray-400">목록으로 돌아가서 다른 공지를 골라봐.</p>
+              <p className="text-lg font-black text-gray-700">공지 데이터가 없습니다.</p>
+              <p className="mt-3 text-sm text-gray-400">목록으로 돌아가 다른 공지를 확인해 주세요.</p>
               <div className="mt-8 flex items-center justify-center gap-3">
                 <Link href="/notices" className="inline-flex items-center gap-2 rounded-2xl bg-orange-500 px-6 py-3 font-black text-white shadow-lg shadow-orange-500/20">
                   목록으로

@@ -1,5 +1,6 @@
 import { initPremiumAnimations } from "./interactions/premiumAnimations.js";
 import { initScrollAnimations, initWishlistButtons } from "./interactions/commonInteractions.js";
+import { initMonthlyHotelDeals } from "./monthlyDeals.js";
 
 const initLegacyIcons = () => {
   if (window.lucide?.createIcons) {
@@ -28,4 +29,5 @@ export const initHotelPage = () => {
   initWishlistButtons();
   initScrollAnimations();
   initPremiumAnimationsWhenReady();
+  void initMonthlyHotelDeals();
 };

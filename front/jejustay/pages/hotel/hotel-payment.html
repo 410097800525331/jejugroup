@@ -528,6 +528,7 @@
         const adults = readNumber("adults", 1, 1);
         const children = readNumber("children", 0, 0);
         const rooms = readNumber("rooms", 1, 1);
+        const guests = adults + children;
         const checkInDate = parseDate(checkInRaw);
         const checkOutDate = parseDate(checkOutRaw);
         const rawNightCount = checkInDate && checkOutDate ? Math.round((checkOutDate - checkInDate) / 86400000) : 1;
@@ -629,7 +630,14 @@
                 return { firstName: "", lastName: "" };
             }
             if (parts.length === 1) {
-                return { firstName: parts[0], lastName: "" };
+                if (parts[0].length >= 2) {
+                    return {
+                        firstName: parts[0].slice(1),
+                        lastName: parts[0].slice(0, 1)
+                    };
+                }
+
+                return { firstName: parts[0], lastName: parts[0] };
             }
             return {
                 firstName: parts[0],
@@ -694,6 +702,68 @@
             }
 
             return null;
+        };
+
+        const readDashboardProfile = (payload) => {
+            if (!payload || typeof payload !== "object") {
+                return null;
+            }
+
+            const dashboard = payload.dashboard && typeof payload.dashboard === "object"
+                ? payload.dashboard
+                : payload;
+
+            const dashboardProfile = dashboard.profile && typeof dashboard.profile === "object"
+                ? dashboard.profile
+                : dashboard.snapshot && typeof dashboard.snapshot === "object" && dashboard.snapshot.profile && typeof dashboard.snapshot.profile === "object"
+                    ? dashboard.snapshot.profile
+                    : dashboard;
+
+            const name = normalizeText(
+                dashboardProfile.userName ||
+                dashboardProfile.name ||
+                dashboardProfile.displayName ||
+                dashboardProfile.memberName
+            );
+            const email = normalizeEmail(
+                dashboardProfile.email ||
+                dashboardProfile.userEmail ||
+                dashboardProfile.memberEmail ||
+                dashboardProfile.accountEmail
+            );
+            const phone = normalizeText(
+                dashboardProfile.phone ||
+                dashboardProfile.mobile ||
+                dashboardProfile.tel ||
+                dashboardProfile.phoneNumber ||
+                dashboardProfile.memberPhone
+            );
+
+            if (name || email || phone) {
+                return { name, email, phone };
+            }
+
+            return null;
+        };
+
+        const mergeProfiles = (...profiles) => {
+            const mergedProfile = {
+                name: "",
+                email: "",
+                phone: ""
+            };
+
+            profiles.forEach((profile) => {
+                if (!profile || typeof profile !== "object") {
+                    return;
+                }
+
+                mergedProfile.name ||= normalizeText(profile.name);
+                mergedProfile.email ||= normalizeEmail(profile.email);
+                mergedProfile.phone ||= normalizeText(profile.phone);
+            });
+
+            return mergedProfile.name || mergedProfile.email || mergedProfile.phone ? mergedProfile : null;
         };
 
         const applySessionProfile = (profile) => {
@@ -779,6 +849,38 @@
             return null;
         };
 
+        const fetchDashboardProfile = async () => {
+            try {
+                const response = await fetch("/api/mypage/dashboard", {
+                    method: "GET",
+                    credentials: "include",
+                    headers: {
+                        Accept: "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    return null;
+                }
+
+                const payload = await response.json();
+                return readDashboardProfile(payload);
+            } catch (error) {
+                console.warn("[HotelPayment] MyPage dashboard fetch failed:", error);
+            }
+
+            return null;
+        };
+
+        const fetchBestAvailableProfile = async () => {
+            const sessionProfile = await fetchSessionProfile();
+            if (sessionProfile?.name && sessionProfile?.email && sessionProfile?.phone) {
+                return sessionProfile;
+            }
+
+            return mergeProfiles(sessionProfile, await fetchDashboardProfile());
+        };
+
         const syncGuestFieldsFromSession = async () => {
             applySessionProfile(readSessionProfile(readStoredUserSession()));
 
@@ -798,13 +900,13 @@
                 return;
             }
 
-            applySessionProfile(await fetchSessionProfile());
+            applySessionProfile(await fetchBestAvailableProfile());
         };
 
         void syncGuestFieldsFromSession();
 
         const ensureSessionState = async () => {
-            const sessionProfile = await fetchSessionProfile();
+            const sessionProfile = await fetchBestAvailableProfile();
             sessionState.hasSession = Boolean(sessionProfile);
             sessionState.profile = sessionProfile;
             return sessionState;

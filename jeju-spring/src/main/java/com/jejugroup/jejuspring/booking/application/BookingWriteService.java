@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -145,6 +146,43 @@ public class BookingWriteService {
                 row.firstName(),
                 row.email()
             );
+        }
+    }
+
+    public BookingCancellationView cancelBooking(String bookingNo, SessionUser sessionUser) throws SQLException {
+        if (sessionUser == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
+
+        String normalizedBookingNo = requireBookingNo(bookingNo);
+        String normalizedUserId = normalizeSessionUserId(sessionUser.id());
+
+        try (Connection connection = openConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                BookingCommandRepository.BookingCancellationRow booking =
+                    bookingCommandRepository.loadBookingForCancellation(connection, normalizedBookingNo);
+
+                if (booking.userId() == null || !normalizedUserId.equals(booking.userId().trim())) {
+                    throw new BookingAccessDeniedException("권한이 없습니다.");
+                }
+
+                if (!isCancellableBooking(booking.status(), booking.paymentStatus(), booking.cancelledAt())) {
+                    throw new BookingConflictException("이미 취소된 예약입니다.");
+                }
+
+                LocalDateTime cancelledAt = LocalDateTime.now();
+                int updatedRows = bookingCommandRepository.cancelBooking(connection, booking.id(), cancelledAt);
+                if (updatedRows != 1) {
+                    throw new BookingConflictException("취소할 수 없는 예약입니다.");
+                }
+
+                connection.commit();
+                return new BookingCancellationView(booking.bookingNo(), "cancelled", cancelledAt);
+            } catch (SQLException | RuntimeException exception) {
+                rollbackQuietly(connection);
+                throw exception;
+            }
         }
     }
 
@@ -358,6 +396,14 @@ public class BookingWriteService {
         return userId.trim();
     }
 
+    private String requireBookingNo(String bookingNo) {
+        if (!StringUtils.hasText(bookingNo)) {
+            throw new IllegalArgumentException("예약 번호가 필요합니다.");
+        }
+
+        return bookingNo.trim();
+    }
+
     private String firstText(String... values) {
         for (String value : values) {
             if (StringUtils.hasText(value)) {
@@ -445,6 +491,38 @@ public class BookingWriteService {
         };
     }
 
+    private boolean isCancellableBooking(String status, String paymentStatus, LocalDateTime cancelledAt) {
+        if (cancelledAt != null) {
+            return false;
+        }
+
+        return !isTerminalStatus(status) && !isTerminalPaymentStatus(paymentStatus);
+    }
+
+    private boolean isTerminalStatus(String status) {
+        if (!StringUtils.hasText(status)) {
+            return false;
+        }
+
+        String normalized = status.trim().toLowerCase();
+        return switch (normalized) {
+            case "cancelled", "canceled", "failed", "completed", "used", "missed", "refunded" -> true;
+            default -> false;
+        };
+    }
+
+    private boolean isTerminalPaymentStatus(String paymentStatus) {
+        if (!StringUtils.hasText(paymentStatus)) {
+            return false;
+        }
+
+        String normalized = paymentStatus.trim().toLowerCase();
+        return switch (normalized) {
+            case "cancelled", "canceled", "failed", "refunded", "partial_refund", "chargeback" -> true;
+            default -> false;
+        };
+    }
+
     private String normalize(String value) {
         return value == null ? "" : value.trim();
     }
@@ -470,5 +548,24 @@ public class BookingWriteService {
         String lastName,
         String firstName
     ) {
+    }
+
+    public record BookingCancellationView(
+        String bookingNo,
+        String status,
+        LocalDateTime cancelledAt
+    ) {
+    }
+
+    public static class BookingConflictException extends RuntimeException {
+        public BookingConflictException(String message) {
+            super(message);
+        }
+    }
+
+    public static class BookingAccessDeniedException extends RuntimeException {
+        public BookingAccessDeniedException(String message) {
+            super(message);
+        }
     }
 }

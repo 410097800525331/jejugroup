@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -14,6 +15,8 @@ import com.jejugroup.jejuspring.config.AppProperties;
 
 @Service
 public class SupportAccessPolicy extends SupportDatabaseSupport {
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public SupportAccessPolicy(AppProperties appProperties) {
         super(appProperties);
     }
@@ -30,6 +33,30 @@ public class SupportAccessPolicy extends SupportDatabaseSupport {
 
     public boolean canAccessTicket(SessionUser user, TicketRow ticket) {
         return isAdmin(user) || Objects.equals(requireText(user.id(), "userId"), ticket.userId());
+    }
+
+    public boolean isTicketOwner(SessionUser user, TicketRow ticket) {
+        return user != null && StringUtils.hasText(user.id()) && Objects.equals(user.id().trim(), ticket.userId());
+    }
+
+    public void requireOwnerPassword(Connection connection, SessionUser user, TicketRow ticket, String password) throws SQLException {
+        if (isAdmin(user)) {
+            return;
+        }
+
+        if (!isTicketOwner(user, ticket)) {
+            throw new ForbiddenOperationException("이 문의를 수정할 권한이 없어.");
+        }
+
+        String requestedPassword = normalizeNullable(password);
+        if (!StringUtils.hasText(requestedPassword)) {
+            throw new IllegalArgumentException("비밀번호를 입력해줘.");
+        }
+
+        String storedPassword = loadUserPasswordHash(connection, requireText(user.id(), "userId"));
+        if (!StringUtils.hasText(storedPassword) || !passwordEncoder.matches(requestedPassword, storedPassword)) {
+            throw new ForbiddenOperationException("비밀번호가 일치하지 않아.");
+        }
     }
 
     public TicketRow requireTicketAccess(Connection connection, SessionUser user, long ticketId) throws SQLException {
@@ -84,6 +111,22 @@ public class SupportAccessPolicy extends SupportDatabaseSupport {
                     normalizeNullable(resultSet.getString("category_name")),
                     normalizeNullable(resultSet.getString("category_description"))
                 );
+            }
+        }
+    }
+
+    private String loadUserPasswordHash(Connection connection, String userId) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("""
+            SELECT pw
+            FROM users
+            WHERE id = ?
+            """)) {
+            statement.setString(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return null;
+                }
+                return normalizeNullable(resultSet.getString("pw"));
             }
         }
     }

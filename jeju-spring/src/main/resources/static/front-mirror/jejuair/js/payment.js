@@ -617,23 +617,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const journey = getJourneyState();
 
     if (!journey.travelDate && journey.tripType !== "multi") {
-      alert("예약 가능 여부 페이지에서 출발일을 다시 선택해줘.");
+      alert("예약 가능 여부 페이지에서 출발일을 다시 선택해 주세요.");
       return false;
     }
 
     if (!journey.departure || !journey.destination) {
-      alert("예약 가능 여부 페이지에서 출발지와 도착지를 다시 선택해줘.");
+      alert("예약 가능 여부 페이지에서 출발지와 도착지를 다시 선택해 주세요.");
       return false;
     }
 
     if (journey.tripType === "round" && !journey.returnDate) {
-      alert("예약 가능 여부 페이지에서 왕복 일정을 다시 선택해줘.");
+      alert("예약 가능 여부 페이지에서 왕복 일정을 다시 선택해 주세요.");
       return false;
     }
 
     if (journey.tripType === "multi") {
       if (!journey.segments.length) {
-        alert("예약 가능 여부 페이지에서 다구간 여정을 다시 선택해줘.");
+        alert("예약 가능 여부 페이지에서 다구간 여정을 다시 선택해 주세요.");
         return false;
       }
 
@@ -642,7 +642,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ));
 
       if (hasInvalidSegment) {
-        alert("예약 가능 여부 페이지에서 다구간 여정을 다시 선택해줘.");
+        alert("예약 가능 여부 페이지에서 다구간 여정을 다시 선택해 주세요.");
         return false;
       }
     }
@@ -656,13 +656,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const lookup = getGuestLookup();
 
     if (!lookup.bookerLastName || !lookup.bookerFirstName) {
-      alert("예약자 성과 이름을 입력해주세요.");
+      alert("예약자 성과 이름을 입력해 주세요.");
       guestBookerLastNameInput.focus();
       return false;
     }
 
     if (!lookup.passengerLastName || !lookup.passengerFirstName) {
-      alert("탑승객 성과 이름을 입력해주세요.");
+      alert("탑승객 성과 이름을 입력해 주세요.");
       guestPassengerLastNameInput.focus();
       return false;
     }
@@ -674,7 +674,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const method = getSelectedMethod();
 
     if (!agreeTermsInput.checked) {
-      alert("결제 약관에 동의해주세요.");
+      alert("결제 약관에 동의해 주세요.");
       return false;
     }
 
@@ -683,32 +683,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (method === "card") {
       if (digitsOnly(cardNumberInput.value).length !== 16) {
-        alert("카드 번호를 정확히 입력해주세요.");
+        alert("카드 번호를 정확히 입력해 주세요.");
         cardNumberInput.focus();
         return false;
       }
 
       if (!cardHolderInput.value.trim()) {
-        alert("카드 소유자명을 입력해주세요.");
+        alert("카드 소유자명을 입력해 주세요.");
         cardHolderInput.focus();
         return false;
       }
 
       if (!/^\d{2}\/\d{2}$/.test(cardExpiryInput.value)) {
-        alert("유효기간을 MM/YY 형식으로 입력해주세요.");
+        alert("유효기간을 MM/YY 형식으로 입력해 주세요.");
         cardExpiryInput.focus();
         return false;
       }
 
       if (digitsOnly(cardCvvInput.value).length !== 3) {
-        alert("CVV 3자리를 입력해주세요.");
+        alert("CVV 3자리를 입력해 주세요.");
         cardCvvInput.focus();
         return false;
       }
     }
 
     if (method === "mobile" && digitsOnly(mobileNumberInput.value).length < 10) {
-      alert("휴대폰 번호를 정확히 입력해주세요.");
+      alert("휴대폰 번호를 정확히 입력해 주세요.");
       mobileNumberInput.focus();
       return false;
     }

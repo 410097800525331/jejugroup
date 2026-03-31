@@ -23,13 +23,13 @@ $(document).ready(function () {
           <div class="ticketing_target">
             <div class="input_box">
               <label>출발지</label>
-              <input type="text" placeholder="선택">
+              <input type="text" placeholder="선택해 주세요">
               <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
             <div class="arrow_btn"><img src="assets/img/ico-arrow.svg" alt="icon"></div>
             <div class="input_box">
               <label>도착지</label>
-              <input type="text" placeholder="선택">
+              <input type="text" placeholder="선택해 주세요">
               <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
           </div>
@@ -38,13 +38,13 @@ $(document).ready(function () {
           <div class="ticketing_target">
             <div class="input_box">
               <label>출발지</label>
-              <input type="text" placeholder="선택">
+              <input type="text" placeholder="선택해 주세요">
               <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
             <div class="arrow_btn"><img src="assets/img/ico-arrowB.svg" alt="icon"></div>
             <div class="input_box">
               <label>도착지</label>
-              <input type="text" placeholder="선택">
+              <input type="text" placeholder="선택해 주세요">
               <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
           </div>
@@ -56,7 +56,7 @@ $(document).ready(function () {
           <div class="ticketing_target">
             <div class="input_box">
               <label>탑승일</label>
-              <input type="text" class="date_input" placeholder="선택" readonly>
+              <input type="text" class="date_input" placeholder="선택해 주세요" readonly>
               <span class="stay_info"></span>
               <img src="assets/img/ico_cal.svg" alt="icon">
             </div>
@@ -77,7 +77,7 @@ $(document).ready(function () {
           </div>
           <div class="discount_row">
             <label>할인 방법</label>
-            <input class="discount_input" placeholder="프로모션 코드를 입력해주세요!">
+            <input class="discount_input" placeholder="프로모션 코드를 입력해 주세요!">
             <button class="coupon_btn">운임 할인 쿠폰 ></button>
           </div>
           <div class="search">
@@ -114,16 +114,16 @@ $(document).ready(function () {
             <br>
             <div class="input_box">
               <label>탑승일</label>
-              <input type="text" class="date_input" placeholder="선택" readonly>
+              <input type="text" class="date_input" placeholder="선택해 주세요" readonly>
               <span class="stay_info"></span>
               <img src="assets/img/ico_cal.svg" alt="icon">
             </div>
           </div>
           <ul class="reserve_msg">
             <li>- 여행사, 공항, 고객센터, 비회원 예약 고객님도 조회 가능합니다.</li>
-            <li>- 예약시 입력한 탑승객명을 입력해주세요.</li>
-            <li>- 국제선의 경우 영문명을 입력해주세요.</li>
-            <li>- 2명 이상 예약 조회는 <a href="#">여기</a>를 클릭해주세요.</li>
+            <li>- 예약 시 입력한 탑승객명을 입력해 주세요.</li>
+            <li>- 국제선의 경우 영문명을 입력해 주세요.</li>
+            <li>- 2명 이상 예약 조회는 <a href="#">여기</a>를 클릭해 주세요.</li>
           </ul>
           <div class="search">
             <button type="button" class="search_btn">예약 조회</button>
@@ -141,13 +141,13 @@ $(document).ready(function () {
           <div class="ticketing_target">
             <div class="input_box">
               <label>출발지</label>
-              <input type="text" placeholder="선택">
+              <input type="text" placeholder="선택해 주세요">
               <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
             <div class="arrow_btn"></div>
             <div class="input_box">
               <label>도착지</label>
-              <input type="text" placeholder="선택">
+              <input type="text" placeholder="선택해 주세요">
               <img src="assets/img/ico_loc.svg" alt="icon">
             </div>
           </div>
@@ -159,7 +159,7 @@ $(document).ready(function () {
           <div class="ticketing_target">
             <div class="input_box">
               <label>탑승일</label>
-              <input type="text" class="date_input" placeholder="선택" readonly>
+              <input type="text" class="date_input" placeholder="선택해 주세요" readonly>
               <span class="stay_info"></span>
               <img src="assets/img/ico_cal.svg" alt="icon">
             </div>
@@ -178,7 +178,7 @@ $(document).ready(function () {
           <div class="ticketing_target">
             <div class="input_box">
               <label>탑승일</label>
-              <input type="text" class="date_input" placeholder="선택" readonly>
+              <input type="text" class="date_input" placeholder="선택해 주세요" readonly>
               <span class="stay_info"></span>
               <img src="assets/img/ico_cal.svg" alt="icon">
             </div>

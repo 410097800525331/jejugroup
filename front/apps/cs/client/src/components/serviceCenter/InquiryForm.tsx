@@ -14,13 +14,13 @@ const sanitizeInput = (value: string) => value.replace(/[<>]/g, "");
 const inquirySchema = z
   .object({
     service: z.enum(["jeju-air", "jeju-stay", "jeju-rental", "common"]),
-    inquiryType: z.string().min(1, "문의 유형을 선택해줘."),
-    name: z.string().min(2, "이름은 최소 2글자 이상이어야 해.").max(20, "이름은 20자 이내여야 해."),
-    email: z.string().email("유효한 이메일 주소를 입력해줘."),
-    phone: z.string().min(10, "연락처를 올바르게 입력해줘."),
-    title: z.string().min(5, "제목은 최소 5자 이상이어야 해.").max(100, "제목은 100자 이내여야 해."),
-    content: z.string().min(10, "상세 내용은 최소 10자 이상 작성해줘.").max(5000, "상세 내용은 5,000자 이내여야 해."),
-    agreement: z.boolean().refine((value) => value === true, "개인정보 수집 및 이용에 동의해줘."),
+    inquiryType: z.string().min(1, "문의 유형을 선택해 주세요."),
+    name: z.string().min(2, "이름은 최소 2글자 이상이어야 합니다.").max(20, "이름은 20자 이내여야 합니다."),
+    email: z.string().email("유효한 이메일 주소를 입력해 주세요."),
+    phone: z.string().min(10, "연락처를 올바르게 입력해 주세요."),
+    title: z.string().min(5, "제목은 최소 5자 이상이어야 합니다.").max(100, "제목은 100자 이내여야 합니다."),
+    content: z.string().min(10, "문의 내용은 최소 10자 이상 작성해 주세요.").max(5000, "문의 내용은 5,000자 이내여야 합니다."),
+    agreement: z.boolean().refine((value) => value === true, "개인정보 수집 및 이용에 동의해 주세요."),
   })
   .superRefine((data, ctx) => {
     const allowedInquiryTypes = INQUIRY_TYPES[data.service] ?? [];
@@ -30,7 +30,7 @@ const inquirySchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["inquiryType"],
-        message: "현재 서비스와 맞지 않는 문의 유형이야. 다시 골라줘.",
+        message: "현재 선택하신 서비스와 맞지 않는 문의 유형입니다. 다시 선택해 주세요.",
       });
     }
   });
@@ -101,7 +101,7 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
     setSubmitError(null);
 
     if (!isAuthenticated) {
-      setSubmitError("로그인해야 문의를 등록할 수 있어.");
+      setSubmitError("로그인이 필요하여 문의를 등록할 수 없습니다.");
       return;
     }
 
@@ -140,7 +140,7 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
       });
       void onSubmitted?.();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "문의 작성에 실패했어. 잠시 후 다시 시도해줘.");
+      setSubmitError(error instanceof Error ? error.message : "문의 작성에 실패했습니다. 잠시 후 다시 시도해 주세요.");
     }
   };
 
@@ -148,14 +148,14 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
     <div className="inquiry-form-container">
       <header className="inquiry-form-header">
         <h2>1:1 문의하기</h2>
-        <p>문의 내용을 적어주면 담당자가 확인하고 답변을 남겨줘.</p>
+        <p>문의 내용을 입력해 주시면 담당자가 확인 후 답변을 남겨 드립니다.</p>
         {isAuthenticated && user ? (
           <div style={{ marginTop: "10px", fontSize: "0.9rem", color: "#ff6000", fontWeight: 700 }}>
-            {user.name} 계정으로 작성 중이야.
+            {user.name} 계정으로 작성 중입니다.
           </div>
         ) : (
           <div style={{ marginTop: "10px", fontSize: "0.9rem", color: "#b45309", fontWeight: 700 }}>
-            로그인하지 않아도 문의 작성은 가능해.
+            로그인하지 않아도 문의 작성은 가능합니다.
           </div>
         )}
         {submitError ? (
@@ -192,7 +192,7 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
           <div className="inquiry-form-group">
             <label htmlFor="inquiryType">문의 유형</label>
             <select id="inquiryType" {...register("inquiryType")}>
-              <option value="">문의 유형 선택</option>
+              <option value="">문의 유형을 선택해 주세요</option>
               {currentInquiryTypes.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -206,7 +206,7 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
             <>
               <div className="inquiry-form-group">
                 <label htmlFor="name">이름</label>
-                <input id="name" type="text" placeholder="이름 입력" {...register("name")} />
+                <input id="name" type="text" placeholder="이름을 입력해 주세요" {...register("name")} />
                 {errors.name ? <span className="inquiry-error-text">{errors.name.message}</span> : null}
               </div>
 
@@ -226,13 +226,13 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
 
           <div className="inquiry-form-group full-width">
             <label htmlFor="title">제목</label>
-            <input id="title" type="text" placeholder="문의 제목 입력 (최소 5자)" {...register("title")} />
+            <input id="title" type="text" placeholder="문의 제목을 입력해 주세요 (최소 5자)" {...register("title")} />
             {errors.title ? <span className="inquiry-error-text">{errors.title.message}</span> : null}
           </div>
 
           <div className="inquiry-form-group full-width">
             <label htmlFor="content">문의 내용</label>
-            <textarea id="content" placeholder="상세한 문의 내용을 작성해줘 (최대 5,000자)" {...register("content")} />
+            <textarea id="content" placeholder="문의 내용을 자세히 작성해 주세요 (최대 5,000자)" {...register("content")} />
             {errors.content ? <span className="inquiry-error-text">{errors.content.message}</span> : null}
           </div>
 
@@ -250,8 +250,8 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
                 <br />
                 <br />
                 {isAuthenticated
-                  ? "기존 회원 정보가 있는 경우 개인정보 수집 및 이용에 동의한 것으로 간주해 문의를 진행해."
-                  : "회원이 아닌 경우 개인정보 수집 및 이용에 대한 동의가 필요해. 내용 목적 이해를 위해서만 사용해."}
+                  ? "기존 회원 정보가 있는 경우 개인정보 수집 및 이용에 동의하신 것으로 간주하여 문의를 진행합니다."
+                  : "회원이 아닌 경우 개인정보 수집 및 이용에 대한 동의가 필요합니다. 내용 확인 목적으로만 사용합니다."}
               </div>
               <label className="inquiry-checkbox-group">
                 <input type="checkbox" {...register("agreement")} />
@@ -264,7 +264,7 @@ export default function InquiryForm({ onSubmitted }: InquiryFormProps) {
 
         <div className="inquiry-form-group full-width">
           <button type="submit" className="inquiry-submit-btn" disabled={!isAuthenticated || isSubmitting || !isValid}>
-            {isSubmitting ? "작성 중..." : isAuthenticated ? "1:1 문의 등록하기" : "로그인 필요"}
+            {isSubmitting ? "작성 중..." : isAuthenticated ? "1:1 문의 등록" : "로그인이 필요합니다"}
           </button>
         </div>
       </form>

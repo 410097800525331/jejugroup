@@ -38,6 +38,10 @@ class BookingApiControllerIntegrationTests extends IntegrationTestDatabaseProper
     private static final String MEMBER_USER_NAME = "Booking Member";
     private static final String MEMBER_USER_EMAIL = "booking.member@example.com";
     private static final String MEMBER_USER_PHONE = "010-1111-1111";
+    private static final String OTHER_MEMBER_USER_ID = "booking-member-other";
+    private static final String OTHER_MEMBER_USER_NAME = "Booking Member Other";
+    private static final String OTHER_MEMBER_USER_EMAIL = "booking.member.other@example.com";
+    private static final String OTHER_MEMBER_USER_PHONE = "010-2222-2222";
     private static final String MEMBER_DESTINATION = "Booking Test Destination Member";
     private static final String GUEST_DESTINATION = "Booking Test Destination Guest";
     private static final String STAY_DESTINATION = "Booking Test Destination Stay";
@@ -134,6 +138,8 @@ class BookingApiControllerIntegrationTests extends IntegrationTestDatabaseProper
             jdbcTemplate.update("DELETE FROM bookings WHERE destination IN (?, ?, ?, ?)", MEMBER_DESTINATION, GUEST_DESTINATION, STAY_DESTINATION, LEGACY_DESTINATION);
             jdbcTemplate.update("DELETE FROM user_profiles WHERE user_id = ?", MEMBER_USER_ID);
             jdbcTemplate.update("DELETE FROM users WHERE id = ?", MEMBER_USER_ID);
+            jdbcTemplate.update("DELETE FROM user_profiles WHERE user_id = ?", OTHER_MEMBER_USER_ID);
+            jdbcTemplate.update("DELETE FROM users WHERE id = ?", OTHER_MEMBER_USER_ID);
         } finally {
             jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1");
         }
@@ -144,7 +150,7 @@ class BookingApiControllerIntegrationTests extends IntegrationTestDatabaseProper
         seedMemberUser();
 
         MvcResult checkoutResult = mockMvc.perform(post("/api/booking/checkout")
-                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "USER"))
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(newCheckoutJson(
                     MEMBER_DESTINATION,
@@ -220,16 +226,188 @@ class BookingApiControllerIntegrationTests extends IntegrationTestDatabaseProper
         )).isEqualTo(1L);
 
         mockMvc.perform(get("/api/booking/me")
-                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "USER")))
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.bookings[0].bookingNo").value(bookingNo))
             .andExpect(jsonPath("$.data.bookings[0].bookingType").value("air"));
 
         mockMvc.perform(get("/api/mypage/dashboard")
-                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "USER")))
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.dashboard.bookings[0].title").value(MEMBER_DESTINATION + " 항공권"))
             .andExpect(jsonPath("$.dashboard.bookings[0].amount").exists());
+    }
+
+    @Test
+    void memberCanCancelOwnBookingAndMypageReadsReflectCancelledState() throws Exception {
+        seedMemberUser();
+
+        MvcResult checkoutResult = mockMvc.perform(post("/api/booking/checkout")
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newCheckoutJson(
+                    MEMBER_DESTINATION,
+                    TRAVEL_DATE,
+                    129000,
+                    110000,
+                    19000,
+                    true,
+                    "Kim",
+                    "Minji",
+                    "Kim",
+                    "Minji",
+                    "card",
+                    "toss",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                )))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        String bookingNo = JsonPath.read(checkoutResult.getResponse().getContentAsString(), "$.data.bookingNo");
+
+        mockMvc.perform(post("/api/booking/{bookingNo}/cancel", bookingNo)
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.message").value("예약이 취소되었습니다."))
+            .andExpect(jsonPath("$.data.bookingNo").value(bookingNo))
+            .andExpect(jsonPath("$.data.status").value("cancelled"))
+            .andExpect(jsonPath("$.data.cancelledAt").exists());
+
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT status FROM bookings WHERE booking_no = ?",
+            String.class,
+            bookingNo
+        )).isEqualTo("cancelled");
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT payment_status FROM bookings WHERE booking_no = ?",
+            String.class,
+            bookingNo
+        )).isEqualTo("cancelled");
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT cancelled_at IS NOT NULL FROM bookings WHERE booking_no = ?",
+            Boolean.class,
+            bookingNo
+        )).isTrue();
+
+        mockMvc.perform(get("/api/booking/me")
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.bookings[0].bookingNo").value(bookingNo))
+            .andExpect(jsonPath("$.data.bookings[0].status").value("cancelled"))
+            .andExpect(jsonPath("$.data.bookings[0].cancelledAt").exists());
+    }
+
+    @Test
+    void memberCannotCancelAnotherMembersBooking() throws Exception {
+        seedMemberUser();
+        seedOtherMemberUser();
+
+        MvcResult checkoutResult = mockMvc.perform(post("/api/booking/checkout")
+                .sessionAttr("user", new SessionUser(OTHER_MEMBER_USER_ID, OTHER_MEMBER_USER_NAME, "", "", "USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newCheckoutJson(
+                    MEMBER_DESTINATION,
+                    TRAVEL_DATE,
+                    129000,
+                    110000,
+                    19000,
+                    true,
+                    "Han",
+                    "Jisoo",
+                    "Han",
+                    "Jisoo",
+                    "card",
+                    "toss",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                )))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        String bookingNo = JsonPath.read(checkoutResult.getResponse().getContentAsString(), "$.data.bookingNo");
+
+        mockMvc.perform(post("/api/booking/{bookingNo}/cancel", bookingNo)
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER")))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.message").value("권한이 없습니다."));
+
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT status FROM bookings WHERE booking_no = ?",
+            String.class,
+            bookingNo
+        )).isEqualTo("confirmed");
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT payment_status FROM bookings WHERE booking_no = ?",
+            String.class,
+            bookingNo
+        )).isEqualTo("paid");
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT cancelled_at IS NOT NULL FROM bookings WHERE booking_no = ?",
+            Boolean.class,
+            bookingNo
+        )).isFalse();
+    }
+
+    @Test
+    void alreadyCancelledBookingIsRejectedSafely() throws Exception {
+        seedMemberUser();
+
+        MvcResult checkoutResult = mockMvc.perform(post("/api/booking/checkout")
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newCheckoutJson(
+                    MEMBER_DESTINATION,
+                    TRAVEL_DATE,
+                    129000,
+                    110000,
+                    19000,
+                    true,
+                    "Kim",
+                    "Minji",
+                    "Kim",
+                    "Minji",
+                    "card",
+                    "toss",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                )))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        String bookingNo = JsonPath.read(checkoutResult.getResponse().getContentAsString(), "$.data.bookingNo");
+
+        mockMvc.perform(post("/api/booking/{bookingNo}/cancel", bookingNo)
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER")))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(post("/api/booking/{bookingNo}/cancel", bookingNo)
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER")))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.message").value("이미 취소된 예약입니다."));
+
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT status FROM bookings WHERE booking_no = ?",
+            String.class,
+            bookingNo
+        )).isEqualTo("cancelled");
+        assertThat(jdbcTemplate.queryForObject(
+            "SELECT payment_status FROM bookings WHERE booking_no = ?",
+            String.class,
+            bookingNo
+        )).isEqualTo("cancelled");
     }
 
     @Test
@@ -237,7 +415,7 @@ class BookingApiControllerIntegrationTests extends IntegrationTestDatabaseProper
         seedMemberUser();
 
         MvcResult checkoutResult = mockMvc.perform(post("/api/booking/checkout")
-                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "USER"))
+                .sessionAttr("user", new SessionUser(MEMBER_USER_ID, MEMBER_USER_NAME, "", "", "USER"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(newCheckoutJson(
                     MEMBER_DESTINATION,
@@ -452,6 +630,24 @@ class BookingApiControllerIntegrationTests extends IntegrationTestDatabaseProper
     }
 
     private void seedMemberUser() {
+        seedUser(
+            MEMBER_USER_ID,
+            MEMBER_USER_NAME,
+            MEMBER_USER_EMAIL,
+            MEMBER_USER_PHONE
+        );
+    }
+
+    private void seedOtherMemberUser() {
+        seedUser(
+            OTHER_MEMBER_USER_ID,
+            OTHER_MEMBER_USER_NAME,
+            OTHER_MEMBER_USER_EMAIL,
+            OTHER_MEMBER_USER_PHONE
+        );
+    }
+
+    private void seedUser(String userId, String name, String email, String phone) {
         jdbcTemplate.update(
             """
             INSERT INTO users (id, pw, name, phone, email, birth_date, gender, provider, role)
@@ -466,11 +662,11 @@ class BookingApiControllerIntegrationTests extends IntegrationTestDatabaseProper
                 provider = VALUES(provider),
                 role = VALUES(role)
             """,
-            MEMBER_USER_ID,
+            userId,
             "encoded-password",
-            MEMBER_USER_NAME,
-            MEMBER_USER_PHONE,
-            MEMBER_USER_EMAIL,
+            name,
+            phone,
+            email,
             Date.valueOf(LocalDate.of(1991, 3, 3)),
             "F",
             "PASS",
@@ -484,8 +680,8 @@ class BookingApiControllerIntegrationTests extends IntegrationTestDatabaseProper
             ON DUPLICATE KEY UPDATE
                 display_name = VALUES(display_name)
             """,
-            MEMBER_USER_ID,
-            MEMBER_USER_NAME
+            userId,
+            name
         );
     }
 

@@ -50,8 +50,21 @@ public class AuthSessionService {
             return null;
         }
 
-        activeUserPresenceService.touch(session.getId(), user);
-        return user;
+        SessionUser resolvedUser = user;
+        if (needsProfileRefresh(user)) {
+            try {
+                SessionUser refreshedUser = loadSessionUserById(user.id());
+                if (refreshedUser != null) {
+                    session.setAttribute("user", refreshedUser);
+                    resolvedUser = refreshedUser;
+                }
+            } catch (SQLException exception) {
+                System.err.println("[AuthSession] Session refresh failed: " + exception.getMessage());
+            }
+        }
+
+        activeUserPresenceService.touch(session.getId(), resolvedUser);
+        return resolvedUser;
     }
 
     public void logout(HttpSession session) {
@@ -61,7 +74,7 @@ public class AuthSessionService {
     }
 
     private SessionUser authenticate(String id, String plainPw) throws SQLException {
-        String query = "SELECT id, pw, name, role FROM users WHERE id = ?";
+        String query = "SELECT id, pw, name, email, phone, role FROM users WHERE id = ?";
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, id);
@@ -79,10 +92,38 @@ public class AuthSessionService {
                 return new SessionUser(
                     resultSet.getString("id"),
                     resultSet.getString("name"),
+                    resultSet.getString("email"),
+                    resultSet.getString("phone"),
                     resultSet.getString("role")
                 );
             }
         }
+    }
+
+    private SessionUser loadSessionUserById(String id) throws SQLException {
+        String query = "SELECT id, name, email, phone, role FROM users WHERE id = ?";
+        try (Connection connection = openConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, id);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return null;
+                }
+
+                return new SessionUser(
+                    resultSet.getString("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("email"),
+                    resultSet.getString("phone"),
+                    resultSet.getString("role")
+                );
+            }
+        }
+    }
+
+    private boolean needsProfileRefresh(SessionUser user) {
+        return !StringUtils.hasText(user.email()) || !StringUtils.hasText(user.phone());
     }
 
     private Connection openConnection() throws SQLException {

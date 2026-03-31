@@ -1,10 +1,8 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+﻿import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Circle } from "lucide-react";
 
 import FAQItem from "@/components/serviceCenter/FAQItem";
-import InquirySupportAttachments from "@/components/serviceCenter/InquirySupportAttachments";
-import InquirySupportComments from "@/components/serviceCenter/InquirySupportComments";
 import NoticeListItem from "@/components/serviceCenter/NoticeListItem";
 import { createNotice, updateFaq, updateNotice } from "@/lib/serviceCenterApi";
 import Inquiries from "@/pages/Inquiries";
@@ -42,6 +40,19 @@ const memberAuth = {
   sessionError: null,
 };
 
+const adminAuth = {
+  user: {
+    id: "admin-1",
+    name: "Admin",
+    role: "ADMIN",
+    roles: ["ADMIN"],
+    isLocalAdmin: true,
+  },
+  isAuthenticated: true,
+  sessionState: "success",
+  sessionError: null,
+};
+
 const jsonResponse = (payload: unknown, init: ResponseInit = {}) =>
   ({
     ok: (init.status ?? 200) >= 200 && (init.status ?? 200) < 300,
@@ -69,12 +80,49 @@ const makeFetchMock = () =>
       return emptyJsonResponse({ status: 204 });
     }
 
-    if (url.includes("/attachments")) {
-      if (method === "GET") {
-        return jsonResponse({ attachments: [] });
+    if (url.includes("/api/customer-center/support/tickets/")) {
+      if (method === "PUT") {
+        return jsonResponse({
+          ticket: {
+            id: 101,
+            userId: "user-1",
+            serviceType: "common",
+            inquiryType: "general",
+            inquiryTypeCode: "general",
+            requesterName: "User",
+            requesterEmail: "user@example.com",
+            requesterPhone: "01012345678",
+            title: "Edited title",
+            content: "Edited content",
+            status: "pending",
+            priority: "normal",
+          },
+        });
       }
 
-      return emptyJsonResponse({ status: 204 });
+      if (method === "DELETE") {
+        return jsonResponse({ deleted: true, ticketId: 101, entity: "ticket" });
+      }
+
+      if (method === "GET") {
+        return jsonResponse({
+          ticket: {
+            id: 101,
+            userId: "user-1",
+            serviceType: "common",
+            inquiryType: "general",
+            inquiryTypeCode: "general",
+            requesterName: "User",
+            requesterEmail: "user@example.com",
+            requesterPhone: "01012345678",
+            title: "Sample inquiry",
+            content: "Sample content",
+            status: "pending",
+            priority: "normal",
+            comments: [],
+          },
+        });
+      }
     }
 
     if (url.includes("/api/customer-center/faqs/")) {
@@ -313,27 +361,215 @@ describe("ServiceCenter regressions", () => {
     );
   });
 
-  it("renders the inquiry support comment and attachment sections for the owner path", async () => {
+  it("renders the inquiry detail comments without the attachment panel and supports password-gated actions", async () => {
     mocks.useAuth.mockReturnValue(memberAuth);
+    mocks.listMyTickets.mockResolvedValue({
+      ok: true,
+      status: 200,
+      data: [
+        {
+          id: 101,
+          title: "Sample inquiry",
+          status: "pending",
+          serviceType: "common",
+          inquiryType: "general",
+          content: "Sample content",
+          createdAt: "2026-03-23T00:00:00Z",
+          userId: "user-1",
+        },
+      ],
+      error: null,
+    });
+    mocks.getTicketDetail.mockResolvedValue({
+      ok: true,
+      status: 200,
+      data: {
+        id: 101,
+        ticketId: 101,
+        userId: "user-1",
+        serviceType: "common",
+        inquiryType: "general",
+        inquiryTypeCode: "general",
+        requesterName: "User",
+        requesterEmail: "user@example.com",
+        requesterPhone: "01012345678",
+        title: "Sample inquiry",
+        content: "Sample content",
+        status: "pending",
+        priority: "normal",
+        comments: [],
+      },
+      error: null,
+    });
 
     const fetchMock = makeFetchMock();
     vi.stubGlobal("fetch", fetchMock);
 
-    render(
-      <div>
-        <InquirySupportComments ticketId={101} ticketOwnerId="user-1" ticketTitle="문의 101" />
-        <InquirySupportAttachments ticketId={101} ticketOwnerId="user-1" ticketTitle="문의 101" ticketStatus="pending" />
-      </div>,
-    );
+    render(<Inquiries />);
 
     await waitFor(() => {
-      expect(screen.getByText("support comments")).toBeInTheDocument();
-      expect(screen.getByText("attachments metadata")).toBeInTheDocument();
+      expect(mocks.listMyTickets).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole("button", { name: /Sample inquiry/i })).toBeInTheDocument();
     });
 
-    expect(screen.getByRole("button", { name: "댓글 등록" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "메타데이터 등록" })).toBeEnabled();
-    expect(fetchMock).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: /Sample inquiry/i }));
+
+    await waitFor(() => {
+      expect(mocks.getTicketDetail).toHaveBeenCalledTimes(1);
+    });
+
+    expect(screen.getByText("Sample content")).toBeInTheDocument();
+    expect(screen.getByText("support comments")).toBeInTheDocument();
+    expect(screen.queryByText("attachments metadata")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "수정" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "삭제" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByRole("button", { name: "수정" })[0]);
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
+
+    const editDialog = screen.getByRole("dialog");
+    fireEvent.change(within(editDialog).getByLabelText("제목"), { target: { value: "Edited title" } });
+    fireEvent.change(within(editDialog).getByLabelText("내용"), { target: { value: "Edited content" } });
+    fireEvent.change(within(editDialog).getByLabelText("비밀번호"), { target: { value: "secret123" } });
+    fireEvent.click(within(editDialog).getByRole("button", { name: "수정" }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/customer-center/support/tickets/101",
+        expect.objectContaining({
+          method: "PUT",
+          body: expect.stringContaining('"password":"secret123"'),
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getAllByRole("button", { name: "삭제" })[0]);
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
+
+    const deleteDialog = screen.getByRole("dialog");
+    fireEvent.change(within(deleteDialog).getByLabelText("비밀번호"), { target: { value: "secret123" } });
+    fireEvent.click(within(deleteDialog).getByRole("button", { name: "삭제" }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/customer-center/support/tickets/101",
+        expect.objectContaining({
+          method: "DELETE",
+          body: expect.stringContaining('"password":"secret123"'),
+        }),
+      );
+    });
+  });
+
+  it("lets admins edit and delete without a password prompt", async () => {
+    mocks.useAuth.mockReturnValue(adminAuth);
+    mocks.listMyTickets.mockResolvedValue({
+      ok: true,
+      status: 200,
+      data: [
+        {
+          id: 102,
+          title: "Admin inquiry",
+          status: "pending",
+          serviceType: "common",
+          inquiryType: "general",
+          content: "Admin content",
+          createdAt: "2026-03-23T00:00:00Z",
+          userId: "writer-1",
+        },
+      ],
+      error: null,
+    });
+    mocks.getTicketDetail.mockResolvedValue({
+      ok: true,
+      status: 200,
+      data: {
+        id: 102,
+        ticketId: 102,
+        userId: "writer-1",
+        serviceType: "common",
+        inquiryType: "general",
+        inquiryTypeCode: "general",
+        requesterName: "Writer",
+        requesterEmail: "writer@example.com",
+        requesterPhone: "01012345678",
+        title: "Admin inquiry",
+        content: "Admin content",
+        status: "pending",
+        priority: "normal",
+        comments: [],
+      },
+      error: null,
+    });
+
+    const fetchMock = makeFetchMock();
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<Inquiries />);
+
+    await waitFor(() => {
+      expect(mocks.listMyTickets).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole("button", { name: /Admin inquiry/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Admin inquiry/i }));
+
+    await waitFor(() => {
+      expect(mocks.getTicketDetail).toHaveBeenCalledTimes(1);
+    });
+
+    fireEvent.click(screen.getAllByRole("button", { name: "수정" })[0]);
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
+
+    const adminEditDialog = screen.getByRole("dialog");
+    expect(within(adminEditDialog).queryByLabelText("비밀번호")).not.toBeInTheDocument();
+
+    fireEvent.change(within(adminEditDialog).getByLabelText("제목"), { target: { value: "Admin edited title" } });
+    fireEvent.change(within(adminEditDialog).getByLabelText("내용"), { target: { value: "Admin edited content" } });
+    fireEvent.click(within(adminEditDialog).getByRole("button", { name: "수정" }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/customer-center/support/tickets/102",
+        expect.objectContaining({
+          method: "PUT",
+          body: expect.not.stringContaining('"password"'),
+        }),
+      );
+    });
+
+    fireEvent.click(screen.getAllByRole("button", { name: "삭제" })[0]);
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
+
+    const adminDeleteDialog = screen.getByRole("dialog");
+    expect(within(adminDeleteDialog).queryByLabelText("비밀번호")).not.toBeInTheDocument();
+    fireEvent.click(within(adminDeleteDialog).getByRole("button", { name: "삭제" }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/customer-center/support/tickets/102",
+        expect.objectContaining({
+          method: "DELETE",
+          body: expect.not.stringContaining('"password"'),
+        }),
+      );
+    });
   });
 
   it.each(["answered", "resolved", "closed"])("treats %s inquiry status as completed in the UI", async (status) => {
@@ -361,6 +597,7 @@ describe("ServiceCenter regressions", () => {
     });
 
     const inquiryButton = screen.getByRole("button", { name: /status regression ticket/i });
-    expect(inquiryButton).toHaveTextContent("완료");
+    expect(inquiryButton).toHaveTextContent(/완료/);
   });
 });
+

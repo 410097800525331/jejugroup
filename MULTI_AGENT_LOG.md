@@ -4343,3 +4343,367 @@
   - `node --check D:\git\jejugroup\front\jejuair\js\payment.js` passed.
   - `git diff --check -- D:\git\jejugroup\front\jejuair\pages\booking\Availability.html D:\git\jejugroup\front\jejuair\js\payment.js D:\git\jejugroup\STATE.md` passed.
   - `reviewer_booking_random_lookup (Avicenna)` reported `no findings` after the handoff marker follow-up fix.
+
+- time: `2026-03-31 09:17:53 +09:00`
+- route: `Route A`
+- task: `Replace local MySQL jejugroup_local contents by importing the workspace dump with UTF-8-safe settings`
+- participants: `main`
+- write_sets:
+  - `main`: `D:\lsh\git\jejugroup\jeju-spring\jejugroup_local.sql, local MySQL jejugroup_local schema, STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+- verification:
+  - Backed up the previous local database to `D:\lsh\git\jejugroup\.codex-temp\jejugroup_local_pre_import_20260331_091549.sql` with `mysqldump.exe --default-character-set=utf8mb4 --no-tablespaces`.
+  - Confirmed `D:\lsh\git\jejugroup\jeju-spring\jejugroup_local.sql` is UTF-8 without a BOM and contains readable Korean rows in `banner_slots` and `users`.
+  - Re-imported the dump by streaming UTF-8 content into mysql stdin after explicit `DROP DATABASE`, `CREATE DATABASE ... CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`, and `USE jejugroup_local` statements.
+  - `SHOW TABLES` in `jejugroup_local` now returns 65 tables, `SELECT COUNT(*) FROM users` returns `30`, and sample Korean values like `관리자`, `윤가은`, and `제주항공 탑승객 인증 시 전 세계 호텔 7% 추가 할인` round-trip without mojibake.
+  - `information_schema.SCHEMATA` reports `utf8mb4 / utf8mb4_unicode_ci`, and no tables remain outside `utf8mb4` collation.
+
+- time: `2026-03-31 09:13:15 +09:00`
+- route: `Route A`
+- task: `Pin local MySQL jejugroup_local schema to utf8mb4 defaults and verify Korean text round-trip`
+- participants: `main`
+- write_sets:
+  - `main`: `local MySQL jejugroup_local schema, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `information_schema.SCHEMATA` already reported `jejugroup_local` as `utf8mb4 / utf8mb4_unicode_ci`.
+  - No tables in `information_schema.TABLES` and no text columns in `information_schema.COLUMNS` remained outside `utf8mb4`.
+  - Re-applied `ALTER DATABASE jejugroup_local CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci` to pin the schema default explicitly.
+  - Verified a temporary-table round-trip with `한글 UTF-8 확인`, which returned `utf8mb4 / utf8mb4_unicode_ci` and preserved the expected hex payload.
+
+- time: `2026-03-31 09:49:30 +09:00`
+- route: `Route B`
+- task: `Fix hotel payment guest autofill by exposing email and phone in the authenticated session payload`
+- participants: `main`, `worker_auth_session (Beauvoir)`, `worker_payment_verify (Anscombe)`, `reviewer_auth_payment (Erdos)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_auth_session (Beauvoir)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/auth/**, directly impacted session-user tests`
+  - `worker_payment_verify (Anscombe)`: `front/jejustay/pages/hotel/hotel-payment.html`
+  - `reviewer_auth_payment (Erdos)`: `review only`
+- verification:
+  - `worker_auth_session (Beauvoir)` expanded `SessionUser` to include `email` and `phone`, updated auth login/session resolution to populate those fields, and upgraded legacy sessions by reloading the current user record when old session objects lacked the new fields.
+  - `worker_payment_verify (Anscombe)` confirmed `hotel-payment.html` already consumed session email/phone and patched the mypage fallback parser to read nested `dashboard.profile.*` data instead of only flat top-level keys.
+  - `reviewer_auth_payment (Erdos)` first reported the broken dashboard fallback parser and missing legacy-session upgrade path, then re-reviewed the follow-up and reported `no material findings remain`.
+  - `node scripts/spring/run-jeju-spring-gradle.cjs compileJava compileTestJava` passed after the auth-session change.
+
+- time: `2026-03-31 10:10:30 +09:00`
+- route: `Route B`
+- task: `Sync the current hotel payment autofill fix into the jeju-spring mirror`
+- participants: `main`, `worker_sync (Descartes)`, `reviewer_sync (Raman)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync (Descartes)`: `generated front build outputs, jeju-spring front-mirror outputs`
+  - `reviewer_sync (Raman)`: `review only`
+- verification:
+  - `worker_sync (Descartes)` ran `pnpm run sync` successfully and confirmed the hotel payment autofill changes were mirrored into `jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/hotel/hotel-payment.html` and the synced hotel runtime bundle `jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-hotel-Dsez6Nay.js`.
+  - `reviewer_sync (Raman)` reported `no findings` and confirmed the mirrored hotel payment template reads nested `dashboard.profile`/`dashboard.snapshot.profile` while the backend session path still exposes email/phone and upgrades legacy sessions.
+
+- time: `2026-03-31 10:23:30 +09:00`
+- route: `Route B`
+- task: `Sync the current hotel payment fixes into the jeju-spring mirror`
+- participants: `main`, `worker_sync (Aristotle)`, `reviewer_sync (Noether)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync (Aristotle)`: `generated front build outputs, jeju-spring front-mirror outputs`
+  - `reviewer_sync (Noether)`: `review only`
+- verification:
+  - `worker_sync (Aristotle)` ran `pnpm run sync` successfully and confirmed the latest hotel payment fixes were mirrored into `jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/hotel/hotel-payment.html` and `jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-hotel-Dsez6Nay.js`.
+  - `reviewer_sync (Noether)` reported `no findings` and confirmed the mirrored hotel payment template contains both the `const guests = adults + children;` completion-submit fix and the autofill fallback flow without mirror-boundary drift.
+
+- time: `2026-03-31 10:35:30 +09:00`
+- route: `Route B`
+- task: `Sync the latest hotel payment fixes into the jeju-spring mirror`
+- participants: `main`, `worker_sync (Euclid)`, `reviewer_sync (Wegener)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync (Euclid)`: `generated front build outputs, jeju-spring front-mirror outputs`
+  - `reviewer_sync (Wegener)`: `review only`
+- verification:
+  - `worker_sync (Euclid)` ran `pnpm run sync` successfully and confirmed the latest hotel payment fixes were mirrored into `jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/hotel/hotel-payment.html` and `jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-hotel-Dsez6Nay.js`.
+  - `reviewer_sync (Wegener)` reported `no findings` and confirmed the mirrored hotel payment template matches the front source for `const guests = adults + children;`, the single-token guest-name parsing branch, and the nested `dashboard.profile` autofill fallback.
+
+- time: `2026-03-31 10:23:30 +09:00`
+- route: `Route B`
+- task: `Sync the current hotel payment fixes into the jeju-spring mirror`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` completed successfully.
+  - `jeju-spring/src/main/resources/templates/front-mirror/jejustay/pages/hotel/hotel-payment.html` contains the latest `guests`, `readDashboardProfile`, and `fetchBestAvailableProfile` changes.
+  - `jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-hotel-Dsez6Nay.js` was regenerated as part of the mirror update.
+
+- time: `2026-03-31 09:48:55 +09:00`
+- route: `Route B`
+- task: `Sync the current JejuStay life-search hotel-list redirect fix into the jeju-spring mirror`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, derived sync outputs`
+- verification:
+  - `pnpm run sync` passed and completed the existing `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` pipeline.
+  - The sync refreshed `jeju-spring/src/main/resources/templates/front-mirror/**` and `jeju-spring/src/main/resources/static/front-mirror/**` from the current `front/**` workspace state without manual mirror edits.
+  - Mirror output reported `template 47개, static 263개 처리`, plus `generated runtime copied: yes` and `customer center overlay copied: yes`.
+  - The mirrored runtime output now includes the refreshed life-search bundle `jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-life-BZrJn-4f.js` timestamped with the sync run.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` warning, but exited successfully.
+
+- time: `2026-03-31 14:31:00 +09:00`
+- route: `Route B`
+- task: `Enable mypage booking cancellation and replace the dead booking-change button with an explicit dummy action`
+- participants: `main`, `worker_booking_backend (Mencius)`, `worker_mypage_front (James)`, `reviewer_booking_mypage (Herschel)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_booking_backend (Mencius)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/**, directly impacted booking cancellation tests`
+  - `worker_mypage_front (James)`: `front/components/react/mypage/**`
+  - `reviewer_booking_mypage (Herschel)`: `review only`
+- verification:
+  - `worker_booking_backend (Mencius)` added `POST /api/booking/{bookingNo}/cancel`, ownership checks, cancellation status updates, and integration coverage for own-booking cancel, other-user booking denial, and repeated-cancel conflict.
+  - `worker_mypage_front (James)` wired `예약 취소` to the booking cancel API, added explicit feedback banners, disabled the button while pending, and changed `예약 변경` into an explicit dummy notice instead of a dead click.
+  - `main` ran `.\gradlew.bat test --tests com.jejugroup.jejuspring.booking.BookingApiControllerIntegrationTests` in `jeju-spring` and it passed.
+  - `main` ran `git diff --check -- front/components/react/mypage/BookingSection.tsx jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/application/BookingCommandRepository.java jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/application/BookingWriteService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/booking/web/BookingApiController.java jeju-spring/src/test/java/com/jejugroup/jejuspring/booking/BookingApiControllerIntegrationTests.java STATE.md` and it passed.
+  - `reviewer_booking_mypage (Herschel)` reported `no findings` and confirmed that `booking.id` is fed from `bookingNo`, the cancel API enforces session ownership with terminal-state guards, and the mypage UI now refreshes visible booking state after cancellation.
+
+- time: `2026-03-31 18:55:00 +09:00`
+- route: `Route B`
+- task: `Sync the latest mypage booking cancellation changes into the jeju-spring mirror`
+- participants: `main`, `worker_sync (Hubble)`, `reviewer_sync (Carver)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync (Hubble)`: `generated front build outputs, jeju-spring front-mirror outputs`
+  - `reviewer_sync (Carver)`: `review only`
+- verification:
+  - `worker_sync (Hubble)` ran `pnpm run sync` successfully and confirmed the mypage booking action updates were mirrored into the regenerated `feature-mypage-bgO5DnON.js` runtime output under both `front/.generated/webapp-overlay/**` and `jeju-spring/src/main/resources/static/front-mirror/**`.
+  - `worker_sync (Hubble)` confirmed the sync pipeline completed through `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` and reported `template 47개, static 263개 처리`, `generated runtime copied: yes`, and `customer center overlay copied: yes`.
+  - `reviewer_sync (Carver)` reported `no findings` and confirmed the mirrored mypage runtime contains the booking cancel/dummy-change behavior without front-to-mirror boundary drift.
+
+- time: `2026-03-31 19:16:00 +09:00`
+- route: `Route B`
+- task: `Add an internal jeju-spring /api/chat endpoint and switch the chatbot panel off the hardcoded external URL`
+- participants: `main`, `worker_chat_backend (Dirac)`, `worker_chat_front (Rawls)`, `reviewer_chat (Ampere)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_chat_backend (Dirac)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, directly impacted config files, related chat API tests`
+  - `worker_chat_front (Rawls)`: `front/components/react/widget/**`
+  - `reviewer_chat (Ampere)`: `review only`
+- verification:
+  - `worker_chat_backend (Dirac)` added the internal Spring `/api/chat` controller/service flow, kept secrets on the server side via `app.external.openaiApiKey`, and added focused controller/service tests for the chat slice.
+  - `worker_chat_front (Rawls)` switched the chatbot panel from the hardcoded external URL to the relative `/api/chat` endpoint and kept the existing message UX intact while improving failure-message extraction.
+  - `main` ran `.\gradlew.bat --no-daemon test --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests --tests com.jejugroup.jejuspring.chat.ChatServiceTests` in `jeju-spring` and it passed.
+  - `main` ran `pnpm exec tsc --noEmit --jsx react-jsx --module esnext --target es2020 --lib "dom,es2020,dom.iterable" --moduleResolution bundler --skipLibCheck front/components/react/widget/ChatbotPanel.tsx` and it passed.
+  - `main` ran `git diff --check -- front/components/react/widget/ChatbotPanel.tsx jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/ChatApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/ChatService.java jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatApiControllerTests.java jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatServiceTests.java` and it passed.
+  - `reviewer_chat (Ampere)` reported `no findings` and confirmed the frontend no longer carries the external chat URL or any secret, the backend returns opaque failures, and the `/api/chat` GET/POST contract matches the chatbot panel usage.
+- time: `2026-03-31 11:29:25 +09:00`
+- route: `Route B`
+- task: `Implement jeju-spring internal /api/weather endpoint for current/pollution/search`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, ERROR_LOG.md, MULTI_AGENT_LOG.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/weather/**`
+- verification:
+  - `./gradlew test --tests com.jejugroup.jejuspring.weather.WeatherServiceTests --tests com.jejugroup.jejuspring.weather.web.WeatherApiControllerTests` passed.
+  - `./gradlew test` failed on unrelated pre-existing Spring context/bootstrap issues outside the weather slice.
+- time: `2026-03-31 20:12:00 +09:00`
+- route: `Route B`
+- task: `Remove inquiry attachments, keep comments only, and require the writer password before ticket edit/delete in customer center`
+- participants: `main`, `worker_front (Cicero)`, `worker_backend (Averroes)`, `reviewer_cs (Hegel)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_front (Cicero)`: `front/apps/cs/client/src/pages/Inquiries.tsx, front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx, front/apps/cs/client/src/lib/serviceCenterApi.ts, front/apps/cs/client/src/types/service-center.ts, front/apps/cs/client/src/test/ServiceCenterRegression.test.tsx, front/apps/cs/client/src/test/InquiryForm.test.tsx`
+  - `worker_backend (Averroes)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/**`
+  - `reviewer_cs (Hegel)`: `review only`
+- verification:
+  - `front/apps/cs/client/src/pages/Inquiries.tsx` now removes the attachment panel from inquiry detail, keeps the comments panel only, and adds `수정/삭제` actions beside `닫기` with owner/admin-aligned password gating.
+  - `front/apps/cs/client/src/lib/serviceCenterApi.ts` and `front/apps/cs/client/src/types/service-center.ts` now expose support-ticket update/delete requests that can carry an owner password when required.
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/customercenter/support/SupportApiController.java`, `SupportTicketService.java`, and `SupportAccessPolicy.java` now enforce owner password verification on support-ticket update/delete while preserving admin bypass.
+  - `front/apps/cs/client/src/test/ServiceCenterRegression.test.tsx` now covers attachment removal, owner password-required edit/delete, and admin no-password edit/delete UI flows.
+  - `jeju-spring/src/test/java/com/jejugroup/jejuspring/customercenter/CustomerCenterIntegrationTests.java` now covers owner wrong-password rejection, owner correct-password success, and admin bypass for support-ticket update/delete.
+  - `pnpm -C front/apps/cs check` passed.
+  - `pnpm -C front/apps/cs test --run src/test/ServiceCenterRegression.test.tsx` passed.
+  - `.\gradlew.bat compileJava` passed in `jeju-spring`.
+  - `.\gradlew.bat test --tests com.jejugroup.jejuspring.customercenter.CustomerCenterIntegrationTests -x compileJava -x compileTestJava --no-daemon` failed on a pre-existing Spring test context/bootstrap issue tied to `AdminBannerDbStore` DB configuration, so the new backend assertions were not executed to completion in this turn.
+
+- time: `2026-03-31 20:21:00 +09:00`
+- route: `Route B`
+- task: `Add an internal jeju-spring /api/weather endpoint and switch the weather widget off the hardcoded external URL`
+- participants: `main`, `worker_weather_backend (Halley)`, `worker_weather_front (Archimedes)`, `reviewer_weather (Meitner)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_weather_backend (Halley)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/**, directly impacted config files, related weather API tests`
+  - `worker_weather_front (Archimedes)`: `front/apps/shell/src/runtime/widget/**`
+  - `reviewer_weather (Meitner)`: `review only`
+- verification:
+  - `worker_weather_backend (Halley)` added the internal Spring `/api/weather` controller/service flow for `type=current|pollution|search`, kept secrets on the server side via `app.external.openweatherApiKey`, and added focused controller/service tests for the weather slice.
+  - `worker_weather_front (Archimedes)` switched the weather widget from the hardcoded external URL to the relative `/api/weather` endpoint and kept the existing overlay/search UX intact while improving failure-message extraction.
+  - `main` ran `.\gradlew.bat --no-daemon test --tests com.jejugroup.jejuspring.weather.web.WeatherApiControllerTests --tests com.jejugroup.jejuspring.weather.WeatherServiceTests` in `jeju-spring` and it passed.
+  - `main` ran `pnpm -C front/apps/shell check` and it passed.
+  - `main` ran `git diff --check -- front/apps/shell/src/runtime/widget/weather.ts jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/WeatherService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/web/WeatherApiController.java jeju-spring/src/test/java/com/jejugroup/jejuspring/weather/WeatherServiceTests.java jeju-spring/src/test/java/com/jejugroup/jejuspring/weather/web/WeatherApiControllerTests.java` and it passed.
+  - `reviewer_weather (Meitner)` found no source-level secret leakage or contract mismatch, but flagged that generated runtime and mirror outputs still carried the old external weather URL until sync.
+
+- time: `2026-03-31 20:27:00 +09:00`
+- route: `Route B`
+- task: `Sync the latest weather widget internal API changes into the jeju-spring mirror`
+- participants: `main`, `worker_sync (Kierkegaard)`, `reviewer_sync (Boyle)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync (Kierkegaard)`: `generated front build outputs, jeju-spring front-mirror outputs`
+  - `reviewer_sync (Boyle)`: `review only`
+- verification:
+  - `worker_sync (Kierkegaard)` ran `pnpm run sync` successfully and confirmed the weather widget internal API changes were mirrored into the regenerated `runtime-widget-SpJ2XLBZ.js` runtime output under both `front/.generated/webapp-overlay/**` and `jeju-spring/src/main/resources/static/front-mirror/**`.
+  - `worker_sync (Kierkegaard)` confirmed the sync pipeline completed through `build:shell -> build:cs -> scripts/spring/sync-front-assets-to-spring.cjs` and reported `template 47개, static 263개 처리`.
+  - `reviewer_sync (Boyle)` reported `no findings` and confirmed the mirrored weather widget runtime now uses the internal `/api/weather` path without front-to-mirror boundary drift.
+
+- time: `2026-03-31 20:41:00 +09:00`
+- route: `Route B`
+- task: `Switch the internal jeju-spring /api/chat backend from OPENAI_API_KEY to GEMINI_API_KEY`
+- participants: `main`, `worker_chat_backend (Popper)`, `reviewer_chat (Plato)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_chat_backend (Popper)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, directly impacted config files, related chat tests`
+  - `reviewer_chat (Plato)`: `review only`
+- verification:
+  - `worker_chat_backend (Popper)` switched the Spring chat upstream to Gemini `generateContent`, made `GEMINI_API_KEY` the primary server-side env contract with `OPENAI_API_KEY` kept only as a legacy fallback, and aligned the migration dashboard wording with the Gemini-first contract.
+  - `main` ran `.\gradlew.bat --no-daemon test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests` in `jeju-spring` and it passed.
+  - `main` ran `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java jeju-spring/src/main/resources/application.yml jeju-spring/.env.example jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/ChatService.java jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatServiceTests.java jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatApiControllerTests.java` and it passed.
+  - `main` confirmed the remaining OpenAI references are limited to legacy fallback/config wording (`GEMINI_API_KEY:${OPENAI_API_KEY:}` and the migration dashboard fallback note), not the active runtime call path.
+  - `reviewer_chat (Plato)` reported `no findings` and confirmed the runtime now uses Gemini with opaque failures while preserving the frontend response contract.
+
+- time: `2026-03-31 12:10:21 +09:00`
+- route: `Route B`
+- task: `Add Gemini model fallback order for /api/chat with Gemini 3 Flash preview, Gemini 2.5 Flash-Lite, then Gemini 2.5 Flash`
+- participants: `main`, `worker_chat_backend`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_chat_backend`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, jeju-spring/src/main/resources/application.yml, jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java, jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/**`
+- verification:
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/ChatService.java` now iterates the configured Gemini model list in order, builds the upstream URI from the configured base URL, and only falls back after quota/resource-exhaustion style `HttpStatusCodeException` failures.
+  - `jeju-spring/src/main/resources/application.yml` now defaults the chat model chain to `gemini-3-flash-preview`, `gemini-2.5-flash-lite`, then `gemini-2.5-flash`, while keeping `GEMINI_API_KEY` as the primary server-side alias and `OPENAI_API_KEY` as legacy fallback.
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java` now carries Gemini chat base URL and model list configuration, with the legacy 2-arg `External` constructor preserved for existing callers.
+  - `jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatServiceTests.java` now covers model ordering, quota-only fallback, non-quota upstream failure short-circuiting, missing-key rejection, and the legacy key alias path.
+  - `.\gradlew.bat --no-daemon test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests` passed in `jeju-spring`.
+  - `git diff --check -- jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/ChatService.java jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java jeju-spring/src/main/resources/application.yml jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatServiceTests.java jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatApiControllerTests.java` passed.
+
+- time: `2026-03-31 21:12:00 +09:00`
+- route: `Route B`
+- task: `Fix reviewer findings for /api/chat persona authority and Gemini-only naming cleanup`
+- participants: `main`, `worker_chat_backend`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_chat_backend`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java, jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java, jeju-spring/src/main/resources/application.yml, jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/**`
+- verification:
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/ChatService.java` now ignores caller-provided `role=system` messages and always sends the server persona as the authoritative `systemInstruction`.
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/config/AppProperties.java` no longer exposes a public `openaiApiKey()` accessor; chat config uses `geminiApiKey()` only.
+  - `jeju-spring/src/main/java/com/jejugroup/jejuspring/migration/application/MigrationDashboardFactory.java` now references the Gemini key by its Gemini name instead of the legacy OpenAI alias.
+  - `jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatServiceTests.java` now asserts that caller-supplied system prompts are ignored and the Jeju Group persona stays fixed.
+  - `.\gradlew.bat --no-daemon compileJava` passed in `jeju-spring`.
+  - `.\gradlew.bat --no-daemon test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests` passed in `jeju-spring`.
+
+- time: `2026-03-31 21:32:00 +09:00`
+- route: `Route B`
+- task: `Audit and replace banmal user-facing copy across pages with service-tone wording`
+- participants: `main`, `worker_copy_pages (Carson/Fermat)`, `worker_copy_shared (James)`, `reviewer_copy (Raman)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_copy_pages (Carson/Fermat)`: `front/apps/**, front/pages/**, front/jejuair/** page-local user-facing copy touched by the audit`
+  - `worker_copy_shared (James)`: `front/components/react/**, front/core/** shared user-facing copy touched by the audit`
+  - `reviewer_copy (Raman)`: `review only`
+- verification:
+  - `worker_copy_pages (Carson/Fermat)` normalized customer-center page copy, inquiry/notice/FAQ validation and empty-state text, selected Jeju Air booking/auth page prompts, and related page-local user-facing strings to service-tone Korean.
+  - `worker_copy_shared (James)` normalized mypage companion/booking copy, chatbot panel wording, shared copy constants, and follow-up exact-match language constants used by the customer-center pages.
+  - `reviewer_copy (Raman)` flagged a BookingSection locale regression, Home/front-ko-en copy-map exact-match mismatches, and one remaining Jeju Air booking-page wording inconsistency; those findings were fixed in the same task slice.
+  - `main` ran a targeted pattern search across `front/apps/cs`, `front/components/react/mypage`, `front/components/react/widget`, `front/core/constants`, `front/jejuair`, and `front/pages/auth` and confirmed no targeted banmal/service-tone mismatch patterns remained in the audited paths.
+  - `main` ran `git diff --check -- front/apps/cs/client/src/components/serviceCenter/FAQItem.tsx front/apps/cs/client/src/components/serviceCenter/InquiryForm.tsx front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx front/apps/cs/client/src/components/serviceCenter/InquirySupportAttachments.tsx front/apps/cs/client/src/components/serviceCenter/InquirySupportComments.tsx front/apps/cs/client/src/components/serviceCenter/NoticeList.tsx front/apps/cs/client/src/data/mockInquiries.ts front/apps/cs/client/src/data/serviceCenterData.ts front/apps/cs/client/src/pages/FAQs.tsx front/apps/cs/client/src/pages/Home.tsx front/apps/cs/client/src/pages/Inquiries.tsx front/apps/cs/client/src/pages/NoticeDetail.tsx front/apps/cs/client/src/pages/Notices.tsx front/apps/cs/client/src/pages/NotFound.tsx front/components/react/mypage/BookingSection.tsx front/components/react/mypage/CompanionInviteModal.tsx front/components/react/mypage/CompanionManageModal.tsx front/components/react/mypage/useCompanionManager.ts front/components/react/widget/ChatbotPanel.tsx front/core/constants/front-ko-en-copy-map.js front/core/constants/lang_data.js front/jejuair/js/header.js front/jejuair/js/payment.js front/jejuair/js/ticket.js front/jejuair/pages/baggage/liability.html front/jejuair/pages/boarding/eDocument.html front/jejuair/pages/boarding/fastProcedure.html front/jejuair/pages/booking/Availability.html front/jejuair/pages/pet/petPass.html front/jejuair/pages/pet/petService.html front/pages/auth/login.html` and it passed with only pre-existing CRLF normalization warnings.
+
+- time: `2026-04-01 00:03:00 +09:00`
+- route: `Route B`
+- task: `Sync the updated mypage flight booking confirmation popup into generated assets and the jeju-spring mirror`
+- participants: `main`, `worker_sync (Lovelace)`, `reviewer_sync (Hooke)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync (Lovelace)`: `generated front build outputs, jeju-spring front-mirror outputs`
+  - `reviewer_sync (Hooke)`: `review only`
+- verification:
+  - `worker_sync (Lovelace)` ran `pnpm run sync` successfully from the workspace root and confirmed the updated mypage flight popup restyle was mirrored into the regenerated runtime chunk [feature-mypage-DlrpVW5N.js](D:/lsh/git/jejugroup/jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-mypage-DlrpVW5N.js).
+  - `worker_sync (Lovelace)` reported the sync also rotated hashed runtime outputs under `jeju-spring/src/main/resources/static/front-mirror/components/runtime/` and refreshed other generated assets that normally move with the pipeline.
+  - `reviewer_sync (Hooke)` reported `no findings` and verified that the mirrored runtime retained the updated flight popup style values, including the overlay top gap and receipt header spacing, without `jeju-web/src/main/webapp/**` boundary drift.
+
+- time: `2026-04-01 00:18:00 +09:00`
+- route: `Route B`
+- task: `Sync the mypage flight popup button color update into generated assets and the jeju-spring mirror`
+- participants: `main`, `worker_sync (Confucius)`, `reviewer_sync (Helmholtz)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync (Confucius)`: `generated front build outputs, jeju-spring front-mirror outputs`
+  - `reviewer_sync (Helmholtz)`: `review only`
+- verification:
+  - `worker_sync (Confucius)` ran `pnpm run sync` successfully from the workspace root and confirmed the button color update propagated into the regenerated mypage runtime outputs, including [feature-mypage-Ci9O_T3C.js](D:/lsh/git/jejugroup/jeju-spring/src/main/resources/static/front-mirror/components/runtime/feature-mypage-Ci9O_T3C.js) and [runtime-pages-B7wLeQ92.js](D:/lsh/git/jejugroup/jeju-spring/src/main/resources/static/front-mirror/components/runtime/runtime-pages-B7wLeQ92.js).
+  - `worker_sync (Confucius)` reported normal sync churn in other hashed runtime chunks and CS generated assets while the mypage template itself remained unchanged.
+  - `reviewer_sync (Helmholtz)` reported `no findings` and verified that both the generated overlay runtime and the `jeju-spring` front-mirror runtime contain the updated orange button styling for the flight popup, with runtime chunk wiring intact and no `jeju-web/src/main/webapp/**` boundary drift.
+- time: `2026-03-31 21:48:00 +09:00`
+- route: `Route A`
+- task: `Fix hotel guest reservation lookup fallback so hotel bookings can be found by reservation number plus email`
+- participants: `main`
+- write_sets:
+  - `main`: `front/jejuair/pages/booking/viewOnOffReservationList.html, STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `front/jejuair/pages/booking/viewOnOffReservationList.html` now exposes a reservation email field, pre-fills `reservationEmail/email/guestEmail` query params from the hotel payment completion flow, and submits `/api/booking/guest-lookup` with `reservationNo + email` whenever an email is available.
+  - The same fallback page preserves the legacy `reservationNo + travelDate + firstName + lastName` submission path when no email is provided.
+  - `git diff --check -- front/jejuair/pages/booking/viewOnOffReservationList.html STATE.md` passed.
+
+- time: `2026-03-31 12:48:58 +09:00`
+- route: `Route B`
+- task: `Fix chatbot 503 caused by backend Gemini key resolution`
+- participants: `main`, `worker_chat_config (Ptolemy)`, `reviewer_chat (Boyle)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_chat_config (Ptolemy)`: `jeju-spring/src/main/resources/application.yml, jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/**`
+  - `reviewer_chat (Boyle)`: `review only`
+- verification:
+  - `worker_chat_config (Ptolemy)` confirmed direct Gemini API calls worked with the key from `jeju-spring/.env`, isolated the 503 to backend key resolution, and updated `ChatService` to fall back to reading `GEMINI_API_KEY` from the shared env file when property binding is empty.
+  - `worker_chat_config (Ptolemy)` kept the config-path hardening in `application.yml` so Spring can import the shared env from both `./.env` and `./jeju-spring/.env`.
+  - `worker_chat_config (Ptolemy)` added chat tests for env-file fallback and reported `./gradlew.bat compileJava` plus `./gradlew.bat test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests` passed.
+  - `worker_chat_config (Ptolemy)` verified a fresh `bootRun` on a separate port returned `{"success":true,"data":{"status":"online","configured":true}}` from `GET /api/chat` and a successful `POST /api/chat` response.
+  - `reviewer_chat (Boyle)` reported `no blocking findings` and noted only a maintenance residual risk that env-resolution rules now live in both Spring config and `ChatService`.
+
+- time: `2026-03-31 13:05:00 +09:00`
+- route: `Route B`
+- task: `Replace external chatbot API calls with local Jeju Group knowledge responses`
+- participants: `main`, `worker_chat_local`, `reviewer_chat_local`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_chat_local`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/**`
+  - `reviewer_chat_local`: `review only`
+- verification:
+  - `worker_chat_local` replaced the external AI call path with a deterministic local knowledge responder that returns Gemini-shaped JSON and answers from Jeju Group membership and FAQ text.
+  - `worker_chat_local` added tests covering membership guidance, FAQ lookup, system-message ignoring, `**` sanitization, and config-independent availability.
+  - `main` ran `./gradlew.bat compileJava` and `./gradlew.bat test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests`.
+  - `main` verified `GET /api/chat` returned `{"success":true,"data":{"status":"online","configured":true}}` on a local bootRun instance without `GEMINI_API_KEY`.
+- reviewer:
+  - `reviewer_chat_local` found no blocking issues.
+
+- time: `2026-03-31 13:08:16 +09:00`
+- route: `Route B`
+- task: `Correct local chatbot retrieval to use file-based Jeju Group knowledge and recent user turns`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- note: `Work reclassified for a backend chatbot refinement that replaces hardcoded knowledge with runtime-loaded page text and broadens retrieval to recent user turns while ignoring assistant/system messages.`
+- time: `2026-03-31 12:58:55 +09:00`
+- route: `Route B`
+- task: `Sync the mypage flight popup button color update into generated assets and the jeju-spring mirror`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+- verification:
+  - `pnpm run sync` passed and completed the front build plus `scripts/spring/sync-front-assets-to-spring.cjs` mirror pipeline.
+  - The sync refreshed the jeju-spring front-mirror runtime assets for the mypage popup button color update and completed without a manual mirror edit.
+  - The run finished with the existing Vite `new URL('/', import.meta.url)` warning, but exited successfully.
+
+- time: `2026-03-31 13:34:00 +09:00`
+- route: `Route B`
+- task: `Recover destination catalog mojibake at the source and regenerate clean front destination artifacts`
+- participants: `main`, `worker_destination_catalog (Euler)`, `reviewer_destination_catalog (Tesla)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_destination_catalog (Euler)`: `scripts/generate-destination-catalogs.js, front/shared/destination/generated/destination-catalogs.json, front/shared/destination/generated/destination-airport-search.browser.js`
+  - `reviewer_destination_catalog (Tesla)`: `review only`
+- verification:
+  - `worker_destination_catalog (Euler)` repaired the destination generator source chain by adding targeted IATA-based text fixes for the mojibake-affected airport records and regenerated the front destination artifacts without editing `jeju-spring` mirror outputs.
+  - `worker_destination_catalog (Euler)` regenerated `front/shared/destination/generated/destination-catalogs.json` and `front/shared/destination/generated/destination-airport-search.browser.js`, reporting clean BEL, KQT, CQF, QGY, and MIG records and `wrote 172 cities and 5498 airports`.
+  - `main` verified the regenerated front artifacts no longer contain the previously broken probe strings or replacement characters for the affected records and confirmed `git diff --check` is clean for the touched files.
+  - `reviewer_destination_catalog (Tesla)` reported no blocking findings and noted only a residual maintenance risk that the IATA override map is hardcoded and may need refresh if the upstream dataset changes again.

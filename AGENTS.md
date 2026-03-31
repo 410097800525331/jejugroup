@@ -1,6 +1,6 @@
 ﻿# Workspace Override: jejugroup-landing
 
-항공, 숙박, 렌터카, 멤버십을 한 화면에서 소개하는 메인 랜딩 페이지다.
+항공, 숙박, 인터시티 멤버십을 한 화면에서 소개하는 메인 랜딩 페이지다.
 
 This file adds repository-specific rules on top of the global multi-agent defaults.
 Global multi-agent defaults remain in effect unless this file narrows them.
@@ -71,8 +71,6 @@ Global multi-agent defaults remain in effect unless this file narrows them.
 
 - alwaysdata 배포 스크립트 실행
 - ROOT.war 패키징 또는 업로드 방식 변경
-- jeju-spring/.env changes or legacy-only jeju-web/.env reference
-- Oracle Cloud 전환 관련 설정 변경
 - jeju-web/src/main/webapp/** 또는 jeju-spring/** 직접 수정
 
 ## Worker Mapping

@@ -131,7 +131,7 @@ export default function Notices() {
   const pageSize = 5;
 
   const handleChatbotClick = () => {
-    alert("지금은 챗봇 연결이 준비 중이야. 공지 목록에서 먼저 확인해줘.");
+    alert("지금은 챗봇 연결이 준비 중입니다. 공지 목록에서 먼저 확인해 주세요.");
   };
 
   useEffect(() => {
@@ -154,7 +154,7 @@ export default function Notices() {
       })
       .catch((fetchError: unknown) => {
         if (active) {
-          setError(fetchError instanceof Error ? fetchError.message : "공지 목록을 불러오지 못했어.");
+          setError(fetchError instanceof Error ? fetchError.message : "공지 목록을 불러오지 못했습니다.");
         }
       })
       .finally(() => {
@@ -246,7 +246,7 @@ export default function Notices() {
             isLoading={isLoading}
             error={error}
             onRetry={retry}
-            emptyMessage="검색 조건에 맞는 공지가 없어."
+            emptyMessage="검색 조건에 맞는 공지가 없습니다."
             noticeHref={(notice) => `/notices/${notice.id}`}
           />
         </div>

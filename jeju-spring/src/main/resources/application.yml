@@ -2,7 +2,9 @@ spring:
   application:
     name: jeju-spring
   config:
-    import: "optional:file:${JEJU_SHARED_ENV_PATH:./.env}[.properties]"
+    import:
+      - "optional:file:${JEJU_SHARED_ENV_PATH:./.env}[.properties]"
+      - "optional:file:${JEJU_SHARED_ENV_PATH:./jeju-spring/.env}[.properties]"
   datasource:
     url: ${DB_URL:${ALWAYSDATA_DB_URL:jdbc:mysql://localhost:3306/jejugroup_db?characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true}}
     username: ${DB_USER:${ALWAYSDATA_DB_USER:jejugroup}}
@@ -58,7 +60,12 @@ app:
     remote-deploy-path: ${REMOTE_DEPLOY_PATH:/home/jejugroup/ROOT.war}
   external:
     openweather-api-key: ${OPENWEATHER_API_KEY:}
-    openai-api-key: ${OPENAI_API_KEY:}
+    gemini-api-key: ${GEMINI_API_KEY:}
+    gemini-chat-base-url: ${GEMINI_CHAT_BASE_URL:https://generativelanguage.googleapis.com/v1beta/models}
+    gemini-chat-models:
+      - gemini-3-flash-preview
+      - gemini-2.5-flash-lite
+      - gemini-2.5-flash
   social:
     naver-client-id: ${NAVER_CLIENT_ID:}
     naver-client-secret: ${NAVER_CLIENT_SECRET:}

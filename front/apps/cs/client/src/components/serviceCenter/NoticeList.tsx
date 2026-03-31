@@ -49,7 +49,7 @@ export default function NoticeList({
   isLoading = false,
   error = null,
   onRetry,
-  emptyMessage = "검색 조건에 맞는 공지사항이 없어.",
+  emptyMessage = "검색 조건에 맞는 공지사항이 없습니다.",
   isAdmin = false,
   onEditNotice,
   onDeleteNotice,
@@ -64,7 +64,7 @@ export default function NoticeList({
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1>공지사항</h1>
-            <p>서비스 소식과 운영 안내를 빠르게 확인해.</p>
+            <p>서비스 소식과 운영 안내를 빠르게 확인하실 수 있습니다.</p>
           </div>
           {isAdmin ? (
             <div className="hidden md:inline-flex rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-black text-orange-600">
@@ -79,7 +79,7 @@ export default function NoticeList({
           <SkeletonRows />
         ) : error ? (
           <div className="py-20 text-center">
-            <p className="text-lg font-black text-gray-600">공지 목록을 불러오지 못했어.</p>
+            <p className="text-lg font-black text-gray-600">공지 목록을 불러오지 못했습니다.</p>
             <p className="mt-3 text-sm text-gray-400">{error}</p>
             {onRetry ? (
               <button

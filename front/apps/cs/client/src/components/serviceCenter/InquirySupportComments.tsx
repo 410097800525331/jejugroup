@@ -97,7 +97,7 @@ const requestJson = async <T,>(url: string, init?: RequestInit): Promise<T> => {
   }
 
   if (!response.ok) {
-    throw new Error(extractMessage(payload, response.status === 403 ? "소유자 또는 관리자만 댓글을 관리할 수 있어." : "요청을 처리하지 못했어."));
+    throw new Error(extractMessage(payload, response.status === 403 ? "소유자 또는 관리자만 댓글을 관리할 수 있습니다." : "요청을 처리하지 못했습니다."));
   }
 
   return payload as T;
@@ -161,7 +161,7 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
       setComments(extractArrayPayload<CommentApiItem>(payload, ["comments", "items", "data"]).map(normalizeComment));
     } catch (error) {
       setComments([]);
-      setLoadError(error instanceof Error ? error.message : "댓글을 불러오지 못했어.");
+      setLoadError(error instanceof Error ? error.message : "댓글을 불러오지 못했습니다.");
     } finally {
       setLoading(false);
     }
@@ -182,13 +182,13 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!canManage) {
-      setSubmitError("소유자 또는 관리자만 댓글을 등록할 수 있어.");
+      setSubmitError("소유자 또는 관리자만 댓글을 등록할 수 있습니다.");
       return;
     }
 
     const content = draft.content.trim();
     if (!content) {
-      setSubmitError("댓글 내용을 입력해줘.");
+      setSubmitError("댓글 내용을 입력해 주세요.");
       return;
     }
 
@@ -204,7 +204,7 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
       setDraft({ content: "", internal: false });
       await loadComments();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "댓글을 저장하지 못했어.");
+      setSubmitError(error instanceof Error ? error.message : "댓글을 저장하지 못했습니다.");
     } finally {
       setSubmitting(false);
     }
@@ -224,13 +224,13 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
 
   const handleUpdate = async (commentId: number) => {
     if (!canManage) {
-      setSubmitError("소유자 또는 관리자만 댓글을 수정할 수 있어.");
+      setSubmitError("소유자 또는 관리자만 댓글을 수정할 수 있습니다.");
       return;
     }
 
     const content = editingDraft.content.trim();
     if (!content) {
-      setSubmitError("댓글 내용을 입력해줘.");
+      setSubmitError("댓글 내용을 입력해 주세요.");
       return;
     }
 
@@ -249,7 +249,7 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
       cancelEdit();
       await loadComments();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "댓글을 수정하지 못했어.");
+      setSubmitError(error instanceof Error ? error.message : "댓글을 수정하지 못했습니다.");
     } finally {
       setBusyId(null);
     }
@@ -257,11 +257,11 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
 
   const handleDelete = async (commentId: number) => {
     if (!canManage) {
-      setSubmitError("소유자 또는 관리자만 댓글을 삭제할 수 있어.");
+      setSubmitError("소유자 또는 관리자만 댓글을 삭제할 수 있습니다.");
       return;
     }
 
-    if (!window.confirm("이 댓글을 삭제할까?")) return;
+    if (!window.confirm("이 댓글을 삭제하시겠습니까?")) return;
 
     setBusyId(commentId);
     setSubmitError(null);
@@ -274,7 +274,7 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
       if (editingId === commentId) cancelEdit();
       await loadComments();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "댓글을 삭제하지 못했어.");
+      setSubmitError(error instanceof Error ? error.message : "댓글을 삭제하지 못했습니다.");
     } finally {
       setBusyId(null);
     }
@@ -285,8 +285,8 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-bold text-orange-500">댓글</p>
-          <h3 className="mt-1 text-lg font-extrabold text-slate-900">support comments</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-500">{ticketTitle ? `“${ticketTitle}”` : "선택한 문의"}의 소통 기록이야.</p>
+          <h3 className="mt-1 text-lg font-extrabold text-slate-900">댓글 관리</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-500">{ticketTitle ? `“${ticketTitle}”` : "선택한 문의"}의 소통 기록입니다.</p>
         </div>
         <div className="rounded-full bg-orange-50 px-3 py-1 text-xs font-black text-orange-600">{comments.length}개</div>
       </div>
@@ -297,8 +297,8 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
         }`}
       >
         {canManage
-          ? "소유자 또는 관리자 권한이 확인돼. 댓글을 바로 등록, 수정, 삭제할 수 있어."
-          : "소유자 또는 관리자만 댓글을 관리할 수 있어."}
+          ? "소유자 또는 관리자 권한이 확인되었습니다. 댓글을 바로 등록, 수정, 삭제할 수 있습니다."
+          : "소유자 또는 관리자만 댓글을 관리할 수 있습니다."}
       </div>
 
       <form onSubmit={handleCreate} className="mt-5 rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
@@ -309,7 +309,7 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
           id={`support-comment-${ticketId}`}
           value={draft.content}
           onChange={(event) => setDraft((current) => ({ ...current, content: event.target.value }))}
-          placeholder="댓글을 입력해줘. binary 업로드는 없고 텍스트만 저장해."
+          placeholder="댓글을 입력해 주세요. binary 업로드는 없고 텍스트만 저장합니다."
           className="min-h-[120px] w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none transition focus:border-orange-300 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100"
           disabled={!canManage || submitting}
         />
@@ -338,7 +338,7 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
 
       <div className="mt-5 space-y-3">
         {loading ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-sm font-medium text-slate-400">댓글을 불러오는 중이야.</div>
+          <div className="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-sm font-medium text-slate-400">댓글을 불러오는 중입니다.</div>
         ) : loadError ? (
           <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">{loadError}</div>
         ) : comments.length > 0 ? (
@@ -417,14 +417,14 @@ export default function InquirySupportComments({ ticketId, ticketOwnerId, ticket
                     </div>
                   </div>
                 ) : (
-                  <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.content || "내용 없음"}</p>
+                  <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.content || "내용이 없습니다."}</p>
                 )}
               </article>
             );
           })
         ) : (
           <div className="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-sm font-medium text-slate-400">
-            아직 댓글이 없어. 첫 메시지를 남겨도 돼.
+            아직 댓글이 없습니다. 첫 메시지를 남겨 주세요.
           </div>
         )}
       </div>

@@ -183,9 +183,9 @@ export default function FAQItem({
                   {answer}
                 </p>
                 <div className="mt-8 flex items-center gap-4 text-sm text-gray-400 font-bold border-t border-gray-200/50 pt-6">
-                  <span>추가로 궁금한 점이 있으면</span>
+                  <span>추가로 궁금한 점이 있으시면</span>
                   <Link href="/inquiries">
-                    <a className="text-orange-600 hover:underline">문의하기</a>
+                    <a className="text-orange-600 hover:underline">문의해 주세요</a>
                   </Link>
                 </div>
               </div>

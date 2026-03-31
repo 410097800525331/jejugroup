@@ -157,7 +157,7 @@ $(document).ready(function () {
 
 <!-- 검색 영역 -->
 <div class="header_search">
-  <input type="text" placeholder="검색어를 입력하세요">
+  <input type="text" placeholder="검색어를 입력해 주세요">
   <button type="button">검색</button>
 </div>
       </div>
@@ -175,7 +175,7 @@ $(document).ready(function () {
       <a href="../pages/mypage/dashboard.html?shell=air">마이페이지</a>
     </div>
     <div class="mobile_search">
-      <input type="text" placeholder="검색어를 입력하세요">
+      <input type="text" placeholder="검색어를 입력해 주세요">
     </div>
     <ul class="mobile_menu_list">
       <li>

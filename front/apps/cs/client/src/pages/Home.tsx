@@ -168,7 +168,7 @@ async function fetchCustomerCenterList<T>(path: string, signal: AbortSignal) {
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error("목록을 불러오지 못했어.");
+    throw new Error("목록을 불러오지 못했습니다.");
   }
 
   return unwrapList<T>(payload);
@@ -188,7 +188,7 @@ export default function Home() {
   const [faqReloadToken, setFaqReloadToken] = useState(0);
 
   const handleChatbotClick = () => {
-    alert("지금은 읽기 전용이야. 문의가 필요하면 고객센터 1:1 문의를 써줘.");
+    alert("지금은 읽기 전용입니다. 문의가 필요하시면 고객센터 1:1 문의를 이용해 주세요.");
   };
 
   const handleFaqToggle = (id: string) => {
@@ -207,7 +207,7 @@ export default function Home() {
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) {
-          setNoticesError(error instanceof Error ? error.message : "공지 목록을 불러오지 못했어.");
+          setNoticesError(error instanceof Error ? error.message : "공지 목록을 불러오지 못했습니다.");
         }
       })
       .finally(() => {
@@ -231,7 +231,7 @@ export default function Home() {
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) {
-          setFaqsError(error instanceof Error ? error.message : "FAQ 목록을 불러오지 못했어.");
+          setFaqsError(error instanceof Error ? error.message : "FAQ 목록을 불러오지 못했습니다.");
         }
       })
       .finally(() => {
@@ -298,27 +298,27 @@ export default function Home() {
           <SectionHeader
             centered
             title="세 가지 서비스, 한 화면에서"
-            description="제주항공, 제주스테이, 제주렌터카 공지와 FAQ를 API 결과 기준으로 바로 보여줘."
+            description="제주항공, 제주스테이, 제주렌터카의 공지와 FAQ를 API 결과 기준으로 바로 보여드립니다."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-16">
             <ServiceCard
               title="제주항공"
-              description="운항, 예약, 수하물 관련 공지를 빠르게 확인할 수 있어."
+              description="운항, 예약, 수하물 관련 공지를 빠르게 확인할 수 있습니다."
               icon={Plane}
               color="from-orange-400 to-orange-600"
               onClick={() => setActiveService("jeju-air")}
             />
             <ServiceCard
               title="제주스테이"
-              description="숙소, 체크인, 편의시설 관련 질문을 한 번에 볼 수 있어."
+              description="숙소, 체크인, 편의시설 관련 질문을 한 번에 확인할 수 있습니다."
               icon={HomeIcon}
               color="from-cyan-400 to-cyan-600"
               onClick={() => setActiveService("jeju-stay")}
             />
             <ServiceCard
               title="제주렌터카"
-              description="대여, 보험, 반납 관련 공지와 자주 묻는 내용을 모아둬."
+              description="대여, 보험, 반납 관련 공지와 자주 묻는 내용을 모아두었습니다."
               icon={Car}
               color="from-emerald-400 to-emerald-600"
               onClick={() => setActiveService("jeju-rental")}
@@ -331,7 +331,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <SectionHeader
             title="최신 공지"
-            description="API에서 읽어온 공지사항만 보여줘. 서비스와 검색으로 바로 좁힐 수 있어."
+            description="API에서 읽어온 공지사항만 보여드립니다. 서비스와 검색으로 바로 좁힐 수 있습니다."
             action={
               <Link href="/notices">
                 <a className="group flex items-center gap-2 text-orange-600 font-black text-lg hover:gap-4 transition-all">
@@ -377,8 +377,8 @@ export default function Home() {
             </div>
           ) : noticesError ? (
             <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-200">
-              <p className="text-gray-500 font-black text-xl">공지 목록을 불러오지 못했어.</p>
-              <p className="mt-3 text-gray-400">잠깐 뒤에 다시 시도해줘.</p>
+              <p className="text-gray-500 font-black text-xl">공지 목록을 불러오지 못했습니다.</p>
+              <p className="mt-3 text-gray-400">잠시 후 다시 시도해 주세요.</p>
               <button
                 type="button"
                 onClick={retryNotices}
@@ -389,7 +389,7 @@ export default function Home() {
             </div>
           ) : filteredNotices.length === 0 ? (
             <div className="py-20 text-center bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
-              <p className="text-gray-400 font-black text-xl italic uppercase tracking-widest">검색 결과가 없어</p>
+              <p className="text-gray-400 font-black text-xl italic uppercase tracking-widest">검색 결과가 없습니다</p>
             </div>
           ) : (
             <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -416,7 +416,7 @@ export default function Home() {
           <SectionHeader
             centered
             title="자주 묻는 질문"
-            description="검색과 서비스 필터로 궁금한 항목만 빠르게 좁혀봐."
+            description="검색과 서비스 필터로 궁금한 항목만 빠르게 좁히실 수 있습니다."
             action={
               <Link href="/faqs">
                 <Button className="mt-6 bg-gray-900 hover:bg-black text-white px-10 py-7 rounded-2xl text-lg font-black transition-all shadow-xl shadow-gray-900/10">
@@ -447,8 +447,8 @@ export default function Home() {
               </div>
             ) : faqsError ? (
               <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-200">
-                <p className="text-gray-500 font-black text-xl">FAQ를 불러오지 못했어.</p>
-                <p className="mt-3 text-gray-400">잠깐 뒤에 다시 시도해줘.</p>
+                <p className="text-gray-500 font-black text-xl">FAQ를 불러오지 못했습니다.</p>
+                <p className="mt-3 text-gray-400">잠시 후 다시 시도해 주세요.</p>
                 <button
                   type="button"
                   onClick={retryFaqs}
@@ -458,7 +458,7 @@ export default function Home() {
                 </button>
               </div>
             ) : filteredFaqs.length === 0 ? (
-              <div className="py-20 text-center text-gray-300 font-medium">검색 결과가 없어</div>
+              <div className="py-20 text-center text-gray-300 font-medium">검색 결과가 없습니다</div>
             ) : (
               <AnimatePresence mode="popLayout">
                 {filteredFaqs.map((faq) => (
@@ -480,8 +480,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <SectionHeader
             centered
-            title="지금 바로 필요한가요?"
-            description="각 서비스 고객센터로 바로 연결되도록 안내만 유지했어."
+            title="지금 바로 필요하신가요?"
+            description="각 서비스 고객센터로 바로 연결될 수 있도록 안내를 유지했습니다."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-16 text-left">

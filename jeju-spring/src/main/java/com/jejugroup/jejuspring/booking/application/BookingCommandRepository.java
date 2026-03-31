@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.security.SecureRandom;
 import java.util.Locale;
 
@@ -209,6 +210,50 @@ public class BookingCommandRepository {
         }
     }
 
+    public BookingCancellationRow loadBookingForCancellation(Connection connection, String bookingNo) throws SQLException {
+        String query = """
+            SELECT id, booking_no, user_id, status, payment_status, cancelled_at
+            FROM bookings
+            WHERE booking_no = ?
+            FOR UPDATE
+            """;
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, normalizeText(bookingNo));
+
+            try (var resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    throw new NoSuchElementException("예약을 찾을 수 없습니다.");
+                }
+
+                return new BookingCancellationRow(
+                    resultSet.getLong("id"),
+                    resultSet.getString("booking_no"),
+                    resultSet.getString("user_id"),
+                    resultSet.getString("status"),
+                    resultSet.getString("payment_status"),
+                    resultSet.getTimestamp("cancelled_at") == null ? null : resultSet.getTimestamp("cancelled_at").toLocalDateTime()
+                );
+            }
+        }
+    }
+
+    public int cancelBooking(Connection connection, long bookingId, LocalDateTime cancelledAt) throws SQLException {
+        String query = """
+            UPDATE bookings
+            SET status = 'cancelled',
+                payment_status = 'cancelled',
+                cancelled_at = ?
+            WHERE id = ?
+            """;
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setObject(1, cancelledAt);
+            statement.setLong(2, bookingId);
+            return statement.executeUpdate();
+        }
+    }
+
     private String randomDigits() {
         return String.format(Locale.ROOT, "%0" + RESERVATION_NUMBER_DIGITS + "d", RANDOM.nextInt(100_000_000));
     }
@@ -287,5 +332,15 @@ public class BookingCommandRepository {
     private String normalizeEmail(String value) {
         String normalized = normalizeText(value);
         return StringUtils.hasText(normalized) ? normalized : null;
+    }
+
+    public record BookingCancellationRow(
+        long id,
+        String bookingNo,
+        String userId,
+        String status,
+        String paymentStatus,
+        LocalDateTime cancelledAt
+    ) {
     }
 }

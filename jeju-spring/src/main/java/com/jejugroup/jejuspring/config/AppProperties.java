@@ -66,10 +66,28 @@ public record AppProperties(
         }
     }
 
-    public record External(String openweatherApiKey, String openaiApiKey) {
+    public record External(String openweatherApiKey, String geminiApiKey, String geminiChatBaseUrl, List<String> geminiChatModels) {
+        public External(String openweatherApiKey, String geminiApiKey) {
+            this(openweatherApiKey, geminiApiKey, "", List.of());
+        }
+
         public External {
             openweatherApiKey = normalize(openweatherApiKey);
-            openaiApiKey = normalize(openaiApiKey);
+            geminiApiKey = normalize(geminiApiKey);
+            geminiChatBaseUrl = normalize(geminiChatBaseUrl);
+            geminiChatModels = geminiChatModels == null ? List.of() : List.copyOf(geminiChatModels);
+        }
+
+        public String geminiApiKey() {
+            return geminiApiKey;
+        }
+
+        public String geminiChatBaseUrl() {
+            return geminiChatBaseUrl;
+        }
+
+        public List<String> geminiChatModels() {
+            return geminiChatModels;
         }
     }
 
