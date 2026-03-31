@@ -30,7 +30,7 @@ export default function InquiryList({
   errorMessage = null,
 }: InquiryListProps) {
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-  const writeButtonDisabled = !authenticated || isLoading;
+  const writeButtonDisabled = isLoading;
 
   return (
     <div className="bbs-container">

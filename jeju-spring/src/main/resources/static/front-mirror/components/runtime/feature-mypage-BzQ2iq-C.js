@@ -1,4 +1,4 @@
-import { a as c, j as n } from "./react-vendor-BoSfm_Te.js";
+import { a as l, j as n } from "./react-vendor-BoSfm_Te.js";
 import { A as se } from "./legacy-core-CYHwlLlr.js";
 const mn = /^[a-zA-Z][a-zA-Z\d+\-.]*:/, ze = {
   email: "minji.hong@jejugroup.example",
@@ -112,7 +112,7 @@ function St({
   for (const o of s) {
     if (a.size > 0 && !a.has(o.ownerId))
       continue;
-    const l = i.get(o.dayId), g = {
+    const c = i.get(o.dayId), g = {
       checked: o.status === "used",
       id: o.id,
       label: o.activityLabel,
@@ -121,10 +121,10 @@ function St({
       status: o.status,
       type: o.type
     };
-    if (l) {
-      if (l.activities.push(g), o.ownerId !== e && r.has(o.ownerId)) {
+    if (c) {
+      if (c.activities.push(g), o.ownerId !== e && r.has(o.ownerId)) {
         const v = r.get(o.ownerId);
-        v && !l.companions.some((w) => w.id === v.id) && l.companions.push({ ...v });
+        v && !c.companions.some((A) => A.id === v.id) && c.companions.push({ ...v });
       }
       continue;
     }
@@ -139,7 +139,7 @@ function St({
       title: o.title
     });
   }
-  return Array.from(i.values()).sort((o, l) => o.sortKey.localeCompare(l.sortKey)).map(({ sortKey: o, ...l }) => l);
+  return Array.from(i.values()).sort((o, c) => o.sortKey.localeCompare(c.sortKey)).map(({ sortKey: o, ...c }) => c);
 }
 const J = At(ze), _e = je(bt), gn = kt(vt), De = Ue(fn), Le = Pe(xn), Nt = St({
   currentAccountId: ze.id ?? "",
@@ -161,14 +161,14 @@ const J = At(ze), _e = je(bt), gn = kt(vt), De = Ue(fn), Le = Pe(xn), Nt = St({
   const t = It(), s = In(e);
   if (!$n(s))
     return t;
-  const a = An(s, t.profile), i = _n(s.linkedCompanions, t.linkedCompanions), o = Dn(s.travelEvents, t.travelEvents), l = s.travelEvents !== void 0 ? St({
+  const a = An(s, t.profile), i = _n(s.linkedCompanions, t.linkedCompanions), o = Dn(s.travelEvents, t.travelEvents), c = s.travelEvents !== void 0 ? St({
     currentAccountId: a.id ?? t.profile.id ?? "",
     linkedCompanions: i,
     travelEvents: o
   }) : Rn(s.itinerary, t.itinerary);
   return {
     bookings: Mn(s.bookings, t.bookings),
-    itinerary: l,
+    itinerary: c,
     linkedCompanions: i,
     profile: a,
     stats: Cn(s.stats ?? s, t.stats),
@@ -250,7 +250,7 @@ const yn = (e, t) => {
   };
   return s(e), B(e) && (s(e.user), s(e.member), s(e.profile), s(e.data), s(e.session)), t;
 }, An = (e, t) => {
-  const s = kn(e.memberships, e.tier ?? e.role), r = En(e.passport), a = u(e.tier) ?? s[0] ?? u(e.role), i = u(e.id) ?? u(e.memberId) ?? u(e.userId), o = u(e.name) ?? u(e.displayName) ?? u(e.fullName) ?? u(e.nickname) ?? u(e.id) ?? u(e.memberId) ?? u(e.userId) ?? t.name, l = u(e.nickname), g = Xn(
+  const s = kn(e.memberships, e.tier ?? e.role), r = En(e.passport), a = u(e.tier) ?? s[0] ?? u(e.role), i = u(e.id) ?? u(e.memberId) ?? u(e.userId), o = u(e.name) ?? u(e.displayName) ?? u(e.fullName) ?? u(e.nickname) ?? u(e.id) ?? u(e.memberId) ?? u(e.userId) ?? t.name, c = u(e.nickname), g = Xn(
     H(e, "bio") ?? H(e, "intro") ?? H(e.profile, "bio") ?? H(e.profile, "intro") ?? H(e.user, "bio") ?? H(e.user, "intro") ?? H(e.member, "bio") ?? H(e.member, "intro") ?? H(e.data, "bio") ?? H(e.data, "intro") ?? t.bio
   );
   return {
@@ -260,7 +260,7 @@ const yn = (e, t) => {
     id: i ?? t.id,
     memberships: s,
     name: o,
-    nickname: l,
+    nickname: c,
     passport: r,
     phone: u(e.phone) ?? u(e.mobile) ?? "미등록",
     role: u(e.role),
@@ -445,12 +445,12 @@ const yn = (e, t) => {
   const t = B(e) ? e : null;
   if (!t)
     return null;
-  const s = u(t.id), r = u(t.dayId), a = u(t.title), i = u(t.date), o = u(t.time), l = u(t.activityLabel), g = u(t.ownerId), v = u(t.ownerName), w = u(t.googleMapUrl);
-  return !s || !r || !a || !i || !o || !l || !g || !v || !w ? null : {
-    activityLabel: l,
+  const s = u(t.id), r = u(t.dayId), a = u(t.title), i = u(t.date), o = u(t.time), c = u(t.activityLabel), g = u(t.ownerId), v = u(t.ownerName), A = u(t.googleMapUrl);
+  return !s || !r || !a || !i || !o || !c || !g || !v || !A ? null : {
+    activityLabel: c,
     date: i,
     dayId: r,
-    googleMapUrl: w,
+    googleMapUrl: A,
     id: s,
     ownerId: g,
     ownerName: v,
@@ -548,10 +548,10 @@ const yn = (e, t) => {
     ...r
   };
   for (const i of Rt) {
-    const o = s[i], l = r[i];
-    (q(o) || q(l)) && (a[i] = {
+    const o = s[i], c = r[i];
+    (q(o) || q(c)) && (a[i] = {
       ...q(o) ? o : {},
-      ...q(l) ? l : {}
+      ...q(c) ? c : {}
     });
   }
   return a;
@@ -623,7 +623,7 @@ const yn = (e, t) => {
     default:
       return e;
   }
-}, Ut = c.createContext(null), Pt = (e) => `${se}${e}`, ps = (e) => e !== null && typeof e == "object" && !Array.isArray(e), ms = async () => {
+}, Ut = l.createContext(null), Pt = (e) => `${se}${e}`, ps = (e) => e !== null && typeof e == "object" && !Array.isArray(e), ms = async () => {
   try {
     const e = await fetch(Pt(os), {
       credentials: "include",
@@ -701,8 +701,8 @@ const yn = (e, t) => {
   const i = [
     ...r.travelEvents,
     ...a.flatMap((o) => {
-      const l = Lt(o.id);
-      return !l || !("travelEvents" in l) ? [] : Tt(l.travelEvents).map((g) => ({
+      const c = Lt(o.id);
+      return !c || !("travelEvents" in c) ? [] : Tt(c.travelEvents).map((g) => ({
         ...g,
         ownerId: g.ownerId || o.id,
         ownerName: g.ownerName || o.name
@@ -716,7 +716,7 @@ const yn = (e, t) => {
     })
   );
 }, vs = ({ children: e }) => {
-  const [t, s] = c.useReducer(ds, void 0, cs), [r, a] = c.useState(!1), [i, o] = c.useState(!1), l = (j) => {
+  const [t, s] = l.useReducer(ds, void 0, cs), [r, a] = l.useState(!1), [i, o] = l.useState(!1), c = (j) => {
     xe(j), s({ type: "HYDRATE_DASHBOARD", payload: j });
   }, g = (j) => {
     j.type === "HYDRATE_DASHBOARD" ? xe(j.payload) : j.type === "PATCH_PROFILE" && xe({
@@ -730,11 +730,11 @@ const yn = (e, t) => {
     }), s(j);
   }, v = async () => {
     const j = await st();
-    return j ? (l(j), !0) : !1;
+    return j ? (c(j), !0) : !1;
   };
-  c.useEffect(() => {
+  l.useEffect(() => {
     xe(xs(t));
-  }, [t.bookings, t.itinerary, t.linkedCompanions, t.profile, t.stats, t.supportItems, t.travelEvents]), c.useEffect(() => {
+  }, [t.bookings, t.itinerary, t.linkedCompanions, t.profile, t.stats, t.supportItems, t.travelEvents]), l.useEffect(() => {
     let j = !0, S = !1;
     const E = async () => {
       const m = await st();
@@ -744,7 +744,7 @@ const yn = (e, t) => {
         o(!1), a(!0);
         return;
       }
-      j && (o(!0), a(!0), l(m));
+      j && (o(!0), a(!0), c(m));
     }, f = () => {
       S || (S = !0, E().finally(() => {
         S = !1;
@@ -758,16 +758,16 @@ const yn = (e, t) => {
         return;
       }
       (R = m.key) != null && R.startsWith(Mt) && f();
-    }, I = () => {
+    }, w = () => {
       f();
     }, N = () => {
       f();
     };
-    return window.addEventListener("storage", x), window.addEventListener(nt, I), window.addEventListener(Me, N), () => {
-      j = !1, window.removeEventListener("storage", x), window.removeEventListener(nt, I), window.removeEventListener(Me, N);
+    return window.addEventListener("storage", x), window.addEventListener(nt, w), window.addEventListener(Me, N), () => {
+      j = !1, window.removeEventListener("storage", x), window.removeEventListener(nt, w), window.removeEventListener(Me, N);
     };
   }, [s]);
-  const w = c.useMemo(
+  const A = l.useMemo(
     () => ({
       dispatch: g,
       refreshDashboard: v,
@@ -791,9 +791,9 @@ const yn = (e, t) => {
       /* @__PURE__ */ n.jsx("circle", { cx: "12", cy: "17.25", r: "1.1", fill: "currentColor" })
     ] }) }),
     /* @__PURE__ */ n.jsx("p", { className: "mypage-auth-empty-text", children: "로그인을 해주세요." })
-  ] }) : /* @__PURE__ */ n.jsx(Ut.Provider, { value: w, children: e });
+  ] }) : /* @__PURE__ */ n.jsx(Ut.Provider, { value: A, children: e });
 }, le = () => {
-  const e = c.useContext(Ut);
+  const e = l.useContext(Ut);
   if (!e)
     throw new Error("useDashboardState must be used within DashboardProvider");
   return e;
@@ -867,12 +867,12 @@ const yn = (e, t) => {
     status: Ns(e.status ?? e.inviteStatus ?? e.invite_status)
   };
 }, it = (e, t) => Is(e, t), Es = (e = {}) => {
-  const { enabled: t = !0 } = e, [s, r] = c.useState([]), [a, i] = c.useState(!1), [o, l] = c.useState(null), g = c.useRef(0), v = c.useMemo(
+  const { enabled: t = !0 } = e, [s, r] = l.useState([]), [a, i] = l.useState(!1), [o, c] = l.useState(null), g = l.useRef(0), v = l.useMemo(
     () => s.filter((f) => f.direction === "received" && f.status === "pending"),
     [s]
-  ), w = c.useCallback(async () => {
+  ), A = l.useCallback(async () => {
     const f = ++g.current;
-    i(!0), l(null);
+    i(!0), c(null);
     try {
       const x = await fetch(at(rt), {
         credentials: "include",
@@ -880,33 +880,33 @@ const yn = (e, t) => {
           Accept: "application/json"
         },
         method: "GET"
-      }), I = await x.json().catch(() => null);
+      }), w = await x.json().catch(() => null);
       if (x.status === 401)
         throw new Error("로그인이 필요합니다.");
-      if (!x.ok || ne(I) && I.success === !1)
-        throw new Error(it(I, "동행 초대를 불러오지 못했다"));
-      const N = As(I).map(ks).filter((m) => m !== null);
+      if (!x.ok || ne(w) && w.success === !1)
+        throw new Error(it(w, "동행 초대를 불러오지 못했다"));
+      const N = As(w).map(ks).filter((m) => m !== null);
       return f !== g.current || r(N), N;
     } catch (x) {
-      return f !== g.current ? [] : (r([]), l({
+      return f !== g.current ? [] : (r([]), c({
         message: x instanceof Error && x.message.trim() ? x.message : "동행 초대를 불러오지 못했다"
       }), []);
     } finally {
       f === g.current && i(!1);
     }
   }, []);
-  c.useEffect(() => {
+  l.useEffect(() => {
     if (t)
-      return w(), () => {
+      return A(), () => {
         g.current += 1;
       };
-  }, [t, w]);
-  const j = c.useCallback(
+  }, [t, A]);
+  const j = l.useCallback(
     async (f, x) => {
-      const I = x === "accept" ? "accept" : "reject";
-      l(null);
+      const w = x === "accept" ? "accept" : "reject";
+      c(null);
       try {
-        const N = await fetch(at(`${rt}/${f}/${I}`), {
+        const N = await fetch(at(`${rt}/${f}/${w}`), {
           credentials: "include",
           headers: {
             Accept: "application/json"
@@ -917,18 +917,18 @@ const yn = (e, t) => {
           throw new Error("로그인이 필요합니다.");
         if (!N.ok || ne(m) && m.success === !1)
           throw new Error(it(m, "동행 초대를 처리하지 못했다"));
-        return await w(), !0;
+        return await A(), !0;
       } catch (N) {
-        return l({
+        return c({
           message: N instanceof Error && N.message.trim() ? N.message : "동행 초대를 처리하지 못했다"
         }), !1;
       }
     },
-    [w]
-  ), S = c.useCallback(
+    [A]
+  ), S = l.useCallback(
     async (f) => j(f, "accept"),
     [j]
-  ), E = c.useCallback(
+  ), E = l.useCallback(
     async (f) => j(f, "reject"),
     [j]
   );
@@ -938,7 +938,7 @@ const yn = (e, t) => {
     isLoading: a,
     pendingInviteCount: v.length,
     pendingReceivedInvites: v,
-    refreshInvites: w,
+    refreshInvites: A,
     rejectInvite: E
   };
 }, Cs = (e, t) => {
@@ -947,11 +947,11 @@ const yn = (e, t) => {
   const s = Date.parse(e);
   if (!Number.isFinite(s))
     return "00:00:00";
-  const r = Math.max(0, s - t), a = Math.floor(r / 1e3), i = Math.floor(a / 3600), o = Math.floor(a % 3600 / 60), l = a % 60;
-  return [i, o, l].map((g) => String(g).padStart(2, "0")).join(":");
+  const r = Math.max(0, s - t), a = Math.floor(r / 1e3), i = Math.floor(a / 3600), o = Math.floor(a % 3600 / 60), c = a % 60;
+  return [i, o, c].map((g) => String(g).padStart(2, "0")).join(":");
 }, Ts = ({ invite: e }) => {
-  const [t, s] = c.useState(!1), r = V(e.senderAvatarUrl), a = !!(r && !t);
-  return c.useEffect(() => {
+  const [t, s] = l.useState(!1), r = V(e.senderAvatarUrl), a = !!(r && !t);
+  return l.useEffect(() => {
     s(!1);
   }, [r]), /* @__PURE__ */ n.jsxs("div", { className: "companion-invite-avatar companion-avatar soft-radius is-linked", "aria-hidden": "true", children: [
     a ? /* @__PURE__ */ n.jsx(
@@ -974,18 +974,18 @@ const yn = (e, t) => {
     acceptInvite: a,
     errorObj: i,
     isLoading: o,
-    pendingInviteCount: l,
+    pendingInviteCount: c,
     pendingReceivedInvites: g,
     rejectInvite: v
-  } = Es({ enabled: e }), [w, j] = c.useState(null), [S, E] = c.useState(() => Date.now());
-  c.useEffect(() => {
+  } = Es({ enabled: e }), [A, j] = l.useState(null), [S, E] = l.useState(() => Date.now());
+  l.useEffect(() => {
     e && window.lucide && window.lucide.createIcons();
-  }, [e, g, o, i, l]), c.useEffect(() => {
+  }, [e, g.length, o]), l.useEffect(() => {
     const m = (R) => {
       R.key === "Escape" && e && t();
     };
     return window.addEventListener("keydown", m), () => window.removeEventListener("keydown", m);
-  }, [e, t]), c.useEffect(() => {
+  }, [e, t]), l.useEffect(() => {
     if (!e || g.length === 0)
       return;
     E(Date.now());
@@ -996,7 +996,7 @@ const yn = (e, t) => {
       window.clearInterval(m);
     };
   }, [e, g.length]);
-  const f = c.useMemo(
+  const f = l.useMemo(
     () => [...g].sort((m, R) => {
       const d = m.createdAt ?? m.expiresAt ?? "";
       return (R.createdAt ?? R.expiresAt ?? "").localeCompare(d);
@@ -1006,7 +1006,7 @@ const yn = (e, t) => {
   if (!e)
     return null;
   const x = async (m, R) => {
-    if (w === null) {
+    if (A === null) {
       j(m);
       try {
         (R === "accept" ? await a(m) : await v(m)) && (await r(), await (s == null ? void 0 : s()));
@@ -1014,12 +1014,12 @@ const yn = (e, t) => {
         j(null);
       }
     }
-  }, I = () => {
+  }, w = () => {
     t();
   }, N = (m) => {
     m.stopPropagation();
   };
-  return /* @__PURE__ */ n.jsx("div", { className: "meta-modal-overlay companion-invite-modal active", onClick: I, role: "dialog", "aria-modal": "true", children: /* @__PURE__ */ n.jsxs(
+  return /* @__PURE__ */ n.jsx("div", { className: "meta-modal-overlay companion-invite-modal active", onClick: w, role: "dialog", "aria-modal": "true", children: /* @__PURE__ */ n.jsxs(
     "div",
     {
       className: "meta-modal-content companion-invite-modal-content soft-radius meta-glass-theme",
@@ -1037,7 +1037,7 @@ const yn = (e, t) => {
           /* @__PURE__ */ n.jsxs("div", { className: "companion-invite-summary", children: [
             /* @__PURE__ */ n.jsx("strong", { children: "받은 초대" }),
             /* @__PURE__ */ n.jsxs("span", { children: [
-              l,
+              c,
               "건"
             ] })
           ] }),
@@ -1088,7 +1088,7 @@ const yn = (e, t) => {
                     className: "companion-invite-action companion-invite-reject",
                     type: "button",
                     onClick: () => void x(m.id, "reject"),
-                    disabled: w !== null,
+                    disabled: A !== null,
                     children: "거절"
                   }
                 ),
@@ -1098,7 +1098,7 @@ const yn = (e, t) => {
                     className: "companion-invite-action companion-invite-accept",
                     type: "button",
                     onClick: () => void x(m.id, "accept"),
-                    disabled: w !== null,
+                    disabled: A !== null,
                     children: "수락"
                   }
                 )
@@ -1189,11 +1189,11 @@ const yn = (e, t) => {
   pendingInviteCount: t
 } = {}) => {
   var M, C, z, _;
-  const { state: s } = le(), r = s.profile ?? J, a = (M = s.stats) != null && M.length ? s.stats : _e, i = ((C = r.memberships) == null ? void 0 : C[0]) ?? J.memberships[0], o = r.tier ?? i, l = Rs(o), g = zs(o), v = ((z = r.nickname) == null ? void 0 : z.trim()) || r.name.trim(), [w, j] = c.useState(0), [S, E] = c.useState(!1), f = t ?? w, x = f > 0, I = V(r.avatarUrl) ?? `https://api.dicebear.com/7.x/notionists/svg?seed=${r.name}&backgroundColor=f8f9fa`;
-  c.useEffect(() => {
+  const { state: s } = le(), r = s.profile ?? J, a = (M = s.stats) != null && M.length ? s.stats : _e, i = ((C = r.memberships) == null ? void 0 : C[0]) ?? J.memberships[0], o = r.tier ?? i, c = Rs(o), g = zs(o), v = ((z = r.nickname) == null ? void 0 : z.trim()) || r.name.trim(), [A, j] = l.useState(0), [S, E] = l.useState(!1), f = t ?? A, x = f > 0, w = V(r.avatarUrl) ?? `https://api.dicebear.com/7.x/notionists/svg?seed=${r.name}&backgroundColor=f8f9fa`;
+  l.useEffect(() => {
     window.lucide && window.lucide.createIcons();
   }, []);
-  const N = c.useCallback(async () => {
+  const N = l.useCallback(async () => {
     if (typeof t == "number") {
       j(0);
       return;
@@ -1211,15 +1211,15 @@ const yn = (e, t) => {
         return;
       }
       const U = await k.json().catch(() => null), b = Ds(U).filter(($) => {
-        const A = ct($.status), h = ct($.direction);
-        return A === "pending" && h === "received";
+        const I = ct($.status), h = ct($.direction);
+        return I === "pending" && h === "received";
       }).length;
       j(b);
     } catch {
       j(0);
     }
   }, [t]);
-  c.useEffect(() => {
+  l.useEffect(() => {
     let k = !0;
     return N().finally(() => {
       !k && typeof t != "number" && j(0);
@@ -1231,7 +1231,7 @@ const yn = (e, t) => {
     e && e(), E(!0);
   }, R = (k) => {
     (k.key === "Enter" || k.key === " ") && (k.preventDefault(), m());
-  }, d = c.useMemo(() => a, [a]);
+  }, d = l.useMemo(() => a, [a]);
   return /* @__PURE__ */ n.jsxs("section", { className: "meta-section layer-hero dashboard-summary-grid", children: [
     /* @__PURE__ */ n.jsx(ie, { className: "hero-glass-container profile-main-card", children: /* @__PURE__ */ n.jsxs("div", { className: "profile-layout-flex", children: [
       /* @__PURE__ */ n.jsx("div", { className: "profile-left-area", children: /* @__PURE__ */ n.jsxs("div", { className: "profile-avatar-wrap", children: [
@@ -1240,10 +1240,10 @@ const yn = (e, t) => {
           {
             alt: "profile",
             className: "profile-avatar",
-            src: I
+            src: w
           }
         ),
-        /* @__PURE__ */ n.jsx("div", { className: `membership-grade-chip soft-radius ${l}`, children: /* @__PURE__ */ n.jsx("span", { children: g }) })
+        /* @__PURE__ */ n.jsx("div", { className: `membership-grade-chip soft-radius ${c}`, children: /* @__PURE__ */ n.jsx("span", { children: g }) })
       ] }) }),
       /* @__PURE__ */ n.jsx("div", { className: "profile-right-area", children: /* @__PURE__ */ n.jsxs("div", { className: "profile-info", children: [
         /* @__PURE__ */ n.jsxs("h1", { className: "profile-name", children: [
@@ -1390,9 +1390,9 @@ const yn = (e, t) => {
   if (!t)
     return null;
   if (t.match(dt)) {
-    const [a, i] = t.split(dt, 2), o = T(a), l = T(i).split(/\s+/)[0] ?? "";
-    if (o && l)
-      return { departure: o, destination: l };
+    const [a, i] = t.split(dt, 2), o = T(a), c = T(i).split(/\s+/)[0] ?? "";
+    if (o && c)
+      return { departure: o, destination: c };
   }
   const r = t.match(/\b[A-Z]{2,4}\b/g);
   return r && r.length >= 2 ? {
@@ -1528,10 +1528,10 @@ const yn = (e, t) => {
       return Js(e);
   }
 }, er = () => {
-  const { dispatch: e, refreshDashboard: t, state: s } = le(), r = s.bookings ?? [], [a, i] = c.useState(null), [o, l] = c.useState(null), [g, v] = c.useState(null);
-  c.useEffect(() => {
+  const { dispatch: e, refreshDashboard: t, state: s } = le(), r = s.bookings ?? [], [a, i] = l.useState(null), [o, c] = l.useState(null), [g, v] = l.useState(null);
+  l.useEffect(() => {
     window.lucide && window.lucide.createIcons();
-  }, [a, r, s.filter]), c.useEffect(() => {
+  }, [a]), l.useEffect(() => {
     if (!a)
       return;
     const d = (M) => {
@@ -1539,27 +1539,27 @@ const yn = (e, t) => {
     };
     return window.addEventListener("keydown", d), () => window.removeEventListener("keydown", d);
   }, [a]);
-  const w = c.useMemo(() => s.filter === "all" ? r : r.filter((d) => d.type === s.filter), [r, s.filter]), j = c.useCallback(
+  const A = l.useMemo(() => s.filter === "all" ? r : r.filter((d) => d.type === s.filter), [r, s.filter]), j = l.useCallback(
     (d) => {
       e({ type: "SET_FILTER", payload: d });
     },
     [e]
-  ), S = c.useMemo(
+  ), S = l.useMemo(
     () => r.find((d) => d.id === a) ?? null,
     [a, r]
-  ), E = c.useMemo(() => S ? Qs(S) : null, [S]), f = c.useCallback((d) => {
+  ), E = l.useMemo(() => S ? Qs(S) : null, [S]), f = l.useCallback((d) => {
     i(d);
-  }, []), x = c.useCallback(() => {
+  }, []), x = l.useCallback(() => {
     i(null);
-  }, []), I = c.useCallback((d) => {
-    l({
+  }, []), w = l.useCallback((d) => {
+    c({
       bookingId: d,
       message: "예약 변경은 아직 이 화면에서 바로 처리되지 않습니다. 고객센터로 문의해 주세요.",
       tone: "info"
     });
-  }, []), N = c.useCallback(
+  }, []), N = l.useCallback(
     async (d) => {
-      v(d.id), l({
+      v(d.id), c({
         bookingId: d.id,
         message: "예약 취소를 처리하는 중입니다. 잠시만 기다려 주세요.",
         tone: "loading"
@@ -1576,13 +1576,13 @@ const yn = (e, t) => {
           throw new Error("로그인이 필요합니다.");
         if (!M.ok || Wt(C) && C.success === !1)
           throw new Error(pt(C, "예약 취소에 실패했습니다."));
-        l({
+        c({
           bookingId: d.id,
           message: pt(C, "예약 취소가 완료되었습니다."),
           tone: "success"
         }), await t() || window.location.reload(), a === d.id && i(null);
       } catch (M) {
-        l({
+        c({
           bookingId: d.id,
           message: M instanceof Error && M.message.trim() ? M.message : "예약 취소에 실패했습니다.",
           tone: "error"
@@ -1592,10 +1592,10 @@ const yn = (e, t) => {
       }
     },
     [a, t]
-  ), m = c.useCallback(
+  ), m = l.useCallback(
     (d) => {
       if (!d) {
-        l({
+        c({
           bookingId: "",
           message: "바우처 링크가 아직 연결되지 않았습니다.",
           tone: "info"
@@ -1605,8 +1605,8 @@ const yn = (e, t) => {
       window.open(d, "_blank", "noopener,noreferrer");
     },
     []
-  ), R = c.useCallback((d) => {
-    l({
+  ), R = l.useCallback((d) => {
+    c({
       bookingId: a ?? "",
       message: d,
       tone: "info"
@@ -1647,7 +1647,7 @@ const yn = (e, t) => {
         children: o.message
       }
     ) : null,
-    /* @__PURE__ */ n.jsx("ul", { className: "full-width-trip-list", children: w.length > 0 ? w.map((d) => /* @__PURE__ */ n.jsxs("li", { className: "inline-trip-card soft-radius", "data-type": d.type, children: [
+    /* @__PURE__ */ n.jsx("ul", { className: "full-width-trip-list", children: A.length > 0 ? A.map((d) => /* @__PURE__ */ n.jsxs("li", { className: "inline-trip-card soft-radius", "data-type": d.type, children: [
       /* @__PURE__ */ n.jsxs("div", { className: "trip-core-info", children: [
         /* @__PURE__ */ n.jsxs("div", { className: "trip-head-flex", children: [
           /* @__PURE__ */ n.jsx(Ps, { tone: d.type, value: d.status }),
@@ -1680,7 +1680,7 @@ const yn = (e, t) => {
             /* @__PURE__ */ n.jsx("i", { "data-lucide": "download", className: "lucide-download" }),
             "e-티켓 / 바우처"
           ] }) : /* @__PURE__ */ n.jsx("button", { className: "inline-btn outline pill-shape", type: "button", onClick: () => f(d.id), children: "예약 확인" }),
-          /* @__PURE__ */ n.jsx("button", { className: "inline-btn outline pill-shape", type: "button", onClick: () => I(d.id), children: "예약 변경" })
+          /* @__PURE__ */ n.jsx("button", { className: "inline-btn outline pill-shape", type: "button", onClick: () => w(d.id), children: "예약 변경" })
         ] }),
         /* @__PURE__ */ n.jsx("button", { className: "inline-btn danger pill-shape", disabled: g === d.id, type: "button", onClick: () => void N(d), children: "예약 취소" })
       ] })
@@ -1708,7 +1708,7 @@ const yn = (e, t) => {
           return /* @__PURE__ */ n.jsxs(
             "div",
             {
-              onClick: (A) => A.stopPropagation(),
+              onClick: (I) => I.stopPropagation(),
               style: {
                 background: "#ffffff",
                 borderRadius: "28px",
@@ -2325,81 +2325,81 @@ const yn = (e, t) => {
   initialCompanions: e = [],
   searchMembers: t = cr
 } = {}) => {
-  const [s, r] = c.useState(e), [a, i] = c.useState(""), [o, l] = c.useState([]), [g, v] = c.useState("suggestions"), [w, j] = c.useState(!1), [S, E] = c.useState(!1), [f, x] = c.useState(null), I = c.useRef(0), N = c.useRef(/* @__PURE__ */ new Set()), m = c.useRef({
+  const [s, r] = l.useState(e), [a, i] = l.useState(""), [o, c] = l.useState([]), [g, v] = l.useState("suggestions"), [A, j] = l.useState(!1), [S, E] = l.useState(!1), [f, x] = l.useState(null), w = l.useRef(0), N = l.useRef(/* @__PURE__ */ new Set()), m = l.useRef({
     controller: null,
     timerId: null
-  }), R = c.useRef(null), d = c.useCallback(() => {
+  }), R = l.useRef(null), d = l.useCallback(() => {
     var h;
-    const A = m.current;
-    A.timerId !== null && window.clearTimeout(A.timerId), (h = A.controller) == null || h.abort(), A.controller = null, A.timerId = null, E(!1);
-  }, []), M = c.useCallback(() => {
-    var A;
-    (A = R.current) == null || A.abort(), R.current = null, j(!1);
-  }, []), C = c.useCallback(
-    async (A, h) => {
+    const I = m.current;
+    I.timerId !== null && window.clearTimeout(I.timerId), (h = I.controller) == null || h.abort(), I.controller = null, I.timerId = null, E(!1);
+  }, []), M = l.useCallback(() => {
+    var I;
+    (I = R.current) == null || I.abort(), R.current = null, j(!1);
+  }, []), C = l.useCallback(
+    async (I, h) => {
       var G, L, Q, X;
-      const D = ut(A);
+      const D = ut(I);
       if (!D)
-        return l([]), h != null && h.strict && x({ message: "검색할 제주그룹 회원 ID를 입력해 주세요." }), [];
+        return c([]), h != null && h.strict && x({ message: "검색할 제주그룹 회원 ID를 입력해 주세요." }), [];
       if (!ht(D))
-        return l([]), h != null && h.strict && x({ message: "회원 ID는 영문, 숫자, 점, 밑줄, 하이픈만 쓸 수 있다" }), [];
-      const Y = ++I.current;
+        return c([]), h != null && h.strict && x({ message: "회원 ID는 영문, 숫자, 점, 밑줄, 하이픈만 쓸 수 있다" }), [];
+      const Y = ++w.current;
       if (h != null && h.strict) {
         d();
-        const F = new AbortController();
-        R.current = F, l([]), x(null), v("results"), j(!0), h = {
+        const K = new AbortController();
+        R.current = K, c([]), x(null), v("results"), j(!0), h = {
           ...h,
-          signal: h.signal ?? F.signal
+          signal: h.signal ?? K.signal
         };
       } else
         E(!0);
       try {
-        const F = await t(D, {
+        const K = await t(D, {
           limit: h != null && h.strict ? void 0 : mt,
           signal: h == null ? void 0 : h.signal
         });
-        return Y !== I.current || (G = h == null ? void 0 : h.signal) != null && G.aborted ? [] : (l(F), h != null && h.strict && F.length === 0 ? x({ message: "일치하는 제주그룹 회원 ID를 찾지 못했다" }) : x(null), F);
-      } catch (F) {
-        return Y !== I.current || (L = h == null ? void 0 : h.signal) != null && L.aborted ? [] : (l([]), x({ message: mr(F) }), []);
+        return Y !== w.current || (G = h == null ? void 0 : h.signal) != null && G.aborted ? [] : (c(K), h != null && h.strict && K.length === 0 ? x({ message: "일치하는 제주그룹 회원 ID를 찾지 못했다" }) : x(null), K);
+      } catch (K) {
+        return Y !== w.current || (L = h == null ? void 0 : h.signal) != null && L.aborted ? [] : (c([]), x({ message: mr(K) }), []);
       } finally {
-        Y === I.current && !((Q = h == null ? void 0 : h.signal) != null && Q.aborted) && (h != null && h.strict ? (j(!1), ((X = R.current) == null ? void 0 : X.signal) === h.signal && (R.current = null)) : E(!1));
+        Y === w.current && !((Q = h == null ? void 0 : h.signal) != null && Q.aborted) && (h != null && h.strict ? (j(!1), ((X = R.current) == null ? void 0 : X.signal) === h.signal && (R.current = null)) : E(!1));
       }
     },
     [d, t]
   );
-  c.useEffect(() => {
-    const A = ut(a);
-    if (!A)
-      return l([]), x(null), E(!1), () => {
-        I.current += 1;
+  l.useEffect(() => {
+    const I = ut(a);
+    if (!I)
+      return c([]), x(null), E(!1), () => {
+        w.current += 1;
       };
-    if (!ht(A))
-      return l([]), x({ message: "회원 ID는 영문, 숫자, 점, 밑줄, 하이픈만 쓸 수 있다" }), E(!1), () => {
-        I.current += 1;
+    if (!ht(I))
+      return c([]), x({ message: "회원 ID는 영문, 숫자, 점, 밑줄, 하이픈만 쓸 수 있다" }), E(!1), () => {
+        w.current += 1;
       };
     const h = new AbortController(), D = window.setTimeout(() => {
-      C(A, { signal: h.signal });
+      C(I, { signal: h.signal });
     }, nr);
     return m.current.controller = h, m.current.timerId = D, () => {
-      h.abort(), window.clearTimeout(D), m.current.controller === h && (m.current.controller = null), m.current.timerId === D && (m.current.timerId = null), I.current += 1;
+      h.abort(), window.clearTimeout(D), m.current.controller === h && (m.current.controller = null), m.current.timerId === D && (m.current.timerId = null), w.current += 1;
     };
   }, [C, a]);
-  const z = c.useCallback((A) => {
-    M(), i(A), l([]), v("suggestions"), x(null), d();
-  }, [M, d]), _ = c.useCallback(() => {
-    M(), d(), I.current += 1, i(""), l([]), v("suggestions"), j(!1), E(!1), x(null);
-  }, [M, d]), k = c.useCallback(
-    async (A) => (d(), await C(A, { strict: !0 })),
+  const z = l.useCallback((I) => {
+    M(), i(I), c([]), v("suggestions"), x(null), d();
+  }, [M, d]), _ = l.useCallback(() => {
+    M(), d(), w.current += 1, i(""), c([]), v("suggestions"), j(!1), E(!1), x(null);
+  }, [M, d]), k = l.useCallback(
+    async (I) => (d(), await C(I, { strict: !0 })),
     [d, C]
-  ), U = c.useCallback(async (A) => {
+  ), U = l.useCallback(async (I) => {
     x(null);
     try {
-      const h = await dr(A), D = W(h) ? Kt(
+      const h = await dr(I), D = W(h) ? Kt(
         h.relationState ?? h.relation_state ?? h.status ?? h.inviteState ?? h.invite_state
       ) ?? "outgoing_pending" : "outgoing_pending";
-      l(
+      c(
         (Y) => Y.map(
-          (G) => G.id === A.id ? {
+          (G) => G.id === I.id ? {
             ...G,
             relationState: D
           } : G
@@ -2408,19 +2408,19 @@ const yn = (e, t) => {
     } catch (h) {
       x({ message: ur(h) });
     }
-  }, []), b = c.useCallback(async (A) => {
-    x(null), N.current.add(A), r((h) => h.filter((D) => D.id !== A)), l(
+  }, []), b = l.useCallback(async (I) => {
+    x(null), N.current.add(I), r((h) => h.filter((D) => D.id !== I)), c(
       (h) => h.map(
-        (D) => D.id === A ? {
+        (D) => D.id === I ? {
           ...D,
           relationState: "none"
         } : D
       )
     );
-  }, []), $ = c.useCallback(async () => {
-    const A = Array.from(N.current);
-    if (A.length !== 0)
-      for (const h of A)
+  }, []), $ = l.useCallback(async () => {
+    const I = Array.from(N.current);
+    if (I.length !== 0)
+      for (const h of I)
         try {
           await pr(h), N.current.delete(h);
         } catch (D) {
@@ -2432,7 +2432,7 @@ const yn = (e, t) => {
     clearSearch: _,
     errorObj: f,
     handleSearch: k,
-    isSearching: w,
+    isSearching: A,
     isSuggestionLoading: S,
     inviteCompanion: U,
     commitPendingUnlinks: $,
@@ -2449,8 +2449,8 @@ const yn = (e, t) => {
   showLinkedIndicator: s = !0,
   style: r
 }) => {
-  const [a, i] = c.useState(!1), o = V(e.avatarUrl), l = !!(o && !a);
-  return c.useEffect(() => {
+  const [a, i] = l.useState(!1), o = V(e.avatarUrl), c = !!(o && !a);
+  return l.useEffect(() => {
     i(!1);
   }, [o]), /* @__PURE__ */ n.jsxs(
     "div",
@@ -2460,7 +2460,7 @@ const yn = (e, t) => {
       "data-companion-search-avatar": "true",
       style: r,
       children: [
-        l ? /* @__PURE__ */ n.jsx(
+        c ? /* @__PURE__ */ n.jsx(
           "img",
           {
             alt: "",
@@ -2479,8 +2479,8 @@ const yn = (e, t) => {
   none: "초대",
   outgoing_pending: "초대중"
 }, gr = (e, t) => t ? "linked" : e.relationState ?? "none", yr = (e) => xr[e], ft = ({ companion: e, isLinked: t, onInvite: s }) => {
-  var l;
-  const r = ((l = e.bio) == null ? void 0 : l.trim()) || `@${e.id}`, a = gr(e, t), i = a === "none", o = yr(a);
+  var c;
+  const r = ((c = e.bio) == null ? void 0 : c.trim()) || `@${e.id}`, a = gr(e, t), i = a === "none", o = yr(a);
   return /* @__PURE__ */ n.jsxs(
     "button",
     {
@@ -2514,36 +2514,36 @@ const yn = (e, t) => {
     companions: a,
     searchMode: i,
     searchQuery: o,
-    searchResults: l,
+    searchResults: c,
     setSearchQuery: g,
     isSearching: v,
-    errorObj: w,
+    errorObj: A,
     handleSearch: j,
     inviteCompanion: S,
     commitPendingUnlinks: E,
     removeCompanion: f,
     clearSearch: x
-  } = fr({ initialCompanions: e }), I = c.useRef(null), [N, m] = c.useState(!1), R = 4, d = o.trim().length > 0, M = c.useMemo(
-    () => l.slice(0, R),
-    [l]
+  } = fr({ initialCompanions: e }), w = l.useRef(null), [N, m] = l.useState(!1), R = 4, d = o.trim().length > 0, M = l.useMemo(
+    () => c.slice(0, R),
+    [c]
   );
-  if (c.useEffect(() => {
+  if (l.useEffect(() => {
     if (t) {
       x();
       const b = window.setTimeout(() => {
         var $;
-        return ($ = I.current) == null ? void 0 : $.focus();
+        return ($ = w.current) == null ? void 0 : $.focus();
       }, 100);
       return () => window.clearTimeout(b);
     }
-  }, [t, x]), c.useEffect(() => {
+  }, [t, x]), l.useEffect(() => {
     const b = ($) => {
       $.key === "Escape" && t && s();
     };
     return window.addEventListener("keydown", b), () => window.removeEventListener("keydown", b);
-  }, [t, s]), c.useEffect(() => {
+  }, [t, s]), l.useEffect(() => {
     t && window.lucide && window.lucide.createIcons();
-  }, [t, i, l, a, w]), !t) return null;
+  }, [t, i, c.length, a.length]), !t) return null;
   const C = (b) => {
     b.preventDefault(), j(o);
   }, z = async () => {
@@ -2555,16 +2555,16 @@ const yn = (e, t) => {
     } finally {
       m(!1);
     }
-  }, _ = (b) => a.some(($) => $.id === b), k = () => i !== "results" ? null : /* @__PURE__ */ n.jsx("div", { className: "companion-search-results-panel", children: w ? /* @__PURE__ */ n.jsxs("div", { className: "error-message", style: { color: "red", fontSize: "13px", fontWeight: 600 }, children: [
+  }, _ = (b) => a.some(($) => $.id === b), k = () => i !== "results" ? null : /* @__PURE__ */ n.jsx("div", { className: "companion-search-results-panel", children: A ? /* @__PURE__ */ n.jsxs("div", { className: "error-message", style: { color: "red", fontSize: "13px", fontWeight: 600 }, children: [
     /* @__PURE__ */ n.jsx("i", { "data-lucide": "alert-circle", style: { marginRight: "4px", width: "14px", height: "14px", verticalAlign: "text-bottom" } }),
-    w.message
-  ] }) : v ? /* @__PURE__ */ n.jsx("p", { className: "empty-list", style: { padding: "28px 20px", fontSize: "14px" }, children: "제주그룹 회원을 찾는 중이다." }) : l.length === 0 ? /* @__PURE__ */ n.jsx("p", { className: "empty-list", style: { padding: "28px 20px", fontSize: "14px" }, children: "일치하는 제주그룹 회원이 없다." }) : /* @__PURE__ */ n.jsxs(n.Fragment, { children: [
+    A.message
+  ] }) : v ? /* @__PURE__ */ n.jsx("p", { className: "empty-list", style: { padding: "28px 20px", fontSize: "14px" }, children: "제주그룹 회원을 찾는 중이다." }) : c.length === 0 ? /* @__PURE__ */ n.jsx("p", { className: "empty-list", style: { padding: "28px 20px", fontSize: "14px" }, children: "일치하는 제주그룹 회원이 없다." }) : /* @__PURE__ */ n.jsxs(n.Fragment, { children: [
     /* @__PURE__ */ n.jsxs("div", { style: { color: "var(--meta-text-muted)", fontSize: "13px", fontWeight: 700, flexShrink: 0 }, children: [
       "검색 결과 ",
-      l.length,
+      c.length,
       "명"
     ] }),
-    /* @__PURE__ */ n.jsx("div", { className: "companion-search-results-list", children: l.map((b) => /* @__PURE__ */ n.jsx(
+    /* @__PURE__ */ n.jsx("div", { className: "companion-search-results-list", children: c.map((b) => /* @__PURE__ */ n.jsx(
       ft,
       {
         companion: b,
@@ -2596,7 +2596,7 @@ const yn = (e, t) => {
               /* @__PURE__ */ n.jsx(
                 "input",
                 {
-                  ref: I,
+                  ref: w,
                   className: "id-input companion-search-input",
                   type: "text",
                   placeholder: "제주그룹 회원 ID를 입력해 주세요",
@@ -2629,9 +2629,9 @@ const yn = (e, t) => {
             )
           ] }),
           i === "results" ? k() : null,
-          w && i !== "results" && /* @__PURE__ */ n.jsxs("div", { className: "error-message", style: { color: "red", fontSize: "13px", marginBottom: "16px", fontWeight: 600 }, children: [
+          A && i !== "results" && /* @__PURE__ */ n.jsxs("div", { className: "error-message", style: { color: "red", fontSize: "13px", marginBottom: "16px", fontWeight: 600 }, children: [
             /* @__PURE__ */ n.jsx("i", { "data-lucide": "alert-circle", style: { marginRight: "4px", width: "14px", height: "14px", verticalAlign: "text-bottom" } }),
-            w.message
+            A.message
           ] }),
           i !== "results" && /* @__PURE__ */ n.jsxs("div", { className: "linked-companions-section", style: { display: "flex", flex: "1 1 auto", flexDirection: "column", minHeight: 0, overflow: "hidden" }, children: [
             /* @__PURE__ */ n.jsxs("h4", { style: { fontSize: "16px", fontWeight: 800, marginBottom: "20px", color: "var(--meta-text-main)" }, children: [
@@ -2722,8 +2722,8 @@ const yn = (e, t) => {
       };
   }
 }, jr = ({ companion: e }) => {
-  const [t, s] = c.useState(!1), r = V(e.avatarUrl), a = !!(r && !t);
-  return c.useEffect(() => {
+  const [t, s] = l.useState(!1), r = V(e.avatarUrl), a = !!(r && !t);
+  return l.useEffect(() => {
     s(!1);
   }, [r]), /* @__PURE__ */ n.jsxs(
     "div",
@@ -2763,17 +2763,17 @@ const yn = (e, t) => {
       time: "시간 미정",
       title: "여행 일정 준비 중"
     }
-  ], a = t.linkedCompanions ?? [], i = t.profile, [o, l] = c.useState(!1), [g, v] = c.useState(null), w = c.useRef({}), [j, S] = c.useState({});
-  c.useEffect(() => {
+  ], a = t.linkedCompanions ?? [], i = t.profile, [o, c] = l.useState(!1), [g, v] = l.useState(null), A = l.useRef({}), [j, S] = l.useState({});
+  l.useEffect(() => {
     window.lucide && window.lucide.createIcons();
-  }, [o, s, a]), c.useLayoutEffect(() => {
-    const f = r.reduce((x, I) => {
+  }, []), l.useLayoutEffect(() => {
+    const f = r.reduce((x, w) => {
       var N;
-      return x[I.id] = ((N = w.current[I.id]) == null ? void 0 : N.scrollHeight) ?? 0, x;
+      return x[w.id] = ((N = A.current[w.id]) == null ? void 0 : N.scrollHeight) ?? 0, x;
     }, {});
     S((x) => {
-      const I = Object.keys(x), N = Object.keys(f);
-      return I.length === N.length && N.every((m) => x[m] === f[m]) ? x : f;
+      const w = Object.keys(x), N = Object.keys(f);
+      return w.length === N.length && N.every((m) => x[m] === f[m]) ? x : f;
     });
   }, [r, o]);
   const E = (f) => {
@@ -2798,16 +2798,16 @@ const yn = (e, t) => {
     ] }),
     /* @__PURE__ */ n.jsxs("div", { className: `itinerary-timeline-wrap ${o ? "is-expanded" : ""}`, children: [
       r.map((f, x) => {
-        const I = x < 2, N = I || o, m = j[f.id] ?? 720, R = f.id === "empty-itinerary", d = a.length > 0 ? a : f.companions, M = d.slice(0, 4), C = d.length > 4 ? d.length - 4 : 0, z = C > 0 ? `외 ${C}명` : `총 ${d.length}명`;
+        const w = x < 2, N = w || o, m = j[f.id] ?? 720, R = f.id === "empty-itinerary", d = a.length > 0 ? a : f.companions, M = d.slice(0, 4), C = d.length > 4 ? d.length - 4 : 0, z = C > 0 ? `외 ${C}명` : `총 ${d.length}명`;
         return /* @__PURE__ */ n.jsxs(
           "div",
           {
             className: "itinerary-day-block",
             ref: (_) => {
-              w.current[f.id] = _;
+              A.current[f.id] = _;
             },
             "aria-hidden": !N,
-            style: I ? void 0 : {
+            style: w ? void 0 : {
               overflow: "hidden",
               maxHeight: N ? `${m}px` : "0px",
               opacity: N ? 1 : 0,
@@ -2896,7 +2896,7 @@ const yn = (e, t) => {
           f.id
         );
       }),
-      s.length > 2 && /* @__PURE__ */ n.jsx("div", { className: `timeline-gradient-overlay ${o ? "active" : ""}`, children: /* @__PURE__ */ n.jsx("button", { className: "expand-cta-btn pill-shape", onClick: () => l(!o), children: o ? /* @__PURE__ */ n.jsxs(n.Fragment, { children: [
+      s.length > 2 && /* @__PURE__ */ n.jsx("div", { className: `timeline-gradient-overlay ${o ? "active" : ""}`, children: /* @__PURE__ */ n.jsx("button", { className: "expand-cta-btn pill-shape", onClick: () => c(!o), children: o ? /* @__PURE__ */ n.jsxs(n.Fragment, { children: [
         "전체 일정 접기 ",
         /* @__PURE__ */ n.jsx("i", { className: "lucide-chevron-up" })
       ] }) : /* @__PURE__ */ n.jsxs(n.Fragment, { children: [
@@ -2961,15 +2961,15 @@ const yn = (e, t) => {
 }), be = (e, t, s) => Math.min(s, Math.max(t, e)), te = (e, t, s) => {
   if (!e.naturalWidth || !e.naturalHeight)
     return null;
-  const r = Math.max(1, Math.round(t || 320)), a = Math.max(1, Math.round(s || 320)), i = Math.max(0, Math.min(r, a) - wr * 2), o = i / 2, l = Math.min(r / e.naturalWidth, a / e.naturalHeight), g = e.naturalWidth * l, v = e.naturalHeight * l, w = Math.max(i / Math.max(g, 1), i / Math.max(v, 1), 1);
+  const r = Math.max(1, Math.round(t || 320)), a = Math.max(1, Math.round(s || 320)), i = Math.max(0, Math.min(r, a) - wr * 2), o = i / 2, c = Math.min(r / e.naturalWidth, a / e.naturalHeight), g = e.naturalWidth * c, v = e.naturalHeight * c, A = Math.max(i / Math.max(g, 1), i / Math.max(v, 1), 1);
   return {
     baseHeight: v,
-    baseScale: l,
+    baseScale: c,
     baseWidth: g,
     circleDiameter: i,
     circleRadius: o,
     maxZoom: Ir,
-    minZoom: w,
+    minZoom: A,
     stageHeight: a,
     stageWidth: r
   };
@@ -2986,24 +2986,24 @@ const yn = (e, t) => {
 }, Rr = (e, t, s) => new Promise((r, a) => {
   const i = document.createElement("canvas"), o = window.devicePixelRatio || 1;
   i.width = Math.max(1, Math.round(Z * o)), i.height = Math.max(1, Math.round(Z * o));
-  const l = i.getContext("2d");
-  if (!l)
+  const c = i.getContext("2d");
+  if (!c)
     throw new Error("프로필 사진 편집용 캔버스를 만들지 못했습니다.");
-  l.scale(o, o), l.imageSmoothingQuality = "high", l.clearRect(0, 0, Z, Z);
-  const g = Z / Math.max(t.circleDiameter, 1), v = t.baseWidth * s.zoom, w = t.baseHeight * s.zoom, j = t.stageWidth / 2 + s.panX - v / 2 - (t.stageWidth / 2 - t.circleRadius), S = t.stageHeight / 2 + s.panY - w / 2 - (t.stageHeight / 2 - t.circleRadius);
-  l.save(), l.beginPath(), l.arc(
+  c.scale(o, o), c.imageSmoothingQuality = "high", c.clearRect(0, 0, Z, Z);
+  const g = Z / Math.max(t.circleDiameter, 1), v = t.baseWidth * s.zoom, A = t.baseHeight * s.zoom, j = t.stageWidth / 2 + s.panX - v / 2 - (t.stageWidth / 2 - t.circleRadius), S = t.stageHeight / 2 + s.panY - A / 2 - (t.stageHeight / 2 - t.circleRadius);
+  c.save(), c.beginPath(), c.arc(
     Z / 2,
     Z / 2,
     Z / 2,
     0,
     Math.PI * 2
-  ), l.closePath(), l.clip(), l.drawImage(
+  ), c.closePath(), c.clip(), c.drawImage(
     e,
     j * g,
     S * g,
     v * g,
-    w * g
-  ), l.restore(), i.toBlob((E) => {
+    A * g
+  ), c.restore(), i.toBlob((E) => {
     if (E) {
       r(E);
       return;
@@ -3022,34 +3022,34 @@ const yn = (e, t) => {
   ];
   for (const o of i)
     if (typeof o == "string") {
-      const l = o.trim();
-      if (l.length > 0)
-        return l;
+      const c = o.trim();
+      if (c.length > 0)
+        return c;
     }
   return null;
 }, _r = (e) => e === "point" ? {
   color: "#1f2937"
 } : void 0, Dr = () => {
   var Xe, Ze, Je, Qe, et, tt;
-  const { refreshDashboard: e, state: t } = le(), s = t.profile ?? J, r = (Xe = t.stats) != null && Xe.length ? t.stats : _e, a = s.passport, [i, o] = c.useState(() => Ee(s)), [l, g] = c.useState(() => Ee(s)), [v, w] = c.useState(!1), [j, S] = c.useState("profile"), [E, f] = c.useState(!1), [x, I] = c.useState(null), [N, m] = c.useState(null), [R, d] = c.useState(!1), [M, C] = c.useState(null), [z, _] = c.useState(null), [k, U] = c.useState({ panX: 0, panY: 0, zoom: 1 }), [b, $] = c.useState({ height: 320, width: 320 }), [A, h] = c.useState(!1), [D, Y] = c.useState(!1), G = c.useRef(null), L = c.useRef(null), Q = c.useRef(null), X = c.useRef(null), F = V(M) ?? s.avatarUrl ?? null, Yt = (l.nickname.trim().charAt(0) || l.name.trim().charAt(0) || ((Ze = i.nickname) == null ? void 0 : Ze.trim().charAt(0)) || i.name.trim().charAt(0) || ((Je = J.nickname) == null ? void 0 : Je.trim().charAt(0)) || J.name.trim().charAt(0) || "J").toUpperCase(), Gt = l.nickname.trim() || l.name.trim() || ((Qe = i.nickname) == null ? void 0 : Qe.trim()) || i.name.trim() || ((et = J.nickname) == null ? void 0 : et.trim()) || J.name.trim(), qt = ye(l.bio) || ye(i.bio), Ne = l.nickname.trim().length > 0 && l.nickname.trim().length < 2 ? "닉네임은 2자 이상부터 가능합니다" : null;
-  c.useEffect(() => {
+  const { refreshDashboard: e, state: t } = le(), s = t.profile ?? J, r = (Xe = t.stats) != null && Xe.length ? t.stats : _e, a = s.passport, [i, o] = l.useState(() => Ee(s)), [c, g] = l.useState(() => Ee(s)), [v, A] = l.useState(!1), [j, S] = l.useState("profile"), [E, f] = l.useState(!1), [x, w] = l.useState(null), [N, m] = l.useState(null), [R, d] = l.useState(!1), [M, C] = l.useState(null), [z, _] = l.useState(null), [k, U] = l.useState({ panX: 0, panY: 0, zoom: 1 }), [b, $] = l.useState({ height: 320, width: 320 }), [I, h] = l.useState(!1), [D, Y] = l.useState(!1), G = l.useRef(null), L = l.useRef(null), Q = l.useRef(null), X = l.useRef(null), K = V(M) ?? s.avatarUrl ?? null, Yt = (c.nickname.trim().charAt(0) || c.name.trim().charAt(0) || ((Ze = i.nickname) == null ? void 0 : Ze.trim().charAt(0)) || i.name.trim().charAt(0) || ((Je = J.nickname) == null ? void 0 : Je.trim().charAt(0)) || J.name.trim().charAt(0) || "J").toUpperCase(), Gt = c.nickname.trim() || c.name.trim() || ((Qe = i.nickname) == null ? void 0 : Qe.trim()) || i.name.trim() || ((et = J.nickname) == null ? void 0 : et.trim()) || J.name.trim(), qt = ye(c.bio) || ye(i.bio), Ne = c.nickname.trim().length > 0 && c.nickname.trim().length < 2 ? "닉네임은 2자 이상부터 가능합니다" : null;
+  l.useEffect(() => {
     v && window.lucide && window.lucide.createIcons();
-  }, [F, v, j]), c.useEffect(() => {
+  }, [v, j]), l.useEffect(() => {
     if (!v)
       return;
     const p = document.body.style.overflow, y = document.documentElement.style.overflow;
     return document.body.style.overflow = "hidden", document.documentElement.style.overflow = "hidden", () => {
       document.body.style.overflow = p, document.documentElement.style.overflow = y;
     };
-  }, [v]), c.useEffect(() => {
+  }, [v]), l.useEffect(() => {
     const p = Ee(s);
     v || (o(p), g(p));
-  }, [s, v]), c.useEffect(() => {
+  }, [s, v]), l.useEffect(() => {
     if (!v || j !== "avatar" || !Q.current)
       return;
     const p = () => {
-      var K;
-      const O = (K = Q.current) == null ? void 0 : K.getBoundingClientRect();
+      var F;
+      const O = (F = Q.current) == null ? void 0 : F.getBoundingClientRect();
       O && $({
         height: Math.max(1, Math.round(O.height)),
         width: Math.max(1, Math.round(O.width))
@@ -3058,12 +3058,12 @@ const yn = (e, t) => {
     p();
     const y = new ResizeObserver(p);
     return y.observe(Q.current), () => y.disconnect();
-  }, [z, v, j]), c.useEffect(() => {
-    if (!z || !A || !L.current)
+  }, [z, v, j]), l.useEffect(() => {
+    if (!z || !I || !L.current)
       return;
     const p = te(L.current, b.width, b.height);
     p && U((y) => ve(y, p));
-  }, [A, z, b.height, b.width]);
+  }, [I, z, b.height, b.width]);
   const Xt = () => {
     const p = L.current;
     if (!p)
@@ -3077,9 +3077,9 @@ const yn = (e, t) => {
   }, we = () => {
     _(null), U({ panX: 0, panY: 0, zoom: 1 }), h(!1), m(null), d(!1), Y(!1), X.current = null;
   }, Zt = () => {
-    g(i), I(null), S("profile"), C((p) => V(p) ?? s.avatarUrl ?? null), we(), w(!0);
+    g(i), w(null), S("profile"), C((p) => V(p) ?? s.avatarUrl ?? null), we(), A(!0);
   }, Oe = () => {
-    g(i), I(null), S("profile"), we(), w(!1);
+    g(i), w(null), S("profile"), we(), A(!1);
   }, Be = () => {
     S("avatar"), we();
   }, Fe = () => {
@@ -3098,8 +3098,8 @@ const yn = (e, t) => {
         return;
       }
       try {
-        const K = await Tr(y);
-        _(K), U({ panX: 0, panY: 0, zoom: 1 }), h(!1), m(null);
+        const F = await Tr(y);
+        _(F), U({ panX: 0, panY: 0, zoom: 1 }), h(!1), m(null);
       } catch {
         m("이미지를 불러오지 못했습니다. 다른 파일로 다시 선택해 주세요.");
       }
@@ -3115,7 +3115,7 @@ const yn = (e, t) => {
       )
     );
   }, en = (p) => {
-    !z || !A || !L.current || !te(L.current, b.width, b.height) || (p.preventDefault(), p.currentTarget.setPointerCapture(p.pointerId), X.current = {
+    !z || !I || !L.current || !te(L.current, b.width, b.height) || (p.preventDefault(), p.currentTarget.setPointerCapture(p.pointerId), X.current = {
       pointerId: p.pointerId,
       startClientX: p.clientX,
       startClientY: p.clientY,
@@ -3124,7 +3124,7 @@ const yn = (e, t) => {
     }, Y(!0));
   }, tn = (p) => {
     const y = X.current;
-    if (!y || y.pointerId !== p.pointerId || !A || !L.current)
+    if (!y || y.pointerId !== p.pointerId || !I || !L.current)
       return;
     const O = {
       panX: y.startPanX + (p.clientX - y.startClientX),
@@ -3136,25 +3136,25 @@ const yn = (e, t) => {
     const y = X.current;
     !y || y.pointerId !== p.pointerId || (X.current = null, Y(!1), p.currentTarget.hasPointerCapture(p.pointerId) && p.currentTarget.releasePointerCapture(p.pointerId));
   }, nn = (p) => {
-    !z || !A || !L.current || (p.preventDefault(), p.stopPropagation(), U((y) => {
+    !z || !I || !L.current || (p.preventDefault(), p.stopPropagation(), U((y) => {
       const O = L.current;
       if (!O)
         return y;
-      const K = te(O, b.width, b.height);
-      if (!K)
+      const F = te(O, b.width, b.height);
+      if (!F)
         return y;
-      const ce = Math.exp(-p.deltaY * 12e-4), he = be(y.zoom * ce, K.minZoom, K.maxZoom), ae = he / Math.max(y.zoom, 1e-4);
+      const ce = Math.exp(-p.deltaY * 12e-4), he = be(y.zoom * ce, F.minZoom, F.maxZoom), ae = he / Math.max(y.zoom, 1e-4);
       return ve(
         {
           panX: y.panX * ae,
           panY: y.panY * ae,
           zoom: he
         },
-        K
+        F
       );
     }));
   }, sn = async () => {
-    if (!z || !A || !L.current) {
+    if (!z || !I || !L.current) {
       m("먼저 이미지를 선택해 주세요.");
       return;
     }
@@ -3165,10 +3165,10 @@ const yn = (e, t) => {
     }
     d(!0), m(null);
     try {
-      const y = await Rr(L.current, p, k), O = new File([y], "avatar.png", { type: "image/png" }), K = new FormData();
-      K.append("avatar", O);
+      const y = await Rr(L.current, p, k), O = new File([y], "avatar.png", { type: "image/png" }), F = new FormData();
+      F.append("avatar", O);
       const ce = await fetch(gt("/api/mypage/avatar"), {
-        body: K,
+        body: F,
         credentials: "include",
         headers: {
           Accept: "application/json"
@@ -3189,12 +3189,12 @@ const yn = (e, t) => {
       d(!1);
     }
   }, rn = async () => {
-    const p = Cr(l);
+    const p = Cr(c);
     if (!xt(p)) {
-      I(Ne ?? "닉네임, 이메일, 휴대전화 정보를 확인해 주세요.");
+      w(Ne ?? "닉네임, 이메일, 휴대전화 정보를 확인해 주세요.");
       return;
     }
-    f(!0), I(null);
+    f(!0), w(null);
     try {
       const y = await fetch(gt("/api/mypage/profile"), {
         body: JSON.stringify(p),
@@ -3211,13 +3211,13 @@ const yn = (e, t) => {
         throw new Error("프로필 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
       if (!await e())
         throw new Error("저장은 완료되었지만 최신 정보를 다시 불러오지 못했습니다.");
-      w(!1), S("profile");
+      A(!1), S("profile");
     } catch (y) {
-      I(y instanceof Error ? y.message : "프로필 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      w(y instanceof Error ? y.message : "프로필 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
     } finally {
       f(!1);
     }
-  }, an = E || !xt(l), P = z && A && L.current ? te(L.current, b.width, b.height) : null, He = P ? P.baseWidth * k.zoom : 0, Ve = P ? P.baseHeight * k.zoom : 0, on = P ? P.stageWidth / 2 + k.panX - He / 2 : 0, ln = P ? P.stageHeight / 2 + k.panY - Ve / 2 : 0, Ye = (P == null ? void 0 : P.circleDiameter) ?? 0, re = (P == null ? void 0 : P.circleRadius) ?? 0, cn = {
+  }, an = E || !xt(c), P = z && I && L.current ? te(L.current, b.width, b.height) : null, He = P ? P.baseWidth * k.zoom : 0, Ve = P ? P.baseHeight * k.zoom : 0, on = P ? P.stageWidth / 2 + k.panX - He / 2 : 0, ln = P ? P.stageHeight / 2 + k.panY - Ve / 2 : 0, Ye = (P == null ? void 0 : P.circleDiameter) ?? 0, re = (P == null ? void 0 : P.circleRadius) ?? 0, cn = {
     alignItems: "center",
     aspectRatio: "1 / 1",
     background: "#eef2f7",
@@ -3346,7 +3346,7 @@ const yn = (e, t) => {
                 },
                 children: [
                   /* @__PURE__ */ n.jsxs("div", { className: "companion-avatar soft-radius is-linked", "aria-hidden": "true", style: { position: "relative" }, children: [
-                    /* @__PURE__ */ n.jsx("span", { style: Ar, children: F ? /* @__PURE__ */ n.jsx("img", { alt: "", className: "profile-link-preview-image", src: F, style: kr }) : /* @__PURE__ */ n.jsx("span", { style: Er, children: Yt }) }),
+                    /* @__PURE__ */ n.jsx("span", { style: Ar, children: K ? /* @__PURE__ */ n.jsx("img", { alt: "", className: "profile-link-preview-image", src: K, style: kr }) : /* @__PURE__ */ n.jsx("span", { style: Er, children: Yt }) }),
                     /* @__PURE__ */ n.jsx("i", { "data-lucide": "link", className: "lucide-link linked-indicator" })
                   ] }),
                   /* @__PURE__ */ n.jsxs("div", { className: "profile-link-copy", children: [
@@ -3376,7 +3376,7 @@ const yn = (e, t) => {
                           className: "id-input",
                           maxLength: Vt,
                           type: "text",
-                          value: l.bio,
+                          value: c.bio,
                           onChange: (p) => g((y) => ({
                             ...y,
                             bio: ye(p.target.value)
@@ -3400,7 +3400,7 @@ const yn = (e, t) => {
                         {
                           className: "id-input",
                           type: "text",
-                          value: l.nickname,
+                          value: c.nickname,
                           onChange: (p) => g((y) => ({ ...y, nickname: p.target.value })),
                           style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                         }
@@ -3421,7 +3421,7 @@ const yn = (e, t) => {
                         {
                           className: "id-input",
                           type: "email",
-                          value: l.email,
+                          value: c.email,
                           onChange: (p) => g((y) => ({ ...y, email: p.target.value })),
                           style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                         }
@@ -3441,7 +3441,7 @@ const yn = (e, t) => {
                         {
                           className: "id-input",
                           type: "tel",
-                          value: l.phone,
+                          value: c.phone,
                           onChange: (p) => g((y) => ({ ...y, phone: p.target.value })),
                           style: { width: "100%", boxSizing: "border-box", padding: "17px 22px", fontSize: "16px", borderRadius: "12px" }
                         }
@@ -3548,7 +3548,7 @@ const yn = (e, t) => {
                 className: "save-btn pill-shape",
                 type: "button",
                 onClick: sn,
-                disabled: !z || !A || R,
+                disabled: !z || !I || R,
                 style: { padding: "18px 0", fontSize: "15px" },
                 children: R ? "적용 중..." : "적용"
               }
@@ -3566,7 +3566,7 @@ const yn = (e, t) => {
   const s = e === "qna" ? "qna" : e === "notice" ? "notice" : "faq", [r, a] = Lr[s];
   return t ? a : r;
 }, Pr = () => {
-  const { state: e } = le(), t = e.supportItems ?? [], [s] = c.useState(Ur), [r, a] = c.useState({});
+  const { state: e } = le(), t = e.supportItems ?? [], [s] = l.useState(Ur), [r, a] = l.useState({});
   return /* @__PURE__ */ n.jsxs("section", { className: "meta-section layer-support", children: [
     /* @__PURE__ */ n.jsxs("header", { className: "section-header", children: [
       /* @__PURE__ */ n.jsx("h2", { className: "section-title", children: "고객지원" }),
@@ -3578,8 +3578,8 @@ const yn = (e, t) => {
         {
           alt: i.label,
           onError: (o) => {
-            r[i.id] || s || (a((l) => ({
-              ...l,
+            r[i.id] || s || (a((c) => ({
+              ...c,
               [i.id]: !0
             })), o.currentTarget.src = yt(i.id, !0));
           },

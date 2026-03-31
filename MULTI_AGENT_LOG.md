@@ -4962,3 +4962,17 @@
   - `worker_ops_docs (Boyle)` updated `deploy/README.md` to separate remote runtime env from local deploy env and added `deploy/.env.oci.example` as a deploy-only template.
   - `main` restored `STATE.md` to the active OCI deployment task after unrelated task metadata drift and logged the missing-local-Docker verification gap in `ERROR_LOG.md`.
   - `reviewer_deploy_contract (Ohm)` completed a final pass with no blocking findings; residual risk is limited to the lack of Docker/OCI runtime smoke validation on this workstation.
+- time: `2026-03-31 18:00:00 +09:00`
+- route: `Route B`
+- task: `Sync the customer-center inquiry CTA hotfix into the Spring mirror and redeploy it to OCI`
+- participants: `main`, `worker_sync_cs (Bacon)`, `reviewer_sync_cs (Feynman)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_cs (Bacon)`: `jeju-spring/src/main/resources/** sync outputs`
+  - `reviewer_sync_cs (Feynman)`: `review only`
+- verification:
+  - `front/apps/cs/client/src/pages/Inquiries.tsx` kept the anonymous write CTA redirect path through `getLoginUrl()`, and `front/apps/cs/client/src/components/serviceCenter/InquiryList.tsx` was follow-up fixed so the logged-out CTA is no longer disabled while loading is the only disable condition.
+  - `pnpm --dir front/apps/cs run check` passed after the follow-up CTA fix.
+  - `pnpm run sync` passed and refreshed the Spring mirror customer-center assets under `jeju-spring/src/main/resources/templates/front-mirror/pages/cs/**` and `jeju-spring/src/main/resources/static/front-mirror/pages/cs/**`.
+  - `main` bundled the synced Spring resources plus runtime config updates, copied them to OCI host `129.146.53.253:/opt/jejugroup/docker-src`, rebuilt the `app` image with `docker compose build app`, and restarted `app/nginx` with `docker compose up -d app nginx`.
+  - The first OCI rollout exposed a reviewer-found blocker because the anonymous CTA was still disabled in `InquiryList`; after the follow-up source fix and second sync/redeploy, the deployed customer-center bundle now includes the anonymous login redirect handler and the live health endpoint `http://129.146.53.253/actuator/health` returned `{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}`.

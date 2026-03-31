@@ -106,7 +106,7 @@ export const ItinerarySection = () => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
-  }, [isExpanded, itinerary, linkedCompanions]);
+  }, []);
 
   useLayoutEffect(() => {
     const nextHeights = displayItinerary.reduce<Record<string, number>>((acc, day) => {

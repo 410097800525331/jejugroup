@@ -71,6 +71,6 @@ app:
     naver-client-secret: ${NAVER_CLIENT_SECRET:}
     kakao-js-key: ${KAKAO_JS_KEY:}
   mypage:
-    avatar-upload-root: ${MYPAGE_AVATAR_UPLOAD_ROOT:./.tmp/mypage-avatars}
+    avatar-upload-root: ${MYPAGE_AVATAR_UPLOAD_ROOT:/uploads}
   banner:
     upload-root: ${BANNER_UPLOAD_ROOT:./.tmp/banner-assets}

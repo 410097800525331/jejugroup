@@ -1,7 +1,7 @@
 import { c as I, j as l } from "./react-vendor-BoSfm_Te.js";
 import { L as A, P as _, S as v } from "./feature-auth-5X5Z8_N0.js";
 import "./legacy-core-CYHwlLlr.js";
-import { M as j } from "./feature-mypage-Ci9O_T3C.js";
+import { M as j } from "./feature-mypage-BzQ2iq-C.js";
 import { i as C, a as L, b as w, c as M, d as k, e as T, f as H, m as p, g as K, h as V, j as B } from "./runtime-layout-DSqPGP9h.js";
 import { c as O, i as N, r as G } from "./runtime-ui-CL9rSoeU.js";
 import { T as $ } from "./feature-travel-c3JZIw7d.js";

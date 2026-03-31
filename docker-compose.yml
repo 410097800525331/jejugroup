@@ -25,7 +25,7 @@ services:
     environment:
       JEJU_SHARED_ENV_PATH: ${JEJU_SHARED_ENV_PATH:-/opt/jejugroup/.env}
       SERVER_PORT: "8080"
-      MYPAGE_AVATAR_UPLOAD_ROOT: /uploads/mypage-avatars
+      MYPAGE_AVATAR_UPLOAD_ROOT: ${MYPAGE_AVATAR_UPLOAD_ROOT:-/uploads}
     volumes:
       - ${JEJU_SHARED_ENV_FILE:-/opt/jejugroup/.env}:${JEJU_SHARED_ENV_PATH:-/opt/jejugroup/.env}:ro
       - ${JEJU_UPLOADS_DIR:-/uploads}:/uploads

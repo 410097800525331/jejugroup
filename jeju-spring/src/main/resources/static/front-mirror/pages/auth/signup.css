@@ -51,7 +51,7 @@ html {
 
 #main-header-placeholder {
   position: relative;
-  z-index: 100; /* ?ㅻ뜑瑜?臾댁“嫄?理쒖긽?⑥쑝濡?*/
+  z-index: 100; /* 헤더를 무조건 최상위층으로 */
 }
 
 .signup-wrapper, #main-footer-placeholder {
@@ -222,7 +222,7 @@ body.signup-page .footer.shell-footer .footer-copyright {
   flex: 1;
 }
 
-/* 5. 踰꾪듉 ?붿옄??(洹몃씪?곗씠??& 湲濡쒖슦 - login.css 怨듯넻) */
+/* 5. 버튼 요소들 (그라데이션 & 글로우 - login.css 공통) */
 .btn-primary, .btn-secondary {
   border: none;
   font-family: 'FlightSans', sans-serif;

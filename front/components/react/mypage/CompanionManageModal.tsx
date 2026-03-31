@@ -159,7 +159,7 @@ export const CompanionManageModal = ({
     if (isOpen && window.lucide) {
       window.lucide.createIcons();
     }
-  }, [isOpen, searchMode, searchResults, companions, errorObj]);
+  }, [isOpen, searchMode, searchResults.length, companions.length]);
 
   if (!isOpen) return null;
 

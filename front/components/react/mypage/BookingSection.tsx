@@ -335,7 +335,7 @@ export const BookingSection = () => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
-  }, [activeBookingId, bookings, state.filter]);
+  }, [activeBookingId]);
 
   useEffect(() => {
     if (!activeBookingId) {

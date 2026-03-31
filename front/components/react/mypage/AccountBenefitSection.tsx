@@ -318,7 +318,7 @@ export const AccountBenefitSection = () => {
     if (isEditModalOpen && window.lucide) {
       window.lucide.createIcons();
     }
-  }, [avatarPreviewSourceUrl, isEditModalOpen, modalView]);
+  }, [isEditModalOpen, modalView]);
 
   useEffect(() => {
     if (!isEditModalOpen) {

@@ -8,6 +8,7 @@ import InquiryList from "@/components/serviceCenter/InquiryList";
 import InquirySupportComments from "@/components/serviceCenter/InquirySupportComments";
 import SearchBar from "@/components/serviceCenter/SearchBar";
 import ServiceCenterFooter from "@/components/serviceCenter/ServiceCenterFooter";
+import { getLoginUrl } from "@/const";
 import { getServiceLabel } from "@/data/serviceCenterData";
 import { deleteTicket, getTicketDetail, listMyTickets, updateTicket } from "@/lib/serviceCenterApi";
 import type { InquiryRecord, ServiceType, TicketApi, TicketUpdateRequest } from "@/types/service-center";
@@ -281,6 +282,15 @@ export default function Inquiries() {
     setView("list");
   };
 
+  const handleWriteClick = () => {
+    if (!isAuthenticated) {
+      window.location.assign(getLoginUrl());
+      return;
+    }
+
+    setView("write");
+  };
+
   const openEditModal = () => {
     if (!selectedTicket) return;
     setDetailAction("edit");
@@ -443,7 +453,7 @@ export default function Inquiries() {
                 inquiries={pagedInquiries}
                 isLoading={isLoading}
                 onPageChange={setCurrentPage}
-                onWriteClick={() => setView("write")}
+                onWriteClick={handleWriteClick}
                 onInquirySelect={handleInquirySelect}
                 selectedInquiryId={selectedTicketId}
                 totalPages={totalPages}

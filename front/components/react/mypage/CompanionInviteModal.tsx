@@ -80,7 +80,7 @@ export const CompanionInviteModal = ({
     if (isOpen && window.lucide) {
       window.lucide.createIcons();
     }
-  }, [isOpen, pendingReceivedInvites, isLoading, errorObj, pendingInviteCount]);
+  }, [isOpen, pendingReceivedInvites.length, isLoading]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

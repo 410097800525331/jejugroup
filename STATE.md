@@ -2,42 +2,45 @@
 
 ## Current Task
 
-- task: `Make the weather API read the OpenWeather key more robustly at runtime`
+  - task: `Sync the customer-center inquiry CTA hotfix into the Spring mirror and redeploy it to OCI`
 - phase: `implementation`
-- scope: `jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/WeatherService.java`
-- verification_target: `The weather API no longer fails solely because the typed app config is empty when OPENWEATHER_API_KEY is present via env or JVM properties, and the existing weather endpoints still behave the same otherwise.`
+  - scope: `front/apps/cs client source -> jeju-spring/src/main/resources/** sync outputs -> OCI docker-src refresh -> remote app/nginx redeploy`
+  - verification_target: `The synced Spring mirror must be present on OCI, the customer-center CTA hotfix must be included in the deployed app, and the application health check must return UP after redeploy.`
 
 ## Route
 
-- route: `Route A`
-- reason: `The user narrowed the work to a small single-service weather runtime fix that stays inside WeatherService without changing shared shell behavior, routes, mirrors, or test files, so one local write lane is sufficient.`
+- route: `Route B`
+  - reason: `The requested work now spans synced Spring resources plus live OCI deployment/verification, so it remains a multi-stage Route B task with separate implementation and review ownership.`
 
 ## Writer Slot
 
-- owner: `main`
-- write_set: `STATE.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/WeatherService.java`
-- write_sets:
-  - `main`: `STATE.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/WeatherService.java`
-- note: `This hotfix stays in one backend lane because it only hardens OpenWeather key resolution in the weather service without touching mirrors or frontend source.`
+- owner: `planner-only main`
+  - write_set: `STATE.md, MULTI_AGENT_LOG.md`
+  - write_sets:
+    - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_sync_cs`: `generated sync outputs from front/apps/cs into jeju-spring/src/main/resources/**`
+  - `worker_deploy_oci`: `OCI docker-src refresh and remote app/nginx redeploy`
+  - `reviewer_sync_cs`: `review only`
+  - note: `Main coordinates sync and deploy slices; worker ownership stays split between mirror generation and OCI rollout.`
 
 ## Contract Freeze
 
-- contract_freeze: `Keep the weather API contract and upstream proxy behavior unchanged, but make WeatherService resolve the OpenWeather API key safely from the existing typed config plus direct runtime fallbacks such as environment variables or JVM properties so deployments do not fail when only the binding path is empty.`
+  - contract_freeze: `Keep the customer-center CTA hotfix behavior unchanged, propagate it through the approved front -> jeju-spring sync path, and redeploy that exact synced output to OCI without unrelated source edits.`
 
 ## Seed
 
-- status: `not_applicable`
-- path: `n/a`
-- revision: `n/a`
-- note: `This is a tiny one-file runtime hotfix, so a separate seed artifact is unnecessary.`
+- status: `frozen-in-state`
+- path: `STATE.md`
+- revision: `2026-03-31-cs-login-cta-sync-deploy`
+  - note: `This sync slice is frozen directly in STATE so the generated outputs stay aligned with the CTA hotfix.`
 
 ## Reviewer
 
-- reviewer: `not_assigned`
-- reviewer_target: `n/a`
-- reviewer_focus: `Route A single-lane hotfix; main will verify that only weather key resolution changed and the existing weather tests still pass.`
+- reviewer: `assigned`
+- reviewer_target: `reviewer_sync_cs`
+  - reviewer_focus: `Check that the sync outputs only propagate the intended customer-center CTA behavior and that the OCI rollout does not miss any synced assets needed for the deployed page.`
 
 ## Last Update
 
-- timestamp: `2026-03-31 16:30:00 +09:00`
-- note: `Reclassified the task to a tiny Route A backend weather hotfix after the user narrowed the request to fixing the weather API runtime only.`
+- timestamp: `2026-03-31 18:00:00 +09:00`
+- note: `Closed the OCI rollout after a follow-up hotfix removed the anonymous inquiry CTA disable gate, re-synced the Spring mirror, redeployed app/nginx, and rechecked the live health endpoint as UP.`

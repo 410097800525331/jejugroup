@@ -1,5 +1,11 @@
 # ERROR LOG
 
+- time: `2026-03-31 16:00:49 +09:00`
+- location: `OCI remote restart command via ssh`
+- summary: `initial weather env restart command hit a local PowerShell date substitution issue and a transient nginx 502 during app reboot`
+- details: `The first remote command used \`$(date ...)\` inside a double-quoted PowerShell string, so PowerShell tried to evaluate it locally and printed a Get-Date parameter error. The same run still recreated the app container, and the first immediate weather probe returned 502 while the app was still starting. I reran verification after startup, confirmed the remote env keys were present, and both /api/chat and /api/weather responded successfully on the Oracle host.`
+- status: `resolved`
+
 - time: `2026-03-31 11:29:25 +09:00`
 - location: `jeju-spring/gradlew test`
 - summary: `full module test run failed on pre-existing unrelated context/bootstrap issues`
@@ -787,3 +793,14 @@ status: open
 - summary: `Full test suite failed during Spring context startup outside the auth slice`
 - details: `Auth-only tests passed, but the repository-wide test task failed with repeated IllegalStateException context failures; the first visible root cause was AdminBannerDbStore bean initialization wrapping an SQLException during @SpringBootTest startup.`
 - status: `deferred`
+- time: `2026-03-31 16:18:00 +09:00`
+  location: `D:\lsh\git\jejugroup\scripts\pipelines\deploy-oci.js`
+  summary: `OCI node deploy helper failed to parse the existing SSH private key`
+  details: `Running \`node scripts/pipelines/deploy-oci.js\` against 129.146.53.253 failed before upload with \`Cannot parse privateKey: Unsupported key format\` from \`node-ssh/ssh2\`. The workspace already has a PowerShell redeploy path that uses OpenSSH CLI with the same key, so deployment was continued through that fallback instead of stopping on the key-parser mismatch.`
+  status: `deferred`
+
+- time: `2026-03-31 16:19:00 +09:00`
+  location: `D:\lsh\git\jejugroup\scripts\oci-docker-redeploy.ps1`
+  summary: `OpenSSH-based redeploy helper failed before upload because the script syntax is broken`
+  details: `Running \`powershell -ExecutionPolicy Bypass -File scripts/oci-docker-redeploy.ps1\` failed immediately at \`Remove-Item $archivePath -Force\` with a PowerShell parameter-binding error, so deployment had to continue through a manual \`tar + scp + ssh\` fallback instead of the checked-in helper.`
+  status: `open`
