@@ -741,3 +741,33 @@ status: open
 - summary: `repository Gradle verification was blocked by an unrelated pre-existing compile error in stay monthly-deal code`
 - details: `The requested chat test run failed during compileJava in src/main/java/com/jejugroup/jejuspring/stay/application/StayMonthlyDealDbStore.java because MonthlyDealRow no longer has currentPrice(). I verified the chatbot slice by compiling jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/ChatService.java and jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/ChatServiceTests.java directly with javac, then ran ./gradlew.bat test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests -x compileJava -x compileTestJava successfully.`
 - status: `open`
+
+- time: `2026-03-31 14:11:08 +09:00`
+- location: `jeju-spring bootRun verification script`
+- summary: `first admin lodging endpoint smoke attempt failed on a PowerShell Start-Process redirect constraint`
+- details: `The first local /api/admin/tables/lodging smoke check attempted to redirect both stdout and stderr to the same file path, and PowerShell rejected the Start-Process invocation before Spring booted. No repository files or DB state were changed; the verification script was retried with separate log targets afterward.`
+- status: `resolved`
+
+- time: `2026-03-31 14:17:00 +09:00`
+- location: `jeju-spring bootRun verification script`
+- summary: `a follow-up admin lodging smoke attempt used an invalid bootRun option form`
+- details: `The second local smoke command passed --management.server.port through Gradle's command-line parser instead of the app args string, so bootRun failed before startup with Unknown command-line option. The verification was retried with a single --args=--server.port=18081 app argument and then completed.`
+- status: `resolved`
+
+- time: `2026-03-31 14:20:00 +09:00`
+- location: `temporary JDBC verification helper`
+- summary: `the first local JDBC probe failed because PowerShell wrote the temp Java source with a UTF-8 BOM`
+- details: `The first ad-hoc CheckMonthlyDealAdmin.java write used a BOM-emitting path, which made javac fail on an illegal \\ufeff character. The helper was rewritten with BOM-free UTF-8 output and the DB probe continued in the same task.`
+- status: `resolved`
+
+- time: `2026-03-31 14:52:00 +09:00`
+- location: `fresh bootRun verification on port 18123`
+- summary: `clean-port Spring verification timed out before returning the monthly-deal API`
+- details: `A follow-up bootRun check was moved off the stale 18081 listener onto port 18123, but the new process did not reach a queryable API before the shell timeout. I switched to direct JDBC verification and an explicit local SQL apply path for the new monthly-deal code migration instead of treating the timeout as a code regression.`
+- status: `resolved`
+
+- time: `2026-03-31 14:56:00 +09:00`
+- location: `temporary V30 SQL runner`
+- summary: `the first ad-hoc SQL runner skipped the leading UPDATE because the SQL chunk began with comment lines`
+- details: `My temporary JDBC helper split the V30 file on semicolons and skipped any chunk that started with '--', which accidentally dropped the first hotel_properties UPDATE while still applying the later room_type and policy remaps. I corrected the local DB by rerunning the property-code UPDATE explicitly and verified the final property/room/policy codes through JDBC readback.`
+- status: `resolved`

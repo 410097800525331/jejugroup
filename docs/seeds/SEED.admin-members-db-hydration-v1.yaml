@@ -1,0 +1,25 @@
+goal: >
+  Hydrate the admin members page from the live `/api/admin/tables/members`
+  surface while preserving the current tab layout, search affordance, and
+  action bar structure.
+constraints:
+  - Keep the scope limited to `docs/seeds/SEED.admin-members-db-hydration-v1.yaml`, `front/admin/pages/members.html`, `front/admin/js/members.js`, and `front/admin/data/members-config.js`.
+  - Do not touch backend code, mirror paths, generated output, or shared runtime files.
+  - Preserve the existing admin members UI contract: the four tabs stay `member`, `membership`, `permissions`, and `inquiries`.
+  - Read members data from `/api/admin/tables/members` and hydrate the table from the returned `defaultTab` and `tabs` payload.
+  - Keep search working against the fetched rows, not against dummy local data.
+  - Keep failures safe: on fetch or payload problems, fall back to a neutral empty/error state and do not expose internal details to the user.
+  - Keep the direct page load and admin shell navigation paths both functional.
+  - Preserve UTF-8 and LF text integrity.
+acceptance_criteria:
+  - `front/admin/js/members.js` hydrates the members table from the live admin read surface and uses fetched tab rows for rendering.
+  - The members page still supports tab switching, search, sidebar/profile controls, and action bar label updates.
+  - The page degrades safely when the API request fails or returns an unexpected payload.
+  - The existing members page layout and tab keys remain unchanged.
+verification:
+  - `node --check front/admin/js/members.js`
+  - `git diff --check -- docs/seeds/SEED.admin-members-db-hydration-v1.yaml front/admin/pages/members.html front/admin/js/members.js front/admin/data/members-config.js`
+out_of_scope:
+  - Backend controller or SQL changes.
+  - Mirror regeneration or deployment work.
+  - UI redesign, new tabs, or new page shells.

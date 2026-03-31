@@ -33,6 +33,35 @@
 
 # MULTI AGENT LOG
 
+- time: `2026-03-31 23:39:00 +09:00`
+- route: `Route B`
+- task: `Fix admin revenue mismatch by backfilling payment_transactions for BHD-20260331 and future generated bookings`
+- participants: `main`, `worker_booking_revenue_fix (Planck)`, `reviewer_admin_revenue_fix (Godel)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_booking_revenue_fix (Planck)`: `scripts/backfill-mypage-booking-history.ps1`
+  - `reviewer_admin_revenue_fix (Godel)`: `review only`
+- verification:
+  - `worker_booking_revenue_fix (Planck)` updated `scripts/backfill-mypage-booking-history.ps1` so future generated bookings now insert `payment_transactions` rows aligned to each generated `payment_attempt`, with matching amounts plus `completed/payment` status metadata and booking-date timestamps.
+  - `worker_booking_revenue_fix (Planck)` added an idempotent repair path for the existing `BHD-20260331-%` batch and ran the script against the live local MySQL database so missing `payment_transactions` moved from `46915` to `0`.
+  - `main` verified with `mysql.exe` that the admin revenue-style filter now sees `46915` transaction rows totaling `469500852578.00` for `BHD-20260331-%`, and daily historical buckets such as `2026-03-30` now contain non-zero revenue.
+  - `main` rechecked that the current-day KPI remains `17423400.00`, which is expected because the generated backfill dates end at `2026-03-30` while the today card filters `2026-03-31`.
+  - `reviewer_admin_revenue_fix (Godel)` reported `no blocking findings`; only residual risks are that the script uses `TX-<bookingNo>-01` rather than the app's usual `PT-<bookingNo>` transaction number pattern, and the repair path mirrors `payment_attempts.approved_amount` so any pre-existing wrong approved amount would carry forward into the backfilled transaction.
+
+- time: `2026-03-31 23:24:00 +09:00`
+- route: `Route B`
+- task: `Make admin dashboard half-year, 1-year, and 2-year graphs use trailing periods relative to today`
+- participants: `main`, `worker_admin_dashboard_backend (Kuhn)`, `reviewer_admin_dashboard_range (Carver)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_admin_dashboard_backend (Kuhn)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java`
+  - `reviewer_admin_dashboard_range (Carver)`: `review only`
+- verification:
+  - `worker_admin_dashboard_backend (Kuhn)` updated `loadDashboardChartSeries(...)` so `halfYear` now uses trailing 6 monthly buckets, `1year` uses trailing 12 monthly buckets, and `2year` uses trailing 8 quarterly buckets, all including the current period and preserving the existing response shape plus `bookingType` domain filtering.
+  - `worker_admin_dashboard_backend (Kuhn)` added localized trailing monthly/quarterly bucket builders in `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java` without changing the existing `hour/day/week/month/5year` series behavior.
+  - `main` reran `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat compileJava` from `D:\lsh\git\jejugroup\jeju-spring`, and it passed.
+  - `reviewer_admin_dashboard_range (Carver)` reviewed only the dashboard range hunks in `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java` and reported no blocking findings; residual risk only that no live DB-backed endpoint smoke was executed in this turn.
+
 - time: `2026-03-31 18:42:00 +09:00`
 - route: `Route A`
 - task: `Sync the current JejuStay destination-search workspace state into the jeju-spring derived mirrors`
@@ -4660,6 +4689,21 @@
   - `worker_chat_config (Ptolemy)` verified a fresh `bootRun` on a separate port returned `{"success":true,"data":{"status":"online","configured":true}}` from `GET /api/chat` and a successful `POST /api/chat` response.
   - `reviewer_chat (Boyle)` reported `no blocking findings` and noted only a maintenance residual risk that env-resolution rules now live in both Spring config and `ChatService`.
 
+- time: `2026-03-31 13:33:00 +09:00`
+- route: `Route B`
+- task: `Replace external chatbot API calls with local Jeju Group knowledge responses`
+- participants: `main`, `worker_chat_local (Bernoulli)`, `reviewer_chat_local (Russell)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_chat_local (Bernoulli)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/chat/**, jeju-spring/src/test/java/com/jejugroup/jejuspring/chat/**`
+  - `reviewer_chat_local (Russell)`: `review only`
+- verification:
+  - `worker_chat_local (Bernoulli)` removed the external AI request path from `ChatService`, kept the `/api/chat` response in the existing `candidates[0].content.parts[0].text` shape, and sanitized `**` emphasis markers out of local responses.
+  - `worker_chat_local (Bernoulli)` changed the chatbot to build a runtime local knowledge base from `front/jejuair/pages/jmembers/*.html` plus `front/apps/cs/client/src/data/serviceCenterData.ts`, using recent user-only turns for retrieval and question-priority FAQ answer selection.
+  - `main` ran `./gradlew.bat compileJava` in `jeju-spring` and it passed after the final chatbot changes.
+  - `main` ran `./gradlew.bat test --tests com.jejugroup.jejuspring.chat.ChatServiceTests --tests com.jejugroup.jejuspring.chat.ChatApiControllerTests` in `jeju-spring` and it passed.
+  - `reviewer_chat_local (Russell)` reported `no blocking findings` and noted only residual risks around heuristic HTML/TS extraction and ambiguous follow-up prompts falling back to generic guidance.
+
 - time: `2026-03-31 13:05:00 +09:00`
 - route: `Route B`
 - task: `Replace external chatbot API calls with local Jeju Group knowledge responses`
@@ -4707,3 +4751,181 @@
   - `worker_destination_catalog (Euler)` regenerated `front/shared/destination/generated/destination-catalogs.json` and `front/shared/destination/generated/destination-airport-search.browser.js`, reporting clean BEL, KQT, CQF, QGY, and MIG records and `wrote 172 cities and 5498 airports`.
   - `main` verified the regenerated front artifacts no longer contain the previously broken probe strings or replacement characters for the affected records and confirmed `git diff --check` is clean for the touched files.
   - `reviewer_destination_catalog (Tesla)` reported no blocking findings and noted only a residual maintenance risk that the IATA override map is hardcoded and may need refresh if the upstream dataset changes again.
+
+- time: `2026-03-31 13:38:00 +09:00`
+- route: `Route B`
+- task: `Seed monthly hotel deals into stay DB and switch jejuhotel landing deals to DB-backed rendering`
+- participants: `main`, `worker_hotel_deals_backend (Pauli)`, `worker_hotel_deals_front (James)`, `reviewer_hotel_deals (Hubble)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_hotel_deals_backend (Pauli)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/stay/**, jeju-spring/src/main/resources/db/migration/**`
+  - `worker_hotel_deals_front (James)`: `front/jejustay/pages/hotel/**`
+  - `reviewer_hotel_deals (Hubble)`: `review only`
+- verification:
+  - `worker_hotel_deals_backend (Pauli)` added `V29__seed_monthly_hotel_deals.sql`, seeded the four jejuhotel monthly-deal properties into the stay lodging tables with `/uploads/stay/monthly-deals/...` image paths, and exposed `GET /api/stay/hotel-monthly-deals` through `StayMonthlyDealApiController` plus `StayMonthlyDealDbStore`.
+  - `worker_hotel_deals_front (James)` replaced the static monthly-deals card markup in `front/jejustay/pages/hotel/jejuhotel.html` with an API-driven root, added `monthlyDeals.js` rendering/loading/error handling, and kept dynamic card animation/wishlist init working through the hotel page runtime.
+  - `main` manually refined the front mapping so the new DB payload uses `propertyCode`, `heroImagePath`, `summaryText`, and `benefits` correctly for wishlist ids, image URLs, location text, and amenity labels.
+  - `main` ran `D:\lsh\git\jejugroup\jeju-spring\gradlew.bat -p D:\lsh\git\jejugroup\jeju-spring compileJava` and it passed.
+  - `main` ran `node --check front/jejustay/pages/hotel/modules/monthlyDeals.js`, `node --check front/jejustay/pages/hotel/modules/hotelPageApp.js`, and `node --check front/jejustay/pages/hotel/modules/interactions/commonInteractions.js`; all passed.
+  - `main` ran `git diff --check -- front/jejustay/pages/hotel/jejuhotel.html front/jejustay/pages/hotel/modules/hotelPageApp.js front/jejustay/pages/hotel/modules/interactions/commonInteractions.js front/jejustay/pages/hotel/modules/monthlyDeals.js front/jejustay/pages/hotel/styles/deals-section.css jeju-spring/src/main/java/com/jejugroup/jejuspring/stay/web/StayMonthlyDealApiController.java jeju-spring/src/main/java/com/jejugroup/jejuspring/stay/application/StayMonthlyDealDbStore.java jeju-spring/src/main/java/com/jejugroup/jejuspring/stay/view/StayMonthlyDealListView.java jeju-spring/src/main/resources/db/migration/V29__seed_monthly_hotel_deals.sql STATE.md` and it passed.
+  - `main` verified through a direct JDBC probe that the four monthly-deal properties exist in `jejugroup_local` with the expected `/uploads/stay/monthly-deals/...` image paths after the migration path was loaded.
+  - `main` booted `jeju-spring` locally on alternate ports, confirmed Flyway validated all 29 migrations including `V29`, and saw the new `/api/stay/hotel-monthly-deals` endpoint hit the app successfully during local requests.
+  - `reviewer_hotel_deals (Hubble)` reported `no findings` on the final workspace state.
+
+- time: `2026-03-31 13:46:00 +09:00`
+- route: `Route B`
+- task: `Sync the hotel monthly deals DB-backed landing changes into generated assets and the jeju-spring mirror`
+- participants: `main`, `worker_sync_hotel_deals (Ptolemy/Linnaeus)`, `reviewer_sync_hotel_deals (Newton/Schrodinger)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_sync_hotel_deals (Ptolemy/Linnaeus)`: `front/.generated/**, jeju-spring/src/main/resources/static/front-mirror/**, jeju-spring/src/main/resources/templates/front-mirror/**, jeju-spring/build/generated/front-resources/**, jeju-spring/build/resources/main/**`
+  - `reviewer_sync_hotel_deals (Newton/Schrodinger)`: `review only`
+- verification:
+  - `worker_sync_hotel_deals (Ptolemy)` ran `pnpm run sync` successfully from the workspace root and propagated the hotel monthly deals renderer into `front/.generated/**` and `jeju-spring/src/main/resources/static/front-mirror/jejustay/pages/hotel/modules/monthlyDeals.js` without hand-editing mirror files.
+  - `reviewer_sync_hotel_deals (Newton)` found the initial sync left stale `jeju-spring/build/generated/front-resources/**` and `jeju-spring/build/resources/main/**` copies of `monthlyDeals.js`, so the task stayed open for a build-output refresh.
+  - `worker_sync_hotel_deals (Linnaeus)` then ran `cd jeju-spring && ./gradlew.bat processResources`, and verified via matching file hashes that `front/jejustay/pages/hotel/modules/monthlyDeals.js`, `jeju-spring/build/generated/front-resources/static/jejustay/pages/hotel/modules/monthlyDeals.js`, and `jeju-spring/build/resources/main/static/jejustay/pages/hotel/modules/monthlyDeals.js` are now identical.
+  - `worker_sync_hotel_deals (Linnaeus)` also confirmed the final build outputs contain the updated monthly deals field fallbacks plus the `aria-busy` loading-state fix.
+  - `reviewer_sync_hotel_deals (Schrodinger)` reported `no findings` on the final synced state across source, front-mirror, and build outputs.
+
+- time: `2026-03-31 13:49:47 +09:00`
+- route: `Route B`
+- task: `Connect front admin members page to the live admin members DB surface`
+- participants: `main`, `worker_members_surface (Singer)`, `reviewer_members_surface (James)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_members_surface (Singer)`: `docs/seeds/SEED.admin-members-db-hydration-v1.yaml, front/admin/pages/members.html, front/admin/js/members.js, front/admin/data/members-config.js`
+  - `reviewer_members_surface (James)`: `review only`
+- verification:
+  - `worker_members_surface (Singer)` froze the contract in `docs/seeds/SEED.admin-members-db-hydration-v1.yaml`, added members-surface endpoint/loading/error metadata to `front/admin/data/members-config.js`, and switched `front/admin/pages/members.html` plus `front/admin/js/members.js` from empty local rows to `/api/admin/tables/members` hydration.
+  - `worker_members_surface (Singer)` then followed up on reviewer feedback by refactoring `front/admin/js/members.js` around a shared `createMembersPage(...)` flow so direct page load uses the full page boot path while `window.AdminShell.registerSection('members', ...)` mounts the section correctly inside shell navigation without duplicating shared chrome bindings.
+  - `main` manually reviewed the final `members.js` control flow, confirmed the shell mount path now calls `createMembersPage({ root, enableSharedChrome: false })` and the direct-load path still updates tabs through the store subscription.
+  - `main` ran `node --check front/admin/js/members.js` and it passed.
+  - `main` ran `git diff --check -- docs/seeds/SEED.admin-members-db-hydration-v1.yaml front/admin/pages/members.html front/admin/js/members.js front/admin/data/members-config.js STATE.md` and it passed.
+  - `reviewer_members_surface (James)` first caught the missing AdminShell registration path, the follow-up fix was applied, and the final re-review reported `no findings`.
+
+- time: `2026-03-31 14:33:00 +09:00`
+- route: `Route B`
+- task: `Backfill mypage booking history gaps with randomized air/stay reservations for test10-test29`
+- participants: `main`, `worker_booking_backfill (Darwin)`, `reviewer_booking_backfill (Turing)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_booking_backfill (Darwin)`: `scripts/backfill-mypage-booking-history.ps1`
+  - `reviewer_booking_backfill (Turing)`: `review only`
+- verification:
+  - `worker_booking_backfill (Darwin)` created `scripts/backfill-mypage-booking-history.ps1`, connected it to `jeju-spring/.env`, and used the live local MySQL `jejugroup_local` database to fill only empty dates from `2021-03-30` through `2026-03-30` with two randomized `air/stay` bookings per empty day across `test10` through `test29`, inserting coordinated `bookings`, `booking_items`, `booking_passengers`, and `payment_attempts` rows.
+  - `main` verified live DB counts with `mysql.exe`: `3653` total bookings in range, `1827` distinct booked dates across `2021-03-30` to `2026-03-30`, `0` non-`air/stay` bookings in the backfill range, and `3652` bookings assigned to the `test10`-`test29` pool while preserving the one pre-existing out-of-pool booking.
+  - `main` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -DryRun` after the initial insert and confirmed the rerun-safe preview reports `빈 날짜: 0` and `새로 넣을 예약 수: 0`.
+  - `main` fixed the script cleanup path handling and updated the generated passenger first/last-name support in the script, then ran a one-time SQL normalization so existing backfilled `BH-%` passenger rows no longer keep blank `passenger_first_name` or `passenger_last_name` values.
+  - `reviewer_booking_backfill (Turing)` caught that the first script draft emitted `COMMIT` inside the per-day loop without a matching per-day `START TRANSACTION`, which could have left later dates in autocommit partial-write mode; `main` fixed the script so each day block now opens its own transaction before the final dry-run verification.
+
+- time: `2026-03-31 15:27:00 +09:00`
+- route: `Route B`
+- task: `Expand local mypage booking history so every day gets 1-50 randomized air/stay bookings`
+- participants: `main`, `worker_booking_backfill (Leibniz)`, `reviewer_booking_backfill (Carson)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_booking_backfill (Leibniz)`: `scripts/backfill-mypage-booking-history.ps1`
+  - `reviewer_booking_backfill (Carson)`: `review only`
+- verification:
+  - `worker_booking_backfill (Leibniz)` updated `scripts/backfill-mypage-booking-history.ps1` to use the `BHD-20260331` booking prefix, generate a random `1..50` bookings per day across the full `2021-03-30` to `2026-03-30` range, and skip dates already covered by the same prefix so reruns are intentionally `no-op`.
+  - `worker_booking_backfill (Leibniz)` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -DryRun`, then the real `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1`, and finally verified that the prefix batch produced `generated_days=1827`, `min_per_day=1`, `max_per_day=50`, and `total_generated=46915`.
+  - `main` rechecked the live DB with `mysql.exe` and confirmed the `BHD-20260331-%` batch has `46915` bookings, `1827` distinct days, per-day counts bounded to `1` and `50`, `0` out-of-scope booking types, `0` out-of-scope user ids, and matching `46915` rows each in `booking_items`, `booking_passengers`, and `payment_attempts`.
+  - `main` reran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -DryRun` after insertion and confirmed the script now reports `대상 날짜: 0` and exits as a prefix-based `no-op`.
+  - `reviewer_booking_backfill (Carson)` reported `no findings` on the updated script and called out only the intentional residual risk that a fresh batch requires changing `runPrefix`.
+
+- time: `2026-03-31 15:55:00 +09:00`
+- route: `Route B`
+- task: `Randomize booking amounts for the BHD-20260331 local backfill batch`
+- participants: `main`, `worker_booking_backfill (Popper)`, `reviewer_booking_backfill (Euler)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_booking_backfill (Popper)`: `scripts/backfill-mypage-booking-history.ps1`
+  - `reviewer_booking_backfill (Euler)`: `review only`
+- verification:
+  - `worker_booking_backfill (Popper)` updated `scripts/backfill-mypage-booking-history.ps1` with a shared `10000..20000000` KRW amount range plus a `-RefreshAmounts` mode that refreshes the existing `BHD-20260331-%` batch across `bookings`, `booking_items`, and `payment_attempts`.
+  - `worker_booking_backfill (Popper)` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -RefreshAmounts -DryRun`, then `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -RefreshAmounts`, and finally checked the refreshed batch with `mysql.exe`.
+  - `main` rechecked the live DB and confirmed `BHD-20260331-%` now has `MIN/MAX total_amount = 10516.00 / 19999717.00`, with `0` mismatches between `bookings` and `booking_items` amounts and `0` mismatches between `bookings` and `payment_attempts` amounts.
+  - `main` reran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -RefreshAmounts -DryRun` and confirmed the refresh path now previews cleanly against the already-generated batch.
+  - `reviewer_booking_backfill (Euler)` reported `no blocking findings` and noted only the residual behavior that `-RefreshAmounts` is currently intended for a fully generated prefix batch; if that prefix still had missing dates, the script would take the insert path instead of refresh mode.
+
+- time: `2026-03-31 15:27:00 +09:00`
+- route: `Route B`
+- task: `Expand local mypage booking history so every day gets 1-50 randomized air/stay bookings`
+- participants: `main`, `worker_booking_backfill`, `reviewer_booking_backfill`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_booking_backfill`: `scripts/backfill-mypage-booking-history.ps1`
+  - `reviewer_booking_backfill`: `review only`
+- verification:
+  - `main` updated `scripts/backfill-mypage-booking-history.ps1` to generate a random 1-50 bookings per day across the full `2021-03-30` through `2026-03-30` range, with `booking_no` prefixed by `BHD-20260331` so reruns can skip already-generated dates safely.
+  - `main` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -DryRun` and confirmed the script now plans `1827` target dates with per-day counts in the `1..50` range.
+  - `main` ran the live backfill and then re-ran the script; the second run cleanly no-oped with `existing run prefix dates: 1827` and `target dates: 0`, proving rerun safety for the generated prefix.
+  - `main` verified the live local MySQL counts for the new prefix: `46915` generated bookings, `1827` generated days, per-day min/max of `1` and `50`, and matching counts in `booking_items`, `booking_passengers`, and `payment_attempts`.
+
+- time: `2026-03-31 15:55:00 +09:00`
+- route: `Route B`
+- task: `Randomize booking amounts for the BHD-20260331 local backfill batch`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, scripts/backfill-mypage-booking-history.ps1`
+- verification:
+  - `main` updated `scripts/backfill-mypage-booking-history.ps1` so future generated bookings now use a random KRW amount between `10000` and `20000000`, propagated consistently through `bookings`, `booking_items`, and `payment_attempts`.
+  - `main` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -RefreshAmounts -DryRun` to confirm the refresh path is explicit and non-destructive in preview mode.
+  - `main` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -RefreshAmounts` and refreshed the live `BHD-20260331-%` batch so `bookings.total_amount`, `bookings.paid_amount`, `booking_items.unit_price`, `booking_items.total_amount`, `payment_attempts.requested_amount`, and `payment_attempts.approved_amount` all share the same randomized amount per reservation.
+  - `main` verified the refreshed batch with MySQL: `MIN/MAX total_amount` is `10516.00 / 19999717.00`, the same min/max appears in `booking_items` and `payment_attempts`, and mismatch checks for booking/item/payment amounts all returned `0`.
+
+- time: `2026-03-31 15:55:00 +09:00`
+- route: `Route B`
+- task: `Randomize booking amounts for the BHD-20260331 local backfill batch`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, scripts/backfill-mypage-booking-history.ps1`
+- verification:
+  - `main` added the `-RefreshAmounts` path to `scripts/backfill-mypage-booking-history.ps1`, set the future booking amount range to `10000..20000000`, and kept the amount mirrored across `bookings`, `booking_items`, and `payment_attempts`.
+  - `main` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -RefreshAmounts -DryRun` and confirmed it emitted the explicit no-op preview path for already-generated dates.
+  - `main` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1 -RefreshAmounts` and refreshed the live `BHD-20260331-%` batch in `jejugroup_local`.
+  - `main` verified with MySQL that `BHD-20260331-%` now has `MIN/MAX total_amount` of `10516.00 / 19999717.00`, matching values in `booking_items` and `payment_attempts`, and `0` mismatches across the joined comparisons.
+
+- time: `2026-03-31 14:51:33 +09:00`
+- route: `Route B`
+- task: `Replace monthly-deal hotel product codes with short reservation-like random codes`
+- participants: `main`, `worker_monthly_deal_codes (Wegener)`, `reviewer_monthly_deal_codes (Chandrasekhar)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_monthly_deal_codes (Wegener)`: `jeju-spring/src/main/resources/db/migration/V29__seed_monthly_hotel_deals.sql, jeju-spring/src/main/resources/db/migration/V30__shorten_monthly_deal_codes.sql`
+  - `reviewer_monthly_deal_codes (Chandrasekhar)`: `review only`
+- verification:
+  - `worker_monthly_deal_codes (Wegener)` rewrote `V29__seed_monthly_hotel_deals.sql` so the four monthly-deal records now seed short deterministic opaque codes: `st-7q2m9x/rm-7q2m9x/md-7q2m9x-monthly-deal`, `st-4k8d1p/rm-4k8d1p/md-4k8d1p-monthly-deal`, `st-6z1n7c/rm-6z1n7c/md-6z1n7c-monthly-deal`, and `st-9h3v5r/rm-9h3v5r/md-9h3v5r-monthly-deal`, while keeping all `hero_image_url` values on the original slug folders.
+  - `worker_monthly_deal_codes (Wegener)` added `V30__shorten_monthly_deal_codes.sql` as a repeat-safe forward migration that remaps already-migrated monthly-deal rows from the old long property/room/policy codes to the new short codes in place.
+  - `main` ran `git diff --check` for the touched migration files and directly inspected the V29/V30 SQL to confirm the short-code mapping and preserved `-monthly-deal` policy suffixes.
+  - `main` used temporary JDBC helpers against the live local MySQL `jejugroup_local` database to apply the forward remap and then read back the monthly-deal rows, confirming the current DB now stores property codes `st-7q2m9x`, `st-4k8d1p`, `st-6z1n7c`, `st-9h3v5r`, matching short room codes, and matching `md-*-monthly-deal` policy codes.
+  - `reviewer_monthly_deal_codes (Chandrasekhar)` first raised quote-count and migration-order concerns, then after direct line inspection plus the clarified Flyway path re-review returned `no findings` with only the residual note that the monthly-deal query path still depends on keeping the `policy_code` suffix `-monthly-deal`.
+
+- time: `2026-03-31 14:29:16 +09:00`
+- route: `Route B`
+- task: `Integrate the admin lodging page with DB-backed Jeju Stay monthly deals`
+- participants: `main`, `worker_admin_lodging_backend (Kuhn)`, `worker_admin_lodging_front (Curie)`, `reviewer_admin_lodging (Laplace)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, ERROR_LOG.md`
+  - `worker_admin_lodging_backend (Kuhn)`: `jeju-spring/src/main/java/com/jejugroup/jejuspring/admin/web/AdminReadApiController.java`
+  - `worker_admin_lodging_front (Curie)`: `front/admin/js/lodging.js, front/admin/data/lodging-config.js`
+  - `reviewer_admin_lodging (Laplace)`: `review only`
+- verification:
+  - `worker_admin_lodging_front (Curie)` converted `front/admin/js/lodging.js` from static config rendering to live hydration through `/api/admin/tables/lodging`, added safe fallback handling, and later tightened `getTabRowSource()` so only real arrays are normalized.
+  - `worker_admin_lodging_backend (Kuhn)` extended `loadLodgingStayRows()` so each stay row carries structured `propertyCode`/`roomTypeCode`, then enriched the stay tab with monthly-deal metadata from `hotel_display_overrides` and `hotel_price_policies` using schema-correct `updated_at` ordering plus room-type-first matching and appended searchable metadata tokens without dropping the original search terms.
+  - `main` ran `./gradlew.bat compileJava` in `jeju-spring`, `node --check front/admin/js/lodging.js`, `node --check front/admin/data/lodging-config.js`, and `git diff --check` for the touched files.
+  - `main` booted Spring locally on port `18081`, fetched `/api/admin/tables/lodging`, and verified the stay payload now includes the monthly-deal policy codes and `/uploads/stay/monthly-deals/` image paths alongside the 4 monthly-deal room rows.
+  - `reviewer_admin_lodging (Laplace)` first caught unsafe `searchText` parsing and non-array tab-row normalization, then after follow-up fixes returned `no findings` with only the residual note that a browser-session-level admin DOM check was not run.
+
+- time: `2026-03-31 16:02:00 +09:00`
+- route: `Route B`
+- task: `Fix admin revenue mismatch by backfilling payment_transactions for BHD-20260331 and future generated bookings`
+- participants: `main`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md, scripts/backfill-mypage-booking-history.ps1`
+- verification:
+  - `main` updated `scripts/backfill-mypage-booking-history.ps1` so future generated bookings now insert `payment_transactions` rows aligned to each generated `payment_attempt`, with `status='completed'`, `transaction_type='payment'`, and matching timestamps/amounts.
+  - `main` updated the existing repair path in `scripts/backfill-mypage-booking-history.ps1` so the live `BHD-20260331-%` batch backfills any missing `payment_transactions` rows idempotently inside the script.
+  - `main` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1` and the script reported `누락된 payment_transactions: 46915 -> 0`.
+  - `main` verified with MySQL that `BHD-20260331-%` now has `0` missing `payment_transactions`, and the admin revenue-style filter sees `46915` transaction rows totaling `469500852578.00` across the batch's date buckets.
+  - `main` verified the current-day revenue-style query still returns `17423400.00`, which is expected because the generated batch is dated through `2026-03-30` and the fix affects historical chart buckets rather than today's KPI.

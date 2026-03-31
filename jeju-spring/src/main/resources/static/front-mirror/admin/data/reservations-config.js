@@ -1,6 +1,9 @@
 const reservationsConfig = {
   defaultTab: 'booking',
   searchButtonLabel: '검색',
+  surfaceEndpoint: '/api/admin/tables/reservations',
+  loadingMessage: '예약 데이터를 불러오는 중입니다.',
+  errorMessage: '예약 데이터를 불러오지 못했습니다.',
   domainFilters: [
     { key: 'all', label: '전체' },
     { key: 'flight', label: '항공권' },

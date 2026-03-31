@@ -1,6 +1,9 @@
 const membersConfig = {
   defaultTab: 'member',
   searchButtonLabel: '검색',
+  surfaceEndpoint: '/api/admin/tables/members',
+  loadingMessage: '회원 데이터를 불러오는 중입니다.',
+  errorMessage: '회원 데이터를 불러오지 못했습니다.',
   tabs: {
     member: {
       searchPlaceholder: '회원명이나 ID로 검색',

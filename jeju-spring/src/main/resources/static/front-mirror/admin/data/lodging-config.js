@@ -1,6 +1,9 @@
 const lodgingConfig = {
   defaultTab: 'stay',
   searchButtonLabel: '검색',
+  surfaceEndpoint: '/api/admin/tables/lodging',
+  loadingMessage: '숙박 데이터를 불러오는 중입니다.',
+  errorMessage: '숙박 데이터를 불러오지 못했습니다.',
   tabs: {
     stay: {
       searchPlaceholder: '숙박 코드나 상품명으로 검색',

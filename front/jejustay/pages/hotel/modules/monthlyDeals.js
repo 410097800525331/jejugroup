@@ -108,16 +108,57 @@ const toArray = (value) => {
   return [];
 };
 
+const toLabelArray = (value) => {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => {
+        if (typeof item === "string") {
+          return collapseText(item);
+        }
+
+        if (isPlainObject(item)) {
+          return collapseText(firstDefined(item.name, item.label, item.title, item.code));
+        }
+
+        return "";
+      })
+      .filter(Boolean);
+  }
+
+  return toArray(value);
+};
+
 const firstDefined = (...values) => values.find((value) => value !== undefined && value !== null && value !== "");
 
 const readTitle = (item) =>
   collapseText(firstDefined(item.title, item.name, item.hotelName, item.propertyName, item.displayName, item.label));
 
 const readLocation = (item) =>
-  collapseText(firstDefined(item.location, item.address, item.area, item.region, item.locationText, item.subTitle));
+  collapseText(
+    firstDefined(
+      item.location,
+      item.summaryText,
+      item.address,
+      item.area,
+      item.region,
+      item.regionName,
+      item.locationText,
+      item.subTitle
+    )
+  );
 
 const readImageUrl = (item) =>
-  sanitizeImageUrl(firstDefined(item.imageUrl, item.image, item.imagePath, item.thumbnailUrl, item.photoUrl, item.coverImageUrl));
+  sanitizeImageUrl(
+    firstDefined(
+      item.imageUrl,
+      item.heroImagePath,
+      item.image,
+      item.imagePath,
+      item.thumbnailUrl,
+      item.photoUrl,
+      item.coverImageUrl
+    )
+  );
 
 const readBadge = (item) =>
   collapseText(firstDefined(item.badge, item.badgeText, item.badgeLabel, item.label, item.highlight, item.promotionLabel)) || "JJ 추천";
@@ -137,7 +178,7 @@ const readBadgeClass = (item, badgeText) => {
 };
 
 const readAmenities = (item) =>
-  toArray(firstDefined(item.amenities, item.tags, item.features, item.highlights, item.amenityLabels));
+  toLabelArray(firstDefined(item.amenities, item.benefits, item.features, item.highlights, item.amenityLabels, item.tags));
 
 const readStarCount = (item) => {
   const explicitCount = parseNumeric(firstDefined(item.starCount, item.starRating, item.ratingStars));
@@ -175,7 +216,9 @@ const readPriceLabel = (item) =>
   collapseText(firstDefined(item.priceLabel, item.nightLabel, item.rateLabel)) || "1박 요금";
 
 const readWishlistId = (item) =>
-  collapseText(firstDefined(item.wishlistId, item.id, item.hotelId, item.lodgingId, item.slug, readTitle(item)));
+  collapseText(
+    firstDefined(item.wishlistId, item.id, item.propertyCode, item.hotelId, item.lodgingId, item.slug, readTitle(item))
+  );
 
 const unwrapPayload = (payload) => {
   if (Array.isArray(payload)) {
@@ -364,7 +407,7 @@ const renderStateMarkup = (kind, message, detail) => `
 
 const setRootState = (root, state) => {
   root.dataset.hotelDealsState = state;
-  root.setAttribute("aria-busy", state === "ready" ? "false" : "true");
+  root.setAttribute("aria-busy", state === "loading" ? "true" : "false");
 };
 
 const renderLoading = (root) => {

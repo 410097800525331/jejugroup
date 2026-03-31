@@ -234,6 +234,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         ?? dashboardData.chartRanges[0]
         ?? { range: 'day', labels: [] };
 
+    const createShiftedMonth = (baseDate, monthOffset) => {
+        const shiftedDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
+        shiftedDate.setMonth(shiftedDate.getMonth() + monthOffset);
+        return shiftedDate;
+    };
+
+    const formatMonthLabel = (date) => `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+    const formatQuarterLabel = (date) => {
+        const quarter = Math.floor(date.getMonth() / 3) + 1;
+        return `${date.getFullYear()} Q${quarter}`;
+    };
+
+    const buildTrailingRangeLabels = (range) => {
+        const today = new Date();
+
+        if (range === 'halfYear') {
+            return Array.from({ length: 6 }, (_, index) => formatMonthLabel(createShiftedMonth(today, index - 5)));
+        }
+
+        if (range === '1year') {
+            return Array.from({ length: 12 }, (_, index) => formatMonthLabel(createShiftedMonth(today, index - 11)));
+        }
+
+        if (range === '2year') {
+            const currentQuarterStartMonth = Math.floor(today.getMonth() / 3) * 3;
+            const currentQuarterStart = new Date(today.getFullYear(), currentQuarterStartMonth, 1);
+
+            return Array.from({ length: 8 }, (_, index) => {
+                const shiftedQuarter = new Date(currentQuarterStart);
+                shiftedQuarter.setMonth(currentQuarterStart.getMonth() + ((index - 7) * 3));
+                return formatQuarterLabel(shiftedQuarter);
+            });
+        }
+
+        return null;
+    };
+
     const setStaticLabels = () => {
         if (pageTitleEl && dashboardData.pageTitle) {
             pageTitleEl.textContent = dashboardData.pageTitle;
@@ -416,7 +454,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const buildChartSeries = (range, seriesByRange) => {
         const rangeMeta = getRangeMeta(range);
-        const labels = Array.isArray(rangeMeta.labels) ? rangeMeta.labels : [];
+        const labels = buildTrailingRangeLabels(range)
+            ?? (Array.isArray(rangeMeta.labels) ? rangeMeta.labels : []);
         const sourceSeries = seriesByRange?.[range] ?? {};
 
         const normalizeSeries = (values) => {

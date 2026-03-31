@@ -374,7 +374,7 @@ class AdminReadService {
                 Integer totalQuantity = nullableInteger(resultSet, "total_quantity");
                 boolean active = resultSet.getInt("property_active") == 1 && resultSet.getInt("room_type_active") == 1;
 
-                rows.add(row(
+                Map<String, Object> stayRow = row(
                     searchable(
                         resultSet.getString("property_code"),
                         resultSet.getString("room_type_code"),
@@ -396,11 +396,14 @@ class AdminReadService {
                         buildCatalogStatusLabel(active, resultSet.getString("inventory_status"), availableQuantity),
                         "읽기 전용"
                     )
-                ));
+                );
+                stayRow.put("propertyCode", resultSet.getString("property_code"));
+                stayRow.put("roomTypeCode", resultSet.getString("room_type_code"));
+                rows.add(stayRow);
             }
         }
 
-        return rows;
+        return enrichStayRowsWithMonthlyDeals(connection, rows);
     }
 
     private List<Map<String, Object>> loadLodgingFlightRows(Connection connection) throws SQLException {
@@ -2175,7 +2178,9 @@ class AdminReadService {
 
         Map<String, Object> monthSeries = loadChartRangeSeries(connection, bookingType, buildMonthlyBuckets());
         chartSeriesByRange.put("month", monthSeries);
-        chartSeriesByRange.put("1year", copyChartSeries(monthSeries));
+        chartSeriesByRange.put("halfYear", loadChartRangeSeries(connection, bookingType, buildTrailingMonthlyBuckets(6)));
+        chartSeriesByRange.put("1year", loadChartRangeSeries(connection, bookingType, buildTrailingMonthlyBuckets(12)));
+        chartSeriesByRange.put("2year", loadChartRangeSeries(connection, bookingType, buildTrailingQuarterlyBuckets(8)));
         chartSeriesByRange.put("5year", loadChartRangeSeries(connection, bookingType, buildFiveYearBuckets()));
 
         return chartSeriesByRange;
@@ -2292,6 +2297,32 @@ class AdminReadService {
         return buckets;
     }
 
+    private List<TimeBucket> buildTrailingMonthlyBuckets(int bucketCount) {
+        LocalDate today = LocalDate.now();
+        List<TimeBucket> buckets = new ArrayList<>();
+        for (int offset = bucketCount - 1; offset >= 0; offset--) {
+            YearMonth yearMonth = YearMonth.from(today).minusMonths(offset);
+            buckets.add(new TimeBucket(
+                yearMonth.atDay(1).atStartOfDay(),
+                yearMonth.plusMonths(1).atDay(1).atStartOfDay()
+            ));
+        }
+        return buckets;
+    }
+
+    private List<TimeBucket> buildTrailingQuarterlyBuckets(int bucketCount) {
+        LocalDate today = LocalDate.now();
+        int quarterStartMonth = ((today.getMonthValue() - 1) / 3) * 3 + 1;
+        LocalDateTime currentQuarterStart = LocalDate.of(today.getYear(), quarterStartMonth, 1).atStartOfDay();
+
+        List<TimeBucket> buckets = new ArrayList<>();
+        for (int offset = bucketCount - 1; offset >= 0; offset--) {
+            LocalDateTime start = currentQuarterStart.minusMonths(3L * offset);
+            buckets.add(new TimeBucket(start, start.plusMonths(3)));
+        }
+        return buckets;
+    }
+
     private List<TimeBucket> buildFiveYearBuckets() {
         int currentYear = LocalDate.now().getYear();
         List<TimeBucket> buckets = new ArrayList<>();
@@ -2308,13 +2339,6 @@ class AdminReadService {
             series.add(0L);
         }
         return series;
-    }
-
-    private Map<String, Object> copyChartSeries(Map<String, Object> source) {
-        Map<String, Object> copy = new LinkedHashMap<>();
-        copy.put("revenue", source.get("revenue"));
-        copy.put("reservation", source.get("reservation"));
-        return copy;
     }
 
     private long countTodayReservations(Connection connection, String bookingType) throws SQLException {
@@ -2970,6 +2994,215 @@ class AdminReadService {
         };
     }
 
+    private List<Map<String, Object>> enrichStayRowsWithMonthlyDeals(Connection connection, List<Map<String, Object>> rows) throws SQLException {
+        if (rows.isEmpty() || !tableExists(connection, "hotel_display_overrides") || !tableExists(connection, "hotel_price_policies")) {
+            return rows;
+        }
+
+        Map<String, StayMonthlyDealMetadata> metadataByKey = loadStayMonthlyDealMetadata(connection);
+        if (metadataByKey.isEmpty()) {
+            return rows;
+        }
+
+        List<Map<String, Object>> enrichedRows = new ArrayList<>(rows.size());
+        for (Map<String, Object> sourceRow : rows) {
+            String searchText = text((String) sourceRow.get("searchText"));
+            String roomTypeCode = text((String) sourceRow.get("roomTypeCode")).toLowerCase(Locale.ROOT);
+            String propertyCode = text((String) sourceRow.get("propertyCode")).toLowerCase(Locale.ROOT);
+            StayMonthlyDealMetadata metadata = null;
+            if (StringUtils.hasText(roomTypeCode)) {
+                metadata = metadataByKey.get(roomTypeCode);
+            }
+            if (metadata == null && StringUtils.hasText(propertyCode)) {
+                metadata = metadataByKey.get(propertyCode);
+            }
+            if (metadata == null) {
+                enrichedRows.add(sourceRow);
+                continue;
+            }
+
+            @SuppressWarnings("unchecked")
+            List<String> cells = (List<String>) sourceRow.get("cells");
+            List<String> enrichedCells = new ArrayList<>(cells);
+            enrichedCells.set(1, joinPlain(" / ", enrichedCells.get(1), "월간딜"));
+            enrichedCells.set(2, joinPlain(" / ", enrichedCells.get(2), buildStayMonthlyDealSummaryLabel(metadata)));
+            enrichedCells.set(3, joinPlain(" / ", enrichedCells.get(3), buildStayMonthlyDealImageLabel(metadata)));
+            enrichedCells.set(4, joinPlain(" / ", enrichedCells.get(4), buildStayMonthlyDealPriceLabel(metadata)));
+            enrichedCells.set(5, joinPlain(" / ", enrichedCells.get(5), buildStayMonthlyDealPolicyLabel(metadata)));
+
+            enrichedRows.add(row(
+                searchable(
+                    searchText,
+                    roomTypeCode,
+                    propertyCode,
+                    metadata.badgeText(),
+                    metadata.summaryText(),
+                    metadata.imagePath(),
+                    metadata.policyCode(),
+                    metadata.policyName(),
+                    formatAmount(metadata.originalPrice(), "KRW"),
+                    formatAmount(metadata.salePrice(), "KRW"),
+                    formatAmount(metadata.discountAmount(), "KRW")
+                ),
+                enrichedCells
+            ));
+        }
+
+        return enrichedRows;
+    }
+
+    private Map<String, StayMonthlyDealMetadata> loadStayMonthlyDealMetadata(Connection connection) throws SQLException {
+        String query = """
+            SELECT
+                hp.property_code,
+                hrt.room_type_code,
+                (
+                    SELECT hdo.badge_text
+                    FROM hotel_display_overrides hdo
+                    WHERE hdo.hotel_property_id = hp.id
+                      AND hdo.is_visible = 1
+                    ORDER BY hdo.updated_at DESC
+                    LIMIT 1
+                ) AS badge_text,
+                (
+                    SELECT hdo.summary_text
+                    FROM hotel_display_overrides hdo
+                    WHERE hdo.hotel_property_id = hp.id
+                      AND hdo.is_visible = 1
+                    ORDER BY hdo.updated_at DESC
+                    LIMIT 1
+                ) AS summary_text,
+                (
+                    SELECT hdo.hero_image_url
+                    FROM hotel_display_overrides hdo
+                    WHERE hdo.hotel_property_id = hp.id
+                      AND hdo.is_visible = 1
+                    ORDER BY hdo.updated_at DESC
+                    LIMIT 1
+                ) AS image_path,
+                (
+                    SELECT hdo.original_price_override
+                    FROM hotel_display_overrides hdo
+                    WHERE hdo.hotel_property_id = hp.id
+                      AND hdo.is_visible = 1
+                    ORDER BY hdo.updated_at DESC
+                    LIMIT 1
+                ) AS original_price,
+                (
+                    SELECT hdo.current_price_override
+                    FROM hotel_display_overrides hdo
+                    WHERE hdo.hotel_property_id = hp.id
+                      AND hdo.is_visible = 1
+                    ORDER BY hdo.updated_at DESC
+                    LIMIT 1
+                ) AS sale_price,
+                (
+                    pp.policy_code
+                ) AS policy_code,
+                (
+                    pp.policy_name
+                ) AS policy_name,
+                (
+                    pp.discount_value
+                ) AS discount_amount
+            FROM hotel_properties hp
+            INNER JOIN hotel_price_policies pp
+                ON pp.hotel_property_id = hp.id
+               AND pp.is_active = 1
+               AND pp.policy_code LIKE '%-monthly-deal'
+            LEFT JOIN hotel_room_types hrt ON hrt.id = pp.hotel_room_type_id
+            WHERE hp.service_type = 'stay'
+              AND hp.is_active = 1
+            ORDER BY hp.property_code ASC, hrt.room_type_code ASC, pp.priority ASC, pp.id ASC
+            """;
+
+        Map<String, StayMonthlyDealMetadata> metadataByKey = new LinkedHashMap<>();
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                String propertyCode = text(resultSet.getString("property_code"));
+                String roomTypeCode = text(resultSet.getString("room_type_code"));
+                if (!StringUtils.hasText(propertyCode)) {
+                    continue;
+                }
+
+                StayMonthlyDealMetadata metadata = new StayMonthlyDealMetadata(
+                    text(resultSet.getString("badge_text")),
+                    text(resultSet.getString("summary_text")),
+                    normalizePath(resultSet.getString("image_path")),
+                    resultSet.getBigDecimal("original_price"),
+                    resultSet.getBigDecimal("sale_price"),
+                    resultSet.getBigDecimal("discount_amount"),
+                    text(resultSet.getString("policy_code")),
+                    text(resultSet.getString("policy_name"))
+                );
+
+                if (StringUtils.hasText(roomTypeCode)) {
+                    metadataByKey.putIfAbsent(roomTypeCode.toLowerCase(Locale.ROOT), metadata);
+                } else {
+                    metadataByKey.putIfAbsent(propertyCode.toLowerCase(Locale.ROOT), metadata);
+                }
+            }
+        }
+
+        return metadataByKey;
+    }
+
+    private String buildStayMonthlyDealSummaryLabel(StayMonthlyDealMetadata metadata) {
+        List<String> parts = new ArrayList<>();
+        if (StringUtils.hasText(metadata.badgeText())) {
+            parts.add("[월간딜] " + metadata.badgeText());
+        }
+        if (StringUtils.hasText(metadata.summaryText())) {
+            parts.add(metadata.summaryText());
+        }
+
+        return parts.isEmpty() ? "" : String.join(" | ", parts);
+    }
+
+    private String buildStayMonthlyDealImageLabel(StayMonthlyDealMetadata metadata) {
+        return StringUtils.hasText(metadata.imagePath()) ? "이미지 " + metadata.imagePath() : "";
+    }
+
+    private String buildStayMonthlyDealPriceLabel(StayMonthlyDealMetadata metadata) {
+        List<String> parts = new ArrayList<>();
+        if (metadata.originalPrice() != null && metadata.originalPrice().compareTo(BigDecimal.ZERO) > 0) {
+            parts.add("원가 " + formatAmount(metadata.originalPrice(), "KRW"));
+        }
+        if (metadata.salePrice() != null && metadata.salePrice().compareTo(BigDecimal.ZERO) > 0) {
+            parts.add("판매 " + formatAmount(metadata.salePrice(), "KRW"));
+        }
+        if (metadata.discountAmount() != null && metadata.discountAmount().compareTo(BigDecimal.ZERO) > 0) {
+            parts.add("할인 " + formatAmount(metadata.discountAmount(), "KRW"));
+        }
+
+        return parts.isEmpty() ? "" : String.join(" | ", parts);
+    }
+
+    private String buildStayMonthlyDealPolicyLabel(StayMonthlyDealMetadata metadata) {
+        List<String> parts = new ArrayList<>();
+        if (StringUtils.hasText(metadata.policyCode())) {
+            parts.add("월간딜 " + metadata.policyCode());
+        }
+        if (StringUtils.hasText(metadata.policyName())) {
+            parts.add(metadata.policyName());
+        }
+
+        return parts.isEmpty() ? "" : String.join(" / ", parts);
+    }
+
+    private record StayMonthlyDealMetadata(
+        String badgeText,
+        String summaryText,
+        String imagePath,
+        BigDecimal originalPrice,
+        BigDecimal salePrice,
+        BigDecimal discountAmount,
+        String policyCode,
+        String policyName
+    ) {
+    }
+
     private String toReservationDomainKey(String bookingType) {
         return switch (text(bookingType).toLowerCase(Locale.ROOT)) {
             case "air" -> "flight";
@@ -3017,6 +3250,14 @@ class AdminReadService {
 
     private String text(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private String normalizePath(String value) {
+        String normalized = text(value);
+        if (!StringUtils.hasText(normalized)) {
+            return "";
+        }
+        return normalized.startsWith("/") ? normalized : "/" + normalized;
     }
 
     private String formatTimestamp(Timestamp timestamp) {
