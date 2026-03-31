@@ -2,43 +2,42 @@
 
 ## Current Task
 
-- task: `Fix admin revenue mismatch by backfilling payment_transactions for BHD-20260331 and future generated bookings`
+- task: `Make the weather API read the OpenWeather key more robustly at runtime`
 - phase: `implementation`
-- scope: `scripts/backfill-mypage-booking-history.ps1, STATE.md, MULTI_AGENT_LOG.md`
-- verification_target: `Future generated bookings create payment_transactions rows aligned with payment_attempts, and the live BHD-20260331 batch has zero missing payment_transactions so admin revenue queries include the generated amounts.`
+- scope: `jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/WeatherService.java`
+- verification_target: `The weather API no longer fails solely because the typed app config is empty when OPENWEATHER_API_KEY is present via env or JVM properties, and the existing weather endpoints still behave the same otherwise.`
 
 ## Route
 
-- route: `Route B`
-- reason: `The request changes persisted booking/payment data and requires both script-side generation and a live local MySQL repair path, which is a data-contract change that must be tracked explicitly.`
+- route: `Route A`
+- reason: `The user narrowed the work to a small single-service weather runtime fix that stays inside WeatherService without changing shared shell behavior, routes, mirrors, or test files, so one local write lane is sufficient.`
 
 ## Writer Slot
 
 - owner: `main`
-- write_set: `STATE.md, MULTI_AGENT_LOG.md`
+- write_set: `STATE.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/WeatherService.java`
 - write_sets:
-  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
-  - `worker_booking_revenue_fix`: `scripts/backfill-mypage-booking-history.ps1`
-- note: `Main stays planner-only on Route B, and the script-backed repair slice is delegated to the worker lane.`
+  - `main`: `STATE.md, jeju-spring/src/main/java/com/jejugroup/jejuspring/weather/WeatherService.java`
+- note: `This hotfix stays in one backend lane because it only hardens OpenWeather key resolution in the weather service without touching mirrors or frontend source.`
 
 ## Contract Freeze
 
-- contract_freeze: `Future generated bookings from scripts/backfill-mypage-booking-history.ps1 must insert payment_transactions rows that mirror payment_attempts amounts/status timestamps, and the existing BHD-20260331 batch must be repaired in local MySQL so admin revenue queries that sum payment_transactions.amount can see the generated reservations.`
+- contract_freeze: `Keep the weather API contract and upstream proxy behavior unchanged, but make WeatherService resolve the OpenWeather API key safely from the existing typed config plus direct runtime fallbacks such as environment variables or JVM properties so deployments do not fail when only the binding path is empty.`
 
 ## Seed
 
 - status: `not_applicable`
 - path: `n/a`
 - revision: `n/a`
-- note: `The user fixed the goal directly in-thread, so the Route B data-contract change is frozen here without a separate seed file.`
+- note: `This is a tiny one-file runtime hotfix, so a separate seed artifact is unnecessary.`
 
 ## Reviewer
 
-- reviewer: `assigned`
-- reviewer_target: `reviewer_admin_revenue_fix`
-- reviewer_focus: `Future payment_transactions generation, idempotent repair of the BHD-20260331 batch, and revenue query compatibility with admin dashboard status/date filters.`
+- reviewer: `not_assigned`
+- reviewer_target: `n/a`
+- reviewer_focus: `Route A single-lane hotfix; main will verify that only weather key resolution changed and the existing weather tests still pass.`
 
 ## Last Update
 
-- timestamp: `2026-03-31 23:39:00 +09:00`
-- note: `Normalized the Route B ownership so only STATE.md and MULTI_AGENT_LOG.md remain on the main write set while the payment-transaction repair stays delegated to the worker slice.`
+- timestamp: `2026-03-31 16:30:00 +09:00`
+- note: `Reclassified the task to a tiny Route A backend weather hotfix after the user narrowed the request to fixing the weather API runtime only.`

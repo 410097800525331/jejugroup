@@ -2,12 +2,70 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <title>OAuth Callback Placeholder</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>네이버 로그인 처리 중</title>
+  <link rel="stylesheet" th:href="@{/front-mirror/styles/globals.css}" href="/front-mirror/styles/globals.css">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #fffaf6 0%, #ffffff 100%);
+      color: #222;
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+    }
+
+    .oauth-callback-card {
+      width: min(92vw, 420px);
+      padding: 28px 24px;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .oauth-callback-title {
+      margin: 0 0 12px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .oauth-callback-message {
+      margin: 0 0 20px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #555;
+    }
+
+    .oauth-callback-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 12px;
+      background: #ff5000;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .oauth-callback-link:hover {
+      background: #e64800;
+    }
+  </style>
 </head>
 
 <body>
-    <h1>OAuth 처리 중...</h1>
+  <main class="oauth-callback-card" aria-live="polite">
+    <h1 class="oauth-callback-title" id="oauthCallbackTitle">네이버 로그인 처리 중</h1>
+    <p class="oauth-callback-message" id="oauthCallbackMessage">잠시만 기다려 주세요.</p>
+    <a class="oauth-callback-link" th:href="@{/pages/auth/login.html}" href="/pages/auth/login.html" id="oauthCallbackLink">로그인 페이지로 이동</a>
+  </main>
+
+  <script type="module" th:src="@{/front-mirror/pages/auth/oauth_callback.js}" src="/front-mirror/pages/auth/oauth_callback.js"></script>
 </body>
 
 </html>

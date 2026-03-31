@@ -55,6 +55,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const searchButton = document.querySelector('.admin-reservations-search-group .admin-btn-outline');
     const actionButtons = document.querySelectorAll('.admin-reservations-quick-actions .admin-btn');
     const domainFilterButtons = document.querySelectorAll('#reservation-domain-filters .subfilter-btn');
+    const paginationPrevButton = document.getElementById('reservations-page-prev');
+    const paginationNextButton = document.getElementById('reservations-page-next');
+    const paginationIndicator = document.getElementById('reservations-page-indicator');
     const themeBtns = document.querySelectorAll('.theme-btn');
     const profileTrigger = document.getElementById('admin-profile-trigger');
     const profileContainer = document.getElementById('admin-profile-container');
@@ -64,6 +67,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const DEFAULT_TAB = TAB_CONFIG[reservationsConfig.defaultTab]
         ? reservationsConfig.defaultTab
         : (tabButtons[0]?.dataset.domain ?? 'booking');
+    const ROWS_PER_PAGE = 10;
+    const BOOKING_LOOKBACK_MONTHS = 1;
     const NO_RESULTS_MESSAGE = '검색 결과가 없습니다.';
     let surfaceConfig = {
         defaultTab: DEFAULT_TAB,
@@ -71,6 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     let activeDomainKey = 'all';
     let activeTab = DEFAULT_TAB;
+    let currentPage = 1;
     let searchKeyword = '';
     let surfaceState = 'loading';
 
@@ -123,15 +129,88 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const rawCells = Array.isArray(row.cells) ? row.cells : [];
+        const rawCellTexts = rawCells.map((cell) => extractText(cell));
         const cells = rawCells.map((cell) => escapeHtml(extractText(cell)));
-        const searchText = extractText(row.searchText) || rawCells.map(extractText).join(' ');
+        const searchText = extractText(row.searchText) || rawCellTexts.join(' ');
 
         return {
             ...row,
             cells,
+            rawCellTexts,
             domainKey: extractText(row.domainKey).trim().toLowerCase(),
             searchText: searchText.trim().toLowerCase()
         };
+    };
+
+    const parseAdminDateTime = (value) => {
+        const textValue = extractText(value);
+        const match = textValue.match(/^(\d{4})\.(\d{2})\.(\d{2})(?:\s+(\d{2}):(\d{2}))?$/);
+        if (!match) {
+            return null;
+        }
+
+        const [, year, month, day, hour = '00', minute = '00'] = match;
+        const parsed = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    };
+
+    const buildBookingCutoffDate = () => {
+        const cutoff = new Date();
+        cutoff.setMonth(cutoff.getMonth() - BOOKING_LOOKBACK_MONTHS);
+        return cutoff;
+    };
+
+    const isVisibleBookingRow = (row) => {
+        const occurredAt = parseAdminDateTime(row?.rawCellTexts?.[5]);
+        if (!occurredAt) {
+            return false;
+        }
+
+        return occurredAt >= buildBookingCutoffDate();
+    };
+
+    const getFilteredRows = (tabKey) => {
+        const config = getTabConfig(tabKey);
+        const keyword = searchKeyword.trim().toLowerCase();
+
+        return (config.rows ?? []).filter((row) => {
+            const domainMatch = activeDomainKey === 'all'
+                || !row.domainKey
+                || row.domainKey === activeDomainKey;
+            const searchMatch = !keyword || row.searchText.includes(keyword);
+            const recentBookingMatch = tabKey !== 'booking' || isVisibleBookingRow(row);
+            return domainMatch && searchMatch && recentBookingMatch;
+        });
+    };
+
+    const getTotalPages = (rowCount) => Math.max(1, Math.ceil(rowCount / ROWS_PER_PAGE));
+
+    const resetPagination = () => {
+        currentPage = 1;
+    };
+
+    const syncPagination = (rowCount) => {
+        if (!paginationPrevButton || !paginationNextButton || !paginationIndicator) {
+            return;
+        }
+
+        if (rowCount <= 0) {
+            paginationPrevButton.disabled = true;
+            paginationNextButton.disabled = true;
+            paginationIndicator.textContent = '0 / 0';
+            paginationIndicator.title = '표시할 예약이 없습니다.';
+            return;
+        }
+
+        const totalPages = getTotalPages(rowCount);
+        currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+        const rangeStart = ((currentPage - 1) * ROWS_PER_PAGE) + 1;
+        const rangeEnd = Math.min(currentPage * ROWS_PER_PAGE, rowCount);
+
+        paginationPrevButton.disabled = currentPage <= 1;
+        paginationNextButton.disabled = currentPage >= totalPages;
+        paginationIndicator.textContent = `${currentPage} / ${totalPages}`;
+        paginationIndicator.title = `${rangeStart}-${rangeEnd} / ${rowCount}건`;
     };
 
     const normalizeTabConfig = (tabKey, tabPayload = {}) => {
@@ -197,14 +276,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const config = getTabConfig(tabKey);
         if (!tableBody) return;
 
-        const keyword = searchKeyword.trim().toLowerCase();
-        const rows = (config.rows ?? []).filter((row) => {
-            const domainMatch = activeDomainKey === 'all'
-                || !row.domainKey
-                || row.domainKey === activeDomainKey;
-            const searchMatch = !keyword || row.searchText.toLowerCase().includes(keyword);
-            return domainMatch && searchMatch;
-        });
+        const rows = getFilteredRows(tabKey);
         const colspan = Math.max(config.columns.length, 1);
         const emptyMessage = tabKey === 'booking' && surfaceState === 'loading'
             ? reservationsConfig.loadingMessage
@@ -215,11 +287,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     : config.emptyMessage;
 
         if (rows.length === 0) {
+            syncPagination(0);
             tableBody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center; padding: 40px;">${escapeHtml(emptyMessage)}</td></tr>`;
             return;
         }
 
-        tableBody.innerHTML = rows.map((row) => `
+        const totalPages = getTotalPages(rows.length);
+        currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+        const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+        const visibleRows = rows.slice(startIndex, startIndex + ROWS_PER_PAGE);
+
+        syncPagination(rows.length);
+
+        tableBody.innerHTML = visibleRows.map((row) => `
             <tr>
                 ${row.cells.map((cell) => `<td>${cell}</td>`).join('')}
             </tr>
@@ -252,8 +332,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
 
-    const setActiveTab = (tabKey) => {
+    const setActiveTab = (tabKey, options = {}) => {
+        const { resetPage = false } = options;
         activeTab = surfaceConfig.tabs[tabKey] ? tabKey : surfaceConfig.defaultTab;
+        if (resetPage) {
+            resetPagination();
+        }
         tabButtons.forEach((button) => {
             button.classList.toggle('active', button.dataset.domain === activeTab);
         });
@@ -268,7 +352,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        setActiveTab(tabKey);
+        setActiveTab(tabKey, { resetPage: true });
     };
 
     const loadReservationsSurface = async () => {
@@ -308,6 +392,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     tabButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
             searchKeyword = '';
+            resetPagination();
             if (searchInput) searchInput.value = '';
             setDomain(event.currentTarget.dataset.domain);
         });
@@ -316,21 +401,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (searchInput) {
         searchInput.addEventListener('input', (event) => {
             searchKeyword = event.currentTarget.value;
+            resetPagination();
             renderTableBody(activeTab);
         });
     }
 
     if (searchButton) {
-        searchButton.addEventListener('click', () => renderTableBody(activeTab));
+        searchButton.addEventListener('click', () => {
+            resetPagination();
+            renderTableBody(activeTab);
+        });
     }
 
     domainFilterButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
             activeDomainKey = event.currentTarget.dataset.domainKey || 'all';
+            resetPagination();
             syncDomainFilters();
             renderTableBody(activeTab);
         });
     });
+
+    if (paginationPrevButton) {
+        paginationPrevButton.addEventListener('click', () => {
+            if (currentPage <= 1) {
+                return;
+            }
+
+            currentPage -= 1;
+            renderTableBody(activeTab);
+        });
+    }
+
+    if (paginationNextButton) {
+        paginationNextButton.addEventListener('click', () => {
+            const rowCount = getFilteredRows(activeTab).length;
+            const totalPages = rowCount > 0 ? getTotalPages(rowCount) : 0;
+            if (currentPage >= totalPages) {
+                return;
+            }
+
+            currentPage += 1;
+            renderTableBody(activeTab);
+        });
+    }
 
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', () => {
@@ -394,7 +508,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const initialState = window.AdminStore?.getState?.() ?? { ui: {} };
     syncSidebarUI(initialState.ui.sidebarOpen);
     updateThemeDOM(initialState.ui.theme);
-    setActiveTab(TAB_CONFIG[initialState.ui.domain] ? initialState.ui.domain : DEFAULT_TAB);
+    setActiveTab(TAB_CONFIG[initialState.ui.domain] ? initialState.ui.domain : DEFAULT_TAB, { resetPage: true });
     syncDomainFilters();
     await loadReservationsSurface();
     window.addEventListener('resize', () => syncSidebarUI(window.AdminStore?.getState?.()?.ui?.sidebarOpen));

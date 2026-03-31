@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, type ChangeEventHandler, type FormEventHandler } from "react";
 import { loginWithCredentials, navigateAfterLogin } from "@front-components/auth/services/loginService";
+import { startNaverLogin } from "@front-components/auth/services/socialAuth";
 import { useAuthActions, useAuthState } from "@front-components/auth/state/context";
 
 const SAVED_ID_KEY = "jeju:login-id";
@@ -80,9 +81,32 @@ export const useLoginController = () => {
     [actions, login.loginId, login.password],
   );
 
+  const handleNaverLogin = useCallback(async () => {
+    try {
+      actions.patchLogin({ submitting: true });
+      actions.resetError("login");
+      actions.setStatus("verifying");
+
+      const result = await startNaverLogin();
+      if (!result.success || !result.authorizationUrl) {
+        actions.setStatus("error");
+        actions.setError("login", result.message || "네이버 로그인 준비 실패 상태");
+        return;
+      }
+
+      window.location.replace(result.authorizationUrl);
+    } catch (_error) {
+      actions.setStatus("error");
+      actions.setError("login", "네이버 로그인 준비 실패 상태");
+    } finally {
+      actions.patchLogin({ submitting: false });
+    }
+  }, [actions]);
+
   return {
     errorMessage: errors.login,
     handleIdChange,
+    handleNaverLogin,
     handlePasswordChange,
     handleRememberChange,
     handleSubmit,

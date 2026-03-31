@@ -1,5 +1,6 @@
 package com.jejugroup.jejuspring.auth.web;
 
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -17,24 +18,37 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jejugroup.jejuspring.auth.application.AuthSessionService;
 import com.jejugroup.jejuspring.auth.application.AuthSignupService;
 import com.jejugroup.jejuspring.auth.application.AuthVerificationService;
+import com.jejugroup.jejuspring.auth.application.NaverAuthConfigurationException;
+import com.jejugroup.jejuspring.auth.application.NaverAuthService;
+import com.jejugroup.jejuspring.auth.application.NaverAuthStateMismatchException;
+import com.jejugroup.jejuspring.auth.application.NaverAuthUnauthorizedException;
+import com.jejugroup.jejuspring.auth.application.NaverAuthUpstreamException;
 import com.jejugroup.jejuspring.auth.model.SessionUser;
 import com.jejugroup.jejuspring.auth.model.SignupRequest;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthApiController {
+    private static final String NAVER_LOGIN_SUCCESS_MESSAGE = "네이버 로그인이 완료되었습니다.";
+    private static final String NAVER_LOGIN_FAILURE_MESSAGE = "네이버 로그인 처리에 실패했습니다.";
+    private static final String NAVER_LOGIN_UNAVAILABLE_MESSAGE = "네이버 로그인 서비스를 사용할 수 없습니다.";
+    private static final String NAVER_LOGIN_REQUEST_MESSAGE = "네이버 로그인 요청을 처리할 수 없습니다.";
+
     private final AuthVerificationService authVerificationService;
     private final AuthSignupService authSignupService;
     private final AuthSessionService authSessionService;
+    private final NaverAuthService naverAuthService;
 
     public AuthApiController(
         AuthVerificationService authVerificationService,
         AuthSignupService authSignupService,
-        AuthSessionService authSessionService
+        AuthSessionService authSessionService,
+        NaverAuthService naverAuthService
     ) {
         this.authVerificationService = authVerificationService;
         this.authSignupService = authSignupService;
         this.authSessionService = authSessionService;
+        this.naverAuthService = naverAuthService;
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -81,6 +95,57 @@ public class AuthApiController {
             "success", true,
             "message", "로그아웃 완료"
         ));
+    }
+
+    @GetMapping(value = {"/naver/start", "/naver/init"})
+    public ResponseEntity<?> startNaverLoginRedirect(HttpSession session) {
+        try {
+            URI redirectUri = naverAuthService.createAuthorizationUri(session);
+            return ResponseEntity.status(HttpStatus.FOUND)
+                .location(redirectUri)
+                .build();
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, NAVER_LOGIN_REQUEST_MESSAGE);
+        } catch (NaverAuthConfigurationException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, NAVER_LOGIN_UNAVAILABLE_MESSAGE);
+        }
+    }
+
+    @PostMapping(
+        value = {"/naver/start", "/naver/init"},
+        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> startNaverLogin(HttpSession session, @RequestParam Map<String, String> form) {
+        try {
+            URI authorizationUri = naverAuthService.createAuthorizationUri(session);
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "authorizationUrl", authorizationUri.toString()
+            ));
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, NAVER_LOGIN_REQUEST_MESSAGE);
+        } catch (NaverAuthConfigurationException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, NAVER_LOGIN_UNAVAILABLE_MESSAGE);
+        }
+    }
+
+    @PostMapping(value = "/naver/callback", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> completeNaverLogin(
+        @RequestParam("code") String code,
+        @RequestParam("state") String state,
+        HttpSession session
+    ) {
+        return handleNaverCallback(code, state, session);
+    }
+
+    @GetMapping(value = "/naver/callback", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> completeNaverLoginByGet(
+        @RequestParam("code") String code,
+        @RequestParam("state") String state,
+        HttpSession session
+    ) {
+        return handleNaverCallback(code, state, session);
     }
 
     @GetMapping(value = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -157,5 +222,26 @@ public class AuthApiController {
             "success", success,
             "message", message
         ));
+    }
+
+    private ResponseEntity<?> handleNaverCallback(String code, String state, HttpSession session) {
+        try {
+            SessionUser user = naverAuthService.completeLogin(code, state, session);
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", NAVER_LOGIN_SUCCESS_MESSAGE,
+                "user", user
+            ));
+        } catch (IllegalArgumentException exception) {
+            return json(HttpStatus.BAD_REQUEST, false, NAVER_LOGIN_REQUEST_MESSAGE);
+        } catch (NaverAuthStateMismatchException | NaverAuthUnauthorizedException exception) {
+            return json(HttpStatus.UNAUTHORIZED, false, NAVER_LOGIN_FAILURE_MESSAGE);
+        } catch (NaverAuthConfigurationException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, NAVER_LOGIN_UNAVAILABLE_MESSAGE);
+        } catch (NaverAuthUpstreamException exception) {
+            return json(HttpStatus.BAD_GATEWAY, false, NAVER_LOGIN_FAILURE_MESSAGE);
+        } catch (SQLException exception) {
+            return json(HttpStatus.SERVICE_UNAVAILABLE, false, NAVER_LOGIN_FAILURE_MESSAGE);
+        }
     }
 }

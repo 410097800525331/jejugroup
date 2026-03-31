@@ -127,7 +127,21 @@ public class WeatherService {
     }
 
     private String resolveApiKey() {
-        return appProperties.external().openweatherApiKey();
+        String configuredKey = normalizeApiKey(appProperties.external().openweatherApiKey());
+        if (StringUtils.hasText(configuredKey)) {
+            return configuredKey;
+        }
+
+        String envKey = normalizeApiKey(System.getenv("OPENWEATHER_API_KEY"));
+        if (StringUtils.hasText(envKey)) {
+            return envKey;
+        }
+
+        return normalizeApiKey(System.getProperty("OPENWEATHER_API_KEY"));
+    }
+
+    private String normalizeApiKey(String value) {
+        return value == null ? "" : value.trim();
     }
 
     private static String normalize(String value) {

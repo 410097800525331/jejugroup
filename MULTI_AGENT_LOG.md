@@ -4929,3 +4929,36 @@
   - `main` ran `powershell -ExecutionPolicy Bypass -File scripts/backfill-mypage-booking-history.ps1` and the script reported `누락된 payment_transactions: 46915 -> 0`.
   - `main` verified with MySQL that `BHD-20260331-%` now has `0` missing `payment_transactions`, and the admin revenue-style filter sees `46915` transaction rows totaling `469500852578.00` across the batch's date buckets.
   - `main` verified the current-day revenue-style query still returns `17423400.00`, which is expected because the generated batch is dated through `2026-03-30` and the fix affects historical chart buckets rather than today's KPI.
+
+- time: `2026-03-31 15:06:00 +09:00`
+- route: `Route B`
+- task: `Restore Flyway bootability by reverting V29 monthly hotel deals migration to the applied checksum-compatible content`
+- participants: `main`, `worker_flyway_v29_restore (Erdos)`, `worker_error_log (Helmholtz)`, `reviewer_flyway_v29_restore (James)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_flyway_v29_restore (Erdos)`: `jeju-spring/src/main/resources/db/migration/V29__seed_monthly_hotel_deals.sql`
+  - `worker_error_log (Helmholtz)`: `ERROR_LOG.md`
+  - `reviewer_flyway_v29_restore (James)`: `review only`
+- verification:
+  - `worker_flyway_v29_restore (Erdos)` restored `V29__seed_monthly_hotel_deals.sql` to the long-code `stay-*` / `*-monthly-room` / `*-monthly-deal` content that matches the previously applied migration state, removing the later short-code edits from V29.
+  - `main` confirmed the repository already carries the intended short-code transition in `jeju-spring/src/main/resources/db/migration/V30__shorten_monthly_deal_codes.sql`, so the restore re-aligns the migration sequence instead of discarding the newer code scheme.
+  - `main` ran `.\gradlew.bat bootRun` in `jeju-spring`; the process stayed up instead of failing Flyway validation, and a follow-up request to `http://127.0.0.1:8080/index.html` returned HTTP `200`.
+  - `worker_error_log (Helmholtz)` appended the material boot failure and resolution summary to `ERROR_LOG.md` as a resolved entry.
+  - `reviewer_flyway_v29_restore (James)` returned `no findings`, with only the residual note that any separate DB environment already repaired to the modified V29 checksum would still need environment-specific `repair` or reapply handling.
+- time: `2026-03-31 15:50:00 +09:00`
+- route: `Route B`
+- task: `Prepare Oracle Cloud deployment assets and documentation for the Jeju Group landing stack`
+- participants: `main`, `worker_ops_docs (Boyle)`, `worker_ops_scripts (Einstein)`, `reviewer_deploy_contract (Ohm)`
+- write_sets:
+  - `main`: `STATE.md, MULTI_AGENT_LOG.md`
+  - `worker_ops_docs (Boyle)`: `deploy/**, root deployment documentation file if needed`
+  - `worker_ops_scripts (Einstein)`: `package.json, scripts/pipelines/**, scripts/utils/**, jeju-spring/.env.example, docker-compose.yml`
+- verification:
+  - `worker_ops_docs (Boyle)` added `deploy/README.md` with OCI host prerequisites, `/opt/jejugroup` directory layout, host-only `.env` handling, Docker Compose startup/update flow, health checks, rollback notes, and security guidance.
+  - `worker_ops_scripts (Einstein)` switched the default deploy path to OCI via `package.json`, added `scripts/pipelines/deploy-oci.js`, centralized OCI env resolution in `scripts/utils/deploy-contract.js`, parameterized `docker-compose.yml` host env/uploads paths, and updated `jeju-spring/.env.example` with the OCI deployment contract while keeping `deploy:alwaysdata` available as a legacy path.
+  - `worker_ops_scripts (Einstein)` revised the OCI redeploy flow to avoid destructive `rm -rf` replacement by using staging/backup directory swaps and removed the unnecessary local WAR build from `deploy:oci`.
+  - `reviewer_deploy_contract (Ohm)` first flagged env-path mismatch, missing deploy-time docs, and secret-mixing risk between deploy credentials and runtime container env; those findings were resolved by follow-up worker changes.
+  - `worker_ops_scripts (Einstein)` split deploy-time secrets away from runtime env by moving local deploy loading to `deploy/.env.oci` or shell env, keeping `/opt/jejugroup/.env` for app/mysql runtime only, and fixing OCI-prefixed env lookup plus POSIX remote path defaults in `scripts/utils/deploy-contract.js`.
+  - `worker_ops_docs (Boyle)` updated `deploy/README.md` to separate remote runtime env from local deploy env and added `deploy/.env.oci.example` as a deploy-only template.
+  - `main` restored `STATE.md` to the active OCI deployment task after unrelated task metadata drift and logged the missing-local-Docker verification gap in `ERROR_LOG.md`.
+  - `reviewer_deploy_contract (Ohm)` completed a final pass with no blocking findings; residual risk is limited to the lack of Docker/OCI runtime smoke validation on this workstation.

@@ -30,12 +30,25 @@ public class AuthSessionService {
 
     public SessionUser login(String id, String plainPw, HttpSession session) throws SQLException {
         if (!StringUtils.hasText(id) || !StringUtils.hasText(plainPw)) {
-            throw new IllegalArgumentException("아이디와 비밀번호를 입력해주세요.");
+            throw new IllegalArgumentException("아이디 또는 비밀번호를 입력해주세요.");
         }
 
         SessionUser user = authenticate(id.trim(), plainPw);
         if (user == null) {
             return null;
+        }
+
+        establishSession(user, session);
+        return user;
+    }
+
+    public SessionUser establishSession(SessionUser user, HttpSession session) {
+        if (user == null) {
+            throw new IllegalArgumentException("Session user is required");
+        }
+
+        if (session == null) {
+            throw new IllegalArgumentException("Session is required");
         }
 
         session.setAttribute("user", user);

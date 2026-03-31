@@ -7,7 +7,7 @@ services:
       - "80:80"
     volumes:
       - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - /uploads:/uploads:ro
+      - ${JEJU_UPLOADS_DIR:-/uploads}:/uploads:ro
     depends_on:
       app:
         condition: service_started
@@ -21,14 +21,14 @@ services:
     container_name: jejugroup-app
     restart: unless-stopped
     env_file:
-      - /opt/jejugroup/.env
+      - ${JEJU_SHARED_ENV_FILE:-/opt/jejugroup/.env}
     environment:
-      JEJU_SHARED_ENV_PATH: /opt/jejugroup/.env
+      JEJU_SHARED_ENV_PATH: ${JEJU_SHARED_ENV_PATH:-/opt/jejugroup/.env}
       SERVER_PORT: "8080"
       MYPAGE_AVATAR_UPLOAD_ROOT: /uploads/mypage-avatars
     volumes:
-      - /opt/jejugroup/.env:/opt/jejugroup/.env:ro
-      - /uploads:/uploads
+      - ${JEJU_SHARED_ENV_FILE:-/opt/jejugroup/.env}:${JEJU_SHARED_ENV_PATH:-/opt/jejugroup/.env}:ro
+      - ${JEJU_UPLOADS_DIR:-/uploads}:/uploads
     expose:
       - "8080"
     depends_on:
@@ -42,7 +42,7 @@ services:
     container_name: jejugroup-mysql
     restart: unless-stopped
     env_file:
-      - /opt/jejugroup/.env
+      - ${JEJU_SHARED_ENV_FILE:-/opt/jejugroup/.env}
     environment:
       TZ: Asia/Seoul
     volumes:

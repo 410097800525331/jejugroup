@@ -142,6 +142,10 @@
         <main class="admin-main">
             <div class="admin-page-header">
                 <h1 class="admin-page-title">예약/결제/환불 관리</h1>
+                <p id="reservations-range-caption"
+                    style="margin-top:8px; color:var(--admin-text-secondary); font-size:0.95rem;">
+                    최근 1달 예약만 표시하며, 페이지당 10건씩 보여줍니다.
+                </p>
             </div>
 
             <div class="admin-reservations-quick-actions">
@@ -194,10 +198,11 @@
             </div>
 
             <!-- Pagination Mock -->
-            <div style="display:flex; justify-content:center; margin-top:20px; gap:8px;">
-                <button class="admin-btn admin-btn-outline" disabled>&lt;</button>
-                <button class="admin-btn admin-btn-primary">1</button>
-                <button class="admin-btn admin-btn-outline">&gt;</button>
+            <div id="reservations-pagination"
+                style="display:flex; justify-content:center; margin-top:20px; gap:8px;">
+                <button class="admin-btn admin-btn-outline" id="reservations-page-prev" type="button" disabled>&lt;</button>
+                <button class="admin-btn admin-btn-primary" id="reservations-page-indicator" type="button" disabled>0 / 0</button>
+                <button class="admin-btn admin-btn-outline" id="reservations-page-next" type="button" disabled>&gt;</button>
             </div>
         </main>
     </div>

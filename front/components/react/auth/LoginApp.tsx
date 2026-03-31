@@ -5,14 +5,22 @@ import { useLoginController, getSavedLoginId } from "@front-components/auth/hook
 import { AuthProvider } from "@front-components/auth/state/context";
 
 const LoginContent = () => {
-  const { errorMessage, handleIdChange, handlePasswordChange, handleRememberChange, handleSubmit, isDisabled, login } =
-    useLoginController();
+  const {
+    errorMessage,
+    handleIdChange,
+    handleNaverLogin,
+    handlePasswordChange,
+    handleRememberChange,
+    handleSubmit,
+    isDisabled,
+    login,
+  } = useLoginController();
 
   return (
     <AuthCard>
       <div className="login-header">
         <h1 className="login-title">로그인</h1>
-        <p className="login-desc">포인트 적립에서 운임 할인까지 회원 전용 혜택을 받아보는 구간</p>
+        <p className="login-desc">포인트 적립부터 운임 혜택까지 한 번에 이용하세요.</p>
       </div>
 
       <form className="login-form" id="user_form" onSubmit={handleSubmit}>
@@ -21,7 +29,7 @@ const LoginContent = () => {
           id="id"
           label="이메일/아이디"
           onChange={handleIdChange}
-          placeholder="아이디 또는 이메일 입력"
+          placeholder="아이디 또는 이메일을 입력해 주세요"
           value={login.loginId}
         />
 
@@ -30,7 +38,7 @@ const LoginContent = () => {
           id="pw"
           label="비밀번호"
           onChange={handlePasswordChange}
-          placeholder="비밀번호 입력"
+          placeholder="비밀번호를 입력해 주세요"
           type="password"
           value={login.password}
         />
@@ -57,6 +65,15 @@ const LoginContent = () => {
         <button className="login-btn btn" data-state={login.submitting ? "loading" : "idle"} disabled={isDisabled} type="submit">
           {login.submitting ? "로그인 중" : "로그인"}
         </button>
+
+        <div className="quick_login">간편 로그인</div>
+
+        <div className="sns_login">
+          <button className="sns_btn naver" disabled={login.submitting} onClick={() => void handleNaverLogin()} type="button">
+            <span aria-hidden="true">N</span>
+            네이버로 로그인
+          </button>
+        </div>
       </form>
     </AuthCard>
   );

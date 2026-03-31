@@ -771,3 +771,19 @@ status: open
 - summary: `the first ad-hoc SQL runner skipped the leading UPDATE because the SQL chunk began with comment lines`
 - details: `My temporary JDBC helper split the V30 file on semicolons and skipped any chunk that started with '--', which accidentally dropped the first hotel_properties UPDATE while still applying the later room_type and policy remaps. I corrected the local DB by rerunning the property-code UPDATE explicitly and verified the final property/room/policy codes through JDBC readback.`
 - status: `resolved`
+
+- time: `2026-03-31 15:01:59 +09:00`
+- location: `jeju-spring bootRun / Flyway validation`
+- summary: `bootRun was blocked by Flyway validation failed on V29 checksum mismatch`
+- details: `V29 checksum was applied as -1047147740 but resolved as -1525585218 because V29 had been modified after it was already applied; V30 was originally responsible for the short-code transition. The fix was to restore V29 to the applied-compatible long-code content, after which bootRun reached a normal 200 response again.`
+- status: `resolved`
+- time: `2026-03-31 15:52:00 +09:00`
+  location: `D:\lsh\git\jejugroup`
+  summary: `OCI deployment prep verification could not run docker compose checks locally`
+  details: `While verifying the Oracle Cloud deployment-prep slice, \`docker --version\` and \`docker compose config\` both failed because the Docker CLI is not installed in the current workstation environment. Static checks passed, but live Compose validation remains pending on a Docker-enabled host.`
+  status: `open`
+# 2026-03-31 15:29:16 +09:00
+- location: `jeju-spring / ./gradlew test`
+- summary: `Full test suite failed during Spring context startup outside the auth slice`
+- details: `Auth-only tests passed, but the repository-wide test task failed with repeated IllegalStateException context failures; the first visible root cause was AdminBannerDbStore bean initialization wrapping an SQLException during @SpringBootTest startup.`
+- status: `deferred`
