@@ -1,21 +1,20 @@
 -- V20 schema refactor: hotel-prefixed stay tables and admin-facing support masters
 -- Fresh replay target: keep bookings-common/payment-common intact, then normalize domain names.
 
-RENAME TABLE
-    properties TO hotel_properties,
-    property_room_types TO hotel_room_types,
-    property_benefits TO hotel_benefits,
-    property_display_overrides TO hotel_display_overrides,
-    property_tags TO hotel_tags,
-    inventory_stocks TO hotel_inventory_stocks,
-    inventory_adjustments TO hotel_inventory_adjustments,
-    price_policies TO hotel_price_policies,
-    rental_locations TO rentcar_branches,
-    rental_vehicle_classes TO rentcar_vehicle_models,
-    rental_vehicles TO rentcar_products,
-    rental_rate_policies TO rentcar_rate_policies,
-    rental_vehicle_inventories TO rentcar_inventory_stocks,
-    flight_seat_inventories TO flight_inventory_stocks;
+RENAME TABLE properties TO hotel_properties;
+RENAME TABLE property_room_types TO hotel_room_types;
+RENAME TABLE property_benefits TO hotel_benefits;
+RENAME TABLE property_display_overrides TO hotel_display_overrides;
+RENAME TABLE property_tags TO hotel_tags;
+RENAME TABLE inventory_stocks TO hotel_inventory_stocks;
+RENAME TABLE inventory_adjustments TO hotel_inventory_adjustments;
+RENAME TABLE price_policies TO hotel_price_policies;
+RENAME TABLE rental_locations TO rentcar_branches;
+RENAME TABLE rental_vehicle_classes TO rentcar_vehicle_models;
+RENAME TABLE rental_vehicles TO rentcar_products;
+RENAME TABLE rental_rate_policies TO rentcar_rate_policies;
+RENAME TABLE rental_vehicle_inventories TO rentcar_inventory_stocks;
+RENAME TABLE flight_seat_inventories TO flight_inventory_stocks;
 
 ALTER TABLE hotel_properties COMMENT='front/admin/pages/lodging.html stay tab - hotel/property master';
 ALTER TABLE hotel_room_types COMMENT='front/admin/pages/lodging.html stay tab - room types';
@@ -38,7 +37,9 @@ ALTER TABLE flight_fare_policies COMMENT='front/admin/pages/reservations.html fl
 ALTER TABLE flight_inventory_stocks COMMENT='front/admin/pages/reservations.html flight tab - flight seat inventory';
 
 ALTER TABLE hotel_room_types
-    DROP FOREIGN KEY fk_property_room_types_property,
+    DROP FOREIGN KEY fk_property_room_types_property;
+
+ALTER TABLE hotel_room_types
     CHANGE COLUMN property_id hotel_property_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE hotel_room_types
@@ -48,7 +49,9 @@ ALTER TABLE hotel_room_types
         ON UPDATE CASCADE;
 
 ALTER TABLE hotel_benefits
-    DROP FOREIGN KEY fk_property_benefits_property,
+    DROP FOREIGN KEY fk_property_benefits_property;
+
+ALTER TABLE hotel_benefits
     CHANGE COLUMN property_id hotel_property_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE hotel_benefits
@@ -58,7 +61,9 @@ ALTER TABLE hotel_benefits
         ON UPDATE CASCADE;
 
 ALTER TABLE hotel_display_overrides
-    DROP FOREIGN KEY fk_property_display_overrides_property,
+    DROP FOREIGN KEY fk_property_display_overrides_property;
+
+ALTER TABLE hotel_display_overrides
     CHANGE COLUMN property_id hotel_property_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE hotel_display_overrides
@@ -68,7 +73,9 @@ ALTER TABLE hotel_display_overrides
         ON UPDATE CASCADE;
 
 ALTER TABLE hotel_tags
-    DROP FOREIGN KEY fk_property_tags_property,
+    DROP FOREIGN KEY fk_property_tags_property;
+
+ALTER TABLE hotel_tags
     CHANGE COLUMN property_id hotel_property_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE hotel_tags
@@ -78,7 +85,9 @@ ALTER TABLE hotel_tags
         ON UPDATE CASCADE;
 
 ALTER TABLE hotel_inventory_stocks
-    DROP FOREIGN KEY fk_inventory_stocks_room_type,
+    DROP FOREIGN KEY fk_inventory_stocks_room_type;
+
+ALTER TABLE hotel_inventory_stocks
     CHANGE COLUMN property_room_type_id hotel_room_type_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE hotel_inventory_stocks
@@ -88,74 +97,108 @@ ALTER TABLE hotel_inventory_stocks
         ON UPDATE CASCADE;
 
 ALTER TABLE hotel_inventory_adjustments
-    DROP FOREIGN KEY fk_inventory_adjustments_stock,
-    DROP FOREIGN KEY fk_inventory_adjustments_user,
+    DROP FOREIGN KEY fk_inventory_adjustments_stock;
+
+ALTER TABLE hotel_inventory_adjustments
+    DROP FOREIGN KEY fk_inventory_adjustments_user;
+
+ALTER TABLE hotel_inventory_adjustments
     CHANGE COLUMN inventory_stock_id hotel_inventory_stock_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE hotel_inventory_adjustments
     ADD CONSTRAINT fk_hotel_inventory_adjustments_hotel_inventory_stock
         FOREIGN KEY (hotel_inventory_stock_id) REFERENCES hotel_inventory_stocks (id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE;
+
+ALTER TABLE hotel_inventory_adjustments
     ADD CONSTRAINT fk_hotel_inventory_adjustments_user
         FOREIGN KEY (adjusted_by_user_id) REFERENCES users (id)
         ON DELETE SET NULL
         ON UPDATE CASCADE;
 
 ALTER TABLE hotel_price_policies
-    DROP FOREIGN KEY fk_price_policies_property,
-    DROP FOREIGN KEY fk_price_policies_room_type_same_property,
-    CHANGE COLUMN property_id hotel_property_id BIGINT UNSIGNED NOT NULL,
+    DROP FOREIGN KEY fk_price_policies_property;
+
+ALTER TABLE hotel_price_policies
+    DROP FOREIGN KEY fk_price_policies_room_type_same_property;
+
+ALTER TABLE hotel_price_policies
+    CHANGE COLUMN property_id hotel_property_id BIGINT UNSIGNED NOT NULL;
+
+ALTER TABLE hotel_price_policies
     CHANGE COLUMN property_room_type_id hotel_room_type_id BIGINT UNSIGNED NULL;
 
 ALTER TABLE hotel_price_policies
     ADD CONSTRAINT fk_hotel_price_policies_hotel_property
         FOREIGN KEY (hotel_property_id) REFERENCES hotel_properties (id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE;
+
+ALTER TABLE hotel_price_policies
     ADD CONSTRAINT fk_hotel_price_policies_hotel_room_type
         FOREIGN KEY (hotel_room_type_id) REFERENCES hotel_room_types (id)
         ON DELETE SET NULL
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE;
+
+ALTER TABLE hotel_price_policies
     ADD CONSTRAINT fk_hotel_price_policies_room_type_same_property
         FOREIGN KEY (hotel_property_id, hotel_room_type_id) REFERENCES hotel_room_types (hotel_property_id, id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE;
 
 ALTER TABLE rentcar_products
-    DROP FOREIGN KEY fk_rental_vehicles_location,
-    DROP FOREIGN KEY fk_rental_vehicles_class,
-    CHANGE COLUMN rental_location_id rentcar_branch_id BIGINT UNSIGNED NOT NULL,
+    DROP FOREIGN KEY fk_rental_vehicles_location;
+
+ALTER TABLE rentcar_products
+    DROP FOREIGN KEY fk_rental_vehicles_class;
+
+ALTER TABLE rentcar_products
+    CHANGE COLUMN rental_location_id rentcar_branch_id BIGINT UNSIGNED NOT NULL;
+
+ALTER TABLE rentcar_products
     CHANGE COLUMN rental_vehicle_class_id rentcar_vehicle_model_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE rentcar_products
     ADD CONSTRAINT fk_rentcar_products_rentcar_branch
         FOREIGN KEY (rentcar_branch_id) REFERENCES rentcar_branches (id)
         ON DELETE RESTRICT
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE;
+
+ALTER TABLE rentcar_products
     ADD CONSTRAINT fk_rentcar_products_rentcar_vehicle_model
         FOREIGN KEY (rentcar_vehicle_model_id) REFERENCES rentcar_vehicle_models (id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE;
 
 ALTER TABLE rentcar_rate_policies
-    DROP FOREIGN KEY fk_rental_rate_policies_location,
-    DROP FOREIGN KEY fk_rental_rate_policies_class,
-    CHANGE COLUMN rental_location_id rentcar_branch_id BIGINT UNSIGNED NOT NULL,
+    DROP FOREIGN KEY fk_rental_rate_policies_location;
+
+ALTER TABLE rentcar_rate_policies
+    DROP FOREIGN KEY fk_rental_rate_policies_class;
+
+ALTER TABLE rentcar_rate_policies
+    CHANGE COLUMN rental_location_id rentcar_branch_id BIGINT UNSIGNED NOT NULL;
+
+ALTER TABLE rentcar_rate_policies
     CHANGE COLUMN rental_vehicle_class_id rentcar_vehicle_model_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE rentcar_rate_policies
     ADD CONSTRAINT fk_rentcar_rate_policies_rentcar_branch
         FOREIGN KEY (rentcar_branch_id) REFERENCES rentcar_branches (id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE;
+
+ALTER TABLE rentcar_rate_policies
     ADD CONSTRAINT fk_rentcar_rate_policies_rentcar_vehicle_model
         FOREIGN KEY (rentcar_vehicle_model_id) REFERENCES rentcar_vehicle_models (id)
         ON DELETE CASCADE
         ON UPDATE CASCADE;
 
 ALTER TABLE rentcar_inventory_stocks
-    DROP FOREIGN KEY fk_rental_vehicle_inventories_vehicle,
+    DROP FOREIGN KEY fk_rental_vehicle_inventories_vehicle;
+
+ALTER TABLE rentcar_inventory_stocks
     CHANGE COLUMN rental_vehicle_id rentcar_product_id BIGINT UNSIGNED NOT NULL;
 
 ALTER TABLE rentcar_inventory_stocks

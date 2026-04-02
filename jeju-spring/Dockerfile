@@ -6,7 +6,7 @@ COPY . .
 
 WORKDIR /workspace/jeju-spring
 
-RUN chmod +x gradlew && ./gradlew --no-daemon bootJar
+RUN gradle --no-daemon bootJar
 
 FROM eclipse-temurin:21-jre-jammy
 

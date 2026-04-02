@@ -1,13 +1,31 @@
+-- TiDB compatible: one DDL operation per ALTER TABLE
+-- TiDB rule: must drop ALL indexes covering a column before DROP COLUMN
+-- TiDB rule: FK auto-indexes are NOT auto-removed on DROP FK
+
+-- Step 1: Drop FK that references (comment_ticket_id, comment_id)
 ALTER TABLE support_attachments
-    DROP FOREIGN KEY fk_support_attachments_comment_ticket_pair,
-    DROP INDEX idx_support_attachments_comment_ticket,
-    DROP INDEX idx_support_attachments_comment,
-    DROP COLUMN comment_ticket_id,
+    DROP FOREIGN KEY fk_support_attachments_comment_ticket_pair;
+
+-- Step 2: Drop the explicit index on (comment_ticket_id, comment_id)
+ALTER TABLE support_attachments
+    DROP INDEX idx_support_attachments_comment_ticket;
+
+-- Step 3: Drop the V1 index on (comment_id) - must go before DROP COLUMN
+ALTER TABLE support_attachments
+    DROP INDEX idx_support_attachments_comment;
+
+-- Step 4: Now safe to drop columns (no more indexes reference them)
+ALTER TABLE support_attachments
+    DROP COLUMN comment_ticket_id;
+
+ALTER TABLE support_attachments
     DROP COLUMN comment_id;
 
+-- Step 5: Drop unique key from support_comments
 ALTER TABLE support_comments
     DROP INDEX uk_support_comments_ticket_id_id;
 
+-- Table comments
 ALTER TABLE users COMMENT = 'AuthService 레거시 users 계약을 유지하는 회원 기본 정보 테이블';
 ALTER TABLE user_profiles COMMENT = '회원의 표시 이름, 프로필 이미지, 언어 설정을 저장하는 테이블';
 ALTER TABLE user_auth_accounts COMMENT = '외부 인증 제공자와 회원 계정을 연결하는 테이블';

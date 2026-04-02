@@ -2,20 +2,42 @@
 -- repeat-safe, source-aligned with front/admin/data/cms-config.js
 
 ALTER TABLE banner_slots
-    ADD COLUMN service_type VARCHAR(30) NOT NULL DEFAULT 'common' AFTER placement,
+    ADD COLUMN service_type VARCHAR(30) NOT NULL DEFAULT 'common' AFTER placement;
+
+ALTER TABLE banner_slots
     ADD KEY idx_banner_slots_service_active (service_type, is_active);
 
 ALTER TABLE banners
-    ADD COLUMN slot_key VARCHAR(80) NOT NULL DEFAULT '' AFTER banner_slot_id,
-    ADD COLUMN family VARCHAR(80) NOT NULL DEFAULT 'legacy' AFTER slot_key,
-    ADD COLUMN service_type VARCHAR(30) NOT NULL DEFAULT 'common' AFTER family,
-    ADD COLUMN eyebrow VARCHAR(200) NULL AFTER subtitle,
-    ADD COLUMN body LONGTEXT NULL AFTER eyebrow,
-    ADD COLUMN cta_label VARCHAR(200) NULL AFTER link_url,
-    ADD COLUMN cta_href VARCHAR(500) NULL AFTER cta_label,
-    ADD COLUMN alt_text VARCHAR(500) NULL AFTER cta_href,
-    ADD KEY idx_banners_slot_key (slot_key),
-    ADD KEY idx_banners_family_service_sort (family, service_type, is_active, sort_order),
+    ADD COLUMN slot_key VARCHAR(80) NOT NULL DEFAULT '' AFTER banner_slot_id;
+
+ALTER TABLE banners
+    ADD COLUMN family VARCHAR(80) NOT NULL DEFAULT 'legacy' AFTER slot_key;
+
+ALTER TABLE banners
+    ADD COLUMN service_type VARCHAR(30) NOT NULL DEFAULT 'common' AFTER family;
+
+ALTER TABLE banners
+    ADD COLUMN eyebrow VARCHAR(200) NULL AFTER subtitle;
+
+ALTER TABLE banners
+    ADD COLUMN body LONGTEXT NULL AFTER eyebrow;
+
+ALTER TABLE banners
+    ADD COLUMN cta_label VARCHAR(200) NULL AFTER link_url;
+
+ALTER TABLE banners
+    ADD COLUMN cta_href VARCHAR(500) NULL AFTER cta_label;
+
+ALTER TABLE banners
+    ADD COLUMN alt_text VARCHAR(500) NULL AFTER cta_href;
+
+ALTER TABLE banners
+    ADD KEY idx_banners_slot_key (slot_key);
+
+ALTER TABLE banners
+    ADD KEY idx_banners_family_service_sort (family, service_type, is_active, sort_order);
+
+ALTER TABLE banners
     ADD KEY idx_banners_service_sort (service_type, is_active, sort_order);
 
 UPDATE banner_slots s

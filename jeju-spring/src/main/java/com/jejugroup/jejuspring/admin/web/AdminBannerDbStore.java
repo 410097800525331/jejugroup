@@ -78,7 +78,11 @@ public class AdminBannerDbStore {
 
     @PostConstruct
     public void initializeManagedBanners() {
-        ensureBootstrapped();
+        try {
+            ensureBootstrapped();
+        } catch (Exception ex) {
+            System.err.println("[AdminBannerDbStore] Banner bootstrap deferred – will retry on first access: " + ex.getMessage());
+        }
     }
 
     public synchronized Map<String, Object> listBanners() {
