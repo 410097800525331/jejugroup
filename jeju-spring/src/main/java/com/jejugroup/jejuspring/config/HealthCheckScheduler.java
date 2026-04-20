@@ -19,7 +19,7 @@ public class HealthCheckScheduler {
     private final RestTemplate restTemplate;
     private final String baseUrl;
 
-    public HealthCheckScheduler(RestTemplate restTemplate, @Value("${BASE_URL}") String baseUrl) {
+    public HealthCheckScheduler(RestTemplate restTemplate, @Value("${BASE_URL:http://localhost:8080}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

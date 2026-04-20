@@ -77,6 +77,3 @@ app:
     avatar-upload-root: ${MYPAGE_AVATAR_UPLOAD_ROOT:/uploads}
   banner:
     upload-root: ${BANNER_UPLOAD_ROOT:./.tmp/banner-assets}
-
-# Health Check Configuration
-BASE_URL: ${BASE_URL:http://localhost:8080}  # Render 서버 URL 예시
