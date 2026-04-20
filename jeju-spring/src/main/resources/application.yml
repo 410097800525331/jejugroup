@@ -66,6 +66,8 @@ app:
       - gemini-3-flash-preview
       - gemini-2.5-flash-lite
       - gemini-2.5-flash
+  health-check:
+    base-url: ${BASE_URL:http://localhost:8080}  # Render 서버 URL 예시
   social:
     naver-client-id: ${NAVER_CLIENT_ID:}
     naver-client-secret: ${NAVER_CLIENT_SECRET:}
@@ -74,3 +76,6 @@ app:
     avatar-upload-root: ${MYPAGE_AVATAR_UPLOAD_ROOT:/uploads}
   banner:
     upload-root: ${BANNER_UPLOAD_ROOT:./.tmp/banner-assets}
+
+# Health Check Configuration
+BASE_URL: ${BASE_URL:http://localhost:8080}  # Render 서버 URL 예시
